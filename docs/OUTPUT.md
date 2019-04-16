@@ -1,7 +1,7 @@
 # Save output
 ## saveElement
 ```js
-await browser.imageComparison.saveElement(firstButton, 'example-element-tag');
+browser.saveElement(firstButton, 'example-element-tag');
 ```
 ### Desktop
 ![saveElement Desktop](./images/firstButtonElement-chrome-latest-1366x768.png)
@@ -13,7 +13,7 @@ await browser.imageComparison.saveElement(firstButton, 'example-element-tag');
 
 ## saveScreen
 ```js
-await browser.imageComparison.saveScreen('example-page-tag');
+browser.saveScreen('example-page-tag');
 ```
 ### Desktop
 ![saveScreen Desktop](./images/examplePage-chrome-latest-1366x768.png)
@@ -27,7 +27,7 @@ await browser.imageComparison.saveScreen('example-page-tag');
 
 ## saveFullPageScreen
 ```js
-await browser.imageComparison.saveFullPageScreen('full-page-tag');
+browser.saveFullPageScreen('full-page-tag');
 ```
 ### Desktop
 ![saveFullPageScreens Desktop](./images/fullPage-chrome-latest-1366x768.png)
@@ -43,21 +43,21 @@ await browser.imageComparison.saveFullPageScreen('full-page-tag');
 
 ## checkElement
 ```js
-await browser.imageComparison.checkElement('example-element-tag');
+browser.checkElement('example-element-tag');
 ```
 ### Desktop
 ![checkElement Desktop](./images/firstButtonElement-fail-chrome-latest-1366x768.png)
 
 ## checkScreen
 ```js
-await browser.imageComparison.checkScreen('example-page-tag');
+browser.checkScreen('example-page-tag');
 ```
 ### Desktop
 ![checkScreen Desktop](./images/examplePage-fail-chrome-latest-1366x768.png)
 
 ## checkFullPageScreens
 ```js
-await browser.imageComparison.checkFullPageScreen('full-page-tag');
+browser.checkFullPageScreen('full-page-tag');
 ```
 ### Desktop
 ![checkFullPageScreens Desktop](./images/fullPage-fail-chrome-latest-1366x768.png)
