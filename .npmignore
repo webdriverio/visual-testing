@@ -21,3 +21,6 @@ docs/
 .tmp/
 localBaseline/
 .DS_Store
+.github/
+tests/
+
