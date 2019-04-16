@@ -1,6 +1,8 @@
 wdio-image-comparison-service
 ==========
 
+> **NOTE:** This module is in BETA, and now only supports all browsers (without Safari 12). Install with `npm install wdio-image-comparison-service@beta`
+
 ## What can it do?
 *wdio-image-comparison-service* is a lightweight *WebdriverIO* service for browsers / mobile browsers / hybrid apps to do image comparison on screens, elements or full page screens.
 
