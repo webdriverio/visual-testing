@@ -1,0 +1,14 @@
+sudo: required
+
+language: node_js
+
+node_js:
+  - "stable"
+
+script:
+  - npm i
+  - npm run compile
+  - npm run test.unit
+
+after_script:
+  - npm run coveralls
