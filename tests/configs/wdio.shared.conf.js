@@ -38,6 +38,8 @@ exports.config = {
         browser.logName = capabilities.logName;
 
         // Set the default screensize
-        browser._setWindowSize(1366, 768);
+        if (browser.isMobile) {
+            browser._setWindowSize(1366, 768);
+        }
     },
 }
