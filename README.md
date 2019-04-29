@@ -42,6 +42,7 @@ Instructions on how to install `WebdriverIO` can be found [here.](http://webdriv
 `wdio-image-comparison-service` is a service so it can be used as a normal service. You can set it up in your `wdio.conf.js` file with the following
 
 ```js
+const { join } = require('path');
 // wdio.conf.js
 exports.config = {
     // ...
