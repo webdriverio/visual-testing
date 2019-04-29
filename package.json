@@ -35,7 +35,7 @@
     "webdriverio": "^5.7.13"
   },
   "dependencies": {
-    "webdriver-image-comparison": "^0.3.0"
+    "webdriver-image-comparison": "^0.4.0"
   },
   "repository": {
     "type": "git",
