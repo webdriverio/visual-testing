@@ -35,11 +35,11 @@ exports.config = {
 
     before: (capabilities) => {
         // Add a default logname to the browserobject that is used in the basic specs
-        browser.logName = capabilities.logName;
+        browser.logName = capabilities.logName || capabilities[ 'sauce:options' ].logName;
 
         // Set the default screensize
-        if (browser.isMobile) {
-            browser._setWindowSize(1366, 768);
+        if (!browser.isMobile) {
+            browser.setWindowSize(1366, 768);
         }
     },
 }

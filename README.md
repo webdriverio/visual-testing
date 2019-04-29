@@ -174,3 +174,10 @@ See [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
 - [ ] configure a travis build
 - [ ] add Sauce Labs matrix
 - [ ] create a new website
+
+## Credits
+`wdio-image-comparison-service` uses an open source licence from Sauce Labs.
+![Powered by Sauce LAbs](./docs/images/powered-by-saucelabs.png)
+
+You can request your open source licence [here](https://saucelabs.com/open-source/open-sauce)
+
