@@ -1,6 +1,8 @@
 wdio-image-comparison-service
 ==========
 
+
+
 > **NOTE:** This module is in BETA, and now only supports all browsers (without Safari 12). Install with `npm install wdio-image-comparison-service@beta`
 
 ## What can it do?
@@ -170,8 +172,7 @@ See [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
 
 ## TODO:
 - [ ] add more options for the contributing doc
-- [ ] fix mobile
-- [ ] fix Safari 12
+- [ ] fix the scroll-bar for Android, sometimes it showes
 - [ ] configure a travis build
 - [ ] add Sauce Labs matrix
 - [ ] create a new website
