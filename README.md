@@ -1,7 +1,7 @@
 wdio-image-comparison-service
 ==========
 
-
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://saucelabs.com/u/wdio-image-comparison-service)
 
 > **NOTE:** This module is in BETA, and now only supports all browsers (without Safari 12). Install with `npm install wdio-image-comparison-service@beta`
 
@@ -173,7 +173,6 @@ See [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
 ## TODO:
 - [ ] add more options for the contributing doc
 - [ ] fix the scroll-bar for Android, sometimes it showes
-- [ ] configure a travis build
 - [ ] add Sauce Labs matrix
 - [ ] create a new website
 
