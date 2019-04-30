@@ -5,9 +5,9 @@ const WdioImageComparisonService = require('../../build/');
 const basicSpecs = join(process.cwd(), './tests/specs/basics.spec.js');
 const deskSpecs = join(process.cwd(), './tests/specs/desktop.spec.js');
 const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js');
-const tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
+const buildIdentifier = process.env.TRAVIS_JOB_NUMBER;
 const defaultBrowserSauceOptions = {
-    tunnelIdentifier,
+    build: buildIdentifier,
     screenResolution: '1600x1200',
     seleniumVersion: '3.141.59',
 };
@@ -39,7 +39,7 @@ config.capabilities = [
         platformName: 'IOS',
         specs: [ mobileSpecs ],
         logName: 'iPadPro12.9.2nd',
-        tunnelIdentifier,
+        build: buildIdentifier,
     },
     {
         deviceName: 'iPad Air Simulator',
@@ -48,7 +48,7 @@ config.capabilities = [
         platformName: 'ios',
         platformVersion: '12.2',
         specs: [ mobileSpecs ],
-        tunnelIdentifier,
+        build: buildIdentifier,
     },
     {
         browserName: 'safari',
@@ -57,7 +57,7 @@ config.capabilities = [
         platformName: 'ios',
         platformVersion: '11.3',
         specs: [ mobileSpecs ],
-        tunnelIdentifier,
+        build: buildIdentifier,
     },
     {
         browserName: 'safari',
@@ -66,7 +66,7 @@ config.capabilities = [
         platformName: 'ios',
         platformVersion: '12.2',
         specs: [ mobileSpecs ],
-        tunnelIdentifier,
+        build: buildIdentifier,
     },
     // // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
     // // webdriver-image-comparison module
@@ -77,7 +77,7 @@ config.capabilities = [
     // 	platformName: 'ios',
     // 	platformVersion: '12.2',
     // 	specs: [ mobileSpecs ],
-    // 	tunnelIdentifier,
+    // 	build: buildIdentifier,
     // },
 
     /**
@@ -91,7 +91,7 @@ config.capabilities = [
         platformVersion: '8.1',
         specs: [ mobileSpecs ],
         nativeWebScreenshot: true,
-        tunnelIdentifier,
+        build: buildIdentifier,
     },
     {
         browserName: 'chrome',
@@ -101,7 +101,7 @@ config.capabilities = [
         platformVersion: '7.1',
         specs: [ mobileSpecs ],
         nativeWebScreenshot: true,
-        tunnelIdentifier,
+        build: buildIdentifier,
     },
     // // Not supporting Android Tablets now with nativeWebScreenshot
     // {
@@ -110,7 +110,7 @@ config.capabilities = [
     // 	logName: 'GooglePixelCTablet7.1NativeWebScreenshot',
     // 	platformName: 'Android',
     // 	platformVersion: '7.1',
-    // 	tunnelIdentifier,
+    // 	build: buildIdentifier,
     // 	shardTestFiles,
     // 	specs: [ mobileSpecs ],
     // 	nativeWebScreenshot: true,
@@ -126,7 +126,7 @@ config.capabilities = [
         platformName: 'Android',
         platformVersion: '8.1',
         specs: [ mobileSpecs ],
-        tunnelIdentifier,
+        build: buildIdentifier,
     },
     {
         browserName: 'chrome',
@@ -135,7 +135,7 @@ config.capabilities = [
         platformName: 'Android',
         platformVersion: '7.1',
         specs: [ mobileSpecs ],
-        tunnelIdentifier,
+        build: buildIdentifier,
     },
     {
         browserName: 'chrome',
@@ -144,7 +144,7 @@ config.capabilities = [
         platformName: 'Android',
         platformVersion: '7.1',
         specs: [ mobileSpecs ],
-        tunnelIdentifier,
+        build: buildIdentifier,
     },
 
     /**
