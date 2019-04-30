@@ -35,7 +35,10 @@ exports.config = {
 
     before: (capabilities) => {
         // Add a default logname to the browserobject that is used in the basic specs
-        browser.logName = capabilities.logName || capabilities[ 'sauce:options' ].logName;
+        browser.logName = capabilities.logName
+            || (capabilities[ 'sauce:options' ] ? capabilities[ 'sauce:options' ].logName : null)
+            || (capabilities[ 'appium:options' ] ? capabilities[ 'appium:options' ].logName : null)
+            || '';
 
         // Set the default screensize
         if (!browser.isMobile) {

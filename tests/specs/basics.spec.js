@@ -10,7 +10,7 @@ describe('wdio-image-comparison-service basics', () => {
     });
 
     // Chrome remembers the last postion when the url is loaded again, this will reset it.
-    afterEach(() => browser.execute('window.scrollTo(0, 0);'));
+    afterEach(() => browser.execute('window.scrollTo(0, 0);', []));
 
     describe('save methods', () => {
         it('should do a save screen', () => {

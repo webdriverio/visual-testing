@@ -11,9 +11,6 @@ const defaultBrowserSauceOptions = {
     screenResolution: '1600x1200',
     seleniumVersion: '3.141.59',
 };
-const defaultAppiumSauceOptions = {
-    tunnelIdentifier,
-};
 const chromeOptions = {
     'goog:chromeOptions': {
         'w3c': true,
@@ -23,154 +20,133 @@ const chromeOptions = {
 // =========================
 // Sauce RDC specific config
 // =========================
-config.user = process.env.SAUCE_USERNAME;
-config.key = process.env.SAUCE_ACCESS_KEY;
-// config.key = process.env.SAUCE_ACCESS_KEY_EU;
-// config.region = 'eu';
+config.user = process.env.SAUCE_USERNAME_WDIO_ICS;
+config.key = process.env.SAUCE_ACCESS_KEY_WDIO_ICS;
+config.region = 'eu';
 
 // ============
 // Capabilities
 // ============
 config.capabilities = [
-    // /**
-    //  * iOS
-    //  */
+    /**
+     * iOS
+     */
+    {
+        browserName: 'safari',
+        automationName: 'XCUITest',
+        deviceName: 'iPad Pro (12.9 inch) (2nd generation) Simulator',
+        platformVersion: '12.0',
+        platformName: 'IOS',
+        specs: [ mobileSpecs ],
+        logName: 'iPadPro12.9.2nd',
+        tunnelIdentifier,
+    },
+    {
+        deviceName: 'iPad Air Simulator',
+        browserName: 'safari',
+        logName: 'iPadAirSimulator',
+        platformName: 'ios',
+        platformVersion: '12.2',
+        specs: [ mobileSpecs ],
+        tunnelIdentifier,
+    },
+    {
+        browserName: 'safari',
+        deviceName: 'iPhone 8 Simulator',
+        logName: 'iPhone8Simulator',
+        platformName: 'ios',
+        platformVersion: '11.3',
+        specs: [ mobileSpecs ],
+        tunnelIdentifier,
+    },
+    {
+        browserName: 'safari',
+        deviceName: 'iPhone X Simulator',
+        logName: 'iPhoneXSimulator',
+        platformName: 'ios',
+        platformVersion: '12.2',
+        specs: [ mobileSpecs ],
+        tunnelIdentifier,
+    },
+    // // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
+    // // webdriver-image-comparison module
     // {
-    //     deviceName: 'iPad Pro (12.9 inch) (2nd generation) Simulator',
-    //     browserName: 'safari',
-    //     platformName: 'IOS',
-    //     platformVersion: '12.0',
-    //     specs: [ mobileSpecs ],
-    //     'appium:options': {
-    //         logName: 'iPadPro12.9.2nd',
-    //         ...defaultAppiumSauceOptions,
-    //     },
-    //     // logName: 'iPadPro12.9.2nd',
+    // 	deviceName: 'iPad Pro (12.9 inch) (3rd generation) Simulator',
+    // 	browserName: 'safari',
+    // 	logName: 'iPadPro12.9.3rdGeneration',
+    // 	platformName: 'ios',
+    // 	platformVersion: '12.2',
+    // 	specs: [ mobileSpecs ],
+    // 	tunnelIdentifier,
     // },
-    // {
-    //     deviceName: 'iPad Air Simulator',
-    //     browserName: 'safari',
-    //     logName: 'iPadAirSimulator',
-    //     platformName: 'ios',
-    //     platformVersion: '12.2',
-    //     specs: [ mobileSpecs ],
-    //     ...defaultCapabilities,
-    // },
-    // {
-    //     browserName: 'safari',
-    //     deviceName: 'iPhone 8 Simulator',
-    //     logName: 'iPhone8Simulator',
-    //     platformName: 'ios',
-    //     platformVersion: '11.3',
-    //     specs: [ mobileSpecs ],
-    //     ...defaultCapabilities,
-    // },
-    // {
-    //     browserName: 'safari',
-    //     deviceName: 'iPhone X Simulator',
-    //     logName: 'iPhoneXSimulator',
-    //     platformName: 'ios',
-    //     platformVersion: '12.2',
-    //     specs: [ mobileSpecs ],
-    //     ...defaultCapabilities,
-    // },
-    // // {
-    // // 	deviceName: 'iPad Pro (12.9 inch) (3rd generation) Simulator',
-    // // 	browserName: 'safari',
-    // // 	logName: 'iPadPro12.9.3rdGeneration',
-    // // 	platformName: 'ios',
-    // // 	platformVersion: '12.2',
-    // // 	specs: [ mobileSpecs ],
-    // // 	...defaultCapabilities,
-    // // },
-    //
-    // /**
-    //  * Android with native Webscreenshot
-    //  */
-    // {
-    //     browserName: 'chrome',
-    //     deviceName: 'Google Pixel GoogleAPI Emulator',
-    //     logName: 'GooglePixelGoogleAPIEmulator8.1NativeWebScreenshot',
-    //     platformName: 'Android',
-    //     platformVersion: '8.1',
-    //     specs: [ mobileSpecs ],
-    //     nativeWebScreenshot: true,
-    //     ...defaultCapabilities,
-    // },
-    // {
-    //     browserName: 'chrome',
-    //     deviceName: 'Google Pixel GoogleAPI Emulator',
-    //     logName: 'GooglePixelGoogleAPIEmulator7.1NativeWebScreenshot',
-    //     platformName: 'Android',
-    //     platformVersion: '7.1',
-    //     specs: [ mobileSpecs ],
-    //     nativeWebScreenshot: true,
-    //     ...defaultCapabilities,
-    // },
-    // // @TODO: There is an issue with taking an element screenshot
-    // {
-    //     browserName: 'chrome',
-    //     deviceName: 'Android GoogleAPI Emulator',
-    //     logName: 'AndroidGoogleApiEmulator6.0NativeWebScreenshot',
-    //     platformName: 'Android',
-    //     platformVersion: '6.0',
-    //     specs: [ mobileSpecs ],
-    //     nativeWebScreenshot: true,
-    //     ...defaultCapabilities,
-    // },
+
+    /**
+     * Android with native Webscreenshot
+     */
+    {
+        browserName: 'chrome',
+        deviceName: 'Google Pixel GoogleAPI Emulator',
+        logName: 'GooglePixelGoogleAPIEmulator8.1NativeWebScreenshot',
+        platformName: 'Android',
+        platformVersion: '8.1',
+        specs: [ mobileSpecs ],
+        nativeWebScreenshot: true,
+        tunnelIdentifier,
+    },
+    {
+        browserName: 'chrome',
+        deviceName: 'Google Pixel GoogleAPI Emulator',
+        logName: 'GooglePixelGoogleAPIEmulator7.1NativeWebScreenshot',
+        platformName: 'Android',
+        platformVersion: '7.1',
+        specs: [ mobileSpecs ],
+        nativeWebScreenshot: true,
+        tunnelIdentifier,
+    },
     // // Not supporting Android Tablets now with nativeWebScreenshot
-    // // {
-    // // 	browserName: 'chrome',
-    // // 	deviceName: 'Google Pixel C GoogleAPI Emulator',
-    // // 	logName: 'GooglePixelCTablet7.1NativeWebScreenshot',
-    // // 	platformName: 'Android',
-    // // 	platformVersion: '7.1',
-    // // 	tunnelIdentifier,
-    // // 	shardTestFiles,
-    // // 	specs: [ mobileSpecs ],
-    // // 	nativeWebScreenshot: true,
-    // // },
-    //
-    // /**
-    //  * Android with chrome driver screenshots
-    //  */
     // {
-    //     browserName: 'chrome',
-    //     deviceName: 'Google Pixel GoogleAPI Emulator',
-    //     logName: 'GooglePixelGoogleAPIEmulator8.1ChromeDriver',
-    //     platformName: 'Android',
-    //     platformVersion: '8.1',
-    //     specs: [ mobileSpecs ],
-    //     ...defaultCapabilities,
+    // 	browserName: 'chrome',
+    // 	deviceName: 'Google Pixel C GoogleAPI Emulator',
+    // 	logName: 'GooglePixelCTablet7.1NativeWebScreenshot',
+    // 	platformName: 'Android',
+    // 	platformVersion: '7.1',
+    // 	tunnelIdentifier,
+    // 	shardTestFiles,
+    // 	specs: [ mobileSpecs ],
+    // 	nativeWebScreenshot: true,
     // },
-    // {
-    //     browserName: 'chrome',
-    //     deviceName: 'Google Pixel GoogleAPI Emulator',
-    //     logName: 'GooglePixelGoogleAPIEmulator7.1ChromeDriver',
-    //     platformName: 'Android',
-    //     platformVersion: '7.1',
-    //     specs: [ mobileSpecs ],
-    //     ...defaultCapabilities,
-    // },
-    // {
-    //     browserName: 'chrome',
-    //     deviceName: 'Android GoogleAPI Emulator',
-    //     logName: 'AndroidGoogleApiEmulator6.0ChromeDriver',
-    //     platformName: 'Android',
-    //     platformVersion: '6.0',
-    //     specs: [ mobileSpecs ],
-    //     ...defaultCapabilities,
-    // },
-    // {
-    //     browserName: 'chrome',
-    //     deviceName: 'Google Pixel C GoogleAPI Emulator',
-    //     logName: 'GooglePixelCTablet7.1ChromeDriver',
-    //     platformName: 'Android',
-    //     platformVersion: '7.1',
-    //     specs: [ mobileSpecs ],
-    //     ...defaultCapabilities,
-    // },
-    //
+
+    /**
+     * Android with chrome driver screenshots
+     */
+    {
+        browserName: 'chrome',
+        deviceName: 'Google Pixel GoogleAPI Emulator',
+        logName: 'GooglePixelGoogleAPIEmulator8.1ChromeDriver',
+        platformName: 'Android',
+        platformVersion: '8.1',
+        specs: [ mobileSpecs ],
+        tunnelIdentifier,
+    },
+    {
+        browserName: 'chrome',
+        deviceName: 'Google Pixel GoogleAPI Emulator',
+        logName: 'GooglePixelGoogleAPIEmulator7.1ChromeDriver',
+        platformName: 'Android',
+        platformVersion: '7.1',
+        specs: [ mobileSpecs ],
+        tunnelIdentifier,
+    },
+    {
+        browserName: 'chrome',
+        deviceName: 'Google Pixel C GoogleAPI Emulator',
+        logName: 'GooglePixelCTablet7.1ChromeDriver',
+        platformName: 'Android',
+        platformVersion: '7.1',
+        specs: [ mobileSpecs ],
+        tunnelIdentifier,
+    },
+
     /**
      * Desktop browsers
      */
@@ -236,10 +212,6 @@ config.capabilities = [
         specs: [ deskSpecs ],
         logName: 'SierraSafari11',
         ...defaultBrowserSauceOptions,
-        // 'sauce:options': {
-        //     logName: 'SierraSafari11',
-        //     ...defaultBrowserSauceOptions,
-        // },
     },
     {
         browserName: 'safari',
@@ -260,11 +232,11 @@ config.services = [
     'sauce',
     [ WdioImageComparisonService.default, {
         baselineFolder: join(process.cwd(), './tests/sauceLabsBaseline/'),
-        debug: true,
+        debug: false,
         formatImageName: '{tag}-{logName}-{width}x{height}',
         screenshotPath: join(process.cwd(), '.tmp/'),
         savePerInstance: true,
-        autoSaveBaseline: true,
+        autoSaveBaseline: false,
         blockOutStatusBar: true,
         blockOutToolBar: true,
         clearRuntimeFolder: true,
