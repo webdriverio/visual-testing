@@ -1,6 +1,8 @@
 wdio-image-comparison-service
 ==========
 
+[![dependencies Status](https://david-dm.org/wswebcreation/wdio-image-comparison-service/status.svg)](https://david-dm.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://travis-ci.org/wswebcreation/wdio-image-comparison-service.svg?branch=master)](https://travis-ci.org/wswebcreation/wdio-image-comparison-service) [![Sauce Test Status](https://saucelabs.com/buildstatus/wdio-image-comparison-service)](https://saucelabs.com/u/wdio-image-comparison-service)
+
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://saucelabs.com/u/wdio-image-comparison-service)
 
 > **NOTE:** This module is in BETA, and now only supports all browsers (without Safari 12). Install with `npm install wdio-image-comparison-service@beta`
