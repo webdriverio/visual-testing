@@ -8,6 +8,7 @@
     "compile": "babel lib/ -d build/",
     "lint": "eslint ./lib",
     "precompile": "npm run clean",
+    "prepublish": "npm run compile",
     "test.local.init": "wdio ./tests/configs/wdio.local.init.conf.js",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.js",
     "test.saucelabs": "wdio ./tests/configs/wdio.saucelabs.conf.js",
