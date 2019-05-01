@@ -3,9 +3,9 @@ wdio-image-comparison-service
 
 [![dependencies Status](https://david-dm.org/wswebcreation/wdio-image-comparison-service/status.svg)](https://david-dm.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://travis-ci.org/wswebcreation/wdio-image-comparison-service.svg?branch=master)](https://travis-ci.org/wswebcreation/wdio-image-comparison-service) [![Sauce Test Status](https://eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
 
-[![Sauce Test Status](https://eu-central-1.saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
+[![NPM](https://nodei.co/npm/wdio-image-comparison-service.png)](https://nodei.co/npm/wdio-image-comparison-service/)
 
-> **NOTE:** This module is in BETA, and now only supports all browsers (without Safari 12). Install with `npm install wdio-image-comparison-service@beta`
+[![Sauce Test Status](https://eu-central-1.saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
 
 ## What can it do?
 *wdio-image-comparison-service* is a lightweight *WebdriverIO* service for browsers / mobile browsers / hybrid apps to do image comparison on screens, elements or full page screens.
@@ -173,9 +173,7 @@ It could be that the error `Width and height cannot be negative` is thrown. 9 ou
 See [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
 
 ## TODO:
-- [ ] add more options for the contributing doc
-- [ ] fix the scroll-bar for Android, sometimes it showes
-- [ ] add Sauce Labs matrix
+- [ ] fix the scroll-bar for Android, sometimes it shows
 - [ ] create a new website
 
 ## Credits

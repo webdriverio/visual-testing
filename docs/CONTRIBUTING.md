@@ -38,3 +38,36 @@ In order to create a PR for this project and start contributing follow this step
 	```
 
 * And create the new feature / fix a bug
+
+## Tests
+There are several test that need to be executed to be able to test the module. When adding a PR all tests must at least pass the local tests.
+Each PR is automatically tested against Sauce Labs, see [Travis-ci with Sauce Labs](./CONTRIBUTING.md#travis-ci-with-sauce-labs-not-needed-for-a-pr).
+Before approving a PR the core contributers will test the PR against emulators / simulators / real devices.
+
+### Local
+First a local baseline needs to be created. This can be done with 
+
+```
+$ npm run test.local.init
+```
+		
+This command will create a folder called `localBaseline` that will hold all the baseline images.
+
+Then run 
+
+```
+npm run test.local.desktop
+``` 
+
+This will run all tests on a local machine on Chrome.
+
+## Travis-ci with Sauce Labs (not needed for a PR)
+The command below is used to test the build on [Travis-ci](https://travis-ci.org/wswebcreation/protractor-image-comparison/), it can only be used there and not for local development.
+
+```
+$ npm run test.saucelabs
+```
+
+It will test against a lot of configurations that can be found [here](./tests/configs/wdio.saucelabs.conf.js).
+
+All PR's are automatically checked against Sauce Labs.

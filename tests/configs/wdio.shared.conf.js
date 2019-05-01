@@ -38,6 +38,7 @@ exports.config = {
         browser.logName = capabilities.logName
             || (capabilities[ 'sauce:options' ] ? capabilities[ 'sauce:options' ].logName : null)
             || (capabilities[ 'appium:options' ] ? capabilities[ 'appium:options' ].logName : null)
+            || (capabilities[ 'wdio-ics:options' ] ? capabilities[ 'wdio-ics:options' ].logName : null)
             || '';
 
         // Set the default screensize
