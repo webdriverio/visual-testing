@@ -4,15 +4,17 @@
   "description": "Image comparison / visual regression testing for WebdriverIO",
   "main": "build/index.js",
   "scripts": {
-    "clean": "rimraf coverage build tmp",
+    "clean": "rimraf coverage build .tmp",
     "compile": "babel lib/ -d build/",
     "lint": "eslint ./lib",
-    "precompile": "npm run clean",
-    "prepublish": "npm run compile",
     "test.local.init": "wdio ./tests/configs/wdio.local.init.conf.js",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.js",
     "test.saucelabs": "wdio ./tests/configs/wdio.saucelabs.conf.js",
-    "watch": "npm run compile -- --watch"
+    "watch": "npm run compile -- --watch",
+    "release": "np",
+    "precompile": "npm run clean",
+    "prepublish": "npm run compile",
+    "prerelease": "npm run compile"
   },
   "keywords": [
     "webdriverio",
@@ -42,7 +44,8 @@
     "webdriverio": "^5.7.13"
   },
   "dependencies": {
-    "webdriver-image-comparison": "^0.4.2"
+    "np": "^5.0.1",
+    "webdriver-image-comparison": "^0.4.7"
   },
   "repository": {
     "type": "git",
