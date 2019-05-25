@@ -1,7 +1,8 @@
 describe('wdio-image-comparison-service mobile', () => {
 	beforeEach(() => {
         browser.url('');
-        browser.pause(500);
+        $('.uk-button:nth-child(1)').waitForDisplayed(5000);
+        browser.pause(1000)
 	});
 
 	// Chrome remembers the last postion when the url is loaded again, this will reset it.
