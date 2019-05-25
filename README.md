@@ -51,9 +51,9 @@ const { join } = require('path');
 // wdio.conf.js
 exports.config = {
     // ...
-    // ========================
-    // Native app compare setup
-    // ========================
+    // =====
+    // Setup
+    // =====
     services: [ 
         ['image-comparison', 
         // The options
@@ -81,8 +81,8 @@ You can use it like this:
 
 ```js
 describe('Example', () => {
-  beforeEach(async () => {
-    await browser.url();
+  beforeEach(() => {
+     browser.url('https://webdriver.io');
   });
   
   it('should save some screenshots', () => {
@@ -90,22 +90,22 @@ describe('Example', () => {
   	browser.saveScreen('examplePaged', { /* some options*/ });
   	
   	// Save an element
-  	browser.saveElement($('.uk-button:nth-child(1)'), 'firstButtonElement', { /* some options*/ });
+  	browser.saveElement($('#element-id'), 'firstButtonElement', { /* some options*/ });
   	
   	// Save a full page screens
   	browser.saveFullPageScreen('fullPage', { /* some options*/ });
-	});
+  });
   
   it('should compare successful with a baseline', () => {
   	// Check a screen
   	expect(browser.checkScreen('examplePaged', { /* some options*/ })).toEqual(0);
   	
   	// Check an element
-  	expect(browser.checkElement($('.uk-button:nth-child(1)'), 'firstButtonElement', { /* some options*/ })).toEqual(0);
+  	expect(browser.checkElement($('#element-id'), 'firstButtonElement', { /* some options*/ })).toEqual(0);
   	
   	// Check a full page screens
   	expect(browser.checkFullPageScreen('fullPage', { /* some options*/ })).toEqual(0);
-	});
+  });
 });
 ``` 
 
@@ -139,7 +139,7 @@ const saveResult = {
 };
 ```
 
-See the [Check output on failure](./docs/OUTPUT.md#check-output-on-failure) section in the [output](./docs/OUTPUT.md) docs for the images.
+See the [Save output](./docs/OUTPUT.md#save-output) section in the [output](./docs/OUTPUT.md) docs for the images.
 
 By default the `check(Screen/Element/FullPageScreen)` methods will only provide a mismatch percentage like `1.23`, but when the plugin has the options `returnAllCompareData: true` the following information is provided after the method has been executed:
 
@@ -161,7 +161,7 @@ const checkResult = {
 };
 ```
 
-See the [Save output](./docs/OUTPUT.md#save-output) section in the [output](./docs/OUTPUT.md) docs for the images.
+See the [Check output on failure](./docs/OUTPUT.md#check-output-on-failure) section in the [output](./docs/OUTPUT.md) docs for the images.
 
 ## FAQ
 ### Do I need to use a `save(Screen/Element/FullPageScreen)` methods when I want to run `check(Screen/Element/FullPageScreen)`?
