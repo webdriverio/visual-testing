@@ -1,5 +1,3 @@
-const { join } = require('path');
-
 exports.config = {
     // ====================
     // Runner Configuration
@@ -23,7 +21,7 @@ exports.config = {
     framework: 'jasmine',
     reporters: [ 'spec' ],
     jasmineNodeOpts: {
-        defaultTimeoutInterval: 60000,
+        defaultTimeoutInterval: 180000,
     },
 
     // =====

@@ -1,8 +1,9 @@
 describe('wdio-image-comparison-service mobile', () => {
 	beforeEach(() => {
         browser.url('');
+        // Double url because on Android emu this breaks sometimes
+        browser.url('');
         $('.uk-button:nth-child(1)').waitForDisplayed(5000);
-        browser.pause(1000)
 	});
 
 	// Chrome remembers the last postion when the url is loaded again, this will reset it.

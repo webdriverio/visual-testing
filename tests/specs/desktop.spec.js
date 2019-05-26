@@ -1,7 +1,7 @@
 describe('wdio-image-comparison-service desktop', () => {
     beforeEach(() => {
         browser.url('');
-        browser.pause(500);
+        $('.uk-button:nth-child(1)')
     });
 
     // Chrome remembers the last postion when the url is loaded again, this will reset it.
