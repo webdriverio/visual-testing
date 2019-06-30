@@ -216,10 +216,10 @@ config.capabilities = [
     {
         browserName: 'safari',
         platformName: 'macOS 10.14',
-        browserVersion: '12.0',
+        browserVersion: 'latest',
         specs: [ deskSpecs ],
         'sauce:options': {
-            logName: 'MojaveSafari12',
+            logName: 'MojaveSafariLatest',
             ...defaultBrowserSauceOptions,
         },
     }
