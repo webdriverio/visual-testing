@@ -105,3 +105,19 @@ describe('Example', () => {
 Compare options are the options that can be set during instantiation of the plugin or per method. If the options has the same key as an option that has been set during the instantiation of the plugin, the method compare option will override the plugin compare option value.
 They can be found <a href="https://github.com/wswebcreation/webdriver-image-comparison/blob/master/docs/OPTIONS.md#compare-options" target="_blank">here</a>.
 The usage can be found above in the plugin and method examples.
+
+## Folder options
+The baseline folder and screenshot folders(actual, diff) are options that can be set during instantiation of the plugin or method. To set the folder options on a particular method, pass in folder options to the methods option object
+```
+const methodOptions = {
+    actualFolder: path.join(process.cwd(), './testActual'),
+    baselineFolder: path.join(process.cwd(), './testBaseline'),
+    diffFolder: path.join(process.cwd(), './testDiff')
+};
+expect(browser.checkFullPageScreen('cehckFullPage', methodOptions)).toEqual(0);
+
+const methodOptions = {
+    actualFolder: path.join(process.cwd(), './testActual')
+};
+const imageData = browser.saveFullPageScreen('saveFullPage', {}, methodOptions);
+```
