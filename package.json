@@ -9,6 +9,7 @@
     "lint": "eslint ./lib",
     "test.local.init": "wdio ./tests/configs/wdio.local.init.conf.js",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.js",
+    "test.local.autosave": "wdio ./tests/configs/wdio.local.autosave.conf.js",
     "test.saucelabs": "wdio ./tests/configs/wdio.saucelabs.conf.js",
     "watch": "npm run compile -- --watch",
     "release": "np",
