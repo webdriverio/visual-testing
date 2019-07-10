@@ -36,6 +36,7 @@ exports.config = {
 ## Method options
 Methods options are the options that can be set per method. If the option has the same key as an options that has been set during the instantiation of the plugin, this method option will override the plugin option value.
 They can be found <a href="https://github.com/wswebcreation/webdriver-image-comparison/blob/master/docs/OPTIONS.md#method-options" target="_blank">here</a>.
+You can now also set folder options, see [here](#folder-options).
 
 An example for all methods can be found below:
 
@@ -108,16 +109,18 @@ The usage can be found above in the plugin and method examples.
 
 ## Folder options
 The baseline folder and screenshot folders(actual, diff) are options that can be set during instantiation of the plugin or method. To set the folder options on a particular method, pass in folder options to the methods option object
-```
+
+```js
 const methodOptions = {
     actualFolder: path.join(process.cwd(), './testActual'),
     baselineFolder: path.join(process.cwd(), './testBaseline'),
     diffFolder: path.join(process.cwd(), './testDiff')
 };
-expect(browser.checkFullPageScreen('cehckFullPage', methodOptions)).toEqual(0);
+
+expect(browser.checkFullPageScreen('checkFullPage', methodOptions)).toEqual(0);
 
 const methodOptions = {
     actualFolder: path.join(process.cwd(), './testActual')
 };
-const imageData = browser.saveFullPageScreen('saveFullPage', {}, methodOptions);
+const imageData = browser.saveFullPageScreen('saveFullPage', methodOptions);
 ```
