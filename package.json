@@ -5,10 +5,11 @@
   "main": "build/index.js",
   "scripts": {
     "clean": "rimraf coverage build .tmp",
-    "compile": "babel lib/ -d build/",
+    "compile": "babel lib/ --ignore **/*.spec.js -d build/",
     "lint": "eslint ./lib",
     "test.local.init": "wdio ./tests/configs/wdio.local.init.conf.js",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.js",
+    "test.unit.coverage": "jest --coverage ",
     "test.saucelabs": "wdio ./tests/configs/wdio.saucelabs.conf.js",
     "watch": "npm run compile -- --watch",
     "release": "np",
@@ -37,9 +38,11 @@
     "@wdio/selenium-standalone-service": "^5.9.2",
     "@wdio/spec-reporter": "^5.7.13",
     "@wdio/sync": "^5.9.2",
+    "babel-jest": "^24.8.0",
     "eslint": "^5.16.0",
     "eslint-plugin-import": "^2.17.3",
     "fs-extra": "^7.0.1",
+    "jest": "^24.8.0",
     "np": "^5.0.2",
     "rimraf": "^2.6.3",
     "webdriverio": "^5.9.2"
@@ -50,5 +53,30 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/wswebcreation/wdio-image-comparison-service.git"
+  },
+  "jest": {
+    "testMatch": [
+      "<rootDir>/lib/tests/*.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/tests/",
+      "<rootDir>/node_modules/"
+    ],
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "node_modules/",
+      "tests/",
+      "docs/"
+    ]
   }
 }

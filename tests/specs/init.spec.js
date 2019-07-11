@@ -3,6 +3,7 @@ import { normalize, join } from 'path'
 
 describe('protractor-image-comparison local development initialization', () => {
     const localBaseline = 'localBaseline';
+    const checkBaseline = 'checkBaseline';
 
     beforeEach(async () => {
         await browser.url('');
@@ -14,26 +15,48 @@ describe('protractor-image-comparison local development initialization', () => {
 
     it('should save the compare screenshot screenshots', () => {
         const examplePage = 'examplePage';
-        const examplePageFail = 'examplePageFail';
         browser.saveScreen(examplePage);
         const { fileName, path } = browser.saveScreen(examplePage);
 
         copy(normalize(`${ path }/${ fileName }`), join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName }`));
         copy(
-            normalize(`${ path }/${ fileName }`), join(process.cwd(),
-                `./${ localBaseline }/${ path.split('/').pop() }/${ fileName.replace(examplePage, examplePageFail) }`)
+            normalize(`${ path }/${ fileName }`),
+            join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName.replace(examplePage, 'examplePageFail') }`),
+        );
+        copy(
+            normalize(`${ path }/${ fileName }`),
+            join(
+                process.cwd(),
+                `./${ localBaseline }/${ checkBaseline }/${ path.split('/').pop() }/${ fileName.replace(examplePage, 'screenCheckFolders') }`
+            ),
         );
     });
 
     it('should save the compare element screenshot', () => {
-        const { fileName, path } = browser.saveElement($('.uk-button:nth-child(1)'), 'firstButtonElement');
+        const firstButtonElement = 'firstButtonElement';
+        const { fileName, path } = browser.saveElement($('.uk-button:nth-child(1)'), firstButtonElement);
 
         copy(normalize(`${ path }/${ fileName }`), join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName }`));
+        copy(
+            normalize(`${ path }/${ fileName }`),
+            join(
+                process.cwd(),
+                `./${ localBaseline }/${ checkBaseline }/${ path.split('/').pop() }/${ fileName.replace(firstButtonElement, 'elementCheckFolders') }`
+            ),
+        );
     });
 
     it('should save the compare fullpage screenshots', () => {
-        const { fileName, path } = browser.saveFullPageScreen('fullPage', { fullPageScrollTimeout: '1500' });
+        const fullPage = 'fullPage';
+        const { fileName, path } = browser.saveFullPageScreen(fullPage, { fullPageScrollTimeout: '1500' });
 
         copy(normalize(`${ path }/${ fileName }`), join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName }`));
+        copy(
+            normalize(`${ path }/${ fileName }`),
+            join(
+                process.cwd(),
+                `./${ localBaseline }/${ checkBaseline }/${ path.split('/').pop() }/${ fileName.replace(fullPage, 'fullPageCheckFolders') }`,
+            ),
+        );
     });
 });
