@@ -11,6 +11,8 @@ config.capabilities = [
         specs: [
             './tests/specs/basics.spec.js',
             './tests/specs/desktop.spec.js',
+            './tests/specs/checkMethodsFolders.spec.js',
+            './tests/specs/saveMethodsFolders.spec.js',
         ],
         'goog:chromeOptions': {
             args: [ 'disable-infobars' ],

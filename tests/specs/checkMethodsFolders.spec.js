@@ -1,9 +1,8 @@
-import fileExists from '../helpers/fileExists';
 const path = require('path');
 
 describe('wdio-image-comparison-service check methods folder options', () => {
-    const logName = browser.logName;
-    const resolution = '1366x768';
+
+    const baselineFolder = browser.config.services.includes('sauce') ? 'tests/sauceLabsBaseline' : 'localBaseline';
 
     beforeEach(() => {
         browser.url('');
@@ -16,123 +15,47 @@ describe('wdio-image-comparison-service check methods folder options', () => {
     describe('checkFullPageScreen method with folder options', () => {
         it('should set all folders using method options', () => {
             const testOptions = {
-                actualFolder: path.join(process.cwd(), './testActual'),
-                baselineFolder: path.join(process.cwd(), './testBaseline'),
-                diffFolder: path.join(process.cwd(), './testDiff'),
+                actualFolder: path.join(process.cwd(), './.tmp/checkActual'),
+                baselineFolder: path.join(process.cwd(), `./${ baselineFolder }/checkBaseline`),
+                diffFolder: path.join(process.cwd(), './.tmp/testDiff'),
                 returnAllCompareData: true
             };
-            const results = browser.checkFullPageScreen('fullPageAllOptions', testOptions);
-            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./',''));
-            expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./',''));
-            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./',''));
-            expect(results.misMatchPercentage).toEqual(0);
-        });
+            const results = browser.checkFullPageScreen('fullPageCheckFolders', testOptions);
 
-        it('should set one folder using method options', () => {
-            const testOptions = {
-                actualFolder: path.join(process.cwd(), './testActual'),
-                returnAllCompareData: true
-            };
-            const results = browser.checkFullPageScreen('fullPageOneOption', testOptions);
-            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./',''));
-            expect(results.folders.baseline).toMatch('localBaseline');
-            expect(results.folders.diff).toMatch('.tmp');
-            expect(results.misMatchPercentage).toEqual(0);
-        });
-
-        it('should set two folders using method options', () => {
-            const testOptions = {
-                actualFolder: path.join(process.cwd(), './testActual'),
-                diffFolder: path.join(process.cwd(), './testDiff'),
-                returnAllCompareData: true
-            };
-            const results = browser.checkScreen('fullPageTwoOptions', testOptions);
-            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./',''));
-            expect(results.folders.baseline).toMatch('localBaseline');
-            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./',''));
-            expect(results.misMatchPercentage).toEqual(0);
+            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./', ''));
+            expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./', ''));
+            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
         });
     });
 
     describe('checkScreen method with folder options', () => {
         it('should set all folders using method options', () => {
             const testOptions = {
-                actualFolder: path.join(process.cwd(), './testActual'),
-                baselineFolder: path.join(process.cwd(), './testBaseline'),
-                diffFolder: path.join(process.cwd(), './testDiff'),
+                actualFolder: path.join(process.cwd(), './.tmp/checkActual'),
+                baselineFolder: path.join(process.cwd(), `./${ baselineFolder }/checkBaseline`),
+                diffFolder: path.join(process.cwd(), './.tmp/testDiff'),
                 returnAllCompareData: true
             };
-            const results = browser.checkScreen('screenOptions', testOptions);
-            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./',''));
-            expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./',''));
-            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./',''));
-            expect(results.misMatchPercentage).toEqual(0);
-        });
+            const results = browser.checkScreen('screenCheckFolders', testOptions);
 
-        it('should set one folder using method options', () => {
-            const testOptions = {
-                actualFolder: path.join(process.cwd(), './testActual'),
-                returnAllCompareData: true
-            };
-            const results = browser.checkFullPageScreen('screenOneOption', testOptions);
-            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./',''));
-            expect(results.folders.baseline).toMatch('localBaseline');
-            expect(results.folders.diff).toMatch('.tmp');
-            expect(results.misMatchPercentage).toEqual(0);
-        });
-
-        it('should set two folders using method options', () => {
-            const testOptions = {
-                actualFolder: path.join(process.cwd(), './testActual'),
-                diffFolder: path.join(process.cwd(), './testDiff'),
-                returnAllCompareData: true
-            };
-            const results = browser.checkScreen('screenTwoOptions', testOptions);
-            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./',''));
-            expect(results.folders.baseline).toMatch('localBaseline');
-            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./',''));
-            expect(results.misMatchPercentage).toEqual(0);
+            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./', ''));
+            expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./', ''));
+            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
         });
     });
 
     describe('checkElement method with folder options', () => {
         it('should set all folders using method options', () => {
             const testOptions = {
-                actualFolder: path.join(process.cwd(), './testActual'),
-                baselineFolder: path.join(process.cwd(), './testBaseline'),
-                diffFolder: path.join(process.cwd(), './testDiff'),
+                actualFolder: path.join(process.cwd(), './.tmp/checkActual'),
+                baselineFolder: path.join(process.cwd(), `./${ baselineFolder }/checkBaseline`),
+                diffFolder: path.join(process.cwd(), './.tmp/testDiff'),
                 returnAllCompareData: true
             };
-            const results = browser.checkScreen('elementAllOptions', testOptions);
-            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./',''));
-            expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./',''));
-            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./',''));
-            expect(results.misMatchPercentage).toEqual(0);
-        });
-
-        it('should set one folder using method options', () => {
-            const testOptions = {
-                actualFolder: path.join(process.cwd(), './testActual'),
-                returnAllCompareData: true
-            };
-            const results = browser.checkScreen('elementOneOption', testOptions);
-            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./',''));
-            expect(results.folders.baseline).toMatch('localBaseline');
-            expect(results.folders.diff).toMatch('.tmp');
-            expect(results.misMatchPercentage).toEqual(0);
-        });
-
-        it('should set two folders using method options', () => {
-            const testOptions = {
-                actualFolder: path.join(process.cwd(), './testActual'),
-                diffFolder: path.join(process.cwd(), './testDiff'),
-                returnAllCompareData: true
-            };
-            const results = browser.checkScreen('elementTwoOptions', testOptions);
-            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./',''));
-            expect(results.folders.baseline).toMatch('localBaseline');
-            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./',''));
-            expect(results.misMatchPercentage).toEqual(0);
+            const results = browser.checkElement($('.uk-button:nth-child(1)'), 'elementCheckFolders', testOptions);
+            expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./', ''));
+            expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./', ''));
+            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
         });
     });
 });

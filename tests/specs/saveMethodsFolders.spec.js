@@ -1,14 +1,10 @@
-import fileExists from '../helpers/fileExists';
 const path = require('path');
 
 describe('wdio-image-comparison-service save methods folder options', () => {
-    const logName = browser.logName;
-    const resolution = '1366x768';
-
     const testOptions = {
         returnAllCompareData: true,
-        actualFolder: path.join(process.cwd(), './testActual'),
-        testFolder: './testFolder'
+        actualFolder: path.join(process.cwd(), './.tmp/saveActual'),
+        testFolder: './.tmp'
     };
 
     beforeEach(() => {
@@ -21,9 +17,8 @@ describe('wdio-image-comparison-service save methods folder options', () => {
 
     describe('saveFullPageScreen method with folder options', () => {
         it('should set folders using method options', () => {
-            console.log('TEST OPTIONS:', testOptions);
             const results = browser.saveFullPageScreen('saveFullPageFolderOptions', testOptions);
-            expect(results.path).toMatch(testOptions.actualFolder.replace('./',''));
+            expect(results.path).toMatch(testOptions.actualFolder.replace('./', ''));
         });
 
         it('should set folders using default options', () => {
@@ -35,7 +30,7 @@ describe('wdio-image-comparison-service save methods folder options', () => {
     describe('saveScreen method with folder options', () => {
         it('should set folders using method options', () => {
             const results = browser.saveScreen('saveScreenFolderOptions', testOptions);
-            expect(results.path).toMatch(testOptions.actualFolder.replace('./',''));
+            expect(results.path).toMatch(testOptions.actualFolder.replace('./', ''));
         });
 
         it('should set folders using default options', () => {
@@ -47,7 +42,7 @@ describe('wdio-image-comparison-service save methods folder options', () => {
     describe('saveElement method with folder options', () => {
         it('should set folders using method options', () => {
             const results = browser.saveElement($('.uk-button:nth-child(1)'), 'saveElementFolderOptions', testOptions);
-            expect(results.path).toMatch(testOptions.actualFolder.replace('./',''));
+            expect(results.path).toMatch(testOptions.actualFolder.replace('./', ''));
         });
 
         it('should set folders using default options', () => {

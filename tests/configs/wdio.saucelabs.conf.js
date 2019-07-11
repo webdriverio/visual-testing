@@ -3,6 +3,8 @@ const { config } = require('./wdio.shared.conf');
 const WdioImageComparisonService = require('../../build/');
 
 const basicSpecs = join(process.cwd(), './tests/specs/basics.spec.js');
+const saveMethodFolderSpecs = join(process.cwd(), './tests/specs/saveMethodsFolders.spec.js');
+const checkMethodFolderSpecs = join(process.cwd(), './tests/specs/checkMethodsFolders.spec.js');
 const deskSpecs = join(process.cwd(), './tests/specs/desktop.spec.js');
 const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js');
 const buildIdentifier = process.env.TRAVIS_JOB_NUMBER;
@@ -154,7 +156,11 @@ config.capabilities = [
         browserName: 'googlechrome',
         platformName: 'Windows 10',
         browserVersion: 'latest',
-        specs: [ basicSpecs ],
+        specs: [
+            basicSpecs,
+            checkMethodFolderSpecs,
+            saveMethodFolderSpecs,
+        ],
         'sauce:options': {
             logName: 'chrome-latest',
             ...defaultBrowserSauceOptions,
@@ -232,7 +238,7 @@ config.services = [
     'sauce',
     [ WdioImageComparisonService.default, {
         baselineFolder: join(process.cwd(), './tests/sauceLabsBaseline/'),
-        debug: false,
+        debug: true,
         formatImageName: '{tag}-{logName}-{width}x{height}',
         screenshotPath: join(process.cwd(), '.tmp/'),
         savePerInstance: true,
