@@ -19,65 +19,77 @@ Object {
 exports[`utils getInstanceData should return instance data when all capabilities are provided 1`] = `
 Object {
   "browserName": "chrome",
+  "browserVersion": "75.123",
   "deviceName": "devicename",
   "logName": "logName",
   "name": "",
   "nativeWebScreenshot": false,
   "platformName": "platformname",
+  "platformVersion": "12",
 }
 `;
 
 exports[`utils getInstanceData should return instance data when log name is provided 1`] = `
 Object {
   "browserName": "chrome",
+  "browserVersion": "75.123",
   "deviceName": "",
   "logName": "logName",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "",
+  "platformName": "not-known",
+  "platformVersion": "12",
 }
 `;
 
 exports[`utils getInstanceData should return instance data when the appium log name is provided 1`] = `
 Object {
   "browserName": "chrome",
+  "browserVersion": "75.123",
   "deviceName": "",
   "logName": "appiumLogName",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "",
+  "platformName": "not-known",
+  "platformVersion": "12",
 }
 `;
 
 exports[`utils getInstanceData should return instance data when the minimum of capabilities is provided 1`] = `
 Object {
-  "browserName": "",
+  "browserName": "not-known",
+  "browserVersion": "not-known",
   "deviceName": "",
   "logName": "",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "",
+  "platformName": "not-known",
+  "platformVersion": "not-known",
 }
 `;
 
 exports[`utils getInstanceData should return instance data when the sauce log name is provided 1`] = `
 Object {
   "browserName": "chrome",
+  "browserVersion": "75.123",
   "deviceName": "",
   "logName": "sauceLogName",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "",
+  "platformName": "not-known",
+  "platformVersion": "12",
 }
 `;
 
 exports[`utils getInstanceData should return instance data when wdio-ics option log name is provided 1`] = `
 Object {
   "browserName": "chrome",
+  "browserVersion": "75.123",
   "deviceName": "",
   "logName": "wdio-ics-logName",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "",
+  "platformName": "not-known",
+  "platformVersion": "12",
 }
 `;

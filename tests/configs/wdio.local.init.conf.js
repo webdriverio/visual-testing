@@ -3,19 +3,8 @@ const { config } = require('./wdio.local.desktop.conf');
 // ============
 // Capabilities
 // ============
-config.capabilities = [
-    {
-        browserName: 'chrome',
-        specs: [
-            './tests/specs/init.spec.js',
-        ],
-        'goog:chromeOptions': {
-            args: [ 'disable-infobars' ],
-        },
-        'wdio-ics:options': {
-            logName: 'chrome-latest',
-        },
-    },
+config.specs= [
+    './tests/specs/init.spec.js',
 ];
 
 exports.config = config;

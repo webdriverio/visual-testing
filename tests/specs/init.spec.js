@@ -1,7 +1,7 @@
 import { copy } from 'fs-extra';
 import { normalize, join } from 'path'
 
-describe('protractor-image-comparison local development initialization', () => {
+describe('webdriverio image comparison local development initialization', () => {
     const localBaseline = 'localBaseline';
     const checkBaseline = 'checkBaseline';
 

@@ -8,12 +8,6 @@ const WdioImageComparisonService = require('../../build/');
 config.capabilities = [
     {
         browserName: 'chrome',
-        specs: [
-            './tests/specs/basics.spec.js',
-            './tests/specs/desktop.spec.js',
-            './tests/specs/checkMethodsFolders.spec.js',
-            './tests/specs/saveMethodsFolders.spec.js',
-        ],
         'goog:chromeOptions': {
             args: [ 'disable-infobars' ],
         },
@@ -21,6 +15,16 @@ config.capabilities = [
             logName: 'chrome-latest',
         },
     },
+];
+
+// ============
+// Capabilities
+// ============
+config.specs= [
+    './tests/specs/basics.spec.js',
+    './tests/specs/desktop.spec.js',
+    './tests/specs/checkMethodsFolders.spec.js',
+    './tests/specs/saveMethodsFolders.spec.js',
 ];
 
 // ===================
