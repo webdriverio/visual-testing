@@ -156,11 +156,29 @@ config.capabilities = [
         browserName: 'googlechrome',
         platformName: 'Windows 10',
         browserVersion: 'latest',
-        specs: [
-            basicSpecs,
-            checkMethodFolderSpecs,
-            saveMethodFolderSpecs,
-        ],
+        specs: [ basicSpecs ],
+        'sauce:options': {
+            logName: 'chrome-latest',
+            ...defaultBrowserSauceOptions,
+        },
+        ...chromeOptions,
+    },
+    {
+        browserName: 'googlechrome',
+        platformName: 'Windows 10',
+        browserVersion: 'latest',
+        specs: [ checkMethodFolderSpecs ],
+        'sauce:options': {
+            logName: 'chrome-latest',
+            ...defaultBrowserSauceOptions,
+        },
+        ...chromeOptions,
+    },
+    {
+        browserName: 'googlechrome',
+        platformName: 'Windows 10',
+        browserVersion: 'latest',
+        specs: [ saveMethodFolderSpecs ],
         'sauce:options': {
             logName: 'chrome-latest',
             ...defaultBrowserSauceOptions,
