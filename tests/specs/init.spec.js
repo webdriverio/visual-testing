@@ -5,9 +5,9 @@ describe('webdriverio image comparison local development initialization', () => 
     const localBaseline = 'localBaseline';
     const checkBaseline = 'checkBaseline';
 
-    beforeEach(async () => {
-        await browser.url('');
-        await browser.pause(500);
+    beforeEach(() => {
+        browser.url('');
+        browser.pause(500);
     });
 
     // Chrome remembers the last postion when the url is loaded again, this will reset it.
