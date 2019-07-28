@@ -37,7 +37,7 @@ Object {
   "logName": "logName",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "not-known",
+  "platformName": "osx",
   "platformVersion": "12",
 }
 `;
@@ -50,7 +50,7 @@ Object {
   "logName": "appiumLogName",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "not-known",
+  "platformName": "osx",
   "platformVersion": "12",
 }
 `;
@@ -76,7 +76,7 @@ Object {
   "logName": "sauceLogName",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "not-known",
+  "platformName": "osx",
   "platformVersion": "12",
 }
 `;
@@ -89,7 +89,20 @@ Object {
   "logName": "wdio-ics-logName",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "not-known",
+  "platformName": "osx",
+  "platformVersion": "12",
+}
+`;
+
+exports[`utils getInstanceData should return platformName based on the currentCapabilities.platform 1`] = `
+Object {
+  "browserName": "chrome",
+  "browserVersion": "75.123",
+  "deviceName": "",
+  "logName": "",
+  "name": "",
+  "nativeWebScreenshot": false,
+  "platformName": "browser.platform",
   "platformVersion": "12",
 }
 `;
