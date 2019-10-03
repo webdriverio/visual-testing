@@ -85,6 +85,17 @@ config.capabilities = [
     /**
      * Android with native Webscreenshot
      */
+    // // @TODO: figure out whu the results are not stable with Android 9.0
+    // {
+    //     browserName: 'chrome',
+    //     deviceName: 'Samsung Galaxy S9 WQHD GoogleAPI Emulator',
+    //     logName: 'EmulatorSamsungGalaxyS9WQHDGoogleAPI9.0NativeWebScreenshot',
+    //     platformName: 'Android',
+    //     platformVersion: '9.0',
+    //     specs: [ mobileSpecs ],
+    //     nativeWebScreenshot: true,
+    //     build: buildIdentifier,
+    // },
     {
         browserName: 'chrome',
         deviceName: 'Google Pixel GoogleAPI Emulator',
@@ -95,17 +106,22 @@ config.capabilities = [
         nativeWebScreenshot: true,
         build: buildIdentifier,
     },
-    {
-        browserName: 'chrome',
-        deviceName: 'Google Pixel GoogleAPI Emulator',
-        logName: 'GooglePixelGoogleAPIEmulator7.1NativeWebScreenshot',
-        platformName: 'Android',
-        platformVersion: '7.1',
-        specs: [ mobileSpecs ],
-        nativeWebScreenshot: true,
-        build: buildIdentifier,
-    },
-    // // Not supporting Android Tablets now with nativeWebScreenshot
+    /**
+     * 7.1 is disabled due to image problems
+     */
+    // {
+    //     browserName: 'chrome',
+    //     deviceName: 'Samsung Galaxy Tab A 10 GoogleAPI Emulator',
+    //     logName: 'EmulatorSamsungGalaxyTabA10GoogleAPIEmulator7.1NativeWebScreenshot',
+    //     platformName: 'Android',
+    //     platformVersion: '7.1',
+    //     specs: [ mobileSpecs ],
+    //     nativeWebScreenshot: true,
+    //     build: buildIdentifier,
+    // },
+    /**
+     * Not supporting Android Tablets now with nativeWebScreenshot
+     */
     // {
     // 	browserName: 'chrome',
     // 	deviceName: 'Google Pixel C GoogleAPI Emulator',
@@ -113,14 +129,22 @@ config.capabilities = [
     // 	platformName: 'Android',
     // 	platformVersion: '7.1',
     // 	build: buildIdentifier,
-    // 	shardTestFiles,
     // 	specs: [ mobileSpecs ],
     // 	nativeWebScreenshot: true,
     // },
-
     /**
      * Android with chrome driver screenshots
      */
+    // // @TODO: figure out whu the results are not stable with Android 9.0
+    // {
+    //     browserName: 'chrome',
+    //     deviceName: 'Samsung Galaxy S9 WQHD GoogleAPI Emulator',
+    //     logName: 'EmulatorSamsungGalaxyS9WQHDGoogleAPI9.0ChromeDriver',
+    //     platformName: 'Android',
+    //     platformVersion: '9.0',
+    //     specs: [ mobileSpecs ],
+    //     build: buildIdentifier,
+    // },
     {
         browserName: 'chrome',
         deviceName: 'Google Pixel GoogleAPI Emulator',
@@ -130,24 +154,27 @@ config.capabilities = [
         specs: [ mobileSpecs ],
         build: buildIdentifier,
     },
-    {
-        browserName: 'chrome',
-        deviceName: 'Google Pixel GoogleAPI Emulator',
-        logName: 'GooglePixelGoogleAPIEmulator7.1ChromeDriver',
-        platformName: 'Android',
-        platformVersion: '7.1',
-        specs: [ mobileSpecs ],
-        build: buildIdentifier,
-    },
-    {
-        browserName: 'chrome',
-        deviceName: 'Google Pixel C GoogleAPI Emulator',
-        logName: 'GooglePixelCTablet7.1ChromeDriver',
-        platformName: 'Android',
-        platformVersion: '7.1',
-        specs: [ mobileSpecs ],
-        build: buildIdentifier,
-    },
+    /**
+     * 7.1 is disabled due to image problems
+     */
+    // {
+    //     browserName: 'chrome',
+    //     deviceName: 'Samsung Galaxy S9 WQHD GoogleAPI Emulator',
+    //     logName: 'EmulatorSamsungGalaxyS9WQHDGoogleAPI7.1ChromeDriver',
+    //     platformName: 'Android',
+    //     platformVersion: '7.1',
+    //     specs: [ mobileSpecs ],
+    //     build: buildIdentifier,
+    // },
+    // {
+    //     browserName: 'chrome',
+    //     deviceName: 'Samsung Galaxy Tab A 10 GoogleAPI Emulator',
+    //     logName: 'EmulatorSamsungGalaxyTabA10GoogleAPIEmulator7.1ChromeDriver',
+    //     platformName: 'Android',
+    //     platformVersion: '7.1',
+    //     specs: [ mobileSpecs ],
+    //     build: buildIdentifier,
+    // },
 
     /**
      * Desktop browsers
