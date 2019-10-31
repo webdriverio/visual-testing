@@ -53,6 +53,7 @@ describe('wdio-image-comparison-service check methods folder options', () => {
                 returnAllCompareData: true
             };
             const results = browser.checkElement($('.uk-button:nth-child(1)'), 'elementCheckFolders', testOptions);
+
             expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./', ''));
             expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./', ''));
             expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
