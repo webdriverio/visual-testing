@@ -70,6 +70,15 @@ config.capabilities = [
         specs: [ mobileSpecs ],
         build: buildIdentifier,
     },
+    {
+        browserName: 'safari',
+        deviceName: 'iPhone XS Simulator',
+        logName: 'iPhoneXsSimulator',
+        platformName: 'ios',
+        platformVersion: '13.0',
+        specs: [ mobileSpecs ],
+        build: buildIdentifier,
+    },
     // // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
     // // webdriver-image-comparison module
     // {
@@ -221,6 +230,28 @@ config.capabilities = [
     {
         browserName: 'googlechrome',
         platformName: 'Windows 10',
+        browserVersion: 'latest-2',
+        specs: [ deskSpecs ],
+        'sauce:options': {
+            logName: 'chrome-latest-2',
+            ...defaultBrowserSauceOptions,
+        },
+        ...chromeOptions,
+    },
+    {
+        browserName: 'googlechrome',
+        platformName: 'Windows 10',
+        browserVersion: 'latest-1',
+        specs: [ deskSpecs ],
+        'sauce:options': {
+            logName: 'chrome-latest-1',
+            ...defaultBrowserSauceOptions,
+        },
+        ...chromeOptions,
+    },
+    {
+        browserName: 'googlechrome',
+        platformName: 'Windows 10',
         browserVersion: 'latest',
         specs: [ deskSpecs ],
         'sauce:options': {
@@ -228,6 +259,26 @@ config.capabilities = [
             ...defaultBrowserSauceOptions,
         },
         ...chromeOptions,
+    },
+    {
+        browserName: 'firefox',
+        platformName: 'Windows 10',
+        browserVersion: 'latest-2',
+        specs: [deskSpecs],
+        'sauce:options': {
+            logName: 'Firefox latest-2',
+            ...defaultBrowserSauceOptions,
+        },
+    },
+    {
+        browserName: 'firefox',
+        platformName: 'Windows 10',
+        browserVersion: 'latest-1',
+        specs: [deskSpecs],
+        'sauce:options': {
+            logName: 'Firefox latest-1',
+            ...defaultBrowserSauceOptions,
+        },
     },
     {
         browserName: 'firefox',
@@ -253,6 +304,26 @@ config.capabilities = [
     {
         browserName: 'MicrosoftEdge',
         platformName: 'Windows 10',
+        browserVersion: 'latest-2',
+        specs: [ deskSpecs ],
+        'sauce:options': {
+            logName: 'Microsoft Edge latest-2',
+            ...defaultBrowserSauceOptions,
+        },
+    },
+    {
+        browserName: 'MicrosoftEdge',
+        platformName: 'Windows 10',
+        browserVersion: 'latest-1',
+        specs: [ deskSpecs ],
+        'sauce:options': {
+            logName: 'Microsoft Edge latest-1',
+            ...defaultBrowserSauceOptions,
+        },
+    },
+    {
+        browserName: 'MicrosoftEdge',
+        platformName: 'Windows 10',
         browserVersion: 'latest',
         specs: [ deskSpecs ],
         'sauce:options': {
@@ -269,6 +340,16 @@ config.capabilities = [
         specs: [ deskSpecs ],
         logName: 'SierraSafari11',
         ...defaultBrowserSauceOptions,
+    },
+    {
+        browserName: 'safari',
+        platformName: 'macOS 10.13',
+        browserVersion: '13.0',
+        specs: [ deskSpecs ],
+        'sauce:options': {
+            logName: 'HighSierraSafari13',
+            ...defaultBrowserSauceOptions,
+        },
     },
     {
         browserName: 'safari',
