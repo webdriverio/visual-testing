@@ -8,6 +8,16 @@ wdio-image-comparison-service
 
 [![Sauce Test Status](https://eu-central-1.saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
 
+> **NOTE for Windows users!!<br/>**
+> Please check the [FAQ](./README.md#faq)
+
+## IMPORTANT!
+1. This module will execute a **pixel-by-pixel** comparison for you. There are some things you can change during comparison, see [here](https://github.com/wswebcreation/webdriver-image-comparison/blob/master/docs/OPTIONS.md#plugin-options) but it stays a baisc **pixel-by-pixel** comparison. <br/> This means that if for example Chrome updates to a newer version, you might need to change your baseline due to fontrendering differences.
+1. Secondly you can only execute visual comparison on screenshots that have been taken with the same platform. For example, the screenshot on a Mac with Chrome can't be used to compare the same page on a Ubuntu or Windows with Chrome. <br/>***You need to compare Apples with Apples, not Apples with Windows***
+1. Try to prevent accepting a `missmatch percentage`. You never know what you accept and especially with large screenshots you might accept a button not being rendered and or shown on a page.
+1. **DONT' TRY TO MIMIC MOBILE SCREENSIZES BY RESIZING YOUR BROWSER AND SAY IT'S A CHROME OR SAFARI MOBILE BROWSER!!!!** This module is there to compare visuals of what you're user would see. A resized Chrome or Safari is not equal to what your enduser is using on his mobile phone. Web-pages and so on a desktop browser CAN'T be compared with mobile browsers due to different font, html and JS-rendering.
+1. In my humble opinion it's useless to use this module with headless browsers and I will also NOT support any issues as a result of headless browsers. Reason is that an enduser is not using a headless browser :wink:
+
 ## What can it do?
 *wdio-image-comparison-service* is a lightweight *WebdriverIO* service for browsers / mobile browsers / hybrid apps to do image comparison on screens, elements or full page screens.
 
@@ -169,6 +179,9 @@ No, you don't need to do this. The `check(Screen/Element/FullPageScreen)` will d
 
 ### Width and height cannot be negative
 It could be that the error `Width and height cannot be negative` is thrown. 9 out of 10 times this is related to creating an image of an element that is not in the view. Please be sure you always make sure the element in is in the view before you try to make an image of the element.
+
+### Installation of Canvas on Windows failed with Node-Gyp logs
+Canvas uses Node-Gyp and might cause some issues on Windows that are not fully set up. Please check [this post](https://spin.atomicobject.com/2019/03/27/node-gyp-windows/) for Fixing Node-Gyp Issues on Windows. (Thanks to [IgorSasovets](https://github.com/IgorSasovets))
 
 ## Contribution
 See [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
