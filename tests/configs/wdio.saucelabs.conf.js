@@ -117,7 +117,7 @@ config.capabilities = [
         build: buildIdentifier,
     },
     /**
-     * 7.1 is disabled due to image problems
+     * Not supporting Android Tablets now with nativeWebScreenshot
      */
     // {
     //     browserName: 'chrome',
@@ -157,28 +157,29 @@ config.capabilities = [
         specs: [ mobileSpecs ],
         build: buildIdentifier,
     },
-    // // @TODO: ChromeDriver screenshots fail with black areas due to Chrome 69
-    // {
-    //    browserName: 'chrome',
-    //    deviceName: 'Google Pixel GoogleAPI Emulator',
-    //    logName: 'GooglePixelGoogleAPIEmulator8.1ChromeDriver',
-    //    platformName: 'Android',
-    //    platformVersion: '8.1',
-    //    appiumVersion: '1.15.0',
-    //    specs: [mobileSpecs],
-    //    build: buildIdentifier,
-    // },
-    // // @TODO: ChromeDriver screenshots fail with black areas due to Chrome 69
-    // {
-    //     browserName: 'chrome',
-    //     deviceName: 'Samsung Galaxy S9 WQHD GoogleAPI Emulator',
-    //     logName: 'EmulatorSamsungGalaxyS9WQHDGoogleAPI7.1ChromeDriver',
-    //     platformName: 'Android',
-    //     platformVersion: '7.1',
-    //     appiumVersion: '1.15.0',
-    //     specs: [ mobileSpecs ],
-    //     build: buildIdentifier,
-    // },
+    {
+       browserName: 'chrome',
+       deviceName: 'Google Pixel GoogleAPI Emulator',
+       logName: 'GooglePixelGoogleAPIEmulator8.1ChromeDriver',
+       platformName: 'Android',
+       platformVersion: '8.1',
+       appiumVersion: '1.15.0',
+       specs: [mobileSpecs],
+       build: buildIdentifier,
+    },
+    {
+        browserName: 'chrome',
+        deviceName: 'Samsung Galaxy S9 WQHD GoogleAPI Emulator',
+        logName: 'EmulatorSamsungGalaxyS9WQHDGoogleAPI7.1ChromeDriver',
+        platformName: 'Android',
+        platformVersion: '7.1',
+        appiumVersion: '1.15.0',
+        specs: [ mobileSpecs ],
+        build: buildIdentifier,
+    },
+    /**
+     * Not supporting Android Tablets now with nativeWebScreenshot
+     */
     // {
     //     browserName: 'chrome',
     //     deviceName: 'Samsung Galaxy Tab A 10 GoogleAPI Emulator',
