@@ -96,6 +96,17 @@ config.capabilities = [
      */
     {
         browserName: 'chrome',
+        deviceName: 'Google Pixel 3 XL GoogleAPI Emulator',
+        logName: 'EmulatorGooglePixel3XLGoogleAPI10.0NativeWebScreenshot',
+        platformName: 'Android',
+        platformVersion: '10.0',
+        appiumVersion: '1.16.0',
+        specs: [ mobileSpecs ],
+        nativeWebScreenshot: true,
+        build: buildIdentifier,
+    },
+    {
+        browserName: 'chrome',
         deviceName: 'Samsung Galaxy S9 WQHD GoogleAPI Emulator',
         logName: 'EmulatorSamsungGalaxyS9WQHDGoogleAPI9.0NativeWebScreenshot',
         platformName: 'Android',
@@ -147,6 +158,16 @@ config.capabilities = [
     /**
      * Android with chrome driver screenshots
      */
+    {
+        browserName: 'chrome',
+        deviceName: 'Google Pixel 3 XL GoogleAPI Emulator',
+        logName: 'EmulatorGooglePixel3XLGoogleAPI10.0ChromeDriver',
+        platformName: 'Android',
+        platformVersion: '10.0',
+        appiumVersion: '1.16.0',
+        specs: [ mobileSpecs ],
+        build: buildIdentifier,
+    },
     {
         browserName: 'chrome',
         deviceName: 'Samsung Galaxy S9 WQHD GoogleAPI Emulator',
@@ -299,6 +320,16 @@ config.capabilities = [
             logName: 'IE11',
             ...defaultBrowserSauceOptions,
             iedriverVersion: '3.141.59',
+        },
+    },
+    {
+        browserName: 'MicrosoftEdge',
+        platformName: 'Windows 10',
+        browserVersion: '18.17763',
+        specs: [ deskSpecs ],
+        'sauce:options': {
+            logName: 'Microsoft Edge 18',
+            ...defaultBrowserSauceOptions,
         },
     },
     {
