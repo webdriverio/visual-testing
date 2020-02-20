@@ -23,16 +23,16 @@ In order to create a PR for this project and start contributing follow this step
 	```
 	$ git clone https://github.com/wswebcreation/wdio-image-comparison-service.git
 	```
-    
+
 * Go to the directory and setup the project
-		
+
 	```
 	$ cd wdio-image-comparison-service
 	$ npm install
 	```
 
 * Run the watch mode that will automatically transpile the code
-		
+
 	```
 	$ npm run watch
 	```
@@ -45,19 +45,27 @@ Each PR is automatically tested against Sauce Labs, see [Travis-ci with Sauce La
 Before approving a PR the core contributers will test the PR against emulators / simulators / real devices.
 
 ### Local
-First a local baseline needs to be created. This can be done with 
+First a local baseline needs to be created. This can be done with
 
 ```
+// With the webdriver protocol
 $ npm run test.local.init
+
+// With the Chrome DevTools protocol
+$ npm run test.local.dev.tools.init
 ```
-		
+
 This command will create a folder called `localBaseline` that will hold all the baseline images.
 
-Then run 
+Then run
 
 ```
+// With the webdriver protocol
 npm run test.local.desktop
-``` 
+
+// With the Chrome DevTools protocol
+$ npm run test.local.dev.tools.desktop
+```
 
 This will run all tests on a local machine on Chrome.
 

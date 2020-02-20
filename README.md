@@ -28,6 +28,7 @@ You can:
 - blockout custom regions and even automatically exclude a status and or tool bars (mobile only) during a comparison
 - increase the element dimensions screenshots
 - use different comparison methods
+- **NEW:** We now support Puppeteer with WebdriverIO
 - and much more, see the [options here](./docs/OPTIONS.md)
 
 The module is now based on the power of the new [`webdriver-image-comparison`](https://github.com/wswebcreation/webdriver-image-comparison) module. This is a lightweight module to retrieve the needed data and screenshots for all browsers / devices.
@@ -89,6 +90,11 @@ exports.config = {
 ```
 
 More plugin options can be found [here](./docs/OPTIONS.md#plugin-options).
+
+### DEV-TOOLS support
+You can also use the Chrome DevTools as automation protocol in combination with this module. You don't need to do anything,
+just change `automationProtocol: 'devtools'` in your config.
+More information about how to use the DEV-TOOLS can be found in [this](https://webdriver.io/blog/2019/09/16/devtools.html) blog post.
 
 ### Writing tests
 *wdio-image-comparison-service* is framework agnostic, meaning that you can use it with all the frameworks WebdriverIO supports like `Jasmine|Mocha`.
