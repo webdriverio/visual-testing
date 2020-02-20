@@ -3,6 +3,7 @@
   "version": "1.10.0",
   "description": "Image comparison / visual regression testing for WebdriverIO",
   "main": "build/index.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "clean": "rimraf coverage build .tmp",
     "compile": "babel lib/ --ignore **/*.spec.js -d build/",

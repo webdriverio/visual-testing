@@ -184,6 +184,20 @@ const checkResult = {
 
 See the [Check output on failure](./docs/OUTPUT.md#check-output-on-failure) section in the [output](./docs/OUTPUT.md) docs for the images.
 
+### Typescript support
+
+Library supports typescript types. To your `tsconfig.json` add the following entry to `types`:
+
+```json
+{
+  "compilerOptions": {
+    "types": [
+      "wdio-image-comparison-service"
+    ]
+  }
+}
+```
+
 ## FAQ
 ### Do I need to use a `save(Screen/Element/FullPageScreen)` methods when I want to run `check(Screen/Element/FullPageScreen)`?
 No, you don't need to do this. The `check(Screen/Element/FullPageScreen)` will do this automatically for you
