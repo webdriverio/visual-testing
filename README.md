@@ -2,11 +2,11 @@ wdio-image-comparison-service
 ==========
 
 [![Gitter chat](https://badges.gitter.im/wswebcreation/wdio-image-comparison-service.png)](https://gitter.im/wswebcreation/wdio-image-comparison-service "Gitter chat")
-[![dependencies Status](https://david-dm.org/wswebcreation/wdio-image-comparison-service/status.svg)](https://david-dm.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://travis-ci.org/wswebcreation/wdio-image-comparison-service.svg?branch=master)](https://travis-ci.org/wswebcreation/wdio-image-comparison-service) [![Sauce Test Status](https://eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
+[![dependencies Status](https://david-dm.org/wswebcreation/wdio-image-comparison-service/status.svg)](https://david-dm.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://travis-ci.org/wswebcreation/wdio-image-comparison-service.svg?branch=master)](https://travis-ci.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://app.eu-central-1.saucelabs.com/builds/1ca0dc1a0db24bc9b41f899a590f232b)
 
 [![NPM](https://nodei.co/npm/wdio-image-comparison-service.png)](https://nodei.co/npm/wdio-image-comparison-service/)
 
-[![Sauce Test Status](https://eu-central-1.saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
+[![Build Status](https://app.eu-central-1.saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://app.eu-central-1.saucelabs.com/builds/1ca0dc1a0db24bc9b41f899a590f232b)
 
 > **NOTE for Windows users!!<br/>**
 > Please check the [FAQ](./README.md#faq)
