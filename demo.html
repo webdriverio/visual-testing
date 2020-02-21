@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>inputs</title>
+</head>
+<body>
+
+<h2>Code example</h2>
+<pre>
+    &lt;input tabindex="3"&gt;
+    &lt;input tabindex="0"&gt;
+    &lt;input tabindex="-1"&gt;
+    &lt;input&gt;
+    &lt;input tabindex="2"&gt;
+    &lt;input tabindex="1"&gt;
+    &lt;span tabindex="4"&gt;This wouldn’t normally receive focus (4) largest value. Next tab will give focus to the rest of tabnavigable elements in code source order.&lt;/span&gt;
+    &lt;a href="#" &gt;Link 1&lt;/a&gt;
+    &lt;a href="#"&gt;Link 2&lt;/a&gt;
+    &lt;a href="#"&gt;Link 3&lt;/a&gt;
+    &lt;a href="#"&gt;Link 4&lt;/a&gt;
+</pre>
+
+<br><br>
+
+<h2>Live elements</h2>
+<p>
+    <input tabindex="3"> (3) Will receive focus third<br><br>
+    <input tabindex="0" style="margin-left: 50px"> (0) In normal source order<br><br>
+    <input tabindex="-1" style="margin-left: 0"> (-1) Will not receive focus<br><br>
+    <input> (n/a) In normal source order<br><br>
+    <input tabindex="2" style="margin-left: 20px"> (2) Will receive focus second<br><br>
+    <input tabindex="1" style="margin-left: 0"> (1) Will receive focus first<br><br>
+    <span tabindex="4" style="margin-left: 40px">This wouldn’t normally receive focus</span>
+    (4) largest value. Next tab will give focus to the
+    rest of tabnavigable elements in code source order.<br><br>
+    <a href="#" style="margin-left: 0">Link 1</a><br><br>
+    <a href="#" style="margin-left: 20px">Link 2</a><br><br>
+    <a href="#" style="margin-left: 30px">Link 3 </a><br><br>
+    <a href="#" style="margin-left: 40px">Link 4</a><br><br>
+</p>
+</body>
+</html>
