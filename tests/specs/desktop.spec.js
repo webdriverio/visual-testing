@@ -25,4 +25,10 @@ describe('wdio-image-comparison-service desktop', () => {
             expect(browser.checkFullPageScreen('fullPage', { fullPageScrollTimeout: '1500' })).toEqual(0);
         });
     });
+
+    describe('compare tabbable', () => {
+        it('should compare successful with a baseline', () => {
+            expect(browser.checkTabbable('tabbable')).toEqual(0);
+        });
+    });
 });

@@ -13,7 +13,7 @@ describe('webdriverio image comparison local development initialization', () => 
     // Chrome remembers the last postion when the url is loaded again, this will reset it.
     afterEach(() => browser.execute('window.scrollTo(0, 0);', []));
 
-    it('should save the compare screenshot screenshots', () => {
+    it('should save the compare screenshot screenshot', () => {
         const examplePage = 'examplePage';
         browser.saveScreen(examplePage);
         const { fileName, path } = browser.saveScreen(examplePage);
@@ -46,7 +46,7 @@ describe('webdriverio image comparison local development initialization', () => 
         );
     });
 
-    it('should save the compare fullpage screenshots', () => {
+    it('should save the compare fullpage screenshot', () => {
         const fullPage = 'fullPage';
         const { fileName, path } = browser.saveFullPageScreen(fullPage, { fullPageScrollTimeout: '1500' });
 
@@ -56,6 +56,20 @@ describe('webdriverio image comparison local development initialization', () => 
             join(
                 process.cwd(),
                 `./${ localBaseline }/${ checkBaseline }/${ path.split('/').pop() }/${ fileName.replace(fullPage, 'fullPageCheckFolders') }`,
+            ),
+        );
+    });
+
+    it('should save the tabbable screenshot', () => {
+        const tabbable = 'tabbable';
+        const { fileName, path } = browser.saveTabbable(tabbable, { fullPageScrollTimeout: '1500' });
+
+        copy(normalize(`${ path }/${ fileName }`), join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName }`));
+        copy(
+            normalize(`${ path }/${ fileName }`),
+            join(
+                process.cwd(),
+                `./${ localBaseline }/${ checkBaseline }/${ path.split('/').pop() }/${ fileName.replace(tabbable, 'tabbableCheckFolders') }`,
             ),
         );
     });

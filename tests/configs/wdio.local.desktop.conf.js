@@ -21,11 +21,10 @@ config.capabilities = [
 // Capabilities
 // ============
 config.specs= [
-    // './tests/specs/basics.spec.js',
-    // './tests/specs/desktop.spec.js',
-    // './tests/specs/checkMethodsFolders.spec.js',
-    // './tests/specs/saveMethodsFolders.spec.js',
-    './tests/specs/accessibleLines.spec.js',
+    './tests/specs/basics.spec.js',
+    './tests/specs/desktop.spec.js',
+    './tests/specs/checkMethodsFolders.spec.js',
+    './tests/specs/saveMethodsFolders.spec.js',
 ];
 
 // ===================
