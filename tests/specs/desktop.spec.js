@@ -28,7 +28,7 @@ describe('wdio-image-comparison-service desktop', () => {
 
     describe('compare tabbable', () => {
         it('should compare successful with a baseline', () => {
-            expect(browser.checkTabbable('tabbable')).toEqual(0);
+            expect(browser.checkTabbablePage('tabbable')).toEqual(0);
         });
     });
 });
