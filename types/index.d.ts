@@ -18,7 +18,7 @@ declare module WebdriverIO {
         /**
          * Saves an image of the complete screen with the tabbable lines and dots
          */
-        saveTabbable(tag: string, saveTabbableOptions?: {});
+        saveTabbablePage(tag: string, saveTabbableOptions?: {});
 
         /**
          * Compare an image of an element
@@ -38,6 +38,6 @@ declare module WebdriverIO {
         /**
          * Compares an image of the complete screen with the tabbable lines and dots
          */
-        checkTabbable(tag: string, checkTabbableOptions?: {});
+        checkTabbablePage(tag: string, checkTabbableOptions?: {});
     }
 }
