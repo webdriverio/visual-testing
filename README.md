@@ -2,7 +2,7 @@ wdio-image-comparison-service
 ==========
 
 [![Gitter chat](https://badges.gitter.im/wswebcreation/wdio-image-comparison-service.png)](https://gitter.im/wswebcreation/wdio-image-comparison-service "Gitter chat")
-[![dependencies Status](https://david-dm.org/wswebcreation/wdio-image-comparison-service/status.svg)](https://david-dm.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://travis-ci.org/wswebcreation/wdio-image-comparison-service.svg?branch=master)](https://travis-ci.org/wswebcreation/wdio-image-comparison-service) [![Test Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service?saucy)](https://app.eu-central-1.saucelabs.com/builds/1ca0dc1a0db24bc9b41f899a590f232b)
+[![dependencies Status](https://david-dm.org/wswebcreation/wdio-image-comparison-service/status.svg)](https://david-dm.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://travis-ci.org/wswebcreation/wdio-image-comparison-service.svg?branch=master)](https://travis-ci.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service?saucy)](https://app.eu-central-1.saucelabs.com/builds/2e3fc2551a5b41399a969c89dbd35b5f)
 
 [![NPM](https://nodei.co/npm/wdio-image-comparison-service.png)](https://nodei.co/npm/wdio-image-comparison-service/)
 
