@@ -29,6 +29,7 @@ You can:
 - increase the element dimensions screenshots
 - use different comparison methods
 - **NEW:** We now support Puppeteer with WebdriverIO
+- **NEW:** You can now verify how your website will support tabbing with your keyboard, see also [here](./README.md#tabbing-through-a-website)
 - and much more, see the [options here](./docs/OPTIONS.md)
 
 The module is now based on the power of the new [`webdriver-image-comparison`](https://github.com/wswebcreation/webdriver-image-comparison) module. This is a lightweight module to retrieve the needed data and screenshots for all browsers / devices.
@@ -82,6 +83,18 @@ exports.config = {
             blockOutToolBar: true,
             // NOTE: When you are testing a hybrid app please use this setting
             isHybridApp: true,
+            // Options for the tabbing image
+            tabbableOptions:{
+                circle:{
+                    size: 18,
+                    fontSize: 18,
+                    // ...
+                },
+                line:{
+                    color: '#ff221a', // hex-code or for example words like `red|black|green`
+                    width: 3,
+                },
+            }
             // ... more options
         }],
     ],
@@ -90,11 +103,6 @@ exports.config = {
 ```
 
 More plugin options can be found [here](./docs/OPTIONS.md#plugin-options).
-
-### DEV-TOOLS support
-You can also use the Chrome DevTools as automation protocol in combination with this module. You don't need to do anything,
-just change `automationProtocol: 'devtools'` in your config.
-More information about how to use the DEV-TOOLS can be found in [this](https://webdriver.io/blog/2019/09/16/devtools.html) blog post.
 
 ### Writing tests
 *wdio-image-comparison-service* is framework agnostic, meaning that you can use it with all the frameworks WebdriverIO supports like `Jasmine|Mocha`.
@@ -108,24 +116,30 @@ describe('Example', () => {
 
   it('should save some screenshots', () => {
   	// Save a screen
-  	browser.saveScreen('examplePaged', { /* some options*/ });
+  	browser.saveScreen('examplePaged', { /* some options */ });
 
   	// Save an element
-  	browser.saveElement($('#element-id'), 'firstButtonElement', { /* some options*/ });
+  	browser.saveElement($('#element-id'), 'firstButtonElement', { /* some options */ });
 
-  	// Save a full page screens
-  	browser.saveFullPageScreen('fullPage', { /* some options*/ });
+  	// Save a full page screenshot
+  	browser.saveFullPageScreen('fullPage', { /* some options */ });
+
+  	// Save a full page screenshot with all tab executions
+  	browser.saveTabbablePage('save-tabbable', { /* some options, use the same options as for saveFullPageScreen */ });
   });
 
   it('should compare successful with a baseline', () => {
   	// Check a screen
-  	expect(browser.checkScreen('examplePaged', { /* some options*/ })).toEqual(0);
+  	expect(browser.checkScreen('examplePaged', { /* some options */ })).toEqual(0);
 
   	// Check an element
-  	expect(browser.checkElement($('#element-id'), 'firstButtonElement', { /* some options*/ })).toEqual(0);
+  	expect(browser.checkElement($('#element-id'), 'firstButtonElement', { /* some options */ })).toEqual(0);
 
-  	// Check a full page screens
-  	expect(browser.checkFullPageScreen('fullPage', { /* some options*/ })).toEqual(0);
+  	// Check a full page screenshot
+  	expect(browser.checkFullPageScreen('fullPage', { /* some options */ })).toEqual(0);
+
+  	// Check a full page screenshot with all tab executions
+  	expect(browser.checkTabbablePage('check-tabbable', { /* some options, use the same options as for checkFullPageScreen */ })).toEqual(0);
   });
 });
 ```
@@ -184,9 +198,40 @@ const checkResult = {
 
 See the [Check output on failure](./docs/OUTPUT.md#check-output-on-failure) section in the [output](./docs/OUTPUT.md) docs for the images.
 
-### Typescript support
+### Tabbing through a website
+We now support checking if a website is accessible through using the keyboards `TAB`-key. Testing this part of accessibility has always been a time consuming (manual) job and pretty hard to do through automation.
+With the methods `saveTabbablePage` and `checkTabbablePage` you can now draw lines and dots on your website to verify the tabbing order.
 
-Library supports typescript types. To your `tsconfig.json` add the following entry to `types`:
+Be aware of the fact that this is only useful for desktop browser and **NOT** for mobile devices. All desktop browsers are supporting this feature, see the browser matrix on the top of this page to check which desktop browsers and versions are supported.
+
+> **NOTE:**<br>
+> The work is inspired by [Viv Richards](https://github.com/vivrichards600) his blog post about ["AUTOMATING PAGE TABABILITY (IS THAT A WORD?) WITH VISUAL TESTING"](https://vivrichards.co.uk/accessibility/automating-page-tab-flows-using-visual-testing-and-javascript).<br>
+> The way tabbable elements are selected are based on the module [tabbable](https://github.com/davidtheclark/tabbable). If there are any issues regarding the tabbing please check the [README.md](https://github.com/davidtheclark/tabbable/blob/master/README.md) and especially the [More details](https://github.com/davidtheclark/tabbable/blob/master/README.md#more-details)-section.
+
+#### How does it work
+Both methods will create a `canvas` element on your website and draw lines and dots to show you where your TAB would go if an end-user would use it. After that it will create a full page screenshot to give you a good overview of the flow.
+
+> **Use the `saveTabbablePage` only when you need to create a screenshot and DON'T want to compare it with a base line image.**
+
+When you want to compare the tabbing flow with a baseline, then you can use the `checkTabbablePage`-method. You **DON'T** need to use the two methods together. If there is already a baseline image created, which can automatically be done by providing `autoSaveBaseline: true` when you instantiate the service,
+the `checkTabbablePage` will first create the *actual* image and then compare it against the baseline.
+
+##### Options
+Both methods use the same options as the [`saveFullPageScreen`](https://github.com/wswebcreation/webdriver-image-comparison/blob/master/docs/OPTIONS.md#savefullpagescreen-or-savetabbablepage) or the
+[`compareFullPageScreen`](https://github.com/wswebcreation/webdriver-image-comparison/blob/master/docs/OPTIONS.md#comparefullpagescreen-or-comparetabbablepage).
+
+#### Example
+This is an example of how the tabbing works on the website of our amazing sponsor [Sauce Labs](https://www.saucelabs.com):
+
+![Sauce Labs tabbing example](./docs/images/tabbable-sauce-labs-chrome-latest-1366x768.png)
+
+### DEV-TOOLS support
+You can also use the Chrome DevTools as automation protocol in combination with this module. You don't need to do anything,
+just change `automationProtocol: 'devtools'` in your config.
+More information about how to use the DEV-TOOLS can be found in [this](https://webdriver.io/blog/2019/09/16/devtools.html) blog post.
+
+### Typescript support
+We now also support typescript types. Add the following to the `types` in your `tsconfig.json`:
 
 ```json
 {

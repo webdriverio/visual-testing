@@ -12,6 +12,10 @@ module.exports = {
     $: true,
     $$: true,
     browser: true,
+    expect: true,
+    describe: true,
+    it: true,
+    beforeEach: true,
   },
   parser: 'babel-eslint',
   parserOptions: {
