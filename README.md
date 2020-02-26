@@ -190,9 +190,13 @@ async function main() {
   wdioImageComparisonService.before(browser.capabilities)
 
   await browser.url('https://webdriver.io/');
-  await browser.saveFullPageScreen('examplePaged', {});
-  await browser.checkFullPageScreen('examplePaged', {});
 
+  // or use this for ONLY saving a screenshot
+  await browser.saveFullPageScreen('examplePaged', {});
+  
+  // or use this for validating. Both methods don't need to be combined, see the FAQ
+  await browser.checkFullPageScreen('examplePaged', {});
+  
   await browser.deleteSession();
 }
 
