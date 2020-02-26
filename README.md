@@ -160,6 +160,47 @@ describe('Example', () => {
 This means that the current screenshot is saved in the actual folder and you **manually need to copy it to your baseline**.
 If you instantiate `wdio-image-comparison-service` with `autoSaveBaseline: true` the image will automatically be saved into the baseline folder.
 
+### Running Programmatically 
+
+Here is a minimal example usage of getting `wdio-image-comparison-service` to work via `remote` options
+
+```js
+const {
+  remote
+} = require("webdriverio");
+
+const WdioImageComparisonService = require('wdio-image-comparison-service').default;
+
+let wdioImageComparisonService = new WdioImageComparisonService({});
+
+async function main() {
+  const browser = await remote({
+    logLevel: "silent",
+    capabilities: {
+      browserName: "chrome"
+    }
+  });
+
+  global.browser = browser;
+
+  wdioImageComparisonService.defaultOptions.autoSaveBaseline = true;
+  browser.defaultOptions = wdioImageComparisonService.defaultOptions;
+  browser.folders = wdioImageComparisonService.folders;
+  
+  wdioImageComparisonService.before(browser.capabilities)
+
+  await browser.url('https://webdriver.io/');
+  await browser.saveFullPageScreen('examplePaged', {});
+  await browser.checkFullPageScreen('examplePaged', {});
+
+  await browser.deleteSession();
+}
+
+main().catch(async e => {
+  console.error(e)
+});
+```
+
 ### Test result outputs
 The `save(Screen/Element/FullPageScreen)` methods will provide the following information after the method has been executed:
 
