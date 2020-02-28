@@ -37,7 +37,9 @@ declare module WebdriverIO {
       element: Element,
       tag: string,
       checkElementOptions?: {}
-    ): number | { fileName: string; folders: { actual: string; baseline: string }; misMatchPercentage: number };
+    ):
+      | number
+      | { fileName: string; folders: { actual: string; baseline: string; diff?: string }; misMatchPercentage: number };
 
     /**
      * Compares an image of a viewport
@@ -45,7 +47,9 @@ declare module WebdriverIO {
     checkScreen(
       tag: string,
       checkScreenOptions?: {}
-    ): number | { fileName: string; folders: { actual: string; baseline: string }; misMatchPercentage: number };
+    ):
+      | number
+      | { fileName: string; folders: { actual: string; baseline: string; diff?: string }; misMatchPercentage: number };
 
     /**
      * Compares an image of the complete screen
@@ -53,7 +57,9 @@ declare module WebdriverIO {
     checkFullPageScreen(
       tag: string,
       checkFullPageOptions?: {}
-    ): number | { fileName: string; folders: { actual: string; baseline: string }; misMatchPercentage: number };
+    ):
+      | number
+      | { fileName: string; folders: { actual: string; baseline: string; diff?: string }; misMatchPercentage: number };
 
     /**
      * Compares an image of the complete screen with the tabbable lines and dots
@@ -61,6 +67,8 @@ declare module WebdriverIO {
     checkTabbablePage(
       tag: string,
       checkTabbableOptions?: {}
-    ): number | { fileName: string; folders: { actual: string; baseline: string }; misMatchPercentage: number };
+    ):
+      | number
+      | { fileName: string; folders: { actual: string; baseline: string; diff?: string }; misMatchPercentage: number };
   }
 }
