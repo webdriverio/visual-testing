@@ -3,22 +3,22 @@ declare module WebdriverIO {
         /**
          * Saves an image of an element
          */
-        saveElement(element: Element, tag: string, saveElementOptions?: {}): void;
+        saveElement(element: Element, tag: string, saveElementOptions?: {}): {fileName: string, path: string, devicePixelRatio: number};
 
         /**
          * Saves an image of a viewport
          */
-        saveScreen(tag: string, saveScreenOptions?: {}): void;
+        saveScreen(tag: string, saveScreenOptions?: {}): {fileName: string, path: string, devicePixelRatio: number};
 
         /**
          * Saves an image of the complete screen
          */
-        saveFullPageScreen(tag: string, saveFullPageScreenOptions?: {}): void;
+        saveFullPageScreen(tag: string, saveFullPageScreenOptions?: {}): {fileName: string, path: string, devicePixelRatio: number};
 
         /**
          * Saves an image of the complete screen with the tabbable lines and dots
          */
-        saveTabbablePage(tag: string, saveTabbableOptions?: {}): void;
+        saveTabbablePage(tag: string, saveTabbableOptions?: {}): {fileName: string, path: string, devicePixelRatio: number};
 
         /**
          * Compare an image of an element
