@@ -62,7 +62,7 @@ describe('webdriverio image comparison local development initialization', () => 
 
     it('should save the tabbable screenshot', () => {
         const tabbable = 'tabbable';
-        const { fileName, path } = browser.saveTabbable(tabbable, { fullPageScrollTimeout: '1500' });
+        const { fileName, path } = browser.saveTabbablePage(tabbable, { fullPageScrollTimeout: '1500' });
 
         copy(normalize(`${ path }/${ fileName }`), join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName }`));
         copy(
