@@ -33,42 +33,21 @@ declare module WebdriverIO {
     /**
      * Compare an image of an element
      */
-    checkElement(
-      element: Element,
-      tag: string,
-      checkElementOptions?: {}
-    ):
-      | number
-      | { fileName: string; folders: { actual: string; baseline: string; diff?: string }; misMatchPercentage: number };
+    checkElement(element: Element, tag: string, checkElementOptions?: {}): any;
 
     /**
      * Compares an image of a viewport
      */
-    checkScreen(
-      tag: string,
-      checkScreenOptions?: {}
-    ):
-      | number
-      | { fileName: string; folders: { actual: string; baseline: string; diff?: string }; misMatchPercentage: number };
+    checkScreen(tag: string, checkScreenOptions?: {}): any;
 
     /**
      * Compares an image of the complete screen
      */
-    checkFullPageScreen(
-      tag: string,
-      checkFullPageOptions?: {}
-    ):
-      | number
-      | { fileName: string; folders: { actual: string; baseline: string; diff?: string }; misMatchPercentage: number };
+    checkFullPageScreen(tag: string, checkFullPageOptions?: {}): any;
 
     /**
      * Compares an image of the complete screen with the tabbable lines and dots
      */
-    checkTabbablePage(
-      tag: string,
-      checkTabbableOptions?: {}
-    ):
-      | number
-      | { fileName: string; folders: { actual: string; baseline: string; diff?: string }; misMatchPercentage: number };
+    checkTabbablePage(tag: string, checkTabbableOptions?: {}): any;
   }
 }
