@@ -44,6 +44,16 @@ config.capabilities = [
         build: buildIdentifier,
     },
     {
+        browserName: 'safari',
+        automationName: 'XCUITest',
+        deviceName: 'iPad (7th generation) Simulator',
+        platformVersion: '13.2',
+        platformName: 'IOS',
+        specs: [mobileSpecs],
+        logName: 'iPad13.2.7th',
+        build: buildIdentifier,
+    },
+    {
         deviceName: 'iPad Air Simulator',
         browserName: 'safari',
         logName: 'iPadAirSimulator',
@@ -52,6 +62,17 @@ config.capabilities = [
         specs: [mobileSpecs],
         build: buildIdentifier,
     },
+    // // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
+    // // webdriver-image-comparison module
+    // {
+    // 	deviceName: 'iPad Pro (12.9 inch) (3rd generation) Simulator',
+    // 	browserName: 'safari',
+    // 	logName: 'iPadPro12.9.3rdGeneration',
+    // 	platformName: 'ios',
+    // 	platformVersion: '13.2',
+    // 	specs: [ mobileSpecs ],
+    // 	build: buildIdentifier,
+    // },
     {
         browserName: 'safari',
         deviceName: 'iPhone 8 Simulator',
@@ -90,17 +111,6 @@ config.capabilities = [
         specs: [mobileSpecs],
         build: buildIdentifier,
     },
-    // // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
-    // // webdriver-image-comparison module
-    // {
-    // 	deviceName: 'iPad Pro (12.9 inch) (3rd generation) Simulator',
-    // 	browserName: 'safari',
-    // 	logName: 'iPadPro12.9.3rdGeneration',
-    // 	platformName: 'ios',
-    // 	platformVersion: '12.2',
-    // 	specs: [ mobileSpecs ],
-    // 	build: buildIdentifier,
-    // },
 
     /**
      * Android with native Webscreenshot
