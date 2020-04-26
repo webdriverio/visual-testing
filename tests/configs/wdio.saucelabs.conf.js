@@ -7,7 +7,7 @@ const saveMethodFolderSpecs = join(process.cwd(), './tests/specs/saveMethodsFold
 const checkMethodFolderSpecs = join(process.cwd(), './tests/specs/checkMethodsFolders.spec.js');
 const deskSpecs = join(process.cwd(), './tests/specs/desktop.spec.js');
 const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js');
-const buildIdentifier = process.env.TRAVIS_JOB_NUMBER;
+const buildIdentifier = process.env.TRAVIS_JOB_NUMBER || `Local build-${new Date().getTime()}`;
 const defaultBrowserSauceOptions = {
     build: buildIdentifier,
     screenResolution: '1600x1200',
@@ -39,8 +39,18 @@ config.capabilities = [
         deviceName: 'iPad Pro (12.9 inch) (2nd generation) Simulator',
         platformVersion: '12.0',
         platformName: 'IOS',
-        specs: [ mobileSpecs ],
+        specs: [mobileSpecs],
         logName: 'iPadPro12.9.2nd',
+        build: buildIdentifier,
+    },
+    {
+        browserName: 'safari',
+        automationName: 'XCUITest',
+        deviceName: 'iPad (7th generation) Simulator',
+        platformVersion: '13.2',
+        platformName: 'IOS',
+        specs: [mobileSpecs],
+        logName: 'iPad13.2.7th',
         build: buildIdentifier,
     },
     {
@@ -49,34 +59,7 @@ config.capabilities = [
         logName: 'iPadAirSimulator',
         platformName: 'ios',
         platformVersion: '12.2',
-        specs: [ mobileSpecs ],
-        build: buildIdentifier,
-    },
-    {
-        browserName: 'safari',
-        deviceName: 'iPhone 8 Simulator',
-        logName: 'iPhone8Simulator',
-        platformName: 'ios',
-        platformVersion: '11.3',
-        specs: [ mobileSpecs ],
-        build: buildIdentifier,
-    },
-    {
-        browserName: 'safari',
-        deviceName: 'iPhone X Simulator',
-        logName: 'iPhoneXSimulator',
-        platformName: 'ios',
-        platformVersion: '12.2',
-        specs: [ mobileSpecs ],
-        build: buildIdentifier,
-    },
-    {
-        browserName: 'safari',
-        deviceName: 'iPhone XS Simulator',
-        logName: 'iPhoneXsSimulator',
-        platformName: 'ios',
-        platformVersion: '13.0',
-        specs: [ mobileSpecs ],
+        specs: [mobileSpecs],
         build: buildIdentifier,
     },
     // // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
@@ -86,10 +69,48 @@ config.capabilities = [
     // 	browserName: 'safari',
     // 	logName: 'iPadPro12.9.3rdGeneration',
     // 	platformName: 'ios',
-    // 	platformVersion: '12.2',
+    // 	platformVersion: '13.2',
     // 	specs: [ mobileSpecs ],
     // 	build: buildIdentifier,
     // },
+    {
+        browserName: 'safari',
+        deviceName: 'iPhone 8 Simulator',
+        logName: 'iPhone8Simulator',
+        platformName: 'ios',
+        platformVersion: '11.3',
+        specs: [mobileSpecs],
+        build: buildIdentifier,
+    },
+    {
+        browserName: 'safari',
+        deviceName: 'iPhone X Simulator',
+        logName: 'iPhoneXSimulator',
+        platformName: 'ios',
+        platformVersion: '12.2',
+        specs: [mobileSpecs],
+        build: buildIdentifier,
+    },
+    {
+        browserName: 'safari',
+        deviceName: 'iPhone XS Simulator',
+        logName: 'iPhoneXsSimulator13.0',
+        platformName: 'ios',
+        platformVersion: '13.0',
+        appiumVersion: '1.16.0',
+        specs: [mobileSpecs],
+        build: buildIdentifier,
+    },
+    {
+        browserName: 'safari',
+        deviceName: 'iPhone XS Simulator',
+        logName: 'iPhoneXsSimulator13.2',
+        platformName: 'ios',
+        platformVersion: '13.2',
+        appiumVersion: '1.16.0',
+        specs: [mobileSpecs],
+        build: buildIdentifier,
+    },
 
     /**
      * Android with native Webscreenshot
