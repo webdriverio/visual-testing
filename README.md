@@ -2,11 +2,13 @@ wdio-image-comparison-service
 ==========
 
 [![Gitter chat](https://badges.gitter.im/wswebcreation/wdio-image-comparison-service.png)](https://gitter.im/wswebcreation/wdio-image-comparison-service "Gitter chat")
-[![dependencies Status](https://david-dm.org/wswebcreation/wdio-image-comparison-service/status.svg)](https://david-dm.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://travis-ci.org/wswebcreation/wdio-image-comparison-service.svg?branch=master)](https://travis-ci.org/wswebcreation/wdio-image-comparison-service) [![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service?saucy)](https://app.eu-central-1.saucelabs.com/builds/2e3fc2551a5b41399a969c89dbd35b5f)
+[![dependencies Status](https://david-dm.org/wswebcreation/wdio-image-comparison-service/status.svg)](https://david-dm.org/wswebcreation/wdio-image-comparison-service)
+[![Build Status](https://travis-ci.org/wswebcreation/wdio-image-comparison-service.svg?branch=master)](https://travis-ci.org/wswebcreation/wdio-image-comparison-service)
+[![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service?saucy)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
 
 [![NPM](https://nodei.co/npm/wdio-image-comparison-service.png)](https://nodei.co/npm/wdio-image-comparison-service/)
 
-[![Browser Status](https://app.eu-central-1.saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://app.eu-central-1.saucelabs.com/builds/1ca0dc1a0db24bc9b41f899a590f232b)
+[![Browser Status](https://app.eu-central-1.saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
 
 > **NOTE for Windows users!!<br/>**
 > Please check the [FAQ](./README.md#faq)
@@ -160,7 +162,7 @@ describe('Example', () => {
 This means that the current screenshot is saved in the actual folder and you **manually need to copy it to your baseline**.
 If you instantiate `wdio-image-comparison-service` with `autoSaveBaseline: true` the image will automatically be saved into the baseline folder.
 
-### Running Programmatically 
+### Running Programmatically
 
 Here is a minimal example usage of getting `wdio-image-comparison-service` to work via `remote` options
 
@@ -186,17 +188,17 @@ async function main() {
   wdioImageComparisonService.defaultOptions.autoSaveBaseline = true;
   browser.defaultOptions = wdioImageComparisonService.defaultOptions;
   browser.folders = wdioImageComparisonService.folders;
-  
+
   wdioImageComparisonService.before(browser.capabilities)
 
   await browser.url('https://webdriver.io/');
 
   // or use this for ONLY saving a screenshot
   await browser.saveFullPageScreen('examplePaged', {});
-  
+
   // or use this for validating. Both methods don't need to be combined, see the FAQ
   await browser.checkFullPageScreen('examplePaged', {});
-  
+
   await browser.deleteSession();
 }
 
