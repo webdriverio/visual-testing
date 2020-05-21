@@ -13,26 +13,34 @@ import {
     SaveFullPageMethodOptions
 } from "webdriver-image-comparison/build/commands/fullPage.interfaces";
 
-interface hideRemove {
+// @ts-ignore
+interface WdioCheckFullPageMethodOptions extends CheckFullPageMethodOptions {
     hideElements?: WebdriverIO.Element[];
     removeElements?: WebdriverIO.Element[];
-}
-// @ts-ignore
-interface WdioCheckFullPageMethodOptions extends CheckFullPageMethodOptions, hideRemove {
     hideAfterFirstScroll?: WebdriverIO.Element[];
 }
 // @ts-ignore
-interface WdioSaveFullPageMethodOptions extends SaveFullPageMethodOptions, hideRemove {
+interface WdioSaveFullPageMethodOptions extends SaveFullPageMethodOptions {
+    hideElements?: WebdriverIO.Element[];
+    removeElements?: WebdriverIO.Element[];
     hideAfterFirstScroll?: WebdriverIO.Element[];
 }
 // @ts-ignore
-interface WdioSaveElementMethodOptions extends SaveElementMethodOptions, hideRemove{}
+interface WdioSaveElementMethodOptions extends SaveElementMethodOptions{
+    hideElements?: WebdriverIO.Element[];
+    removeElements?: WebdriverIO.Element[];}
 // @ts-ignore
-interface WdioSaveScreenMethodOptions extends SaveScreenMethodOptions, hideRemove{}
+interface WdioSaveScreenMethodOptions extends SaveScreenMethodOptions{
+    hideElements?: WebdriverIO.Element[];
+    removeElements?: WebdriverIO.Element[];}
 // @ts-ignore
-interface WdioCheckElementMethodOptions extends CheckElementMethodOptions, hideRemove{}
+interface WdioCheckElementMethodOptions extends CheckElementMethodOptions{
+    hideElements?: WebdriverIO.Element[];
+    removeElements?: WebdriverIO.Element[];}
 // @ts-ignore
-interface WdioCheckScreenMethodOptions extends CheckScreenMethodOptions, hideRemove{}
+interface WdioCheckScreenMethodOptions extends CheckScreenMethodOptions{
+    hideElements?: WebdriverIO.Element[];
+    removeElements?: WebdriverIO.Element[];}
 // @ts-ignore
 
 declare global {
