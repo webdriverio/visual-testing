@@ -4,8 +4,7 @@ wdio-image-comparison-service
 [![Gitter chat](https://badges.gitter.im/wswebcreation/wdio-image-comparison-service.png)](https://gitter.im/wswebcreation/wdio-image-comparison-service "Gitter chat")
 [![dependencies Status](https://david-dm.org/wswebcreation/wdio-image-comparison-service/status.svg)](https://david-dm.org/wswebcreation/wdio-image-comparison-service)
 [![Build Status](https://travis-ci.org/wswebcreation/wdio-image-comparison-service.svg?branch=master)](https://travis-ci.org/wswebcreation/wdio-image-comparison-service)
-[![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service?saucy)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
-
+[![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
 [![NPM](https://nodei.co/npm/wdio-image-comparison-service.png)](https://nodei.co/npm/wdio-image-comparison-service/)
 
 [![Browser Status](https://app.eu-central-1.saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
@@ -35,7 +34,7 @@ You can:
 - and much more, see the [options here](./docs/OPTIONS.md)
 
 The module is now based on the power of the new [`webdriver-image-comparison`](https://github.com/wswebcreation/webdriver-image-comparison) module. This is a lightweight module to retrieve the needed data and screenshots for all browsers / devices.
-The comparison power comes from [ResembleJS](https://github.com/Huddle/Resemble.js). If you want to compare images online you can check the [online tool](https://huddleeng.github.io/Resemble.js/)
+The comparison power comes from [ResembleJS](https://github.com/Huddle/Resemble.js). If you want to compare images online you can check the [online tool](http://rsmbl.github.io/Resemble.js/)
 
 
 It can be used for:
