@@ -22,15 +22,12 @@ exports.config = {
     reporters: [ 'spec' ],
     jasmineNodeOpts: {
         defaultTimeoutInterval: 180000,
+        helpers: [require.resolve('@babel/register')],
     },
 
     // =====
     // Hooks
     // =====
-    beforeSession: () => {
-        require('@babel/register');
-    },
-
     before: (capabilities) => {
         // Add a default logname to the browserobject that is used in the basic specs
         browser.logName = capabilities.logName

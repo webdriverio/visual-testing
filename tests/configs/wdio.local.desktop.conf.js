@@ -9,7 +9,7 @@ config.capabilities = [
     {
         browserName: 'chrome',
         'goog:chromeOptions': {
-            args: [ 'disable-infobars' ],
+            args: [ 'disable-infobars', '--headless' ],
         },
         'wdio-ics:options': {
             logName: 'chrome-latest',
@@ -36,6 +36,7 @@ config.services = [
         debug: true,
         formatImageName: '{tag}-{logName}-{width}x{height}',
         screenshotPath: join(process.cwd(), '.tmp/'),
+        autoSaveBaseline: true,
         savePerInstance: true,
         blockOutStatusBar: true,
         blockOutToolBar: true,
