@@ -259,7 +259,7 @@ config.capabilities = [
         browserName: 'chrome',
         browserVersion: 'latest',
         platformName: 'Windows 10',
-        specs: [ checkMethodFolderSpecs ],
+        specs: [checkMethodFolderSpecs],
         'sauce:options': {
             logName: 'chrome-latest',
             ...defaultBrowserSauceOptions,
@@ -430,7 +430,6 @@ config.services = [
     'sauce',
     [WdioImageComparisonService.default, {
         baselineFolder: join(process.cwd(), './tests/sauceLabsBaseline/'),
-        debug: true,
         formatImageName: '{tag}-{logName}-{width}x{height}',
         screenshotPath: join(process.cwd(), '.tmp/'),
         savePerInstance: true,
@@ -438,6 +437,7 @@ config.services = [
         blockOutStatusBar: true,
         blockOutToolBar: true,
         clearRuntimeFolder: true,
+        logLevel: 'debug',
     }],
 ];
 
