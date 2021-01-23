@@ -24,7 +24,7 @@ describe('wdio-image-comparison-service check methods folder options', () => {
 
             expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./', ''));
             expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./', ''));
-            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
+            // expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
         });
     });
 
@@ -40,7 +40,7 @@ describe('wdio-image-comparison-service check methods folder options', () => {
 
             expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./', ''));
             expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./', ''));
-            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
+            // expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
         });
     });
 
@@ -56,7 +56,7 @@ describe('wdio-image-comparison-service check methods folder options', () => {
 
             expect(results.folders.actual).toMatch(testOptions.actualFolder.replace('./', ''));
             expect(results.folders.baseline).toMatch(testOptions.baselineFolder.replace('./', ''));
-            expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
+            //expect(results.folders.diff).toMatch(testOptions.diffFolder.replace('./', ''));
         });
     });
 });

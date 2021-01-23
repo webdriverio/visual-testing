@@ -32,13 +32,12 @@ config.capabilities = [
      * iOS
      */
     {
-        deviceName: 'iPad Pro (12.9 inch) (2nd generation) Simulator',
+        deviceName: 'iPad Air Simulator',
         browserName: 'safari',
-        automationName: 'XCUITest',
+        logName: 'iPadAirSimulator',
+        platformName: 'ios',
         platformVersion: '12.4',
-        platformName: 'IOS',
         specs: [mobileSpecs],
-        logName: 'iPadPro12.9.2nd',
         build: buildIdentifier,
     },
     {
@@ -52,16 +51,17 @@ config.capabilities = [
         build: buildIdentifier,
     },
     {
-        deviceName: 'iPad Air Simulator',
+        deviceName: 'iPad Air 2 Simulator',
         browserName: 'safari',
-        logName: 'iPadAirSimulator',
-        platformName: 'ios',
-        platformVersion: '12.4',
+        automationName: 'XCUITest',
+        platformVersion: '14.0',
+        platformName: 'IOS',
         specs: [mobileSpecs],
+        logName: 'iPadAir2Simulator',
         build: buildIdentifier,
     },
-    // // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
-    // // webdriver-image-comparison module
+    // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
+    // webdriver-image-comparison module
     // {
     // 	deviceName: 'iPad Pro (12.9 inch) (3rd generation) Simulator',
     // 	browserName: 'safari',
@@ -95,6 +95,26 @@ config.capabilities = [
         logName: 'iPhoneXsSimulator',
         platformName: 'ios',
         platformVersion: '13.4',
+        specs: [mobileSpecs],
+        build: buildIdentifier,
+    },
+    // @TODO: check if the iPhone 11 has a different address bar height,
+    // element cuts are not correct, rest is ok
+    // {
+    //     deviceName: 'iPhone 11 Simulator',
+    //     browserName: 'safari',
+    //     logName: 'iPhone11Simulator',
+    //     platformName: 'ios',
+    //     platformVersion: '14.0',
+    //     specs: [mobileSpecs],
+    //     build: buildIdentifier,
+    // },
+    {
+        deviceName: 'iPhone 11 Pro Simulator',
+        browserName: 'safari',
+        logName: 'iPhone11ProSimulator',
+        platformName: 'ios',
+        platformVersion: '14.0',
         specs: [mobileSpecs],
         build: buildIdentifier,
     },

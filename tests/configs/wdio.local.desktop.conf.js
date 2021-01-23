@@ -9,7 +9,10 @@ config.capabilities = [
     {
         browserName: 'chrome',
         'goog:chromeOptions': {
-            args: [ 'disable-infobars', '--headless' ],
+            args: [
+                'disable-infobars',
+                '--headless',
+            ],
         },
         'wdio-ics:options': {
             logName: 'chrome-latest',

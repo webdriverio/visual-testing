@@ -1,3 +1,6 @@
+/**
+ * Added a retry on the mobile tests because in some cases the emulator or simulator wasn't loaded properly
+ */
 describe('wdio-image-comparison-service mobile', () => {
     beforeEach(() => {
         browser.url('');
@@ -18,12 +21,12 @@ describe('wdio-image-comparison-service mobile', () => {
     describe('compare element', () => {
         it('should compare successful with a baseline', () => {
             expect(browser.checkElement($('.uk-button:nth-child(1)'), 'firstButtonElement')).toEqual(0);
-        });
+        }, 3);
     });
 
     describe('compare fullpage', () => {
         it('should compare successful with a baseline', () => {
             expect(browser.checkFullPageScreen('fullPage', { fullPageScrollTimeout: '1500' })).toEqual(0);
-        });
+        }, 3);
     });
 });
