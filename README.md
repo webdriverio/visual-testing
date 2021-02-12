@@ -13,7 +13,7 @@ wdio-image-comparison-service
 > Please check the [FAQ](./README.md#faq)
 
 ## IMPORTANT!
-1. This module will execute a **pixel-by-pixel** comparison for you. There are some things you can change during comparison, see [here](https://github.com/wswebcreation/webdriver-image-comparison/blob/master/docs/OPTIONS.md#plugin-options) but it stays a baisc **pixel-by-pixel** comparison. <br/> This means that if for example Chrome updates to a newer version, you might need to change your baseline due to fontrendering differences.
+1. This module will execute a **pixel-by-pixel** comparison for you. There are some things you can change during comparison, see [here](https://github.com/wswebcreation/webdriver-image-comparison/blob/master/docs/OPTIONS.md#plugin-options) but it stays a basic **pixel-by-pixel** comparison. <br/> This means that if for example Chrome updates to a newer version, you might need to change your baseline due to fontrendering differences.
 1. Secondly you can only execute visual comparison on screenshots that have been taken with the same platform. For example, the screenshot on a Mac with Chrome can't be used to compare the same page on a Ubuntu or Windows with Chrome. <br/>***You need to compare Apples with Apples, not Apples with Windows***
 1. Try to prevent accepting a `missmatch percentage`. You never know what you accept and especially with large screenshots you might accept a button not being rendered and or shown on a page.
 1. **DONT' TRY TO MIMIC MOBILE SCREENSIZES BY RESIZING YOUR BROWSER AND SAY IT'S A CHROME OR SAFARI MOBILE BROWSER!!!!** This module is there to compare visuals of what you're user would see. A resized Chrome or Safari is not equal to what your enduser is using on his mobile phone. Web-pages and so on a desktop browser CAN'T be compared with mobile browsers due to different font, html and JS-rendering.
@@ -308,7 +308,7 @@ See [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
 
 ## Credits
 `wdio-image-comparison-service` uses an open source licence from Sauce Labs.
-![Powered by Sauce LAbs](./docs/images/powered-by-saucelabs.png)
+![Powered by Sauce Labs](./docs/images/powered-by-saucelabs.png)
 
 You can request your open source licence [here](https://saucelabs.com/open-source/open-sauce)
 
