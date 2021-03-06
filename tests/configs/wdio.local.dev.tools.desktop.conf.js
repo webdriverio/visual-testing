@@ -20,15 +20,6 @@ config.capabilities = [
             logName: 'chrome-dev-tools-headless',
         },
     },
-    {
-        browserName: 'firefox',
-        'moz:firefoxOptions': {
-            headless: true
-        },
-        'wdio-ics:options': {
-            logName: 'firefox-dev-tools-headless',
-        },
-    },
 ];
 
 // ============
