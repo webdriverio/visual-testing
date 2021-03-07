@@ -1,8 +1,10 @@
-name: Test wdio-image-comparison-service
+name: wdio-image-comparison-service
 
 on:
   pull_request:
     branches: [ master ]
+  schedule:
+    - cron:  '0 0 * * 0'
 
 jobs:
   build:
@@ -30,6 +32,9 @@ jobs:
     - name: Run Unit Tests and generate coverage report
       working-directory: ./
       run: npm run test.unit.coverage
+      
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
 
     - name: Lint the code
       working-directory: ./
