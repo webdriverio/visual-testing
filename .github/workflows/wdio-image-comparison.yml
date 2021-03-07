@@ -1,0 +1,52 @@
+name: Test wdio-image-comparison-service
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    # Testing steps
+    - name: Install dependencies
+      working-directory: ./
+      run: npm install
+
+    - name: Run Unit Tests and generate coverage report
+      working-directory: ./
+      run: npm run test.unit.coverage
+
+    - name: Lint the code
+      working-directory: ./
+      run: npm run test.unit.coverage
+
+    - name: Lint the code
+      working-directory: ./
+      run: npm run lint
+
+    - name: Compile the code
+      working-directory: ./
+      run: npm run compile
+
+    - name: Build and E2E test the site
+      working-directory: ./
+      env:
+        SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+        SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+        BUILD_PREFIX: true
+      run: npm run test.saucelabs
