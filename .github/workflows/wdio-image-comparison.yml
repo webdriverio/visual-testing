@@ -46,7 +46,7 @@ jobs:
     - name: Build and E2E test the site
       working-directory: ./
       env:
-        SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-        SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+        SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
+        SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
         BUILD_PREFIX: true
-      run: npm run test.saucelabs -- --logLevel=debug
+      run: npm run test.saucelabs
