@@ -40,10 +40,7 @@ config.capabilities = {
 // Capabilities
 // ============
 config.specs= [
-    './tests/specs/basics.spec.js',
-    './tests/specs/desktop.spec.js',
-    './tests/specs/checkMethodsFolders.spec.js',
-    './tests/specs/saveMethodsFolders.spec.js',
+    './tests/specs/multiremote.spec.js'
 ];
 
 // ===================
@@ -55,7 +52,7 @@ config.services = [
         debug: true,
         formatImageName: '{tag}-{logName}-{width}x{height}',
         screenshotPath: join(process.cwd(), '.tmp/'),
-        autoSaveBaseline: true,
+        autoSaveBaseline: false,
         savePerInstance: true,
         blockOutStatusBar: true,
         blockOutToolBar: true,

@@ -12,6 +12,7 @@ import {
     CheckFullPageMethodOptions,
     SaveFullPageMethodOptions
 } from "webdriver-image-comparison/build/commands/fullPage.interfaces";
+import {Browser} from "webdriverio";
 
 // @ts-ignore
 interface WdioCheckFullPageMethodOptions extends CheckFullPageMethodOptions {
@@ -89,3 +90,6 @@ declare global {
         interface Element {}
     }
 }
+
+declare const chromeBrowserOne:Browser<"sync">;
+declare const chromeBrowserTwo:Browser<"sync">;
