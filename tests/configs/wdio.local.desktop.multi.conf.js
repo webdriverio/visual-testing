@@ -16,7 +16,7 @@ config.capabilities = {
                 ],
             },
             'wdio-ics:options': {
-                logName: 'chrome-latest',
+                logName: 'chrome-latest-one',
             },
         }
     },
@@ -30,7 +30,7 @@ config.capabilities = {
                 ],
             },
             'wdio-ics:options': {
-                logName: 'chrome-latest',
+                logName: 'chrome-latest-two',
             },
         }
     },
@@ -60,5 +60,20 @@ config.services = [
     } ],
     'selenium-standalone'
 ];
+
+// =====
+// Hooks
+// =====
+config.before = () => {
+    // Set the default screensize
+    //Note: browser.setWindowSize does not execute on each browser unlike some of the other commands.
+    if (!chromeBrowserOne.isMobile) {
+        chromeBrowserOne.setWindowSize(1366, 768);
+    }
+
+    if (!chromeBrowserTwo.isMobile) {
+        chromeBrowserTwo.setWindowSize(1366, 768);
+    }
+};
 
 exports.config = config;

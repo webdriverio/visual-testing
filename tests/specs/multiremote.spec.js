@@ -1,5 +1,7 @@
-describe('wdio-image-comparison-service check that multi remote is working', () => {
+import fileExists from '../helpers/fileExists';
 
+describe('wdio-image-comparison-service check that multi remote is working', () => {
+    const resolution = '1366x768';
 
     beforeEach(() => {
         chromeBrowserOne.url('');
@@ -16,10 +18,16 @@ describe('wdio-image-comparison-service check that multi remote is working', () 
     });
 
     it('take a screenshot of each browser', () => {
-        //Not a great test, but saves the screen on one browser and expect it to be exactly the same on the other
-        //Note that autoSaveBaseline is set to false but neither of these capabilities have a logname set so they'll use
-        // the same file name given the same tag.
-        chromeBrowserOne.saveScreen('homepage')
-        expect(chromeBrowserTwo.checkScreen('homepage')).toBe(0)
+        const tag = 'homepage'
+        const imageDataOne = chromeBrowserOne.saveScreen(tag)
+        const imageDataTwo = chromeBrowserTwo.saveScreen(tag)
+
+        const filePathOne = `${imageDataOne.path}/${tag}-chrome-latest-one-${resolution}.png`
+        expect(fileExists(filePathOne)).toBe(true, `File : "${filePathOne}" could not be found`)
+
+        const filePathTwo = `${imageDataTwo.path}/${tag}-chrome-latest-two-${resolution}.png`
+        expect(fileExists(filePathTwo)).toBe(true, `File : "${filePathTwo}" could not be found`)
     });
+
+
 });
