@@ -64,15 +64,27 @@ config.services = [
 // =====
 // Hooks
 // =====
-config.before = () => {
+function getLogName(capabilities) {
+    return capabilities.logName
+        || (capabilities[ 'sauce:options' ] ? capabilities[ 'sauce:options' ].logName : null)
+        || (capabilities[ 'appium:options' ] ? capabilities[ 'appium:options' ].logName : null)
+        || (capabilities[ 'wdio-ics:options' ] ? capabilities[ 'wdio-ics:options' ].logName : null)
+        || ''
+}
+
+config.before = (capabilities) => {
+    // Add a default logname to each browser object that is used in the spec
+    chromeBrowserOne.logName =  getLogName(capabilities.chromeBrowserOne.capabilities)
+    chromeBrowserTwo.logName =  getLogName(capabilities.chromeBrowserTwo.capabilities)
+
     // Set the default screensize
     //Note: browser.setWindowSize does not execute on each browser unlike some of the other commands.
     if (!chromeBrowserOne.isMobile) {
-        chromeBrowserOne.setWindowSize(1366, 768);
+        chromeBrowserOne.setWindowSize(1366, 768)
     }
 
     if (!chromeBrowserTwo.isMobile) {
-        chromeBrowserTwo.setWindowSize(1366, 768);
+        chromeBrowserTwo.setWindowSize(1366, 768)
     }
 };
 

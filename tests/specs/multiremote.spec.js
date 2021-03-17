@@ -22,12 +22,24 @@ describe('wdio-image-comparison-service check that multi remote is working', () 
         const imageDataOne = chromeBrowserOne.saveScreen(tag)
         const imageDataTwo = chromeBrowserTwo.saveScreen(tag)
 
-        const filePathOne = `${imageDataOne.path}/${tag}-chrome-latest-one-${resolution}.png`
+        const logNameOne = chromeBrowserOne.logName
+        const filePathOne = `${imageDataOne.path}/${tag}-${logNameOne}-${resolution}.png`
         expect(fileExists(filePathOne)).toBe(true, `File : "${filePathOne}" could not be found`)
 
-        const filePathTwo = `${imageDataTwo.path}/${tag}-chrome-latest-two-${resolution}.png`
+        const logNameTwo = chromeBrowserTwo.logName
+        const filePathTwo = `${imageDataTwo.path}/${tag}-${logNameTwo}-${resolution}.png`
         expect(fileExists(filePathTwo)).toBe(true, `File : "${filePathTwo}" could not be found`)
     });
 
+    it('take a screenshot of each browser using the global browser', () => {
+        const tag = 'homepage-multi'
+        const imageDatas = browser.saveScreen(tag)
+
+        for(const [browserName, imageData] of Object.entries(imageDatas)) {
+            const logName = global[browserName].logName
+            const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
+            expect(fileExists(filePath)).toBe(true, `File : "${filePath}" could not be found`)
+        }
+    });
 
 });
