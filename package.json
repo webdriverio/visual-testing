@@ -10,6 +10,7 @@
     "lint": "eslint ./lib",
     "test.local.init": "wdio ./tests/configs/wdio.local.init.conf.js",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.js",
+    "test.local.desktop.multi": "wdio tests/configs/wdio.local.desktop.multi.conf.js",
     "test.local.dev.tools.init": "wdio ./tests/configs/wdio.local.dev.tools.init.conf.js",
     "test.local.dev.tools.desktop": "wdio tests/configs/wdio.local.dev.tools.desktop.conf.js",
     "test.unit.coverage": "jest --coverage ",
@@ -54,6 +55,7 @@
     "webdriverio": "^7.1.0"
   },
   "dependencies": {
+    "@wdio/logger": "^7.0.0",
     "webdriver-image-comparison": "0.17.0"
   },
   "repository": {

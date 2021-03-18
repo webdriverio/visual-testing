@@ -106,3 +106,16 @@ Object {
   "platformVersion": "12",
 }
 `;
+
+exports[`utils getInstanceData should use the currentBrowser values when those are passed 1`] = `
+Object {
+  "browserName": "chrome",
+  "browserVersion": "75.123",
+  "deviceName": "devicename",
+  "logName": "logName",
+  "name": "",
+  "nativeWebScreenshot": false,
+  "platformName": "platformname",
+  "platformVersion": "12",
+}
+`;
