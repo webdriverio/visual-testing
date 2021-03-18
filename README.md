@@ -162,6 +162,48 @@ describe('Example', () => {
 This means that the current screenshot is saved in the actual folder and you **manually need to copy it to your baseline**.
 If you instantiate `wdio-image-comparison-service` with `autoSaveBaseline: true` the image will automatically be saved into the baseline folder.
 
+### WebdriverIO MultiRemote
+This module now also support MultiRemote. To make this work properly make sure that you add `'wdio-ics:options` to your
+capabilities as can be seen below. This will make sure that each screenshot will have its own unique name.
+
+```js
+exports.config = {
+    capabilities: {
+        chromeBrowserOne: {
+            capabilities: {
+                browserName: 'chrome',
+                'goog:chromeOptions': {
+                    args: [
+                        'disable-infobars',
+                        '--headless',
+                    ],
+                },
+                // THIS!!!
+                'wdio-ics:options': {
+                    logName: 'chrome-latest-one',
+                },
+            }
+        },
+        chromeBrowserTwo: {
+            capabilities: {
+                browserName: 'chrome',
+                'goog:chromeOptions': {
+                    args: [
+                        'disable-infobars',
+                        '--headless',
+                    ],
+                },
+                // THIS!!!
+                'wdio-ics:options': {
+                    logName: 'chrome-latest-two',
+                },
+            }
+        },
+    }
+}
+```
+
+
 ### Running Programmatically
 
 Here is a minimal example usage of getting `wdio-image-comparison-service` to work via `remote` options
