@@ -55,6 +55,7 @@
     "webdriverio": "^7.1.0"
   },
   "dependencies": {
+    "@wdio/logger": "^7.0.0",
     "webdriver-image-comparison": "0.17.0"
   },
   "repository": {
