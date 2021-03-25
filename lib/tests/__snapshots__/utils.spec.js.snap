@@ -16,6 +16,32 @@ Object {
 }
 `;
 
+exports[`utils getInstanceData should return correct instance data when JSONWP Mobile capabilities are provided 1`] = `
+Object {
+  "browserName": "chrome",
+  "browserVersion": "75.123",
+  "deviceName": "devicename",
+  "logName": "logName",
+  "name": "",
+  "nativeWebScreenshot": true,
+  "platformName": "platformname",
+  "platformVersion": "12",
+}
+`;
+
+exports[`utils getInstanceData should return correct instance data when W3C Mobile capabilities are provided 1`] = `
+Object {
+  "browserName": "chrome",
+  "browserVersion": "75.123",
+  "deviceName": "appium:devicename",
+  "logName": "logName",
+  "name": "",
+  "nativeWebScreenshot": true,
+  "platformName": "platformname",
+  "platformVersion": "12",
+}
+`;
+
 exports[`utils getInstanceData should return instance data when all capabilities are provided 1`] = `
 Object {
   "browserName": "chrome",
