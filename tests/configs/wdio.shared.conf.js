@@ -24,11 +24,13 @@ exports.config = {
         defaultTimeoutInterval: 180000,
         helpers: [require.resolve('@babel/register')],
     },
+    specFileRetries: 2,
+    specFileRetriesDelay: 0,
 
     // =====
     // Hooks
     // =====
-    before: (capabilities) => {
+    before: async (capabilities) => {
         // Add a default logname to the browserobject that is used in the basic specs
         browser.logName = capabilities.logName
             || (capabilities[ 'sauce:options' ] ? capabilities[ 'sauce:options' ].logName : null)
@@ -38,7 +40,7 @@ exports.config = {
 
         // Set the default screensize
         if (!browser.isMobile) {
-            browser.setWindowSize(1366, 768);
+           await browser.setWindowSize(1366, 768);
         }
     },
 }

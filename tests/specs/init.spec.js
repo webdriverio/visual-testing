@@ -5,18 +5,17 @@ describe('webdriverio image comparison local development initialization', () => 
     const localBaseline = 'localBaseline';
     const checkBaseline = 'checkBaseline';
 
-    beforeEach(() => {
-        browser.url('');
-        browser.pause(500);
+    beforeEach(async () => {
+        await browser.url('');
+        await browser.pause(500);
     });
 
-    // Chrome remembers the last postion when the url is loaded again, this will reset it.
-    afterEach(() => browser.execute('window.scrollTo(0, 0);', []));
+    // Chrome remembers the last position when the url is loaded again, this will reset it.
+    afterEach(async () => await browser.execute('window.scrollTo(0, 0);', []));
 
-    it('should save the compare screenshot screenshot', () => {
+    it('should save the compare screenshot screenshot', async () => {
         const examplePage = 'examplePage';
-        browser.saveScreen(examplePage);
-        const { fileName, path } = browser.saveScreen(examplePage);
+        const { fileName, path } = await browser.saveScreen(examplePage);
 
         copy(normalize(`${ path }/${ fileName }`), join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName }`));
         copy(
@@ -32,9 +31,9 @@ describe('webdriverio image comparison local development initialization', () => 
         );
     });
 
-    it('should save the compare element screenshot', () => {
+    it('should save the compare element screenshot', async () => {
         const firstButtonElement = 'firstButtonElement';
-        const { fileName, path } = browser.saveElement($('.uk-button:nth-child(1)'), firstButtonElement);
+        const { fileName, path } = await browser.saveElement(await $('.uk-button:nth-child(1)'), firstButtonElement);
 
         copy(normalize(`${ path }/${ fileName }`), join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName }`));
         copy(
@@ -46,9 +45,9 @@ describe('webdriverio image comparison local development initialization', () => 
         );
     });
 
-    it('should save the compare fullpage screenshot', () => {
+    it('should save the compare fullpage screenshot', async () => {
         const fullPage = 'fullPage';
-        const { fileName, path } = browser.saveFullPageScreen(fullPage, { fullPageScrollTimeout: '1500' });
+        const { fileName, path } = await browser.saveFullPageScreen(fullPage, { fullPageScrollTimeout: '1500' });
 
         copy(normalize(`${ path }/${ fileName }`), join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName }`));
         copy(
@@ -60,9 +59,9 @@ describe('webdriverio image comparison local development initialization', () => 
         );
     });
 
-    it('should save the tabbable screenshot', () => {
+    it('should save the tabbable screenshot', async () => {
         const tabbable = 'tabbable';
-        const { fileName, path } = browser.saveTabbablePage(tabbable, { fullPageScrollTimeout: '1500' });
+        const { fileName, path } = await browser.saveTabbablePage(tabbable, { fullPageScrollTimeout: '1500' });
 
         copy(normalize(`${ path }/${ fileName }`), join(process.cwd(), `./${ localBaseline }/${ path.split('/').pop() }/${ fileName }`));
         copy(

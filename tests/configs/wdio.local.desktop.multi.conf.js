@@ -72,7 +72,7 @@ function getLogName(capabilities) {
         || ''
 }
 
-config.before = (capabilities) => {
+config.before = async (capabilities) => {
     // Add a default logname to each browser object that is used in the spec
     chromeBrowserOne.logName =  getLogName(capabilities.chromeBrowserOne.capabilities)
     chromeBrowserTwo.logName =  getLogName(capabilities.chromeBrowserTwo.capabilities)
@@ -80,11 +80,11 @@ config.before = (capabilities) => {
     // Set the default screensize
     //Note: browser.setWindowSize does not execute on each browser unlike some of the other commands.
     if (!chromeBrowserOne.isMobile) {
-        chromeBrowserOne.setWindowSize(1366, 768)
+        await chromeBrowserOne.setWindowSize(1366, 768)
     }
 
     if (!chromeBrowserTwo.isMobile) {
-        chromeBrowserTwo.setWindowSize(1366, 768)
+        await chromeBrowserTwo.setWindowSize(1366, 768)
     }
 };
 
