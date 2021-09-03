@@ -7,7 +7,7 @@ const saveMethodFolderSpecs = join(process.cwd(), './tests/specs/saveMethodsFold
 const checkMethodFolderSpecs = join(process.cwd(), './tests/specs/checkMethodsFolders.spec.js');
 const deskSpecs = join(process.cwd(), './tests/specs/desktop.spec.js');
 const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js');
-const buildIdentifier = process.env.TRAVIS_JOB_NUMBER || `Local build-${new Date().getTime()}`;
+const buildIdentifier = process.env.CI ?  `${process.env.GITHUB_WORKFLOW} - ${process.env.GITHUB_JOB}` : `Local build-${new Date().getTime()}`;
 const defaultBrowserSauceOptions = {
     build: buildIdentifier,
     screenResolution: '1600x1200',

@@ -7,7 +7,7 @@ exports.config = {
     // ============
     // Capabilities
     // ============
-    maxInstances: 25,
+    maxInstances: 20,
     // For the rest see the specific configs
 
     // ===================
