@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
 
     steps:
     - name: Checkout Repository
@@ -27,14 +27,11 @@ jobs:
     # Testing steps
     - name: Install dependencies
       working-directory: ./
-      run: npm install
+      run: npm ci
 
     - name: Run Unit Tests and generate coverage report
       working-directory: ./
       run: npm run test.unit.coverage
-      
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
 
     - name: Lint the code
       working-directory: ./
