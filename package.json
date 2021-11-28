@@ -17,7 +17,11 @@
     "test.unit.coverage": "jest --coverage ",
     "test.saucelabs": "wdio ./tests/configs/wdio.saucelabs.conf.js",
     "watch": "npm run compile -- --watch",
-    "release": "np",
+    "release": "release-it --github.release",
+    "release.ci": "npm run release -- --ci --npm.skipChecks --no-git.requireCleanWorkingDir",
+    "release.patch": "npm run release -- patch",
+    "release.minor": "npm run release -- minor",
+    "release.major": "npm run release -- major",
     "precompile": "npm run clean",
     "prepublish": "npm run compile",
     "prerelease": "npm run compile"
@@ -36,27 +40,27 @@
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.16.4",
     "@babel/register": "^7.16.0",
-    "@wdio/cli": "^7.16.9",
-    "@wdio/devtools-service": "^7.16.9",
+    "@wdio/cli": "^7.16.10",
+    "@wdio/devtools-service": "^7.16.10",
     "@wdio/jasmine-framework": "^7.16.6",
-    "@wdio/local-runner": "^7.16.9",
-    "@wdio/sauce-service": "^7.16.9",
+    "@wdio/local-runner": "^7.16.10",
+    "@wdio/sauce-service": "^7.16.10",
     "@wdio/selenium-standalone-service": "^7.16.6",
     "@wdio/spec-reporter": "^7.16.9",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^27.3.1",
-    "devtools": "^7.16.7",
+    "devtools": "^7.16.10",
     "eslint": "^8.3.0",
     "eslint-plugin-import": "^2.25.3",
     "fs-extra": "^10.0.0",
     "jest": "^27.3.1",
-    "np": "^7.6.0",
+    "release-it": "^14.11.8",
     "rimraf": "^3.0.2",
-    "webdriverio": "^7.16.9"
+    "webdriverio": "^7.16.10"
   },
   "dependencies": {
     "@wdio/logger": "^7.16.0",
-    "webdriver-image-comparison": "0.20.0"
+    "webdriver-image-comparison": "0.20.2"
   },
   "repository": {
     "type": "git",
