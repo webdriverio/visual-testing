@@ -17,9 +17,10 @@ module.exports = {
     it: true,
     beforeEach: true,
   },
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaVersion: 2016,
+    requireConfigFile: false,
     sourceType: 'module'
   },
   rules: {
