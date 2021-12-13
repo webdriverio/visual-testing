@@ -47,6 +47,7 @@
     "@wdio/local-runner": "^7.16.10",
     "@wdio/sauce-service": "^7.16.10",
     "@wdio/selenium-standalone-service": "^7.16.6",
+    "@wdio/shared-store-service": "^7.16.11",
     "@wdio/spec-reporter": "^7.16.9",
     "babel-jest": "^27.4.2",
     "devtools": "^7.16.10",
