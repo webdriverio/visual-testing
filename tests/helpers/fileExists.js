@@ -1,13 +1,13 @@
-import { accessSync } from 'fs-extra';
+const { accessSync } = require("fs-extra");
 
 /**
  * Check if a file exists
  */
-export default function fileExists(filePath) {
+module.exports = function fileExists(filePath) {
     try {
         accessSync(filePath);
         return true;
     } catch (err) {
         return false;
     }
-}
+};

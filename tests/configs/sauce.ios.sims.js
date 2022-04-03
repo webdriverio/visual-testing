@@ -1,220 +1,132 @@
-import {join} from 'path';
+const { join } = require("path");
 
-export function sauceIosSim({buildName, specs}) {
-    const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js');
+module.exports = function sauceIosSim({ buildName, specs }) {
+    const mobileSpecs = join(process.cwd(), "./tests/specs/mobile.spec.js");
+    const genericCaps = {
+        "sauce:options": {
+            build: buildName,
+            appiumVersion: "1.21.0",
+        },
+        specs: [mobileSpecs],
+    };
 
     return [
         /**
          * iPhones
          */
         {
-            deviceName: 'iPhone 8 Simulator',
-            browserName: 'safari',
-            logName: 'iPhone8Simulator',
-            platformName: 'ios',
-            platformVersion: '11.3',
-            specs: [ mobileSpecs ],
-            build: buildName,
+            browserName: "safari",
+            platformName: "ios",
+            "appium:deviceName": "iPhone 8 Simulator",
+            "appium:platformVersion": "12.4",
+            "appium:automationName": "XCUITest",
+            "wdio-ics:options": {
+                logName: "iPhone8Simulator",
+            },
+            ...genericCaps,
         },
         {
-            deviceName: 'iPhone X Simulator',
-            browserName: 'safari',
-            logName: 'iPhoneXSimulator',
-            platformName: 'ios',
-            platformVersion: '12.4',
-            specs: [ mobileSpecs ],
-            build: buildName,
+            browserName: "safari",
+            platformName: "ios",
+            "appium:deviceName": "iPhone X Simulator",
+            "appium:platformVersion": "13.4",
+            "appium:automationName": "XCUITest",
+            "wdio-ics:options": {
+                logName: "iPhoneXSimulator",
+            },
+            ...genericCaps,
         },
         {
-            deviceName: 'iPhone XS Simulator',
-            browserName: 'safari',
-            logName: 'iPhoneXsSimulator',
-            platformName: 'ios',
-            platformVersion: '13.4',
-            specs: [ mobileSpecs ],
-            build: buildName,
+            browserName: "safari",
+            platformName: "ios",
+            "appium:deviceName": "iPhone XS Simulator",
+            "appium:platformVersion": "14.5",
+            "appium:automationName": "XCUITest",
+            "wdio-ics:options": {
+                logName: "iPhoneXsSimulator",
+            },
+            ...genericCaps,
         },
-        // // @TODO: check if the iPhone 11 has a different address bar height,
-        // // element cuts are not correct, rest is ok
+        // @TODO: check if the iPhone 11 has a different address bar height,
+        // element cuts are not correct, rest is ok
         // {
-        //     deviceName: 'iPhone 11 Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone11Simulator',
-        //     platformName: 'ios',
-        //     platformVersion: '14.4',
-        //     specs: [ mobileSpecs ],
-        //     build: buildName,
+        //     browserName: "safari",
+        //     platformName: "ios",
+        //     "appium:deviceName": "iPhone 11 Simulator",
+        //     "appium:platformVersion": "14.5",
+        //     "appium:automationName": "XCUITest",
+        //     "wdio-ics:options": {
+        //         logName: "iPhone11Simulator",
+        //     },
+        //     ...genericCaps,
         // },
-        {
-            deviceName: 'iPhone 11 Pro Simulator',
-            browserName: 'safari',
-            logName: 'iPhone11ProSimulator',
-            platformName: 'ios',
-            platformVersion: '14.4',
-            specs: [ mobileSpecs ],
-            build: buildName,
-        },
-        // All Notch devices
+        // // @TODO: Check why the element cuts are not correct
         // {
-        //     deviceName: 'iPhone X Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhoneXSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone XS Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhoneXsSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone XS Max Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhoneXsMaxSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone XR Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhoneXrSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone 11 Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone11Simulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone 11 Pro Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone11ProSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone 11 Pro Max Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone11ProMaxSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone 12 Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone12Simulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone 12 Pro Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone12ProSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone 12 Pro Max Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone12ProMaxSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone 13 Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone13Simulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone 13 Pro Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone13ProSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
-        // },
-        // {
-        //     deviceName: 'iPhone 13 Pro Max Simulator',
-        //     browserName: 'safari',
-        //     logName: 'iPhone13ProMaxSimulator',
-        //     platformName: 'ios',
-        //     platformVersion: '15.0',
-        //     specs: [mobileSpecs],
-        //     build: buildIdentifier,
+        //     browserName: "safari",
+        //     platformName: "ios",
+        //     "appium:deviceName": "iPhone 11 Pro Simulator",
+        //     "appium:platformVersion": "15.2",
+        //     "appium:automationName": "XCUITest",
+        //     "wdio-ics:options": {
+        //         logName: "iPhone11ProSimulator",
+        //     },
+        //     ...genericCaps,
+        //     // 15.2 needs to have appium version 1.22.2
+        //     "sauce:options": {
+        //         appiumVersion: "1.22.2",
+        //         build: buildName,
+        //     },
         // },
 
         /**
          * iPads
          */
         {
-            deviceName: 'iPad Air Simulator',
-            browserName: 'safari',
-            logName: 'iPadAirSimulator',
-            platformName: 'ios',
-            platformVersion: '12.4',
-            specs: [ mobileSpecs ],
-            build: buildName,
+            browserName: "safari",
+            platformName: "ios",
+            "appium:deviceName": "iPad Air Simulator",
+            "appium:platformVersion": "12.4",
+            "appium:automationName": "XCUITest",
+            "wdio-ics:options": {
+                logName: "iPadAirSimulator",
+            },
+            ...genericCaps,
         },
         {
-            deviceName: 'iPad (7th generation) Simulator',
-            browserName: 'safari',
-            automationName: 'XCUITest',
-            platformVersion: '13.4',
-            platformName: 'IOS',
-            specs: [ mobileSpecs ],
-            logName: 'iPad13.7th',
-            build: buildName,
+            browserName: "safari",
+            platformName: "IOS",
+            "appium:deviceName": "iPad (7th generation) Simulator",
+            "appium:platformVersion": "13.4",
+            "appium:automationName": "XCUITest",
+            "wdio-ics:options": {
+                logName: "iPad13.7th",
+            },
+            ...genericCaps,
         },
         {
-            deviceName: 'iPad Air 2 Simulator',
-            browserName: 'safari',
-            automationName: 'XCUITest',
-            platformVersion: '14.4',
-            platformName: 'IOS',
-            specs: [ mobileSpecs ],
-            logName: 'iPadAir2Simulator',
-            build: buildName,
+            browserName: "safari",
+            platformName: "IOS",
+            "appium:deviceName": "iPad Air 2 Simulator",
+            "appium:platformVersion": "14.4",
+            "appium:automationName": "XCUITest",
+            "wdio-ics:options": {
+                logName: "iPadAir2Simulator",
+            },
+            ...genericCaps,
         },
         // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
         // webdriver-image-comparison module
         // {
-        // 	deviceName: 'iPad Pro (12.9 inch) (3rd generation) Simulator',
-        // 	browserName: 'safari',
-        // 	logName: 'iPadPro12.9.3rdGeneration',
-        // 	platformName: 'ios',
-        // 	platformVersion: '13.2',
-        // 	specs: [ mobileSpecs ],
-        // 	build: buildName,
+        //     browserName: "safari",
+        //     platformName: "ios",
+        //     "appium:deviceName":
+        //         "iPad Pro (12.9 inch) (3rd generation) Simulator",
+        //     "appium:platformVersion": "13.2",
+        //     "appium:automationName": "XCUITest",
+        //     "wdio-ics:options": {
+        //         logName: "iPadPro12.9.3rdGeneration",
+        //     },
+        //     ...genericCaps,
         // },
-    ]
-}
+    ];
+};

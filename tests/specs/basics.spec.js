@@ -1,4 +1,4 @@
-import fileExists from '../helpers/fileExists';
+const fileExists = require('../helpers/fileExists');
 
 describe('wdio-image-comparison-service basics', () => {
     const logName = browser.capabilities['sauce:options']
