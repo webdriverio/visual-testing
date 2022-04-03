@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@wdio/logger": "^7.19.0",
-    "webdriver-image-comparison": "0.20.2"
+    "webdriver-image-comparison": "0.20.3"
   },
   "repository": {
     "type": "git",

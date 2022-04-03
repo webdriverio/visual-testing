@@ -23,7 +23,7 @@ exports.config = {
     jasmineOpts: {
         defaultTimeoutInterval: 180000,
     },
-    // specFileRetries: 2,
+    specFileRetries: 2,
     specFileRetriesDelay: 0,
     autoCompileOpts: {
         autoCompile: true,
@@ -33,7 +33,7 @@ exports.config = {
     // Hooks
     // =====
     before: async (capabilities) => {
-        // Add a default logname to the browserobject that is used in the basic specs
+        // Add a default log name to the browserobject that is used in the basic specs
         browser.logName =
             capabilities.logName ||
             (capabilities["sauce:options"]

@@ -24,21 +24,21 @@ config.capabilities = [
     /**
      * iOS
      */
-    // ...sauceIosSim({
-    //     buildName: buildIdentifier,
-    // }),
+    ...sauceIosSim({
+        buildName: buildIdentifier,
+    }),
     /**
      * Android
      */
     ...sauceAndroidEmus({
         buildName: buildIdentifier,
     }),
-    // /**
-    //  * Desktop browser
-    //  */
-    // ...sauceDesktopBrowsers({
-    //     buildName: buildIdentifier,
-    // }),
+    /**
+     * Desktop browser
+     */
+    ...sauceDesktopBrowsers({
+        buildName: buildIdentifier,
+    }),
 ];
 
 // ===================
