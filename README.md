@@ -124,16 +124,20 @@ describe("Example", () => {
         await browser.url("https://webdriver.io");
     });
 
-    it("should save some screenshots", async() => {
+    it("should save some screenshots", async () => {
         // Save a screen
         await browser.saveScreen("examplePaged", {
             /* some options */
         });
 
         // Save an element
-        await browser.saveElement(await $("#element-id"), "firstButtonElement", {
-            /* some options */
-        });
+        await browser.saveElement(
+            await $("#element-id"),
+            "firstButtonElement",
+            {
+                /* some options */
+            }
+        );
 
         // Save a full page screenshot
         await browser.saveFullPageScreen("fullPage", {
@@ -156,9 +160,13 @@ describe("Example", () => {
 
         // Check an element
         await expect(
-            await browser.checkElement(await $("#element-id"), "firstButtonElement", {
-                /* some options */
-            })
+            await browser.checkElement(
+                await $("#element-id"),
+                "firstButtonElement",
+                {
+                    /* some options */
+                }
+            )
         ).toEqual(0);
 
         // Check a full page screenshot
