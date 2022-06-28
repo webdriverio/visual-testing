@@ -219,5 +219,15 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
                 ...defaultBrowserSauceOptions,
             },
         },
+        {
+            browserName: "safari",
+            browserVersion: "15",
+            platformName: "macOS 12",
+            specs: [deskSpecs],
+            "sauce:options": {
+                logName: "macOS12-15",
+                ...defaultBrowserSauceOptions,
+            },
+        },
     ];
 };

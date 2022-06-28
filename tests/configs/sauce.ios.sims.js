@@ -47,6 +47,17 @@ module.exports = function sauceIosSim({ buildName, specs }) {
             },
             ...genericCaps,
         },
+        {
+            browserName: "safari",
+            platformName: "ios",
+            "appium:deviceName": "iPhone XS Simulator",
+            "appium:platformVersion": "15.4",
+            "appium:automationName": "XCUITest",
+            "wdio-ics:options": {
+                logName: "iPhoneXsSimulator",
+            },
+            ...genericCaps,
+        },
         // @TODO: check if the iPhone 11 has a different address bar height,
         // element cuts are not correct, rest is ok
         // {
@@ -77,7 +88,6 @@ module.exports = function sauceIosSim({ buildName, specs }) {
         //         build: buildName,
         //     },
         // },
-
         /**
          * iPads
          */

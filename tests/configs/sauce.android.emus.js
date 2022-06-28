@@ -23,7 +23,7 @@ module.exports = function sauceAndroidEmus({ buildName }) {
             },
             specs: [mobileSpecs],
         },
-        ...["9.0", "10.0", "11.0"].map((platformVersion) => ({
+        ...["9.0", "10.0", "11.0", "12.0"].map((platformVersion) => ({
             browserName: "chrome",
             platformName: "Android",
             "appium:deviceName": "Google Pixel 3 XL GoogleAPI Emulator",
@@ -72,7 +72,7 @@ module.exports = function sauceAndroidEmus({ buildName }) {
             },
             specs: [mobileSpecs],
         },
-        ...["9.0", "10.0", "11.0"].map((platformVersion) => ({
+        ...["9.0", "10.0", "11.0", "12.0"].map((platformVersion) => ({
             browserName: "chrome",
             platformName: "Android",
             "appium:deviceName": "Google Pixel 3 XL GoogleAPI Emulator",
