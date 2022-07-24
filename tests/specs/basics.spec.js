@@ -4,8 +4,8 @@ describe('wdio-image-comparison-service basics', () => {
     const logName = browser.capabilities['sauce:options']
         ? browser.capabilities['sauce:options'].logName
         : browser.capabilities['wdio-ics:options']
-        ? browser.capabilities['wdio-ics:options'].logName
-        : browser.capabilities.logName
+            ? browser.capabilities['wdio-ics:options'].logName
+            : browser.capabilities.logName
     const resolution = '1366x768'
 
     beforeEach(async () => {
