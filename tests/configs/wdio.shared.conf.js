@@ -22,6 +22,8 @@ exports.config = {
     reporters: ['spec'],
     jasmineOpts: {
         defaultTimeoutInterval: 180000,
+        // Babel setup
+        helpers: [require.resolve('@babel/register')],
     },
     specFileRetries: 2,
     specFileRetriesDelay: 0,
