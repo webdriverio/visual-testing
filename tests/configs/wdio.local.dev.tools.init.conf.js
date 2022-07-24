@@ -1,10 +1,8 @@
-const { config } = require('./wdio.local.dev.tools.desktop.conf');
+const { config } = require('./wdio.local.dev.tools.desktop.conf')
 
 // ============
 // Capabilities
 // ============
-config.specs= [
-    './tests/specs/init.spec.js',
-];
+config.specs = ['./tests/specs/init.spec.js']
 
-exports.config = config;
+exports.config = config

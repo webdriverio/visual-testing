@@ -1,11 +1,11 @@
-const {join} = require('path');
-const {config} = require('./wdio.shared.conf');
-const WdioImageComparisonService = require('../../build/');
+const { join } = require('path')
+const { config } = require('./wdio.shared.conf')
+const WdioImageComparisonService = require('../../build/')
 
 // ===================
 // Automation protocol
 // ===================
-config.automationProtocol = 'devtools';
+config.automationProtocol = 'devtools'
 
 // ============
 // Capabilities
@@ -20,31 +20,31 @@ config.capabilities = [
             logName: 'chrome-dev-tools-headless',
         },
     },
-];
+]
 
 // ============
 // Capabilities
 // ============
-config.specs = [
-    './tests/specs/basics.spec.js',
-    './tests/specs/desktop.spec.js',
-];
+config.specs = ['./tests/specs/basics.spec.js', './tests/specs/desktop.spec.js']
 
 // ===================
 // Image compare setup
 // ===================
 config.services = [
     'devtools',
-    [WdioImageComparisonService.default, {
-        baselineFolder: join(process.cwd(), './localBaseline/'),
-        debug: true,
-        formatImageName: '{tag}-{logName}-{width}x{height}',
-        screenshotPath: join(process.cwd(), '.tmp/'),
-        savePerInstance: true,
-        blockOutStatusBar: true,
-        blockOutToolBar: true,
-        clearRuntimeFolder: true,
-    }],
-];
+    [
+        WdioImageComparisonService.default,
+        {
+            baselineFolder: join(process.cwd(), './localBaseline/'),
+            debug: true,
+            formatImageName: '{tag}-{logName}-{width}x{height}',
+            screenshotPath: join(process.cwd(), '.tmp/'),
+            savePerInstance: true,
+            blockOutStatusBar: true,
+            blockOutToolBar: true,
+            clearRuntimeFolder: true,
+        },
+    ],
+]
 
-exports.config = config;
+exports.config = config
