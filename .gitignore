@@ -26,3 +26,4 @@ localBaseline/
 
 # files
 .DS_Store
+.eslintcache
