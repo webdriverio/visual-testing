@@ -1,60 +1,60 @@
-const { join } = require("path");
+const { join } = require('path')
 
-module.exports = function sauceIosSim({ buildName, specs }) {
-    const mobileSpecs = join(process.cwd(), "./tests/specs/mobile.spec.js");
+module.exports = function sauceIosSim({ buildName }) {
+    const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js')
     const genericCaps = {
-        "sauce:options": {
+        'sauce:options': {
             build: buildName,
-            appiumVersion: "1.21.0",
+            appiumVersion: '1.21.0',
         },
         specs: [mobileSpecs],
-    };
+    }
 
     return [
         /**
          * iPhones
          */
         {
-            browserName: "safari",
-            platformName: "ios",
-            "appium:deviceName": "iPhone 8 Simulator",
-            "appium:platformVersion": "12.4",
-            "appium:automationName": "XCUITest",
-            "wdio-ics:options": {
-                logName: "iPhone8Simulator",
+            browserName: 'safari',
+            platformName: 'ios',
+            'appium:deviceName': 'iPhone 8 Simulator',
+            'appium:platformVersion': '12.4',
+            'appium:automationName': 'XCUITest',
+            'wdio-ics:options': {
+                logName: 'iPhone8Simulator',
             },
             ...genericCaps,
         },
         {
-            browserName: "safari",
-            platformName: "ios",
-            "appium:deviceName": "iPhone X Simulator",
-            "appium:platformVersion": "13.4",
-            "appium:automationName": "XCUITest",
-            "wdio-ics:options": {
-                logName: "iPhoneXSimulator",
+            browserName: 'safari',
+            platformName: 'ios',
+            'appium:deviceName': 'iPhone X Simulator',
+            'appium:platformVersion': '13.4',
+            'appium:automationName': 'XCUITest',
+            'wdio-ics:options': {
+                logName: 'iPhoneXSimulator',
             },
             ...genericCaps,
         },
         {
-            browserName: "safari",
-            platformName: "ios",
-            "appium:deviceName": "iPhone XS Simulator",
-            "appium:platformVersion": "14.5",
-            "appium:automationName": "XCUITest",
-            "wdio-ics:options": {
-                logName: "iPhoneXsSimulator",
+            browserName: 'safari',
+            platformName: 'ios',
+            'appium:deviceName': 'iPhone XS Simulator',
+            'appium:platformVersion': '14.5',
+            'appium:automationName': 'XCUITest',
+            'wdio-ics:options': {
+                logName: 'iPhoneXsSimulator',
             },
             ...genericCaps,
         },
         {
-            browserName: "safari",
-            platformName: "ios",
-            "appium:deviceName": "iPhone XS Simulator",
-            "appium:platformVersion": "15.4",
-            "appium:automationName": "XCUITest",
-            "wdio-ics:options": {
-                logName: "iPhoneXsSimulator",
+            browserName: 'safari',
+            platformName: 'ios',
+            'appium:deviceName': 'iPhone XS Simulator',
+            'appium:platformVersion': '15.4',
+            'appium:automationName': 'XCUITest',
+            'wdio-ics:options': {
+                logName: 'iPhoneXsSimulator',
             },
             ...genericCaps,
         },
@@ -92,35 +92,35 @@ module.exports = function sauceIosSim({ buildName, specs }) {
          * iPads
          */
         {
-            browserName: "safari",
-            platformName: "ios",
-            "appium:deviceName": "iPad Air Simulator",
-            "appium:platformVersion": "12.4",
-            "appium:automationName": "XCUITest",
-            "wdio-ics:options": {
-                logName: "iPadAirSimulator",
+            browserName: 'safari',
+            platformName: 'ios',
+            'appium:deviceName': 'iPad Air Simulator',
+            'appium:platformVersion': '12.4',
+            'appium:automationName': 'XCUITest',
+            'wdio-ics:options': {
+                logName: 'iPadAirSimulator',
             },
             ...genericCaps,
         },
         {
-            browserName: "safari",
-            platformName: "IOS",
-            "appium:deviceName": "iPad (7th generation) Simulator",
-            "appium:platformVersion": "13.4",
-            "appium:automationName": "XCUITest",
-            "wdio-ics:options": {
-                logName: "iPad13.7th",
+            browserName: 'safari',
+            platformName: 'IOS',
+            'appium:deviceName': 'iPad (7th generation) Simulator',
+            'appium:platformVersion': '13.4',
+            'appium:automationName': 'XCUITest',
+            'wdio-ics:options': {
+                logName: 'iPad13.7th',
             },
             ...genericCaps,
         },
         {
-            browserName: "safari",
-            platformName: "IOS",
-            "appium:deviceName": "iPad Air 2 Simulator",
-            "appium:platformVersion": "14.4",
-            "appium:automationName": "XCUITest",
-            "wdio-ics:options": {
-                logName: "iPadAir2Simulator",
+            browserName: 'safari',
+            platformName: 'IOS',
+            'appium:deviceName': 'iPad Air 2 Simulator',
+            'appium:platformVersion': '14.4',
+            'appium:automationName': 'XCUITest',
+            'wdio-ics:options': {
+                logName: 'iPadAir2Simulator',
             },
             ...genericCaps,
         },
@@ -138,5 +138,5 @@ module.exports = function sauceIosSim({ buildName, specs }) {
         //     },
         //     ...genericCaps,
         // },
-    ];
-};
+    ]
+}
