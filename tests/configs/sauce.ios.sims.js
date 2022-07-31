@@ -92,7 +92,7 @@ module.exports = function sauceIosSim({ buildName }) {
 
     return [
         // For some reason with iOS 13 the Landscape screenshot is not correct
-        ...['PORTRAIT']
+        ...['LANDSCAPE', 'PORTRAIT']
             .map((orientation) =>
                 iOS13Devices.map((device) =>
                     createCaps({
