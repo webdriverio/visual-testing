@@ -125,17 +125,6 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             },
         },
         {
-            browserName: 'internet explorer',
-            browserVersion: 'latest',
-            platformName: 'Windows 8.1',
-            specs: [deskSpecs],
-            'sauce:options': {
-                logName: 'IE11',
-                ...defaultBrowserSauceOptions,
-                iedriverVersion: '3.141.59',
-            },
-        },
-        {
             browserName: 'MicrosoftEdge',
             browserVersion: '18.17763',
             platformName: 'Windows 10',
@@ -179,16 +168,6 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
         /**
          * Mac
          */
-        // Safari 11 is not W3C compliant,
-        // see https://developer.apple.com/documentation/webkit/macos_webdriver_commands_for_safari_11_1_and_earlier
-        {
-            browserName: 'safari',
-            version: '11',
-            platform: 'macOS 10.12',
-            specs: [deskSpecs],
-            logName: 'SierraSafari11',
-            ...defaultBrowserSauceOptions,
-        },
         {
             browserName: 'safari',
             browserVersion: '12',

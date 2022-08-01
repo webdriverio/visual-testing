@@ -2,141 +2,178 @@ const { join } = require('path')
 
 module.exports = function sauceIosSim({ buildName }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js')
-    const genericCaps = {
-        'sauce:options': {
-            build: buildName,
-            appiumVersion: '1.21.0',
-        },
-        specs: [mobileSpecs],
-    }
+    // For all screen sizes see
+    // https://github.com/wswebcreation/webdriver-image-comparison/blob/main/lib/helpers/constants.ts
+    const iOS13Devices = [
+        // 667
+        'iPhone 8 Simulator',
+        // 736
+        'iPhone 8 Plus Simulator',
+        // 812
+        'iPhone XS Simulator',
+        // 844 => not available for iOS 13
+        // 896
+        'iPhone 11 Simulator',
+        // 926 => not available for iOS 13
+        // 1024
+        'iPad Air 2 Simulator',
+        // 1080
+        'iPad (5th generation) Simulator',
+        // 1112
+        'iPad Pro (10.5 inch) Simulator',
+        // 1133 => not available for iOS 13
+        // 1180 => not available for iOS 13
+        // 1194
+        'iPad Pro (11 inch) (2nd generation) Simulator',
+        // 1366
+        'iPad Pro (12.9 inch) Simulator',
+        // 1366
+        'iPad Pro (12.9 inch) (4th generation) Simulator',
+    ]
+    const iOS14Devices = [
+        // 667
+        'iPhone 8 Simulator',
+        // 736
+        'iPhone 8 Plus Simulator',
+        // 812
+        'iPhone XS Simulator',
+        // 844
+        'iPhone 12 Simulator',
+        // 896
+        'iPhone 11 Simulator',
+        // 926
+        'iPhone 12 Pro Max Simulator',
+        // 1024
+        'iPad Air 2 Simulator',
+        // 1080
+        'iPad (5th generation) Simulator',
+        // 1112
+        'iPad Pro (10.5 inch) Simulator',
+        // 1133 => not available for iOS 14
+        // 1180
+        'iPad Air (4th generation) Simulator',
+        // 1194
+        'iPad Pro (11 inch) (3rd generation) Simulator',
+        // 1366
+        'iPad Pro (12.9 inch) (1st generation) Simulator',
+        // 1366
+        'iPad Pro (12.9 inch) (5th generation) Simulator',
+    ]
+    const iOS15Devices = [
+        // 667
+        'iPhone 8 Simulator',
+        // 736
+        'iPhone 8 Plus Simulator',
+        // 812
+        'iPhone XS Simulator',
+        // 844
+        'iPhone 12 Simulator',
+        // 896
+        'iPhone 11 Simulator',
+        // 926
+        'iPhone 12 Pro Max Simulator',
+        // 1024
+        'iPad Air 2 Simulator',
+        // 1080
+        'iPad (5th generation) Simulator',
+        // 1112
+        'iPad Pro (10.5 inch) Simulator',
+        // 1133
+        'iPad mini (6th generation) Simulator',
+        // 1180
+        'iPad Air (4th generation) Simulator',
+        // 1194
+        'iPad Pro (11 inch) (3rd generation) Simulator',
+        // 1366
+        'iPad Pro (12.9 inch) (1st generation) Simulator',
+        // 1366
+        'iPad Pro (12.9 inch) (5th generation) Simulator',
+    ]
 
     return [
-        /**
-         * iPhones
-         */
-        {
-            browserName: 'safari',
-            platformName: 'ios',
-            'appium:deviceName': 'iPhone 8 Simulator',
-            'appium:platformVersion': '12.4',
-            'appium:automationName': 'XCUITest',
-            'wdio-ics:options': {
-                logName: 'iPhone8Simulator',
-            },
-            ...genericCaps,
-        },
-        {
-            browserName: 'safari',
-            platformName: 'ios',
-            'appium:deviceName': 'iPhone X Simulator',
-            'appium:platformVersion': '13.4',
-            'appium:automationName': 'XCUITest',
-            'wdio-ics:options': {
-                logName: 'iPhoneXSimulator',
-            },
-            ...genericCaps,
-        },
-        {
-            browserName: 'safari',
-            platformName: 'ios',
-            'appium:deviceName': 'iPhone XS Simulator',
-            'appium:platformVersion': '14.5',
-            'appium:automationName': 'XCUITest',
-            'wdio-ics:options': {
-                logName: 'iPhoneXsSimulator',
-            },
-            ...genericCaps,
-        },
-        {
-            browserName: 'safari',
-            platformName: 'ios',
-            'appium:deviceName': 'iPhone XS Simulator',
-            'appium:platformVersion': '15.4',
-            'appium:automationName': 'XCUITest',
-            'wdio-ics:options': {
-                logName: 'iPhoneXsSimulator',
-            },
-            ...genericCaps,
-        },
-        // @TODO: check if the iPhone 11 has a different address bar height,
-        // element cuts are not correct, rest is ok
-        // {
-        //     browserName: "safari",
-        //     platformName: "ios",
-        //     "appium:deviceName": "iPhone 11 Simulator",
-        //     "appium:platformVersion": "14.5",
-        //     "appium:automationName": "XCUITest",
-        //     "wdio-ics:options": {
-        //         logName: "iPhone11Simulator",
-        //     },
-        //     ...genericCaps,
-        // },
-        // // @TODO: Check why the element cuts are not correct
-        // {
-        //     browserName: "safari",
-        //     platformName: "ios",
-        //     "appium:deviceName": "iPhone 11 Pro Simulator",
-        //     "appium:platformVersion": "15.2",
-        //     "appium:automationName": "XCUITest",
-        //     "wdio-ics:options": {
-        //         logName: "iPhone11ProSimulator",
-        //     },
-        //     ...genericCaps,
-        //     // 15.2 needs to have appium version 1.22.2
-        //     "sauce:options": {
-        //         appiumVersion: "1.22.2",
-        //         build: buildName,
-        //     },
-        // },
-        /**
-         * iPads
-         */
-        {
-            browserName: 'safari',
-            platformName: 'ios',
-            'appium:deviceName': 'iPad Air Simulator',
-            'appium:platformVersion': '12.4',
-            'appium:automationName': 'XCUITest',
-            'wdio-ics:options': {
-                logName: 'iPadAirSimulator',
-            },
-            ...genericCaps,
-        },
-        {
-            browserName: 'safari',
-            platformName: 'IOS',
-            'appium:deviceName': 'iPad (7th generation) Simulator',
-            'appium:platformVersion': '13.4',
-            'appium:automationName': 'XCUITest',
-            'wdio-ics:options': {
-                logName: 'iPad13.7th',
-            },
-            ...genericCaps,
-        },
-        {
-            browserName: 'safari',
-            platformName: 'IOS',
-            'appium:deviceName': 'iPad Air 2 Simulator',
-            'appium:platformVersion': '14.4',
-            'appium:automationName': 'XCUITest',
-            'wdio-ics:options': {
-                logName: 'iPadAir2Simulator',
-            },
-            ...genericCaps,
-        },
-        // @TODO: need to fix the homebar on the iPad pro, this needs to be fixed in the
-        // webdriver-image-comparison module
-        // {
-        //     browserName: "safari",
-        //     platformName: "ios",
-        //     "appium:deviceName":
-        //         "iPad Pro (12.9 inch) (3rd generation) Simulator",
-        //     "appium:platformVersion": "13.2",
-        //     "appium:automationName": "XCUITest",
-        //     "wdio-ics:options": {
-        //         logName: "iPadPro12.9.3rdGeneration",
-        //     },
-        //     ...genericCaps,
-        // },
+        // For some reason with iOS 13 the Landscape screenshot is not correct
+        ...['LANDSCAPE', 'PORTRAIT']
+            .map((orientation) =>
+                iOS13Devices.map((device) =>
+                    createCaps({
+                        deviceName: device,
+                        platformVersion: '13.4',
+                        orientation: orientation,
+                        mobileSpecs,
+                        sauceOptions: {
+                            build: buildName,
+                            deviceOrientation: orientation,
+                        },
+                    })
+                )
+            )
+            .flat(1),
+        ...['LANDSCAPE', 'PORTRAIT']
+            .map((orientation) =>
+                iOS14Devices.map((device) =>
+                    createCaps({
+                        deviceName: device,
+                        platformVersion: '14.5',
+                        orientation: orientation,
+                        mobileSpecs,
+                        sauceOptions: {
+                            build: buildName,
+                            deviceOrientation: orientation,
+                        },
+                    })
+                )
+            )
+            .flat(1),
+        ...['LANDSCAPE', 'PORTRAIT']
+            .map((orientation) =>
+                iOS15Devices.map((device) =>
+                    createCaps({
+                        deviceName: device,
+                        platformVersion: '15.4',
+                        orientation: orientation,
+                        mobileSpecs,
+                        sauceOptions: {
+                            build: buildName,
+                            deviceOrientation: orientation,
+                        },
+                    })
+                )
+            )
+            .flat(1),
     ]
+}
+
+function createCaps({
+    deviceName,
+    mobileSpecs,
+    orientation,
+    platformVersion,
+    sauceOptions,
+}) {
+    return {
+        browserName: 'safari',
+        platformName: 'ios',
+        'appium:deviceName': deviceName,
+        'appium:platformVersion': platformVersion,
+        'appium:orientation': orientation,
+        'appium:automationName': 'XCUITest',
+        'wdio-ics:options': {
+            logName: `${deviceName
+                .split(' ')
+                .map(
+                    (word) =>
+                        word.charAt(0).toUpperCase() +
+                        word.slice(1).toLowerCase()
+                )
+                .join('')}${
+                orientation.charAt(0).toUpperCase() +
+                orientation.slice(1).toLowerCase()
+            }${platformVersion.split('.')[0]}`.replace(
+                /(\s+|\(+|\)+|Simulator)/g,
+                ''
+            ),
+        },
+        'sauce:options': sauceOptions,
+        specs: [mobileSpecs],
+    }
 }

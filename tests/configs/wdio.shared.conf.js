@@ -21,7 +21,7 @@ exports.config = {
     framework: 'jasmine',
     reporters: ['spec'],
     jasmineOpts: {
-        defaultTimeoutInterval: 180000,
+        defaultTimeoutInterval: 10 * 60 * 1000,
         // Babel setup
         helpers: [require.resolve('@babel/register')],
     },

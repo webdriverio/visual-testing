@@ -2,93 +2,157 @@ const { join } = require('path')
 
 module.exports = function sauceAndroidEmus({ buildName }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js')
+    const chromeDriverPhones = ['LANDSCAPE', 'PORTRAIT']
+        .map((orientation) =>
+            ['8.1', '9.0', '10.0', '11.0', '12.0'].map((platformVersion) =>
+                createCaps({
+                    deviceName:
+                        platformVersion === '8.1'
+                            ? 'Samsung Galaxy S9 WQHD GoogleAPI Emulator'
+                            : 'Google Pixel 3 XL GoogleAPI Emulator',
+                    platformVersion: platformVersion,
+                    orientation: orientation,
+                    mobileSpecs,
+                    sauceOptions: {
+                        build: buildName,
+                        deviceOrientation: orientation,
+                    },
+                })
+            )
+        )
+        .flat(1)
+    const nativeWebScreenshotPhones = ['LANDSCAPE', 'PORTRAIT']
+        .map((orientation) =>
+            ['8.1', '9.0', '10.0', '11.0', '12.0'].map((platformVersion) =>
+                createCaps({
+                    deviceName:
+                        platformVersion === '8.1'
+                            ? 'Samsung Galaxy S9 WQHD GoogleAPI Emulator'
+                            : 'Google Pixel 3 XL GoogleAPI Emulator',
+                    platformVersion: platformVersion,
+                    orientation: orientation,
+                    mobileSpecs,
+                    nativeWebScreenshot: true,
+                    sauceOptions: {
+                        build: buildName,
+                        deviceOrientation: orientation,
+                    },
+                })
+            )
+        )
+        .flat(1)
+    const chromeDriverTablets = ['LANDSCAPE', 'PORTRAIT']
+        .map((orientation) =>
+            ['8.1', '11.0', '12.0'].map((platformVersion) => {
+                let tabletType = ''
+
+                switch (platformVersion) {
+                case '8.1':
+                    tabletType = 'S3'
+                    break
+                    // 9 and 10 are not available
+                case '11.0':
+                    tabletType = 'S6'
+                    break
+                case '12.0':
+                    tabletType = 'S7 Plus'
+                    break
+                default:
+                    tabletType = ''
+                }
+
+                return createCaps({
+                    deviceName: `Galaxy Tab ${tabletType} GoogleAPI Emulator`,
+                    platformVersion: platformVersion,
+                    orientation: orientation,
+                    mobileSpecs,
+                    sauceOptions: {
+                        build: buildName,
+                        deviceOrientation: orientation,
+                    },
+                })
+            })
+        )
+        .flat(1)
+    // // There is no Android 10 for Tablets
+    // const nativeWebScreenshotTablets = ['LANDSCAPE', 'PORTRAIT']
+    //     .map((orientation) =>
+    //         ['8.1', '11.0', '12.0'].map((platformVersion) => {
+    //             let tabletType = ''
+
+    //             switch (platformVersion) {
+    //                 case '8.1':
+    //                     tabletType = 'S3'
+    //                     break
+    //                 // 9 and 10 are not available
+    //                 case '11.0':
+    //                     tabletType = 'S6'
+    //                     break
+    //                 case '12.0':
+    //                     tabletType = 'S7 Plus'
+    //                     break
+    //                 default:
+    //                     tabletType = ''
+    //             }
+
+    //             return createCaps({
+    //                 deviceName: `Galaxy Tab ${tabletType} GoogleAPI Emulator`,
+    //                 platformVersion: platformVersion,
+    //                 orientation: orientation,
+    //                 mobileSpecs,
+    //                 nativeWebScreenshot: true,
+    //                 sauceOptions: {
+    //                     build: buildName,
+    //                     deviceOrientation: orientation,
+    //                 },
+    //             })
+    //         })
+    //     )
+    //     .flat(1)
 
     return [
         /**
-         * Android with nativeWebScreenshot
+         * Android phones
          */
-        {
-            'appium:deviceName': 'Google Pixel GoogleAPI Emulator',
-            browserName: 'chrome',
-            platformName: 'Android',
-            'appium:platformVersion': '8.1',
-            'appium:automationName': 'UIAutomator2',
-            'appium:nativeWebScreenshot': true,
-            'wdio-ics:options': {
-                logName: 'GooglePixelGoogleAPIEmulator8.1NativeWebScreenshot',
-            },
-            'sauce:options': {
-                appiumVersion: '1.18.1',
-                build: buildName,
-            },
-            specs: [mobileSpecs],
-        },
-        ...['9.0', '10.0', '11.0', '12.0'].map((platformVersion) => ({
-            browserName: 'chrome',
-            platformName: 'Android',
-            'appium:deviceName': 'Google Pixel 3 XL GoogleAPI Emulator',
-            'appium:platformVersion': platformVersion,
-            'appium:automationName': 'UIAutomator2',
-            'appium:nativeWebScreenshot': true,
-            'wdio-ics:options': {
-                logName: `EmulatorGooglePixel3XLGoogleAPI${platformVersion}NativeWebScreenshot`,
-            },
-            'sauce:options': {
-                build: buildName,
-            },
-            specs: [mobileSpecs],
-        })),
+        ...chromeDriverPhones,
+        ...nativeWebScreenshotPhones,
 
         /**
-         * Android with chrome driver screenshots
+         * Android Tablets
          */
-        {
-            browserName: 'chrome',
-            platformName: 'Android',
-            'appium:deviceName': 'Samsung Galaxy S9 WQHD GoogleAPI Emulator',
-            'appium:platformVersion': '7.1',
-            'appium:automationName': 'UIAutomator2',
-            'wdio-ics:options': {
-                logName: 'EmulatorSamsungGalaxyS9WQHDGoogleAPI7.1ChromeDriver',
-            },
-            'sauce:options': {
-                appiumVersion: '1.18.1',
-                build: buildName,
-            },
-            specs: [mobileSpecs],
-        },
-        {
-            browserName: 'chrome',
-            platformName: 'Android',
-            'appium:deviceName': 'Google Pixel GoogleAPI Emulator',
-            'appium:platformVersion': '8.1',
-            'appium:automationName': 'UIAutomator2',
-            'wdio-ics:options': {
-                logName: 'GooglePixelGoogleAPIEmulator8.1ChromeDriver',
-            },
-            'sauce:options': {
-                appiumVersion: '1.18.1',
-                build: buildName,
-            },
-            specs: [mobileSpecs],
-        },
-        ...['9.0', '10.0', '11.0', '12.0'].map((platformVersion) => ({
-            browserName: 'chrome',
-            platformName: 'Android',
-            'appium:deviceName': 'Google Pixel 3 XL GoogleAPI Emulator',
-            'appium:platformVersion': platformVersion,
-            'appium:automationName': 'UIAutomator2',
-            'wdio-ics:options': {
-                logName: `EmulatorGooglePixel3XLGoogleAPI${platformVersion}ChromeDriver`,
-            },
-            'sauce:options': {
-                build: buildName,
-            },
-            specs: [mobileSpecs],
-        })),
-
-        /**
-         * Not supporting Android Tablets
-         */
+        ...chromeDriverTablets,
+        // ...nativeWebScreenshotTablets,
     ]
+}
+
+function createCaps({
+    deviceName,
+    mobileSpecs,
+    nativeWebScreenshot = false,
+    orientation,
+    platformVersion,
+    sauceOptions,
+}) {
+    const driverScreenshotType = nativeWebScreenshot
+        ? 'NativeWebScreenshot'
+        : 'ChromeDriver'
+    return {
+        browserName: 'chrome',
+        platformName: 'Android',
+        'appium:deviceName': deviceName,
+        'appium:platformVersion': platformVersion,
+        'appium:orientation': orientation,
+        ...(nativeWebScreenshot ? { 'appium:nativeWebScreenshot': true } : {}),
+        'appium:automationName': 'UIAutomator2',
+        'wdio-ics:options': {
+            logName: `Emulator${deviceName.replace(
+                /(\s+|\(+|\)+|Emulator)/g,
+                ''
+            )}${orientation.charAt(0).toUpperCase()}${orientation
+                .slice(1)
+                .toLowerCase()}${driverScreenshotType}${platformVersion}`,
+        },
+        'sauce:options': sauceOptions,
+        specs: [mobileSpecs],
+    }
 }
