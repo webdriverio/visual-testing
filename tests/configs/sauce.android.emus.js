@@ -2,7 +2,7 @@ const { join } = require('path')
 
 module.exports = function sauceAndroidEmus({ buildName }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js')
-    const chromeDriverDevices = ['LANDSCAPE', 'PORTRAIT']
+    const chromeDriverPhones = ['LANDSCAPE', 'PORTRAIT']
         .map((orientation) =>
             ['8.1', '9.0', '10.0', '11.0', '12.0'].map((platformVersion) =>
                 createCaps({
@@ -21,44 +21,107 @@ module.exports = function sauceAndroidEmus({ buildName }) {
             )
         )
         .flat(1)
+    const nativeWebScreenshotPhones = ['LANDSCAPE', 'PORTRAIT']
+        .map((orientation) =>
+            ['8.1', '9.0', '10.0', '11.0', '12.0'].map((platformVersion) =>
+                createCaps({
+                    deviceName:
+                        platformVersion === '8.1'
+                            ? 'Samsung Galaxy S9 WQHD GoogleAPI Emulator'
+                            : 'Google Pixel 3 XL GoogleAPI Emulator',
+                    platformVersion: platformVersion,
+                    orientation: orientation,
+                    mobileSpecs,
+                    nativeWebScreenshot: true,
+                    sauceOptions: {
+                        build: buildName,
+                        deviceOrientation: orientation,
+                    },
+                })
+            )
+        )
+        .flat(1)
+    const chromeDriverTablets = ['LANDSCAPE', 'PORTRAIT']
+        .map((orientation) =>
+            ['8.1', '11.0', '12.0'].map((platformVersion) => {
+                let tabletType = ''
+
+                switch (platformVersion) {
+                case '8.1':
+                    tabletType = 'S3'
+                    break
+                    // 9 and 10 are not available
+                case '11.0':
+                    tabletType = 'S6'
+                    break
+                case '12.0':
+                    tabletType = 'S7 Plus'
+                    break
+                default:
+                    tabletType = ''
+                }
+
+                return createCaps({
+                    deviceName: `Galaxy Tab ${tabletType} GoogleAPI Emulator`,
+                    platformVersion: platformVersion,
+                    orientation: orientation,
+                    mobileSpecs,
+                    sauceOptions: {
+                        build: buildName,
+                        deviceOrientation: orientation,
+                    },
+                })
+            })
+        )
+        .flat(1)
+    // // There is no Android 10 for Tablets
+    // const nativeWebScreenshotTablets = ['LANDSCAPE', 'PORTRAIT']
+    //     .map((orientation) =>
+    //         ['8.1', '11.0', '12.0'].map((platformVersion) => {
+    //             let tabletType = ''
+
+    //             switch (platformVersion) {
+    //                 case '8.1':
+    //                     tabletType = 'S3'
+    //                     break
+    //                 // 9 and 10 are not available
+    //                 case '11.0':
+    //                     tabletType = 'S6'
+    //                     break
+    //                 case '12.0':
+    //                     tabletType = 'S7 Plus'
+    //                     break
+    //                 default:
+    //                     tabletType = ''
+    //             }
+
+    //             return createCaps({
+    //                 deviceName: `Galaxy Tab ${tabletType} GoogleAPI Emulator`,
+    //                 platformVersion: platformVersion,
+    //                 orientation: orientation,
+    //                 mobileSpecs,
+    //                 nativeWebScreenshot: true,
+    //                 sauceOptions: {
+    //                     build: buildName,
+    //                     deviceOrientation: orientation,
+    //                 },
+    //             })
+    //         })
+    //     )
+    //     .flat(1)
 
     return [
         /**
-         * Android phones with nativeWebScreenshot
+         * Android phones
          */
-        // ...['8.1', '9.0', '10.0', '11.0', '12.0'].map((platformVersion) => ({
-        //     browserName: 'chrome',
-        //     platformName: 'Android',
-        //     'appium:deviceName':
-        //         // Android 8.1 needs to be aon a different phone
-        //         platformVersion === '8.1'
-        //             ? 'Samsung Galaxy S9 WQHD GoogleAPI Emulator'
-        //             : 'Google Pixel 3 XL GoogleAPI Emulator',
-        //     'appium:platformVersion': platformVersion,
-        //     'appium:automationName': 'UIAutomator2',
-        //     'appium:orientation': 'PORTRAIT',
-        //     'appium:nativeWebScreenshot': true,
-        //     'wdio-ics:options': {
-        //         logName:
-        //             // Android 8.1 needs to be aon a different phone
-        //             platformVersion === '8.1'
-        //                 ? `EmulatorSamsungGalaxyS9WQHD${platformVersion}NativeWebScreenshot`
-        //                 : `EmulatorGooglePixel3XLGoogleAPI${platformVersion}NativeWebScreenshot`,
-        //     },
-        //     'sauce:options': {
-        //         build: buildName,
-        //     },
-        //     specs: [mobileSpecs],
-        // })),
+        ...chromeDriverPhones,
+        ...nativeWebScreenshotPhones,
 
         /**
-         * Android phones with ChromeDriver screenshots
+         * Android Tablets
          */
-        ...chromeDriverDevices,
-
-        /**
-         * Not supporting Android Tablets
-         */
+        ...chromeDriverTablets,
+        // ...nativeWebScreenshotTablets,
     ]
 }
 
