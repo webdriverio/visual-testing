@@ -57,7 +57,7 @@ config.services = [
             autoSaveBaseline: true,
             blockOutStatusBar: true,
             blockOutToolBar: true,
-            n: true,
+            blockOutSideBar: true,
             logLevel: 'debug',
         },
     ],
