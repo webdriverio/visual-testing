@@ -48,7 +48,15 @@ config.services = [
     ],
 ]
 
-function iOSCaps(deviceName, orientation, osVersion) {
+function iOSCaps(
+    deviceName,
+    orientation,
+    osVersion,
+    // The commands that need to be executed, none means all,
+    // otherwise an array of strings with the commands that
+    // need to be executed
+    wdioIcsCommands = []
+) {
     return {
         browserName: 'Safari',
         platformName: 'iOS',
@@ -75,10 +83,7 @@ function iOSCaps(deviceName, orientation, osVersion) {
                 /(\s+|\(+|\)+|Simulator)/g,
                 ''
             ),
-            // The commands that need to be executed, none means all,
-            // otherwise an array of strings with the commands that
-            // need to be executed
-            wdioIcsCommands: [],
+            commands: wdioIcsCommands,
         },
     }
 }

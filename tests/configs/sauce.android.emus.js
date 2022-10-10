@@ -126,6 +126,10 @@ module.exports = function sauceAndroidEmus({ buildName }) {
 }
 
 function createCaps({
+    // The commands that need to be executed, none means all,
+    // otherwise an array of strings with the commands that
+    // need to be executed
+    wdioIcsCommands = [],
     deviceName,
     mobileSpecs,
     nativeWebScreenshot = false,
@@ -151,6 +155,7 @@ function createCaps({
             )}${orientation.charAt(0).toUpperCase()}${orientation
                 .slice(1)
                 .toLowerCase()}${driverScreenshotType}${platformVersion}`,
+            commands: wdioIcsCommands,
         },
         'sauce:options': sauceOptions,
         specs: [mobileSpecs],

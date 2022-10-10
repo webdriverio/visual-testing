@@ -50,6 +50,7 @@ config.services = [
     [
         WdioImageComparisonService.default,
         {
+            addIOSBezelCorners: true,
             baselineFolder: join(process.cwd(), './tests/sauceLabsBaseline/'),
             formatImageName: '{tag}-{logName}-{width}x{height}',
             screenshotPath: join(process.cwd(), '.tmp/'),
@@ -69,7 +70,7 @@ config.services = [
 // - store it in a global scope
 // - check if the test has been executed for the second time (the retry) and if so, it will check if the status is
 //   passed (result === 0), then it will update the the previous failed status to passed and change the name
-config.after = async (result, capabilities, specs) => {
+config.after = async (result, _capabilities, specs) => {
     // Get the spec name path
     const specFileNamePath = specs[0]
     const RETRIED_SPECS_KEY = 'retriedSpecs'
