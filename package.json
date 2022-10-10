@@ -11,6 +11,7 @@
         "test": "jest",
         "test.local.init": "wdio ./tests/configs/wdio.local.init.conf.js",
         "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.js",
+        "test.local.appium": "wdio tests/configs/wdio.local.appium.conf.js",
         "test.local.desktop.multi": "wdio tests/configs/wdio.local.desktop.multi.conf.js",
         "test.local.dev.tools.init": "wdio ./tests/configs/wdio.local.dev.tools.init.conf.js",
         "test.local.dev.tools.desktop": "wdio tests/configs/wdio.local.dev.tools.desktop.conf.js",
