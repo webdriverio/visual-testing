@@ -24,7 +24,9 @@ describe('wdio-image-comparison-service mobile', () => {
         wdioIcsCommands.includes('checkScreen')
     ) {
         it(`should compare a screen successful for '${deviceName}' in ${orientation}-mode`, async () => {
-            await expect(await browser.checkScreen('screenshot')).toEqual(0)
+            await expect(await browser.checkScreen('screenshot')).toEqual(
+                '0.00'
+            )
         })
     }
 
@@ -38,7 +40,7 @@ describe('wdio-image-comparison-service mobile', () => {
                     await $('.uk-button:nth-child(1)'),
                     'firstButtonElement'
                 )
-            ).toEqual(0)
+            ).toEqual('0.00')
         })
     }
 
@@ -51,7 +53,7 @@ describe('wdio-image-comparison-service mobile', () => {
                 await browser.checkFullPageScreen('fullPage', {
                     fullPageScrollTimeout: '1500',
                 })
-            ).toEqual(0)
+            ).toEqual('0.00')
         })
     }
 })

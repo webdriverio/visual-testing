@@ -1,6 +1,6 @@
 # wdio-image-comparison-service
 
-[![Gitter chat](https://badges.gitter.im/wswebcreation/wdio-image-comparison-service.png)](https://gitter.im/wswebcreation/wdio-image-comparison-service "Gitter chat")
+[![Gitter chat](https://badges.gitter.im/wswebcreation/wdio-image-comparison-service.png)](https://gitter.im/wswebcreation/wdio-image-comparison-service 'Gitter chat')
 ![wdio-image-comparison workflow](https://github.com/wswebcreation/wdio-image-comparison-service/actions/workflows/wdio-image-comparison-service.yml/badge.svg)
 [![codecov](https://codecov.io/gh/wswebcreation/wdio-image-comparison-service/branch/master/graph/badge.svg?token=6zGW0ccdqR)](https://codecov.io/gh/wswebcreation/wdio-image-comparison-service)
 [![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
@@ -30,8 +30,8 @@ You can:
 -   blockout custom regions and even automatically exclude a status and or tool bars (mobile only) during a comparison
 -   increase the element dimensions screenshots
 -   use different comparison methods
--   **NEW:** We now support Puppeteer with WebdriverIO
--   **NEW:** You can now verify how your website will support tabbing with your keyboard, see also [here](./README.md#tabbing-through-a-website)
+-   We now support Puppeteer with WebdriverIO
+-   You can now verify how your website will support tabbing with your keyboard, see also [here](./README.md#tabbing-through-a-website)
 -   and much more, see the [options here](./docs/OPTIONS.md)
 
 The module is now based on the power of the new [`webdriver-image-comparison`](https://github.com/wswebcreation/webdriver-image-comparison) module. This is a lightweight module to retrieve the needed data and screenshots for all browsers / devices.
@@ -66,7 +66,7 @@ Instructions on how to install `WebdriverIO` can be found [here.](http://webdriv
 `wdio-image-comparison-service` is a service so it can be used as a normal service. You can set it up in your `wdio.conf.js` file with the following
 
 ```js
-const { join } = require("path");
+const { join } = require('path')
 // wdio.conf.js
 exports.config = {
     // ...
@@ -75,16 +75,16 @@ exports.config = {
     // =====
     services: [
         [
-            "image-comparison",
+            'image-comparison',
             // The options
             {
                 // Some options, see the docs for more
                 baselineFolder: join(
                     process.cwd(),
-                    "./tests/sauceLabsBaseline/"
+                    './tests/sauceLabsBaseline/'
                 ),
-                formatImageName: "{tag}-{logName}-{width}x{height}",
-                screenshotPath: join(process.cwd(), ".tmp/"),
+                formatImageName: '{tag}-{logName}-{width}x{height}',
+                screenshotPath: join(process.cwd(), '.tmp/'),
                 savePerInstance: true,
                 autoSaveBaseline: true,
                 blockOutStatusBar: true,
@@ -99,7 +99,7 @@ exports.config = {
                         // ...
                     },
                     line: {
-                        color: "#ff221a", // hex-code or for example words like `red|black|green`
+                        color: '#ff221a', // hex-code or for example words like `red|black|green`
                         width: 3,
                     },
                 },
@@ -108,7 +108,7 @@ exports.config = {
         ],
     ],
     // ...
-};
+}
 ```
 
 More plugin options can be found [here](./docs/OPTIONS.md#plugin-options).
@@ -119,71 +119,71 @@ _wdio-image-comparison-service_ is framework agnostic, meaning that you can use 
 You can use it like this:
 
 ```js
-describe("Example", () => {
+describe('Example', () => {
     beforeEach(async () => {
-        await browser.url("https://webdriver.io");
-    });
+        await browser.url('https://webdriver.io')
+    })
 
-    it("should save some screenshots", async () => {
+    it('should save some screenshots', async () => {
         // Save a screen
-        await browser.saveScreen("examplePaged", {
+        await browser.saveScreen('examplePaged', {
             /* some options */
-        });
+        })
 
         // Save an element
         await browser.saveElement(
-            await $("#element-id"),
-            "firstButtonElement",
+            await $('#element-id'),
+            'firstButtonElement',
             {
                 /* some options */
             }
-        );
+        )
 
         // Save a full page screenshot
-        await browser.saveFullPageScreen("fullPage", {
+        await browser.saveFullPageScreen('fullPage', {
             /* some options */
-        });
+        })
 
         // Save a full page screenshot with all tab executions
-        await browser.saveTabbablePage("save-tabbable", {
+        await browser.saveTabbablePage('save-tabbable', {
             /* some options, use the same options as for saveFullPageScreen */
-        });
-    });
+        })
+    })
 
-    it("should compare successful with a baseline", async () => {
+    it('should compare successful with a baseline', async () => {
         // Check a screen
         await expect(
-            await browser.checkScreen("examplePaged", {
+            await browser.checkScreen('examplePaged', {
                 /* some options */
             })
-        ).toEqual(0);
+        ).toEqual('0.00')
 
         // Check an element
         await expect(
             await browser.checkElement(
-                await $("#element-id"),
-                "firstButtonElement",
+                await $('#element-id'),
+                'firstButtonElement',
                 {
                     /* some options */
                 }
             )
-        ).toEqual(0);
+        ).toEqual('0.00')
 
         // Check a full page screenshot
         await expect(
-            await browser.checkFullPageScreen("fullPage", {
+            await browser.checkFullPageScreen('fullPage', {
                 /* some options */
             })
-        ).toEqual(0);
+        ).toEqual('0.00')
 
         // Check a full page screenshot with all tab executions
         await expect(
-            await browser.checkTabbablePage("check-tabbable", {
+            await browser.checkTabbablePage('check-tabbable', {
                 /* some options, use the same options as for checkFullPageScreen */
             })
-        ).toEqual(0);
-    });
-});
+        ).toEqual('0.00')
+    })
+})
 ```
 
 **If you run for the first time without having a baseline the `check`-methods will reject the promise with the following warning:**
@@ -212,30 +212,30 @@ exports.config = {
     capabilities: {
         chromeBrowserOne: {
             capabilities: {
-                browserName: "chrome",
-                "goog:chromeOptions": {
-                    args: ["disable-infobars", "--headless"],
+                browserName: 'chrome',
+                'goog:chromeOptions': {
+                    args: ['disable-infobars', '--headless'],
                 },
                 // THIS!!!
-                "wdio-ics:options": {
-                    logName: "chrome-latest-one",
+                'wdio-ics:options': {
+                    logName: 'chrome-latest-one',
                 },
             },
         },
         chromeBrowserTwo: {
             capabilities: {
-                browserName: "chrome",
-                "goog:chromeOptions": {
-                    args: ["disable-infobars", "--headless"],
+                browserName: 'chrome',
+                'goog:chromeOptions': {
+                    args: ['disable-infobars', '--headless'],
                 },
                 // THIS!!!
-                "wdio-ics:options": {
-                    logName: "chrome-latest-two",
+                'wdio-ics:options': {
+                    logName: 'chrome-latest-two',
                 },
             },
         },
     },
-};
+}
 ```
 
 ### Running Programmatically
@@ -243,43 +243,43 @@ exports.config = {
 Here is a minimal example usage of getting `wdio-image-comparison-service` to work via `remote` options
 
 ```js
-const { remote } = require("webdriverio");
+const { remote } = require('webdriverio')
 
 const WdioImageComparisonService =
-    require("wdio-image-comparison-service").default;
+    require('wdio-image-comparison-service').default
 
-let wdioImageComparisonService = new WdioImageComparisonService({});
+let wdioImageComparisonService = new WdioImageComparisonService({})
 
 async function main() {
     const browser = await remote({
-        logLevel: "silent",
+        logLevel: 'silent',
         capabilities: {
-            browserName: "chrome",
+            browserName: 'chrome',
         },
-    });
+    })
 
-    global.browser = browser;
+    global.browser = browser
 
-    wdioImageComparisonService.defaultOptions.autoSaveBaseline = true;
-    browser.defaultOptions = wdioImageComparisonService.defaultOptions;
-    browser.folders = wdioImageComparisonService.folders;
+    wdioImageComparisonService.defaultOptions.autoSaveBaseline = true
+    browser.defaultOptions = wdioImageComparisonService.defaultOptions
+    browser.folders = wdioImageComparisonService.folders
 
-    wdioImageComparisonService.before(browser.capabilities);
+    wdioImageComparisonService.before(browser.capabilities)
 
-    await browser.url("https://webdriver.io/");
+    await browser.url('https://webdriver.io/')
 
     // or use this for ONLY saving a screenshot
-    await browser.saveFullPageScreen("examplePaged", {});
+    await browser.saveFullPageScreen('examplePaged', {})
 
     // or use this for validating. Both methods don't need to be combined, see the FAQ
-    await browser.checkFullPageScreen("examplePaged", {});
+    await browser.checkFullPageScreen('examplePaged', {})
 
-    await browser.deleteSession();
+    await browser.deleteSession()
 }
 
 main().catch(async (e) => {
-    console.error(e);
-});
+    console.error(e)
+})
 ```
 
 ### Test result outputs
@@ -291,10 +291,10 @@ const saveResult = {
     // The device pixel ratio of the instance that has run
     devicePixelRatio: 1,
     // The formatted filename, this depends on the options `formatImageName`
-    fileName: "examplePage-chrome-latest-1366x768.png",
+    fileName: 'examplePage-chrome-latest-1366x768.png',
     // The path where the actual screenshot file can be found
-    path: "/Users/wswebcreation/Git/wdio-image-comparison-service/.tmp/actual/desktop_chrome",
-};
+    path: '/Users/wswebcreation/Git/wdio-image-comparison-service/.tmp/actual/desktop_chrome',
+}
 ```
 
 See the [Save output](./docs/OUTPUT.md#save-output) section in the [output](./docs/OUTPUT.md) docs for the images.
@@ -304,20 +304,20 @@ By default the `check(Screen/Element/FullPageScreen)` methods will only provide 
 ```js
 const checkResult = {
     // The formatted filename, this depends on the options `formatImageName`
-    fileName: "examplePage-chrome-headless-latest-1366x768.png",
+    fileName: 'examplePage-chrome-headless-latest-1366x768.png',
     folders: {
         // The actual folder and the file name
-        actual: "/Users/wswebcreation/Git/wdio-image-comparison-service/.tmp/actual/desktop_chrome/examplePage-chrome-headless-latest-1366x768.png",
+        actual: '/Users/wswebcreation/Git/wdio-image-comparison-service/.tmp/actual/desktop_chrome/examplePage-chrome-headless-latest-1366x768.png',
         // The baseline folder and the file name
         baseline:
-            "/Users/wswebcreation/Git/wdio-image-comparison-service/localBaseline/desktop_chrome/examplePage-chrome-headless-latest-1366x768.png",
+            '/Users/wswebcreation/Git/wdio-image-comparison-service/localBaseline/desktop_chrome/examplePage-chrome-headless-latest-1366x768.png',
         // This following folder is optional and only if there is a mismatch
         // The folder that holds the diffs and the file name
-        diff: "/Users/wswebcreation/Git/wdio-image-comparison-service/.tmp/diff/desktop_chrome/examplePage-chrome-headless-latest-1366x768.png",
+        diff: '/Users/wswebcreation/Git/wdio-image-comparison-service/.tmp/diff/desktop_chrome/examplePage-chrome-headless-latest-1366x768.png',
     },
     // The mismatch percentage
     misMatchPercentage: 2.34,
-};
+}
 ```
 
 See the [Check output on failure](./docs/OUTPUT.md#check-output-on-failure) section in the [output](./docs/OUTPUT.md) docs for the images.
