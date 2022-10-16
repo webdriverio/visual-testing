@@ -16,19 +16,6 @@ exports[`utils getFolders should be able to return the correct folders when no m
 }
 `;
 
-exports[`utils getInstanceData 0 1`] = `
-{
-  "browserName": "not-known",
-  "browserVersion": "not-known",
-  "deviceName": "",
-  "logName": "",
-  "name": "",
-  "nativeWebScreenshot": false,
-  "platformName": "not-known",
-  "platformVersion": "not-known",
-}
-`;
-
 exports[`utils getInstanceData should return correct instance data when JSONWP Mobile capabilities are provided 1`] = `
 {
   "browserName": "chrome",
@@ -91,6 +78,19 @@ exports[`utils getInstanceData should return instance data when the appium log n
   "nativeWebScreenshot": false,
   "platformName": "osx",
   "platformVersion": "12",
+}
+`;
+
+exports[`utils getInstanceData should return instance data when the minimum of capabilities is provided 1`] = `
+{
+  "browserName": "not-known",
+  "browserVersion": "not-known",
+  "deviceName": "",
+  "logName": "",
+  "name": "",
+  "nativeWebScreenshot": false,
+  "platformName": "not-known",
+  "platformVersion": "not-known",
 }
 `;
 
