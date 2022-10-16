@@ -156,7 +156,7 @@ describe('Example', () => {
             await browser.checkScreen('examplePaged', {
                 /* some options */
             })
-        ).toEqual('0.00')
+        ).toEqual(0)
 
         // Check an element
         await expect(
@@ -167,21 +167,21 @@ describe('Example', () => {
                     /* some options */
                 }
             )
-        ).toEqual('0.00')
+        ).toEqual(0)
 
         // Check a full page screenshot
         await expect(
             await browser.checkFullPageScreen('fullPage', {
                 /* some options */
             })
-        ).toEqual('0.00')
+        ).toEqual(0)
 
         // Check a full page screenshot with all tab executions
         await expect(
             await browser.checkTabbablePage('check-tabbable', {
                 /* some options, use the same options as for checkFullPageScreen */
             })
-        ).toEqual('0.00')
+        ).toEqual(0)
     })
 })
 ```

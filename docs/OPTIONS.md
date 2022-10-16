@@ -102,7 +102,7 @@ describe('Example', () => {
                 ignoreAlpha: true,
                 blockOutStatusBar: true,
             })
-        ).toEqual('0.00')
+        ).toEqual(0)
 
         // Check an element
         expect(
@@ -113,14 +113,14 @@ describe('Example', () => {
                     ignoreAntialiasing: true,
                 }
             )
-        ).toEqual('0.00')
+        ).toEqual(0)
 
         // Check a full page screens
         expect(
             browser.checkFullPageScreen('fullPage', {
                 ignoreColors: true,
             })
-        ).toEqual('0.00')
+        ).toEqual(0)
     })
 })
 ```
@@ -142,9 +142,7 @@ const methodOptions = {
     diffFolder: path.join(process.cwd(), './testDiff'),
 }
 
-expect(browser.checkFullPageScreen('checkFullPage', methodOptions)).toEqual(
-    '0.00'
-)
+expect(browser.checkFullPageScreen('checkFullPage', methodOptions)).toEqual(0)
 
 const methodOptions = {
     actualFolder: path.join(process.cwd(), './testActual'),

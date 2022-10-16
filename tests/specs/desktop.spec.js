@@ -15,7 +15,7 @@ describe('wdio-image-comparison-service desktop', () => {
                 await $('.uk-button:nth-child(1)'),
                 'firstButtonElement'
             )
-        ).toEqual('0.00')
+        ).toEqual(0)
     })
 
     it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async () => {
@@ -23,12 +23,10 @@ describe('wdio-image-comparison-service desktop', () => {
             await browser.checkFullPageScreen('fullPage', {
                 fullPageScrollTimeout: '1500',
             })
-        ).toEqual('0.00')
+        ).toEqual(0)
     })
 
     it(`should compare a tabbable screenshot successful with a baseline for '${browserName}'`, async () => {
-        await expect(await browser.checkTabbablePage('tabbable')).toEqual(
-            '0.00'
-        )
+        await expect(await browser.checkTabbablePage('tabbable')).toEqual(0)
     })
 })
