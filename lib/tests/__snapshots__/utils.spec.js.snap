@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`utils getFolders should be able to return the correct folders when method options are provided 1`] = `
-Object {
+{
   "actualFolder": "methodActual",
   "baselineFolder": "methodBase",
   "diffFolder": "methodDiff",
@@ -9,7 +9,7 @@ Object {
 `;
 
 exports[`utils getFolders should be able to return the correct folders when no method options are provided 1`] = `
-Object {
+{
   "actualFolder": "folderActual",
   "baselineFolder": "folderBase",
   "diffFolder": "folderDiff",
@@ -17,7 +17,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should return correct instance data when JSONWP Mobile capabilities are provided 1`] = `
-Object {
+{
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "devicename",
@@ -30,7 +30,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should return correct instance data when W3C Mobile capabilities are provided 1`] = `
-Object {
+{
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "appium:devicename",
@@ -43,7 +43,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should return instance data when all capabilities are provided 1`] = `
-Object {
+{
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "devicename",
@@ -56,7 +56,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should return instance data when log name is provided 1`] = `
-Object {
+{
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "",
@@ -69,7 +69,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should return instance data when the appium log name is provided 1`] = `
-Object {
+{
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "",
@@ -82,7 +82,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should return instance data when the minimum of capabilities is provided 1`] = `
-Object {
+{
   "browserName": "not-known",
   "browserVersion": "not-known",
   "deviceName": "",
@@ -95,7 +95,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should return instance data when the sauce log name is provided 1`] = `
-Object {
+{
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "",
@@ -108,7 +108,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should return instance data when wdio-ics option log name is provided 1`] = `
-Object {
+{
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "",
@@ -121,7 +121,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should return platformName based on the currentCapabilities.platform 1`] = `
-Object {
+{
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "",
@@ -134,7 +134,7 @@ Object {
 `;
 
 exports[`utils getInstanceData should use the currentBrowser values when those are passed 1`] = `
-Object {
+{
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "devicename",

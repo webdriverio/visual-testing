@@ -126,16 +126,6 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
         },
         {
             browserName: 'MicrosoftEdge',
-            browserVersion: '18.17763',
-            platformName: 'Windows 10',
-            specs: [deskSpecs],
-            'sauce:options': {
-                logName: 'Microsoft Edge 18',
-                ...defaultBrowserSauceOptions,
-            },
-        },
-        {
-            browserName: 'MicrosoftEdge',
             browserVersion: 'latest',
             platformName: 'Windows 10',
             specs: [deskSpecs],
@@ -205,6 +195,16 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             specs: [deskSpecs],
             'sauce:options': {
                 logName: 'macOS12-15',
+                ...defaultBrowserSauceOptions,
+            },
+        },
+        {
+            browserName: 'safari',
+            browserVersion: '16',
+            platformName: 'macOS 12',
+            specs: [deskSpecs],
+            'sauce:options': {
+                logName: 'macOS12-16',
                 ...defaultBrowserSauceOptions,
             },
         },
