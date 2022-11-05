@@ -1,6 +1,6 @@
 {
     "name": "wdio-image-comparison-service",
-    "version": "5.0.1",
+    "version": "5.0.2",
     "description": "Image comparison / visual regression testing for WebdriverIO",
     "main": "build/index.js",
     "types": "./types/index.d.ts",
