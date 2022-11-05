@@ -61,7 +61,7 @@ type Result = MultiResult | (ImageCompareResult | number)
 
 declare global {
     namespace WebdriverIO {
-        interface BrowserAsync {
+        interface Browser {
             /**
              * Saves an image of an element
              */
