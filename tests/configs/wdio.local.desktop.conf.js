@@ -45,7 +45,7 @@ config.services = [
             clearRuntimeFolder: true,
         },
     ],
-    'selenium-standalone',
+    'chromedriver',
 ]
 
 exports.config = config
