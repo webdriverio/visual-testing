@@ -21,24 +21,21 @@ config.region = 'eu'
 // Capabilities
 // ============
 config.capabilities = [
-    /**
-     * iOS
-     */
-    ...sauceIosSim({
-        buildName: buildIdentifier,
-    }),
-    /**
-     * Android
-     */
-    ...sauceAndroidEmus({
-        buildName: buildIdentifier,
-    }),
-    /**
-     * Desktop browser
-     */
-    ...sauceDesktopBrowsers({
-        buildName: buildIdentifier,
-    }),
+    ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'sims'
+        ? sauceIosSim({
+            buildName: buildIdentifier,
+        })
+        : []),
+    ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'emu'
+        ? sauceAndroidEmus({
+            buildName: buildIdentifier,
+        })
+        : []),
+    ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'desktop'
+        ? sauceDesktopBrowsers({
+            buildName: buildIdentifier,
+        })
+        : []),
 ]
 
 // ===================

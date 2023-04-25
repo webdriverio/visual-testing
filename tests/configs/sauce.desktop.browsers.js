@@ -158,6 +158,7 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
         /**
          * Mac
          */
+        // @TODO: might want to drop Safari 12 support
         {
             browserName: 'safari',
             browserVersion: '12',
