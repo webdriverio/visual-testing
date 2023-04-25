@@ -1,54 +1,53 @@
 name: wdio-image-comparison-service
 
 on:
-  pull_request:
-    branches: [ main ]
-  schedule:
-    - cron:  '0 0 * * 0'
+    pull_request:
+        branches: [main]
+    schedule:
+        - cron: '0 0 * * 0'
 
 jobs:
-  build:
+    build:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-18.04
+        strategy:
+            matrix:
+                node-version: [18.x]
 
-    strategy:
-      matrix:
-        node-version: [16.x]
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v2
 
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+            - name: Setup Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
 
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+            # Testing steps
+            - name: Install dependencies
+              working-directory: ./
+              run: npm ci
 
-    # Testing steps
-    - name: Install dependencies
-      working-directory: ./
-      run: npm ci
+            - name: Run Unit Tests and generate coverage report
+              working-directory: ./
+              run: npm run test.unit.coverage
 
-    - name: Run Unit Tests and generate coverage report
-      working-directory: ./
-      run: npm run test.unit.coverage
+            - name: Lint the code
+              working-directory: ./
+              run: npm run test.unit.coverage
 
-    - name: Lint the code
-      working-directory: ./
-      run: npm run test.unit.coverage
+            - name: Lint the code
+              working-directory: ./
+              run: npm run lint
 
-    - name: Lint the code
-      working-directory: ./
-      run: npm run lint
+            - name: Compile the code
+              working-directory: ./
+              run: npm run compile
 
-    - name: Compile the code
-      working-directory: ./
-      run: npm run compile
-
-    - name: Build and E2E test the site
-      working-directory: ./
-      env:
-        SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
-        SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
-        BUILD_PREFIX: true
-      run: npm run test.saucelabs
+            - name: Build and E2E test the site
+              working-directory: ./
+              env:
+                  SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
+                  SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+                  BUILD_PREFIX: true
+              run: npm run test.saucelabs
