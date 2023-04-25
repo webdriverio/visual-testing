@@ -22,18 +22,14 @@ config.region = 'eu'
 // ============
 config.capabilities = [
     ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'sims'
-        ? {
-            ...sauceIosSim({
-                buildName: buildIdentifier,
-            }),
-        }
+        ? sauceIosSim({
+            buildName: buildIdentifier,
+        })
         : []),
     ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'emu'
-        ? {
-            ...sauceAndroidEmus({
-                buildName: buildIdentifier,
-            }),
-        }
+        ? sauceAndroidEmus({
+            buildName: buildIdentifier,
+        })
         : []),
     ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'desktop'
         ? sauceDesktopBrowsers({
