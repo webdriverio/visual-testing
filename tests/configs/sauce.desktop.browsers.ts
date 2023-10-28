@@ -36,7 +36,6 @@ export function sauceDesktopBrowsers({
             specs: [basicSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'chrome-latest',
             },
@@ -48,7 +47,6 @@ export function sauceDesktopBrowsers({
             specs: [checkMethodFolderSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'chrome-latest',
             },
@@ -60,7 +58,6 @@ export function sauceDesktopBrowsers({
             specs: [saveMethodFolderSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'chrome-latest',
             },
@@ -76,7 +73,6 @@ export function sauceDesktopBrowsers({
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'chrome-latest',
             },
@@ -88,7 +84,6 @@ export function sauceDesktopBrowsers({
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'chrome-latest-1',
             },
@@ -100,7 +95,6 @@ export function sauceDesktopBrowsers({
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'chrome-latest-2',
             },
@@ -111,7 +105,6 @@ export function sauceDesktopBrowsers({
             platformName: 'Windows 10',
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'Firefox latest',
             },
@@ -122,7 +115,6 @@ export function sauceDesktopBrowsers({
             platformName: 'Windows 10',
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'Firefox latest-1',
             },
@@ -133,7 +125,6 @@ export function sauceDesktopBrowsers({
             platformName: 'Windows 10',
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'Firefox latest-2',
             },
@@ -144,7 +135,6 @@ export function sauceDesktopBrowsers({
             platformName: 'Windows 10',
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest',
             },
@@ -155,7 +145,6 @@ export function sauceDesktopBrowsers({
             platformName: 'Windows 10',
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest-1',
             },
@@ -166,7 +155,6 @@ export function sauceDesktopBrowsers({
             platformName: 'Windows 10',
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest-2',
             },
@@ -181,7 +169,6 @@ export function sauceDesktopBrowsers({
             platformName: 'macOS 11.00',
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'BigSurSafari14',
             },
@@ -192,7 +179,6 @@ export function sauceDesktopBrowsers({
             platformName: 'macOS 12',
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'macOS12-15',
             },
@@ -203,7 +189,6 @@ export function sauceDesktopBrowsers({
             platformName: 'macOS 12',
             specs: [deskSpecs],
             ...defaultBrowserSauceOptions,
-            // @ts-ignore
             'wdio-ics:options': {
                 logName: 'macOS12-16',
             },

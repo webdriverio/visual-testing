@@ -35,8 +35,6 @@ export const config: Options.Testrunner = {
                 args: ['disable-infobars', '--headless'],
             },
             'wdio-ics:options': {
-                // @TODO: I need to check how I can add the `logName` to the `wdio-ics:options`
-                // @ts-ignore
                 logName: 'chrome-dev-tools-headless',
             },
         },

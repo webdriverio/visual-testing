@@ -119,5 +119,10 @@ declare global {
             ): Promise<Result>;
         }
         interface Element {}
+        interface Capabilities {
+            "wdio-ics:options"?:{
+                logName?: string;
+            }
+        }
     }
 }
