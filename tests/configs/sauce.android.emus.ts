@@ -2,17 +2,14 @@ import { join } from 'node:path'
 import type { DeviceOrientation, ExtendedSauceLabsCapabilities } from '../types/types.ts'
 
 export function sauceAndroidEmus({ buildName }: { buildName: string }) {
-    const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js')
+    const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.ts')
     const chromeDriverPhones = (
         ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
     )
         .map((orientation) =>
-            ['8.1', '9.0', '10.0', '11.0', '12.0'].map((platformVersion) =>
+            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0', '14.0'].map((platformVersion) =>
                 createCaps({
-                    deviceName:
-                        platformVersion === '8.1'
-                            ? 'Samsung Galaxy S9 WQHD GoogleAPI Emulator'
-                            : 'Google Pixel 3 XL GoogleAPI Emulator',
+                    deviceName: 'Android GoogleAPI Emulator',
                     platformVersion: platformVersion,
                     orientation: orientation,
                     mobileSpecs,
@@ -28,21 +25,25 @@ export function sauceAndroidEmus({ buildName }: { buildName: string }) {
         ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
     )
         .map((orientation) =>
-            ['8.1', '9.0', '10.0', '11.0', '12.0'].map((platformVersion) =>
-                createCaps({
-                    deviceName:
-                        platformVersion === '8.1'
-                            ? 'Samsung Galaxy S9 WQHD GoogleAPI Emulator'
-                            : 'Google Pixel 3 XL GoogleAPI Emulator',
-                    platformVersion: platformVersion,
-                    orientation: orientation,
-                    mobileSpecs,
-                    nativeWebScreenshot: true,
-                    sauceOptions: {
-                        build: buildName,
-                        deviceOrientation: orientation,
-                    },
-                })
+            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0', '14.0'].map(
+                (platformVersion) =>
+                    createCaps({
+                        deviceName: 'Android GoogleAPI Emulator',
+                        platformVersion: platformVersion,
+                        orientation: orientation,
+                        mobileSpecs,
+                        nativeWebScreenshot: true,
+                        sauceOptions: {
+                            build: buildName,
+                            deviceOrientation: orientation,
+                        },
+                        // @TODO: There are issues to get element screenshots with nativeWebScreenshot in LANDSCAPE mode
+                        // The Android menu is not abstracted away and:
+                        // - is visible in a full page screenshot
+                        // - is not abstracted away in an element screenshot
+                        wdioIcsCommands:
+                            orientation === 'LANDSCAPE' ? ['checkScreen'] : [],
+                    })
             )
         )
         .flat(1)
@@ -127,7 +128,7 @@ export function sauceAndroidEmus({ buildName }: { buildName: string }) {
         /**
          * Android Tablets
          */
-        ...chromeDriverTablets,
+        // ...chromeDriverTablets,
         // ...nativeWebScreenshotTablets,
     ]
 }

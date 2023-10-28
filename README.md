@@ -2,10 +2,10 @@
 
 ![wdio-image-comparison workflow](https://github.com/wswebcreation/wdio-image-comparison-service/actions/workflows/wdio-image-comparison-service.yml/badge.svg)
 [![codecov](https://codecov.io/gh/wswebcreation/wdio-image-comparison-service/branch/master/graph/badge.svg?token=6zGW0ccdqR)](https://codecov.io/gh/wswebcreation/wdio-image-comparison-service)
-[![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
 [![NPM](https://nodei.co/npm/wdio-image-comparison-service.png)](https://nodei.co/npm/wdio-image-comparison-service/)
 
-[![Browser Status](https://app.eu-central-1.saucelabs.com/browser-matrix/wdio-image-comparison-service.svg)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
+[![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
+[![Sauce Test Status](https://app.eu-central-1.com/browser-matrix/wdio-image-comparison-service)](https://app.eu-central-1.com/u/wdio-image-comparison-service)
 
 > **NOTE for Windows users!!<br/>**
 > Please check the [FAQ](./README.md#faq)
