@@ -5,21 +5,20 @@ export function sauceDesktopBrowsers({
 }: {
     buildName: string;
 }): WebdriverIO.Capabilities[] {
-    const basicSpecs = join(process.cwd(), './tests/specs/basics.spec.js')
+    const basicSpecs = join(process.cwd(), './tests/specs/basics.spec.ts')
     const saveMethodFolderSpecs = join(
         process.cwd(),
-        './tests/specs/saveMethodsFolders.spec.js'
+        './tests/specs/saveMethodsFolders.spec.ts'
     )
     const checkMethodFolderSpecs = join(
         process.cwd(),
-        './tests/specs/checkMethodsFolders.spec.js'
+        './tests/specs/checkMethodsFolders.spec.ts'
     )
-    const deskSpecs = join(process.cwd(), './tests/specs/desktop.spec.js')
+    const deskSpecs = join(process.cwd(), './tests/specs/desktop.spec.ts')
     const defaultBrowserSauceOptions = {
         'sauce:options': {
             build: buildName,
             screenResolution: '1600x1200',
-            seleniumVersion: '3.141.59',
         },
     }
     const chromeOptions = {
@@ -176,29 +175,6 @@ export function sauceDesktopBrowsers({
         /**
          * Mac
          */
-        // @TODO: might want to drop Safari 12 support
-        {
-            browserName: 'safari',
-            browserVersion: '12',
-            platformName: 'macOS 10.14',
-            specs: [deskSpecs],
-            ...defaultBrowserSauceOptions,
-            // @ts-ignore
-            'wdio-ics:options': {
-                logName: 'MojaveSafari12',
-            },
-        },
-        {
-            browserName: 'safari',
-            browserVersion: '13',
-            platformName: 'macOS 10.15',
-            specs: [deskSpecs],
-            ...defaultBrowserSauceOptions,
-            // @ts-ignore
-            'wdio-ics:options': {
-                logName: 'CatalinaSafari13',
-            },
-        },
         {
             browserName: 'safari',
             browserVersion: '14',

@@ -1,6 +1,8 @@
 import { browser, expect } from '@wdio/globals'
 
 describe('wdio-image-comparison-service desktop', () => {
+    // @TODO
+    // @ts-ignore
     const browserName = `${browser.capabilities.browserName}-${browser.capabilities.browserVersion}`
 
     beforeEach(async () => {

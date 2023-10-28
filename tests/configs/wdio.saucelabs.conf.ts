@@ -14,7 +14,7 @@ const buildIdentifier = process.env.CI
     ? `${process.env.GITHUB_WORKFLOW} - ${process.env.GITHUB_JOB}`
     : `Local build-${new Date().getTime()}`
 
-let specFileRetries: number | undefined
+const SPEC_FILE_RETRIES = 'specFileRetries'
 
 export const config: Options.Testrunner = {
     ...sharedConfig,
@@ -69,14 +69,18 @@ export const config: Options.Testrunner = {
                 blockOutToolBar: true,
                 blockOutSideBar: true,
                 logLevel: 'debug',
+                rawMisMatchPercentage: true,
             },
         ],
     ],
     // =====
     // Hooks
     // =====
-    onPrepare: function (config) {
-        specFileRetries = config.specFileRetries
+    onPrepare: async (config) => {
+        const specFileRetries = config.specFileRetries
+        if (specFileRetries !== undefined) {
+            await setValue(SPEC_FILE_RETRIES, specFileRetries)
+        }
     },
     // If a test fails the first time and succeeds the second them, then our build would still be marked as failed.
     // That's why we've implemented an after-hook that will
@@ -85,7 +89,7 @@ export const config: Options.Testrunner = {
     // - check if the test has been executed for the second time (the retry) and if so, it will check if the status is
     //   passed (result === 0), then it will update the the previous failed status to passed and change the name
     after: async (result, _capabilities, specs) => {
-        console.log('after specFileRetries =', specFileRetries)
+        const specFileRetries = (await getValue(SPEC_FILE_RETRIES)) as number
         // Get the spec name path
         const specFileNamePath = specs[0]
         const RETRIED_SPECS_KEY = 'retriedSpecs'
