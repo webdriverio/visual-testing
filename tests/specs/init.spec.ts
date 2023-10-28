@@ -1,5 +1,6 @@
 import { copy } from 'fs-extra'
-import { normalize, join } from 'path'
+import { normalize, join } from 'node:path'
+import { browser } from '@wdio/globals'
 
 describe('webdriverio image comparison local development initialization', () => {
     const localBaseline = 'localBaseline'
@@ -15,7 +16,10 @@ describe('webdriverio image comparison local development initialization', () => 
 
     it('should save the compare screenshot screenshot', async () => {
         const examplePage = 'examplePage'
-        const { fileName, path } = await browser.saveScreen(examplePage)
+        const { fileName, path } = (await browser.saveScreen(examplePage)) as {
+            fileName: string;
+            path: string;
+        }
 
         copy(
             normalize(`${path}/${fileName}`),
@@ -50,10 +54,13 @@ describe('webdriverio image comparison local development initialization', () => 
 
     it('should save the compare element screenshot', async () => {
         const firstButtonElement = 'firstButtonElement'
-        const { fileName, path } = await browser.saveElement(
+        const { fileName, path } = (await browser.saveElement(
             await $('.uk-button:nth-child(1)'),
             firstButtonElement
-        )
+        )) as {
+            fileName: string;
+            path: string;
+        }
 
         copy(
             normalize(`${path}/${fileName}`),
@@ -78,9 +85,12 @@ describe('webdriverio image comparison local development initialization', () => 
 
     it('should save the compare fullpage screenshot', async () => {
         const fullPage = 'fullPage'
-        const { fileName, path } = await browser.saveFullPageScreen(fullPage, {
-            fullPageScrollTimeout: '1500',
-        })
+        const { fileName, path } = (await browser.saveFullPageScreen(fullPage, {
+            fullPageScrollTimeout: 1500,
+        })) as {
+            fileName: string;
+            path: string;
+        }
 
         copy(
             normalize(`${path}/${fileName}`),
@@ -105,9 +115,12 @@ describe('webdriverio image comparison local development initialization', () => 
 
     it('should save the tabbable screenshot', async () => {
         const tabbable = 'tabbable'
-        const { fileName, path } = await browser.saveTabbablePage(tabbable, {
-            fullPageScrollTimeout: '1500',
-        })
+        const { fileName, path } = (await browser.saveTabbablePage(tabbable, {
+            fullPageScrollTimeout: 1500,
+        })) as {
+            fileName: string;
+            path: string;
+        }
 
         copy(
             normalize(`${path}/${fileName}`),

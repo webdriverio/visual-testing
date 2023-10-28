@@ -1,9 +1,10 @@
-const path = require('path')
+import { browser, expect } from '@wdio/globals'
+import { join } from 'node:path'
 
 describe('wdio-image-comparison-service save methods folder options', () => {
     const testOptions = {
         returnAllCompareData: true,
-        actualFolder: path.join(process.cwd(), './.tmp/saveActual'),
+        actualFolder: join(process.cwd(), './.tmp/saveActual'),
         testFolder: './.tmp',
     }
 

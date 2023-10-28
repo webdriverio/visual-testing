@@ -1,6 +1,10 @@
-const { join } = require('path')
+import { join } from 'node:path'
+import type {
+    DeviceOrientation,
+    ExtendedSauceLabsCapabilities,
+} from '../types/types.ts'
 
-module.exports = function sauceIosSim({ buildName }) {
+export function sauceIosSim({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.js')
     // For all screen sizes see
     // https://github.com/wswebcreation/webdriver-image-comparison/blob/main/lib/helpers/constants.ts
@@ -89,7 +93,6 @@ module.exports = function sauceIosSim({ buildName }) {
         // 1366
         'iPad Pro (12.9 inch) (5th generation) Simulator',
     ]
-
     const iOS16Devices = [
         // 667
         'iPhone 8 Simulator',
@@ -120,7 +123,6 @@ module.exports = function sauceIosSim({ buildName }) {
         // 1366
         'iPad Pro (12.9 inch) (5th generation) Simulator',
     ]
-
     const iOS16BezelDevices = [
         // iPhones
         'iPhone X Simulator',
@@ -157,7 +159,7 @@ module.exports = function sauceIosSim({ buildName }) {
 
     return [
         // For some reason with iOS 13 the Landscape screenshot is not correct
-        ...['LANDSCAPE', 'PORTRAIT']
+        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS13Devices.map((device) =>
                     createCaps({
@@ -173,7 +175,7 @@ module.exports = function sauceIosSim({ buildName }) {
                 )
             )
             .flat(1),
-        ...['LANDSCAPE', 'PORTRAIT']
+        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS14Devices.map((device) =>
                     createCaps({
@@ -189,7 +191,7 @@ module.exports = function sauceIosSim({ buildName }) {
                 )
             )
             .flat(1),
-        ...['LANDSCAPE', 'PORTRAIT']
+        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS15Devices.map((device) =>
                     createCaps({
@@ -205,7 +207,7 @@ module.exports = function sauceIosSim({ buildName }) {
                 )
             )
             .flat(1),
-        ...['LANDSCAPE', 'PORTRAIT']
+        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS16Devices.map((device) =>
                     createCaps({
@@ -226,7 +228,7 @@ module.exports = function sauceIosSim({ buildName }) {
                 )
             )
             .flat(1),
-        ...['LANDSCAPE', 'PORTRAIT']
+        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS16BezelDevices.map((device) =>
                     createCaps({
@@ -257,6 +259,13 @@ function createCaps({
     orientation,
     platformVersion,
     sauceOptions,
+}:{
+    wdioIcsCommands?: string[],
+    deviceName: string,
+    mobileSpecs: string,
+    orientation: DeviceOrientation,
+    platformVersion: string,
+    sauceOptions: ExtendedSauceLabsCapabilities,
 }) {
     return {
         browserName: 'safari',

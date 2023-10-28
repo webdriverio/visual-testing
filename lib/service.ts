@@ -1,14 +1,19 @@
-import BaseClass from 'webdriver-image-comparison/build/base'
-import saveScreen from 'webdriver-image-comparison/build/commands/saveScreen'
-import checkScreen from 'webdriver-image-comparison/build/commands/checkScreen'
-import saveElement from 'webdriver-image-comparison/build/commands/saveElement'
-import checkElement from 'webdriver-image-comparison/build/commands/checkElement'
-import saveFullPageScreen from 'webdriver-image-comparison/build/commands/saveFullPageScreen'
-import checkFullPageScreen from 'webdriver-image-comparison/build/commands/checkFullPageScreen'
-import saveTabbablePage from 'webdriver-image-comparison/build/commands/saveTabbablePage'
-import checkTabbablePage from 'webdriver-image-comparison/build/commands/checkTabbablePage'
 import logger from '@wdio/logger'
-import { getFolders, getInstanceData } from './utils'
+import type { Capabilities, Options } from '@wdio/types'
+import { getFolders, getInstanceData } from './utils.js'
+import type {
+    ClassOptions } from 'webdriver-image-comparison'
+import {
+    BaseClass,
+    checkElement,
+    checkFullPageScreen,
+    checkScreen,
+    saveElement,
+    saveFullPageScreen,
+    saveScreen,
+    saveTabbablePage,
+    checkTabbablePage,
+} from 'webdriver-image-comparison'
 
 const log = logger('wdio-image-comparison-service')
 
@@ -23,27 +28,34 @@ const pageCommands = {
 }
 
 export default class WdioImageComparisonService extends BaseClass {
-    constructor(options) {
+    private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+
+    constructor(options: ClassOptions) {
         super(options)
     }
+    before(
+        capabilities: WebdriverIO.Capabilities,
+        _specs: string[],
+        browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+    ) {
+        this._browser = browser
 
-    /**
-     * Gets executed before test execution begins. At this point you can access to all global
-     * variables like `browser`. It is the perfect place to define custom commands.
-     *
-     * @param {Array.<Object>} capabilities list of capabilities details
-     */
-    before(capabilities) {
-        if (typeof capabilities['browserName'] !== 'undefined') {
+        if (!this._browser.isMultiremote) {
             log.info('Adding commands to global browser')
-            this.addCommandsToBrowser(capabilities, browser)
+            this._addCommandsToBrowser(capabilities, this._browser)
         } else {
             const browserNames = Object.keys(capabilities)
             log.info('Adding commands to Multi Browser: ', browserNames)
+
             for (const browserName of browserNames) {
-                this.addCommandsToBrowser(
-                    capabilities[browserName].capabilities,
-                    global[browserName]
+                this._addCommandsToBrowser(
+                    (
+                        (capabilities as Capabilities.MultiRemoteCapabilities)[
+                            browserName
+                        ] as Options.MultiRemoteBrowserOptions
+                    ).capabilities,
+                    // Need to make this better
+                    (global as any)[browserName]
                 )
             }
             //Add all the commands to the global browser object that will execute on each browser in the Multi Remote
@@ -54,9 +66,12 @@ export default class WdioImageComparisonService extends BaseClass {
                 browser.addCommand(command, function () {
                     const returnData = {}
                     for (const browserName of browserNames) {
-                        returnData[browserName] = global[browserName][
-                            command
-                        ].call(global[browserName], ...arguments)
+                        (returnData as any)[browserName] = (global as any)[
+                            browserName
+                        ][command].call(
+                            (global as any)[browserName],
+                            ...arguments
+                        )
                     }
                     return returnData
                 })
@@ -64,7 +79,10 @@ export default class WdioImageComparisonService extends BaseClass {
         }
     }
 
-    addCommandsToBrowser(capabilities, currentBrowser) {
+    _addCommandsToBrowser(
+        capabilities: WebdriverIO.Capabilities,
+        currentBrowser: WebdriverIO.Browser
+    ) {
         const instanceData = getInstanceData(capabilities, currentBrowser)
 
         const folders = this.folders
@@ -73,7 +91,12 @@ export default class WdioImageComparisonService extends BaseClass {
         for (const [commandName, command] of Object.entries(elementCommands)) {
             currentBrowser.addCommand(
                 commandName,
-                function (element, tag, elementOptions = {}) {
+                function (
+                    this: typeof currentBrowser,
+                    element,
+                    tag,
+                    elementOptions = {}
+                ) {
                     return command(
                         {
                             executor: this.execute.bind(currentBrowser),
@@ -96,7 +119,7 @@ export default class WdioImageComparisonService extends BaseClass {
         for (const [commandName, command] of Object.entries(pageCommands)) {
             currentBrowser.addCommand(
                 commandName,
-                function (tag, pageOptions = {}) {
+                function (this: typeof currentBrowser, tag, pageOptions = {}) {
                     return command(
                         {
                             executor: this.execute.bind(currentBrowser),

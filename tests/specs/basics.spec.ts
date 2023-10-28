@@ -1,12 +1,17 @@
-const fileExists = require('../helpers/fileExists')
+import { browser, expect } from '@wdio/globals'
+import { fileExists } from '../helpers/fileExists.ts'
 
 describe('wdio-image-comparison-service basics', () => {
-    const logName = browser.capabilities['sauce:options']
-        ? browser.capabilities['sauce:options'].logName
-        : browser.capabilities['wdio-ics:options']
-            ? browser.capabilities['wdio-ics:options'].logName
-            : browser.capabilities.logName
+    let logName: string
     const resolution = '1366x768'
+
+    before(() => {
+        logName =
+            'wdio-ics:options' in browser.requestedCapabilities
+                ? // @ts-ignore
+                browser.requestedCapabilities['wdio-ics:options']?.logName
+                : ''
+    })
 
     beforeEach(async () => {
         await browser.url('')
@@ -19,43 +24,31 @@ describe('wdio-image-comparison-service basics', () => {
     describe('save methods', () => {
         it('should do a save screen', async () => {
             const tag = 'examplePage'
-            const imageData = await browser.saveScreen('examplePage', {
-                empty: null,
-            })
+            const imageData = await browser.saveScreen('examplePage')
             const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
 
-            expect(fileExists(filePath)).toBe(
-                true,
-                `File : "${filePath}" could not be found`
-            )
+            expect(fileExists(filePath)).toBe(true)
         })
 
         it('should do a save element', async () => {
             const tag = 'firstButtonElement'
             const imageData = await browser.saveElement(
                 await $('.uk-button:nth-child(1)'),
-                tag,
-                { empty: null }
+                tag
             )
             const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
 
-            expect(fileExists(filePath)).toBe(
-                true,
-                `File : "${filePath}" could not be found`
-            )
+            expect(fileExists(filePath)).toBe(true)
         })
 
         it('should save a fullpage screenshot', async () => {
             const tag = 'fullPage'
             const imageData = await browser.saveFullPageScreen(tag, {
-                fullPageScrollTimeout: '1500',
+                fullPageScrollTimeout: 1500,
             })
             const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
 
-            expect(fileExists(filePath)).toBe(
-                true,
-                `File : "${filePath}" could not be found`
-            )
+            expect(fileExists(filePath)).toBe(true)
         })
     })
 

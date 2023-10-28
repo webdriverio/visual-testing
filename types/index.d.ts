@@ -1,63 +1,53 @@
-import { ScreenshotOutput } from 'webdriver-image-comparison/build/helpers/afterScreenshot.interfaces'
-import { ImageCompareResult } from 'webdriver-image-comparison'
+import { ScreenshotOutput } from "webdriver-image-comparison/build/helpers/afterScreenshot.interfaces";
+import { ImageCompareResult } from "webdriver-image-comparison";
 import {
     CheckScreenMethodOptions,
     SaveScreenMethodOptions,
-} from 'webdriver-image-comparison/build/commands/screen.interfaces'
+} from "webdriver-image-comparison/build/commands/screen.interfaces";
 import {
     CheckElementMethodOptions,
     SaveElementMethodOptions,
-} from 'webdriver-image-comparison/build/commands/element.interfaces'
+} from "webdriver-image-comparison/build/commands/element.interfaces";
 import {
     CheckFullPageMethodOptions,
     SaveFullPageMethodOptions,
-} from 'webdriver-image-comparison/build/commands/fullPage.interfaces'
+} from "webdriver-image-comparison/build/commands/fullPage.interfaces";
 
-// @ts-ignore
-interface WdioCheckFullPageMethodOptions extends CheckFullPageMethodOptions {
-    hideElements?: WebdriverIO.Element[]
-    removeElements?: WebdriverIO.Element[]
-    hideAfterFirstScroll?: WebdriverIO.Element[]
+interface WdioIcsCommonOptions {
+    hideElements?: WebdriverIO.Element[];
+    removeElements?: WebdriverIO.Element[];
 }
-// @ts-ignore
-interface WdioSaveFullPageMethodOptions extends SaveFullPageMethodOptions {
-    hideElements?: WebdriverIO.Element[]
-    removeElements?: WebdriverIO.Element[]
-    hideAfterFirstScroll?: WebdriverIO.Element[]
+interface WdioIcsScrollOptions extends WdioCommonOptions {
+    hideAfterFirstScroll?: WebdriverIO.Element[];
 }
-// @ts-ignore
-interface WdioSaveElementMethodOptions extends SaveElementMethodOptions {
-    hideElements?: WebdriverIO.Element[]
-    removeElements?: WebdriverIO.Element[]
-}
-// @ts-ignore
-interface WdioSaveScreenMethodOptions extends SaveScreenMethodOptions {
-    hideElements?: WebdriverIO.Element[]
-    removeElements?: WebdriverIO.Element[]
-}
-// @ts-ignore
-interface WdioCheckElementMethodOptions extends CheckElementMethodOptions {
-    hideElements?: WebdriverIO.Element[]
-    removeElements?: WebdriverIO.Element[]
-}
-// @ts-ignore
-interface WdioCheckScreenMethodOptions extends CheckScreenMethodOptions {
-    hideElements?: WebdriverIO.Element[]
-    removeElements?: WebdriverIO.Element[]
-}
-// @ts-ignore
+
+interface WdioCheckFullPageMethodOptions
+    extends CheckFullPageMethodOptions,
+        WdioIcsScrollOptions {}
+interface WdioSaveFullPageMethodOptions
+    extends SaveFullPageMethodOptions,
+        WdioIcsScrollOptions {}
+interface WdioSaveElementMethodOptions
+    extends SaveElementMethodOptions,
+        WdioIcsCommonOptions {}
+interface WdioSaveScreenMethodOptions
+    extends SaveScreenMethodOptions,
+        WdioIcsCommonOptions {}
+interface WdioCheckElementMethodOptions
+    extends CheckElementMethodOptions,
+        WdioIcsCommonOptions {}
+interface WdioCheckScreenMethodOptions
+    extends CheckScreenMethodOptions,
+        WdioIcsCommonOptions {}
 
 type MultiOutput = {
-    [browserName: string]: ScreenshotOutput
-}
-
-type Output = MultiOutput | ScreenshotOutput
-
+    [browserName: string]: ScreenshotOutput;
+};
+type Output = MultiOutput | ScreenshotOutput;
 type MultiResult = {
-    [browserName: string]: ImageCompareResult | number
-}
-
-type Result = MultiResult | (ImageCompareResult | number)
+    [browserName: string]: ImageCompareResult | number;
+};
+type Result = MultiResult | (ImageCompareResult | number);
 
 declare global {
     namespace WebdriverIO {
@@ -69,7 +59,7 @@ declare global {
                 element: Element,
                 tag: string,
                 saveElementOptions?: WdioSaveElementMethodOptions
-            ): Promise<Output>
+            ): Promise<Output>;
 
             /**
              * Saves an image of a viewport
@@ -77,7 +67,7 @@ declare global {
             saveScreen(
                 tag: string,
                 saveScreenOptions?: WdioSaveScreenMethodOptions
-            ): Promise<Output>
+            ): Promise<Output>;
 
             /**
              * Saves an image of the complete screen
@@ -85,7 +75,7 @@ declare global {
             saveFullPageScreen(
                 tag: string,
                 saveFullPageScreenOptions?: WdioSaveFullPageMethodOptions
-            ): Promise<Output>
+            ): Promise<Output>;
 
             /**
              * Saves an image of the complete screen with the tabbable lines and dots
@@ -93,7 +83,7 @@ declare global {
             saveTabbablePage(
                 tag: string,
                 saveTabbableOptions?: WdioSaveFullPageMethodOptions
-            ): Promise<Output>
+            ): Promise<Output>;
 
             /**
              * Compare an image of an element
@@ -102,7 +92,7 @@ declare global {
                 element: Element,
                 tag: string,
                 checkElementOptions?: WdioCheckElementMethodOptions
-            ): Promise<Result>
+            ): Promise<Result>;
 
             /**
              * Compares an image of a viewport
@@ -110,7 +100,7 @@ declare global {
             checkScreen(
                 tag: string,
                 checkScreenOptions?: WdioCheckScreenMethodOptions
-            ): Promise<Result>
+            ): Promise<Result>;
 
             /**
              * Compares an image of the complete screen
@@ -118,7 +108,7 @@ declare global {
             checkFullPageScreen(
                 tag: string,
                 checkFullPageOptions?: WdioCheckFullPageMethodOptions
-            ): Promise<Result>
+            ): Promise<Result>;
 
             /**
              * Compares an image of the complete screen with the tabbable lines and dots
@@ -126,7 +116,7 @@ declare global {
             checkTabbablePage(
                 tag: string,
                 checkTabbableOptions?: WdioCheckFullPageMethodOptions
-            ): Promise<Result>
+            ): Promise<Result>;
         }
         interface Element {}
     }

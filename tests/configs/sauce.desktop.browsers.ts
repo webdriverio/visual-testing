@@ -1,6 +1,10 @@
-const { join } = require('path')
+import { join } from 'node:path'
 
-module.exports = function sauceDesktopBrowsers({ buildName }) {
+export function sauceDesktopBrowsers({
+    buildName,
+}: {
+    buildName: string;
+}): WebdriverIO.Capabilities[] {
     const basicSpecs = join(process.cwd(), './tests/specs/basics.spec.js')
     const saveMethodFolderSpecs = join(
         process.cwd(),
@@ -12,9 +16,11 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
     )
     const deskSpecs = join(process.cwd(), './tests/specs/desktop.spec.js')
     const defaultBrowserSauceOptions = {
-        build: buildName,
-        screenResolution: '1600x1200',
-        seleniumVersion: '3.141.59',
+        'sauce:options': {
+            build: buildName,
+            screenResolution: '1600x1200',
+            seleniumVersion: '3.141.59',
+        },
     }
     const chromeOptions = {
         'goog:chromeOptions': {},
@@ -29,33 +35,36 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: 'latest',
             platformName: 'Windows 10',
             specs: [basicSpecs],
-            'sauce:options': {
-                logName: 'chrome-latest',
-                ...defaultBrowserSauceOptions,
-            },
+            ...defaultBrowserSauceOptions,
             ...chromeOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
+                logName: 'chrome-latest',
+            },
         },
         {
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
             specs: [checkMethodFolderSpecs],
-            'sauce:options': {
-                logName: 'chrome-latest',
-                ...defaultBrowserSauceOptions,
-            },
+            ...defaultBrowserSauceOptions,
             ...chromeOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
+                logName: 'chrome-latest',
+            },
         },
         {
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
             specs: [saveMethodFolderSpecs],
-            'sauce:options': {
-                logName: 'chrome-latest',
-                ...defaultBrowserSauceOptions,
-            },
+            ...defaultBrowserSauceOptions,
             ...chromeOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
+                logName: 'chrome-latest',
+            },
         },
 
         /**
@@ -66,42 +75,46 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: 'latest',
             platformName: 'Windows 10',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            ...chromeOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'chrome-latest',
-                ...defaultBrowserSauceOptions,
             },
-            ...chromeOptions,
         },
         {
             browserName: 'chrome',
             browserVersion: 'latest-1',
             platformName: 'Windows 10',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            ...chromeOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'chrome-latest-1',
-                ...defaultBrowserSauceOptions,
             },
-            ...chromeOptions,
         },
         {
             browserName: 'chrome',
             browserVersion: 'latest-2',
             platformName: 'Windows 10',
             specs: [deskSpecs],
-            'sauce:options': {
-                logName: 'chrome-latest-2',
-                ...defaultBrowserSauceOptions,
-            },
+            ...defaultBrowserSauceOptions,
             ...chromeOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
+                logName: 'chrome-latest-2',
+            },
         },
         {
             browserName: 'firefox',
             browserVersion: 'latest',
             platformName: 'Windows 10',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'Firefox latest',
-                ...defaultBrowserSauceOptions,
             },
         },
         {
@@ -109,9 +122,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: 'latest-1',
             platformName: 'Windows 10',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'Firefox latest-1',
-                ...defaultBrowserSauceOptions,
             },
         },
         {
@@ -119,9 +133,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: 'latest-2',
             platformName: 'Windows 10',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'Firefox latest-2',
-                ...defaultBrowserSauceOptions,
             },
         },
         {
@@ -129,9 +144,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: 'latest',
             platformName: 'Windows 10',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'Microsoft Edge latest',
-                ...defaultBrowserSauceOptions,
             },
         },
         {
@@ -139,9 +155,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: 'latest-1',
             platformName: 'Windows 10',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'Microsoft Edge latest-1',
-                ...defaultBrowserSauceOptions,
             },
         },
         {
@@ -149,9 +166,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: 'latest-2',
             platformName: 'Windows 10',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'Microsoft Edge latest-2',
-                ...defaultBrowserSauceOptions,
             },
         },
 
@@ -164,9 +182,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: '12',
             platformName: 'macOS 10.14',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'MojaveSafari12',
-                ...defaultBrowserSauceOptions,
             },
         },
         {
@@ -174,9 +193,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: '13',
             platformName: 'macOS 10.15',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'CatalinaSafari13',
-                ...defaultBrowserSauceOptions,
             },
         },
         {
@@ -184,9 +204,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: '14',
             platformName: 'macOS 11.00',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'BigSurSafari14',
-                ...defaultBrowserSauceOptions,
             },
         },
         {
@@ -194,9 +215,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: '15',
             platformName: 'macOS 12',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'macOS12-15',
-                ...defaultBrowserSauceOptions,
             },
         },
         {
@@ -204,9 +226,10 @@ module.exports = function sauceDesktopBrowsers({ buildName }) {
             browserVersion: '16',
             platformName: 'macOS 12',
             specs: [deskSpecs],
-            'sauce:options': {
+            ...defaultBrowserSauceOptions,
+            // @ts-ignore
+            'wdio-ics:options': {
                 logName: 'macOS12-16',
-                ...defaultBrowserSauceOptions,
             },
         },
     ]

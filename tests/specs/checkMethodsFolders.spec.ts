@@ -1,7 +1,8 @@
-const path = require('path')
+import { browser, expect } from '@wdio/globals'
+import { join } from 'node:path'
 
 describe('wdio-image-comparison-service check methods folder options', () => {
-    const baselineFolder = browser.config.services.includes('sauce')
+    const baselineFolder = 'sauce:options' in browser.capabilities
         ? 'tests/sauceLabsBaseline'
         : 'localBaseline'
 
@@ -16,12 +17,12 @@ describe('wdio-image-comparison-service check methods folder options', () => {
     describe('checkFullPageScreen method with folder options', () => {
         it('should set all folders using method options', async () => {
             const testOptions = {
-                actualFolder: path.join(process.cwd(), './.tmp/checkActual'),
-                baselineFolder: path.join(
+                actualFolder: join(process.cwd(), './.tmp/checkActual'),
+                baselineFolder: join(
                     process.cwd(),
                     `./${baselineFolder}/checkBaseline`
                 ),
-                diffFolder: path.join(process.cwd(), './.tmp/testDiff'),
+                diffFolder: join(process.cwd(), './.tmp/testDiff'),
                 returnAllCompareData: true,
             }
             const results = await browser.checkFullPageScreen(
@@ -43,12 +44,12 @@ describe('wdio-image-comparison-service check methods folder options', () => {
     describe('checkScreen method with folder options', () => {
         it('should set all folders using checkScreen method options', async () => {
             const testOptions = {
-                actualFolder: path.join(process.cwd(), './.tmp/checkActual'),
-                baselineFolder: path.join(
+                actualFolder: join(process.cwd(), './.tmp/checkActual'),
+                baselineFolder: join(
                     process.cwd(),
                     `./${baselineFolder}/checkBaseline`
                 ),
-                diffFolder: path.join(process.cwd(), './.tmp/testDiff'),
+                diffFolder: join(process.cwd(), './.tmp/testDiff'),
                 returnAllCompareData: true,
             }
             const results = await browser.checkScreen(
@@ -70,12 +71,12 @@ describe('wdio-image-comparison-service check methods folder options', () => {
     describe('checkElement method with folder options', () => {
         it('should set all folders using checkElement method options', async () => {
             const testOptions = {
-                actualFolder: path.join(process.cwd(), './.tmp/checkActual'),
-                baselineFolder: path.join(
+                actualFolder: join(process.cwd(), './.tmp/checkActual'),
+                baselineFolder: join(
                     process.cwd(),
                     `./${baselineFolder}/checkBaseline`
                 ),
-                diffFolder: path.join(process.cwd(), './.tmp/testDiff'),
+                diffFolder: join(process.cwd(), './.tmp/testDiff'),
                 returnAllCompareData: true,
             }
             const results = await browser.checkElement(

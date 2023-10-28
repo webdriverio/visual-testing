@@ -1,11 +1,15 @@
+import { browser, expect } from '@wdio/globals'
+import type { AppiumCapabilities } from '@wdio/types/build/Capabilities'
+
 /**
  * Added a retry on the mobile tests because in some cases the emulator or simulator wasn't loaded properly
  */
 describe('wdio-image-comparison-service mobile', () => {
-    const deviceName = driver.capabilities.deviceName
-    const orientation = driver.capabilities.orientation
+    const deviceName = (driver.capabilities as AppiumCapabilities)['appium:deviceName']
+    const orientation = (driver.capabilities as AppiumCapabilities)['appium:orientation']
     // Get the commands that need to be executed
     // 0 means all, otherwise it will only execute the commands that are specified
+    // @ts-ignore
     const wdioIcsCommands = driver.capabilities['wdio-ics:options'].commands
 
     beforeEach(async () => {
@@ -49,7 +53,7 @@ describe('wdio-image-comparison-service mobile', () => {
         it(`should compare a full page screenshot successful for '${deviceName}' in ${orientation}-mode`, async () => {
             await expect(
                 await browser.checkFullPageScreen('fullPage', {
-                    fullPageScrollTimeout: '1500',
+                    fullPageScrollTimeout: 1500,
                 })
             ).toEqual(0)
         })
