@@ -1,16 +1,17 @@
 import { browser, expect } from '@wdio/globals'
-import type { AppiumCapabilities } from '@wdio/types/build/Capabilities'
 
 /**
  * Added a retry on the mobile tests because in some cases the emulator or simulator wasn't loaded properly
  */
 describe('wdio-image-comparison-service mobile', () => {
-    const deviceName = (driver.capabilities as AppiumCapabilities)['appium:deviceName']
-    const orientation = (driver.capabilities as AppiumCapabilities)['appium:orientation']
     // Get the commands that need to be executed
     // 0 means all, otherwise it will only execute the commands that are specified
     // @ts-ignore
-    const wdioIcsCommands = driver.capabilities['wdio-ics:options'].commands
+    const wdioIcsCommands = driver.requestedCapabilities['wdio-ics:options'].commands
+    // @ts-ignore
+    const deviceName = driver.requestedCapabilities.deviceName
+    // @ts-ignore
+    const orientation = driver.requestedCapabilities.orientation
 
     beforeEach(async () => {
         await browser.url('')
