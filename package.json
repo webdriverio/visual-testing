@@ -61,7 +61,7 @@
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-unicorn": "^48.0.1",
     "eslint-plugin-wdio": "^8.20.0",
-    "husky": "^8.0.0",
+    "husky": "^8.0.3",
     "jest": "^29.7.0",
     "release-it": "^16.2.1",
     "rimraf": "^5.0.5",
@@ -73,7 +73,7 @@
   "dependencies": {
     "@wdio/logger": "^8.16.17",
     "@wdio/types": "^8.20.0",
-    "webdriver-image-comparison": "^2.0.0"
+    "webdriver-image-comparison": "^2.0.1"
   },
   "repository": {
     "type": "git",
