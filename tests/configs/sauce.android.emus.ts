@@ -7,17 +7,18 @@ export function sauceAndroidEmus({ buildName }: { buildName: string }) {
         ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
     )
         .map((orientation) =>
-            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0', '14.0'].map((platformVersion) =>
-                createCaps({
-                    deviceName: 'Android GoogleAPI Emulator',
-                    platformVersion: platformVersion,
-                    orientation: orientation,
-                    mobileSpecs,
-                    sauceOptions: {
-                        build: buildName,
-                        deviceOrientation: orientation,
-                    },
-                })
+            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0', '14.0'].map(
+                (platformVersion) =>
+                    createCaps({
+                        deviceName: 'Android GoogleAPI Emulator',
+                        platformVersion: platformVersion,
+                        orientation: orientation,
+                        mobileSpecs,
+                        sauceOptions: {
+                            build: buildName,
+                            deviceOrientation: orientation,
+                        },
+                    })
             )
         )
         .flat(1)
@@ -35,7 +36,7 @@ export function sauceAndroidEmus({ buildName }: { buildName: string }) {
                         nativeWebScreenshot: true,
                         sauceOptions: {
                             build: buildName,
-                            deviceOrientation: orientation,
+                            deviceOrientation: orientation
                         },
                         // @TODO: There are issues to get element screenshots with nativeWebScreenshot in LANDSCAPE mode
                         // The Android menu is not abstracted away and:
@@ -51,72 +52,67 @@ export function sauceAndroidEmus({ buildName }: { buildName: string }) {
         ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
     )
         .map((orientation) =>
-            ['8.1', '11.0', '12.0'].map((platformVersion) => {
-                let tabletType = ''
+            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0'].map(
+                (platformVersion) => {
+                    const tabletTypesByVersion: Record<string, string> = {
+                        '8.1': 'S3',
+                        '9.0': 'S3',
+                        '10.0': 'S3',
+                        '11.0': 'S7 Plus',
+                        '12.0': 'S7 Plus',
+                        '13.0': 'S7 Plus',
+                    }
 
-                switch (platformVersion) {
-                case '8.1':
-                    tabletType = 'S3'
-                    break
-                    // 9 and 10 are not available
-                case '11.0':
-                    tabletType = 'S6'
-                    break
-                case '12.0':
-                    tabletType = 'S7 Plus'
-                    break
-                default:
-                    tabletType = ''
+                    const tabletType =
+                        tabletTypesByVersion[platformVersion] || ''
+
+                    return createCaps({
+                        deviceName: `Galaxy Tab ${tabletType} GoogleAPI Emulator`,
+                        platformVersion: platformVersion,
+                        orientation: orientation,
+                        mobileSpecs,
+                        sauceOptions: {
+                            build: buildName,
+                            deviceOrientation: orientation,
+                        },
+                    })
                 }
+            )
+        )
+        .flat(1)
+    // There is no Android 10 for Tablets
+    const nativeWebScreenshotTablets = (['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
+        .map((orientation) =>
+            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0'].map((platformVersion) => {
+                const tabletTypesByVersion: Record<string, string> = {
+                    '8.1': 'S3',
+                    '9.0': 'S3',
+                    '10.0': 'S3',
+                    '11.0': 'S7 Plus',
+                    '12.0': 'S7 Plus',
+                    '13.0': 'S7 Plus',
+                }
+
+                const tabletType = tabletTypesByVersion[platformVersion] || ''
 
                 return createCaps({
                     deviceName: `Galaxy Tab ${tabletType} GoogleAPI Emulator`,
                     platformVersion: platformVersion,
                     orientation: orientation,
                     mobileSpecs,
+                    nativeWebScreenshot: true,
                     sauceOptions: {
                         build: buildName,
                         deviceOrientation: orientation,
                     },
+                    // @TODO: There are issues to get certain screenshots with nativeWebScreenshot in LANDSCAPE mode
+                    // - element screenshots are not perfect
+                    // - Fullpage screenshots have the address bar in the screenshot
+                    wdioIcsCommands: ['checkScreen'],
                 })
             })
         )
         .flat(1)
-    // // There is no Android 10 for Tablets
-    // const nativeWebScreenshotTablets = (['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
-    //     .map((orientation) =>
-    //         ['8.1', '11.0', '12.0'].map((platformVersion) => {
-    //             let tabletType = ''
-
-    //             switch (platformVersion) {
-    //                 case '8.1':
-    //                     tabletType = 'S3'
-    //                     break
-    //                 // 9 and 10 are not available
-    //                 case '11.0':
-    //                     tabletType = 'S6'
-    //                     break
-    //                 case '12.0':
-    //                     tabletType = 'S7 Plus'
-    //                     break
-    //                 default:
-    //                     tabletType = ''
-    //             }
-
-    //             return createCaps({
-    //                 deviceName: `Galaxy Tab ${tabletType} GoogleAPI Emulator`,
-    //                 platformVersion: platformVersion,
-    //                 orientation: orientation,
-    //                 mobileSpecs,
-    //                 nativeWebScreenshot: true,
-    //                 sauceOptions: {
-    //                     build: buildName,
-    //                     deviceOrientation: orientation,
-    //                 },
-    //             })
-    //         })
-    //     )
-    //     .flat(1)
 
     return [
         /**
@@ -128,8 +124,8 @@ export function sauceAndroidEmus({ buildName }: { buildName: string }) {
         /**
          * Android Tablets
          */
-        // ...chromeDriverTablets,
-        // ...nativeWebScreenshotTablets,
+        ...chromeDriverTablets,
+        ...nativeWebScreenshotTablets,
     ]
 }
 
@@ -186,7 +182,10 @@ function createCaps({
                 .toLowerCase()}${driverScreenshotType}${platformVersion}`,
             commands: wdioIcsCommands,
         },
-        'sauce:options': sauceOptions,
+        'sauce:options': {
+            ...sauceOptions,
+            appiumVersion: '2.0.0',
+        },
         specs: [mobileSpecs],
     }
 }

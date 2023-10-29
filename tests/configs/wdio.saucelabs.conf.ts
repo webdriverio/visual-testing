@@ -1,10 +1,10 @@
 import type { Options } from '@wdio/types'
 import { join } from 'node:path'
 import { setValue, getValue } from '@wdio/shared-store-service'
-import WdioImageComparisonService from '../../build/index.js'
-import { config as sharedConfig } from './wdio.shared.conf.ts'
 import type { Job } from 'saucelabs'
 import SauceLabs from 'saucelabs'
+import WdioImageComparisonService from '../../build/index.js'
+import { config as sharedConfig } from './wdio.shared.conf.ts'
 import { sauceIosSim } from './sauce.ios.sims.ts'
 import { sauceAndroidEmus } from './sauce.android.emus.js'
 import { sauceDesktopBrowsers } from './sauce.desktop.browsers.js'
@@ -18,9 +18,9 @@ const SPEC_FILE_RETRIES = 'specFileRetries'
 
 export const config: Options.Testrunner = {
     ...sharedConfig,
-    // =========================
-    // Sauce RDC specific config
-    // =========================
+    // =====================
+    // Sauce specific config
+    // =====================
     user: process.env.SAUCE_USERNAME_WDIO_ICS,
     key: process.env.SAUCE_ACCESS_KEY_WDIO_ICS,
     region: 'eu',
