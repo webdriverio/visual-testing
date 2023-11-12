@@ -21,8 +21,8 @@ export const config: Options.Testrunner = {
     // =====================
     // Sauce specific config
     // =====================
-    user: process.env.SAUCE_USERNAME,
-    key: process.env.SAUCE_ACCESS_KEY,
+    user: process.env.SAUCE_USERNAME_WDIO_ICS,
+    key: process.env.SAUCE_ACCESS_KEY_WDIO_ICS,
     region: 'eu',
     // ============
     // Capabilities
