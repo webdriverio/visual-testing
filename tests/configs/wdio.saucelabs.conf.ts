@@ -21,8 +21,8 @@ export const config: Options.Testrunner = {
     // =====================
     // Sauce specific config
     // =====================
-    user: process.env.SAUCE_USERNAME_WDIO_ICS,
-    key: process.env.SAUCE_ACCESS_KEY_WDIO_ICS,
+    user: process.env.SAUCE_USERNAME,
+    key: process.env.SAUCE_ACCESS_KEY,
     region: 'eu',
     // ============
     // Capabilities
@@ -69,7 +69,7 @@ export const config: Options.Testrunner = {
                 blockOutToolBar: true,
                 blockOutSideBar: true,
                 logLevel: 'debug',
-                rawMisMatchPercentage: true,
+                rawMisMatchPercentage: process.env.RAW_MISMATCH || false,
             },
         ],
     ],
