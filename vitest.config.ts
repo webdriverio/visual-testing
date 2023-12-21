@@ -4,7 +4,6 @@ export default defineConfig({
     test: {
         include: ['./packages/**/tests/**/*.test.ts'],
         coverage: {
-            enabled: true,
             thresholds: {
                 lines: 42,
                 statements: 42,
