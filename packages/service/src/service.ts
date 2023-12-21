@@ -1,7 +1,6 @@
 import logger from '@wdio/logger'
 import type { Capabilities, Options } from '@wdio/types'
-import type {
-    ClassOptions } from 'webdriver-image-comparison'
+import type { ClassOptions } from 'webdriver-image-comparison'
 import {
     BaseClass,
     checkElement,

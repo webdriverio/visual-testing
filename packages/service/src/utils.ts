@@ -1,20 +1,16 @@
 /// <reference types="webdriverio" />
 
 import type { Capabilities } from '@wdio/types'
-import type { Folders } from 'webdriver-image-comparison/build/base.interface.js'
 import type {
-    CheckElementMethodOptions,
-    SaveElementMethodOptions,
-} from 'webdriver-image-comparison/build/commands/element.interfaces.js'
-import type {
-    CheckFullPageMethodOptions,
-    SaveFullPageMethodOptions,
-} from 'webdriver-image-comparison/build/commands/fullPage.interfaces.js'
-import type {
+    Folders,
+    InstanceData,
     CheckScreenMethodOptions,
     SaveScreenMethodOptions,
-} from 'webdriver-image-comparison/build/commands/screen.interfaces.js'
-import type { InstanceData } from 'webdriver-image-comparison/build/methods/instanceData.interfaces.js'
+    CheckFullPageMethodOptions,
+    SaveFullPageMethodOptions,
+    CheckElementMethodOptions,
+    SaveElementMethodOptions,
+} from 'webdriver-image-comparison'
 
 interface WdioIcsOptions {
     logName?: string;

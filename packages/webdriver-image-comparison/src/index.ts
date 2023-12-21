@@ -24,6 +24,9 @@ export type {
     SaveFullPageMethodOptions,
 } from './commands/fullPage.interfaces'
 
+export type { Folders } from './base.interface.js'
+export type { InstanceData } from './methods/instanceData.interfaces.js'
+
 export {
     BaseClass,
     ClassOptions,

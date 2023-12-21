@@ -36,13 +36,19 @@ To create a PR for this project and start contributing follow this step-by-step 
 
     ```sh
     $ cd wdio-image-comparison-service
-    $ npm install
+    $ pnpm install
     ```
 
 -   Run the watch mode that will automatically transpile the code
 
     ```sh
-    $ npm run watch
+    $ pnpm watch
+    ```
+
+    to build the project, run:
+
+    ```sh
+    $ pnpm build
     ```
 
 -   And create a new feature / fix a bug

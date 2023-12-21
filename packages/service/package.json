@@ -18,7 +18,7 @@
   ],
   "exports": "./dist/index.js",
   "type": "module",
-  "types": "./types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "run-s clean build:*",
     "build:tsc": "tsc --project ./tsconfig.json",

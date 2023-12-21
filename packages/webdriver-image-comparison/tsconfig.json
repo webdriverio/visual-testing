@@ -18,7 +18,7 @@
     "noImplicitUseStrict": false,
     "noLib": false,
     "rootDir": "src",
-    "outDir": "build",
+    "outDir": "dist",
     "pretty": true,
     "removeComments": true,
     "sourceMap": true,

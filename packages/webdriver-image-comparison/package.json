@@ -6,8 +6,8 @@
   "homepage": "webdriver.io/docs/visual-testing",
   "keywords": [],
   "license": "MIT",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wswebcreation/webdriver-image-comparison.git"
