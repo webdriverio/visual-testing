@@ -90,7 +90,10 @@ describe('webdriverio image comparison local development initialization', () => 
         const fullPage = 'fullPage'
         const { fileName, path } = (await browser.saveFullPageScreen(fullPage, {
             fullPageScrollTimeout: 1500,
-            hideAfterFirstScroll: [await $('nav.navbar')],
+            hideAfterFirstScroll: [
+                await $('nav.navbar'),
+                await $('.DocSearch-Button'),
+            ],
         })) as {
             fileName: string;
             path: string;
@@ -121,7 +124,10 @@ describe('webdriverio image comparison local development initialization', () => 
         const tabbable = 'tabbable'
         const { fileName, path } = (await browser.saveTabbablePage(tabbable, {
             fullPageScrollTimeout: 1500,
-            hideAfterFirstScroll: [await $('nav.navbar')],
+            hideAfterFirstScroll: [
+                await $('nav.navbar'),
+                await $('.DocSearch-Button'),
+            ],
         })) as {
             fileName: string;
             path: string;

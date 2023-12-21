@@ -58,7 +58,10 @@ describe('wdio-image-comparison-service mobile', () => {
             await expect(
                 await browser.checkFullPageScreen('fullPage', {
                     fullPageScrollTimeout: 1500,
-                    hideAfterFirstScroll: [await $('nav.navbar')],
+                    hideAfterFirstScroll: [
+                        await $('nav.navbar'),
+                        await $('.DocSearch-Button'),
+                    ],
                 })
             ).toEqual(0)
         })

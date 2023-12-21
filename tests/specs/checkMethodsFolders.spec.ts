@@ -29,7 +29,10 @@ describe('wdio-image-comparison-service check methods folder options', () => {
                 'fullPageCheckFolders',
                 {
                     ...testOptions,
-                    hideAfterFirstScroll: [await $('nav.navbar')],
+                    hideAfterFirstScroll: [
+                        await $('nav.navbar'),
+                        await $('.DocSearch-Button'),
+                    ],
                 }
             )
 

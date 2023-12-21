@@ -22,7 +22,10 @@ describe('wdio-image-comparison-service save methods folder options', () => {
                 'saveFullPageFolderOptions',
                 {
                     ...testOptions,
-                    hideAfterFirstScroll: [await $('nav.navbar')],
+                    hideAfterFirstScroll: [
+                        await $('nav.navbar'),
+                        await $('.DocSearch-Button'),
+                    ],
                 }
             )
 
@@ -35,7 +38,10 @@ describe('wdio-image-comparison-service save methods folder options', () => {
             const results = await browser.saveFullPageScreen(
                 'saveFullPageDefaultOptions',
                 {
-                    hideAfterFirstScroll: [await $('nav.navbar')],
+                    hideAfterFirstScroll: [
+                        await $('nav.navbar'),
+                        await $('.DocSearch-Button'),
+                    ],
                 }
             )
 

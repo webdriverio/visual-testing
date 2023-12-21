@@ -29,14 +29,20 @@ describe('wdio-image-comparison-service desktop', () => {
         await expect(
             await browser.checkFullPageScreen('fullPage', {
                 fullPageScrollTimeout: 1500,
-                hideAfterFirstScroll: [await $('nav.navbar')],
+                hideAfterFirstScroll: [
+                    await $('nav.navbar'),
+                    await $('.DocSearch-Button'),
+                ],
             })
         ).toEqual(0)
     })
 
     it(`should compare a tabbable screenshot successful with a baseline for '${browserName}'`, async () => {
         await expect(await browser.checkTabbablePage('tabbable', {
-            hideAfterFirstScroll: [await $('nav.navbar')],
+            hideAfterFirstScroll: [
+                await $('nav.navbar'),
+                await $('.DocSearch-Button'),
+            ],
         })).toEqual(0)
     })
 })
