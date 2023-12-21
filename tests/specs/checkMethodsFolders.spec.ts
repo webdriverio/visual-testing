@@ -27,7 +27,10 @@ describe('wdio-image-comparison-service check methods folder options', () => {
             }
             const results = await browser.checkFullPageScreen(
                 'fullPageCheckFolders',
-                testOptions
+                {
+                    ...testOptions,
+                    hideAfterFirstScroll: [await $('nav.navbar')],
+                }
             )
 
             expect(results.folders.actual).toMatch(
@@ -78,9 +81,11 @@ describe('wdio-image-comparison-service check methods folder options', () => {
                 ),
                 diffFolder: join(process.cwd(), './.tmp/testDiff'),
                 returnAllCompareData: true,
+                removeElements: [await $('nav.navbar')],
+
             }
             const results = await browser.checkElement(
-                await $('.uk-button:nth-child(1)'),
+                await $('.hero__title-logo'),
                 'elementCheckFolders',
                 testOptions
             )

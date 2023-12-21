@@ -7,7 +7,7 @@ describe('wdio-image-comparison-service desktop', () => {
 
     beforeEach(async () => {
         await browser.url('')
-        await $('.uk-button:nth-child(1)').waitForDisplayed()
+        await $('.hero__title-logo').waitForDisplayed()
     })
 
     // Chrome remembers the last position when the url is loaded again, this will reset it.
@@ -16,8 +16,11 @@ describe('wdio-image-comparison-service desktop', () => {
     it(`should compare an element successful with a baseline for '${browserName}'`, async () => {
         await expect(
             await browser.checkElement(
-                await $('.uk-button:nth-child(1)'),
-                'firstButtonElement'
+                await $('.hero__title-logo'),
+                'wdioLogo',
+                {
+                    removeElements: [await $('nav.navbar')]
+                }
             )
         ).toEqual(0)
     })
@@ -26,11 +29,14 @@ describe('wdio-image-comparison-service desktop', () => {
         await expect(
             await browser.checkFullPageScreen('fullPage', {
                 fullPageScrollTimeout: 1500,
+                hideAfterFirstScroll: [await $('nav.navbar')],
             })
         ).toEqual(0)
     })
 
     it(`should compare a tabbable screenshot successful with a baseline for '${browserName}'`, async () => {
-        await expect(await browser.checkTabbablePage('tabbable')).toEqual(0)
+        await expect(await browser.checkTabbablePage('tabbable', {
+            hideAfterFirstScroll: [await $('nav.navbar')],
+        })).toEqual(0)
     })
 })

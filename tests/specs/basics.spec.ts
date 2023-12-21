@@ -31,10 +31,13 @@ describe('wdio-image-comparison-service basics', () => {
         })
 
         it('should do a save element', async () => {
-            const tag = 'firstButtonElement'
+            const tag = 'wdioLogo'
             const imageData = await browser.saveElement(
-                await $('.uk-button:nth-child(1)'),
-                tag
+                await $('.hero__title-logo'),
+                tag,
+                {
+                    removeElements: [await $('nav.navbar')]
+                }
             )
             const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
 
@@ -45,6 +48,7 @@ describe('wdio-image-comparison-service basics', () => {
             const tag = 'fullPage'
             const imageData = await browser.saveFullPageScreen(tag, {
                 fullPageScrollTimeout: 1500,
+                hideAfterFirstScroll: [await $('nav.navbar')],
             })
             const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
 
@@ -58,7 +62,7 @@ describe('wdio-image-comparison-service basics', () => {
 
             await browser.execute(
                 'arguments[0].innerHTML = "Test Demo Page";',
-                await $('h1.uk-heading-large')
+                await $('.hero__subtitle')
             )
 
             await expect(await browser.checkScreen(tag)).toBeGreaterThan(0)
