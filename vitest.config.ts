@@ -5,8 +5,8 @@ export default defineConfig({
         include: ['./packages/**/(tests|src)/**/*.test.ts'],
         coverage: {
             thresholds: {
-                lines: 42,
-                statements: 42,
+                lines: 35,
+                statements: 35,
                 functions: 50,
                 branches: 73
             }

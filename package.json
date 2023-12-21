@@ -12,8 +12,9 @@
   "scripts": {
     "build": "pnpm run -r build",
     "clean": "rimraf coverage build .tmp",
-    "test": "vitest",
-    "test.eslint": "eslint --cache packages tests",
+    "test": "run-s test:*",
+    "test:lint": "eslint --cache packages tests",
+    "test:unit": "vitest --coverage --run",
     "test.local.init": "rimraf localBaseline && wdio ./tests/configs/wdio.local.init.conf.ts",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.ts",
     "test.local.appium": "wdio tests/configs/wdio.local.appium.conf.ts",

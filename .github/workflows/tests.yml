@@ -1,0 +1,49 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  service:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build the code
+        working-directory: ./
+        run: pnpm build
+
+      - name: Run Tests
+        working-directory: ./
+        run: pnpm test
+
+      - name: Build and E2E test the site
+        working-directory: ./
+        env:
+          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
+          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          BUILD_PREFIX: true
+        run: pnpm test.saucelabs
