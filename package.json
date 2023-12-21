@@ -12,7 +12,6 @@
   "scripts": {
     "clean": "rimraf coverage build .tmp",
     "precompile": "npm run clean",
-    "compile": "tsc",
     "test": "vitest",
     "test.eslint": "eslint --cache packages tests",
     "test.local.init": "rimraf localBaseline && wdio ./tests/configs/wdio.local.init.conf.ts",
@@ -32,8 +31,6 @@
     "release.patch": "npm run release -- patch",
     "release.minor": "npm run release -- minor",
     "release.major": "npm run release -- major",
-    "watch": "npm run compile -- -w",
-    "wdio": "wdio run ./wdio.conf.ts",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -48,6 +45,7 @@
     "eslint-plugin-unicorn": "^49.0.0",
     "eslint-plugin-wdio": "^8.24.12",
     "husky": "^8.0.3",
+    "npm-run-all": "^4.1.5",
     "release-it": "^17.0.1",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",

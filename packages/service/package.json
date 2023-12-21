@@ -21,10 +21,8 @@
   "types": "./types/index.d.ts",
   "scripts": {
     "clean": "rimraf coverage build .tmp",
-    "precompile": "npm run clean",
-    "compile": "tsc",
-    "test": "jest",
-    "test.eslint": "eslint --cache lib tests",
+    "build": "run-s clean build:*",
+    "build:tsc": "tsc --project packages/service/tsconfig.json",
     "test.local.init": "rimraf localBaseline && wdio ./tests/configs/wdio.local.init.conf.ts",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.ts",
     "test.local.appium": "wdio tests/configs/wdio.local.appium.conf.ts",
@@ -36,15 +34,7 @@
     "test.saucelabs.desktop": "SAUCE_ENV=desktop wdio ./tests/configs/wdio.saucelabs.conf.ts",
     "test.saucelabs.emu": "SAUCE_ENV=emu wdio ./tests/configs/wdio.saucelabs.conf.ts",
     "test.saucelabs.sims": "SAUCE_ENV=sims wdio ./tests/configs/wdio.saucelabs.conf.ts",
-    "prerelease": "npm run compile",
-    "release": "release-it --github.release",
-    "release.ci": "npm run release -- --ci --npm.skipChecks --no-git.requireCleanWorkingDir",
-    "release.patch": "npm run release -- patch",
-    "release.minor": "npm run release -- minor",
-    "release.major": "npm run release -- major",
-    "watch": "npm run compile -- -w",
-    "wdio": "wdio run ./wdio.conf.ts",
-    "prepare": "husky install"
+    "watch": "npm run compile -- -w"
   },
   "dependencies": {
     "@wdio/logger": "^8.24.12",

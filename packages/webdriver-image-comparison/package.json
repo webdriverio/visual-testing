@@ -16,22 +16,11 @@
     "url": "https://github.com/wswebcreation/webdriver-image-comparison/issues"
   },
   "scripts": {
-    "compile": "npm run copy-files && tsc --allowJs true --declaration false && tsc",
-    "lint": "eslint lib/**/*.ts",
+    "build": "run-s clean build:*",
+    "build:copy": "npx copyfiles -u 1 lib/assets/**/*.png build/",
+    "build:tsc": "tsc",
     "clean": "rimraf coverage build tmp",
-    "copy-files": "npx copyfiles -u 1 lib/assets/**/*.png build/",
-    "pretest": "npm run lint",
-    "test": "jest",
-    "release": "release-it --github.release",
-    "release.ci": "npm run release -- --ci --npm.skipChecks --no-git.requireCleanWorkingDir",
-    "release.patch": "npm run release -- patch",
-    "release.minor": "npm run release -- minor",
-    "release.major": "npm run release -- major",
-    "test:watch": "npm run test -- --watchAll",
-    "watch": "npm run compile -- -w",
-    "precompile": "npm run clean",
-    "prerelease": "npm run compile",
-    "prepare": "husky install"
+    "watch": "npm run build:tsc -- -w"
   },
   "dependencies": {
     "canvas": "^2.11.2",

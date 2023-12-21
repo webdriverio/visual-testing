@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 //@ts-ignore
-import * as resemble from './resemble'
+import * as resemble from './resemble.js'
 import type { CompareOptions } from '../methods/images.interfaces'
 import type { CompareData } from './compare.interfaces'
 
