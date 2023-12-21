@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getEnrichedInstanceData should be able to enrich the instance data with all the defaults for Android ChromeDriver with no shadow padding 1`] = `
+Object {
+  "addressBarShadowPadding": 0,
+  "body": Object {
+    "offsetHeight": 0,
+    "scrollHeight": 0,
+  },
+  "browserName": "browserName",
+  "browserVersion": "browserVersion",
+  "deviceName": "deviceName",
+  "html": Object {
+    "clientHeight": 0,
+    "clientWidth": 0,
+    "offsetHeight": 0,
+    "scrollHeight": 0,
+    "scrollWidth": 0,
+  },
+  "isAndroid": true,
+  "isAndroidChromeDriverScreenshot": true,
+  "isAndroidNativeWebScreenshot": false,
+  "isIos": false,
+  "isMobile": true,
+  "isTestInBrowser": true,
+  "isTestInMobileBrowser": true,
+  "logName": "logName",
+  "name": "name",
+  "nativeWebScreenshot": false,
+  "platformName": "Android",
+  "platformVersion": "8.0",
+  "toolBarShadowPadding": 0,
+  "window": Object {
+    "devicePixelRatio": 1,
+    "innerHeight": 768,
+    "innerWidth": 1024,
+    "outerHeight": 768,
+    "outerWidth": 1024,
+    "screenHeight": 0,
+    "screenWidth": 0,
+  },
+}
+`;
+
+exports[`getEnrichedInstanceData should be able to enrich the instance data with all the defaults for Android Native Webscreenshot with no shadow padding 1`] = `
+Object {
+  "addressBarShadowPadding": 0,
+  "body": Object {
+    "offsetHeight": 0,
+    "scrollHeight": 0,
+  },
+  "browserName": "browserName",
+  "browserVersion": "browserVersion",
+  "deviceName": "deviceName",
+  "html": Object {
+    "clientHeight": 0,
+    "clientWidth": 0,
+    "offsetHeight": 0,
+    "scrollHeight": 0,
+    "scrollWidth": 0,
+  },
+  "isAndroid": true,
+  "isAndroidChromeDriverScreenshot": false,
+  "isAndroidNativeWebScreenshot": true,
+  "isIos": false,
+  "isMobile": true,
+  "isTestInBrowser": true,
+  "isTestInMobileBrowser": true,
+  "logName": "logName",
+  "name": "name",
+  "nativeWebScreenshot": true,
+  "platformName": "Android",
+  "platformVersion": "8.0",
+  "toolBarShadowPadding": 0,
+  "window": Object {
+    "devicePixelRatio": 1,
+    "innerHeight": 768,
+    "innerWidth": 1024,
+    "outerHeight": 768,
+    "outerWidth": 1024,
+    "screenHeight": 0,
+    "screenWidth": 0,
+  },
+}
+`;
+
+exports[`getEnrichedInstanceData should be able to enrich the instance data with all the defaults for desktop with no shadow padding 1`] = `
+Object {
+  "addressBarShadowPadding": 0,
+  "body": Object {
+    "offsetHeight": 0,
+    "scrollHeight": 0,
+  },
+  "browserName": "browserName",
+  "browserVersion": "browserVersion",
+  "deviceName": "deviceName",
+  "html": Object {
+    "clientHeight": 0,
+    "clientWidth": 0,
+    "offsetHeight": 0,
+    "scrollHeight": 0,
+    "scrollWidth": 0,
+  },
+  "isAndroid": false,
+  "isAndroidChromeDriverScreenshot": false,
+  "isAndroidNativeWebScreenshot": false,
+  "isIos": false,
+  "isMobile": false,
+  "isTestInBrowser": true,
+  "isTestInMobileBrowser": false,
+  "logName": "logName",
+  "name": "name",
+  "nativeWebScreenshot": false,
+  "platformName": "platformName",
+  "platformVersion": "platformVersion",
+  "toolBarShadowPadding": 0,
+  "window": Object {
+    "devicePixelRatio": 1,
+    "innerHeight": 768,
+    "innerWidth": 1024,
+    "outerHeight": 768,
+    "outerWidth": 1024,
+    "screenHeight": 0,
+    "screenWidth": 0,
+  },
+}
+`;
+
+exports[`getEnrichedInstanceData should be able to enrich the instance data with all the defaults for iOS with shadow padding 1`] = `
+Object {
+  "addressBarShadowPadding": 6,
+  "body": Object {
+    "offsetHeight": 0,
+    "scrollHeight": 0,
+  },
+  "browserName": "browserName",
+  "browserVersion": "browserVersion",
+  "deviceName": "deviceName",
+  "html": Object {
+    "clientHeight": 0,
+    "clientWidth": 0,
+    "offsetHeight": 0,
+    "scrollHeight": 0,
+    "scrollWidth": 0,
+  },
+  "isAndroid": false,
+  "isAndroidChromeDriverScreenshot": false,
+  "isAndroidNativeWebScreenshot": false,
+  "isIos": true,
+  "isMobile": true,
+  "isTestInBrowser": true,
+  "isTestInMobileBrowser": true,
+  "logName": "logName",
+  "name": "name",
+  "nativeWebScreenshot": false,
+  "platformName": "iOS",
+  "platformVersion": "12.4",
+  "toolBarShadowPadding": 15,
+  "window": Object {
+    "devicePixelRatio": 1,
+    "innerHeight": 768,
+    "innerWidth": 1024,
+    "outerHeight": 768,
+    "outerWidth": 1024,
+    "screenHeight": 0,
+    "screenWidth": 0,
+  },
+}
+`;

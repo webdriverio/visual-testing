@@ -2,7 +2,7 @@
 
 For documentation on visual testing with WebdriverIO, please refer to the [docs](webdriver.io/docs/visual-testing).
 
-## Contribution
+## Contributing
 
 This package depends on `node-canvas`, make sure you have all [required dependencies](https://github.com/Automattic/node-canvas?tab=readme-ov-file#compiling) installed before starting development.
 

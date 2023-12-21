@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`hideRemoveElements should be able to find and hide a single element based on a css selector 1`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide a single element based on a css selector 2`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide a single element based on a css selector 3`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide a single element based on a css selector 4`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide a single element based on a css selector 5`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide a single element based on a css selector 6`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide a single element based on a css selector 7`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide a single element based on a css selector 8`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on a css selector 1`] = `
+NodeList [
+  <span
+    class="hide"
+  >
+    Hello
+  </span>,
+  <span
+    class="hide"
+  >
+    Hello
+  </span>,
+  <span
+    class="hide"
+  >
+    Hello
+  </span>,
+  <span
+    class="hide"
+  >
+    Hello
+  </span>,
+]
+`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on a css selector 2`] = `
+NodeList [
+  <span
+    class="hide"
+    style="visibility: hidden;"
+  >
+    Hello
+  </span>,
+  <span
+    class="hide"
+    style="visibility: hidden;"
+  >
+    Hello
+  </span>,
+  <span
+    class="hide"
+    style="visibility: hidden;"
+  >
+    Hello
+  </span>,
+  <span
+    class="hide"
+    style="visibility: hidden;"
+  >
+    Hello
+  </span>,
+]
+`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on xpath 1`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on xpath 2`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on xpath 3`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on xpath 4`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on xpath 5`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on xpath 6`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on xpath 7`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to find and hide elements based on xpath 8`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to find and hide single element based on xpath 1`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide single element based on xpath 2`] = `""`;
+
+exports[`hideRemoveElements should be able to find and hide single element based on xpath 3`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to find and hide single element based on xpath 4`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again 1`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again 2`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again 3`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again 4`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again 5`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again 6`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 1`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 2`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 3`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 4`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 5`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 6`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 7`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 8`] = `"hidden"`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 9`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 10`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 11`] = `""`;
+
+exports[`hideRemoveElements should be able to hide elements and put them back again when an array of hidden elements is provided 12`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again 1`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again 2`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again 3`] = `"none"`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again 4`] = `"none"`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again 5`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again 6`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 1`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 2`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 3`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 4`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 5`] = `"none"`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 6`] = `"none"`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 7`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 8`] = `"none"`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 9`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 10`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 11`] = `""`;
+
+exports[`hideRemoveElements should be able to remove elements and put them back again when an array of to be removed elements is provided 12`] = `""`;

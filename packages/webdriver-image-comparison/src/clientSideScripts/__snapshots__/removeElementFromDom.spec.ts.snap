@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`removeElementFromDom should be able to remove an element from the body 1`] = `
+<body>
+  <div>
+       
+    <span
+      id="id-1"
+    >
+      Hello
+    </span>
+       
+    <span
+      id="id-2"
+    >
+      Hello
+    </span>
+       
+    <div>
+           
+      <span
+        id="id-3"
+      >
+        Hello
+      </span>
+           
+      <span
+        id="id-4"
+      >
+        Hello
+      </span>
+        
+    </div>
+  </div>
+</body>
+`;
+
+exports[`removeElementFromDom should be able to remove an element from the body 2`] = `
+<body>
+  <div>
+       
+       
+    <span
+      id="id-2"
+    >
+      Hello
+    </span>
+       
+    <div>
+           
+      <span
+        id="id-3"
+      >
+        Hello
+      </span>
+           
+      <span
+        id="id-4"
+      >
+        Hello
+      </span>
+        
+    </div>
+  </div>
+</body>
+`;
+
+exports[`removeElementFromDom should be able to remove the custom css 1`] = `"body:{width:100%}"`;
+
+exports[`removeElementFromDom should be able to remove the custom css 2`] = `""`;
+
+exports[`removeElementFromDom should do nothing if custom css is not present 1`] = `""`;
+
+exports[`removeElementFromDom should do nothing if custom css is not present 2`] = `""`;

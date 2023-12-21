@@ -4,6 +4,7 @@
   "description": "Image comparison / visual regression testing for WebdriverIO",
   "version": "5.0.3",
   "license": "MIT",
+  "homepage": "webdriver.io/docs/visual-testing",
   "repository": {
     "type": "git",
     "url": "https://github.com/wswebcreation/wdio-image-comparison-service.git"

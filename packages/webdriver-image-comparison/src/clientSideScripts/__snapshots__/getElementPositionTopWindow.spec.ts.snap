@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getElementPositionTopWindow should the the element position to the top of the window 1`] = `
+Object {
+  "height": 120,
+  "width": 120,
+  "x": 100,
+  "y": 10,
+}
+`;
