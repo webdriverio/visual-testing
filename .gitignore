@@ -28,3 +28,5 @@ localBaseline/
 .DS_Store
 .eslintcache
 dist
+
+*.tgz

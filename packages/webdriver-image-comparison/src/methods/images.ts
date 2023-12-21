@@ -1,12 +1,12 @@
 import { access, copySync, outputFile, readFileSync } from 'fs-extra'
 import { join } from 'node:path'
 import { createCanvas, loadImage } from 'canvas'
+import type { ComparisonOptions, ComparisonIgnoreOption } from 'resemblejs'
 import compareImages from '../resemble/compareImages.js'
 import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
 import { determineStatusAddressToolBarRectangles } from './rectangles.js'
 import type {
-    CompareOptions,
     CroppedBase64Image,
     IgnoreBoxes,
     ImageCompareOptions,
@@ -303,11 +303,9 @@ export async function executeImageCompare(
     const resembleIgnoreDefaults = ['alpha', 'antialiasing', 'colors', 'less', 'nothing']
     const ignore = resembleIgnoreDefaults.filter((option) =>
         Object.keys(imageCompareOptions).find(
-            (key) =>
-            // @ts-ignore
-                key.toLowerCase().includes(option) && imageCompareOptions[key],
+            (key: keyof typeof imageCompareOptions) => key.toLowerCase().includes(option) && imageCompareOptions[key],
         ),
-    )
+    ) as ComparisonIgnoreOption[]
 
     // 4b. Determine the ignore rectangles for the blockouts
     const blockOut = 'blockOut' in imageCompareOptions ? imageCompareOptions.blockOut : []
@@ -344,7 +342,7 @@ export async function executeImageCompare(
             },
         )
 
-    const compareOptions: CompareOptions = {
+    const compareOptions: ComparisonOptions = {
         ignore,
         ...(ignoredBoxes.length > 0 ? { output: { ignoredBoxes } } : {}),
         scaleToSameSize: imageCompareOptions.scaleImagesToSameSize,

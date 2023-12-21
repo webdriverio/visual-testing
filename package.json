@@ -30,7 +30,7 @@
     "watch": "pnpm run -r --parallel watch"
   },
   "dependencies": {
-    "wdio-image-comparison-service": "file:./packages/service"
+    "wdio-image-comparison-service": "workspace:^"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",

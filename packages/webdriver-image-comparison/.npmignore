@@ -9,6 +9,7 @@ perfecto.config.json
 local.config.json
 localBaseline/
 docs/
-lib/
 .eslintcache
 tsconfig.json
+src
+*.tgz

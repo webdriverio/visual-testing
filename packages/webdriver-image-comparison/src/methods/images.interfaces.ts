@@ -130,14 +130,6 @@ export interface ImageCompareResult {
   misMatchPercentage: number;
 }
 
-export interface CompareOptions {
-  ignore: string[];
-  output?: {
-    ignoredBoxes?: IgnoreBoxes[];
-  };
-  scaleToSameSize?: boolean;
-}
-
 export interface IgnoreBoxes {
   bottom: number;
   right: number;

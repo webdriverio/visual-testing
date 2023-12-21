@@ -1,10 +1,9 @@
 /* istanbul ignore file */
-//@ts-ignore
-import * as resemble from './resemble.js'
-import type { CompareOptions } from '../methods/images.interfaces'
+import * as resemble from 'resemblejs'
+import type { ComparisonOptions } from 'resemblejs'
 import type { CompareData } from './compare.interfaces'
 
-export default async function compareImages(image1: Buffer, image2: Buffer, options: CompareOptions): Promise<CompareData> {
+export default async function compareImages(image1: Buffer, image2: Buffer, options: ComparisonOptions): Promise<CompareData> {
     return new Promise((resolve, reject) => {
     //Resemble.js implemented in the way that scales 2nd images to the size of 1st.
     //Experimentally proven that downscaling images produces more accurate result than upscaling
