@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`hideScrollBars > should be able to hide and show the scrollbars 1`] = `""`;
+
+exports[`hideScrollBars > should be able to hide and show the scrollbars 2`] = `"hidden"`;
+
+exports[`hideScrollBars > should be able to hide and show the scrollbars 3`] = `""`;

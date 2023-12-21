@@ -1,0 +1,114 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`rectangles > determineElementRectangles > should determine them for Android ChromeDriver 1`] = `
+{
+  "height": 20,
+  "width": 375,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for Android Native webscreenshot 1`] = `
+{
+  "height": 360,
+  "width": 360,
+  "x": 300,
+  "y": 30,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for a desktop browser 1`] = `
+{
+  "height": 40,
+  "width": 750,
+  "x": 24,
+  "y": 68,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for iOS 1`] = `
+{
+  "height": 240,
+  "width": 240,
+  "x": 200,
+  "y": 20,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for Android ChromeDriver 1`] = `
+{
+  "height": 1106,
+  "width": 2732,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for Android Native webscreenshot 1`] = `
+{
+  "height": 1536,
+  "width": 750,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for iOS 1`] = `
+{
+  "height": 1536,
+  "width": 2732,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for Android with a status and toolbar blockout 1`] = `
+[
+  {
+    "height": 40,
+    "width": 320,
+    "x": 0,
+    "y": 0,
+  },
+  {
+    "height": 100,
+    "width": 320,
+    "x": 0,
+    "y": 600,
+  },
+  {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+]
+`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for the iOS with a status and toolbar blockout 1`] = `
+[
+  {
+    "height": 94,
+    "width": 375,
+    "x": 0,
+    "y": 0,
+  },
+  {
+    "height": 5,
+    "width": 135,
+    "x": 120,
+    "y": 799,
+  },
+  {
+    "height": 240,
+    "width": 120,
+    "x": 0,
+    "y": 70,
+  },
+]
+`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for the iOS without a status and toolbar blockout 1`] = `[]`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles that there are no rectangles for this device 1`] = `[]`;

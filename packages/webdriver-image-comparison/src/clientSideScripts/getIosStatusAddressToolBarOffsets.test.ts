@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import { describe, it, expect } from 'vitest'
 import { IOS_DEVICES, NAVIGATOR_APP_VERSIONS, CONFIGURABLE } from '../mocks/mocks.js'
 import getIosStatusAddressToolBarOffsets from './getIosStatusAddressToolBarOffsets.js'

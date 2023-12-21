@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import { describe, it, expect, vi } from 'vitest'
 import { CONFIGURABLE } from '../mocks/mocks.js'
 import getScreenDimensions from './getScreenDimensions.js'

@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import { describe, it, expect } from 'vitest'
 import hideRemoveElements from './hideRemoveElements.js'
 

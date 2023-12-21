@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import { describe, it, expect } from 'vitest'
 import getDocumentScrollHeight from './getDocumentScrollHeight.js'
 import { CONFIGURABLE } from '../mocks/mocks.js'

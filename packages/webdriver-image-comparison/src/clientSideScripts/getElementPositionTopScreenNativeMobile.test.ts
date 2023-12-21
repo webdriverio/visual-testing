@@ -1,11 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+// @vitest-environment jsdom
+
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { IOS_DEVICES, CONFIGURABLE } from '../mocks/mocks.js'
 import { getElementPositionTopScreenNativeMobile } from './getElementPositionTopScreenNativeMobile.js'
 
 describe('getElementPositionTopScreenNativeMobile', () => {
     beforeEach(() => {
-    // @ts-ignore
-        Element.prototype.getBoundingClientRect = jest.fn(() => {
+        Element.prototype.getBoundingClientRect = vi.fn(() => {
             return {
                 width: 120,
                 height: 120,
@@ -14,7 +15,7 @@ describe('getElementPositionTopScreenNativeMobile', () => {
                 bottom: 5,
                 right: 12,
             }
-        })
+        }) as any
         document.body.innerHTML = '<div>' + '  <span id="username">Hello</span>' + '</div>'
     })
 

@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import { describe, it } from 'vitest'
 import getElementPositionTopDom from './getElementPositionTopDom.js'
 
