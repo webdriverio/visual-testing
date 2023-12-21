@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable */
 /*
 James Cryer / Huddle
 URL: https://github.com/Huddle/Resemble.js
