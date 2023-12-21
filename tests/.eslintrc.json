@@ -1,0 +1,15 @@
+{
+  "plugins": ["wdio"],
+  "env": {
+    "mocha": true,
+    "browser": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:wdio/recommended",
+    "../.eslintrc.cjs"
+  ],
+  "rules": {
+    "wdio/no-pause": "off"
+  }
+}

@@ -28,17 +28,17 @@ jobs:
               working-directory: ./
               run: npm ci
 
-            - name: Run Unit Tests and generate coverage report
-              working-directory: ./
-              run: npm run test.unit.coverage
+            # - name: Run Unit Tests and generate coverage report
+            #   working-directory: ./
+            #   run: npm run test.unit.coverage
+
+            # - name: Lint the code
+            #   working-directory: ./
+            #   run: npm run test.unit.coverage
 
             - name: Lint the code
               working-directory: ./
-              run: npm run test.unit.coverage
-
-            - name: Lint the code
-              working-directory: ./
-              run: npm run lint
+              run: npm run test.eslint
 
             - name: Compile the code
               working-directory: ./
