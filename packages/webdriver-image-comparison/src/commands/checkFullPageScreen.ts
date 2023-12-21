@@ -1,12 +1,12 @@
-import { executeImageCompare } from '../methods/images'
-import { checkIsMobile } from '../helpers/utils'
-import saveFullPageScreen from './saveFullPageScreen'
+import { executeImageCompare } from '../methods/images.js'
+import { checkIsMobile } from '../helpers/utils.js'
+import saveFullPageScreen from './saveFullPageScreen.js'
 import type { ImageCompareResult } from '../methods/images.interfaces'
 import type { Methods } from '../methods/methods.interface'
 import type { InstanceData } from '../methods/instanceData.interfaces'
 import type { Folders } from '../base.interface'
 import type { CheckFullPageOptions, SaveFullPageOptions } from './fullPage.interfaces'
-import { methodCompareOptions } from '../helpers/options'
+import { methodCompareOptions } from '../helpers/options.js'
 
 /**
  * Compare a fullpage screenshot

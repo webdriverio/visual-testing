@@ -1,6 +1,7 @@
-import { IOS_DEVICES, NAVIGATOR_APP_VERSIONS, CONFIGURABLE } from '../mocks/mocks'
-import getIosStatusAddressToolBarOffsets from './getIosStatusAddressToolBarOffsets'
-import { IOS_OFFSETS } from '../helpers/constants'
+import { describe, it, expect } from 'vitest'
+import { IOS_DEVICES, NAVIGATOR_APP_VERSIONS, CONFIGURABLE } from '../mocks/mocks.js'
+import getIosStatusAddressToolBarOffsets from './getIosStatusAddressToolBarOffsets.js'
+import { IOS_OFFSETS } from '../helpers/constants.js'
 
 describe('getIosStatusAddressToolBarOffsets', () => {
     it('should get the correct status, address and toolbar height for a default iPhone with iOS 14 in Portrait mode', () => {

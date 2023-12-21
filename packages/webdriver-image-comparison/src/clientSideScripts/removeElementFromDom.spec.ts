@@ -1,4 +1,5 @@
-import removeElementFromDom from './removeElementFromDom'
+import { describe, it, expect } from 'vitest'
+import removeElementFromDom from './removeElementFromDom.js'
 
 describe('removeElementFromDom', () => {
     it('should be able to remove the custom css', () => {

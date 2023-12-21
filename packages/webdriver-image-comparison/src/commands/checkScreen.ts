@@ -1,12 +1,12 @@
-import saveScreen from './saveScreen'
-import { executeImageCompare } from '../methods/images'
-import { checkIsMobile } from '../helpers/utils'
+import saveScreen from './saveScreen.js'
+import { executeImageCompare } from '../methods/images.js'
+import { checkIsMobile } from '../helpers/utils.js'
 import type { ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces'
 import type { Methods } from '../methods/methods.interface'
 import type { InstanceData } from '../methods/instanceData.interfaces'
 import type { Folders } from '../base.interface'
 import type { CheckScreenOptions, SaveScreenOptions } from './screen.interfaces'
-import { screenMethodCompareOptions } from '../helpers/options'
+import { screenMethodCompareOptions } from '../helpers/options.js'
 
 /**
  * Compare an image of the viewport of the screen

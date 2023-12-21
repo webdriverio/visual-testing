@@ -36,8 +36,8 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
             return
         }
 
-        drawLine(drawOptions.line, elementCoordinates[i - 1], elementCoordinate)
-        drawCircleAndNumber(drawOptions.circle, elementCoordinate, i)
+        drawLine(drawOptions.line!, elementCoordinates[i - 1], elementCoordinate)
+        drawCircleAndNumber(drawOptions.circle!, elementCoordinate, i)
     })
 
     /**
@@ -46,11 +46,15 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     function drawLine(options: LineOptions, start: ElementCoordinate, end: ElementCoordinate): void {
         const tabbableCanvasContext = (<HTMLCanvasElement>document.getElementById('wic-tabbable-canvas')).getContext('2d')
 
+        if (!tabbableCanvasContext) {
+            return
+        }
+
         // Draw the line
         tabbableCanvasContext.beginPath()
         tabbableCanvasContext.globalCompositeOperation = 'destination-over'
-        tabbableCanvasContext.lineWidth = options.width
-        tabbableCanvasContext.strokeStyle = options.color
+        tabbableCanvasContext.lineWidth = options.width!
+        tabbableCanvasContext.strokeStyle = options.color!
         tabbableCanvasContext.moveTo(start.x, start.y)
         tabbableCanvasContext.lineTo(end.x, end.y)
         tabbableCanvasContext.stroke()
@@ -62,15 +66,19 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     function drawCircleAndNumber(options: CircleOptions, position: ElementCoordinate, i: number): void {
         const tabbableCanvasContext = (<HTMLCanvasElement>document.getElementById('wic-tabbable-canvas')).getContext('2d')
 
+        if (!tabbableCanvasContext) {
+            return
+        }
+
         // Draw circle
         tabbableCanvasContext.beginPath()
         tabbableCanvasContext.globalCompositeOperation = 'source-over'
-        tabbableCanvasContext.fillStyle = options.backgroundColor
-        tabbableCanvasContext.arc(position.x, position.y, options.size, 0, Math.PI * 2, true)
+        tabbableCanvasContext.fillStyle = options.backgroundColor!
+        tabbableCanvasContext.arc(position.x, position.y, options.size!, 0, Math.PI * 2, true)
         tabbableCanvasContext.fill()
         // Draw border
-        tabbableCanvasContext.lineWidth = options.borderWidth
-        tabbableCanvasContext.strokeStyle = options.borderColor
+        tabbableCanvasContext.lineWidth = options.borderWidth!
+        tabbableCanvasContext.strokeStyle = options.borderColor!
         tabbableCanvasContext.stroke()
 
         if (options.showNumber) {
@@ -78,7 +86,7 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
             tabbableCanvasContext.font = `${options.fontSize}px ${options.fontFamily}`
             tabbableCanvasContext.textAlign = 'center'
             tabbableCanvasContext.textBaseline = 'middle'
-            tabbableCanvasContext.fillStyle = options.fontColor
+            tabbableCanvasContext.fillStyle = options.fontColor!
             tabbableCanvasContext.fillText(i.toString(), position.x, position.y)
         }
     }
@@ -154,7 +162,7 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
    * Get the tab index of the node
    */
     function getTabindex(node: HTMLElement): number {
-        const tabindexAttr = parseInt(node.getAttribute('tabindex'), 10)
+        const tabindexAttr = parseInt(node.getAttribute('tabindex')!, 10)
 
         if (!isNaN(tabindexAttr)) {
             return tabindexAttr
@@ -276,7 +284,7 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
 
             // There could be some elements above this largest element,
             // add that on top
-            return pageHeight + largestNodeElement.getBoundingClientRect().top
+            return pageHeight + largestNodeElement?.getBoundingClientRect().top!
         }
 
         // The scrollHeight is good enough

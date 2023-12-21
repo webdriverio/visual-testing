@@ -1,4 +1,5 @@
-import getEnrichedInstanceData from './instanceData'
+import { describe, it, expect, vi } from 'vitest'
+import getEnrichedInstanceData from './instanceData.js'
 
 describe('getEnrichedInstanceData', () => {
     it('should be able to enrich the instance data with all the defaults for desktop with no shadow padding', async () => {
@@ -14,7 +15,7 @@ describe('getEnrichedInstanceData', () => {
             platformName: 'platformName',
             platformVersion: 'platformVersion',
         }
-        const MOCKED_EXECUTOR = jest
+        const MOCKED_EXECUTOR = vi
             .fn()
         // getEnrichedInstanceData for: getScreenDimensions
             .mockResolvedValueOnce({
@@ -56,7 +57,7 @@ describe('getEnrichedInstanceData', () => {
             platformName: 'Android',
             platformVersion: '8.0',
         }
-        const MOCKED_EXECUTOR = jest
+        const MOCKED_EXECUTOR = vi
             .fn()
         // getEnrichedInstanceData for: getScreenDimensions
             .mockResolvedValueOnce({
@@ -98,7 +99,7 @@ describe('getEnrichedInstanceData', () => {
             platformName: 'Android',
             platformVersion: '8.0',
         }
-        const MOCKED_EXECUTOR = jest
+        const MOCKED_EXECUTOR = vi
             .fn()
         // getEnrichedInstanceData for: getScreenDimensions
             .mockResolvedValueOnce({
@@ -140,7 +141,7 @@ describe('getEnrichedInstanceData', () => {
             platformName: 'iOS',
             platformVersion: '12.4',
         }
-        const MOCKED_EXECUTOR = jest
+        const MOCKED_EXECUTOR = vi
             .fn()
         // getEnrichedInstanceData for: getScreenDimensions
             .mockResolvedValueOnce({

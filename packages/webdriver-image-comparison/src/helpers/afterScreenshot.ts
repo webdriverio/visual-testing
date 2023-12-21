@@ -1,13 +1,15 @@
-import hideScrollBars from '../clientSideScripts/hideScrollbars'
-import removeElementFromDom from '../clientSideScripts/removeElementFromDom'
-import { CUSTOM_CSS_ID } from './constants'
-import { checkIsMobile, formatFileName, getAndCreatePath } from './utils'
-import { saveBase64Image } from '../methods/images'
 import { join } from 'node:path'
+
+import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
+import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
+import { CUSTOM_CSS_ID } from './constants.js'
+import { checkIsMobile, formatFileName, getAndCreatePath } from './utils.js'
+import { saveBase64Image } from '../methods/images.js'
+
 import type { Executor } from '../methods/methods.interface'
 import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot.interfaces'
-import hideRemoveElements from '../clientSideScripts/hideRemoveElements'
-import { LogLevel } from './options.interface'
+import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
+import { LogLevel } from './options.interface.js'
 
 /**
  * Methods that need to be executed after a screenshot has been taken

@@ -1,10 +1,10 @@
 import type { Methods } from '../methods/methods.interface'
 import type { InstanceData } from '../methods/instanceData.interfaces'
 import type { Folders } from '../base.interface'
-import drawTabbableOnCanvas from '../clientSideScripts/drawTabbableOnCanvas'
+import drawTabbableOnCanvas from '../clientSideScripts/drawTabbableOnCanvas.js'
 import type { CheckTabbableOptions } from './tabbable.interfaces'
-import removeElementFromDom from '../clientSideScripts/removeElementFromDom'
-import checkFullPageScreen from './checkFullPageScreen'
+import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
+import checkFullPageScreen from './checkFullPageScreen.js'
 import type { ImageCompareResult } from '..'
 
 /**

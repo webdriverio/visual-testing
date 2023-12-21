@@ -1,6 +1,7 @@
+import { describe, it, expect } from 'vitest'
 import { ensureDirSync, pathExistsSync } from 'fs-extra'
 import { join } from 'node:path'
-import BaseClass from './base'
+import BaseClass from './base.js'
 
 describe('BaseClass', () => {
     it('should be able to create BaseClass with options', () => {
@@ -46,8 +47,6 @@ describe('BaseClass', () => {
 
         expect(pathExistsSync(actual)).toEqual(true)
         expect(pathExistsSync(diff)).toEqual(true)
-
-        const instance = new BaseClass({ clearRuntimeFolder: true })
 
         expect(pathExistsSync(actual)).toEqual(false)
         expect(pathExistsSync(diff)).toEqual(false)

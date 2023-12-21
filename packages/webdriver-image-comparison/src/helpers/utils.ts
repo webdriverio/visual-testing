@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { DESKTOP, PLATFORMS } from './constants'
+import { DESKTOP, PLATFORMS } from './constants.js'
 import { ensureDirSync } from 'fs-extra'
 import type {
     FormatFileDefaults,
@@ -261,6 +261,10 @@ export function getIosBezelImageNames(normalizedDeviceName: string): { topImageN
         topImageName = 'ipadpro129-top'
         bottomImageName = 'ipadpro129-bottom'
         break
+    }
+
+    if (!topImageName || !bottomImageName) {
+        throw new Error(`Could not find iOS bezel images for device ${normalizedDeviceName}`)
     }
 
     return { topImageName, bottomImageName }

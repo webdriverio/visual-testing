@@ -1,9 +1,9 @@
-import scrollToPosition from '../clientSideScripts/scrollToPosition'
-import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight'
-import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets'
-import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets'
-import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants'
-import { calculateDprData, getScreenshotSize, waitFor } from '../helpers/utils'
+import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
+import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
+import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
+import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
+import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
+import { calculateDprData, getScreenshotSize, waitFor } from '../helpers/utils.js'
 import type { Executor, TakeScreenShot } from './methods.interface'
 import type {
     FullPageScreenshotOptions,
@@ -12,8 +12,8 @@ import type {
     FullPageScreenshotsData,
 } from './screenshots.interfaces'
 import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces'
-import hideRemoveElements from '../clientSideScripts/hideRemoveElements'
-import hideScrollBars from '../clientSideScripts/hideScrollbars'
+import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
+import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import { LogLevel } from '../helpers/options.interface'
 
 /**
@@ -150,9 +150,9 @@ export async function getFullPageScreenshotsDataNativeMobile(
 
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
-    let scrollHeight: number
-    let screenshotSizeHeight: number
-    let screenshotSizeWidth: number
+    let scrollHeight: number | undefined
+    let screenshotSizeHeight: number | undefined
+    let screenshotSizeWidth: number | undefined
     let isRotated = false
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
@@ -179,17 +179,19 @@ export async function getFullPageScreenshotsDataNativeMobile(
         const screenshot = await takeBase64Screenshot(takeScreenshot)
         screenshotSizeHeight = getScreenshotSize(screenshot, devicePixelRatio).height - sideBarWidth
         screenshotSizeWidth = getScreenshotSize(screenshot, devicePixelRatio).width - sideBarWidth
-        isRotated = isLandscape && screenshotSizeHeight > screenshotSizeWidth
+        isRotated = Boolean(isLandscape && screenshotSizeHeight > screenshotSizeWidth)
 
         // Determine scroll height and check if we need to scroll again
         scrollHeight = await executor(getDocumentScrollHeight)
-        if (scrollY + iosViewportHeight < scrollHeight) {
+        if (scrollHeight && (scrollY + iosViewportHeight < scrollHeight)) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
         // There is no else
 
         // The height of the image of the last 1 could be different
-        const imageHeight = amountOfScrollsArray.length === i ? scrollHeight - scrollY : iosViewportHeight
+        const imageHeight = amountOfScrollsArray.length === i && scrollHeight
+            ? scrollHeight - scrollY
+            : iosViewportHeight
 
         // The starting position for cropping could be different for the last image
         // The cropping always needs to start at status and address bar height and the address bar shadow padding
@@ -225,6 +227,10 @@ export async function getFullPageScreenshotsDataNativeMobile(
         }
     }
 
+    if (!scrollHeight || !screenshotSizeHeight || !screenshotSizeWidth) {
+        throw new Error('Couldn\'t determine scroll height or screenshot size')
+    }
+
     return {
         ...calculateDprData(
             {
@@ -250,7 +256,7 @@ export async function getFullPageScreenshotsDataAndroidChromeDriver(
 
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
-    let scrollHeight: number
+    let scrollHeight: number | undefined
     let screenshotSize
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
@@ -279,14 +285,16 @@ export async function getFullPageScreenshotsDataAndroidChromeDriver(
 
         // Determine scroll height and check if we need to scroll again
         scrollHeight = await executor(getDocumentScrollHeight)
-        if (scrollY + innerHeight < scrollHeight) {
+        if (scrollHeight && (scrollY + innerHeight < scrollHeight)) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
         // There is no else
 
         // The height of the image of the last 1 could be different
-        const imageHeight: number =
-      amountOfScrollsArray.length === i ? scrollHeight - innerHeight * viewportScreenshots.length : innerHeight
+        const imageHeight: number = amountOfScrollsArray.length === i && scrollHeight
+            ? scrollHeight - innerHeight * viewportScreenshots.length
+            : innerHeight
+
         // The starting position for cropping could be different for the last image (0 means no cropping)
         const imageYPosition = amountOfScrollsArray.length === i && amountOfScrollsArray.length !== 0 ? innerHeight - imageHeight : 0
 
@@ -319,6 +327,10 @@ export async function getFullPageScreenshotsDataAndroidChromeDriver(
         }
     }
 
+    if (!scrollHeight || !screenshotSize) {
+        throw new Error('Couldn\'t determine scroll height or screenshot size')
+    }
+
     return {
         ...calculateDprData(
             {
@@ -345,7 +357,7 @@ export async function getFullPageScreenshotsDataDesktop(
 
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
-    let scrollHeight: number
+    let scrollHeight: number | undefined
     let screenshotSize
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
@@ -382,18 +394,20 @@ export async function getFullPageScreenshotsDataDesktop(
         // Determine scroll height and check if we need to scroll again
         scrollHeight = await executor(getDocumentScrollHeight)
 
-        if (scrollY + actualInnerHeight < scrollHeight && screenshotSize.height === actualInnerHeight) {
+        if (scrollHeight && (scrollY + actualInnerHeight < scrollHeight) && screenshotSize.height === actualInnerHeight) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
         // There is no else, Lazy load and large screenshots,
         // like with older drivers such as FF <= 47 and IE11, will not work
 
         // The height of the image of the last 1 could be different
-        const imageHeight: number =
-      amountOfScrollsArray.length === i ? scrollHeight - actualInnerHeight * viewportScreenshots.length : screenshotSize.height
+        const imageHeight: number = scrollHeight && amountOfScrollsArray.length === i
+            ? scrollHeight - actualInnerHeight * viewportScreenshots.length
+            : screenshotSize.height
         // The starting position for cropping could be different for the last image (0 means no cropping)
-        const imageYPosition =
-      amountOfScrollsArray.length === i && amountOfScrollsArray.length !== 0 ? actualInnerHeight - imageHeight : 0
+        const imageYPosition = amountOfScrollsArray.length === i && amountOfScrollsArray.length !== 0
+            ? actualInnerHeight - imageHeight
+            : 0
 
         // Store all the screenshot data in the screenshot object
         viewportScreenshots.push({
@@ -419,6 +433,10 @@ export async function getFullPageScreenshotsDataDesktop(
         } catch (e) {
             logHiddenRemovedError(e, logLevel)
         }
+    }
+
+    if (!scrollHeight || !screenshotSize) {
+        throw new Error('Couldn\'t determine scroll height or screenshot size')
     }
 
     return {

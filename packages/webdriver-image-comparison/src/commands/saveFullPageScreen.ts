@@ -1,8 +1,8 @@
-import beforeScreenshot from '../helpers/beforeScreenshot'
-import afterScreenshot from '../helpers/afterScreenshot'
-import { getBase64FullPageScreenshotsData } from '../methods/screenshots'
-import { makeFullPageBase64Image } from '../methods/images'
-import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces'
+import beforeScreenshot from '../helpers/beforeScreenshot.js'
+import afterScreenshot from '../helpers/afterScreenshot.js'
+import { getBase64FullPageScreenshotsData } from '../methods/screenshots.js'
+import { makeFullPageBase64Image } from '../methods/images.js'
+import type { ScreenshotOutput, AfterScreenshotOptions } from '../helpers/afterScreenshot.interfaces'
 import type { Methods } from '../methods/methods.interface'
 import type { InstanceData } from '../methods/instanceData.interfaces'
 import type { Folders } from '../base.interface'
@@ -23,7 +23,6 @@ export default async function saveFullPageScreen(
     // 1a. Set some variables
     const {
         addressBarShadowPadding,
-        autoSaveBaseline,
         formatImageName,
         isHybridApp,
         logLevel,
@@ -32,17 +31,14 @@ export default async function saveFullPageScreen(
     } = saveFullPageOptions.wic
 
     // 1b. Set the method options to the right values
-    const disableCSSAnimation: boolean =
-    'disableCSSAnimation' in saveFullPageOptions.method
-        ? saveFullPageOptions.method.disableCSSAnimation
+    const disableCSSAnimation: boolean = 'disableCSSAnimation' in saveFullPageOptions.method
+        ? Boolean(saveFullPageOptions.method.disableCSSAnimation)
         : saveFullPageOptions.wic.disableCSSAnimation
-    const hideScrollBars: boolean =
-    'hideScrollBars' in saveFullPageOptions.method
-        ? saveFullPageOptions.method.hideScrollBars
+    const hideScrollBars: boolean = 'hideScrollBars' in saveFullPageOptions.method
+        ? Boolean(saveFullPageOptions.method.hideScrollBars)
         : saveFullPageOptions.wic.hideScrollBars
-    const fullPageScrollTimeout: number =
-    'fullPageScrollTimeout' in saveFullPageOptions.method
-        ? saveFullPageOptions.method.fullPageScrollTimeout
+    const fullPageScrollTimeout: number = 'fullPageScrollTimeout' in saveFullPageOptions.method
+        ? saveFullPageOptions.method.fullPageScrollTimeout!
         : saveFullPageOptions.wic.fullPageScrollTimeout
     const hideElements: HTMLElement[] = saveFullPageOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveFullPageOptions.method.removeElements || []
@@ -66,10 +62,10 @@ export default async function saveFullPageScreen(
     // 3.  Fullpage screenshots are taken per scrolled viewport
     const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
         addressBarShadowPadding: enrichedInstanceData.addressBarShadowPadding,
-        devicePixelRatio,
+        devicePixelRatio: devicePixelRatio || NaN,
         fullPageScrollTimeout,
         hideAfterFirstScroll,
-        innerHeight: enrichedInstanceData.dimensions.window.innerHeight,
+        innerHeight: enrichedInstanceData.dimensions.window.innerHeight || NaN,
         isAndroid: enrichedInstanceData.isAndroid,
         isAndroidChromeDriverScreenshot: enrichedInstanceData.isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot: enrichedInstanceData.isAndroidNativeWebScreenshot,
@@ -77,8 +73,8 @@ export default async function saveFullPageScreen(
         isIos: enrichedInstanceData.isIos,
         isLandscape,
         logLevel: logLevel,
-        screenHeight: enrichedInstanceData.dimensions.window.screenHeight,
-        screenWidth: enrichedInstanceData.dimensions.window.screenWidth,
+        screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
+        screenWidth: enrichedInstanceData.dimensions.window.screenWidth || NaN,
         toolBarShadowPadding: enrichedInstanceData.toolBarShadowPadding,
     }
     const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(
@@ -89,17 +85,16 @@ export default async function saveFullPageScreen(
 
     // 4.  Make a fullpage base64 image
     const fullPageBase64Image: string = await makeFullPageBase64Image(screenshotsData, {
-        devicePixelRatio,
+        devicePixelRatio: devicePixelRatio || NaN,
         isLandscape,
     })
 
     // 5.  The after the screenshot methods
-    const afterOptions = {
+    const afterOptions: AfterScreenshotOptions = {
         actualFolder: folders.actualFolder,
         base64Image: fullPageBase64Image,
         disableCSSAnimation,
         filePath: {
-            autoSaveBaseline,
             browserName: enrichedInstanceData.browserName,
             deviceName: enrichedInstanceData.deviceName,
             isMobile: enrichedInstanceData.isMobile,
@@ -109,18 +104,18 @@ export default async function saveFullPageScreen(
             browserName: enrichedInstanceData.browserName,
             browserVersion: enrichedInstanceData.browserVersion,
             deviceName: enrichedInstanceData.deviceName,
-            devicePixelRatio: enrichedInstanceData.dimensions.window.devicePixelRatio,
+            devicePixelRatio: enrichedInstanceData.dimensions.window.devicePixelRatio || NaN,
             formatImageName,
             isMobile: enrichedInstanceData.isMobile,
             isTestInBrowser: enrichedInstanceData.isTestInBrowser,
             logName: enrichedInstanceData.logName,
             name: enrichedInstanceData.name,
-            outerHeight: enrichedInstanceData.dimensions.window.outerHeight,
-            outerWidth: enrichedInstanceData.dimensions.window.outerWidth,
+            outerHeight: enrichedInstanceData.dimensions.window.outerHeight || NaN,
+            outerWidth: enrichedInstanceData.dimensions.window.outerWidth || NaN,
             platformName: enrichedInstanceData.platformName,
             platformVersion: enrichedInstanceData.platformVersion,
-            screenHeight: enrichedInstanceData.dimensions.window.screenHeight,
-            screenWidth: enrichedInstanceData.dimensions.window.screenWidth,
+            screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
+            screenWidth: enrichedInstanceData.dimensions.window.screenWidth || NaN,
             tag,
         },
         hideElements,
@@ -132,5 +127,5 @@ export default async function saveFullPageScreen(
     }
 
     // 6.  Return the data
-    return afterScreenshot(methods.executor, afterOptions)
+    return afterScreenshot(methods.executor, afterOptions!)
 }

@@ -1,5 +1,6 @@
-import getDocumentScrollHeight from './getDocumentScrollHeight'
-import { CONFIGURABLE } from '../mocks/mocks'
+import { describe, it, expect } from 'vitest'
+import getDocumentScrollHeight from './getDocumentScrollHeight.js'
+import { CONFIGURABLE } from '../mocks/mocks.js'
 
 describe('getDocumentScrollHeight', () => {
     it('should return the bodyScrollHeight', () => {

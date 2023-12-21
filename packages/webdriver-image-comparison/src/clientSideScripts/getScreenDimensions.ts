@@ -8,16 +8,16 @@ export default function getScreenDimensions(): ScreenDimensions {
     const html = document.documentElement
 
     const bodyDimensions = {
-        scrollHeight: body == null ? 0 : body.scrollHeight,
-        offsetHeight: body == null ? 0 : body.offsetHeight,
+        scrollHeight: !body ? 0 : body.scrollHeight,
+        offsetHeight: !body ? 0 : body.offsetHeight,
     }
 
     const htmlDimensions = {
-        clientHeight: html == null ? 0 : html.clientHeight,
-        clientWidth: html == null ? 0 : html.clientWidth,
-        scrollHeight: html == null ? 0 : html.scrollHeight,
-        scrollWidth: html == null ? 0 : html.scrollWidth,
-        offsetHeight: html == null ? 0 : html.offsetHeight,
+        clientHeight: !html ? 0 : html.clientHeight,
+        clientWidth: !html ? 0 : html.clientWidth,
+        scrollHeight: !html ? 0 : html.scrollHeight,
+        scrollWidth: !html ? 0 : html.scrollWidth,
+        offsetHeight: !html ? 0 : html.offsetHeight,
     }
 
     const windowDimensions = {

@@ -1,12 +1,12 @@
-import { executeImageCompare } from '../methods/images'
-import { checkIsMobile } from '../helpers/utils'
-import saveElement from './saveElement'
+import { executeImageCompare } from '../methods/images.js'
+import { checkIsMobile } from '../helpers/utils.js'
+import saveElement from './saveElement.js'
 import type { ImageCompareResult } from '../methods/images.interfaces'
 import type { Methods } from '../methods/methods.interface'
 import type { InstanceData } from '../methods/instanceData.interfaces'
 import type { Folders } from '../base.interface'
 import type { CheckElementOptions, SaveElementOptions } from './element.interfaces'
-import { methodCompareOptions } from '../helpers/options'
+import { methodCompareOptions } from '../helpers/options.js'
 
 /**
  * Compare  an image of the element

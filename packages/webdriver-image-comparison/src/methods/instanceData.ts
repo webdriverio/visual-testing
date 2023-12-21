@@ -8,8 +8,8 @@ import {
     checkTestInMobileBrowser,
     getAddressBarShadowPadding,
     getToolBarShadowPadding,
-} from '../helpers/utils'
-import getScreenDimensions from '../clientSideScripts/getScreenDimensions'
+} from '../helpers/utils.js'
+import getScreenDimensions from '../clientSideScripts/getScreenDimensions.js'
 import type { Executor } from './methods.interface'
 import type { EnrichedInstanceData, InstanceOptions } from './instanceData.interfaces'
 import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces'

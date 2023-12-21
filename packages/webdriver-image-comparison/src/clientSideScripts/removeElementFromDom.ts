@@ -3,7 +3,7 @@
  */
 export default function removeElementFromDom(id: string): void {
     const elem = document.querySelector(`#${id}`)
-    if (elem != null) {
-        elem.parentNode.removeChild(elem)
+    if (elem) {
+        elem.parentNode!.removeChild(elem)
     }
 }

@@ -4,7 +4,7 @@ import type { CssOptions } from './customCss.interfaces'
  * Set some default css
  */
 export default function setCustomCss(cssOptions: CssOptions): void {
-    if (document.head == null) {
+    if (!document.head) {
         return
     }
     // disabling CSS animations for everything including pseudo elements

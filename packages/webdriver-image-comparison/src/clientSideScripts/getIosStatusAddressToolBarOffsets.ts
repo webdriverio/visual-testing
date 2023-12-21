@@ -23,7 +23,7 @@ export default function getIosStatusAddressToolBarOffsets(
     const offsetPortraitHeight =
     Object.keys(iosOffsets[deviceType]).indexOf(portraitHeight.toString()) > -1 ? portraitHeight : defaultPortraitHeight
     const currentOffsets = iosOffsets[deviceType][offsetPortraitHeight][orientationType]
-    const osVersion = parseInt(navigator.appVersion.match(/(?:OS |Version\/)(\d+)(?:_|\.)(\d+)(?:_|\.)?(\d+)?/)[1], 10)
+    const osVersion = parseInt(navigator.appVersion.match(/(?:OS |Version\/)(\d+)(?:_|\.)(\d+)(?:_|\.)?(\d+)?/)![1], 10)
 
     // 2. Get the statusbar height
     let statusBarHeight = currentOffsets.STATUS_BAR

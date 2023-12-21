@@ -1,8 +1,8 @@
-import { takeBase64Screenshot } from '../methods/screenshots'
-import { makeCroppedBase64Image } from '../methods/images'
-import beforeScreenshot from '../helpers/beforeScreenshot'
-import afterScreenshot from '../helpers/afterScreenshot'
-import { determineScreenRectangles } from '../methods/rectangles'
+import { takeBase64Screenshot } from '../methods/screenshots.js'
+import { makeCroppedBase64Image } from '../methods/images.js'
+import beforeScreenshot from '../helpers/beforeScreenshot.js'
+import afterScreenshot from '../helpers/afterScreenshot.js'
+import { determineScreenRectangles } from '../methods/rectangles.js'
 import type { Methods } from '../methods/methods.interface'
 import type { Folders } from '../base.interface'
 import type { SaveScreenOptions } from './screen.interfaces'
@@ -26,12 +26,12 @@ export default async function saveScreen(
     saveScreenOptions.wic
 
     // 1b. Set the method options to the right values
-    const disableCSSAnimation: boolean =
-    'disableCSSAnimation' in saveScreenOptions.method
-        ? saveScreenOptions.method.disableCSSAnimation
+    const disableCSSAnimation: boolean = 'disableCSSAnimation' in saveScreenOptions.method
+        ? Boolean(saveScreenOptions.method.disableCSSAnimation)
         : saveScreenOptions.wic.disableCSSAnimation
-    const hideScrollBars: boolean =
-    'hideScrollBars' in saveScreenOptions.method ? saveScreenOptions.method.hideScrollBars : saveScreenOptions.wic.hideScrollBars
+    const hideScrollBars: boolean = 'hideScrollBars' in saveScreenOptions.method
+        ? Boolean(saveScreenOptions.method.hideScrollBars)
+        : saveScreenOptions.wic.hideScrollBars
     const hideElements: HTMLElement[] = saveScreenOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveScreenOptions.method.removeElements || []
 
@@ -70,9 +70,9 @@ export default async function saveScreen(
 
     // Determine the rectangles
     const screenRectangleOptions: ScreenRectanglesOptions = {
-        devicePixelRatio,
-        innerHeight,
-        innerWidth,
+        devicePixelRatio: devicePixelRatio || NaN,
+        innerHeight: innerHeight || NaN,
+        innerWidth: innerWidth || NaN,
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
         isIos,
@@ -84,7 +84,7 @@ export default async function saveScreen(
         addIOSBezelCorners,
         base64Image,
         deviceName,
-        devicePixelRatio,
+        devicePixelRatio: devicePixelRatio || NaN,
         isIos,
         isLandscape,
         logLevel,
@@ -106,18 +106,18 @@ export default async function saveScreen(
             browserName,
             browserVersion,
             deviceName,
-            devicePixelRatio,
+            devicePixelRatio: devicePixelRatio || NaN,
             formatImageName,
             isMobile,
             isTestInBrowser,
             logName,
             name,
-            outerHeight,
-            outerWidth,
+            outerHeight: outerHeight || NaN,
+            outerWidth: outerWidth || NaN,
             platformName,
             platformVersion,
-            screenHeight,
-            screenWidth,
+            screenHeight: screenHeight || NaN,
+            screenWidth: screenWidth || NaN,
             tag,
         },
         hideElements,

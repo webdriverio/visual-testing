@@ -3,8 +3,8 @@
  */
 /* istanbul ignore next */
 export default function scrollToPosition(yPosition: number): void {
-    const htmlNode = document.querySelector('html')
-    const bodyNode = document.querySelector('body')
+    const htmlNode = document.querySelector('html')!
+    const bodyNode = document.querySelector('body')!
 
     if (htmlNode.scrollHeight > htmlNode.clientHeight) {
         htmlNode.scrollTop = yPosition

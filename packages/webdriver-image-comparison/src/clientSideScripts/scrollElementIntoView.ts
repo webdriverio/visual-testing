@@ -4,8 +4,8 @@
 export default function scrollElementIntoView(element: HTMLElement, addressBarShadowPadding: number): number {
     let currentPosition = 0
     // Determine the current scroll position
-    const htmlNode = document.querySelector('html')
-    const bodyNode = document.querySelector('body')
+    const htmlNode = document.querySelector('html')!
+    const bodyNode = document.querySelector('body')!
     // If could be that we can't calculate the scroll position on the html but on the body node
     if (htmlNode.scrollTop > 0) {
         currentPosition = htmlNode.scrollTop

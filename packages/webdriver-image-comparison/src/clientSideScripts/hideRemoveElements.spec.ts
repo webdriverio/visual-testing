@@ -1,4 +1,5 @@
-import hideRemoveElements from './hideRemoveElements'
+import { describe, it, expect } from 'vitest'
+import hideRemoveElements from './hideRemoveElements.js'
 
 describe('hideRemoveElements', () => {
     it('should be able to hide elements and put them back again', () => {

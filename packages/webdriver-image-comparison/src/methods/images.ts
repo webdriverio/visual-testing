@@ -1,10 +1,10 @@
 import { access, copySync, outputFile, readFileSync } from 'fs-extra'
 import { join } from 'node:path'
 import { createCanvas, loadImage } from 'canvas'
-import compareImages from '../resemble/compareImages'
-import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils'
-import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants'
-import { determineStatusAddressToolBarRectangles } from './rectangles'
+import compareImages from '../resemble/compareImages.js'
+import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils.js'
+import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
+import { determineStatusAddressToolBarRectangles } from './rectangles.js'
 import type {
     CompareOptions,
     CroppedBase64Image,
@@ -288,18 +288,18 @@ export async function executeImageCompare(
     let diffFilePath
     const imageCompareOptions = { ...options.compareOptions.wic, ...options.compareOptions.method }
 
-    // 2. 	Create all needed folders
+    // 2. Create all needed folders
     const createFolderOptions = { browserName, deviceName, isMobile, savePerInstance }
     const actualFolderPath = getAndCreatePath(actualFolder, createFolderOptions)
     const baselineFolderPath = getAndCreatePath(baselineFolder, createFolderOptions)
     const actualFilePath = join(actualFolderPath, fileName)
     const baselineFilePath = join(baselineFolderPath, fileName)
 
-    // 3. 	Check if there is a baseline image, and determine if it needs to be auto saved or not
+    // 3. Check if there is a baseline image, and determine if it needs to be auto saved or not
     await checkBaselineImageExists(actualFilePath, baselineFilePath, autoSaveBaseline, logLevel)
 
-    // 4. 	Prepare the compare
-    // 4a.	Determine the ignore options
+    // 4. Prepare the compare
+    // 4a.Determine the ignore options
     const resembleIgnoreDefaults = ['alpha', 'antialiasing', 'colors', 'less', 'nothing']
     const ignore = resembleIgnoreDefaults.filter((option) =>
         Object.keys(imageCompareOptions).find(
@@ -309,7 +309,7 @@ export async function executeImageCompare(
         ),
     )
 
-    // 4b.	Determine the ignore rectangles for the blockouts
+    // 4b. Determine the ignore rectangles for the blockouts
     const blockOut = 'blockOut' in imageCompareOptions ? imageCompareOptions.blockOut : []
     const statusAddressToolBarOptions = {
         blockOutSideBar: imageCompareOptions.blockOutSideBar,
@@ -323,13 +323,13 @@ export async function executeImageCompare(
         platformName,
     }
 
-    const ignoredBoxes = blockOut
+    const ignoredBoxes = (blockOut || [])
         .concat(
-            // 4c.	Add the mobile rectangles that need to be ignored
+            // 4c. Add the mobile rectangles that need to be ignored
             await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions),
         )
         .map(
-            // 4d.	Make sure all the rectangles are equal to the dpr for the screenshot
+            // 4d. Make sure all the rectangles are equal to the dpr for the screenshot
             (rectangles) => {
                 return calculateDprData(
                     {
@@ -350,14 +350,14 @@ export async function executeImageCompare(
         scaleToSameSize: imageCompareOptions.scaleImagesToSameSize,
     }
 
-    // 5.		Execute the compare and retrieve the data
+    // 5. Execute the compare and retrieve the data
     const data: CompareData = await compareImages(readFileSync(baselineFilePath), readFileSync(actualFilePath), compareOptions)
     const rawMisMatchPercentage = data.rawMisMatchPercentage
     const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage
         : Number(data.rawMisMatchPercentage.toFixed(3))
 
-    // 6.		Save the diff when there is a diff or when debug mode is on
+    // 6. Save the diff when there is a diff or when debug mode is on
     if (rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || logLevel === LogLevel.debug) {
         const isDifference = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance
         const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
@@ -380,7 +380,7 @@ export async function executeImageCompare(
         }
     }
 
-    // 7. 	Return the comparison data
+    // 7. Return the comparison data
     return imageCompareOptions.returnAllCompareData
         ? {
             fileName,

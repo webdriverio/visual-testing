@@ -1,6 +1,6 @@
-import { calculateDprData, checkAndroidNativeWebScreenshot, checkIsIos, getScreenshotSize } from '../helpers/utils'
-import { getElementPositionAndroid, getElementPositionDesktop, getElementPositionIos } from './elementPosition'
-import { IOS_OFFSETS, ANDROID_OFFSETS } from '../helpers/constants'
+import { calculateDprData, checkAndroidNativeWebScreenshot, checkIsIos, getScreenshotSize } from '../helpers/utils.js'
+import { getElementPositionAndroid, getElementPositionDesktop, getElementPositionIos } from './elementPosition.js'
+import { IOS_OFFSETS, ANDROID_OFFSETS } from '../helpers/constants.js'
 import type {
     ElementRectangles,
     RectanglesOutput,
@@ -9,8 +9,8 @@ import type {
     StatusAddressToolBarRectanglesOptions,
 } from './rectangles.interfaces'
 import type { Executor } from './methods.interface'
-import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets'
-import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets'
+import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
+import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
 import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces'
 
 /**

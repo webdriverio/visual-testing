@@ -1,9 +1,10 @@
-import beforeScreenshot from './beforeScreenshot'
+import { describe, it, expect, vi } from 'vitest'
+import beforeScreenshot from './beforeScreenshot.js'
 import { LogLevel } from './options.interface'
 
 describe('beforeScreenshot', () => {
     it('should be able to return the enriched instance data with default options', async () => {
-        const MOCKED_EXECUTOR = jest.fn().mockReturnValue('')
+        const MOCKED_EXECUTOR = vi.fn().mockReturnValue('')
 
         const options = {
             instanceData: {
@@ -29,7 +30,7 @@ describe('beforeScreenshot', () => {
     })
 
     it('should be able to return the enriched instance data with `addShadowPadding: true`', async () => {
-        const MOCKED_EXECUTOR = jest.fn().mockReturnValue('')
+        const MOCKED_EXECUTOR = vi.fn().mockReturnValue('')
 
         const options = {
             instanceData: {

@@ -2,10 +2,10 @@ import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces'
 import type { Methods } from '../methods/methods.interface'
 import type { InstanceData } from '../methods/instanceData.interfaces'
 import type { Folders } from '../base.interface'
-import drawTabbableOnCanvas from '../clientSideScripts/drawTabbableOnCanvas'
-import saveFullPageScreen from './saveFullPageScreen'
+import drawTabbableOnCanvas from '../clientSideScripts/drawTabbableOnCanvas.js'
+import saveFullPageScreen from './saveFullPageScreen.js'
 import type { SaveTabbableOptions } from './tabbable.interfaces'
-import removeElementFromDom from '../clientSideScripts/removeElementFromDom'
+import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 
 /**
  * Saves an image of all tab executions

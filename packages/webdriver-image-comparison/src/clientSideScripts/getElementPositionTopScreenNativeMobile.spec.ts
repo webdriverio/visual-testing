@@ -1,5 +1,6 @@
-import { IOS_DEVICES, CONFIGURABLE } from '../mocks/mocks'
-import { getElementPositionTopScreenNativeMobile } from './getElementPositionTopScreenNativeMobile'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { IOS_DEVICES, CONFIGURABLE } from '../mocks/mocks.js'
+import { getElementPositionTopScreenNativeMobile } from './getElementPositionTopScreenNativeMobile.js'
 
 describe('getElementPositionTopScreenNativeMobile', () => {
     beforeEach(() => {
@@ -21,7 +22,7 @@ describe('getElementPositionTopScreenNativeMobile', () => {
         Object.defineProperty(window, 'innerHeight', { value: IOS_DEVICES.IPHONE.innerHeight, ...CONFIGURABLE })
 
         expect(
-            getElementPositionTopScreenNativeMobile(document.querySelector('#username'), {
+            getElementPositionTopScreenNativeMobile(document.querySelector('#username')!, {
                 isLandscape: false,
                 safeArea: 0,
                 screenHeight: IOS_DEVICES.IPHONE.height,
@@ -36,7 +37,7 @@ describe('getElementPositionTopScreenNativeMobile', () => {
         Object.defineProperty(window, 'innerHeight', { value: IOS_DEVICES.IPHONE.height, ...CONFIGURABLE })
 
         expect(
-            getElementPositionTopScreenNativeMobile(document.querySelector('#username'), {
+            getElementPositionTopScreenNativeMobile(document.querySelector('#username')!, {
                 isLandscape: false,
                 safeArea: 0,
                 screenHeight: IOS_DEVICES.IPHONE.height,
@@ -51,7 +52,7 @@ describe('getElementPositionTopScreenNativeMobile', () => {
         Object.defineProperty(window, 'innerHeight', { value: IOS_DEVICES.IPHONE.width, ...CONFIGURABLE })
 
         expect(
-            getElementPositionTopScreenNativeMobile(document.querySelector('#username'), {
+            getElementPositionTopScreenNativeMobile(document.querySelector('#username')!, {
                 isLandscape: true,
                 safeArea: 44,
                 screenHeight: IOS_DEVICES.IPHONE.innerHeight,

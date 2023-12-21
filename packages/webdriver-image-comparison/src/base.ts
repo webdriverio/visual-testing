@@ -1,7 +1,7 @@
 import { join, normalize } from 'node:path'
 import { removeSync } from 'fs-extra'
-import { defaultOptions } from './helpers/options'
-import { FOLDERS } from './helpers/constants'
+import { defaultOptions } from './helpers/options.js'
+import { FOLDERS } from './helpers/constants.js'
 import type { Folders } from './base.interface'
 import type { ClassOptions, DefaultOptions } from './helpers/options.interface'
 
@@ -13,12 +13,12 @@ export default class BaseClass {
     // determine default options
         this.defaultOptions = defaultOptions(options)
 
-        let baselineFolder
-        let baseFolder
-
-        baselineFolder = typeof options.baselineFolder === 'function' ? options.baselineFolder(options) : normalize(options.baselineFolder || FOLDERS.DEFAULT.BASE)
-
-        baseFolder = typeof options.screenshotPath === 'function' ? options.screenshotPath(options) : normalize(options.screenshotPath || FOLDERS.DEFAULT.SCREENSHOTS)
+        const baselineFolder = typeof options.baselineFolder === 'function'
+            ? options.baselineFolder(options)
+            : normalize(options.baselineFolder || FOLDERS.DEFAULT.BASE)
+        const baseFolder = typeof options.screenshotPath === 'function'
+            ? options.screenshotPath(options)
+            : normalize(options.screenshotPath || FOLDERS.DEFAULT.SCREENSHOTS)
 
         this.folders = {
             actualFolder: join(baseFolder, FOLDERS.ACTUAL),

@@ -1,6 +1,7 @@
-import { ANDROID_OFFSETS } from '../helpers/constants'
-import { ANDROID_DEVICES, NAVIGATOR_APP_VERSIONS, CONFIGURABLE } from '../mocks/mocks'
-import getAndroidStatusAddressToolBarOffsets from './getAndroidStatusAddressToolBarOffsets'
+import { describe, it, expect } from 'vitest'
+import { ANDROID_OFFSETS } from '../helpers/constants.js'
+import { ANDROID_DEVICES, NAVIGATOR_APP_VERSIONS, CONFIGURABLE } from '../mocks/mocks.js'
+import getAndroidStatusAddressToolBarOffsets from './getAndroidStatusAddressToolBarOffsets.js'
 
 describe('getAndroidStatusAddressToolBarOffsets', () => {
     it('should get the android status, address and toolbar height with only a major version in the navigator', () => {

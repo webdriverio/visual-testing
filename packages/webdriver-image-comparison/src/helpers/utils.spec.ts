@@ -1,3 +1,4 @@
+import { describe, it, expect, afterEach } from 'vitest'
 import { pathExistsSync, removeSync } from 'fs-extra'
 import { join } from 'node:path'
 import {
@@ -14,9 +15,9 @@ import {
     getAndCreatePath,
     getScreenshotSize,
     getToolBarShadowPadding,
-} from './utils'
+} from './utils.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces'
-import { IMAGE_STRING } from '../mocks/mocks'
+import { IMAGE_STRING } from '../mocks/mocks.js'
 
 describe('utils', () => {
     describe('getAndCreatePath', () => {

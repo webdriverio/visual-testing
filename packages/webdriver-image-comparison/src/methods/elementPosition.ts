@@ -1,11 +1,11 @@
-import getElementPositionTopWindow from '../clientSideScripts/getElementPositionTopWindow'
-import getElementPositionTopDom from '../clientSideScripts/getElementPositionTopDom'
-import { getElementPositionTopScreenNativeMobile } from '../clientSideScripts/getElementPositionTopScreenNativeMobile'
-import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants'
+import getElementPositionTopWindow from '../clientSideScripts/getElementPositionTopWindow.js'
+import getElementPositionTopDom from '../clientSideScripts/getElementPositionTopDom.js'
+import { getElementPositionTopScreenNativeMobile } from '../clientSideScripts/getElementPositionTopScreenNativeMobile.js'
+import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import type { Executor } from './methods.interface'
 import type { ElementPosition } from '../clientSideScripts/elementPosition.interfaces'
-import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets'
-import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets'
+import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
+import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
 import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces'
 
 /**
@@ -51,7 +51,7 @@ export async function getElementPositionAndroid(
  * @param {element}  element          The element
  *
  * @returns {Promise<{
- * 		height: number,
+ *    height: number,
  *    width: number,
  *    x: number,
  *    y: number

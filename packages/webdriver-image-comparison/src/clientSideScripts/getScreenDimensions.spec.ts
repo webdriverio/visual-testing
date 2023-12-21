@@ -1,10 +1,11 @@
-import { CONFIGURABLE } from '../mocks/mocks'
-import getScreenDimensions from './getScreenDimensions'
+import { describe, it, expect, vi } from 'vitest'
+import { CONFIGURABLE } from '../mocks/mocks.js'
+import getScreenDimensions from './getScreenDimensions.js'
 
 describe('getScreenDimensions', () => {
     it('should get the needed screen dimensions', () => {
         Object.defineProperty(window, 'matchMedia', {
-            value: jest.fn().mockImplementation(() => ({
+            value: vi.fn().mockImplementation(() => ({
                 matches: true,
             })),
             ...CONFIGURABLE,
@@ -18,7 +19,7 @@ describe('getScreenDimensions', () => {
         Object.defineProperty(document.documentElement, 'clientHeight', { value: 1234 })
         Object.defineProperty(document.documentElement, 'clientWidth', { value: 4321 }) // @ts-ignore
         Object.defineProperty(window, 'matchMedia', {
-            value: jest.fn().mockImplementation(() => ({
+            value: vi.fn().mockImplementation(() => ({
                 matches: false,
             })),
             ...CONFIGURABLE,
@@ -31,7 +32,7 @@ describe('getScreenDimensions', () => {
         Object.defineProperty(document, 'body', { value: null })
         Object.defineProperty(document, 'documentElement', { value: null })
         Object.defineProperty(window, 'matchMedia', {
-            value: jest.fn().mockImplementation(() => ({
+            value: vi.fn().mockImplementation(() => ({
                 matches: false,
             })),
             ...CONFIGURABLE,

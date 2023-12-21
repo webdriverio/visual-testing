@@ -1,11 +1,12 @@
-import { getBase64FullPageScreenshotsData } from './screenshots'
+import { describe, it, expect, vi } from 'vitest'
+import { getBase64FullPageScreenshotsData } from './screenshots.js'
 import type { FullPageScreenshotDataOptions } from './screenshots.interfaces'
-import { IMAGE_STRING } from '../mocks/mocks'
+import { IMAGE_STRING } from '../mocks/mocks.js'
 import { LogLevel } from '../helpers/options.interface'
 
 describe('screenshots', () => {
     describe('getBase64FullPageScreenshotsData', () => {
-        const MOCKED_TAKESCREENSHOT = jest.fn().mockResolvedValue(IMAGE_STRING)
+        const MOCKED_TAKESCREENSHOT = vi.fn().mockResolvedValue(IMAGE_STRING)
 
         it('should get the Android nativeWebScreenshot fullpage screenshot data', async () => {
             const options: FullPageScreenshotDataOptions = {
@@ -25,7 +26,7 @@ describe('screenshots', () => {
                 screenHeight: 0,
                 screenWidth: 0,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // For await executor(getAndroidStatusAddressToolBarOffsets, OFFSETS.ANDROID))
                 .mockResolvedValueOnce({
@@ -71,7 +72,7 @@ describe('screenshots', () => {
                 screenHeight: 0,
                 screenWidth: 0,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // For await executor(getAndroidStatusAddressToolBarOffsets, OFFSETS.ANDROID))
                 .mockResolvedValueOnce({
@@ -130,7 +131,7 @@ describe('screenshots', () => {
                 screenHeight: 0,
                 screenWidth: 0,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // THIS NEEDS TO BE FIXED IN THE FUTURE
             // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
@@ -176,7 +177,7 @@ describe('screenshots', () => {
                 screenHeight: 0,
                 screenWidth: 0,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // THIS NEEDS TO BE FIXED IN THE FUTURE
             // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
@@ -226,7 +227,7 @@ describe('screenshots', () => {
                 screenHeight: 0,
                 screenWidth: 0,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
                 .mockResolvedValueOnce({
                     isLandscape: false,
@@ -281,7 +282,7 @@ describe('screenshots', () => {
                 screenHeight: 0,
                 screenWidth: 0,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
                 .mockResolvedValueOnce({
                     isLandscape: true,
@@ -336,7 +337,7 @@ describe('screenshots', () => {
                 screenHeight: 0,
                 screenWidth: 0,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // getBase64FullPageScreenshotsData: For await executor(getIosStatusAddressToolBarOffsets)
                 .mockResolvedValueOnce({
@@ -396,7 +397,7 @@ describe('screenshots', () => {
                 screenHeight: 0,
                 screenWidth: 0,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // THIS NEEDS TO BE FIXED IN THE FUTURE
             // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
@@ -449,7 +450,7 @@ describe('screenshots', () => {
                 screenHeight: 0,
                 screenWidth: 0,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // THIS NEEDS TO BE FIXED IN THE FUTURE
             // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)

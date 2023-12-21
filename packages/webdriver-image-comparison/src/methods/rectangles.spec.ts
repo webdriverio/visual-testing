@@ -1,5 +1,6 @@
-import { determineElementRectangles, determineScreenRectangles, determineStatusAddressToolBarRectangles } from './rectangles'
-import { IMAGE_STRING } from '../mocks/mocks'
+import { describe, it, expect, vi } from 'vitest'
+import { determineElementRectangles, determineScreenRectangles, determineStatusAddressToolBarRectangles } from './rectangles.js'
+import { IMAGE_STRING } from '../mocks/mocks.js'
 
 describe('rectangles', () => {
     describe('determineElementRectangles', () => {
@@ -12,7 +13,7 @@ describe('rectangles', () => {
                 isIos: true,
                 isLandscape: false,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // getElementPositionIos for: getIosStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
@@ -62,7 +63,7 @@ describe('rectangles', () => {
                 isIos: false,
                 isLandscape: false,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // getElementPositionAndroid for: getAndroidStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
@@ -112,7 +113,7 @@ describe('rectangles', () => {
                 isIos: false,
                 isLandscape: false,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // getElementPositionAndroid for: getElementPositionTopWindow
                 .mockResolvedValueOnce({
@@ -141,7 +142,7 @@ describe('rectangles', () => {
                 isIos: false,
                 isLandscape: false,
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // getElementPositionDesktop for: getElementPositionTopWindow
                 .mockResolvedValueOnce({
@@ -170,7 +171,7 @@ describe('rectangles', () => {
                 isIos: false,
                 isLandscape: false,
             }
-            const MOCKED_EXECUTOR = jest.fn().mockResolvedValueOnce({
+            const MOCKED_EXECUTOR = vi.fn().mockResolvedValueOnce({
                 height: 0,
                 width: 375,
                 x: 12,
@@ -186,8 +187,8 @@ describe('rectangles', () => {
                 })
                 // Fail test if above expression doesn't throw anything.
                 expect(true).toBe(false)
-            } catch (e) {
-                expect(e.message).toBe('The element, with selector "$(#elementID)",is not visible. The dimensions are 375x0')
+            } catch (e: unknown) {
+                expect((e as Error).message).toBe('The element, with selector "$(#elementID)",is not visible. The dimensions are 375x0')
             }
         })
 
@@ -200,7 +201,7 @@ describe('rectangles', () => {
                 isIos: false,
                 isLandscape: false,
             }
-            const MOCKED_EXECUTOR = jest.fn().mockResolvedValueOnce({
+            const MOCKED_EXECUTOR = vi.fn().mockResolvedValueOnce({
                 height: 375,
                 width: 0,
                 x: 12,
@@ -216,8 +217,8 @@ describe('rectangles', () => {
                 })
                 // Fail test if above expression doesn't throw anything.
                 expect(true).toBe(false)
-            } catch (e) {
-                expect(e.message).toBe('The element, with selector "$(#elementID)",is not visible. The dimensions are 0x375')
+            } catch (e: unknown) {
+                expect((e as Error).message).toBe('The element, with selector "$(#elementID)",is not visible. The dimensions are 0x375')
             }
         })
 
@@ -230,7 +231,7 @@ describe('rectangles', () => {
                 isIos: false,
                 isLandscape: false,
             }
-            const MOCKED_EXECUTOR = jest.fn().mockResolvedValueOnce({
+            const MOCKED_EXECUTOR = vi.fn().mockResolvedValueOnce({
                 height: 375,
                 width: 0,
                 x: 12,
@@ -246,8 +247,8 @@ describe('rectangles', () => {
                 })
                 // Fail test if above expression doesn't throw anything.
                 expect(true).toBe(false)
-            } catch (e) {
-                expect(e.message).toBe('The element is not visible. The dimensions are 0x375')
+            } catch (e: unknown) {
+                expect((e as Error).message).toBe('The element is not visible. The dimensions are 0x375')
             }
         })
     })
@@ -309,7 +310,7 @@ describe('rectangles', () => {
                 isViewPortScreenshot: true,
                 platformName: 'iOS',
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // determineStatusAddressToolBarRectangles for: getIosStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
@@ -348,7 +349,7 @@ describe('rectangles', () => {
                 isViewPortScreenshot: true,
                 platformName: 'iOS',
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // determineStatusAddressToolBarRectangles for: getIosStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
@@ -387,7 +388,7 @@ describe('rectangles', () => {
                 isViewPortScreenshot: true,
                 platformName: 'Android',
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // determineStatusAddressToolBarRectangles for: getAndroidStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
@@ -426,7 +427,7 @@ describe('rectangles', () => {
                 isViewPortScreenshot: false,
                 platformName: 'Android',
             }
-            const MOCKED_EXECUTOR = jest
+            const MOCKED_EXECUTOR = vi
                 .fn()
             // determineStatusAddressToolBarRectangles for: getAndroidStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({

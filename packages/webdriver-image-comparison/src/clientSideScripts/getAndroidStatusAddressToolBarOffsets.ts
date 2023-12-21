@@ -11,7 +11,7 @@ export default function getAndroidStatusAddressToolBarOffsets(
     // Determine version for the right offsets
     const { height, width } = window.screen
     const { innerHeight } = window
-    const match = navigator.appVersion.match(/Android (\d+).?(\d+)?.?(\d+)?/)
+    const match = navigator.appVersion.match(/Android (\d+).?(\d+)?.?(\d+)?/)!
     const majorVersion = parseInt(match[1], 10)
     const versionOffsets = androidOffsets[majorVersion]
     // Not sure if it's a bug, but in Landscape mode the height is the width

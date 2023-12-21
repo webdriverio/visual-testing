@@ -1,4 +1,5 @@
-import { defaultOptions, methodCompareOptions, screenMethodCompareOptions } from './options'
+import { describe, it, expect } from 'vitest'
+import { defaultOptions, methodCompareOptions, screenMethodCompareOptions } from './options.js'
 import type { ClassOptions } from './options.interface'
 import type { ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces'
 

@@ -1,11 +1,9 @@
-import type { WebElement } from 'selenium-webdriver'
-
 /**
  * Hide or remove elements on the page
  */
 export default function hideRemoveElements(
     hideRemoveElements: {
-    hide: (HTMLElement | HTMLElement[] | WebElement | WebElement[])[];
+    hide: (HTMLElement | HTMLElement[])[];
     remove: (HTMLElement | HTMLElement[])[];
   },
     hideRemove: boolean,
@@ -13,19 +11,19 @@ export default function hideRemoveElements(
     const visitedSelectors: Record<string, boolean> = {}
     hideRemoveElements.hide.forEach((element) => {
         if (Array.isArray(element)) {
-            return element.forEach((singleElement: HTMLElement | WebElement) => hideRemoveEl(singleElement, 'visibility', hideRemove))
+            return element.forEach((singleElement: HTMLElement) => hideRemoveEl(singleElement, 'visibility', hideRemove))
         }
         hideRemoveEl(element, 'visibility', hideRemove)
     })
 
     hideRemoveElements.remove.forEach((element) => {
         if (Array.isArray(element)) {
-            return element.forEach((singleElement: HTMLElement | WebElement) => hideRemoveEl(singleElement, 'display', hideRemove))
+            return element.forEach((singleElement: HTMLElement) => hideRemoveEl(singleElement, 'display', hideRemove))
         }
         hideRemoveEl(element, 'display', hideRemove)
     })
 
-    function hideRemoveEl(el: HTMLElement | WebElement, prop: string, hideRemove: boolean) {
+    function hideRemoveEl(el: HTMLElement, prop: string, hideRemove: boolean) {
     // @ts-ignore
         if (el.style) {
             // Here we get the HTMLElement
@@ -39,7 +37,7 @@ export default function hideRemoveElements(
                 // @ts-ignore
                 const selector = el.selector
 
-                if (visitedSelectors[selector] == null) {
+                if (!visitedSelectors[selector]) {
                     visitedSelectors[selector] = true
                     const elems = document.querySelectorAll(selector)
 

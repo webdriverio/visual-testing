@@ -25,7 +25,7 @@ export default function getDocumentScrollHeight(): number {
         // There could be some elements above this largest element,
         // add that on top
         /* istanbul ignore next */
-        return pageHeight + largestNodeElement.getBoundingClientRect().top
+        return pageHeight + largestNodeElement!.getBoundingClientRect().top
     }
 
     // The scrollHeight is good enough

@@ -1,15 +1,16 @@
-import afterScreenshot from './afterScreenshot'
+import { describe, it, expect, afterEach, vi } from 'vitest'
+import afterScreenshot from './afterScreenshot.js'
 import { join } from 'node:path'
-import { removeSync } from 'fs-extra'
+import { remove } from 'fs-extra'
 import { LogLevel } from './options.interface'
 
 describe('afterScreenshot', () => {
     const folder = join(process.cwd(), '/.tmp/afterScreenshot')
 
-    afterEach(() => removeSync(folder))
+    afterEach(() => remove(folder))
 
     it('should be able to return the ScreenshotOutput with default options', async () => {
-        const MOCKED_EXECUTOR = jest.fn().mockReturnValue('')
+        const MOCKED_EXECUTOR = vi.fn().mockReturnValue('')
         const options = {
             actualFolder: folder,
             base64Image: 'string',

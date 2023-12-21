@@ -27,14 +27,9 @@ export function getElementPositionTopScreenNativeMobile(
 
     // Determine element position
     const elementPosition = element.getBoundingClientRect()
-    let y
-
-    if (screenHeight === innerHeight || screenWidth === innerHeight) {
-    /* an app with a transparent statusbar */
-        y = elementPosition.top
-    } else {
-        y = statusBarAddressBarHeight + elementPosition.top
-    }
+    const y = (screenHeight === innerHeight || screenWidth === innerHeight)
+        ? elementPosition.top
+        : statusBarAddressBarHeight + elementPosition.top
 
     return {
         height: elementPosition.height,

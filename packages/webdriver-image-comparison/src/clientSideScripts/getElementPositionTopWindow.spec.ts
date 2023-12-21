@@ -1,9 +1,9 @@
-import getElementPositionTopWindow from './getElementPositionTopWindow'
+import { describe, it, expect, vi } from 'vitest'
+import getElementPositionTopWindow from './getElementPositionTopWindow.js'
 
 describe('getElementPositionTopWindow', () => {
     it('should the the element position to the top of the window', () => {
-    // @ts-ignore
-        Element.prototype.getBoundingClientRect = jest.fn(() => {
+        Element.prototype.getBoundingClientRect = vi.fn(() => {
             return {
                 width: 120,
                 height: 120,
@@ -12,9 +12,9 @@ describe('getElementPositionTopWindow', () => {
                 bottom: 5,
                 right: 12,
             }
-        })
+        }) as any
         document.body.innerHTML = '<div>' + '  <span id="username">Hello</span>' + '</div>'
 
-        expect(getElementPositionTopWindow(document.querySelector('#username'))).toMatchSnapshot()
+        expect(getElementPositionTopWindow(document.querySelector('#username')!)).toMatchSnapshot()
     })
 })

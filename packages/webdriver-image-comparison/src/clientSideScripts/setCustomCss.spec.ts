@@ -1,5 +1,6 @@
+import { describe, it, expect } from 'vitest'
 import type { CssOptions } from './customCss.interfaces'
-import setCustomCss from './setCustomCss'
+import setCustomCss from './setCustomCss.js'
 
 describe('setCustomCss', () => {
     it('should be able to set the custom css with the default options', () => {

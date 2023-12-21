@@ -1,8 +1,8 @@
-import { takeBase64Screenshot } from '../methods/screenshots'
-import { makeCroppedBase64Image } from '../methods/images'
-import beforeScreenshot from '../helpers/beforeScreenshot'
-import afterScreenshot from '../helpers/afterScreenshot'
-import { determineElementRectangles } from '../methods/rectangles'
+import { takeBase64Screenshot } from '../methods/screenshots.js'
+import { makeCroppedBase64Image } from '../methods/images.js'
+import beforeScreenshot from '../helpers/beforeScreenshot.js'
+import afterScreenshot from '../helpers/afterScreenshot.js'
+import { determineElementRectangles } from '../methods/rectangles.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces'
 import type { Methods } from '../methods/methods.interface'
 import type { InstanceData } from '../methods/instanceData.interfaces'
@@ -10,11 +10,11 @@ import type { Folders } from '../base.interface'
 import type { SaveElementOptions } from './element.interfaces'
 import type { ElementRectanglesOptions, RectanglesOutput } from '../methods/rectangles.interfaces'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interface'
-import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants'
+import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces'
-import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView'
-import { waitFor } from '../helpers/utils'
-import scrollToPosition from '../clientSideScripts/scrollToPosition'
+import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
+import { waitFor } from '../helpers/utils.js'
+import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 
 /**
  * Saves an image of an element
@@ -34,11 +34,11 @@ export default async function saveElement(
     // 1b. Set the method options to the right values
     const disableCSSAnimation: boolean =
     'disableCSSAnimation' in saveElementOptions.method
-        ? saveElementOptions.method.disableCSSAnimation
+        ? Boolean(saveElementOptions.method.disableCSSAnimation)
         : saveElementOptions.wic.disableCSSAnimation
     const hideScrollBars: boolean =
     'hideScrollBars' in saveElementOptions.method
-        ? saveElementOptions.method.hideScrollBars
+        ? Boolean(saveElementOptions.method.hideScrollBars)
         : saveElementOptions.wic.hideScrollBars
     const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
     const hideElements: HTMLElement[] = saveElementOptions.method.hideElements || []
@@ -75,7 +75,7 @@ export default async function saveElement(
     } = enrichedInstanceData
 
     // Scroll the element into top of the viewport and return the current scroll position
-    let currentPosition: number
+    let currentPosition: number | undefined
     if (autoElementScroll) {
         currentPosition = await executor(scrollElementIntoView, element, addressBarShadowPadding)
         await waitFor(500)
@@ -86,8 +86,11 @@ export default async function saveElement(
 
     // 4.  Determine the rectangles
     const elementRectangleOptions: ElementRectanglesOptions = {
-        devicePixelRatio,
-        innerHeight,
+        /**
+         * ToDo: handle NaA case
+         */
+        devicePixelRatio: devicePixelRatio || NaN,
+        innerHeight: innerHeight || NaN,
         isAndroidNativeWebScreenshot,
         isAndroid,
         isIos,
@@ -100,10 +103,10 @@ export default async function saveElement(
         element,
     })
 
-    if (autoElementScroll) {
     // When the screenshot has been taken and the element position has been determined,
     // we can scroll back to the original position
     // We don't need to wait for the scroll here because we don't take a screenshot after this
+    if (autoElementScroll && currentPosition) {
         await executor(scrollToPosition, currentPosition)
     }
 
@@ -113,7 +116,7 @@ export default async function saveElement(
         addIOSBezelCorners: false,
         base64Image,
         deviceName,
-        devicePixelRatio,
+        devicePixelRatio: devicePixelRatio || NaN,
         isIos,
         isLandscape,
         logLevel,
@@ -136,18 +139,18 @@ export default async function saveElement(
             browserName,
             browserVersion,
             deviceName,
-            devicePixelRatio,
+            devicePixelRatio: devicePixelRatio || NaN,
             formatImageName,
             isMobile,
             isTestInBrowser,
             logName,
             name,
-            outerHeight,
-            outerWidth,
+            outerHeight: outerHeight || NaN,
+            outerWidth: outerWidth || NaN,
             platformName,
             platformVersion,
-            screenHeight,
-            screenWidth,
+            screenHeight: screenHeight || NaN,
+            screenWidth: screenWidth || NaN,
             tag,
         },
         hideElements,
