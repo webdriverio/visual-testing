@@ -1,6 +1,6 @@
 import type { Options } from '@wdio/types'
 import { join } from 'node:path'
-import WdioImageComparisonService from '../../build/index.js'
+import WdioImageComparisonService from 'wdio-image-comparison-service'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 
 export const config: Options.Testrunner = {

@@ -25,7 +25,7 @@ describe('wdio-image-comparison-service check methods folder options', () => {
                 diffFolder: join(process.cwd(), './.tmp/testDiff'),
                 returnAllCompareData: true,
             }
-            const results = await browser.checkFullPageScreen(
+            const results: any = await browser.checkFullPageScreen(
                 'fullPageCheckFolders',
                 {
                     ...testOptions,
@@ -58,7 +58,7 @@ describe('wdio-image-comparison-service check methods folder options', () => {
                 diffFolder: join(process.cwd(), './.tmp/testDiff'),
                 returnAllCompareData: true,
             }
-            const results = await browser.checkScreen(
+            const results: any = await browser.checkScreen(
                 'screenCheckFolders',
                 testOptions
             )
@@ -87,7 +87,7 @@ describe('wdio-image-comparison-service check methods folder options', () => {
                 removeElements: [await $('nav.navbar')],
 
             }
-            const results = await browser.checkElement(
+            const results: any = await browser.checkElement(
                 await $('.hero__title-logo'),
                 'elementCheckFolders',
                 testOptions

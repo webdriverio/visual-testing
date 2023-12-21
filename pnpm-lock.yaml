@@ -54,6 +54,9 @@ importers:
       '@wdio/spec-reporter':
         specifier: ^8.27.0
         version: 8.27.0
+      '@wdio/types':
+        specifier: ^8.26.2
+        version: 8.27.0
       devtools:
         specifier: ^8.27.0
         version: 8.27.0(typescript@5.3.3)
