@@ -1,6 +1,6 @@
 import { access, copySync, outputFile, readFileSync } from 'fs-extra'
 import { join } from 'node:path'
-
+import { createCanvas, loadImage } from 'canvas'
 import compareImages from '../resemble/compareImages.js'
 import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
@@ -143,12 +143,6 @@ export async function makeCroppedBase64Image({
     const { height, width, x, y } = rectangles
     const canvasWidth = width + left + right
     const canvasHeight = height + top + bottom
-
-    /**
-     * dynamically import canvas to avoid dependency issue during boot-up time
-     */
-    const { createCanvas, loadImage } = await import('canvas')
-
     const canvas = createCanvas(canvasWidth, canvasHeight)
     const image = await loadImage(`data:image/png;base64,${newBase64Image}`)
     const ctx = canvas.getContext('2d')
