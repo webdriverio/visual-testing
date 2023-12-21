@@ -4,16 +4,16 @@ For documentation on visual testing with WebdriverIO, please refer to the [docs]
 
 ## Contribution
 
-See [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## TODO:
 
--   [ ] fix the scroll-bar for Android, sometimes it shows
+-   [ ] fix the scrollbar for Android, sometimes it shows
 -   [ ] create a new website
 
 ## Credits
 
-`wdio-image-comparison-service` uses an open source licence from Sauce Labs.
-![Powered by Sauce Labs](./docs/images/powered-by-saucelabs.png)
+`wdio-image-comparison-service` uses an open-source license from Sauce Labs.
+![Powered by Sauce Labs](./.github/assets/powered-by-saucelabs.png)
 
-You can request your open source licence [here](https://saucelabs.com/open-source/open-sauce)
+You can request your open-source license [here](https://saucelabs.com/open-source/open-sauce).
