@@ -1,6 +1,6 @@
 {
   "name": "wdio-image-comparison-service",
-  "author": "Wim Selles",
+  "author": "Wim Selles - wswebcreation",
   "description": "Image comparison / visual regression testing for WebdriverIO",
   "version": "5.0.3",
   "license": "MIT",
@@ -20,21 +20,10 @@
   "type": "module",
   "types": "./types/index.d.ts",
   "scripts": {
-    "clean": "rimraf coverage build .tmp",
     "build": "run-s clean build:*",
     "build:tsc": "tsc --project ./tsconfig.json",
-    "test.local.init": "rimraf localBaseline && wdio ./tests/configs/wdio.local.init.conf.ts",
-    "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.ts",
-    "test.local.appium": "wdio tests/configs/wdio.local.appium.conf.ts",
-    "test.local.desktop.multi": "wdio tests/configs/wdio.local.desktop.multi.conf.ts",
-    "test.local.dev.tools.init": "wdio ./tests/configs/wdio.local.dev.tools.init.conf.ts",
-    "test.local.dev.tools.desktop": "wdio tests/configs/wdio.local.dev.tools.desktop.conf.ts",
-    "test.unit.coverage": "jest --coverage ",
-    "test.saucelabs": "wdio ./tests/configs/wdio.saucelabs.conf.ts",
-    "test.saucelabs.desktop": "SAUCE_ENV=desktop wdio ./tests/configs/wdio.saucelabs.conf.ts",
-    "test.saucelabs.emu": "SAUCE_ENV=emu wdio ./tests/configs/wdio.saucelabs.conf.ts",
-    "test.saucelabs.sims": "SAUCE_ENV=sims wdio ./tests/configs/wdio.saucelabs.conf.ts",
-    "watch": "npm run compile -- -w"
+    "clean": "rimraf coverage build .tmp",
+    "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
     "@wdio/logger": "^8.24.12",

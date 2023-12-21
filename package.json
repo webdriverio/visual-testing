@@ -1,6 +1,6 @@
 {
   "name": "@wdio/visual-testing",
-  "author": "wswebcreation",
+  "author": "Wim Selles - wswebcreation",
   "description": "Visual testing monorepo for WebdriverIO",
   "license": "MIT",
   "type": "module",
@@ -10,8 +10,8 @@
     "url": "https://github.com/webdriverio-community/visual-testing.git"
   },
   "scripts": {
+    "build": "pnpm run -r build",
     "clean": "rimraf coverage build .tmp",
-    "precompile": "npm run clean",
     "test": "vitest",
     "test.eslint": "eslint --cache packages tests",
     "test.local.init": "rimraf localBaseline && wdio ./tests/configs/wdio.local.init.conf.ts",
@@ -25,13 +25,8 @@
     "test.saucelabs.desktop": "SAUCE_ENV=desktop wdio ./tests/configs/wdio.saucelabs.conf.ts",
     "test.saucelabs.emu": "SAUCE_ENV=emu wdio ./tests/configs/wdio.saucelabs.conf.ts",
     "test.saucelabs.sims": "SAUCE_ENV=sims wdio ./tests/configs/wdio.saucelabs.conf.ts",
-    "prerelease": "npm run compile",
-    "release": "release-it --github.release",
-    "release.ci": "npm run release -- --ci --npm.skipChecks --no-git.requireCleanWorkingDir",
-    "release.patch": "npm run release -- patch",
-    "release.minor": "npm run release -- minor",
-    "release.major": "npm run release -- major",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "watch": "pnpm run -r --parallel watch"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
