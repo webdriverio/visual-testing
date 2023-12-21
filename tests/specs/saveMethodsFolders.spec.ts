@@ -20,7 +20,13 @@ describe('wdio-image-comparison-service save methods folder options', () => {
         it('should set folders using method options', async () => {
             const results = await browser.saveFullPageScreen(
                 'saveFullPageFolderOptions',
-                testOptions
+                {
+                    ...testOptions,
+                    hideAfterFirstScroll: [
+                        await $('nav.navbar'),
+                        await $('.DocSearch-Button'),
+                    ],
+                }
             )
 
             expect(results.path).toMatch(
@@ -31,7 +37,12 @@ describe('wdio-image-comparison-service save methods folder options', () => {
         it('should set folders using default options', async () => {
             const results = await browser.saveFullPageScreen(
                 'saveFullPageDefaultOptions',
-                {}
+                {
+                    hideAfterFirstScroll: [
+                        await $('nav.navbar'),
+                        await $('.DocSearch-Button'),
+                    ],
+                }
             )
 
             expect(results.path).toMatch('.tmp')
@@ -63,9 +74,12 @@ describe('wdio-image-comparison-service save methods folder options', () => {
     describe('saveElement method with folder options', () => {
         it('should set folders using saveElement method options', async () => {
             const results = await browser.saveElement(
-                await $('.uk-button:nth-child(1)'),
+                await $('.hero__title-logo'),
                 'saveElementFolderOptions',
-                testOptions
+                {
+                    ...testOptions,
+                    removeElements: [await $('nav.navbar')],
+                }
             )
 
             expect(results.path).toMatch(
@@ -75,9 +89,11 @@ describe('wdio-image-comparison-service save methods folder options', () => {
 
         it('should set folders using saveElement default options', async () => {
             const results = await browser.saveElement(
-                await $('.uk-button:nth-child(1)'),
+                await $('.hero__title-logo'),
                 'saveElementDefaultOptions',
-                {}
+                {
+                    removeElements: [await $('nav.navbar')]
+                }
             )
 
             expect(results.path).toMatch('.tmp')

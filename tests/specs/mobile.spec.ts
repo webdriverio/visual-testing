@@ -15,7 +15,7 @@ describe('wdio-image-comparison-service mobile', () => {
 
     beforeEach(async () => {
         await browser.url('')
-        await $('.uk-button:nth-child(1)').waitForDisplayed()
+        await $('.hero__title-logo').waitForDisplayed()
         await browser.pause(3000)
     })
 
@@ -40,8 +40,11 @@ describe('wdio-image-comparison-service mobile', () => {
         it(`should compare an element successful for '${deviceName}' in ${orientation}-mode`, async () => {
             await expect(
                 await browser.checkElement(
-                    await $('.uk-button:nth-child(1)'),
-                    'firstButtonElement'
+                    await $('.hero__title-logo'),
+                    'wdioLogo',
+                    {
+                        removeElements: [await $('nav.navbar')]
+                    }
                 )
             ).toEqual(0)
         })
@@ -55,6 +58,10 @@ describe('wdio-image-comparison-service mobile', () => {
             await expect(
                 await browser.checkFullPageScreen('fullPage', {
                     fullPageScrollTimeout: 1500,
+                    hideAfterFirstScroll: [
+                        await $('nav.navbar'),
+                        await $('.DocSearch-Button'),
+                    ],
                 })
             ).toEqual(0)
         })

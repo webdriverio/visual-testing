@@ -25,7 +25,7 @@ export const config: Options.Testrunner = {
     // Test Configurations
     // ===================
     logLevel: 'silent',
-    baseUrl: 'https://wswebcreation.github.io/protractor-image-comparison/',
+    baseUrl: 'http://guinea-pig.webdriver.io/image-compare.html',
     waitforTimeout: 15000,
     connectionRetryTimeout: 90000,
     connectionRetryCount: 0,

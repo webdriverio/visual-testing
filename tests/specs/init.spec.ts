@@ -53,10 +53,13 @@ describe('webdriverio image comparison local development initialization', () => 
     })
 
     it('should save the compare element screenshot', async () => {
-        const firstButtonElement = 'firstButtonElement'
+        const wdioLogo = 'wdioLogo'
         const { fileName, path } = (await browser.saveElement(
-            await $('.uk-button:nth-child(1)'),
-            firstButtonElement
+            await $('.hero__title-logo'),
+            wdioLogo,
+            {
+                removeElements: [await $('nav.navbar')]
+            }
         )) as {
             fileName: string;
             path: string;
@@ -76,7 +79,7 @@ describe('webdriverio image comparison local development initialization', () => 
                 `./${localBaseline}/${checkBaseline}/${path
                     .split('/')
                     .pop()}/${fileName.replace(
-                    firstButtonElement,
+                    wdioLogo,
                     'elementCheckFolders'
                 )}`
             )
@@ -87,6 +90,10 @@ describe('webdriverio image comparison local development initialization', () => 
         const fullPage = 'fullPage'
         const { fileName, path } = (await browser.saveFullPageScreen(fullPage, {
             fullPageScrollTimeout: 1500,
+            hideAfterFirstScroll: [
+                await $('nav.navbar'),
+                await $('.DocSearch-Button'),
+            ],
         })) as {
             fileName: string;
             path: string;
@@ -117,6 +124,10 @@ describe('webdriverio image comparison local development initialization', () => 
         const tabbable = 'tabbable'
         const { fileName, path } = (await browser.saveTabbablePage(tabbable, {
             fullPageScrollTimeout: 1500,
+            hideAfterFirstScroll: [
+                await $('nav.navbar'),
+                await $('.DocSearch-Button'),
+            ],
         })) as {
             fileName: string;
             path: string;
