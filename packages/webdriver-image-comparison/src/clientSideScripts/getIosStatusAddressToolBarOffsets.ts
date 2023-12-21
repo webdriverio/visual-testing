@@ -21,7 +21,7 @@ export default function getIosStatusAddressToolBarOffsets(
     const deviceHeight = isLandscape ? width : height
     const deviceWidth = isLandscape ? height : width
     const offsetPortraitHeight =
-    Object.keys(iosOffsets[deviceType]).indexOf(portraitHeight.toString()) > -1 ? portraitHeight : defaultPortraitHeight
+        Object.keys(iosOffsets[deviceType]).indexOf(portraitHeight.toString()) > -1 ? portraitHeight : defaultPortraitHeight
     const currentOffsets = iosOffsets[deviceType][offsetPortraitHeight][orientationType]
     const osVersion = parseInt(navigator.appVersion.match(/(?:OS |Version\/)(\d+)(?:_|\.)(\d+)(?:_|\.)?(\d+)?/)![1], 10)
 
@@ -35,8 +35,8 @@ export default function getIosStatusAddressToolBarOffsets(
    */
     if (
         (deviceHeight === 1366 || deviceWidth === 1366) &&
-    deviceType === 'IPAD' &&
-    innerHeight + currentOffsets.ADDRESS_BAR + currentOffsets.STATUS_BAR > deviceHeight
+        deviceType === 'IPAD' &&
+        innerHeight + currentOffsets.ADDRESS_BAR + currentOffsets.STATUS_BAR > deviceHeight
     ) {
         statusBarHeight = 20
         isIpadPro129FirstGeneration = true
@@ -63,27 +63,27 @@ export default function getIosStatusAddressToolBarOffsets(
     //    home bar data
     const toolBarHeight = height - innerHeight - statusAddressBarHeight
     const toolBarOffsets =
-    isLandscape || toolBarHeight <= 0
-        ? // The iPad Pro (12.9 inch) (1st generation) doesn't have a home bar
-        isIpadPro129FirstGeneration
-            ? { height: 0, width: 0, x: 0, y: 0 }
-            : currentOffsets.HOME_BAR
-        : {
-            height: toolBarHeight,
-            width: deviceWidth,
-            x: 0,
-            y: height - toolBarHeight,
-        }
+        isLandscape || toolBarHeight <= 0
+            ? // The iPad Pro (12.9 inch) (1st generation) doesn't have a home bar
+            isIpadPro129FirstGeneration
+                ? { height: 0, width: 0, x: 0, y: 0 }
+                : currentOffsets.HOME_BAR
+            : {
+                height: toolBarHeight,
+                width: deviceWidth,
+                x: 0,
+                y: height - toolBarHeight,
+            }
     // 5. Return the sidebar offsets
     const sideBarOffsets =
-    isLandscape && !isIphone
-        ? {
-            height: deviceHeight - statusAddressBarHeight,
-            width: deviceWidth - document.documentElement.scrollWidth,
-            x: 0,
-            y: statusAddressBarHeight,
-        }
-        : { height: 0, width: 0, x: 0, y: 0 }
+        isLandscape && !isIphone
+            ? {
+                height: deviceHeight - statusAddressBarHeight,
+                width: deviceWidth - document.documentElement.scrollWidth,
+                x: 0,
+                y: statusAddressBarHeight,
+            }
+            : { height: 0, width: 0, x: 0, y: 0 }
 
     // 6. Return the offsets
     return {

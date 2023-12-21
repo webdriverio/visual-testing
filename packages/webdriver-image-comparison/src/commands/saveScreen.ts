@@ -23,7 +23,7 @@ export default async function saveScreen(
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
     const { addressBarShadowPadding, addIOSBezelCorners, formatImageName, logLevel, savePerInstance, toolBarShadowPadding } =
-    saveScreenOptions.wic
+        saveScreenOptions.wic
 
     // 1b. Set the method options to the right values
     const disableCSSAnimation: boolean = 'disableCSSAnimation' in saveScreenOptions.method

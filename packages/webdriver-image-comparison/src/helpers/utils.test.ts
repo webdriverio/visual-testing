@@ -16,7 +16,7 @@ import {
     getScreenshotSize,
     getToolBarShadowPadding,
 } from './utils.js'
-import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces'
+import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 
 describe('utils', () => {
@@ -89,7 +89,7 @@ describe('utils', () => {
 
         it('should format a string with all options provided', () => {
             formatFileOptions.formatImageName =
-        'browser.{browserName}-{browserVersion}-platform.{platformName}-{platformVersion}-dpr.{dpr}-{height}-{logName}-{name}-{tag}-{width}'
+                'browser.{browserName}-{browserVersion}-platform.{platformName}-{platformVersion}-dpr.{dpr}-{height}-{logName}-{name}-{tag}-{width}'
             formatFileOptions.browserName = 'chrome'
             formatFileOptions.browserVersion = '74'
             formatFileOptions.logName = 'chrome-latest'

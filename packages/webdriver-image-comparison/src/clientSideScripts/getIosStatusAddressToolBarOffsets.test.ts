@@ -89,7 +89,7 @@ function setEnvironment(os: string, version: number, deviceType: string) {
     Object.defineProperty(window.screen, 'width', { value: IOS_DEVICES[deviceType].width, ...CONFIGURABLE })
     // @ts-ignore
     Object.defineProperty(global.document, 'documentElement', {
-    // @ts-ignore
+        // @ts-ignore
         value: { scrollWidth: IOS_DEVICES[deviceType].scrollWidth },
         ...CONFIGURABLE,
     })

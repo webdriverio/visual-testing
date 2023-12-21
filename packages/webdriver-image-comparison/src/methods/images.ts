@@ -201,19 +201,19 @@ export async function makeCroppedBase64Image({
     // Add the bezel corners to the iOS image if we need to
     const normalizedDeviceName = deviceName
         .toLowerCase()
-    // (keep alphanumeric|remove simulator|remove inch|remove 1st/2nd/3rd/4th generation)
+        // (keep alphanumeric|remove simulator|remove inch|remove 1st/2nd/3rd/4th generation)
         .replace(/([^A-Za-z0-9]|simulator|inch|(\d(st|nd|rd|th)) generation)/gi, '')
     const isSupported =
-    // For iPhone
-    (normalizedDeviceName.includes('iphone') && supportedIosBezelDevices.includes(normalizedDeviceName)) ||
-    // For iPad
-    (normalizedDeviceName.includes('ipad') &&
-      supportedIosBezelDevices.includes(normalizedDeviceName) &&
-      (canvasHeight / devicePixelRatio >= 1133 || canvasWidth / devicePixelRatio >= 1133))
+        // For iPhone
+        (normalizedDeviceName.includes('iphone') && supportedIosBezelDevices.includes(normalizedDeviceName)) ||
+        // For iPad
+        (normalizedDeviceName.includes('ipad') &&
+            supportedIosBezelDevices.includes(normalizedDeviceName) &&
+            (canvasHeight / devicePixelRatio >= 1133 || canvasWidth / devicePixelRatio >= 1133))
     let isIosBezelError = false
 
     if (addIOSBezelCorners && isIos && isSupported) {
-    // Determine the bezel images
+        // Determine the bezel images
         const { topImageName, bottomImageName } = getIosBezelImageNames(normalizedDeviceName)
 
         if (topImageName && bottomImageName) {
@@ -284,7 +284,7 @@ export async function executeImageCompare(
     // 1. Set some variables
     const { devicePixelRatio, fileName, isAndroidNativeWebScreenshot, isHybridApp, isLandscape, logLevel, platformName } = options
     const { actualFolder, autoSaveBaseline, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
-    options.folderOptions
+        options.folderOptions
     let diffFilePath
     const imageCompareOptions = { ...options.compareOptions.wic, ...options.compareOptions.method }
 

@@ -5,7 +5,7 @@ import removeElementFromDom from './removeElementFromDom.js'
 
 describe('removeElementFromDom', () => {
     it('should be able to remove the custom css', () => {
-    // Set up our document body
+        // Set up our document body
         const id = 'test'
         const cssText = 'body:{width:100%}'
         const head = document.head || document.getElementsByTagName('head')[0]
@@ -43,14 +43,14 @@ describe('removeElementFromDom', () => {
 
     it('should be able to remove an element from the body', () => {
         document.body.innerHTML =
-      '<div>' +
-      '   <span id="id-1">Hello</span>' +
-      '   <span id="id-2">Hello</span>' +
-      '   <div>' +
-      '     <span id="id-3">Hello</span>' +
-      '     <span id="id-4">Hello</span>' +
-      '  </div>' +
-      '</div>'
+            '<div>' +
+            '   <span id="id-1">Hello</span>' +
+            '   <span id="id-2">Hello</span>' +
+            '   <div>' +
+            '     <span id="id-3">Hello</span>' +
+            '     <span id="id-4">Hello</span>' +
+            '  </div>' +
+            '</div>'
 
         expect(document.body).toMatchSnapshot()
 

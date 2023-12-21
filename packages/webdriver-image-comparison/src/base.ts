@@ -10,7 +10,7 @@ export default class BaseClass {
     folders: Folders
 
     constructor(options: ClassOptions) {
-    // determine default options
+        // determine default options
         this.defaultOptions = defaultOptions(options)
 
         const baselineFolder = typeof options.baselineFolder === 'function'

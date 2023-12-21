@@ -17,7 +17,7 @@ describe('getEnrichedInstanceData', () => {
         }
         const MOCKED_EXECUTOR = vi
             .fn()
-        // getEnrichedInstanceData for: getScreenDimensions
+            // getEnrichedInstanceData for: getScreenDimensions
             .mockResolvedValueOnce({
                 body: {
                     offsetHeight: 0,
@@ -59,7 +59,7 @@ describe('getEnrichedInstanceData', () => {
         }
         const MOCKED_EXECUTOR = vi
             .fn()
-        // getEnrichedInstanceData for: getScreenDimensions
+            // getEnrichedInstanceData for: getScreenDimensions
             .mockResolvedValueOnce({
                 body: {
                     offsetHeight: 0,
@@ -101,7 +101,7 @@ describe('getEnrichedInstanceData', () => {
         }
         const MOCKED_EXECUTOR = vi
             .fn()
-        // getEnrichedInstanceData for: getScreenDimensions
+            // getEnrichedInstanceData for: getScreenDimensions
             .mockResolvedValueOnce({
                 body: {
                     offsetHeight: 0,
@@ -143,7 +143,7 @@ describe('getEnrichedInstanceData', () => {
         }
         const MOCKED_EXECUTOR = vi
             .fn()
-        // getEnrichedInstanceData for: getScreenDimensions
+            // getEnrichedInstanceData for: getScreenDimensions
             .mockResolvedValueOnce({
                 body: {
                     offsetHeight: 0,

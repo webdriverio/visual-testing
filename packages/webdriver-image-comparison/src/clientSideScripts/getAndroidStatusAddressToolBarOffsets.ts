@@ -26,7 +26,7 @@ export default function getAndroidStatusAddressToolBarOffsets(
 
     // Determine status, address and tool bar height
     return {
-    // For now Android doesn't have a safe area
+        // For now Android doesn't have a safe area
         safeArea: 0,
         screenHeight: deviceHeight,
         screenWidth: deviceWidth,

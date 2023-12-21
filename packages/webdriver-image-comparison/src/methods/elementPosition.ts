@@ -25,8 +25,8 @@ export async function getElementPositionAndroid(
             sideBar: { width: sideBarWidth },
             statusAddressBar: { height },
         } = <StatusAddressToolBarOffsets>(
-      await executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, { isHybridApp: false, isLandscape })
-    )
+            await executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, { isHybridApp: false, isLandscape })
+        )
 
         return executor(getElementPositionTopScreenNativeMobile, element, {
             isLandscape,

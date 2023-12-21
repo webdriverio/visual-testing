@@ -6,14 +6,14 @@ import hideRemoveElements from './hideRemoveElements.js'
 describe('hideRemoveElements', () => {
     it('should be able to hide elements and put them back again', () => {
         document.body.innerHTML =
-      '<div>' +
-      '   <span id="id-1">Hello</span>' +
-      '   <span id="id-2">Hello</span>' +
-      '   <div>' +
-      '     <span id="id-3">Hello</span>' +
-      '     <span id="id-4">Hello</span>' +
-      '  </div>' +
-      '</div>'
+            '<div>' +
+            '   <span id="id-1">Hello</span>' +
+            '   <span id="id-2">Hello</span>' +
+            '   <div>' +
+            '     <span id="id-3">Hello</span>' +
+            '     <span id="id-4">Hello</span>' +
+            '  </div>' +
+            '</div>'
 
         // Check not hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
@@ -46,14 +46,14 @@ describe('hideRemoveElements', () => {
 
     it('should be able to hide elements and put them back again when an array of hidden elements is provided', () => {
         document.body.innerHTML =
-      '<div>' +
-      '   <span class="hide">Hello</span>' +
-      '   <span class="hide">Hello</span>' +
-      '   <div>' +
-      '     <span id="id-3">Hello</span>' +
-      '     <span class="hide">Hello</span>' +
-      '  </div>' +
-      '</div>'
+            '<div>' +
+            '   <span class="hide">Hello</span>' +
+            '   <span class="hide">Hello</span>' +
+            '   <div>' +
+            '     <span id="id-3">Hello</span>' +
+            '     <span class="hide">Hello</span>' +
+            '  </div>' +
+            '</div>'
 
         // Check not hidden
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.hide')))[0].style.visibility).toMatchSnapshot()
@@ -92,14 +92,14 @@ describe('hideRemoveElements', () => {
 
     it('should be able to remove elements and put them back again', () => {
         document.body.innerHTML =
-      '<div>' +
-      '   <span id="id-1">Hello</span>' +
-      '   <span id="id-2">Hello</span>' +
-      '   <div>' +
-      '     <span id="id-3">Hello</span>' +
-      '     <span id="id-4">Hello</span>' +
-      '  </div>' +
-      '</div>'
+            '<div>' +
+            '   <span id="id-1">Hello</span>' +
+            '   <span id="id-2">Hello</span>' +
+            '   <div>' +
+            '     <span id="id-3">Hello</span>' +
+            '     <span id="id-4">Hello</span>' +
+            '  </div>' +
+            '</div>'
 
         // Check not removed
         expect((<HTMLElement>document.querySelector('#id-2')).style.display).toMatchSnapshot()
@@ -132,14 +132,14 @@ describe('hideRemoveElements', () => {
 
     it('should be able to remove elements and put them back again when an array of to be removed elements is provided', () => {
         document.body.innerHTML =
-      '<div>' +
-      '   <span class="remove">Hello</span>' +
-      '   <span class="remove">Hello</span>' +
-      '   <div>' +
-      '     <span id="id-3">Hello</span>' +
-      '     <span class="remove">Hello</span>' +
-      '  </div>' +
-      '</div>'
+            '<div>' +
+            '   <span class="remove">Hello</span>' +
+            '   <span class="remove">Hello</span>' +
+            '   <div>' +
+            '     <span id="id-3">Hello</span>' +
+            '     <span class="remove">Hello</span>' +
+            '  </div>' +
+            '</div>'
 
         // Check not hidden
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.remove')))[0].style.display).toMatchSnapshot()
@@ -178,14 +178,14 @@ describe('hideRemoveElements', () => {
 
     it('should be able to find and hide single element based on xpath', () => {
         document.body.innerHTML =
-      '<div>' +
-      '   <span id="id-1">Hello</span>' +
-      '   <span id="id-2">Hello</span>' +
-      '   <div>' +
-      '     <span id="id-3">Hello</span>' +
-      '     <span id="id-4">Hello</span>' +
-      '  </div>' +
-      '</div>'
+            '<div>' +
+            '   <span id="id-1">Hello</span>' +
+            '   <span id="id-2">Hello</span>' +
+            '   <div>' +
+            '     <span id="id-3">Hello</span>' +
+            '     <span id="id-4">Hello</span>' +
+            '  </div>' +
+            '</div>'
 
         // Check not hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
@@ -206,14 +206,14 @@ describe('hideRemoveElements', () => {
 
     it('should be able to find and hide elements based on xpath', () => {
         document.body.innerHTML =
-      '<div>' +
-      '   <span id="id-1">Hello</span>' +
-      '   <span id="id-2">Hello</span>' +
-      '   <div>' +
-      '     <span id="id-3">Hello</span>' +
-      '     <span id="id-4">Hello</span>' +
-      '  </div>' +
-      '</div>'
+            '<div>' +
+            '   <span id="id-1">Hello</span>' +
+            '   <span id="id-2">Hello</span>' +
+            '   <div>' +
+            '     <span id="id-3">Hello</span>' +
+            '     <span id="id-4">Hello</span>' +
+            '  </div>' +
+            '</div>'
 
         // Check not hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
@@ -238,14 +238,14 @@ describe('hideRemoveElements', () => {
 
     it('should be able to find and hide a single element based on a css selector', () => {
         document.body.innerHTML =
-      '<div>' +
-      '   <span id="id-1">Hello</span>' +
-      '   <span id="id-2">Hello</span>' +
-      '   <div>' +
-      '     <span id="id-3">Hello</span>' +
-      '     <span class="hide">Hello</span>' +
-      '  </div>' +
-      '</div>'
+            '<div>' +
+            '   <span id="id-1">Hello</span>' +
+            '   <span id="id-2">Hello</span>' +
+            '   <div>' +
+            '     <span id="id-3">Hello</span>' +
+            '     <span class="hide">Hello</span>' +
+            '  </div>' +
+            '</div>'
 
         // Check not hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
@@ -270,14 +270,14 @@ describe('hideRemoveElements', () => {
 
     it('should be able to find and hide elements based on a css selector', () => {
         document.body.innerHTML =
-      '<div>' +
-      '   <span class="hide">Hello</span>' +
-      '   <span class="hide">Hello</span>' +
-      '   <div>' +
-      '     <span class="hide">Hello</span>' +
-      '     <span class="hide">Hello</span>' +
-      '  </div>' +
-      '</div>'
+            '<div>' +
+            '   <span class="hide">Hello</span>' +
+            '   <span class="hide">Hello</span>' +
+            '   <div>' +
+            '     <span class="hide">Hello</span>' +
+            '     <span class="hide">Hello</span>' +
+            '  </div>' +
+            '</div>'
 
         // Check not hidden
         expect(<HTMLElement[]>(<unknown>document.querySelectorAll('.hide'))).toMatchSnapshot()

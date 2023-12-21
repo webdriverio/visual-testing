@@ -46,8 +46,8 @@ export function formatFileName(options: FormatFileNameOptions): string {
     let fileName = options.formatImageName
 
     Object.keys(defaults).forEach((value: string) => {
-    // @ts-ignore
-    // @TODO: Fix this in a proper way
+        // @ts-ignore
+        // @TODO: Fix this in a proper way
         fileName = fileName.replace(`{${value}}`, defaults[value])
     })
 
@@ -244,7 +244,7 @@ export function getIosBezelImageNames(normalizedDeviceName: string): { topImageN
         topImageName = 'iphone14promax-top'
         bottomImageName = 'iphone14promax-bottom'
         break
-    // iPad
+        // iPad
     case 'ipadmini':
         topImageName = 'ipadmini6th-top'
         bottomImageName = 'ipadmini6th-bottom'

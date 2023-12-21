@@ -15,7 +15,7 @@ describe('rectangles', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // getElementPositionIos for: getIosStatusAddressToolBarOffsets
+                // getElementPositionIos for: getIosStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
                     sideBar: {
                         height: 240,
@@ -36,7 +36,7 @@ describe('rectangles', () => {
                         y: 799,
                     },
                 })
-            // getElementPositionIos for: getElementPositionTopScreenNativeMobile
+                // getElementPositionIos for: getElementPositionTopScreenNativeMobile
                 .mockResolvedValueOnce({
                     height: 120,
                     width: 120,
@@ -65,7 +65,7 @@ describe('rectangles', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // getElementPositionAndroid for: getAndroidStatusAddressToolBarOffsets
+                // getElementPositionAndroid for: getAndroidStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
                     sideBar: {
                         height: 0,
@@ -86,7 +86,7 @@ describe('rectangles', () => {
                         y: 799,
                     },
                 })
-            // getElementPositionIos for: getElementPositionTopScreenNativeMobile
+                // getElementPositionIos for: getElementPositionTopScreenNativeMobile
                 .mockResolvedValueOnce({
                     height: 120,
                     width: 120,
@@ -115,7 +115,7 @@ describe('rectangles', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // getElementPositionAndroid for: getElementPositionTopWindow
+                // getElementPositionAndroid for: getElementPositionTopWindow
                 .mockResolvedValueOnce({
                     height: 20,
                     width: 375,
@@ -144,7 +144,7 @@ describe('rectangles', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // getElementPositionDesktop for: getElementPositionTopWindow
+                // getElementPositionDesktop for: getElementPositionTopWindow
                 .mockResolvedValueOnce({
                     height: 20,
                     width: 375,
@@ -312,7 +312,7 @@ describe('rectangles', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // determineStatusAddressToolBarRectangles for: getIosStatusAddressToolBarOffsets
+                // determineStatusAddressToolBarRectangles for: getIosStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
                     sideBar: {
                         height: 240,
@@ -351,7 +351,7 @@ describe('rectangles', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // determineStatusAddressToolBarRectangles for: getIosStatusAddressToolBarOffsets
+                // determineStatusAddressToolBarRectangles for: getIosStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
                     sideBar: {
                         height: 240,
@@ -390,7 +390,7 @@ describe('rectangles', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // determineStatusAddressToolBarRectangles for: getAndroidStatusAddressToolBarOffsets
+                // determineStatusAddressToolBarRectangles for: getAndroidStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
                     sideBar: {
                         height: 0,
@@ -429,7 +429,7 @@ describe('rectangles', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // determineStatusAddressToolBarRectangles for: getAndroidStatusAddressToolBarOffsets
+                // determineStatusAddressToolBarRectangles for: getAndroidStatusAddressToolBarOffsets
                 .mockResolvedValueOnce({
                     statusAddressBar: {
                         height: 40,

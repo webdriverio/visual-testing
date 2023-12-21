@@ -113,8 +113,8 @@ export async function determineStatusAddressToolBarRectangles(
 
     if (
         isViewPortScreenshot &&
-    isMobile &&
-    (checkAndroidNativeWebScreenshot(platformName, isAndroidNativeWebScreenshot) || checkIsIos(platformName))
+        isMobile &&
+        (checkAndroidNativeWebScreenshot(platformName, isAndroidNativeWebScreenshot) || checkIsIos(platformName))
     ) {
         const { sideBar, statusAddressBar, toolBar } = (await (checkIsIos(platformName)
             ? executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)

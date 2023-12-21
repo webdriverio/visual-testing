@@ -3,9 +3,9 @@
  */
 export default function hideRemoveElements(
     hideRemoveElements: {
-    hide: (HTMLElement | HTMLElement[])[];
-    remove: (HTMLElement | HTMLElement[])[];
-  },
+        hide: (HTMLElement | HTMLElement[])[];
+        remove: (HTMLElement | HTMLElement[])[];
+    },
     hideRemove: boolean,
 ): any {
     const visitedSelectors: Record<string, boolean> = {}
@@ -24,7 +24,7 @@ export default function hideRemoveElements(
     })
 
     function hideRemoveEl(el: HTMLElement, prop: string, hideRemove: boolean) {
-    // @ts-ignore
+        // @ts-ignore
         if (el.style) {
             // Here we get the HTMLElement
             // @ts-ignore

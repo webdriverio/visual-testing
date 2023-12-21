@@ -1,7 +1,7 @@
-import type { SauceLabsCapabilities } from '@wdio/types/build/Capabilities'
+import type { Capabilities } from '@wdio/types'
 
 type DeviceOrientation = 'LANDSCAPE' | 'PORTRAIT';
-type ExtendedSauceLabsCapabilities = SauceLabsCapabilities & {
+type ExtendedSauceLabsCapabilities = Capabilities.SauceLabsCapabilities & {
     deviceOrientation?: DeviceOrientation;
 };
 type RetriesSpecs = {

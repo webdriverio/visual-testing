@@ -29,17 +29,17 @@ export default async function saveElement(
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
     const { addressBarShadowPadding, autoElementScroll, formatImageName, logLevel, savePerInstance, toolBarShadowPadding } =
-    saveElementOptions.wic
+        saveElementOptions.wic
     const { executor } = methods
     // 1b. Set the method options to the right values
     const disableCSSAnimation: boolean =
-    'disableCSSAnimation' in saveElementOptions.method
-        ? Boolean(saveElementOptions.method.disableCSSAnimation)
-        : saveElementOptions.wic.disableCSSAnimation
+        'disableCSSAnimation' in saveElementOptions.method
+            ? Boolean(saveElementOptions.method.disableCSSAnimation)
+            : saveElementOptions.wic.disableCSSAnimation
     const hideScrollBars: boolean =
-    'hideScrollBars' in saveElementOptions.method
-        ? Boolean(saveElementOptions.method.hideScrollBars)
-        : saveElementOptions.wic.hideScrollBars
+        'hideScrollBars' in saveElementOptions.method
+            ? Boolean(saveElementOptions.method.hideScrollBars)
+            : saveElementOptions.wic.hideScrollBars
     const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
     const hideElements: HTMLElement[] = saveElementOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveElementOptions.method.removeElements || []

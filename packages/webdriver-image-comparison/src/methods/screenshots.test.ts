@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { getBase64FullPageScreenshotsData } from './screenshots.js'
-import type { FullPageScreenshotDataOptions } from './screenshots.interfaces'
+import type { FullPageScreenshotDataOptions } from './screenshots.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
-import { LogLevel } from '../helpers/options.interface'
+import { LogLevel } from '../helpers/options.interface.js'
 
 describe('screenshots', () => {
     describe('getBase64FullPageScreenshotsData', () => {
@@ -28,7 +28,7 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // For await executor(getAndroidStatusAddressToolBarOffsets, OFFSETS.ANDROID))
+                // For await executor(getAndroidStatusAddressToolBarOffsets, OFFSETS.ANDROID))
                 .mockResolvedValueOnce({
                     isLandscape: false,
                     safeArea: 0,
@@ -37,14 +37,14 @@ describe('screenshots', () => {
                     screenWidth: 1366,
                     sideBar: { width: 0 },
                 })
-            // THIS NEEDS TO BE FIXED IN THE FUTURE
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // THIS NEEDS TO BE FIXED IN THE FUTURE
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(788)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
@@ -74,7 +74,7 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // For await executor(getAndroidStatusAddressToolBarOffsets, OFFSETS.ANDROID))
+                // For await executor(getAndroidStatusAddressToolBarOffsets, OFFSETS.ANDROID))
                 .mockResolvedValueOnce({
                     isLandscape: false,
                     safeArea: 0,
@@ -83,27 +83,27 @@ describe('screenshots', () => {
                     screenWidth: 1366,
                     sideBar: { width: 0 },
                 })
-            // THIS NEEDS TO BE FIXED IN THE FUTURE
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // THIS NEEDS TO BE FIXED IN THE FUTURE
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(788)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
-            // RUN 2
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 2
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(788)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
@@ -133,23 +133,23 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // THIS NEEDS TO BE FIXED IN THE FUTURE
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // THIS NEEDS TO BE FIXED IN THE FUTURE
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(1200)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
-            // RUN 2
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 2
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(1200)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
@@ -179,27 +179,27 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // THIS NEEDS TO BE FIXED IN THE FUTURE
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // THIS NEEDS TO BE FIXED IN THE FUTURE
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(1200)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
-            // RUN 2
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 2
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(1200)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
@@ -238,23 +238,23 @@ describe('screenshots', () => {
                     statusAddressBar: { height: 94 },
                     toolBar: { y: 329 },
                 })
-            // THIS NEEDS TO BE FIXED IN THE FUTURE
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // THIS NEEDS TO BE FIXED IN THE FUTURE
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(1200)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
-            // RUN 2
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 2
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(1200)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
@@ -293,23 +293,23 @@ describe('screenshots', () => {
                     statusAddressBar: { height: 47 },
                     toolBar: { y: 75 },
                 })
-            // THIS NEEDS TO BE FIXED IN THE FUTURE
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // THIS NEEDS TO BE FIXED IN THE FUTURE
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(600)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
-            // RUN 2
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 2
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(600)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
@@ -339,7 +339,7 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // getBase64FullPageScreenshotsData: For await executor(getIosStatusAddressToolBarOffsets)
+                // getBase64FullPageScreenshotsData: For await executor(getIosStatusAddressToolBarOffsets)
                 .mockResolvedValueOnce({
                     isLandscape: false,
                     safeArea: 44,
@@ -349,27 +349,27 @@ describe('screenshots', () => {
                     statusAddressBar: { height: 94 },
                     toolBar: { y: 329 },
                 })
-            // THIS NEEDS TO BE FIXED IN THE FUTURE
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // THIS NEEDS TO BE FIXED IN THE FUTURE
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(1200)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
-            // RUN 2
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 2
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(1200)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
@@ -399,30 +399,30 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // THIS NEEDS TO BE FIXED IN THE FUTURE
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // THIS NEEDS TO BE FIXED IN THE FUTURE
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
-            // RUN 2
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 2
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
-            // RUN 3
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 3
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
-            // RUN 4
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 4
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
-            // RUN 5
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 5
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
 
             // Replace the screenshot with a `mocked-screenshot-string`;
@@ -452,34 +452,34 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-            // THIS NEEDS TO BE FIXED IN THE FUTURE
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // THIS NEEDS TO BE FIXED IN THE FUTURE
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
-            // RUN 2
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 2
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
-            // RUN 3
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 3
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
-            // RUN 4
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 4
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
-            // RUN 5
-            // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // RUN 5
+                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
-            // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
                 .mockResolvedValueOnce(3200)
-            // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
+                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;

@@ -8,14 +8,11 @@
             "dom"
         ],
         "types": [
-            "node",
             "@wdio/globals/types",
-            "expect-webdriverio",
             "@wdio/mocha-framework",
             "@wdio/sauce-service",
             "@wdio/devtools-service",
             "@wdio/shared-store-service",
-            "../types/index.d.ts"
         ],
         "skipLibCheck": true,
         "noEmit": true,

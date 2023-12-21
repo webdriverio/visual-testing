@@ -8,9 +8,9 @@ import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareO
  */
 export function defaultOptions(options: ClassOptions): DefaultOptions {
     return {
-    /**
-     * Module options
-     */
+        /**
+         * Module options
+         */
         addressBarShadowPadding: options.addressBarShadowPadding || DEFAULT_SHADOW.ADDRESS_BAR,
         autoElementScroll: Object.prototype.hasOwnProperty.call(options, 'autoElementScroll')
             ? Boolean(options.autoElementScroll)

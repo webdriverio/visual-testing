@@ -14,13 +14,13 @@ export function getElementPositionTopScreenNativeMobile(
         sideBarWidth,
         statusBarAddressBarHeight,
     }: {
-    isLandscape: boolean;
-    safeArea: number;
-    screenHeight: number;
-    screenWidth: number;
-    sideBarWidth: number;
-    statusBarAddressBarHeight: number;
-  },
+        isLandscape: boolean;
+        safeArea: number;
+        screenHeight: number;
+        screenWidth: number;
+        sideBarWidth: number;
+        statusBarAddressBarHeight: number;
+    },
 ): ElementPosition {
     // Get some heights and widths
     const { innerHeight } = window

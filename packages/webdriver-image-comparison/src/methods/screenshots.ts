@@ -57,7 +57,7 @@ export async function getBase64FullPageScreenshotsData(
     }
 
     if (isAndroid && isAndroidNativeWebScreenshot) {
-    // Create a fullpage screenshot for Android when native screenshot (so including status, address and toolbar) is created
+        // Create a fullpage screenshot for Android when native screenshot (so including status, address and toolbar) is created
         const {
             safeArea,
             screenHeight,
@@ -65,8 +65,8 @@ export async function getBase64FullPageScreenshotsData(
             sideBar: { width: sideBarWidth },
             statusAddressBar: { height: statusAddressBarHeight },
         } = <StatusAddressToolBarOffsets>(
-      await executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, { isHybridApp, isLandscape })
-    )
+            await executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, { isHybridApp, isLandscape })
+        )
 
         const androidNativeMobileOptions = {
             ...nativeMobileOptions,
@@ -85,7 +85,7 @@ export async function getBase64FullPageScreenshotsData(
         // Create a fullpage screenshot for Android when the ChromeDriver provides the screenshots
         return getFullPageScreenshotsDataAndroidChromeDriver(takeScreenshot, executor, chromeDriverOptions)
     } else if (isIos) {
-    // Create a fullpage screenshot for iOS. iOS screenshots will hold the status, address and toolbar so they need to be removed
+        // Create a fullpage screenshot for iOS. iOS screenshots will hold the status, address and toolbar so they need to be removed
         const {
             safeArea,
             screenHeight,
@@ -140,13 +140,13 @@ export async function getFullPageScreenshotsDataNativeMobile(
         toolBarShadowPadding,
     } = options
     const iosViewportHeight =
-    innerHeight -
-    addressBarShadowPadding -
-    toolBarShadowPadding -
-    // This is for iOS devices in landscape mode with a notch. They have a home bar at the bottom of the screen
-    // which is not part of the bottom toolbar. This home bar is not part of the viewport and needs to be subtracted
-    // 1133 is for iPads with a home bar, see the constants
-    (iosHomeBarY && ((isLandscape && safeArea) || screenHeight >= 1133) ? screenHeight - iosHomeBarY : 0)
+        innerHeight -
+        addressBarShadowPadding -
+        toolBarShadowPadding -
+        // This is for iOS devices in landscape mode with a notch. They have a home bar at the bottom of the screen
+        // which is not part of the bottom toolbar. This home bar is not part of the viewport and needs to be subtracted
+        // 1133 is for iPads with a home bar, see the constants
+        (iosHomeBarY && ((isLandscape && safeArea) || screenHeight >= 1133) ? screenHeight - iosHomeBarY : 0)
 
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
@@ -156,7 +156,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
     let isRotated = false
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
-    // Determine and start scrolling
+        // Determine and start scrolling
         const scrollY = iosViewportHeight * i
         await executor(scrollToPosition, scrollY)
 
@@ -196,7 +196,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
         // The starting position for cropping could be different for the last image
         // The cropping always needs to start at status and address bar height and the address bar shadow padding
         const imageYPosition =
-      (amountOfScrollsArray.length === i ? innerHeight - imageHeight : 0) + statusAddressBarHeight + addressBarShadowPadding
+            (amountOfScrollsArray.length === i ? innerHeight - imageHeight : 0) + statusAddressBarHeight + addressBarShadowPadding
 
         // Store all the screenshot data in the screenshot object
         viewportScreenshots.push({
@@ -260,7 +260,7 @@ export async function getFullPageScreenshotsDataAndroidChromeDriver(
     let screenshotSize
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
-    // Determine and start scrolling
+        // Determine and start scrolling
         const scrollY = innerHeight * i
         await executor(scrollToPosition, scrollY)
 
@@ -361,7 +361,7 @@ export async function getFullPageScreenshotsDataDesktop(
     let screenshotSize
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
-    // Determine and start scrolling
+        // Determine and start scrolling
         const scrollY = actualInnerHeight * i
         await executor(scrollToPosition, scrollY)
 

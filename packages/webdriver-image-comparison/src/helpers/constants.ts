@@ -100,7 +100,7 @@ export const ANDROID_OFFSETS = {
 //------------------------------------------------------------------
 export const IOS_OFFSETS: IosOffsets = {
     IPHONE: {
-    // 6/7/8/SE/2020
+        // 6/7/8/SE/2020
         667: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -222,7 +222,7 @@ export const IOS_OFFSETS: IosOffsets = {
         },
     },
     IPAD: {
-    // 9.7|Air 1/2|Mini 1/2/3/4/2019|Pro 9.7
+        // 9.7|Air 1/2|Mini 1/2/3/4/2019|Pro 9.7
         1024: {
             LANDSCAPE: {
                 SAFE_AREA: 0,

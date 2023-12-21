@@ -9,6 +9,6 @@ export default function hideScrollBars(hide: boolean): void {
     try {
         document.body.style.overflow = hide ? 'hidden' : ''
     } catch (e) {
-    // Do nothing
+        // Do nothing
     }
 }
