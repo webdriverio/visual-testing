@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach, vi } from 'vitest'
 import afterScreenshot from './afterScreenshot.js'
 import { join } from 'node:path'
 import { remove } from 'fs-extra'
-import { LogLevel } from './options.interface'
+import { LogLevel } from './options.interface.js'
 
 describe('afterScreenshot', () => {
     const folder = join(process.cwd(), '/.tmp/afterScreenshot')

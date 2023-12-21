@@ -26,6 +26,33 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^1.1.0
         version: 1.1.0(vitest@1.1.0)
+      '@wdio/cli':
+        specifier: ^8.27.0
+        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
+      '@wdio/devtools-service':
+        specifier: ^8.27.0
+        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
+      '@wdio/globals':
+        specifier: ^8.27.0
+        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
+      '@wdio/local-runner':
+        specifier: ^8.27.0
+        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
+      '@wdio/mocha-framework':
+        specifier: ^8.27.0
+        version: 8.27.0
+      '@wdio/sauce-service':
+        specifier: ^8.27.0
+        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
+      '@wdio/shared-store-service':
+        specifier: ^8.27.0
+        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
+      '@wdio/spec-reporter':
+        specifier: ^8.27.0
+        version: 8.27.0
+      devtools:
+        specifier: ^8.27.0
+        version: 8.27.0(typescript@5.3.3)
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -59,6 +86,9 @@ importers:
       vitest:
         specifier: ^1.1.0
         version: 1.1.0(jsdom@23.0.1)
+      webdriverio:
+        specifier: ^8.27.0
+        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
 
   packages/service:
     dependencies:
@@ -71,37 +101,6 @@ importers:
       webdriver-image-comparison:
         specifier: ^2.0.1
         version: link:../webdriver-image-comparison
-    devDependencies:
-      '@wdio/cli':
-        specifier: ^8.26.2
-        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
-      '@wdio/devtools-service':
-        specifier: ^8.26.2
-        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
-      '@wdio/globals':
-        specifier: ^8.26.2
-        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
-      '@wdio/local-runner':
-        specifier: ^8.26.2
-        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
-      '@wdio/mocha-framework':
-        specifier: ^8.26.2
-        version: 8.27.0
-      '@wdio/sauce-service':
-        specifier: ^8.26.2
-        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
-      '@wdio/shared-store-service':
-        specifier: ^8.26.2
-        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
-      '@wdio/spec-reporter':
-        specifier: ^8.26.2
-        version: 8.27.0
-      devtools:
-        specifier: ^8.26.2
-        version: 8.27.0(typescript@5.3.3)
-      webdriverio:
-        specifier: ^8.27.0
-        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
 
   packages/webdriver-image-comparison:
     dependencies:

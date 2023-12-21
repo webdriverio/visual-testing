@@ -22,7 +22,7 @@
   "scripts": {
     "clean": "rimraf coverage build .tmp",
     "build": "run-s clean build:*",
-    "build:tsc": "tsc --project packages/service/tsconfig.json",
+    "build:tsc": "tsc --project ./tsconfig.json",
     "test.local.init": "rimraf localBaseline && wdio ./tests/configs/wdio.local.init.conf.ts",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.ts",
     "test.local.appium": "wdio tests/configs/wdio.local.appium.conf.ts",
@@ -40,17 +40,5 @@
     "@wdio/logger": "^8.24.12",
     "@wdio/types": "^8.26.2",
     "webdriver-image-comparison": "^2.0.1"
-  },
-  "devDependencies": {
-    "@wdio/cli": "^8.26.2",
-    "@wdio/devtools-service": "^8.26.2",
-    "@wdio/globals": "^8.26.2",
-    "@wdio/local-runner": "^8.26.2",
-    "@wdio/mocha-framework": "^8.26.2",
-    "@wdio/sauce-service": "^8.26.2",
-    "@wdio/shared-store-service": "^8.26.2",
-    "@wdio/spec-reporter": "^8.26.2",
-    "devtools": "^8.26.2",
-    "webdriverio": "^8.27.0"
   }
 }

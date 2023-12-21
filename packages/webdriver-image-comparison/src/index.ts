@@ -10,6 +10,20 @@ import checkTabbablePage from './commands/checkTabbablePage.js'
 import { ClassOptions } from './helpers/options.interface'
 import { ImageCompareResult } from './methods/images.interfaces'
 
+export type { ScreenshotOutput } from './helpers/afterScreenshot.interfaces'
+export type {
+    CheckScreenMethodOptions,
+    SaveScreenMethodOptions,
+} from './commands/screen.interfaces'
+export type {
+    CheckElementMethodOptions,
+    SaveElementMethodOptions,
+} from './commands/element.interfaces'
+export type {
+    CheckFullPageMethodOptions,
+    SaveFullPageMethodOptions,
+} from './commands/fullPage.interfaces'
+
 export {
     BaseClass,
     ClassOptions,
