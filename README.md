@@ -51,6 +51,12 @@ To create a PR for this project and start contributing follow this step-by-step 
     $ pnpm build
     ```
 
+-   Ensure that your changes don't break any tests, run:
+
+    ```sh
+    $ pnpm test
+    ```
+
 -   And create a new feature / fix a bug
 
 ### Testing
