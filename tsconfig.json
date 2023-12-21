@@ -1,10 +1,7 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "strict": true,
-    "rootDir": "lib/",
-    "outDir": "./build",
-    "allowJs": true,
     "declaration": true,
     "declarationMap": true,
     "resolveJsonModule": true,
@@ -14,8 +11,7 @@
     "esModuleInterop": true,
     "moduleResolution": "Node16",
     "module": "NodeNext",
-    "lib": ["dom", "es2021"],
-    "types": ["node", "@wdio/globals/types", "webdriver-image-comparison"]
+    "lib": ["dom", "es2020"],
   },
 
   "exclude": [

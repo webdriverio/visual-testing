@@ -1,3 +1,5 @@
+/// <reference types="webdriverio" />
+
 import type { Capabilities } from '@wdio/types'
 import type { Folders } from 'webdriver-image-comparison/build/base.interface.js'
 import type {
@@ -50,30 +52,16 @@ export function getInstanceData(
     capabilities: WebdriverIO.Capabilities,
     currentBrowser: WebdriverIO.Browser
 ): InstanceData {
-    // Subtract the needed data from the running instance
-    // @TODO: There is something wrong with the types
-    // `const currentCapabilities = currentBrowser.capabilities` is equal to:
-    // (property) InstanceBase.capabilities: RemoteCapability
-    // But:
-    // - browserName
-    // - browserVersion
-    // - platformName
-    // all show this error:
-    // ```
-    // Property '{property}' does not exist on type 'RemoteCapability'.
-    //  Property '{property}' does not exist on type 'W3CCapabilities'
-    // ```
-    // ```
-    const currentCapabilities = currentBrowser.requestedCapabilities
+    const currentCapabilities = (currentBrowser.requestedCapabilities as Capabilities.W3CCapabilities).alwaysMatch
+        ? (currentBrowser.requestedCapabilities as Capabilities.W3CCapabilities).alwaysMatch
+        : (currentBrowser.requestedCapabilities as WebdriverIO.Capabilities)
     const browserName = (
         capabilities.browserName ||
-        // @ts-ignore
         currentCapabilities.browserName ||
         'browserName-not-known'
     ).toLowerCase()
     const browserVersion = (
         capabilities.browserVersion ||
-        // @ts-ignore
         currentCapabilities.browserVersion ||
         'not-known'
     ).toLowerCase()
@@ -90,7 +78,6 @@ export function getInstanceData(
     // For mobile
     const platformName = (
         capabilities.platformName ||
-        // @ts-ignore
         currentCapabilities.platformName ||
         'not-known'
     ).toLowerCase()

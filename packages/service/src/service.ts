@@ -1,6 +1,5 @@
 import logger from '@wdio/logger'
 import type { Capabilities, Options } from '@wdio/types'
-import { getFolders, getInstanceData } from './utils.js'
 import type {
     ClassOptions } from 'webdriver-image-comparison'
 import {
@@ -14,6 +13,8 @@ import {
     saveTabbablePage,
     checkTabbablePage,
 } from 'webdriver-image-comparison'
+
+import { getFolders, getInstanceData } from './utils.js'
 
 const log = logger('wdio-image-comparison-service')
 
