@@ -39,7 +39,7 @@
     "@types/eslint": "^8.56.0",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
-    "@typescript-eslint/utils": "^6.15.0",
+    "@typescript-eslint/utils": "^6.16.0",
     "@vitest/coverage-v8": "^1.1.0",
     "@wdio/cli": "^8.27.0",
     "@wdio/devtools-service": "^8.27.0",
