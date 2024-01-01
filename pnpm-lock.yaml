@@ -34,8 +34,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(vitest@1.1.0)
       '@wdio/cli':
-        specifier: ^8.27.0
-        version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
+        specifier: ^8.27.1
+        version: 8.27.1(devtools@8.27.0)(typescript@5.3.3)
       '@wdio/devtools-service':
         specifier: ^8.27.0
         version: 8.27.0(devtools@8.27.0)(typescript@5.3.3)
@@ -1709,8 +1709,8 @@ packages:
       pretty-format: 29.7.0
     dev: true
 
-  /@wdio/cli@8.27.0(devtools@8.27.0)(typescript@5.3.3):
-    resolution: {integrity: sha512-wdNYNvu52XxOqNHqDMGAtexBz+MM0RE2Z5U5ljyllbP3ed5vcvvK9vswURtI4cFGoqobVeoC7wif3VeD3aN+aQ==}
+  /@wdio/cli@8.27.1(devtools@8.27.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-RY9o4h0iN6UGpU31X5c9mu/TK2FlHtKtDaRJYunm5ycZvGahQcN+naYpea1ftDr4IpI2gGGlHxvEeHkJF7urDQ==}
     engines: {node: ^16.13 || >=18}
     hasBin: true
     dependencies:
@@ -9371,7 +9371,7 @@ packages:
       require-directory: 2.1.1
       string-width: 4.2.3
       y18n: 5.0.8
-      yargs-parser: 20.2.4
+      yargs-parser: 20.2.9
     dev: true
 
   /yargs@17.7.1:
