@@ -217,8 +217,8 @@ export async function makeCroppedBase64Image({
         const { topImageName, bottomImageName } = getIosBezelImageNames(normalizedDeviceName)
 
         if (topImageName && bottomImageName) {
-            const topImage = readFileSync(join(__dirname, `../assets/ios/${topImageName}.png`)).toString('base64')
-            const bottomImage = readFileSync(join(__dirname, `../assets/ios/${bottomImageName}.png`)).toString('base64')
+            const topImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${topImageName}.png`)).toString('base64')
+            const bottomImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${bottomImageName}.png`)).toString('base64')
 
             // If the screen is rotated the images need to be rotated
             const topBase64Image = isLandscape

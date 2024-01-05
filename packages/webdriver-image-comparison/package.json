@@ -16,11 +16,9 @@
     "url": "https://github.com/wswebcreation/webdriver-image-comparison/issues"
   },
   "scripts": {
-    "build": "run-s clean build:*",
-    "build:copy": "npx copyfiles -u 1 lib/assets/**/*.png build/",
-    "build:tsc": "tsc",
+    "build": "tsc",
     "clean": "rimraf coverage build tmp",
-    "watch": "npm run build:tsc -- -w"
+    "watch": "npm run build -- -w"
   },
   "dependencies": {
     "canvas": "^2.11.2",
