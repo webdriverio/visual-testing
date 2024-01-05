@@ -1,6 +1,9 @@
 # WebdriverIO Visual Testing 🔎 [![tests](https://github.com/webdriverio/visual-testing/actions/workflows/tests.yml/badge.svg)](https://github.com/webdriverio/visual-testing/actions/workflows/tests.yml) [![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
 
-For documentation on visual testing with WebdriverIO, please refer to the [docs](webdriver.io/docs/visual-testing).
+For documentation on visual testing with WebdriverIO, please refer to the [docs](webdriver.io/docs/visual-testing). This project contains all relevant modules for running visual tests with WebdriverIO. Within the `./packages` directory you will find:
+
+- `wdio-image-comparison-service`: the WebdriverIO service for integrating visual testing
+- `webdriver-image-comparison`: An image compare module that can be used for different NodeJS Test automation frameworks that support the WebDriver protocol
 
 ## Contributing
 
@@ -100,14 +103,6 @@ $ npm run test.saucelabs
 It will test against a lot of configurations that can be found [here](./tests/configs/wdio.saucelabs.conf.js).
 All PRs are automatically checked against Sauce Labs.
 
-## TODO:
-
--   [ ] fix the scrollbar for Android, sometimes it shows
--   [ ] create a new website
-
 ## Credits
 
 `wdio-image-comparison-service` uses an open-source license from Sauce Labs.
-![Powered by Sauce Labs](./.github/assets/powered-by-saucelabs.png)
-
-You can request your open-source license [here](https://saucelabs.com/open-source/open-sauce).
