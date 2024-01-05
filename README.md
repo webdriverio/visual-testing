@@ -11,7 +11,7 @@ This package depends on `node-canvas`, make sure you have all [required dependen
 
 ### Questions
 
-Please first read through the [FAQ](../README.md#faq). If that doesn't answer your question you can file an issue, see [issues](./CONTRIBUTING.md#issues).
+Please join our [Discord](https://discord.webdriver.io) Server if you have any questions or issues contributing to this project. Catch us contributors in the `🙏-contributing` channel.
 
 ### Issues
 
@@ -24,7 +24,7 @@ If you can't find it there you can submit an issue where you can submit:
 -   💡**Feature request**: Suggest an idea for this module.
 -   💬**Question**: Ask questions.
 
-### Contributing to Source Code (Pull Requests)
+### Development Workflow
 
 To create a PR for this project and start contributing follow this step-by-step guide:
 
@@ -64,28 +64,36 @@ To create a PR for this project and start contributing follow this step-by-step 
 
 ### Testing
 
-Several tests need to be executed to be able to test the module. When adding a PR all tests must at least pass the local tests. Each PR is automatically tested against Sauce Labs, see [Travis-ci with Sauce Labs](./CONTRIBUTING.md#travis-ci-with-sauce-labs-not-needed-for-a-pr). Before approving a PR the core contributors will test the PR against emulators/simulators / real devices.
+Several tests need to be executed to be able to test the module. When adding a PR all tests must at least pass the local tests. Each PR is automatically tested against Sauce Labs, see [our GitHub Actions pipeline](https://github.com/webdriverio/visual-testing/actions/workflows/tests.yml). Before approving a PR the core contributors will test the PR against emulators/simulators / real devices.
 
 #### Local Testing
 
-First, a local baseline needs to be created. This can be done with
+First, a local baseline needs to be created. This can be done with:
 
 ```sh
 // With the webdriver protocol
 $ npm run test.local.init
+```
 
+or
+
+```sh
 // With the Chrome DevTools protocol
 $ npm run test.local.dev.tools.init
 ```
 
 This command will create a folder called `localBaseline` that will hold all the baseline images.
 
-Then run
+Then run:
 
 ```sh
 // With the webdriver protocol
 npm run test.local.desktop
+```
 
+or
+
+```sh
 // With the Chrome DevTools protocol
 $ npm run test.local.dev.tools.desktop
 ```
