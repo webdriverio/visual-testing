@@ -31,7 +31,6 @@ describe('wdio-image-comparison-service desktop', () => {
                 fullPageScrollTimeout: 1500,
                 hideAfterFirstScroll: [
                     await $('nav.navbar'),
-                    await $('.DocSearch-Button'),
                 ],
             })
         ).toEqual(0)
@@ -41,7 +40,6 @@ describe('wdio-image-comparison-service desktop', () => {
         await expect(await browser.checkTabbablePage('tabbable', {
             hideAfterFirstScroll: [
                 await $('nav.navbar'),
-                await $('.DocSearch-Button'),
             ],
         })).toEqual(0)
     })

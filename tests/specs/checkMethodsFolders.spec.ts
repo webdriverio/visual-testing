@@ -31,7 +31,6 @@ describe('wdio-image-comparison-service check methods folder options', () => {
                     ...testOptions,
                     hideAfterFirstScroll: [
                         await $('nav.navbar'),
-                        await $('.DocSearch-Button'),
                     ],
                 }
             )

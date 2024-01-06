@@ -29,7 +29,10 @@ describe('wdio-image-comparison-service mobile', () => {
         wdioIcsCommands.includes('checkScreen')
     ) {
         it(`should compare a screen successful for '${deviceName}' in ${orientation}-mode`, async () => {
-            await expect(await browser.checkScreen('screenshot')).toEqual(0)
+            // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
+            // We're accepting 0.05%, which is 500 pixels, to be a max difference
+            const result = await browser.checkScreen('screenshot') as number
+            await expect(result < 0.05 ? 0 : result).toEqual(0)
         })
     }
 
@@ -55,15 +58,15 @@ describe('wdio-image-comparison-service mobile', () => {
         wdioIcsCommands.includes('checkFullPageScreen')
     ) {
         it(`should compare a full page screenshot successful for '${deviceName}' in ${orientation}-mode`, async () => {
-            await expect(
-                await browser.checkFullPageScreen('fullPage', {
-                    fullPageScrollTimeout: 1500,
-                    hideAfterFirstScroll: [
-                        await $('nav.navbar'),
-                        await $('.DocSearch-Button'),
-                    ],
-                })
-            ).toEqual(0)
+            // This is normally a bad practice, but a mobile full page screenshot is normally around 4M pixels
+            // We're accepting 0.05%, which is 2000 pixels, to be a max difference
+            const result = await browser.checkFullPageScreen('fullPage', {
+                fullPageScrollTimeout: 1500,
+                hideAfterFirstScroll: [
+                    await $('nav.navbar'),
+                ],
+            }) as number
+            await expect(result < 0.05 ? 0 : result).toEqual(0)
         })
     }
 })

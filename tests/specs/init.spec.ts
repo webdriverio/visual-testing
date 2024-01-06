@@ -92,7 +92,6 @@ describe('webdriverio image comparison local development initialization', () => 
             fullPageScrollTimeout: 1500,
             hideAfterFirstScroll: [
                 await $('nav.navbar'),
-                await $('.DocSearch-Button'),
             ],
         })) as {
             fileName: string;
@@ -126,7 +125,6 @@ describe('webdriverio image comparison local development initialization', () => 
             fullPageScrollTimeout: 1500,
             hideAfterFirstScroll: [
                 await $('nav.navbar'),
-                await $('.DocSearch-Button'),
             ],
         })) as {
             fileName: string;
