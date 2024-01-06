@@ -42,35 +42,43 @@ export default class WdioImageComparisonService extends BaseClass {
 
         if (!this._browser.isMultiremote) {
             log.info('Adding commands to global browser')
-            this._addCommandsToBrowser(capabilities, this._browser)
+            this.#addCommandsToBrowser(capabilities, this._browser)
         } else {
             const browserNames = Object.keys(capabilities)
             log.info('Adding commands to Multi Browser: ', browserNames)
 
             for (const browserName of browserNames) {
-                this._addCommandsToBrowser(
+                const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
+                const browserInstance = multiremoteBrowser.getInstance(browserName)
+                this.#addCommandsToBrowser(
                     (
                         (capabilities as Capabilities.MultiRemoteCapabilities)[
                             browserName
                         ] as Options.MultiRemoteBrowserOptions
                     ).capabilities,
-                    // Need to make this better
-                    (global as any)[browserName]
+                    browserInstance
                 )
             }
-            //Add all the commands to the global browser object that will execute on each browser in the Multi Remote
+
+            /**
+             * Add all the commands to the global browser object that will execute
+             * on each browser in the Multi Remote
+             */
             for (const command of [
                 ...Object.keys(elementCommands),
                 ...Object.keys(pageCommands),
             ]) {
-                browser.addCommand(command, function () {
-                    const returnData = {}
+                browser.addCommand(command, function (...args: unknown[]) {
+                    const returnData: Record<string, any> = {}
                     for (const browserName of browserNames) {
-                        (returnData as any)[browserName] = (global as any)[
-                            browserName
-                        ][command].call(
-                            (global as any)[browserName],
-                            ...arguments
+                        const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
+                        const browserInstance = multiremoteBrowser.getInstance(browserName)
+                        /**
+                         * casting command to `checkScreen` to simplify type handling here
+                         */
+                        returnData[browserName] = browserInstance[command as 'checkScreen'].call(
+                            browserInstance,
+                            ...args
                         )
                     }
                     return returnData
@@ -79,7 +87,7 @@ export default class WdioImageComparisonService extends BaseClass {
         }
     }
 
-    _addCommandsToBrowser(
+    #addCommandsToBrowser(
         capabilities: WebdriverIO.Capabilities,
         currentBrowser: WebdriverIO.Browser
     ) {

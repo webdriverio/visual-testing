@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`@wdio/visual-service > should pass 1`] = `
+{
+  "addIOSBezelCorners": false,
+  "addressBarShadowPadding": 6,
+  "autoElementScroll": true,
+  "autoSaveBaseline": false,
+  "clearFolder": false,
+  "compareOptions": {
+    "blockOutSideBar": false,
+    "blockOutStatusBar": false,
+    "blockOutToolBar": false,
+    "ignoreAlpha": false,
+    "ignoreAntialiasing": false,
+    "ignoreColors": false,
+    "ignoreLess": false,
+    "ignoreNothing": false,
+    "rawMisMatchPercentage": false,
+    "returnAllCompareData": false,
+    "saveAboveTolerance": 0,
+    "scaleImagesToSameSize": false,
+  },
+  "disableCSSAnimation": false,
+  "formatImageName": "{tag}-{browserName}-{width}x{height}-dpr-{dpr}",
+  "fullPageScrollTimeout": 1500,
+  "hideScrollBars": true,
+  "isHybridApp": false,
+  "logLevel": "info",
+  "savePerInstance": false,
+  "tabbableOptions": {
+    "circle": {
+      "backgroundColor": "#ff0000",
+      "borderColor": "#000",
+      "borderWidth": 1,
+      "fontColor": "#fff",
+      "fontFamily": "Arial",
+      "fontSize": 10,
+      "showNumber": true,
+      "size": 10,
+    },
+    "line": {
+      "color": "#000",
+      "width": 1,
+    },
+  },
+  "toolBarShadowPadding": 6,
+}
+`;
