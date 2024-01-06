@@ -2,7 +2,7 @@
 
 For documentation on visual testing with WebdriverIO, please refer to the [docs](webdriver.io/docs/visual-testing). This project contains all relevant modules for running visual tests with WebdriverIO. Within the `./packages` directory you will find:
 
-- `wdio-image-comparison-service`: the WebdriverIO service for integrating visual testing
+- `@wdio/visual-testing`: the WebdriverIO service for integrating visual testing
 - `webdriver-image-comparison`: An image compare module that can be used for different NodeJS Test automation frameworks that support the WebDriver protocol
 
 ## Contributing
@@ -32,13 +32,13 @@ To create a PR for this project and start contributing follow this step-by-step 
 -   Clone the project somewhere on your computer
 
     ```sh
-    $ git clone https://github.com/wswebcreation/wdio-image-comparison-service.git
+    $ git clone https://github.com/webdriverio/visual-testing.git
     ```
 
 -   Go to the directory and setup the project
 
     ```sh
-    $ cd wdio-image-comparison-service
+    $ cd visual-testing
     $ pnpm install
     ```
 
@@ -75,13 +75,6 @@ First, a local baseline needs to be created. This can be done with:
 $ npm run test.local.init
 ```
 
-or
-
-```sh
-// With the Chrome DevTools protocol
-$ npm run test.local.dev.tools.init
-```
-
 This command will create a folder called `localBaseline` that will hold all the baseline images.
 
 Then run:
@@ -89,13 +82,6 @@ Then run:
 ```sh
 // With the webdriver protocol
 npm run test.local.desktop
-```
-
-or
-
-```sh
-// With the Chrome DevTools protocol
-$ npm run test.local.dev.tools.desktop
 ```
 
 This will run all tests on a local machine on Chrome.
@@ -113,4 +99,4 @@ All PRs are automatically checked against Sauce Labs.
 
 ## Credits
 
-`wdio-image-comparison-service` uses an open-source license from Sauce Labs.
+`@wdio/visual-testing` uses an open-source license from Sauce Labs.
