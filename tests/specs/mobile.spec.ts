@@ -3,7 +3,7 @@ import { browser, expect } from '@wdio/globals'
 /**
  * Added a retry on the mobile tests because in some cases the emulator or simulator wasn't loaded properly
  */
-describe('wdio-image-comparison-service mobile', () => {
+describe('@wdio/visual-service mobile', () => {
     // Get the commands that need to be executed
     // 0 means all, otherwise it will only execute the commands that are specified
     // @ts-ignore

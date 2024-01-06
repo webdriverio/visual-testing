@@ -8,7 +8,7 @@ importers:
 
   .:
     dependencies:
-      wdio-image-comparison-service:
+      '@wdio/visual-service':
         specifier: workspace:^
         version: link:packages/service
     devDependencies:

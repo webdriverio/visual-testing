@@ -15,7 +15,7 @@ import {
 
 import { getFolders, getInstanceData } from './utils.js'
 
-const log = logger('wdio-image-comparison-service')
+const log = logger('@wdio/visual-service')
 
 const elementCommands = { saveElement, checkElement }
 const pageCommands = {

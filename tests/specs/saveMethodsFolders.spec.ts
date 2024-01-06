@@ -1,7 +1,7 @@
 import { browser, expect } from '@wdio/globals'
 import { join } from 'node:path'
 
-describe('wdio-image-comparison-service save methods folder options', () => {
+describe('@wdio/visual-service save methods folder options', () => {
     const testOptions = {
         returnAllCompareData: true,
         actualFolder: join(process.cwd(), './.tmp/saveActual'),

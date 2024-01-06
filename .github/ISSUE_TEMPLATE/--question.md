@@ -5,7 +5,7 @@ about: Ask questions.
 ---
 
 **Describe your question with as much detail as possible**
-A clear and concise question that doesn't require too much conversation. Need more help? [Find me on Gitter](https://gitter.im/wswebcreation/protractor-image-comparison)
+A clear and concise question that doesn't require too much conversation. Need more help? [Join us on Discord](https://discord.webdriver.io)
 
 
 **If it's about a specific piece of code, try and include some of it to support your question.**
@@ -18,7 +18,7 @@ A clear and concise question that doesn't require too much conversation. Need mo
  - Browser name and version: [e.g. Chrome 68]
  - Platform name and version: [e.g. Windows 10]
  - WebdriverIO version: [e.g. 5.1.0]
- - wdio-image-comparison-service version: [e.g. 2.0.0]
+ - `@wdio/visual-service` version: [e.g. 1.0.0]
 
 
 **Additional context**

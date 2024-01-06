@@ -1,5 +1,5 @@
 ---
-"wdio-image-comparison-service": major
+"@wdio/visual-service": major
 "webdriver-image-comparison": major
 ---
 

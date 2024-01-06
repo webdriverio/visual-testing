@@ -29,7 +29,7 @@
     "watch": "pnpm run -r --parallel watch"
   },
   "dependencies": {
-    "wdio-image-comparison-service": "workspace:^"
+    "@wdio/visual-service": "workspace:^"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

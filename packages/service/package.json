@@ -1,13 +1,13 @@
 {
-  "name": "wdio-image-comparison-service",
+  "name": "@wdio/visual-service",
   "author": "Wim Selles - wswebcreation",
   "description": "Image comparison / visual regression testing for WebdriverIO",
-  "version": "5.0.3",
+  "version": "0.1.0",
   "license": "MIT",
-  "homepage": "webdriver.io/docs/visual-testing",
+  "homepage": "https://webdriver.io/docs/visual-testing",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wswebcreation/wdio-image-comparison-service.git"
+    "url": "https://github.com/webdriverio/visual-testing.git"
   },
   "keywords": [
     "webdriverio",

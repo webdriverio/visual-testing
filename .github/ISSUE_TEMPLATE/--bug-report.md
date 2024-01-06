@@ -12,10 +12,10 @@ about: Create a report to help us improve.
  - Browser name and version: [e.g. Chrome 68]
  - Platform name and version: [e.g. Windows 10]
  - WebdriverIO version: [e.g. 5.1.0]
- - wdio-image-comparison-service version: [e.g. 3.0.0]
+ - `@wdio/visual-service` version: [e.g. 1.0.0]
 
-**Config of WebdriverIO + wdio-image-comparison-service**
-An example of how you configured the wdio-image-comparison-service
+**Config of WebdriverIO + `@wdio/visual-service`**
+An example of how you configured the `@wdio/visual-service`
 
 **Describe the bug**
 A clear and concise description of what the bug is.

@@ -1,7 +1,7 @@
 import { browser, expect } from '@wdio/globals'
 import { fileExists } from '../helpers/fileExists.ts'
 
-describe('wdio-image-comparison-service basics', () => {
+describe('@wdio/visual-service basics', () => {
     let logName: string
     const resolution = '1366x768'
 

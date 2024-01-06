@@ -1,7 +1,7 @@
 import { browser, expect } from '@wdio/globals'
 import { fileExists } from '../helpers/fileExists.ts'
 
-describe('wdio-image-comparison-service check that multi remote is working', () => {
+describe('@wdio/visual-service check that multi remote is working', () => {
     const resolution = '1366x768'
 
     beforeEach(async () => {

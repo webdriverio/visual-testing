@@ -1,7 +1,7 @@
 import { browser, expect } from '@wdio/globals'
 import { join } from 'node:path'
 
-describe('wdio-image-comparison-service check methods folder options', () => {
+describe('@wdio/visual-service check methods folder options', () => {
     const baselineFolder = 'sauce:options' in browser.capabilities
         ? 'tests/sauceLabsBaseline'
         : 'localBaseline'
