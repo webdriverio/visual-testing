@@ -50,7 +50,6 @@ describe('wdio-image-comparison-service basics', () => {
                 fullPageScrollTimeout: 1500,
                 hideAfterFirstScroll: [
                     await $('nav.navbar'),
-                    await $('.DocSearch-Button'),
                 ],
             })
             const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`

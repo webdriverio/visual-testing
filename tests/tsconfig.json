@@ -11,7 +11,6 @@
             "@wdio/globals/types",
             "@wdio/mocha-framework",
             "@wdio/sauce-service",
-            "@wdio/devtools-service",
             "@wdio/shared-store-service",
         ],
         "skipLibCheck": true,

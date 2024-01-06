@@ -24,7 +24,6 @@ describe('wdio-image-comparison-service save methods folder options', () => {
                     ...testOptions,
                     hideAfterFirstScroll: [
                         await $('nav.navbar'),
-                        await $('.DocSearch-Button'),
                     ],
                 }
             )
@@ -40,7 +39,6 @@ describe('wdio-image-comparison-service save methods folder options', () => {
                 {
                     hideAfterFirstScroll: [
                         await $('nav.navbar'),
-                        await $('.DocSearch-Button'),
                     ],
                 }
             )
