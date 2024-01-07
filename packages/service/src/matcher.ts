@@ -10,40 +10,41 @@ import type {
 
 export async function toMatchScreenSnapshot (
     browser: WebdriverIO.Browser,
-    options: WdioCheckScreenMethodOptions & { tag: string },
-    expectedResult: Result
+    tag: string,
+    expectedResult: Result,
+    options: WdioCheckScreenMethodOptions
 ) {
-    const { tag, ...screenOptions } = options
-    const result = await browser.checkScreen(tag, screenOptions)
+    const result = await browser.checkScreen(tag, options)
     return expect(result).toEqual(expectedResult)
 }
 
 export async function toMatchFullPageSnapshot (
     browser: WebdriverIO.Browser,
-    options: WdioCheckFullPageMethodOptions & { tag: string },
-    expectedResult: Result
+    tag: string,
+    expectedResult: Result,
+    options: WdioCheckFullPageMethodOptions
 ) {
-    const { tag, ...fullPageOptions } = options
-    const result = await browser.checkFullPageScreen(tag, fullPageOptions)
+    const result = await browser.checkFullPageScreen(tag, options)
     return expect(result).toEqual(expectedResult)
 }
 
 export async function toMatchElementSnapshot (
     element: WebdriverIO.Element,
-    options: WdioCheckElementMethodOptions & { tag: string },
-    expectedResult: Result
+    tag: string,
+    expectedResult: Result,
+    options: WdioCheckElementMethodOptions
 ) {
     const browser = getBrowserObject(element)
-    const { tag, ...elementOptions } = options
-    const result = await browser.checkElement(await element, tag, elementOptions)
+    const result = await browser.checkElement(await element, tag, options)
     return expect(result).toEqual(expectedResult)
 }
+
 export async function toMatchTabbablePageSnapshot (
     browser: WebdriverIO.Browser,
-    options: WdioCheckFullPageMethodOptions & { tag: string },
-    expectedResult: Result
+    tag: string,
+    expectedResult: Result,
+    options: WdioCheckFullPageMethodOptions
 ) {
-    const { tag, ...tabbableOptions } = options
-    const result = await browser.checkFullPageScreen(tag, tabbableOptions)
+    const result = await browser.checkFullPageScreen(tag, options)
     return expect(result).toEqual(expectedResult)
 }

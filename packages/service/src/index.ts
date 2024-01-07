@@ -92,20 +92,24 @@ declare global {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R, T> {
             toMatchScreenSnapshot(
-                options: WdioCheckScreenMethodOptions & { tag: string },
-                expectedResult: Result
+                tag: string,
+                expectedResult: Result,
+                options: WdioCheckScreenMethodOptions
             ): R
             toMatchFullPageSnapshot(
-                options: WdioCheckFullPageMethodOptions & { tag: string },
-                expectedResult: Result
+                tag: string,
+                expectedResult: Result,
+                options: WdioCheckFullPageMethodOptions
             ): R
             toMatchElementSnapshot(
-                options: WdioCheckElementMethodOptions & { tag: string },
-                expectedResult: Result
+                tag: string,
+                expectedResult: Result,
+                options: WdioCheckElementMethodOptions
             ): R
             toMatchTabbablePageSnapshot(
-                options: WdioCheckFullPageMethodOptions & { tag: string },
-                expectedResult: Result
+                tag: string,
+                expectedResult: Result,
+                options: WdioCheckFullPageMethodOptions
             ): R
         }
     }
