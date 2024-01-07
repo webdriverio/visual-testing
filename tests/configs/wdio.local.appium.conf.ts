@@ -1,6 +1,5 @@
 import type { Options } from '@wdio/types'
 import { join } from 'node:path'
-import WdioImageComparisonService from '@wdio/visual-service'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 
 export const config: Options.Testrunner = {
@@ -34,7 +33,7 @@ export const config: Options.Testrunner = {
     // ===================
     services: [
         [
-            WdioImageComparisonService,
+            'visual',
             {
                 addIOSBezelCorners: true,
                 baselineFolder: join(process.cwd(), './tests/localBaseline/'),

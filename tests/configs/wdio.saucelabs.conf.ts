@@ -3,7 +3,6 @@ import { join } from 'node:path'
 import { setValue, getValue } from '@wdio/shared-store-service'
 import type { Job } from 'saucelabs'
 import SauceLabs from 'saucelabs'
-import WdioImageComparisonService from '@wdio/visual-service'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 import { sauceIosSim } from './sauce.ios.sims.ts'
 import { sauceAndroidEmus } from './sauce.android.emus.js'
@@ -54,7 +53,7 @@ export const config: Options.Testrunner = {
         // Image compare setup
         // ===================
         [
-            WdioImageComparisonService,
+            'visual',
             {
                 addIOSBezelCorners: true,
                 baselineFolder: join(
