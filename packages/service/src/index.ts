@@ -1,51 +1,14 @@
 import WdioImageComparisonService from './service.js'
-
 import type {
-    ScreenshotOutput,
-    ImageCompareResult,
-    CheckScreenMethodOptions,
-    SaveScreenMethodOptions,
-    CheckElementMethodOptions,
-    SaveElementMethodOptions,
-    CheckFullPageMethodOptions,
-    SaveFullPageMethodOptions,
-} from 'webdriver-image-comparison'
-
-interface WdioIcsCommonOptions {
-    hideElements?: WebdriverIO.Element[];
-    removeElements?: WebdriverIO.Element[];
-}
-interface WdioIcsScrollOptions extends WdioIcsCommonOptions {
-    hideAfterFirstScroll?: WebdriverIO.Element[];
-}
-
-interface WdioCheckFullPageMethodOptions
-    extends Omit<CheckFullPageMethodOptions, keyof WdioIcsScrollOptions>,
-        WdioIcsScrollOptions {}
-interface WdioSaveFullPageMethodOptions
-    extends Omit<SaveFullPageMethodOptions, keyof WdioIcsScrollOptions>,
-        WdioIcsScrollOptions {}
-interface WdioSaveElementMethodOptions
-    extends Omit<SaveElementMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-interface WdioSaveScreenMethodOptions
-    extends Omit<SaveScreenMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-interface WdioCheckElementMethodOptions
-    extends Omit<CheckElementMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-interface WdioCheckScreenMethodOptions
-    extends Omit<CheckScreenMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-
-type MultiOutput = {
-    [browserName: string]: ScreenshotOutput;
-};
-type Output = MultiOutput | ScreenshotOutput;
-type MultiResult = {
-    [browserName: string]: ImageCompareResult | number;
-};
-type Result = MultiResult | (ImageCompareResult | number);
+    Output,
+    Result,
+    WdioCheckFullPageMethodOptions,
+    WdioSaveFullPageMethodOptions,
+    WdioSaveElementMethodOptions,
+    WdioSaveScreenMethodOptions,
+    WdioCheckElementMethodOptions,
+    WdioCheckScreenMethodOptions
+} from './types.js'
 
 declare global {
     namespace WebdriverIO {
@@ -121,6 +84,29 @@ declare global {
             'wdio-ics:options'?:{
                 logName?: string;
             }
+        }
+    }
+
+    namespace ExpectWebdriverIO {
+        // see https://github.com/webdriverio/expect-webdriverio/issues/1408
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        interface Matchers<R, T> {
+            toMatchScreenSnapshot(
+                options: WdioCheckScreenMethodOptions & { tag: string },
+                expectedResult: Result
+            ): R
+            toMatchFullPageSnapshot(
+                options: WdioCheckFullPageMethodOptions & { tag: string },
+                expectedResult: Result
+            ): R
+            toMatchElementSnapshot(
+                options: WdioCheckElementMethodOptions & { tag: string },
+                expectedResult: Result
+            ): R
+            toMatchTabbablePageSnapshot(
+                options: WdioCheckFullPageMethodOptions & { tag: string },
+                expectedResult: Result
+            ): R
         }
     }
 }
