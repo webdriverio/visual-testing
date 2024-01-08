@@ -1,3 +1,4 @@
+/// <reference types="@wdio/visual-service" />
 import { browser, expect } from '@wdio/globals'
 
 describe('@wdio/visual-service matcher', () => {
@@ -6,7 +7,7 @@ describe('@wdio/visual-service matcher', () => {
     const browserName = `${caps.browserName}-${caps.browserVersion}`
 
     beforeEach(async () => {
-        await browser.url('/')
+        await browser.url('')
         await $('.hero__title-logo').waitForDisplayed()
     })
 

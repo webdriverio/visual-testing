@@ -64,7 +64,6 @@ export const config: Options.Testrunner = {
                 blockOutToolBar: true,
                 clearRuntimeFolder: true,
             },
-        ],
-        'chromedriver',
+        ]
     ],
 }

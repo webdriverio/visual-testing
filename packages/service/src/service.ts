@@ -115,6 +115,7 @@ export default class WdioImageComparisonService extends BaseClass {
         const defaultOptions = this.defaultOptions
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
+            log.info(`Adding element command "${commandName}" to browser object`)
             currentBrowser.addCommand(
                 commandName,
                 function (
@@ -143,6 +144,7 @@ export default class WdioImageComparisonService extends BaseClass {
         }
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
+            log.info(`Adding element command "${commandName}" to browser object`)
             currentBrowser.addCommand(
                 commandName,
                 function (this: typeof currentBrowser, tag, pageOptions = {}) {

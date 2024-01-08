@@ -93,22 +93,22 @@ declare global {
         interface Matchers<R, T> {
             toMatchScreenSnapshot(
                 tag: string,
-                expectedResult: Result,
+                expectedResult: number | ExpectWebdriverIO.PartialMatcher,
                 options: WdioCheckScreenMethodOptions
             ): R
             toMatchFullPageSnapshot(
                 tag: string,
-                expectedResult: Result,
+                expectedResult: number | ExpectWebdriverIO.PartialMatcher,
                 options: WdioCheckFullPageMethodOptions
             ): R
             toMatchElementSnapshot(
                 tag: string,
-                expectedResult: Result,
+                expectedResult: number | ExpectWebdriverIO.PartialMatcher,
                 options: WdioCheckElementMethodOptions
             ): R
             toMatchTabbablePageSnapshot(
                 tag: string,
-                expectedResult: Result,
+                expectedResult: number | ExpectWebdriverIO.PartialMatcher,
                 options: WdioCheckFullPageMethodOptions
             ): R
         }
