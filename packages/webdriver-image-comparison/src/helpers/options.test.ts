@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { defaultOptions, methodCompareOptions, screenMethodCompareOptions } from './options.js'
-import type { ClassOptions } from './options.interface.js'
-import type { ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
+import type { ClassOptions } from './options.interfaces'
+import type { ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces'
 
 describe('options', () => {
     describe('defaultOptions', () => {

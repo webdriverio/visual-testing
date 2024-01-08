@@ -1,6 +1,6 @@
 import { DEFAULT_FORMAT_STRING, DEFAULT_SHADOW, DEFAULT_TABBABLE_OPTIONS, FULL_PAGE_SCROLL_TIMEOUT } from './constants.js'
-import type { ClassOptions, DefaultOptions } from './options.interface'
-import { LogLevel } from './options.interface'
+import type { ClassOptions, DefaultOptions } from './options.interfaces'
+import { LogLevel } from './options.interfaces'
 import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces'
 
 /**

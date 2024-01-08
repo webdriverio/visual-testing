@@ -1,4 +1,4 @@
-import type { LogLevel } from '../helpers/options.interface'
+import type { LogLevel } from '../helpers/options.interfaces'
 
 export interface FullPageScreenshotsData {
     // The height of the full page

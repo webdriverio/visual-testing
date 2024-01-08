@@ -1,6 +1,6 @@
 import type { RectanglesOutput } from './rectangles.interfaces'
-import type { LogLevel } from '../helpers/options.interface'
-import type { Folders } from '../base.interface'
+import type { LogLevel } from '../helpers/options.interfaces'
+import type { Folders } from '../base.interfaces'
 
 export interface ResizeDimensions {
     // The bottom margin

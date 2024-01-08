@@ -1,5 +1,5 @@
-import type { Folders } from '../base.interface'
-import type { DefaultOptions } from '../helpers/options.interface'
+import type { Folders } from '../base.interfaces'
+import type { DefaultOptions } from '../helpers/options.interfaces'
 import type { CheckMethodOptions } from './check.interfaces'
 
 export interface SaveScreenOptions {

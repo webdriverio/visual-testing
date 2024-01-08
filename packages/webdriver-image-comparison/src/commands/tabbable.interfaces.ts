@@ -1,4 +1,4 @@
-import type { DefaultOptions } from '../helpers/options.interface'
+import type { DefaultOptions } from '../helpers/options.interfaces'
 import type { CheckFullPageMethodOptions, SaveFullPageMethodOptions } from './fullPage.interfaces'
 
 export interface SaveTabbableOptions {

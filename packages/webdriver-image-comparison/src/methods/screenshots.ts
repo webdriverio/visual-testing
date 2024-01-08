@@ -4,7 +4,7 @@ import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndro
 import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
 import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getScreenshotSize, waitFor } from '../helpers/utils.js'
-import type { Executor, TakeScreenShot } from './methods.interfaces.js'
+import type { Executor, TakeScreenShot } from './methods.interfaces'
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
@@ -14,7 +14,7 @@ import type {
 import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
-import { LogLevel } from '../helpers/options.interface'
+import { LogLevel } from '../helpers/options.interfaces'
 
 /**
  * Take a full page screenshots for desktop / iOS / Android

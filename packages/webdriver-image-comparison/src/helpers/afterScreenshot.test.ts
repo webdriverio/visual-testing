@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import afterScreenshot from './afterScreenshot.js'
 import { remove } from 'fs-extra'
-import { LogLevel } from './options.interface.js'
+import { LogLevel } from './options.interfaces'
 
 vi.mock('../methods/images.js', () => ({
     saveBase64Image: vi.fn()

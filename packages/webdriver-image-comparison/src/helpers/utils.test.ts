@@ -16,7 +16,7 @@ import {
     getScreenshotSize,
     getToolBarShadowPadding,
 } from './utils.js'
-import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
+import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 
 describe('utils', () => {

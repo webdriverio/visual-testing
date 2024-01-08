@@ -1,4 +1,4 @@
-import type { LogLevel } from './options.interface'
+import type { LogLevel } from './options.interfaces'
 
 export interface ScreenshotOutput {
     // The device pixel ratio of the instance

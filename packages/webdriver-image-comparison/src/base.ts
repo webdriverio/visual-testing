@@ -2,8 +2,8 @@ import { join, normalize } from 'node:path'
 import { removeSync } from 'fs-extra'
 import { defaultOptions } from './helpers/options.js'
 import { FOLDERS } from './helpers/constants.js'
-import type { Folders } from './base.interface'
-import type { ClassOptions, DefaultOptions } from './helpers/options.interface'
+import type { Folders } from './base.interfaces'
+import type { ClassOptions, DefaultOptions } from './helpers/options.interfaces'
 
 export default class BaseClass {
     defaultOptions: DefaultOptions

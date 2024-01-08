@@ -14,9 +14,9 @@ import type {
     RotateBase64ImageOptions,
 } from './images.interfaces'
 import type { FullPageScreenshotsData } from './screenshots.interfaces'
-import type { Executor } from './methods.interfaces.js'
+import type { Executor } from './methods.interfaces'
 import type { CompareData } from '../resemble/compare.interfaces'
-import { LogLevel } from '../helpers/options.interface'
+import { LogLevel } from '../helpers/options.interfaces'
 
 /**
  * Check if the image exists and create a new baseline image if needed
