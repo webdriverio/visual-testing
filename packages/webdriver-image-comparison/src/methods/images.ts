@@ -14,7 +14,7 @@ import type {
     RotateBase64ImageOptions,
 } from './images.interfaces'
 import type { FullPageScreenshotsData } from './screenshots.interfaces'
-import type { Executor } from './methods.interface'
+import type { Executor } from './methods.interfaces.js'
 import type { CompareData } from '../resemble/compare.interfaces'
 import { LogLevel } from '../helpers/options.interface'
 

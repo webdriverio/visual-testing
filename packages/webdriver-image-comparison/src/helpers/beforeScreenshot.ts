@@ -4,7 +4,7 @@ import { CUSTOM_CSS_ID } from './constants.js'
 import { checkIsMobile, getAddressBarShadowPadding, getToolBarShadowPadding, waitFor } from './utils.js'
 import getEnrichedInstanceData from '../methods/instanceData.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeScreenshot.interface'
-import type { Executor } from '../methods/methods.interface'
+import type { Executor } from '../methods/methods.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import { LogLevel } from './options.interface'
 

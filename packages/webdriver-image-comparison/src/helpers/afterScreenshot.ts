@@ -6,7 +6,7 @@ import { CUSTOM_CSS_ID } from './constants.js'
 import { checkIsMobile, formatFileName, getAndCreatePath } from './utils.js'
 import { saveBase64Image } from '../methods/images.js'
 
-import type { Executor } from '../methods/methods.interface'
+import type { Executor } from '../methods/methods.interfaces.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot.interfaces'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import { LogLevel } from './options.interface.js'

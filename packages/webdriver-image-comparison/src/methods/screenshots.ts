@@ -4,7 +4,7 @@ import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndro
 import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
 import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getScreenshotSize, waitFor } from '../helpers/utils.js'
-import type { Executor, TakeScreenShot } from './methods.interface'
+import type { Executor, TakeScreenShot } from './methods.interfaces.js'
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,

@@ -82,6 +82,6 @@ export async function toMatchTabbablePageSnapshot (
     expectedResult: number | ExpectWebdriverIO.PartialMatcher,
     options: WdioCheckFullPageMethodOptions
 ) {
-    const result = await browser.checkFullPageScreen(tag, options)
+    const result = await browser.checkTabbablePage(tag, options)
     return compareResult(result, expectedResult)
 }

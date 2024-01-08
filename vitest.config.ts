@@ -5,11 +5,17 @@ export default defineConfig({
         include: ['./packages/**/(tests|src)/**/*.test.ts'],
         coverage: {
             thresholds: {
-                lines: 46,
-                statements: 46,
-                functions: 57,
-                branches: 83
-            }
+                lines: 57,
+                statements: 57,
+                functions: 74,
+                branches: 86
+            },
+            exclude: [
+                'packages/service/src/types.ts',
+                '.eslintrc.cjs',
+                'tests/**',
+                '**/*.interfaces.ts',
+            ]
         },
         /**
          * not to ESM ported packages

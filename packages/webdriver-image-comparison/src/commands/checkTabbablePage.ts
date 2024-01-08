@@ -1,4 +1,4 @@
-import type { Methods } from '../methods/methods.interface'
+import type { Methods } from '../methods/methods.interfaces'
 import type { InstanceData } from '../methods/instanceData.interfaces'
 import type { Folders } from '../base.interface'
 import drawTabbableOnCanvas from '../clientSideScripts/drawTabbableOnCanvas.js'
