@@ -60,7 +60,7 @@ To create a PR for this project and start contributing follow this step-by-step 
     $ pnpm test
     ```
 
--   And create a new feature / fix a bug
+This project uses [changesets](https://github.com/changesets/changesets) to automatically create changelogs and releases.
 
 ### Testing
 
@@ -96,6 +96,16 @@ $ npm run test.saucelabs
 
 It will test against a lot of configurations that can be found [here](./tests/configs/wdio.saucelabs.conf.js).
 All PRs are automatically checked against Sauce Labs.
+
+## Releasing
+
+To release a version of any of the packages listed above, do the following:
+
+- trigger the [release pipeline](https://github.com/webdriverio/visual-testing/actions/workflows/release.yml)
+- a release PR is generated, have this be reviewed and approved by another WebdriverIO member
+- merge the PR
+- trigger the [release pipeline](https://github.com/webdriverio/visual-testing/actions/workflows/release.yml) again
+- a new version should be released 🎉
 
 ## Credits
 
