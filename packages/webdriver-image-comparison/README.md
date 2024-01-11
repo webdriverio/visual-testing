@@ -1,14 +1,14 @@
-# webdriver-image-comparison
+WebDriver Image Comparison
+==========================
 
-> **Ultra low-maintenance mode: One or two times a year the library author will spend some time to keep the library useful. Feel free to raise issues and contribute improvements, but please be aware that it may be sometime before a response is given.**
+> an image compare module that can be used for different NodeJS Test automation frameworks that support the [WebDriver protocol](https://www.w3.org/TR/webdriver2/).
 
-![webdriver-image-comparison workflow](https://github.com/wswebcreation/webdriver-image-comparison/actions/workflows/webdriver-image-comparison.yml/badge.svg)
-[![codecov](https://codecov.io/gh/wswebcreation/webdriver-image-comparison/branch/master/graph/badge.svg?token=Q4UsgDSRd3)](https://codecov.io/gh/wswebcreation/webdriver-image-comparison)
-[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+## Installation
 
-*webdriver-image-comparison* is an image compare module that can be used for different NodeJS Test automation frameworks that support the webdriver protocol.
+The easiest way is to keep `webdriver-image-comparison` as a dev-dependency in your `package.json`, via:
 
-## TO-DO
-- [ ] Make proper documentation
-- [ ] Optimize UT's and increase coverage
-- [ ] Look at the execute methods, maybe they could be optimized
+```sh
+npm install webdriver-image-comparison --save-dev
+```
+
+Instructions on how to get started can be found in the [visual testing](https://webdriver.io/docs/visual-testing) docs on the WebdriverIO project page.
