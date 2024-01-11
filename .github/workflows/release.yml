@@ -35,6 +35,11 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: ∽ Git Setup
+        run: |
+          git config --global user.email "bot@webdriver.io"
+          git config --global user.name "WebdriverIO Release Bot"
+
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -58,3 +63,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
