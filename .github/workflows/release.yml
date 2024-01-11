@@ -4,6 +4,11 @@ on: [workflow_dispatch]
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NPM_CONFIG_PROVENANCE: true
+
 jobs:
   release:
     name: Release
@@ -30,13 +35,11 @@ jobs:
         with:
           version: 8
 
-      - name: 🔐 Authenticate with NPM
+      - name: NPM Setup
         run: |
-          cat << EOF > "$HOME/.npmrc"
-            //registry.npmjs.org/:_authToken=$NPM_TOKEN
-          EOF
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          npm set registry "https://registry.npmjs.org/"
+          npm set //registry.npmjs.org/:_authToken $NPM_TOKEN
+          npm whoami
 
       - name: ∽ Git Setup
         run: |
@@ -65,7 +68,3 @@ jobs:
           publish: pnpm release
           setupGitUser: false
           commit: "chore: release [skip ci]"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
