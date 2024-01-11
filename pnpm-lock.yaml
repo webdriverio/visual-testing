@@ -109,7 +109,7 @@ importers:
         specifier: ^8.26.2
         version: 8.27.0
       webdriver-image-comparison:
-        specifier: ^3.0.0
+        specifier: ^2.0.1
         version: link:../webdriver-image-comparison
 
   packages/webdriver-image-comparison:
