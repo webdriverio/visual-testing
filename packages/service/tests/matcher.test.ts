@@ -1,14 +1,20 @@
+/// <reference types="../" />
 import { describe, it, vi, expect } from 'vitest'
 import {
     toMatchScreenSnapshot, toMatchFullPageSnapshot,
     toMatchElementSnapshot, toMatchTabbablePageSnapshot
 } from '../src/matcher.js'
 
+const folders = {
+    baseline: 'foo',
+    actual: 'bar',
+    diff: 'baz'
+}
 const browser = {
-    checkScreen: vi.fn().mockResolvedValue(123),
-    checkFullPageScreen: vi.fn().mockResolvedValue(123),
-    checkElement: vi.fn().mockResolvedValue(123),
-    checkTabbablePage: vi.fn().mockResolvedValue(123)
+    checkScreen: vi.fn().mockResolvedValue({ misMatchPercentage :123, folders }),
+    checkFullPageScreen: vi.fn().mockResolvedValue({ misMatchPercentage :123, folders }),
+    checkElement: vi.fn().mockResolvedValue({ misMatchPercentage :123, folders }),
+    checkTabbablePage: vi.fn().mockResolvedValue({ misMatchPercentage :123, folders })
 } as any as WebdriverIO.Browser
 
 describe('custom visual matcher', () => {
@@ -42,5 +48,30 @@ describe('custom visual matcher', () => {
             message: expect.any(Function)
         })
         expect(browser.checkTabbablePage).toBeCalledTimes(1)
+    })
+
+    it('should throw an error if tag is missing', async () => {
+        // @ts-expect-error test invalid input
+        await expect(toMatchScreenSnapshot(browser)).rejects.toThrow(/tag as a string/)
+        // @ts-expect-error test invalid input
+        await expect(toMatchFullPageSnapshot(browser)).rejects.toThrow(/tag as a string/)
+        // @ts-expect-error test invalid input
+        await expect(toMatchElementSnapshot(browser as any as WebdriverIO.Element)).rejects.toThrow(/tag as a string/)
+        // @ts-expect-error test invalid input
+        await expect(toMatchTabbablePageSnapshot(browser)).rejects.toThrow(/tag as a string/)
+    })
+
+    it('defaults to 0 if no expected result is given', async () => {
+        const result = await toMatchScreenSnapshot(browser, 'foo')
+        expect(result.pass).toBe(false)
+        expect(result.message()).toMatchSnapshot()
+    })
+
+    it('should allow asymmetric matchers', async () => {
+        const result = await toMatchScreenSnapshot(browser, 'foo', expect.any(String))
+        expect(result.pass).toBe(false)
+        expect(result.message()).toMatchSnapshot()
+        const result2 = await toMatchScreenSnapshot(browser, 'foo', expect.any(Number))
+        expect(result2.pass).toBe(true)
     })
 })

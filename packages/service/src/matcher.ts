@@ -30,7 +30,7 @@ function compareResult (result: ImageCompareResult, expected: number | ExpectWeb
         const pass = expected.asymmetricMatch(result.misMatchPercentage)
         return {
             pass,
-            message: () => expected.sample
+            message: () => 'Expected image to match with given asymmetric matcher but did not pass!\n'
         }
     }
 
