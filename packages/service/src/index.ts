@@ -94,7 +94,7 @@ declare global {
             /**
              * cks that if current screen matches with snapshot of baseline.
              * @param tag snapshot name
-             * @param expectedResult either a number representing a mismatch percentage or an asymmetric matcher
+             * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
              * @param options options to pass into the `checkScreen` method
              */
             toMatchScreenSnapshot(
@@ -102,10 +102,14 @@ declare global {
                 expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
                 options?: WdioCheckScreenMethodOptions
             ): R
+            toMatchScreenSnapshot(
+                tag: string,
+                options?: WdioCheckScreenMethodOptions
+            ): R
             /**
              * Checks that if the full page screenshot matches with snapshot of baseline.
              * @param tag snapshot name
-             * @param expectedResult either a number representing a mismatch percentage or an asymmetric matcher
+             * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
              * @param options options to pass into the `checkFullPageScreen` method
              */
             toMatchFullPageSnapshot(
@@ -113,10 +117,14 @@ declare global {
                 expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
                 options?: WdioCheckFullPageMethodOptions
             ): R
+            toMatchFullPageSnapshot(
+                tag: string,
+                options?: WdioCheckFullPageMethodOptions
+            ): R
             /**
              * Checks that if given element matches with snapshot of baseline.
              * @param tag snapshot name
-             * @param expectedResult either a number representing a mismatch percentage or an asymmetric matcher
+             * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
              * @param options options to pass into the `checkElement` method
              */
             toMatchElementSnapshot(
@@ -124,15 +132,23 @@ declare global {
                 expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
                 options?: WdioCheckElementMethodOptions
             ): R
+            toMatchElementSnapshot(
+                tag: string,
+                options?: WdioCheckElementMethodOptions
+            ): R
             /**
              * Checks that if the full page screenshot including tab marks matches with snapshot of baseline.
              * @param tag snapshot name
-             * @param expectedResult either a number representing a mismatch percentage or an asymmetric matcher
+             * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
              * @param options options to pass into the `checkTabbablePage` method
              */
             toMatchTabbablePageSnapshot(
                 tag: string,
                 expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                options?: WdioCheckFullPageMethodOptions
+            ): R
+            toMatchTabbablePageSnapshot(
+                tag: string,
                 options?: WdioCheckFullPageMethodOptions
             ): R
         }
