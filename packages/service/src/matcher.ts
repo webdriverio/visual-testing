@@ -7,6 +7,8 @@ import type {
     WdioCheckScreenMethodOptions
 } from './types.js'
 
+const DEFAULT_EXPECTED_RESULT = 0
+
 const asymmetricMatcher =
     typeof Symbol === 'function' && Symbol.for
         ? Symbol.for('jest.asymmetricMatcher')
@@ -48,40 +50,40 @@ function compareResult (actual: Result, expected: number | ExpectWebdriverIO.Par
 export async function toMatchScreenSnapshot (
     browser: WebdriverIO.Browser,
     tag: string,
-    expectedResult: number | ExpectWebdriverIO.PartialMatcher,
-    options: WdioCheckScreenMethodOptions
+    expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+    options?: WdioCheckScreenMethodOptions
 ) {
     const result = await browser.checkScreen(tag, options)
-    return compareResult(result, expectedResult)
+    return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }
 
 export async function toMatchFullPageSnapshot (
     browser: WebdriverIO.Browser,
     tag: string,
-    expectedResult: number | ExpectWebdriverIO.PartialMatcher,
-    options: WdioCheckFullPageMethodOptions
+    expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+    options?: WdioCheckFullPageMethodOptions
 ) {
     const result = await browser.checkFullPageScreen(tag, options)
-    return compareResult(result, expectedResult)
+    return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }
 
 export async function toMatchElementSnapshot (
     element: WebdriverIO.Element,
     tag: string,
-    expectedResult: number | ExpectWebdriverIO.PartialMatcher,
-    options: WdioCheckElementMethodOptions
+    expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+    options?: WdioCheckElementMethodOptions
 ) {
     const browser = getBrowserObject(await element)
     const result = await browser.checkElement(await element, tag, options)
-    return compareResult(result, expectedResult)
+    return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }
 
 export async function toMatchTabbablePageSnapshot (
     browser: WebdriverIO.Browser,
     tag: string,
-    expectedResult: number | ExpectWebdriverIO.PartialMatcher,
-    options: WdioCheckFullPageMethodOptions
+    expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+    options?: WdioCheckFullPageMethodOptions
 ) {
     const result = await browser.checkTabbablePage(tag, options)
-    return compareResult(result, expectedResult)
+    return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }
