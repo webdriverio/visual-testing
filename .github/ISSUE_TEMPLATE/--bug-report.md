@@ -1,10 +1,7 @@
 ---
 name: "\U0001F41BBug report"
 about: Create a report to help us improve.
-
 ---
-
-> **NOTE: Be aware of the fact that this module is only a plugin that provides all functionality from [`webdriver-image-comparison`](https://github.com/wswebcreation/webdriver-image-comparison). So please check if this is an issue with this plugin or with `webdriver-image-comparison`.**
 
 **Environment (please complete the following information):**
  - Node.js version: [e.g. 8.9.1]
