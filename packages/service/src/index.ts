@@ -91,25 +91,49 @@ declare global {
         // see https://github.com/webdriverio/expect-webdriverio/issues/1408
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R, T> {
+            /**
+             * cks that if current screen matches with snapshot of baseline.
+             * @param tag snapshot name
+             * @param expectedResult either a number representing a mismatch percentage or an asymmetric matcher
+             * @param options options to pass into the `checkScreen` method
+             */
             toMatchScreenSnapshot(
                 tag: string,
-                expectedResult: number | ExpectWebdriverIO.PartialMatcher,
-                options: WdioCheckScreenMethodOptions
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                options?: WdioCheckScreenMethodOptions
             ): R
+            /**
+             * Checks that if the full page screenshot matches with snapshot of baseline.
+             * @param tag snapshot name
+             * @param expectedResult either a number representing a mismatch percentage or an asymmetric matcher
+             * @param options options to pass into the `checkFullPageScreen` method
+             */
             toMatchFullPageSnapshot(
                 tag: string,
-                expectedResult: number | ExpectWebdriverIO.PartialMatcher,
-                options: WdioCheckFullPageMethodOptions
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                options?: WdioCheckFullPageMethodOptions
             ): R
+            /**
+             * Checks that if given element matches with snapshot of baseline.
+             * @param tag snapshot name
+             * @param expectedResult either a number representing a mismatch percentage or an asymmetric matcher
+             * @param options options to pass into the `checkElement` method
+             */
             toMatchElementSnapshot(
                 tag: string,
-                expectedResult: number | ExpectWebdriverIO.PartialMatcher,
-                options: WdioCheckElementMethodOptions
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                options?: WdioCheckElementMethodOptions
             ): R
+            /**
+             * Checks that if the full page screenshot including tab marks matches with snapshot of baseline.
+             * @param tag snapshot name
+             * @param expectedResult either a number representing a mismatch percentage or an asymmetric matcher
+             * @param options options to pass into the `checkTabbablePage` method
+             */
             toMatchTabbablePageSnapshot(
                 tag: string,
-                expectedResult: number | ExpectWebdriverIO.PartialMatcher,
-                options: WdioCheckFullPageMethodOptions
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                options?: WdioCheckFullPageMethodOptions
             ): R
         }
     }
