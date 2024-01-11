@@ -1,6 +1,5 @@
 import type { Options } from '@wdio/types'
 import { join } from 'node:path'
-import WdioImageComparisonService from '@wdio/visual-service'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 
 export const config: Options.Testrunner = {
@@ -41,6 +40,7 @@ export const config: Options.Testrunner = {
     specs: [
         '../specs/basics.spec.ts',
         '../specs/desktop.spec.ts',
+        '../specs/matcher.spec.ts',
         '../specs/checkMethodsFolders.spec.ts',
         '../specs/saveMethodsFolders.spec.ts',
     ],
@@ -52,7 +52,7 @@ export const config: Options.Testrunner = {
         // Image compare setup
         // ===================
         [
-            WdioImageComparisonService,
+            'visual',
             {
                 baselineFolder: join(process.cwd(), './localBaseline/'),
                 debug: true,
@@ -64,7 +64,6 @@ export const config: Options.Testrunner = {
                 blockOutToolBar: true,
                 clearRuntimeFolder: true,
             },
-        ],
-        'chromedriver',
+        ]
     ],
 }

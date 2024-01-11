@@ -7,7 +7,7 @@ import checkScreen from './commands/checkScreen.js'
 import checkElement from './commands/checkElement.js'
 import checkFullPageScreen from './commands/checkFullPageScreen.js'
 import checkTabbablePage from './commands/checkTabbablePage.js'
-import { ClassOptions } from './helpers/options.interface'
+import { ClassOptions } from './helpers/options.interfaces'
 import { ImageCompareResult } from './methods/images.interfaces'
 
 export type { ScreenshotOutput } from './helpers/afterScreenshot.interfaces'
@@ -24,8 +24,8 @@ export type {
     SaveFullPageMethodOptions,
 } from './commands/fullPage.interfaces'
 
-export type { Folders } from './base.interface.js'
-export type { InstanceData } from './methods/instanceData.interfaces.js'
+export type { Folders } from './base.interfaces'
+export type { InstanceData } from './methods/instanceData.interfaces'
 
 export {
     BaseClass,

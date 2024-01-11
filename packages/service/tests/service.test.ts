@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
+import { expect as wdioExpect } from '@wdio/globals'
+
 import VisualService from '../src/index.js'
 
 vi.mock('webdriver-image-comparison', () => ({
@@ -13,7 +15,24 @@ vi.mock('webdriver-image-comparison', () => ({
     checkTabbablePage: vi.fn(),
 }))
 
+vi.mock('@wdio/globals', () => ({
+    expect: {
+        extend: vi.fn()
+    }
+}))
+
 describe('@wdio/visual-service', () => {
+    it('should register custom matchers', () => {
+        const service = new VisualService({})
+        const browser = {
+            isMultiremote: false,
+            addCommand: vi.fn(),
+            requestedCapabilities: {}
+        } as any as WebdriverIO.Browser
+        service.before({}, [], browser)
+        expect(wdioExpect.extend).toBeCalledTimes(1)
+    })
+
     it('adds command to normal browser in before hook', () => {
         const service = new VisualService({})
         const browser = {

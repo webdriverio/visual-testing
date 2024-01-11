@@ -2,7 +2,7 @@ import getElementPositionTopWindow from '../clientSideScripts/getElementPosition
 import getElementPositionTopDom from '../clientSideScripts/getElementPositionTopDom.js'
 import { getElementPositionTopScreenNativeMobile } from '../clientSideScripts/getElementPositionTopScreenNativeMobile.js'
 import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
-import type { Executor } from './methods.interface'
+import type { Executor } from './methods.interfaces'
 import type { ElementPosition } from '../clientSideScripts/elementPosition.interfaces'
 import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
 import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'

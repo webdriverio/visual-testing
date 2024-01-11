@@ -14,33 +14,25 @@ describe('@wdio/visual-service desktop', () => {
     afterEach(async () => await browser.execute('window.scrollTo(0, 0);', []))
 
     it(`should compare an element successful with a baseline for '${browserName}'`, async () => {
-        await expect(
-            await browser.checkElement(
-                await $('.hero__title-logo'),
-                'wdioLogo',
-                {
-                    removeElements: [await $('nav.navbar')]
-                }
-            )
-        ).toEqual(0)
+        await expect($('.hero__title-logo')).toMatchElementSnapshot('wdioLogo', {
+            removeElements: [await $('nav.navbar')]
+        })
     })
 
     it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async () => {
-        await expect(
-            await browser.checkFullPageScreen('fullPage', {
-                fullPageScrollTimeout: 1500,
-                hideAfterFirstScroll: [
-                    await $('nav.navbar'),
-                ],
-            })
-        ).toEqual(0)
-    })
-
-    it(`should compare a tabbable screenshot successful with a baseline for '${browserName}'`, async () => {
-        await expect(await browser.checkTabbablePage('tabbable', {
+        await expect(browser).toMatchFullPageSnapshot('fullPage', {
+            fullPageScrollTimeout: 1500,
             hideAfterFirstScroll: [
                 await $('nav.navbar'),
             ],
-        })).toEqual(0)
+        })
+    })
+
+    it(`should compare a tabbable screenshot successful with a baseline for '${browserName}'`, async () => {
+        await expect(browser).toMatchTabbablePageSnapshot('tabbable', {
+            hideAfterFirstScroll: [
+                await $('nav.navbar'),
+            ],
+        })
     })
 })

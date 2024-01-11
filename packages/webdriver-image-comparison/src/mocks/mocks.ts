@@ -1,5 +1,5 @@
-import type { BeforeScreenshotOptions } from '../helpers/beforeScreenshot.interface'
-import { LogLevel } from '../helpers/options.interface'
+import type { BeforeScreenshotOptions } from '../helpers/beforeScreenshot.interfaces'
+import { LogLevel } from '../helpers/options.interfaces'
 
 export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
     instanceData: {

@@ -6,10 +6,10 @@ import { CUSTOM_CSS_ID } from './constants.js'
 import { checkIsMobile, formatFileName, getAndCreatePath } from './utils.js'
 import { saveBase64Image } from '../methods/images.js'
 
-import type { Executor } from '../methods/methods.interface'
+import type { Executor } from '../methods/methods.interfaces'
 import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot.interfaces'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
-import { LogLevel } from './options.interface.js'
+import { LogLevel } from './options.interfaces'
 
 /**
  * Methods that need to be executed after a screenshot has been taken

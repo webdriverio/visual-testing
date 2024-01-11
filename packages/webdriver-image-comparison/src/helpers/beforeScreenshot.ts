@@ -3,10 +3,10 @@ import setCustomCss from '../clientSideScripts/setCustomCss.js'
 import { CUSTOM_CSS_ID } from './constants.js'
 import { checkIsMobile, getAddressBarShadowPadding, getToolBarShadowPadding, waitFor } from './utils.js'
 import getEnrichedInstanceData from '../methods/instanceData.js'
-import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeScreenshot.interface'
-import type { Executor } from '../methods/methods.interface'
+import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeScreenshot.interfaces'
+import type { Executor } from '../methods/methods.interfaces'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
-import { LogLevel } from './options.interface'
+import { LogLevel } from './options.interfaces'
 
 /**
  * Methods that need to be executed before a screenshot will be taken

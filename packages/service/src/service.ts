@@ -1,4 +1,5 @@
 import logger from '@wdio/logger'
+import { expect } from '@wdio/globals'
 import type { Capabilities, Options } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import {
@@ -14,6 +15,12 @@ import {
 } from 'webdriver-image-comparison'
 
 import { getFolders, getInstanceData } from './utils.js'
+import {
+    toMatchScreenSnapshot,
+    toMatchFullPageSnapshot,
+    toMatchElementSnapshot,
+    toMatchTabbablePageSnapshot
+} from './matcher.js'
 
 const log = logger('@wdio/visual-service')
 
@@ -44,46 +51,57 @@ export default class WdioImageComparisonService extends BaseClass {
             log.info('Adding commands to global browser')
             this.#addCommandsToBrowser(capabilities, this._browser)
         } else {
-            const browserNames = Object.keys(capabilities)
-            log.info('Adding commands to Multi Browser: ', browserNames)
+            this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
+        }
 
-            for (const browserName of browserNames) {
-                const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-                const browserInstance = multiremoteBrowser.getInstance(browserName)
-                this.#addCommandsToBrowser(
-                    (
-                        (capabilities as Capabilities.MultiRemoteCapabilities)[
-                            browserName
-                        ] as Options.MultiRemoteBrowserOptions
-                    ).capabilities,
-                    browserInstance
-                )
-            }
+        /**
+         * add custom matcher for visual comparison
+         */
+        expect.extend({
+            toMatchScreenSnapshot,
+            toMatchFullPageSnapshot,
+            toMatchElementSnapshot,
+            toMatchTabbablePageSnapshot,
+        })
+    }
 
-            /**
-             * Add all the commands to the global browser object that will execute
-             * on each browser in the Multi Remote
-             */
-            for (const command of [
-                ...Object.keys(elementCommands),
-                ...Object.keys(pageCommands),
-            ]) {
-                browser.addCommand(command, function (...args: unknown[]) {
-                    const returnData: Record<string, any> = {}
-                    for (const browserName of browserNames) {
-                        const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-                        const browserInstance = multiremoteBrowser.getInstance(browserName)
-                        /**
-                         * casting command to `checkScreen` to simplify type handling here
-                         */
-                        returnData[browserName] = browserInstance[command as 'checkScreen'].call(
-                            browserInstance,
-                            ...args
-                        )
-                    }
-                    return returnData
-                })
-            }
+    #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
+        const browser = this._browser as WebdriverIO.MultiRemoteBrowser
+        const browserNames = Object.keys(capabilities)
+        log.info(`Adding commands to Multi Browser: ${browserNames.join(', ')}`)
+
+        for (const browserName of browserNames) {
+            const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
+            const browserInstance = multiremoteBrowser.getInstance(browserName)
+            this.#addCommandsToBrowser(
+                (capabilities[browserName] as Options.MultiRemoteBrowserOptions).capabilities,
+                browserInstance
+            )
+        }
+
+        /**
+         * Add all the commands to the global browser object that will execute
+         * on each browser in the Multi Remote
+         */
+        for (const command of [
+            ...Object.keys(elementCommands),
+            ...Object.keys(pageCommands),
+        ]) {
+            browser.addCommand(command, function (...args: unknown[]) {
+                const returnData: Record<string, any> = {}
+                for (const browserName of browserNames) {
+                    const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
+                    const browserInstance = multiremoteBrowser.getInstance(browserName)
+                    /**
+                     * casting command to `checkScreen` to simplify type handling here
+                     */
+                    returnData[browserName] = browserInstance[command as 'checkScreen'].call(
+                        browserInstance,
+                        ...args
+                    )
+                }
+                return returnData
+            })
         }
     }
 
@@ -97,6 +115,7 @@ export default class WdioImageComparisonService extends BaseClass {
         const defaultOptions = this.defaultOptions
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
+            log.info(`Adding element command "${commandName}" to browser object`)
             currentBrowser.addCommand(
                 commandName,
                 function (
@@ -125,6 +144,7 @@ export default class WdioImageComparisonService extends BaseClass {
         }
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
+            log.info(`Adding element command "${commandName}" to browser object`)
             currentBrowser.addCommand(
                 commandName,
                 function (this: typeof currentBrowser, tag, pageOptions = {}) {

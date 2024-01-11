@@ -1,51 +1,14 @@
 import WdioImageComparisonService from './service.js'
-
 import type {
-    ScreenshotOutput,
-    ImageCompareResult,
-    CheckScreenMethodOptions,
-    SaveScreenMethodOptions,
-    CheckElementMethodOptions,
-    SaveElementMethodOptions,
-    CheckFullPageMethodOptions,
-    SaveFullPageMethodOptions,
-} from 'webdriver-image-comparison'
-
-interface WdioIcsCommonOptions {
-    hideElements?: WebdriverIO.Element[];
-    removeElements?: WebdriverIO.Element[];
-}
-interface WdioIcsScrollOptions extends WdioIcsCommonOptions {
-    hideAfterFirstScroll?: WebdriverIO.Element[];
-}
-
-interface WdioCheckFullPageMethodOptions
-    extends Omit<CheckFullPageMethodOptions, keyof WdioIcsScrollOptions>,
-        WdioIcsScrollOptions {}
-interface WdioSaveFullPageMethodOptions
-    extends Omit<SaveFullPageMethodOptions, keyof WdioIcsScrollOptions>,
-        WdioIcsScrollOptions {}
-interface WdioSaveElementMethodOptions
-    extends Omit<SaveElementMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-interface WdioSaveScreenMethodOptions
-    extends Omit<SaveScreenMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-interface WdioCheckElementMethodOptions
-    extends Omit<CheckElementMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-interface WdioCheckScreenMethodOptions
-    extends Omit<CheckScreenMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-
-type MultiOutput = {
-    [browserName: string]: ScreenshotOutput;
-};
-type Output = MultiOutput | ScreenshotOutput;
-type MultiResult = {
-    [browserName: string]: ImageCompareResult | number;
-};
-type Result = MultiResult | (ImageCompareResult | number);
+    Output,
+    Result,
+    WdioCheckFullPageMethodOptions,
+    WdioSaveFullPageMethodOptions,
+    WdioSaveElementMethodOptions,
+    WdioSaveScreenMethodOptions,
+    WdioCheckElementMethodOptions,
+    WdioCheckScreenMethodOptions
+} from './types.js'
 
 declare global {
     namespace WebdriverIO {
@@ -121,6 +84,73 @@ declare global {
             'wdio-ics:options'?:{
                 logName?: string;
             }
+        }
+    }
+
+    namespace ExpectWebdriverIO {
+        // see https://github.com/webdriverio/expect-webdriverio/issues/1408
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        interface Matchers<R, T> {
+            /**
+             * cks that if current screen matches with snapshot of baseline.
+             * @param tag snapshot name
+             * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
+             * @param options options to pass into the `checkScreen` method
+             */
+            toMatchScreenSnapshot(
+                tag: string,
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                options?: WdioCheckScreenMethodOptions
+            ): R
+            toMatchScreenSnapshot(
+                tag: string,
+                options?: WdioCheckScreenMethodOptions
+            ): R
+            /**
+             * Checks that if the full page screenshot matches with snapshot of baseline.
+             * @param tag snapshot name
+             * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
+             * @param options options to pass into the `checkFullPageScreen` method
+             */
+            toMatchFullPageSnapshot(
+                tag: string,
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                options?: WdioCheckFullPageMethodOptions
+            ): R
+            toMatchFullPageSnapshot(
+                tag: string,
+                options?: WdioCheckFullPageMethodOptions
+            ): R
+            /**
+             * Checks that if given element matches with snapshot of baseline.
+             * @param tag snapshot name
+             * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
+             * @param options options to pass into the `checkElement` method
+             */
+            toMatchElementSnapshot(
+                tag: string,
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                options?: WdioCheckElementMethodOptions
+            ): R
+            toMatchElementSnapshot(
+                tag: string,
+                options?: WdioCheckElementMethodOptions
+            ): R
+            /**
+             * Checks that if the full page screenshot including tab marks matches with snapshot of baseline.
+             * @param tag snapshot name
+             * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
+             * @param options options to pass into the `checkTabbablePage` method
+             */
+            toMatchTabbablePageSnapshot(
+                tag: string,
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                options?: WdioCheckFullPageMethodOptions
+            ): R
+            toMatchTabbablePageSnapshot(
+                tag: string,
+                options?: WdioCheckFullPageMethodOptions
+            ): R
         }
     }
 }
