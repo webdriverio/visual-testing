@@ -1,5 +1,5 @@
 {
-  "name": "@wdio/visual-testing",
+  "name": "@wdio/visual-testing-monorepo",
   "author": "Wim Selles - wswebcreation",
   "description": "Visual testing monorepo for WebdriverIO",
   "license": "MIT",
