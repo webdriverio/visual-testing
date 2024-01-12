@@ -1,13 +1,9 @@
 import type { Options } from '@wdio/types'
 import { join } from 'node:path'
-import { config as sharedConfig } from './wdio.shared.conf.ts'
+import { config as sharedConfig } from './wdio.local.appium.shared.conf.ts'
 
 export const config: Options.Testrunner = {
     ...sharedConfig,
-    // =========================
-    // Appium Configuration
-    // =========================
-    port: 4723,
     // ==================
     // Specify Test Files
     // ==================
@@ -25,28 +21,8 @@ export const config: Options.Testrunner = {
         // iOSCaps('iPhone 14 Pro', 'LANDSCAPE', '16.0'),
         // iOSCaps("iPhone 14 Pro Max", "PORTRAIT", "16.0"),
         // iOSCaps('iPhone 14 Pro Max', 'LANDSCAPE', '16.0'),
-        iOSCaps('iPhone 15', 'PORTRAIT', '17.0'),
-        // iOSCaps('iPhone 15', 'LANDSCAPE', '17.0'),
-    ],
-    // ===================
-    // Image compare setup
-    // ===================
-    services: [
-        [
-            'visual',
-            {
-                addIOSBezelCorners: true,
-                baselineFolder: join(process.cwd(), './tests/localBaseline/'),
-                formatImageName: '{tag}-{logName}-{width}x{height}',
-                screenshotPath: join(process.cwd(), '.tmp/'),
-                savePerInstance: true,
-                autoSaveBaseline: true,
-                blockOutStatusBar: true,
-                blockOutToolBar: true,
-                blockOutSideBar: true,
-                logLevel: 'debug',
-            },
-        ],
+        iOSCaps('iPhone 15', 'PORTRAIT', '17.2'),
+        // iOSCaps('iPhone 15', 'LANDSCAPE', '17.2'),
     ],
 }
 

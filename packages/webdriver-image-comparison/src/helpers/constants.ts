@@ -61,6 +61,8 @@ export const ANDROID_OFFSETS = {
     10: { ...ANDROID_DEFAULT_OFFSETS },
     11: { ...ANDROID_DEFAULT_OFFSETS },
     12: { ...ANDROID_DEFAULT_OFFSETS },
+    13: { ...ANDROID_DEFAULT_OFFSETS },
+    14: { ...ANDROID_DEFAULT_OFFSETS },
 }
 
 //=========================
