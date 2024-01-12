@@ -113,3 +113,47 @@ export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browse
     const elemObject = elem as WebdriverIO.Element
     return (elemObject as WebdriverIO.Element).parent ? getBrowserObject(elemObject.parent) : elem as WebdriverIO.Browser
 }
+
+/**
+ * We can't say it's native context if the autoWebview is provided and set to true, for all other cases we can say it's native
+ */
+export function determineNativeContext(
+    driver: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+): boolean {
+    if (driver.isMobile) {
+        // @todo: Figure this one out, according to the types this is not possible, but it returns for example this
+        // driver {
+        //   "sessionId": "6f546a6a-5f6a-4b7e-a2f9-e362cd7155b2",
+        //   "capabilities": {
+        //     "webStorageEnabled": false,
+        //     "locationContextEnabled": false,
+        //     "browserName": "",
+        //     "platform": "MAC",
+        //     "javascriptEnabled": true,
+        //     "databaseEnabled": false,
+        //     "takesScreenshot": true,
+        //     "networkConnectionEnabled": false,
+        //     "platformName": "iOS",
+        //     "wdio-ics:options": {
+        //       "logName": "Iphone15Portrait17",
+        //       "commands": []
+        //     },
+        //     "automationName": "XCUITest",
+        //     "deviceName": "iPhone 15",
+        //     "platformVersion": "17.2",
+        //     "app": "/Users/wimselles/Git/wdio/visual-testing/apps/ios.simulator.wdio.native.app.v1.0.8.zip",
+        //     "orientation": "PORTRAIT",
+        //     "newCommandTimeout": 240,
+        //     "language": "en",
+        //     "locale": "en",
+        //     "udid": "937B028C-B107-4B94-B4D5-1297A1FEDC34"
+        //   }
+        // }
+
+        // @ts-ignore
+        return driver.capabilities?.browserName === undefined && driver.capabilities?.app !== undefined && driver.capabilities?.autoWebview !== true
+    }
+
+    return false
+
+}

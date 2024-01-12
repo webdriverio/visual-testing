@@ -14,7 +14,7 @@ import {
     checkTabbablePage,
 } from 'webdriver-image-comparison'
 
-import { getFolders, getInstanceData } from './utils.js'
+import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
     toMatchFullPageSnapshot,
@@ -36,9 +36,11 @@ const pageCommands = {
 
 export default class WdioImageComparisonService extends BaseClass {
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+    private _isNativeContext: boolean | undefined
 
     constructor(options: ClassOptions) {
         super(options)
+        this._isNativeContext = undefined
     }
     before(
         capabilities: WebdriverIO.Capabilities,
@@ -46,6 +48,10 @@ export default class WdioImageComparisonService extends BaseClass {
         browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     ) {
         this._browser = browser
+
+        this._isNativeContext = determineNativeContext(this._browser)
+
+        console.log(`\n\nthis._isNativeContext: ${this._isNativeContext}\n\n`)
 
         if (!this._browser.isMultiremote) {
             log.info('Adding commands to global browser')
@@ -63,6 +69,13 @@ export default class WdioImageComparisonService extends BaseClass {
             toMatchElementSnapshot,
             toMatchTabbablePageSnapshot,
         })
+    }
+
+    afterCommand (commandName:string, _args:string[], result:number|string, error:any) {
+        // This is for the cases where in the E2E tests we switch to a WEBVIEW or back to NATIVE_APP context
+        if (commandName === 'getContext' && error === undefined && typeof result === 'string') {
+            this._isNativeContext = result.includes('NATIVE')
+        }
     }
 
     #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
@@ -110,9 +123,7 @@ export default class WdioImageComparisonService extends BaseClass {
         currentBrowser: WebdriverIO.Browser
     ) {
         const instanceData = getInstanceData(capabilities, currentBrowser)
-
-        const folders = this.folders
-        const defaultOptions = this.defaultOptions
+        const self = this
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
@@ -122,7 +133,7 @@ export default class WdioImageComparisonService extends BaseClass {
                     this: typeof currentBrowser,
                     element,
                     tag,
-                    elementOptions = {}
+                    elementOptions = {},
                 ) {
                     return command(
                         {
@@ -131,13 +142,14 @@ export default class WdioImageComparisonService extends BaseClass {
                                 this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(elementOptions, folders),
+                        getFolders(elementOptions, self.folders),
                         element,
                         tag,
                         {
-                            wic: defaultOptions,
+                            wic: self.defaultOptions,
                             method: elementOptions,
-                        }
+                        },
+                        self._isNativeContext as boolean,
                     )
                 }
             )
@@ -155,12 +167,13 @@ export default class WdioImageComparisonService extends BaseClass {
                                 this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(pageOptions, folders),
+                        getFolders(pageOptions, self.folders),
                         tag,
                         {
-                            wic: defaultOptions,
+                            wic: self.defaultOptions,
                             method: pageOptions,
-                        }
+                        },
+                        self._isNativeContext as boolean,
                     )
                 }
             )

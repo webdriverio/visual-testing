@@ -7,7 +7,7 @@ export const config: Options.Testrunner = {
     // ==================
     // Specify Test Files
     // ==================
-    specs: [join(process.cwd(), './tests/specs/mobile.web.spec.ts')],
+    specs: [join(process.cwd(), './tests/specs/mobile.app.spec.ts')],
     specFileRetries: 0,
     // ============
     // Capabilities
@@ -39,11 +39,16 @@ function androidCaps(
     wdioIcsCommands: string[] = []
 ) {
     return {
-        browserName: 'Chrome',
         platformName: 'Android',
         'appium:automationName': 'UIAutomator2',
         'appium:deviceName': deviceName,
         'appium:platformVersion': osVersion,
+        'appium:app': join(
+            process.cwd(),
+            'apps',
+            // Change this name according to the app version you downloaded
+            'android.wdio.native.app.v1.0.8.apk'
+        ),
         'appium:orientation': orientation,
         'appium:newCommandTimeout': 240,
         ...(nativeWebScreenshot ? { 'appium:nativeWebScreenshot': true } : {}),

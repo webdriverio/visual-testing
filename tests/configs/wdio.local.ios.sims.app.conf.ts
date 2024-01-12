@@ -7,7 +7,7 @@ export const config: Options.Testrunner = {
     // ==================
     // Specify Test Files
     // ==================
-    specs: [join(process.cwd(), './tests/specs/mobile.web.spec.ts')],
+    specs: [join(process.cwd(), './tests/specs/mobile.app.spec.ts')],
     specFileRetries: 0,
     // ============
     // Capabilities
@@ -36,11 +36,17 @@ function iOSCaps(
     wdioIcsCommands: string[] = []
 ) {
     return {
-        browserName: 'Safari',
         platformName: 'iOS',
         'appium:automationName': 'XCUITest',
         'appium:deviceName': deviceName,
         'appium:platformVersion': osVersion,
+        // The path to the app
+        'appium:app': join(
+            process.cwd(),
+            'apps',
+            // Change this name according to the app version you downloaded
+            'ios.simulator.wdio.native.app.v1.0.8.zip'
+        ),
         'appium:orientation': orientation,
         'appium:newCommandTimeout': 240,
         'appium:language': 'en',
@@ -62,5 +68,9 @@ function iOSCaps(
             ),
             commands: wdioIcsCommands,
         },
+        // @TODO: needs to be removed before we merge
+        'appium:includeSafariInWebviews': true,
+        // This is needed to wait for the webview context to become available
+        'appium:webviewConnectTimeout': 5000,
     }
 }
