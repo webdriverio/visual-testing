@@ -52,8 +52,8 @@ importers:
         specifier: ^8.27.0
         version: 8.27.0(typescript@5.3.3)
       '@wdio/spec-reporter':
-        specifier: ^8.27.0
-        version: 8.27.0
+        specifier: ^8.27.2
+        version: 8.27.2
       '@wdio/types':
         specifier: ^8.27.0
         version: 8.27.0
@@ -1627,13 +1627,13 @@ packages:
       '@types/node': 20.10.5
     dev: true
 
-  /@wdio/reporter@8.27.0:
-    resolution: {integrity: sha512-kBwsrHbsblmXfHSWlaOKXjPRPeT29WSKTUoCmzuTcCkhvbjY4TrEB0p04cpaM7uNqdIZTxHng54gZVaG/nZPiw==}
+  /@wdio/reporter@8.27.2:
+    resolution: {integrity: sha512-vMhoTVsowDmk6EXYgJ4nFBd6vvMFLIO3zUL4w/DCCkPDyjS9/6ggs/wpVSlrKxw9qisAph1Z4W9ngtNuhQQuwg==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.10.5
       '@wdio/logger': 8.24.12
-      '@wdio/types': 8.27.0
+      '@wdio/types': 8.27.2
       diff: 5.1.0
       object-inspect: 1.13.1
     dev: true
@@ -1700,12 +1700,12 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@wdio/spec-reporter@8.27.0:
-    resolution: {integrity: sha512-EOXLBIr4oLzSDp/BQ86IqCulSF0jwEAj2EiMeY6dh9WXzBBtoR8WnoX/27xFoZ8GU2zetWC3EVnLJ0Ex8Up1mA==}
+  /@wdio/spec-reporter@8.27.2:
+    resolution: {integrity: sha512-2U1MALAHjUqDo3C+PYinN1wAnDBiy+kLG3GrTpMeIWZ2qZ6m1fRWt9GlADX7r07vhiRqShxy131nUenqeoF/qg==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@wdio/reporter': 8.27.0
-      '@wdio/types': 8.27.0
+      '@wdio/reporter': 8.27.2
+      '@wdio/types': 8.27.2
       chalk: 5.3.0
       easy-table: 1.2.0
       pretty-ms: 7.0.1
@@ -1716,6 +1716,13 @@ packages:
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.10.5
+
+  /@wdio/types@8.27.2:
+    resolution: {integrity: sha512-z/TtSQysEtAUNh+DooOs22G7xotTsJC2RcIZKaVtHY4Gl6lF+tn8kLRXD79jem2ta1byB1TpW62K366k1vzcLw==}
+    engines: {node: ^16.13 || >=18}
+    dependencies:
+      '@types/node': 20.10.5
+    dev: true
 
   /@wdio/utils@8.27.0:
     resolution: {integrity: sha512-4BY+JBQssVn003P5lA289uDMie3LtGinHze5btkcW9timB6VaU+EeZS4eKTPC0pziizLhteVvXYxv3YTpeeRfA==}
