@@ -17,23 +17,25 @@ export interface AfterScreenshotOptions {
     // The image
     base64Image: string;
     // Disable all css animations
-    disableCSSAnimation: boolean;
+    disableCSSAnimation?: boolean;
     // If scrollbars need to be hidden
-    hideScrollBars: boolean;
+    hideScrollBars?: boolean;
     // The file path options
     filePath: ScreenshotFilePathOptions;
     // The file name options object
     fileName: ScreenshotFileNameOptions;
     // Elements that need to be hidden (visibility: hidden) before saving a screenshot
-    hideElements: (HTMLElement | HTMLElement[])[];
+    hideElements?: (HTMLElement | HTMLElement[])[];
     // If it's in landscape mode
     isLandscape: boolean;
+    // isNativeContext
+    isNativeContext: boolean;
     // Level to show logs
     logLevel: LogLevel;
     // The platform name of the instance
     platformName: string;
     // Elements that need to be removed (display: none) before saving a screenshot
-    removeElements: (HTMLElement | HTMLElement[])[];
+    removeElements?: (HTMLElement | HTMLElement[])[];
 }
 
 export interface ScreenshotFilePathOptions {
@@ -67,9 +69,9 @@ export interface ScreenshotFileNameOptions {
     // The the name of the instance
     name: string;
     // The outer height of the screen
-    outerHeight: number;
+    outerHeight?: number;
     // The outer width of the screen
-    outerWidth: number;
+    outerWidth?: number;
     // The platform name
     platformName: string;
     // The platform version

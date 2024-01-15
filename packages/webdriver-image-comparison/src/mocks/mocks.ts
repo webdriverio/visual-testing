@@ -3,9 +3,18 @@ import { LogLevel } from '../helpers/options.interfaces'
 
 export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
     instanceData: {
+        appName: 'chrome-app',
         browserName: 'chrome',
         browserVersion: '75.0.1',
         deviceName: '',
+        devicePixelRatio: 1,
+        deviceScreenSize: {
+            height:1,
+            width: 1,
+        },
+        isAndroid: false,
+        isIOS: false,
+        isMobile: false,
         logName: 'chrome-latest',
         name: 'chrome-name',
         nativeWebScreenshot: true,

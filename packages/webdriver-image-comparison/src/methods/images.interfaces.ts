@@ -142,7 +142,7 @@ export interface CroppedBase64Image {
     base64Image: string;
     deviceName: string;
     devicePixelRatio: number;
-    isIos: boolean;
+    isIOS: boolean;
     isLandscape: boolean;
     logLevel: LogLevel;
     rectangles: RectanglesOutput;

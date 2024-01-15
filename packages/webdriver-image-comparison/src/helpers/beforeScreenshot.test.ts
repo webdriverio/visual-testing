@@ -8,9 +8,18 @@ describe('beforeScreenshot', () => {
 
         const options = {
             instanceData: {
+                appName: 'appName',
                 browserName: 'browserName',
                 browserVersion: 'browserVersion',
                 deviceName: 'deviceName',
+                devicePixelRatio: 1,
+                deviceScreenSize: {
+                    height:1,
+                    width: 1,
+                },
+                isAndroid: false,
+                isIOS: false,
+                isMobile: false,
                 logName: 'logName',
                 name: 'name',
                 nativeWebScreenshot: false,
@@ -34,10 +43,19 @@ describe('beforeScreenshot', () => {
 
         const options = {
             instanceData: {
+                appName: 'appName',
                 browserName: 'browserName',
                 browserVersion: 'browserVersion',
                 deviceName: 'deviceName',
+                devicePixelRatio: 1,
+                deviceScreenSize: {
+                    height:1,
+                    width: 1,
+                },
                 logName: 'logName',
+                isAndroid: false,
+                isIOS: false,
+                isMobile: false,
                 name: 'name',
                 nativeWebScreenshot: false,
                 platformName: 'platformName',

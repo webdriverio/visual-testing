@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { DESKTOP, PLATFORMS } from './constants.js'
+import { DESKTOP, NOT_KNOWN, PLATFORMS } from './constants.js'
 import { ensureDirSync } from 'fs-extra'
 import type {
     FormatFileDefaults,
@@ -14,7 +14,12 @@ import type {
  * Get and create a folder
  */
 export function getAndCreatePath(folder: string, options: GetAndCreatePathOptions): string {
-    const { browserName, deviceName, isMobile, savePerInstance } = options
+    const {
+        browserName = NOT_KNOWN,
+        deviceName = NOT_KNOWN,
+        isMobile,
+        savePerInstance,
+    } = options
     const instanceName = (isMobile ? deviceName : `${DESKTOP}_${browserName}`).replace(/ /g, '_')
     const subFolder = savePerInstance ? instanceName : ''
     const folderName = join(folder, subFolder)
@@ -28,19 +33,35 @@ export function getAndCreatePath(folder: string, options: GetAndCreatePathOption
  * Format the filename
  */
 export function formatFileName(options: FormatFileNameOptions): string {
+    const {
+        browserName = NOT_KNOWN,
+        browserVersion = NOT_KNOWN,
+        deviceName = NOT_KNOWN,
+        devicePixelRatio,
+        isMobile,
+        screenHeight,
+        screenWidth,
+        outerHeight = screenHeight,
+        outerWidth = screenWidth,
+        isTestInBrowser,
+        name,
+        platformName,
+        platformVersion,
+        tag,
+    } = options
     const defaults: FormatFileDefaults = {
-        browserName: options.browserName,
-        browserVersion: options.browserVersion,
-        deviceName: options.deviceName,
-        dpr: options.devicePixelRatio,
-        height: options.isMobile ? options.screenHeight : options.outerHeight,
+        browserName,
+        browserVersion,
+        deviceName,
+        dpr: devicePixelRatio,
+        height:isMobile ? screenHeight : outerHeight,
         logName: options.logName,
-        mobile: options.isMobile && options.isTestInBrowser ? options.browserName : options.isMobile ? 'app' : '',
-        name: options.name,
-        platformName: options.platformName,
-        platformVersion: options.platformVersion,
-        tag: options.tag,
-        width: options.isMobile ? options.screenWidth : options.outerWidth,
+        mobile: isMobile && isTestInBrowser ? browserName  : isMobile ? 'app' : NOT_KNOWN,
+        name: name,
+        platformName,
+        platformVersion,
+        tag,
+        width: isMobile ? screenWidth : outerWidth,
     }
 
     let fileName = options.formatImageName
@@ -111,9 +132,9 @@ export function getAddressBarShadowPadding(options: GetAddressBarShadowPaddingOp
     const isTestInMobileBrowser = checkTestInMobileBrowser(platformName, browserName)
     const isAndroidNativeWebScreenshot = checkAndroidNativeWebScreenshot(platformName, nativeWebScreenshot)
     const isAndroid = checkIsAndroid(platformName)
-    const isIos = checkIsIos(platformName)
+    const isIOS = checkIsIos(platformName)
 
-    return isTestInMobileBrowser && ((isAndroidNativeWebScreenshot && isAndroid) || isIos) && addShadowPadding
+    return isTestInMobileBrowser && ((isAndroidNativeWebScreenshot && isAndroid) || isIOS) && addShadowPadding
         ? addressBarShadowPadding
         : 0
 }
@@ -159,6 +180,16 @@ export function getScreenshotSize(screenshot: string, devicePixelRation = 1): Sc
         height: Buffer.from(screenshot, 'base64').readUInt32BE(20) / devicePixelRation,
         width: Buffer.from(screenshot, 'base64').readUInt32BE(16) / devicePixelRation,
     }
+}
+
+/**
+ * Get the device pixel ratio
+ */
+export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {height:number, width: number}): number {
+    const screenshotSize = getScreenshotSize(screenshot)
+    const devicePixelRatio = screenshotSize.width / deviceScreenSize.width
+
+    return Math.round(devicePixelRatio)
 }
 
 /**

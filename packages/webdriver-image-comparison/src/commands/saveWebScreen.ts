@@ -20,6 +20,7 @@ export default async function saveWebScreen(
     folders: Folders,
     tag: string,
     saveScreenOptions: SaveScreenOptions,
+    isNativeContext: boolean,
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
     const { addressBarShadowPadding, addIOSBezelCorners, formatImageName, logLevel, savePerInstance, toolBarShadowPadding } =
@@ -56,7 +57,7 @@ export default async function saveWebScreen(
         },
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
-        isIos,
+        isIOS,
         isMobile,
         isTestInBrowser,
         logName,
@@ -75,7 +76,7 @@ export default async function saveWebScreen(
         innerWidth: innerWidth || NaN,
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
-        isIos,
+        isIOS,
         isLandscape,
     }
     const rectangles: RectanglesOutput = determineScreenRectangles(base64Image, screenRectangleOptions)
@@ -85,7 +86,7 @@ export default async function saveWebScreen(
         base64Image,
         deviceName,
         devicePixelRatio: devicePixelRatio || NaN,
-        isIos,
+        isIOS,
         isLandscape,
         logLevel,
         rectangles,
@@ -123,6 +124,7 @@ export default async function saveWebScreen(
         hideElements,
         hideScrollBars,
         isLandscape,
+        isNativeContext,
         logLevel,
         platformName: instanceData.platformName,
         removeElements,

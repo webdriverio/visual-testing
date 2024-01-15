@@ -83,7 +83,7 @@ export async function makeCroppedBase64Image({
     base64Image,
     deviceName,
     devicePixelRatio,
-    isIos,
+    isIOS,
     isLandscape,
     logLevel,
     rectangles,
@@ -212,7 +212,7 @@ export async function makeCroppedBase64Image({
             (canvasHeight / devicePixelRatio >= 1133 || canvasWidth / devicePixelRatio >= 1133))
     let isIosBezelError = false
 
-    if (addIOSBezelCorners && isIos && isSupported) {
+    if (addIOSBezelCorners && isIOS && isSupported) {
         // Determine the bezel images
         const { topImageName, bottomImageName } = getIosBezelImageNames(normalizedDeviceName)
 
@@ -251,7 +251,7 @@ export async function makeCroppedBase64Image({
         }
     }
 
-    if (addIOSBezelCorners && isIos && !isSupported) {
+    if (addIOSBezelCorners && isIOS && !isSupported) {
         isIosBezelError = true
     }
 

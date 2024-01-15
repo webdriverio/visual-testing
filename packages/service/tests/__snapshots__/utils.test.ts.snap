@@ -18,9 +18,18 @@ exports[`utils > getFolders > should be able to return the correct folders when 
 
 exports[`utils > getInstanceData > should return correct instance data when JSONWP Mobile capabilities are provided 1`] = `
 {
+  "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "not-known",
   "deviceName": "",
+  "devicePixelRatio": 1,
+  "deviceScreenSize": {
+    "height": 0,
+    "width": 0,
+  },
+  "isAndroid": undefined,
+  "isIOS": undefined,
+  "isMobile": undefined,
   "logName": "",
   "name": "",
   "nativeWebScreenshot": false,
@@ -31,9 +40,18 @@ exports[`utils > getInstanceData > should return correct instance data when JSON
 
 exports[`utils > getInstanceData > should return correct instance data when W3C Mobile capabilities are provided 1`] = `
 {
+  "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "not-known",
   "deviceName": "appium:devicename",
+  "devicePixelRatio": 1,
+  "deviceScreenSize": {
+    "height": 0,
+    "width": 0,
+  },
+  "isAndroid": undefined,
+  "isIOS": undefined,
+  "isMobile": undefined,
   "logName": "",
   "name": "",
   "nativeWebScreenshot": true,
@@ -44,9 +62,18 @@ exports[`utils > getInstanceData > should return correct instance data when W3C 
 
 exports[`utils > getInstanceData > should return instance data when all capabilities are provided 1`] = `
 {
+  "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "not-known",
   "deviceName": "",
+  "devicePixelRatio": 1,
+  "deviceScreenSize": {
+    "height": 0,
+    "width": 0,
+  },
+  "isAndroid": undefined,
+  "isIOS": undefined,
+  "isMobile": undefined,
   "logName": "",
   "name": "",
   "nativeWebScreenshot": false,
@@ -57,9 +84,18 @@ exports[`utils > getInstanceData > should return instance data when all capabili
 
 exports[`utils > getInstanceData > should return instance data when log name is provided 1`] = `
 {
+  "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "not-known",
   "deviceName": "",
+  "devicePixelRatio": 1,
+  "deviceScreenSize": {
+    "height": 0,
+    "width": 0,
+  },
+  "isAndroid": undefined,
+  "isIOS": undefined,
+  "isMobile": undefined,
   "logName": "",
   "name": "",
   "nativeWebScreenshot": false,
@@ -70,9 +106,18 @@ exports[`utils > getInstanceData > should return instance data when log name is 
 
 exports[`utils > getInstanceData > should return instance data when the appium log name is provided 1`] = `
 {
+  "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "not-known",
   "deviceName": "",
+  "devicePixelRatio": 1,
+  "deviceScreenSize": {
+    "height": 0,
+    "width": 0,
+  },
+  "isAndroid": undefined,
+  "isIOS": undefined,
+  "isMobile": undefined,
   "logName": "",
   "name": "",
   "nativeWebScreenshot": false,
@@ -83,9 +128,18 @@ exports[`utils > getInstanceData > should return instance data when the appium l
 
 exports[`utils > getInstanceData > should return instance data when the minimum of capabilities is provided 1`] = `
 {
+  "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "not-known",
   "deviceName": "",
+  "devicePixelRatio": 1,
+  "deviceScreenSize": {
+    "height": 0,
+    "width": 0,
+  },
+  "isAndroid": undefined,
+  "isIOS": undefined,
+  "isMobile": undefined,
   "logName": "",
   "name": "",
   "nativeWebScreenshot": false,
@@ -96,9 +150,18 @@ exports[`utils > getInstanceData > should return instance data when the minimum 
 
 exports[`utils > getInstanceData > should return instance data when the sauce log name is provided 1`] = `
 {
+  "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "not-known",
   "deviceName": "",
+  "devicePixelRatio": 1,
+  "deviceScreenSize": {
+    "height": 0,
+    "width": 0,
+  },
+  "isAndroid": undefined,
+  "isIOS": undefined,
+  "isMobile": undefined,
   "logName": "",
   "name": "",
   "nativeWebScreenshot": false,
@@ -109,9 +172,18 @@ exports[`utils > getInstanceData > should return instance data when the sauce lo
 
 exports[`utils > getInstanceData > should return instance data when wdio-ics option log name is provided 1`] = `
 {
+  "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "not-known",
   "deviceName": "",
+  "devicePixelRatio": 1,
+  "deviceScreenSize": {
+    "height": 0,
+    "width": 0,
+  },
+  "isAndroid": undefined,
+  "isIOS": undefined,
+  "isMobile": undefined,
   "logName": "wdio-ics-logName",
   "name": "",
   "nativeWebScreenshot": false,
@@ -122,9 +194,18 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
 
 exports[`utils > getInstanceData > should return platformName based on the currentCapabilities.platform 1`] = `
 {
+  "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "not-known",
   "deviceName": "",
+  "devicePixelRatio": 1,
+  "deviceScreenSize": {
+    "height": 0,
+    "width": 0,
+  },
+  "isAndroid": undefined,
+  "isIOS": undefined,
+  "isMobile": undefined,
   "logName": "",
   "name": "",
   "nativeWebScreenshot": false,

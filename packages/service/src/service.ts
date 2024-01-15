@@ -42,22 +42,19 @@ export default class WdioImageComparisonService extends BaseClass {
         super(options)
         this._isNativeContext = undefined
     }
-    before(
+    async before(
         capabilities: WebdriverIO.Capabilities,
         _specs: string[],
         browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     ) {
         this._browser = browser
-
         this._isNativeContext = determineNativeContext(this._browser)
-
-        console.log(`\n\nthis._isNativeContext: ${this._isNativeContext}\n\n`)
 
         if (!this._browser.isMultiremote) {
             log.info('Adding commands to global browser')
-            this.#addCommandsToBrowser(capabilities, this._browser)
+            await this.#addCommandsToBrowser(capabilities, this._browser)
         } else {
-            this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
+            await this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
         }
 
         /**
@@ -78,7 +75,7 @@ export default class WdioImageComparisonService extends BaseClass {
         }
     }
 
-    #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
+    async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
         const browser = this._browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
         log.info(`Adding commands to Multi Browser: ${browserNames.join(', ')}`)
@@ -86,7 +83,7 @@ export default class WdioImageComparisonService extends BaseClass {
         for (const browserName of browserNames) {
             const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
             const browserInstance = multiremoteBrowser.getInstance(browserName)
-            this.#addCommandsToBrowser(
+            await this.#addCommandsToBrowser(
                 (capabilities[browserName] as Options.MultiRemoteBrowserOptions).capabilities,
                 browserInstance
             )
@@ -118,11 +115,11 @@ export default class WdioImageComparisonService extends BaseClass {
         }
     }
 
-    #addCommandsToBrowser(
+    async #addCommandsToBrowser(
         capabilities: WebdriverIO.Capabilities,
         currentBrowser: WebdriverIO.Browser
     ) {
-        const instanceData = getInstanceData(capabilities, currentBrowser)
+        const instanceData = await getInstanceData(capabilities, currentBrowser)
         const self = this
 
         for (const [commandName, command] of Object.entries(elementCommands)) {

@@ -7,7 +7,7 @@ import saveAppScreen from './saveAppScreen.js'
 import saveWebScreen from './saveWebScreen.js'
 
 /**
- * Saves an image of the viewport of the screen
+ * Saves an image of the viewport of the desktop browser or the screen of a mobile device
  */
 export default async function saveScreen(
     methods: Methods,
@@ -17,8 +17,7 @@ export default async function saveScreen(
     saveScreenOptions: SaveScreenOptions,
     isNativeContext: boolean,
 ): Promise<ScreenshotOutput> {
-    console.log('saveScreen isNativeContext:', isNativeContext)
     return isNativeContext
-        ? saveAppScreen()
-        : saveWebScreen(methods, instanceData, folders, tag, saveScreenOptions)
+        ? saveAppScreen(methods, instanceData, folders, tag, saveScreenOptions, isNativeContext)
+        : saveWebScreen(methods, instanceData, folders, tag, saveScreenOptions, isNativeContext)
 }

@@ -20,6 +20,7 @@ export const DEFAULT_SHADOW = {
     TOOL_BAR: 6,
 }
 export const DESKTOP = 'desktop'
+export const NOT_KNOWN = 'not_known'
 export const CUSTOM_CSS_ID = 'pic-css'
 export const DEFAULT_RESIZE_DIMENSIONS: Required<ResizeDimensions> = {
     top: 0,

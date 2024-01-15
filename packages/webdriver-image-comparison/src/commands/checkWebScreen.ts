@@ -17,6 +17,8 @@ export default async function checkWebScreen(
     folders: Folders,
     tag: string,
     checkScreenOptions: CheckScreenOptions,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
     // 1.  Take the actual screenshot and retrieve the needed data
     const saveScreenOptions: SaveScreenOptions = {
@@ -30,7 +32,7 @@ export default async function checkWebScreen(
             ...{ removeElements: checkScreenOptions.method.removeElements || [] },
         },
     }
-    const { devicePixelRatio, fileName, isLandscape } = await saveWebScreen(methods, instanceData, folders, tag, saveScreenOptions)
+    const { devicePixelRatio, fileName, isLandscape } = await saveWebScreen(methods, instanceData, folders, tag, saveScreenOptions, false)
 
     // 2a. Determine the compare options
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)

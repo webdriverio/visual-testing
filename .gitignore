@@ -32,3 +32,4 @@ logs/
 dist
 
 *.tgz
+bugreport*.zip

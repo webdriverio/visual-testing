@@ -17,9 +17,7 @@ export default async function checkScreen(
     checkScreenOptions: CheckScreenOptions,
     isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
-    console.log('checkElement isNativeContext:', isNativeContext)
-
     return isNativeContext
-        ? checkAppScreen()
-        : checkWebScreen(methods, instanceData, folders, tag, checkScreenOptions)
+        ? checkAppScreen(methods, instanceData, folders, tag, checkScreenOptions, isNativeContext)
+        : checkWebScreen(methods, instanceData, folders, tag, checkScreenOptions, isNativeContext)
 }

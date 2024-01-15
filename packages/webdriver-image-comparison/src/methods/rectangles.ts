@@ -23,12 +23,19 @@ export async function determineElementRectangles({
     element,
 }: ElementRectangles): Promise<RectanglesOutput> {
     // Determine screenshot data
-    const { devicePixelRatio, innerHeight, isAndroid, isAndroidNativeWebScreenshot, isIos, isLandscape } = options
+    const {
+        devicePixelRatio,
+        innerHeight,
+        isAndroid,
+        isAndroidNativeWebScreenshot,
+        isIOS,
+        isLandscape,
+    } = options
     const { height } = getScreenshotSize(base64Image, devicePixelRatio)
     let elementPosition
 
     // Determine the element position on the screenshot
-    if (isIos) {
+    if (isIOS) {
         elementPosition = await getElementPositionIos(executor, element, { isLandscape })
     } else if (isAndroid) {
         elementPosition = await getElementPositionAndroid(executor, element, { isAndroidNativeWebScreenshot, isLandscape })
@@ -67,7 +74,7 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
         devicePixelRatio,
         innerHeight,
         innerWidth,
-        isIos,
+        isIOS,
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
         isLandscape,
@@ -75,8 +82,8 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
     const { height, width } = getScreenshotSize(base64Image, devicePixelRatio)
 
     // Determine the width
-    const screenshotWidth = isIos || isAndroidChromeDriverScreenshot ? width : innerWidth
-    const screenshotHeight = isIos || isAndroidNativeWebScreenshot ? height : innerHeight
+    const screenshotWidth = isIOS || isAndroidChromeDriverScreenshot ? width : innerWidth
+    const screenshotHeight = isIOS || isAndroidNativeWebScreenshot ? height : innerHeight
     const isRotated = isLandscape && height > width
 
     // Determine the rectangles

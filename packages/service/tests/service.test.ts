@@ -22,25 +22,25 @@ vi.mock('@wdio/globals', () => ({
 }))
 
 describe('@wdio/visual-service', () => {
-    it('should register custom matchers', () => {
+    it('should register custom matchers', async () => {
         const service = new VisualService({})
         const browser = {
             isMultiremote: false,
             addCommand: vi.fn(),
             requestedCapabilities: {}
         } as any as WebdriverIO.Browser
-        service.before({}, [], browser)
+        await service.before({}, [], browser)
         expect(wdioExpect.extend).toBeCalledTimes(1)
     })
 
-    it('adds command to normal browser in before hook', () => {
+    it('adds command to normal browser in before hook', async () => {
         const service = new VisualService({})
         const browser = {
             isMultiremote: false,
             addCommand: vi.fn(),
             requestedCapabilities: {}
         } as any as WebdriverIO.Browser
-        service.before({}, [], browser)
+        await service.before({}, [], browser)
         expect(browser.addCommand).toHaveBeenCalledTimes(8)
         expect(browser.addCommand).toHaveBeenCalledWith('saveElement', expect.any(Function))
         expect(browser.addCommand).toHaveBeenCalledWith('checkElement', expect.any(Function))
@@ -52,7 +52,7 @@ describe('@wdio/visual-service', () => {
         expect(browser.addCommand).toHaveBeenCalledWith('checkTabbablePage', expect.any(Function))
     })
 
-    it('adds command to multiremote browser in before hook', () => {
+    it('adds command to multiremote browser in before hook', async () => {
         const service = new VisualService({})
         const browserInstance = {
             addCommand: vi.fn(),
@@ -64,7 +64,7 @@ describe('@wdio/visual-service', () => {
             getInstances: vi.fn().mockReturnValue(['chrome', 'firefox']),
             getInstance: vi.fn().mockReturnValue(browserInstance)
         } as any as WebdriverIO.MultiRemoteBrowser
-        service.before({
+        await service.before({
             'chrome': { capabilities: {} },
             'firefox': { capabilities: {} }
         } as any, [], browser)

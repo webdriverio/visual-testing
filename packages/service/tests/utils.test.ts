@@ -40,22 +40,22 @@ describe('utils', () => {
             requestedCapabilities: capabilities,
         } as any as WebdriverIO.Browser
 
-        it('should return instance data when the minimum of capabilities is provided', () => {
+        it('should return instance data when the minimum of capabilities is provided', async() => {
             const capabilities = {} as WebdriverIO.Capabilities
-            expect(getInstanceData(capabilities, browser)).toMatchSnapshot()
+            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
         })
 
-        it('should return instance data when wdio-ics option log name is provided', () => {
+        it('should return instance data when wdio-ics option log name is provided', async() => {
             const capabilities = {
                 browserName: 'chrome',
                 'wdio-ics:options': {
                     logName: 'wdio-ics-logName',
                 },
             } as WebdriverIO.Capabilities
-            expect(getInstanceData(capabilities, browser)).toMatchSnapshot()
+            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
         })
 
-        it('should return instance data when log name is provided', () => {
+        it('should return instance data when log name is provided', async () => {
             const capabilities = {
                 browserName: 'chrome',
                 logName: 'logName',
@@ -63,48 +63,48 @@ describe('utils', () => {
                     foo: 'bar',
                 },
             } as WebdriverIO.Capabilities
-            expect(getInstanceData(capabilities, browser)).toMatchSnapshot()
+            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
         })
 
-        it('should return instance data when the sauce log name is provided', () => {
+        it('should return instance data when the sauce log name is provided', async() => {
             const capabilities = {
                 browserName: 'chrome',
                 'sauce:options': {
                     logName: 'sauceLogName',
                 },
             } as WebdriverIO.Capabilities
-            expect(getInstanceData(capabilities, browser)).toMatchSnapshot()
+            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
         })
 
-        it('should return instance data when the appium log name is provided', () => {
+        it('should return instance data when the appium log name is provided', async() => {
             const capabilities = {
                 browserName: 'chrome',
                 'appium:options': {
                     logName: 'appiumLogName',
                 },
             } as WebdriverIO.Capabilities
-            expect(getInstanceData(capabilities, browser)).toMatchSnapshot()
+            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
         })
 
-        it('should return instance data when all capabilities are provided', () => {
+        it('should return instance data when all capabilities are provided', async() => {
             const capabilities = {
                 browserName: 'chrome',
                 logName: 'logName',
                 deviceName: 'deviceName',
                 platformName: 'platformName',
             } as WebdriverIO.Capabilities
-            expect(getInstanceData(capabilities, browser)).toMatchSnapshot()
+            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
         })
 
-        it('should return platformName based on the currentCapabilities.platform', () => {
+        it('should return platformName based on the currentCapabilities.platform', async() => {
             const capabilities = {}
-            expect(getInstanceData(capabilities, {
+            expect(await getInstanceData(capabilities, {
                 ...browser,
                 platform: 'browser.platform'
             } as any)).toMatchSnapshot()
         })
 
-        it('should return correct instance data when JSONWP Mobile capabilities are provided', () => {
+        it('should return correct instance data when JSONWP Mobile capabilities are provided', async() => {
             const capabilities = {
                 browserName: 'chrome',
                 logName: 'logName',
@@ -112,10 +112,10 @@ describe('utils', () => {
                 platformName: 'platformName',
                 nativeWebScreenshot: true,
             } as WebdriverIO.Capabilities
-            expect(getInstanceData(capabilities, browser)).toMatchSnapshot()
+            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
         })
 
-        it('should return correct instance data when W3C Mobile capabilities are provided', () => {
+        it('should return correct instance data when W3C Mobile capabilities are provided', async () => {
             const capabilities = {
                 browserName: 'chrome',
                 logName: 'logName',
@@ -123,7 +123,7 @@ describe('utils', () => {
                 platformName: 'platformName',
                 'appium:nativeWebScreenshot': true,
             } as WebdriverIO.Capabilities
-            expect(getInstanceData(capabilities, browser)).toMatchSnapshot()
+            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
         })
     })
 })

@@ -28,7 +28,7 @@ export default async function getEnrichedInstanceData(
 
     // Determine some constants
     const isAndroid = checkIsAndroid(platformName)
-    const isIos = checkIsIos(platformName)
+    const isIOS = checkIsIos(platformName)
     const isMobile = checkIsMobile(platformName)
     const isTestInBrowser = checkTestInBrowser(browserName)
     const isTestInMobileBrowser = checkTestInMobileBrowser(platformName, browserName)
@@ -51,7 +51,7 @@ export default async function getEnrichedInstanceData(
         isAndroid,
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
-        isIos,
+        isIOS,
         isMobile,
         isTestInBrowser,
         isTestInMobileBrowser,

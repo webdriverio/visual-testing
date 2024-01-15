@@ -46,6 +46,7 @@ describe('afterScreenshot', () => {
             },
             hideScrollBars: true,
             isLandscape: false,
+            isNativeContext: false,
             logLevel: LogLevel.debug,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
             platformName: '',
