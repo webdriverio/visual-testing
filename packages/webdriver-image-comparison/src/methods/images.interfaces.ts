@@ -14,6 +14,8 @@ export interface ResizeDimensions {
 }
 
 export interface ImageCompareOptions {
+    // Optional ignore regions
+    ignoreRegions?: RectanglesOutput[];
     // The device pixel ratio of the device
     devicePixelRatio: number;
     // The compare options
@@ -27,6 +29,8 @@ export interface ImageCompareOptions {
     folderOptions: ImageCompareFolderOptions;
     // Is it an hybrid app or not
     isHybridApp: boolean;
+    // Is this an Android device
+    isAndroid?: boolean;
     // If it's in Landscape mode
     isLandscape: boolean;
     // Level to show logs

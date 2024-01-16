@@ -1,4 +1,5 @@
-import { calculateDprData, checkAndroidNativeWebScreenshot, checkIsIos, getScreenshotSize } from '../helpers/utils.js'
+import type { ChainablePromiseElement } from 'webdriverio'
+import { calculateDprData, checkAndroidNativeWebScreenshot, checkIsIos, getScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementPositionIos } from './elementPosition.js'
 import { IOS_OFFSETS, ANDROID_OFFSETS } from '../helpers/constants.js'
 import type {
@@ -8,10 +9,12 @@ import type {
     StatusAddressToolBarRectangles,
     StatusAddressToolBarRectanglesOptions,
 } from './rectangles.interfaces'
-import type { Executor } from './methods.interfaces'
+import type { Executor, GetElementRect } from './methods.interfaces'
 import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
 import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
 import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces'
+import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
+import type { InstanceData } from './instanceData.interfaces.js'
 
 /**
  * Determine the element rectangles on the page / screenshot
@@ -142,6 +145,145 @@ export async function determineStatusAddressToolBarRectangles(
             rectangles.push(sideBar)
         }
     }
+
+    return rectangles
+}
+
+/**
+ * Validate that the element is a WebdriverIO element
+ */
+function isWdioElement(x: unknown) {
+    if (!isObject(x)) {
+        return false
+    }
+
+    const region = x as WebdriverIO.Element
+    const keys: (keyof WebdriverIO.Element)[] = ['selector', 'elementId']
+
+    return keys.every(key => typeof region[key] === 'string')
+}
+
+/**
+ * Validate that the object is a valid ignore region
+ */
+function validateIgnoreRegion(x: unknown) {
+    if (!isObject(x)) {
+        return false
+    }
+
+    const region = x as RectanglesOutput
+    const keys: (keyof RectanglesOutput)[] = ['height', 'width', 'x', 'y']
+
+    return keys.every(key => typeof region[key] === 'number')
+}
+
+/**
+ * Format the error message
+ */
+function formatErrorMessage(item:unknown, message:string) {
+    const formattedItem = isObject(item) ? JSON.stringify(item) : item
+    return `${formattedItem} ${message}`
+}
+
+/**
+ * Split the ignores into elements and regions and throw an error if
+ * an element is not a valid WebdriverIO element/region
+ */
+function splitIgnores(items:unknown[]): { elements: WebdriverIO.Element[], regions: RectanglesOutput[] }{
+    const elements = []
+    const regions = []
+    const errorMessages = []
+
+    for (const item of items) {
+        if (Array.isArray(item)) {
+            for (const nestedItem of item) {
+                if (!isWdioElement(nestedItem)) {
+                    errorMessages.push(formatErrorMessage(nestedItem, 'is not a valid WebdriverIO element'))
+                } else {
+                    elements.push(nestedItem as WebdriverIO.Element)
+                }
+            }
+        } else if (isWdioElement(item)) {
+            elements.push(item as WebdriverIO.Element)
+        } else if (validateIgnoreRegion(item)) {
+            regions.push(item as RectanglesOutput)
+        } else {
+            errorMessages.push(formatErrorMessage(item, 'is not a valid WebdriverIO element or region'))
+        }
+    }
+
+    if (errorMessages.length > 0) {
+        throw new Error('Invalid elements or regions: ' + errorMessages.join(', '))
+    }
+
+    return { elements, regions }
+}
+
+/**
+ * Get the regions from the elements
+ */
+async function getRegionsFromElements(
+    elements: WebdriverIO.Element[],
+    getElementRect: GetElementRect,
+): Promise<RectanglesOutput[]> {
+    const regions = []
+    for (const element of elements) {
+        const region = await getElementRect(element.elementId)
+        regions.push(region)
+    }
+
+    return regions
+}
+
+/**
+ * Translate ignores to regions
+ */
+export async function determineIgnoreRegions(
+    ignores: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>)[],
+    getElementRect: GetElementRect,
+): Promise<RectanglesOutput[]>{
+    const awaitedIgnores = await Promise.all(ignores)
+    const { elements, regions } = splitIgnores(awaitedIgnores)
+    const regionsFromElements = await getRegionsFromElements(elements, getElementRect)
+
+    return [...regions, ...regionsFromElements]
+        .map((region:RectanglesOutput) => ({
+            x: Math.round(region.x),
+            y: Math.round(region.y),
+            width: Math.round(region.width),
+            height: Math.round(region.height),
+        }))
+}
+
+/**
+ * Determine the device block outs
+ */
+export async function determineDeviceBlockOuts({ isAndroid, screenCompareOptions, instanceData }: {
+    isAndroid: boolean,
+    screenCompareOptions: CheckScreenMethodOptions,
+    instanceData: InstanceData,
+}){
+    const rectangles: RectanglesOutput[] = []
+    const { blockOutStatusBar, blockOutToolBar } = screenCompareOptions
+    const { devicePlatformRect:{ homeBar, statusBar } } = instanceData
+
+    if (blockOutStatusBar){
+        rectangles.push(statusBar)
+    }
+    if (isAndroid){
+        //
+    } else if (blockOutToolBar){
+        rectangles.push(homeBar)
+    }
+
+    // @TODO: This is from the native-app-compare module, I can't really find the diffs between the two
+    // if (options.blockOutStatusBar) {
+    //     rectangles.push(deviceInfo.rectangles.statusBar)
+    // }
+
+    // if (driver.isAndroid && options.blockOutNavigationBar) {
+    //     rectangles.push(deviceInfo.rectangles.androidNavigationBar)
+    // }
 
     return rectangles
 }

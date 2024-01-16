@@ -12,6 +12,10 @@ export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
             height:1,
             width: 1,
         },
+        devicePlatformRect: {
+            statusBar: { x: 0, y:0, width: 0, height: 0 },
+            homeBar: { x: 0, y:0, width: 0, height: 0 },
+        },
         isAndroid: false,
         isIOS: false,
         isMobile: false,

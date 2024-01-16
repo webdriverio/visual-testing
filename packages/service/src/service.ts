@@ -134,9 +134,13 @@ export default class WdioImageComparisonService extends BaseClass {
                 ) {
                     return command(
                         {
-                            executor: this.execute.bind(currentBrowser),
-                            screenShot:
-                                this.takeScreenshot.bind(currentBrowser),
+                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
+                            },
+                            getElementRect: this.getElementRect.bind(currentBrowser),
+                            getSettings: this.getSettings.bind(currentBrowser),
+                            screenShot: this.takeScreenshot.bind(currentBrowser),
+                            updateSettings: this.updateSettings.bind(currentBrowser),
                         },
                         instanceData,
                         getFolders(elementOptions, self.folders),
@@ -159,7 +163,10 @@ export default class WdioImageComparisonService extends BaseClass {
                 function (this: typeof currentBrowser, tag, pageOptions = {}) {
                     return command(
                         {
-                            executor: this.execute.bind(currentBrowser),
+                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
+                            },
+                            getElementRect: this.getElementRect.bind(currentBrowser),
                             screenShot:
                                 this.takeScreenshot.bind(currentBrowser),
                         },

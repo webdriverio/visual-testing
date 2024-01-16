@@ -163,7 +163,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 124, y: 829, height: 9, width: 143 },
             },
         },
-        // 14Pro (notch)
+        // 14Pro|15 (dynamic island)
         852: {
             LANDSCAPE: {
                 SAFE_AREA: 59,
@@ -357,6 +357,7 @@ export const supportedIosBezelDevices = [
     'iphone14plus',
     'iphone14pro',
     'iphone14promax',
+    'iphone15',
     // // iPads
     'ipadmini', // 1133
     'ipadair', // 1180

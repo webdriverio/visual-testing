@@ -275,6 +275,10 @@ export function getIosBezelImageNames(normalizedDeviceName: string): { topImageN
         topImageName = 'iphone14promax-top'
         bottomImageName = 'iphone14promax-bottom'
         break
+    case 'iphone15':
+        topImageName = 'iphone15-top'
+        bottomImageName = 'iphone15-bottom'
+        break
         // iPad
     case 'ipadmini':
         topImageName = 'ipadmini6th-top'
@@ -299,4 +303,11 @@ export function getIosBezelImageNames(normalizedDeviceName: string): { topImageN
     }
 
     return { topImageName, bottomImageName }
+}
+
+/**
+ * Validate that the item is an object
+ */
+export function isObject(item:unknown) {
+    return (typeof item === 'object' && item !== null) || typeof item === 'function'
 }

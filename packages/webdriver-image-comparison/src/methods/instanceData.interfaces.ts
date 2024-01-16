@@ -1,4 +1,5 @@
 import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces'
+import type { RectanglesOutput } from './rectangles.interfaces'
 
 export interface InstanceData {
     // The name of the app
@@ -11,6 +12,11 @@ export interface InstanceData {
     deviceName: string;
     // The devicePixelRatio of the instance
     devicePixelRatio: number;
+    // The Device Platform Rect
+    devicePlatformRect: {
+        statusBar: RectanglesOutput;
+        homeBar: RectanglesOutput;
+    }
     // The Device Screen size
     deviceScreenSize: {
         // The Device Screen Height

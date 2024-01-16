@@ -280,9 +280,20 @@ export async function executeImageCompare(
     executor: Executor,
     options: ImageCompareOptions,
     isViewPortScreenshot = false,
+    isNativeContext = false,
 ): Promise<ImageCompareResult | number> {
     // 1. Set some variables
-    const { devicePixelRatio, fileName, isAndroidNativeWebScreenshot, isHybridApp, isLandscape, logLevel, platformName } = options
+    const {
+        ignoreRegions = [],
+        devicePixelRatio,
+        fileName,
+        isAndroidNativeWebScreenshot,
+        isAndroid,
+        isHybridApp,
+        isLandscape,
+        logLevel,
+        platformName,
+    } = options
     const { actualFolder, autoSaveBaseline, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
         options.folderOptions
     let diffFilePath
@@ -307,8 +318,8 @@ export async function executeImageCompare(
         ),
     ) as ComparisonIgnoreOption[]
 
-    // 4b. Determine the ignore rectangles for the blockouts
-    const blockOut = 'blockOut' in imageCompareOptions ? imageCompareOptions.blockOut : []
+    // 4b. Determine the ignore rectangles for the block outs
+    const blockOut = 'blockOut' in imageCompareOptions ? imageCompareOptions.blockOut || [] : []
     const statusAddressToolBarOptions = {
         blockOutSideBar: imageCompareOptions.blockOutSideBar,
         blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
@@ -320,12 +331,15 @@ export async function executeImageCompare(
         isAndroidNativeWebScreenshot,
         platformName,
     }
-
-    const ignoredBoxes = (blockOut || [])
-        .concat(
-            // 4c. Add the mobile rectangles that need to be ignored
-            await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions),
-        )
+    const ignoredBoxes = [
+        // These come from the method
+        ...blockOut,
+        // @TODO: I'm defaulting ignore regions for devices
+        // Need to check if this is the right thing to do for web and mobile browser tests
+        ...ignoreRegions,
+        // Only get info about the status bars when we are in the web context
+        ...(isNativeContext ? [] :  (await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions)) || [])
+    ]
         .map(
             // 4d. Make sure all the rectangles are equal to the dpr for the screenshot
             (rectangles) => {
@@ -337,7 +351,8 @@ export async function executeImageCompare(
                         left: rectangles.x,
                         top: rectangles.y,
                     },
-                    devicePixelRatio,
+                    // For Android we don't need to do it times the pixel ratio, for all others we need to
+                    isAndroid ? 1 : devicePixelRatio,
                 )
             },
         )

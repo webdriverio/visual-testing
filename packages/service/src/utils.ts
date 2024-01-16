@@ -1,4 +1,5 @@
 import type { Capabilities } from '@wdio/types'
+import { IOS_OFFSETS } from 'webdriver-image-comparison'
 import type {
     Folders,
     InstanceData,
@@ -135,18 +136,51 @@ export async function getInstanceData(
         width: 0,
     }
     let devicePixelRatio = 1
+    const devicePlatformRect = {
+        statusBar: { height: 0, x: 0, width: 0, y: 0 },
+        homeBar: { height: 0, x: 0, width: 0, y: 0 },
+    }
     if (isMobile) {
         const { height, width } = await currentBrowser.getWindowSize()
         deviceScreenSize.height = height
         deviceScreenSize.width = width
-        // @ts-ignore
-        if (isAndroid && currentBrowser.capabilities?.pixelRatio !== undefined) {
+
+        console.log(JSON.stringify(deviceScreenSize, null, 2))
+
+        // This is al based on PORTRAIT mode
+
+        if (isAndroid && currentBrowser.capabilities) {
             // @ts-ignore
-            devicePixelRatio = currentBrowser.capabilities?.pixelRatio
+            if (currentBrowser.capabilities?.pixelRatio !== undefined){
+                // @ts-ignore
+                devicePixelRatio = currentBrowser.capabilities?.pixelRatio
+            }
+            // @ts-ignore
+            if (currentBrowser.capabilities?.statBarHeight !== undefined){
+                // @ts-ignore
+                devicePlatformRect.statusBar.height = currentBrowser.capabilities?.statBarHeight
+                devicePlatformRect.statusBar.width = width
+            }
         } else {
             // This is to already determine the device pixel ratio if it's not set in the capabilities
             const base64Image = await currentBrowser.takeScreenshot()
             devicePixelRatio = getDevicePixelRatio(base64Image, deviceScreenSize)
+            const isIphone = width < 1024 && height < 1024
+            const deviceType = isIphone ? 'IPHONE' : 'IPAD'
+            const defaultPortraitHeight = isIphone ? 667 : 1024
+            const portraitHeight = width > height ? width : height
+            const offsetPortraitHeight =
+                Object.keys(IOS_OFFSETS[deviceType]).indexOf(portraitHeight.toString()) > -1 ? portraitHeight : defaultPortraitHeight
+            const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight].PORTRAIT
+            // NOTE: The values for iOS are based on CSS pixels, so we need to multiply them with the devicePixelRatio,
+            // This will not be done here but in a central place
+            devicePlatformRect.statusBar = {
+                y: 0,
+                x: 0,
+                width,
+                height: currentOffsets.STATUS_BAR,
+            }
+            devicePlatformRect.homeBar = currentOffsets.HOME_BAR
         }
     }
 
@@ -241,6 +275,7 @@ export async function getInstanceData(
         browserVersion,
         deviceName,
         devicePixelRatio,
+        devicePlatformRect,
         deviceScreenSize,
         isAndroid,
         isIOS,
