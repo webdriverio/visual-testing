@@ -5,18 +5,20 @@ import type { ComparisonOptions, ComparisonIgnoreOption } from 'resemblejs'
 import compareImages from '../resemble/compareImages.js'
 import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
-import { determineStatusAddressToolBarRectangles } from './rectangles.js'
+import { determineStatusAddressToolBarRectangles, isWdioElement } from './rectangles.js'
 import type {
     CroppedBase64Image,
     IgnoreBoxes,
     ImageCompareOptions,
     ImageCompareResult,
+    ResizeDimensions,
     RotateBase64ImageOptions,
 } from './images.interfaces'
 import type { FullPageScreenshotsData } from './screenshots.interfaces'
-import type { Executor } from './methods.interfaces'
+import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces'
 import type { CompareData } from '../resemble/compare.interfaces'
 import { LogLevel } from '../helpers/options.interfaces'
+import type { WicElement } from '../commands/element.interfaces.js'
 
 /**
  * Check if the image exists and create a new baseline image if needed
@@ -96,50 +98,11 @@ export async function makeCroppedBase64Image({
     const newBase64Image = isRotated
         ? await rotateBase64Image({ base64Image, degrees: -90, newHeight: screenshotWidth, newWidth: screenshotHeight })
         : base64Image
-    /**
-   * This is in for backwards compatibility, it will be removed in the future
-   */
-    let resizeValues
-    if (typeof resizeDimensions === 'number') {
-        resizeValues = {
-            top: resizeDimensions,
-            right: resizeDimensions,
-            bottom: resizeDimensions,
-            left: resizeDimensions,
-        }
-        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-            console.log(
-                '\x1b[33m%s\x1b[0m',
-                `
-#####################################################################################
- WARNING:
- THE 'resizeDimensions' NEEDS TO BE AN OBJECT LIKE
- {
-    top: 10,
-    right: 20,
-    bottom: 15,
-    left: 25,
- }
- NOW IT WILL BE DEFAULTED TO
-  {
-    top: ${resizeDimensions},
-    right: ${resizeDimensions},
-    bottom: ${resizeDimensions},
-    left: ${resizeDimensions},
- }
- THIS IS DEPRECATED AND WILL BE REMOVED IN A NEW MAJOR RELEASE
-#####################################################################################
-`,
-            )
-        }
-    } else {
-        resizeValues = resizeDimensions
-    }
 
-    const { top, right, bottom, left }: { top: number; right: number; bottom: number; left: number } = {
+    const { top, right, bottom, left }: { top: number; right: number; bottom: number; left: number } = calculateDprData({
         ...DEFAULT_RESIZE_DIMENSIONS,
-        ...resizeValues,
-    }
+        ...resizeDimensions,
+    }, isIOS ? devicePixelRatio : 1)
     const { height, width, x, y } = rectangles
     const canvasWidth = width + left + right
     const canvasHeight = height + top + bottom
@@ -531,4 +494,109 @@ async function rotateBase64Image({ base64Image, degrees, newHeight, newWidth }: 
     ctx.drawImage(image, image.width / -2, image.height / -2)
 
     return canvas.toDataURL().replace(/^data:image\/png;base64,/, '')
+}
+
+/**
+ * Take a based64 screenshot of an element and resize it
+ */
+async function takeResizedBase64Screenshot({
+    element,
+    devicePixelRatio,
+    isIOS,
+    methods:{
+        getElementRect,
+        screenShot,
+    },
+    resizeDimensions,
+}:{
+    element: WicElement,
+    devicePixelRatio: number,
+    isIOS: boolean,
+    methods:{
+        getElementRect: GetElementRect,
+        screenShot: TakeScreenShot,
+    }
+    resizeDimensions: ResizeDimensions,
+}
+): Promise<string> {
+    const awaitedElement = await element
+    if (!isWdioElement(awaitedElement)){
+        console.log('awaitedElement = ', JSON.stringify(awaitedElement))
+    }
+
+    // Get the element position
+    const elementRegion = await getElementRect(awaitedElement.elementId)
+
+    // Create a screenshot
+    const base64Image = await screenShot()
+    // Crop it out with the correct dimensions
+
+    // Make the image smaller
+    // Provide the size of the image with the resizeDimensions on left, right, top and bottom
+    const resizedBase64Image = await makeCroppedBase64Image({
+        addIOSBezelCorners: false,
+        base64Image,
+        deviceName: '',
+        devicePixelRatio,
+        isIOS,
+        isLandscape: false,
+        // @ts-ignore
+        logLevel: 'debug',
+        rectangles: calculateDprData({
+            height: elementRegion.height,
+            width: elementRegion.width,
+            x: elementRegion.x,
+            y: elementRegion.y,
+        }, isIOS ? devicePixelRatio : 1),
+        resizeDimensions,
+    })
+
+    return resizedBase64Image
+}
+
+/**
+ * Take a base64 screenshot of an element
+ */
+export async function takeBase64ElementScreenshot({
+    element,
+    devicePixelRatio,
+    isIOS,
+    methods:{
+        getElementRect,
+        screenShot,
+    },
+    resizeDimensions,
+}:{
+    element: WicElement,
+    devicePixelRatio: number,
+    isIOS: boolean,
+    methods:{
+        getElementRect: GetElementRect,
+        screenShot: TakeScreenShot,
+    }
+    resizeDimensions: ResizeDimensions,
+}): Promise<string> {
+    let base64Image:string
+    // If we are not resizing we can use the default element take screenshot method
+    if (resizeDimensions === DEFAULT_RESIZE_DIMENSIONS){
+        // Await the element, so we will handle the promise if people forget to await the element
+        const awaitedElement = await element
+        if (!isWdioElement(awaitedElement)){
+            console.log('awaitedElement = ', JSON.stringify(awaitedElement))
+        }
+        base64Image = await awaitedElement.takeElementScreenshot(awaitedElement.elementId)
+    } else {
+        base64Image = await takeResizedBase64Screenshot({
+            element,
+            devicePixelRatio,
+            isIOS,
+            methods:{
+                getElementRect,
+                screenShot,
+            },
+            resizeDimensions,
+        })
+    }
+
+    return base64Image
 }

@@ -17,8 +17,8 @@ export interface SaveFullPageMethodOptions extends Partial<Folders> {
     hideScrollBars?: boolean;
     // The amount of milliseconds to wait for a new scroll
     fullPageScrollTimeout?: number;
-    // The resizeDimensions, for backwards compatibility this will be an object or a number
-    resizeDimensions?: ResizeDimensions | number;
+    // The resizeDimensions
+    resizeDimensions?: ResizeDimensions;
     // The padding that needs to be added to the tool bar on iOS and Android
     toolBarShadowPadding?: number;
     // Elements that need to be hidden (visibility: hidden) before saving a screenshot

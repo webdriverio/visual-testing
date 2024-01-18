@@ -152,7 +152,7 @@ export async function determineStatusAddressToolBarRectangles(
 /**
  * Validate that the element is a WebdriverIO element
  */
-function isWdioElement(x: unknown) {
+export function isWdioElement(x: unknown) {
     if (!isObject(x)) {
         return false
     }

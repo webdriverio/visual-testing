@@ -7,7 +7,7 @@ import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterS
 import type { Methods } from '../methods/methods.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
-import type { SaveElementOptions } from './element.interfaces.js'
+import type { SaveElementOptions, WicElement } from './element.interfaces.js'
 import type { ElementRectanglesOptions, RectanglesOutput } from '../methods/rectangles.interfaces.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
@@ -23,9 +23,11 @@ export default async function saveWebElement(
     methods: Methods,
     instanceData: InstanceData,
     folders: Folders,
-    element: HTMLElement,
+    element: HTMLElement | WicElement,
     tag: string,
     saveElementOptions: SaveElementOptions,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isNativeContext: boolean,
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
     const { addressBarShadowPadding, autoElementScroll, formatImageName, logLevel, savePerInstance, toolBarShadowPadding } =

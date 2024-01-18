@@ -150,7 +150,7 @@ export interface CroppedBase64Image {
     isLandscape: boolean;
     logLevel: LogLevel;
     rectangles: RectanglesOutput;
-    resizeDimensions?: number | ResizeDimensions;
+    resizeDimensions?: ResizeDimensions;
 }
 
 export interface RotateBase64ImageOptions {

@@ -50,7 +50,7 @@ export default async function checkAppScreen(
         instanceData,
     })
 
-    // 2a. Determine the compare options
+    // 4a. Determine the compare options
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)
 
     const executeCompareOptions: ImageCompareOptions = {
@@ -79,6 +79,6 @@ export default async function checkAppScreen(
         platformName: instanceData.platformName,
     }
 
-    // 2b Now execute the compare and return the data
+    // 4b Now execute the compare and return the data
     return executeImageCompare(executor, executeCompareOptions, true, isNativeContext)
 }
