@@ -320,16 +320,20 @@ export async function executeImageCompare(
 
     // 4b. Determine the ignore rectangles for the block outs
     const blockOut = 'blockOut' in imageCompareOptions ? imageCompareOptions.blockOut || [] : []
-    const statusAddressToolBarOptions = {
-        blockOutSideBar: imageCompareOptions.blockOutSideBar,
-        blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
-        blockOutToolBar: imageCompareOptions.blockOutToolBar,
-        isHybridApp,
-        isLandscape,
-        isMobile,
-        isViewPortScreenshot,
-        isAndroidNativeWebScreenshot,
-        platformName,
+    const webStatusAddressToolBarOptions = []
+    if (!isNativeContext){
+        const statusAddressToolBarOptions = {
+            blockOutSideBar: imageCompareOptions.blockOutSideBar,
+            blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
+            blockOutToolBar: imageCompareOptions.blockOutToolBar,
+            isHybridApp,
+            isLandscape,
+            isMobile,
+            isViewPortScreenshot,
+            isAndroidNativeWebScreenshot,
+            platformName,
+        }
+        webStatusAddressToolBarOptions.push(...(await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions)) || [])
     }
     const ignoredBoxes = [
         // These come from the method
@@ -338,7 +342,7 @@ export async function executeImageCompare(
         // Need to check if this is the right thing to do for web and mobile browser tests
         ...ignoreRegions,
         // Only get info about the status bars when we are in the web context
-        ...(isNativeContext ? [] :  (await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions)) || [])
+        ...webStatusAddressToolBarOptions
     ]
         .map(
             // 4d. Make sure all the rectangles are equal to the dpr for the screenshot

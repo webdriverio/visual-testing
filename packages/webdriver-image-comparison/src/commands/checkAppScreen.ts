@@ -31,7 +31,7 @@ export default async function checkAppScreen(
         ...checkScreenOptions.wic.compareOptions,
         ...checkScreenOptions.method,
     }
-    const { getElementRect } = methods
+    const { executor, getElementRect } = methods
     const { isAndroid, isMobile } = instanceData
 
     // 2. Take the actual screenshot and retrieve the needed data
@@ -72,15 +72,13 @@ export default async function checkAppScreen(
             savePerInstance: checkScreenOptions.wic.savePerInstance,
         },
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        isHybridApp: checkScreenOptions.wic.isHybridApp,
+        isHybridApp: false,
         isAndroid,
         isLandscape,
         logLevel: checkScreenOptions.wic.logLevel,
         platformName: instanceData.platformName,
     }
 
-    console.log('executeCompareOptions = ', JSON.stringify(executeCompareOptions, null, 2))
-
     // 2b Now execute the compare and return the data
-    return executeImageCompare(methods.executor, executeCompareOptions, false, isNativeContext)
+    return executeImageCompare(executor, executeCompareOptions, true, isNativeContext)
 }

@@ -8,6 +8,20 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 1,
     "width": 1,
@@ -36,6 +50,20 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 1,
     "width": 1,
