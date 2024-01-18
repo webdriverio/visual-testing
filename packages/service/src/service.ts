@@ -13,7 +13,6 @@ import {
     saveTabbablePage,
     checkTabbablePage,
 } from 'webdriver-image-comparison'
-
 import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -138,9 +137,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
                             },
                             getElementRect: this.getElementRect.bind(currentBrowser),
-                            getSettings: this.getSettings.bind(currentBrowser),
                             screenShot: this.takeScreenshot.bind(currentBrowser),
-                            updateSettings: this.updateSettings.bind(currentBrowser),
                         },
                         instanceData,
                         getFolders(elementOptions, self.folders),

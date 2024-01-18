@@ -1,5 +1,7 @@
 import type { Folders } from '../base.interfaces.js'
+import { methodCompareOptions } from '../helpers/options.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
+import { executeImageCompare } from '../methods/images.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
 import type { Methods } from '../methods/methods.interfaces.js'
 import type { CheckElementOptions, WicElement } from './element.interfaces.js'
@@ -18,23 +20,12 @@ export default async function checkAppElement(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
-    // Visual module steps
-    //
-    // 1a. Set some variables
-    // 1b. Set the method options to the right values
-    // 2.  Prepare the beforeScreenshot
-    // Scroll the element into top of the viewport and return the current scroll position
-    // 3.  Take the screenshot
-    // 4.  Determine the rectangles
-    // 5.  Make a cropped base64 image with resizeDimensions
-    // 6.  The after the screenshot methods
-    // 7.  Return the data
+    // 1. Set some vars
+    const { isMobile } = instanceData
+    const { executor } = methods
 
-    // The native app compare module steps
-    //
-    // Determine the element compare options
-    // Save the element and return the data
-    const base64Image: any = await saveAppElement(
+    // 2. Save the element and return the data
+    const { devicePixelRatio, fileName, isLandscape } = await saveAppElement(
         methods,
         instanceData,
         folders,
@@ -43,12 +34,35 @@ export default async function checkAppElement(
         checkElementOptions,
         isNativeContext,
     )
+    // @TODO: This is something for the future, to allow ignore regions on the element itself.
+    // This will become a feature request
 
-    console.log('base64Image', base64Image)
-    // Check if the baseline image exists
-    // Determine the ignore rectangles
-    // Execute the compare
-    // Return compare results and if a baseline image was created
+    // 3a. Determine the options
+    const compareOptions = methodCompareOptions(checkElementOptions.method)
+    const executeCompareOptions = {
+        devicePixelRatio,
+        compareOptions: {
+            wic: checkElementOptions.wic.compareOptions,
+            method: compareOptions,
+        },
+        fileName,
+        folderOptions: {
+            autoSaveBaseline: checkElementOptions.wic.autoSaveBaseline,
+            actualFolder: folders.actualFolder,
+            baselineFolder: folders.baselineFolder,
+            diffFolder: folders.diffFolder,
+            browserName: instanceData.browserName,
+            deviceName: instanceData.deviceName,
+            isMobile,
+            savePerInstance: checkElementOptions.wic.savePerInstance,
+        },
+        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
+        isHybridApp: checkElementOptions.wic.isHybridApp,
+        isLandscape,
+        logLevel: checkElementOptions.wic.logLevel,
+        platformName: instanceData.platformName,
+    }
 
-    return 0
+    // 3b Now execute the compare and return the data
+    return executeImageCompare(executor, executeCompareOptions)
 }

@@ -145,10 +145,7 @@ export async function getInstanceData(
         deviceScreenSize.height = height
         deviceScreenSize.width = width
 
-        console.log(JSON.stringify(deviceScreenSize, null, 2))
-
-        // This is al based on PORTRAIT mode
-
+        // @TODO: This is al based on PORTRAIT mode
         if (isAndroid && currentBrowser.capabilities) {
             // @ts-ignore
             if (currentBrowser.capabilities?.pixelRatio !== undefined){
@@ -173,7 +170,7 @@ export async function getInstanceData(
                 Object.keys(IOS_OFFSETS[deviceType]).indexOf(portraitHeight.toString()) > -1 ? portraitHeight : defaultPortraitHeight
             const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight].PORTRAIT
             // NOTE: The values for iOS are based on CSS pixels, so we need to multiply them with the devicePixelRatio,
-            // This will not be done here but in a central place
+            // This will NOT be done here but in a central place
             devicePlatformRect.statusBar = {
                 y: 0,
                 x: 0,
