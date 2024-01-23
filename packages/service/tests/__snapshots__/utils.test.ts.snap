@@ -23,6 +23,20 @@ exports[`utils > getInstanceData > should return correct instance data when JSON
   "browserVersion": "not-known",
   "deviceName": "",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 0,
     "width": 0,
@@ -45,6 +59,20 @@ exports[`utils > getInstanceData > should return correct instance data when W3C 
   "browserVersion": "not-known",
   "deviceName": "appium:devicename",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 0,
     "width": 0,
@@ -67,6 +95,20 @@ exports[`utils > getInstanceData > should return instance data when all capabili
   "browserVersion": "not-known",
   "deviceName": "",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 0,
     "width": 0,
@@ -89,6 +131,20 @@ exports[`utils > getInstanceData > should return instance data when log name is 
   "browserVersion": "not-known",
   "deviceName": "",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 0,
     "width": 0,
@@ -111,6 +167,20 @@ exports[`utils > getInstanceData > should return instance data when the appium l
   "browserVersion": "not-known",
   "deviceName": "",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 0,
     "width": 0,
@@ -133,6 +203,20 @@ exports[`utils > getInstanceData > should return instance data when the minimum 
   "browserVersion": "not-known",
   "deviceName": "",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 0,
     "width": 0,
@@ -155,6 +239,20 @@ exports[`utils > getInstanceData > should return instance data when the sauce lo
   "browserVersion": "not-known",
   "deviceName": "",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 0,
     "width": 0,
@@ -177,6 +275,20 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
   "browserVersion": "not-known",
   "deviceName": "",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 0,
     "width": 0,
@@ -199,6 +311,20 @@ exports[`utils > getInstanceData > should return platformName based on the curre
   "browserVersion": "not-known",
   "deviceName": "",
   "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 0,
     "width": 0,
