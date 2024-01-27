@@ -17,7 +17,6 @@ export default async function checkAppElement(
     element: WicElement,
     tag: string,
     checkElementOptions: CheckElementOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
     // 1. Set some vars

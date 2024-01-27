@@ -93,7 +93,7 @@ declare global {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R, T> {
             /**
-             * cks that if current screen matches with snapshot of baseline.
+             * Checks that if current screen matches with snapshot of baseline.
              * @param tag snapshot name
              * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
              * @param options options to pass into the `checkScreen` method

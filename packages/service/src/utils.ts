@@ -1,4 +1,5 @@
 import type { Capabilities } from '@wdio/types'
+import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
 import { IOS_OFFSETS } from 'webdriver-image-comparison'
 import type {
     Folders,
@@ -300,37 +301,9 @@ export function determineNativeContext(
     driver: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
 ): boolean {
     if (driver.isMobile) {
-        // @todo: Figure this one out, according to the types this is not possible, but it returns for example this
-        // driver {
-        //   "sessionId": "6f546a6a-5f6a-4b7e-a2f9-e362cd7155b2",
-        //   "capabilities": {
-        //     "webStorageEnabled": false,
-        //     "locationContextEnabled": false,
-        //     "browserName": "",
-        //     "platform": "MAC",
-        //     "javascriptEnabled": true,
-        //     "databaseEnabled": false,
-        //     "takesScreenshot": true,
-        //     "networkConnectionEnabled": false,
-        //     "platformName": "iOS",
-        //     "wdio-ics:options": {
-        //       "logName": "Iphone15Portrait17",
-        //       "commands": []
-        //     },
-        //     "automationName": "XCUITest",
-        //     "deviceName": "iPhone 15",
-        //     "platformVersion": "17.2",
-        //     "app": "/Users/wimselles/Git/wdio/visual-testing/apps/ios.simulator.wdio.native.app.v1.0.8.zip",
-        //     "orientation": "PORTRAIT",
-        //     "newCommandTimeout": 240,
-        //     "language": "en",
-        //     "locale": "en",
-        //     "udid": "937B028C-B107-4B94-B4D5-1297A1FEDC34"
-        //   }
-        // }
-
-        // @ts-ignore
-        return !!driver.capabilities?.browserName === false && driver.capabilities?.app !== undefined && driver.capabilities?.autoWebview !== true
+        return !!(driver.requestedCapabilities as WebdriverIO.Capabilities)?.browserName === false
+            && (driver.requestedCapabilities as AppiumCapabilities)?.['appium:app'] !== undefined
+            && (driver.requestedCapabilities as AppiumCapabilities)?.['appium:autoWebview'] !== true
     }
 
     return false
