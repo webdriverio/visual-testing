@@ -149,46 +149,20 @@ async function getMobileInstanceData({
 /**
  * Get the instance data
  */
-export async function getInstanceData(
-    capabilities: WebdriverIO.Capabilities,
-    currentBrowser: WebdriverIO.Browser,
-): Promise<InstanceData> {
-    console.log('capabilities:', JSON.stringify(capabilities, null, 2))
-    console.log('currentBrowser.capabilities:', JSON.stringify(currentBrowser.capabilities, null, 2))
-    console.log('currentBrowser.requestedCapabilities:', JSON.stringify(currentBrowser.requestedCapabilities, null, 2))
-
-    // Generic data         | capabilities | currentCapabilities |requestedCapabilities
-    // browserName          | x            | x                   | x
-    // browserVersion       | x            | x (the "official")  | x (not always)
-    // platformName         | x            | x                   | x
-    // logName              | x            | x                   | x
-    // name                 | x            | x                   | x
-
-    // Mobile data          | capabilities | currentCapabilities |requestedCapabilities
-    // appName              | x            | x                   | x
-    // deviceName           | x            | x (the "official")  | x
-    // devicePixelRatio     |              |                     | x (only for Android)
-    // devicePlatformRect   |              | x (only for Android)|
-    // deviceScreenSize     |              | x (only for Android)|
-    // isAndroid            |              |                     |
-    // isIOS                |              |                     |
-    // isMobile             |              |                     |
-    // nativeWebScreenshot  |              |                     |
-    // Android only         | 'appium:'    | x                   |x
-    // platformVersion      | x            | x (the "official")  | x
-
+export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Promise<InstanceData> {
+    const NOT_KNOWN = 'not-known'
     const { capabilities: currentCapabilities, requestedCapabilities } = currentBrowser
     const {
-        browserName: rawBrowserName,
-        browserVersion: rawBrowserVersion,
-        platformName: rawPlatformName,
+        browserName: rawBrowserName = NOT_KNOWN,
+        browserVersion: rawBrowserVersion = NOT_KNOWN,
+        platformName: rawPlatformName = NOT_KNOWN,
     } = currentCapabilities as WebdriverIO.Capabilities
 
     // Generic data
-    const browserName = (rawBrowserName === undefined || rawBrowserName === '') ? 'not-known' : rawBrowserName.toLowerCase()
-    const browserVersion = (rawBrowserVersion === undefined || rawBrowserVersion === '') ? 'not-known' : rawBrowserVersion.toLowerCase()
+    const browserName = rawBrowserName === '' ? NOT_KNOWN : rawBrowserName.toLowerCase()
+    const browserVersion = rawBrowserVersion === '' ? NOT_KNOWN : rawBrowserVersion.toLowerCase()
     let devicePixelRatio = 1
-    const platformName = (rawPlatformName === undefined || rawPlatformName === '') ? 'not-known' : rawPlatformName.toLowerCase()
+    const platformName = rawPlatformName === '' ? NOT_KNOWN : rawPlatformName.toLowerCase()
     const logName =
         'wdio-ics:options' in requestedCapabilities
             ? (requestedCapabilities['wdio-ics:options'] as WdioIcsOptions)?.logName ?? ''
@@ -204,19 +178,19 @@ export async function getInstanceData(
         // We use a few `@ts-ignore` here because this is returned by the driver
         // and not recognized by the types because they are not requested
         // @ts-ignore
-        app: rawApp,
+        app: rawApp = NOT_KNOWN,
         // @ts-ignore
-        deviceName: rawDeviceName,
+        deviceName: rawDeviceName = NOT_KNOWN,
         // @ts-ignore
-        platformVersion: rawPlatformVersion,
+        platformVersion: rawPlatformVersion = NOT_KNOWN,
     } = currentCapabilities as WebdriverIO.Capabilities
     const { 'appium:deviceName': requestedDeviceName } = requestedCapabilities as AppiumCapabilities
-    const appName = rawApp
-        ? (rawApp?.replace(/\\/g, '/')?.split('/')?.pop()?.replace(/[^a-zA-Z0-9]/g, '_') ?? 'not-known')
-        :'not-known'
+    const appName = rawApp !== NOT_KNOWN
+        ? rawApp.replace(/\\/g, '/').split('/').pop().replace(/[^a-zA-Z0-9]/g, '_')
+        : NOT_KNOWN
     const deviceName = (requestedDeviceName || rawDeviceName || '').toLowerCase()
     const nativeWebScreenshot = !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
-    const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? 'not-known' : rawPlatformVersion.toLowerCase()
+    const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? NOT_KNOWN : rawPlatformVersion.toLowerCase()
 
     const { devicePixelRatio: mobileDevicePixelRatio, devicePlatformRect, deviceScreenSize, } = await getMobileInstanceData({ currentBrowser, isAndroid, isMobile })
     devicePixelRatio = isMobile ? mobileDevicePixelRatio : devicePixelRatio

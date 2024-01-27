@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { determineNativeContext, getBrowserObject, getDevicePixelRatio, getFolders, getInstanceData, getScreenshotSize } from '../src/utils.js'
 import type { AppiumCapabilities } from '@wdio/types/build/Capabilities.js'
 
@@ -71,101 +71,255 @@ describe('utils', () => {
     })
 
     describe('getInstanceData', () => {
-        const capabilities = {
-            browserName: 'chrome',
-            version: '75.123',
-            platformName: 'osx',
-            platformVersion: '12',
-        } as WebdriverIO.Capabilities
-        const browser = {
-            capabilities,
-            requestedCapabilities: capabilities,
+        const DEFAULT_DESKTOP_BROWSER = {
+            capabilities:{
+                browserName: 'chrome',
+                browserVersion: '75.123',
+                platformName: 'osx',
+            },
+            isAndroid: false,
+            isIOS: false,
+            isMobile: false,
+            requestedCapabilities: {
+                browserName: 'chrome',
+                browserVersion: '75.123',
+                platformName: 'osx',
+            },
         } as any as WebdriverIO.Browser
+        const createDriverMock = (customProps: Partial<WebdriverIO.Browser>) => {
+            return ({ ...DEFAULT_DESKTOP_BROWSER, ...customProps }) as WebdriverIO.Browser
+        }
+
+        afterEach(() => {
+            vi.restoreAllMocks()
+        })
 
         it('should return instance data when the minimum of capabilities is provided', async() => {
-            const capabilities = {} as WebdriverIO.Capabilities
-            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
+            const driver = createDriverMock({})
+            expect(await getInstanceData(driver)).toMatchSnapshot()
         })
 
         it('should return instance data when wdio-ics option log name is provided', async() => {
-            const capabilities = {
-                browserName: 'chrome',
-                'wdio-ics:options': {
-                    logName: 'wdio-ics-logName',
+            const driver = createDriverMock({
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    'wdio-ics:options': {
+                        // @ts-ignore
+                        logName: 'wdio-ics-logName',
+                    },
                 },
-            } as WebdriverIO.Capabilities
-            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
         })
 
-        it('should return instance data when log name is provided', async () => {
-            const capabilities = {
-                browserName: 'chrome',
-                logName: 'logName',
-                'wdio-ics:options': {
-                    foo: 'bar',
+        it('should return instance data when wdio-ics option name is provided', async() => {
+            const driver = createDriverMock({
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    'wdio-ics:options': {
+                        // @ts-ignore
+                        name: 'wdio-ics-name',
+                    },
                 },
-            } as WebdriverIO.Capabilities
-            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
         })
 
-        it('should return instance data when the sauce log name is provided', async() => {
-            const capabilities = {
-                browserName: 'chrome',
-                'sauce:options': {
-                    logName: 'sauceLogName',
-                },
-            } as WebdriverIO.Capabilities
-            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
+        it('should return instance data for an Android mobile app', async() => {
+            // @ts-ignore
+            const driver = createDriverMock({
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    // @ts-ignore
+                    deviceName: 'Android Emulator',
+                    platformVersion: '14.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                    pixelRatio: 3.5,
+                    statBarHeight: 144,
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    'appium:deviceName': 'Android Emulator',
+                    'appium:platformVersion': '14.0',
+                    'appium:app': '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                } as WebdriverIO.Capabilities,
+                isAndroid: true,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
         })
 
-        it('should return instance data when the appium log name is provided', async() => {
-            const capabilities = {
-                browserName: 'chrome',
-                'appium:options': {
-                    logName: 'appiumLogName',
-                },
-            } as WebdriverIO.Capabilities
-            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
+        it('should return instance data for an iOS iPhone mobile app', async() => {
+            const mockScreenshot = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAoCAIAAABxU02MAAAAJElEQVR4nO3LMQEAAAgDILV/59nBV/jpJHU15ynLsizLsvw+L/3pA02VPl1RAAAAAElFTkSuQmCC'
+            // @ts-ignore
+            const driver =  createDriverMock( {
+                ...DEFAULT_DESKTOP_BROWSER,
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    // @ts-ignore
+                    deviceName: 'iPhone 15 Pro',
+                    platformName: 'iOS',
+                    platformVersion: '17.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/ios.zip',
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    ...{
+                        browserName: '',
+                        browserVersion: '',
+                        'appium:deviceName': 'iPhone 15 Pro',
+                        platformName: 'iOS',
+                        'appium:platformVersion': '17.0',
+                        'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
+                    },
+                } as WebdriverIO.Capabilities,
+                isAndroid: false,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 852, width: 393 }),
+                takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
         })
 
-        it('should return instance data when all capabilities are provided', async() => {
-            const capabilities = {
-                browserName: 'chrome',
-                logName: 'logName',
-                deviceName: 'deviceName',
-                platformName: 'platformName',
-            } as WebdriverIO.Capabilities
-            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
+        it('should return instance data for an iOS iPad mobile app', async() => {
+            const mockScreenshot = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAoCAIAAABxU02MAAAAJElEQVR4nO3LMQEAAAgDILV/59nBV/jpJHU15ynLsizLsvw+L/3pA02VPl1RAAAAAElFTkSuQmCC'
+            // @ts-ignore
+            const driver =  createDriverMock( {
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+
+                    browserName: '',
+                    browserVersion: '',
+                    // @ts-ignore
+                    deviceName: 'iPad',
+                    platformName: 'iOS',
+                    platformVersion: '17.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/ios.zip',
+
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    'appium:deviceName': 'iPad',
+                    platformName: 'iOS',
+                    'appium:platformVersion': '17.0',
+                    'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
+
+                } as WebdriverIO.Capabilities,
+                isAndroid: false,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 1194, width: 834 }),
+                takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
         })
 
-        it('should return platformName based on the currentCapabilities.platform', async() => {
-            const capabilities = {}
-            expect(await getInstanceData(capabilities, {
-                ...browser,
-                platform: 'browser.platform'
-            } as any)).toMatchSnapshot()
+        it('should return instance data for an iOS iPad mobile app in landscape mode', async() => {
+            const mockScreenshot = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAoCAIAAABxU02MAAAAJElEQVR4nO3LMQEAAAgDILV/59nBV/jpJHU15ynLsizLsvw+L/3pA02VPl1RAAAAAElFTkSuQmCC'
+            // @ts-ignore
+            const driver =  createDriverMock( {
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+
+                    browserName: '',
+                    browserVersion: '',
+                    // @ts-ignore
+                    deviceName: 'iPad',
+                    platformName: 'iOS',
+                    platformVersion: '17.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/ios.zip',
+
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+
+                    browserName: '',
+                    browserVersion: '',
+                    'appium:deviceName': 'iPad',
+                    platformName: 'iOS',
+                    'appium:platformVersion': '17.0',
+                    'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
+
+                } as WebdriverIO.Capabilities,
+                isAndroid: false,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 834, width: 1194 }),
+                takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
         })
 
-        it('should return correct instance data when JSONWP Mobile capabilities are provided', async() => {
-            const capabilities = {
-                browserName: 'chrome',
-                logName: 'logName',
-                deviceName: 'deviceName',
-                platformName: 'platformName',
-                nativeWebScreenshot: true,
-            } as WebdriverIO.Capabilities
-            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
+        it('should return instance data for an iOS iPad mobile app for a non matching screensize', async() => {
+            const mockScreenshot = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAoCAIAAABxU02MAAAAJElEQVR4nO3LMQEAAAgDILV/59nBV/jpJHU15ynLsizLsvw+L/3pA02VPl1RAAAAAElFTkSuQmCC'
+            // @ts-ignore
+            const driver =  createDriverMock({
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    // @ts-ignore
+                    deviceName: 'iPad',
+                    platformName: 'iOS',
+                    platformVersion: '17.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/ios.zip',
+
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    'appium:deviceName': 'iPad',
+                    platformName: 'iOS',
+                    'appium:platformVersion': '17.0',
+                    'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
+                } as WebdriverIO.Capabilities,
+                isAndroid: false,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 888, width: 1234 }),
+                takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
         })
 
-        it('should return correct instance data when W3C Mobile capabilities are provided', async () => {
-            const capabilities = {
-                browserName: 'chrome',
-                logName: 'logName',
-                'appium:deviceName': 'appium:deviceName',
-                platformName: 'platformName',
-                'appium:nativeWebScreenshot': true,
-            } as WebdriverIO.Capabilities
-            expect(await getInstanceData(capabilities, browser)).toMatchSnapshot()
+        it('should return instance data for a mobile app with incomplete capability data', async() => {
+            // @ts-ignore
+            const driver =  createDriverMock({
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: '',
+                    // @ts-ignore
+                    deviceName: '',
+                    platformVersion: '',
+                    app: '/',
+                    pixelRatio: 3.5,
+                    statBarHeight: 144,
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: '',
+                    'appium:deviceName': '',
+                    'appium:platformVersion': '',
+                    'appium:app': '/',
+                } as WebdriverIO.Capabilities,
+                isAndroid: true,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
         })
     })
 

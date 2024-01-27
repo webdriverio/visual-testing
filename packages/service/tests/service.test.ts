@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
 import { expect as wdioExpect } from '@wdio/globals'
-
 import VisualService from '../src/index.js'
 
 vi.mock('webdriver-image-comparison', () => ({
@@ -27,6 +26,7 @@ describe('@wdio/visual-service', () => {
         const browser = {
             isMultiremote: false,
             addCommand: vi.fn(),
+            capabilities: {},
             requestedCapabilities: {}
         } as any as WebdriverIO.Browser
         await service.before({}, [], browser)
@@ -38,6 +38,7 @@ describe('@wdio/visual-service', () => {
         const browser = {
             isMultiremote: false,
             addCommand: vi.fn(),
+            capabilities: {},
             requestedCapabilities: {}
         } as any as WebdriverIO.Browser
         await service.before({}, [], browser)
@@ -56,6 +57,7 @@ describe('@wdio/visual-service', () => {
         const service = new VisualService({})
         const browserInstance = {
             addCommand: vi.fn(),
+            capabilities: {},
             requestedCapabilities: {}
         }
         const browser = {

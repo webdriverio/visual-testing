@@ -1,6 +1,6 @@
 import logger from '@wdio/logger'
 import { expect } from '@wdio/globals'
-import type { Capabilities, Options } from '@wdio/types'
+import type { Capabilities } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import {
     BaseClass,
@@ -51,7 +51,7 @@ export default class WdioImageComparisonService extends BaseClass {
 
         if (!this._browser.isMultiremote) {
             log.info('Adding commands to global browser')
-            await this.#addCommandsToBrowser(capabilities, this._browser)
+            await this.#addCommandsToBrowser(this._browser)
         } else {
             await this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
         }
@@ -82,10 +82,7 @@ export default class WdioImageComparisonService extends BaseClass {
         for (const browserName of browserNames) {
             const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
             const browserInstance = multiremoteBrowser.getInstance(browserName)
-            await this.#addCommandsToBrowser(
-                (capabilities[browserName] as Options.MultiRemoteBrowserOptions).capabilities,
-                browserInstance
-            )
+            await this.#addCommandsToBrowser(browserInstance)
         }
 
         /**
@@ -114,11 +111,8 @@ export default class WdioImageComparisonService extends BaseClass {
         }
     }
 
-    async #addCommandsToBrowser(
-        capabilities: WebdriverIO.Capabilities,
-        currentBrowser: WebdriverIO.Browser
-    ) {
-        const instanceData = await getInstanceData(capabilities, currentBrowser)
+    async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
+        const instanceData = await getInstanceData(currentBrowser)
         const self = this
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
