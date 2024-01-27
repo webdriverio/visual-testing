@@ -67,96 +67,53 @@ export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {heigh
 }
 
 /**
- * Get the instance data
+ * Get the mobile instance data
  */
-export async function getInstanceData(
-    capabilities: WebdriverIO.Capabilities,
-    currentBrowser: WebdriverIO.Browser,
-): Promise<InstanceData> {
-    // @todo: Figure this one out, it might be that this can be simplified
-    // we might be able to bring this back to the currentBrowser.requestedCapabilities, we would only miss
-    // "protocol": "http",
-    // "hostname": "127.0.0.1",
-    // "path": "/",
-    // "port": 4723
-    // console.log('capabilities:', JSON.stringify(capabilities, null, 2))
-    // console.log('currentBrowser.capabilities:', JSON.stringify(currentBrowser.capabilities, null, 2))
-    // console.log('currentBrowser.requestedCapabilities:', JSON.stringify(currentBrowser.requestedCapabilities, null, 2))
-    const currentCapabilities = (currentBrowser.requestedCapabilities as Capabilities.W3CCapabilities).alwaysMatch
-        ? (currentBrowser.requestedCapabilities as Capabilities.W3CCapabilities).alwaysMatch
-        : (currentBrowser.requestedCapabilities as WebdriverIO.Capabilities)
-    const browserName = (
-        capabilities.browserName ||
-        currentCapabilities.browserName ||
-        'not-known'
-    ).toLowerCase()
-    const browserVersion = (
-        capabilities.browserVersion ||
-        currentCapabilities.browserVersion ||
-        'not-known'
-    ).toLowerCase()
-    const logName =
-        'wdio-ics:options' in capabilities
-            ? (capabilities['wdio-ics:options'] as WdioIcsOptions)?.logName ??
-              ''
-            : ''
-    const name =
-        'wdio-ics:options' in capabilities
-            ? (capabilities['wdio-ics:options'] as WdioIcsOptions)?.name ?? ''
-            : ''
-
-    // For mobile
-    const platformName = (
-        capabilities.platformName ||
-        currentCapabilities.platformName ||
-        'not-known'
-    ).toLowerCase()
-    const platformVersion = (
-        capabilities['appium:platformVersion'] ||
-        (currentCapabilities as Capabilities.AppiumCapabilities)[
-            'appium:platformVersion'
-        ] ||
-        'not-known'
-    ).toLowerCase()
-    const deviceName = (capabilities['appium:deviceName'] || '').toLowerCase()
-    const nativeWebScreenshot = !!(
-        (capabilities as Capabilities.AppiumAndroidCapabilities)[
-            'appium:nativeWebScreenshot'
-        ] ||
-        (currentCapabilities as Capabilities.AppiumAndroidCapabilities)[
-            'appium:nativeWebScreenshot'
-        ]
-    )
-    const appName = 'appium:app' in capabilities
-        ? (capabilities['appium:app']?.replace(/\\/g, '/')?.split('/')?.pop()?.replace(/[^a-zA-Z0-9]/g, '_') ?? 'not-known')
-        :'not-known'
-
-    const { isAndroid, isIOS, isMobile } = currentBrowser
+async function getMobileInstanceData({
+    currentBrowser,
+    isAndroid,
+    isMobile
+}: {
+    currentBrowser: WebdriverIO.Browser;
+    isAndroid:boolean;
+    isMobile: boolean
+}): Promise<{
+    devicePixelRatio: number;
+    devicePlatformRect: {
+        statusBar: { height: number; x: number; width: number; y: number };
+        homeBar: { height: number; x: number; width: number; y: number };
+    };
+    deviceScreenSize: { height: number; width: number };
+}>{
     const deviceScreenSize = {
         height: 0,
         width: 0,
     }
-    let devicePixelRatio = 1
     const devicePlatformRect = {
         statusBar: { height: 0, x: 0, width: 0, y: 0 },
         homeBar: { height: 0, x: 0, width: 0, y: 0 },
     }
-    if (isMobile) {
+    let devicePixelRatio = 1
+
+    if (isMobile){
+        const currentDriverCapabilities = currentBrowser.capabilities
         const { height, width } = await currentBrowser.getWindowSize()
         deviceScreenSize.height = height
         deviceScreenSize.width = width
 
         // @TODO: This is al based on PORTRAIT mode
-        if (isAndroid && currentBrowser.capabilities) {
+        if (isAndroid && currentDriverCapabilities) {
+            // We use a few `@ts-ignore` here because `pixelRatio` and `statBarHeight`
+            // are returned by the driver, and not recognized by the types because they are not requested
             // @ts-ignore
-            if (currentBrowser.capabilities?.pixelRatio !== undefined){
+            if (currentDriverCapabilities?.pixelRatio !== undefined){
                 // @ts-ignore
-                devicePixelRatio = currentBrowser.capabilities?.pixelRatio
+                devicePixelRatio = currentDriverCapabilities?.pixelRatio
             }
             // @ts-ignore
-            if (currentBrowser.capabilities?.statBarHeight !== undefined){
+            if (currentDriverCapabilities?.statBarHeight !== undefined){
                 // @ts-ignore
-                devicePlatformRect.statusBar.height = currentBrowser.capabilities?.statBarHeight
+                devicePlatformRect.statusBar.height = currentDriverCapabilities?.statBarHeight
                 devicePlatformRect.statusBar.width = width
             }
         } else {
@@ -168,7 +125,7 @@ export async function getInstanceData(
             const defaultPortraitHeight = isIphone ? 667 : 1024
             const portraitHeight = width > height ? width : height
             const offsetPortraitHeight =
-                Object.keys(IOS_OFFSETS[deviceType]).indexOf(portraitHeight.toString()) > -1 ? portraitHeight : defaultPortraitHeight
+            Object.keys(IOS_OFFSETS[deviceType]).indexOf(portraitHeight.toString()) > -1 ? portraitHeight : defaultPortraitHeight
             const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight].PORTRAIT
             // NOTE: The values for iOS are based on CSS pixels, so we need to multiply them with the devicePixelRatio,
             // This will NOT be done here but in a central place
@@ -182,91 +139,88 @@ export async function getInstanceData(
         }
     }
 
-    // For Mobile we can already get this data
-    // Android
-    // currentBrowser =  {
-    //   "sessionId": "4328ba3b-618c-4068-8157-2531fb24cd3d",
-    //   "capabilities": {
-    //     "platformName": "Android",
-    //     "wdio-ics:options": {
-    //       "logName": "Pixel_7_pro_android_14_api_34_ChromeDriver_Portrait14",
-    //       "commands": []
-    //     },
-    //     "automationName": "UIAutomator2",
-    //     "deviceName": "emulator-5554",
-    //     "platformVersion": "14",
-    //     "app": "/Users/wimselles/Git/wdio/visual-testing/apps/android.wdio.native.app.v1.0.8.apk",
-    //     "orientation": "PORTRAIT",
-    //     "newCommandTimeout": 240,
-    //     "platform": "LINUX",
-    //     "webStorageEnabled": false,
-    //     "takesScreenshot": true,
-    //     "javascriptEnabled": true,
-    //     "databaseEnabled": false,
-    //     "networkConnectionEnabled": true,
-    //     "locationContextEnabled": false,
-    //     "warnings": {},
-    //     "desired": {
-    //       "platformName": "Android",
-    //       "wdio-ics:options": {
-    //         "logName": "Pixel_7_pro_android_14_api_34_ChromeDriver_Portrait14",
-    //         "commands": []
-    //       },
-    //       "automationName": "UIAutomator2",
-    //       "deviceName": "Pixel_7_Pro_Android_14_API_34",
-    //       "platformVersion": "14.0",
-    //       "app": "/Users/wimselles/Git/wdio/visual-testing/apps/android.wdio.native.app.v1.0.8.apk",
-    //       "orientation": "PORTRAIT",
-    //       "newCommandTimeout": 240
-    //     },
-    //     "deviceUDID": "emulator-5554",
-    //     "appPackage": "com.wdiodemoapp",
-    //     "pixelRatio": "3.5",
-    //     "statBarHeight": 144,
-    //     "viewportRect": {
-    //       "left": 0,
-    //       "top": 144,
-    //       "width": 1440,
-    //       "height": 2976
-    //     },
-    //     "deviceApiLevel": 34,
-    //     "deviceManufacturer": "Google",
-    //     "deviceModel": "sdk_gphone64_arm64",
-    //     "deviceScreenSize": "1440x3120",
-    //     "deviceScreenDensity": 560
-    //   }
-    // }
+    return {
+        devicePixelRatio,
+        devicePlatformRect,
+        deviceScreenSize,
+    }
+}
 
-    // iOS
-    // currentBrowser =  {
-    //   "sessionId": "e1628f05-f4fd-4f0d-b6be-1b1defad6da2",
-    //   "capabilities": {
-    //     "webStorageEnabled": false,
-    //     "locationContextEnabled": false,
-    //     "browserName": "",
-    //     "platform": "MAC",
-    //     "javascriptEnabled": true,
-    //     "databaseEnabled": false,
-    //     "takesScreenshot": true,
-    //     "networkConnectionEnabled": false,
-    //     "platformName": "iOS",
-    //     "wdio-ics:options": {
-    //       "logName": "Iphone15Portrait17",
-    //       "commands": []
-    //     },
-    //     "automationName": "XCUITest",
-    //     "deviceName": "iPhone 15",
-    //     "platformVersion": "17.2",
-    //     "app": "/Users/wimselles/Git/wdio/visual-testing/apps/ios.simulator.wdio.native.app.v1.0.8.zip",
-    //     "orientation": "PORTRAIT",
-    //     "newCommandTimeout": 240,
-    //     "language": "en",
-    //     "locale": "en",
-    //     "includeSafariInWebviews": true,
-    //     "webviewConnectTimeout": 5000,
-    //     "udid": "937B028C-B107-4B94-B4D5-1297A1FEDC34"
-    //   }
-    // }
+/**
+ * Get the instance data
+ */
+export async function getInstanceData(
+    capabilities: WebdriverIO.Capabilities,
+    currentBrowser: WebdriverIO.Browser,
+): Promise<InstanceData> {
+    console.log('capabilities:', JSON.stringify(capabilities, null, 2))
+    console.log('currentBrowser.capabilities:', JSON.stringify(currentBrowser.capabilities, null, 2))
+    console.log('currentBrowser.requestedCapabilities:', JSON.stringify(currentBrowser.requestedCapabilities, null, 2))
+
+    // Generic data         | capabilities | currentCapabilities |requestedCapabilities
+    // browserName          | x            | x                   | x
+    // browserVersion       | x            | x (the "official")  | x (not always)
+    // platformName         | x            | x                   | x
+    // logName              | x            | x                   | x
+    // name                 | x            | x                   | x
+
+    // Mobile data          | capabilities | currentCapabilities |requestedCapabilities
+    // appName              | x            | x                   | x
+    // deviceName           | x            | x (the "official")  | x
+    // devicePixelRatio     |              |                     | x (only for Android)
+    // devicePlatformRect   |              | x (only for Android)|
+    // deviceScreenSize     |              | x (only for Android)|
+    // isAndroid            |              |                     |
+    // isIOS                |              |                     |
+    // isMobile             |              |                     |
+    // nativeWebScreenshot  |              |                     |
+    // Android only         | 'appium:'    | x                   |x
+    // platformVersion      | x            | x (the "official")  | x
+
+    const { capabilities: currentCapabilities, requestedCapabilities } = currentBrowser
+    const {
+        browserName: rawBrowserName,
+        browserVersion: rawBrowserVersion,
+        platformName: rawPlatformName,
+    } = currentCapabilities as WebdriverIO.Capabilities
+
+    // Generic data
+    const browserName = (rawBrowserName === undefined || rawBrowserName === '') ? 'not-known' : rawBrowserName.toLowerCase()
+    const browserVersion = (rawBrowserVersion === undefined || rawBrowserVersion === '') ? 'not-known' : rawBrowserVersion.toLowerCase()
+    let devicePixelRatio = 1
+    const platformName = (rawPlatformName === undefined || rawPlatformName === '') ? 'not-known' : rawPlatformName.toLowerCase()
+    const logName =
+        'wdio-ics:options' in requestedCapabilities
+            ? (requestedCapabilities['wdio-ics:options'] as WdioIcsOptions)?.logName ?? ''
+            : ''
+    const name =
+        'wdio-ics:options' in requestedCapabilities
+            ? (requestedCapabilities['wdio-ics:options'] as WdioIcsOptions)?.name ?? ''
+            : ''
+
+    // Mobile data
+    const { isAndroid, isIOS, isMobile } = currentBrowser
+    const {
+        // We use a few `@ts-ignore` here because this is returned by the driver
+        // and not recognized by the types because they are not requested
+        // @ts-ignore
+        app: rawApp,
+        // @ts-ignore
+        deviceName: rawDeviceName,
+        // @ts-ignore
+        platformVersion: rawPlatformVersion,
+    } = currentCapabilities as WebdriverIO.Capabilities
+    const { 'appium:deviceName': requestedDeviceName } = requestedCapabilities as AppiumCapabilities
+    const appName = rawApp
+        ? (rawApp?.replace(/\\/g, '/')?.split('/')?.pop()?.replace(/[^a-zA-Z0-9]/g, '_') ?? 'not-known')
+        :'not-known'
+    const deviceName = (requestedDeviceName || rawDeviceName || '').toLowerCase()
+    const nativeWebScreenshot = !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
+    const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? 'not-known' : rawPlatformVersion.toLowerCase()
+
+    const { devicePixelRatio: mobileDevicePixelRatio, devicePlatformRect, deviceScreenSize, } = await getMobileInstanceData({ currentBrowser, isAndroid, isMobile })
+    devicePixelRatio = isMobile ? mobileDevicePixelRatio : devicePixelRatio
+
     return {
         appName,
         browserName,
@@ -287,7 +241,7 @@ export async function getInstanceData(
 }
 
 /**
- * traverse up the scope chain until browser element was reached
+ * Traverse up the scope chain until browser element was reached
  */
 export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browser): WebdriverIO.Browser {
     const elemObject = elem as WebdriverIO.Element
@@ -307,5 +261,4 @@ export function determineNativeContext(
     }
 
     return false
-
 }

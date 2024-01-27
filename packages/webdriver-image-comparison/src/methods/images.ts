@@ -577,20 +577,27 @@ export async function takeBase64ElementScreenshot({
     resizeDimensions: ResizeDimensions,
 }): Promise<string> {
     let base64Image:string
-    // If we are not resizing we can use the default element take screenshot method
-    if (resizeDimensions === DEFAULT_RESIZE_DIMENSIONS){
-        // Await the element, so we will handle the promise if people forget to await the element
-        const awaitedElement = await element
-        if (!isWdioElement(awaitedElement)){
-            console.log('awaitedElement = ', JSON.stringify(awaitedElement))
+    let shouldTakeResizedScreenshot = resizeDimensions !== DEFAULT_RESIZE_DIMENSIONS
+
+    if (!shouldTakeResizedScreenshot) {
+        try {
+            const awaitedElement = await element
+            if (!isWdioElement(awaitedElement)) {
+                console.error(' takeBase64ElementScreenshot element is not a valid element because of ', JSON.stringify(awaitedElement))
+            }
+            base64Image = await awaitedElement.takeElementScreenshot(awaitedElement.elementId)
+        } catch (error) {
+            console.error('Error taking an element screenshot with the default `element.takeElementScreenshot(elementId)` method:', error, ' We will retry with a resized screenshot')
+            shouldTakeResizedScreenshot = true
         }
-        base64Image = await awaitedElement.takeElementScreenshot(awaitedElement.elementId)
-    } else {
+    }
+
+    if (shouldTakeResizedScreenshot) {
         base64Image = await takeResizedBase64Screenshot({
             element,
             devicePixelRatio,
             isIOS,
-            methods:{
+            methods: {
                 getElementRect,
                 screenShot,
             },
