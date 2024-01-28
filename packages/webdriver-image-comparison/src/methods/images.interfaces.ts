@@ -1,3 +1,4 @@
+import type { CanvasRenderingContext2D } from 'canvas'
 import type { RectanglesOutput } from './rectangles.interfaces'
 import type { LogLevel } from '../helpers/options.interfaces'
 import type { Folders } from '../base.interfaces'
@@ -158,4 +159,47 @@ export interface RotateBase64ImageOptions {
     degrees: number;
     newHeight: number;
     newWidth: number;
+}
+
+export interface CropAndConvertToDataURL {
+    addIOSBezelCorners: boolean,
+    base64Image: string,
+    deviceName: string,
+    devicePixelRatio: number,
+    height: number,
+    isIOS: boolean,
+    isLandscape: boolean,
+    sourceX: number,
+    sourceY: number,
+    width: number,
+}
+
+export interface AdjustedAxis {
+    length: number,
+    logLevel: LogLevel,
+    maxDimension: number,
+    paddingEnd: number,
+    paddingStart: number,
+    start: number,
+    warningType: 'WIDTH' | 'HEIGHT',
+}
+
+export interface DimensionsWarning {
+    dimension: number,
+    logLevel: LogLevel
+    maxDimension: number,
+    position: number,
+    type: string,
+}
+
+export interface RotatedImage { isLandscape: boolean, base64Image:string }
+
+export interface HandleIOSBezelCorners {
+    addIOSBezelCorners: boolean,
+    ctx: CanvasRenderingContext2D,
+    deviceName: string,
+    devicePixelRatio: number,
+    height: number,
+    isLandscape: boolean,
+    width: number,
 }

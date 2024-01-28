@@ -7,12 +7,17 @@ import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreensho
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
 import { determineStatusAddressToolBarRectangles, isWdioElement } from './rectangles.js'
 import type {
+    AdjustedAxis,
+    CropAndConvertToDataURL,
     CroppedBase64Image,
+    DimensionsWarning,
+    HandleIOSBezelCorners,
     IgnoreBoxes,
     ImageCompareOptions,
     ImageCompareResult,
     ResizeDimensions,
     RotateBase64ImageOptions,
+    RotatedImage,
 } from './images.interfaces'
 import type { FullPageScreenshotsData } from './screenshots.interfaces'
 import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces'
@@ -78,142 +83,107 @@ export async function checkBaselineImageExists(
 }
 
 /**
- * Make a cropped image with Canvas
+ * Get the rotated image if needed
  */
-export async function makeCroppedBase64Image({
-    addIOSBezelCorners,
-    base64Image,
-    deviceName,
-    devicePixelRatio,
-    isIOS,
-    isLandscape,
-    logLevel,
-    rectangles,
-    resizeDimensions = DEFAULT_RESIZE_DIMENSIONS,
-}: CroppedBase64Image): Promise<string> {
-    // Determine if the image is rotated
-    const { height: rawScreenshotHeight, width: rawScreenshotWidth } = getScreenshotSize(base64Image)
-    const screenshotHeight = Math.round(rawScreenshotHeight)
-    const screenshotWidth = Math.round(rawScreenshotWidth)
+async function getRotatedImageIfNeeded({ isLandscape, base64Image }: RotatedImage): Promise<string> {
+    const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
     const isRotated = isLandscape && screenshotHeight > screenshotWidth
-    // If so we need to rotate is -90 degrees
-    const newBase64Image = isRotated
+
+    return isRotated
         ? await rotateBase64Image({ base64Image, degrees: -90, newHeight: screenshotWidth, newWidth: screenshotHeight })
         : base64Image
+}
 
-    const { top, right, bottom, left }: { top: number; right: number; bottom: number; left: number } = {
-        ...DEFAULT_RESIZE_DIMENSIONS,
-        ...resizeDimensions,
-    }
-    const { height, width, x, y } = rectangles
-    let sourceXStart = x - left
-    let sourceYStart = y - top
-
-    if (sourceXStart < 0) {
-        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-            console.log(
-                '\x1b[33m%s\x1b[0m',
-                `
+/**
+ * Log a warning when the crop goes out of the screen
+ */
+function logDimensionWarning({
+    dimension,
+    logLevel,
+    maxDimension,
+    position,
+    type,
+}: DimensionsWarning): void {
+    if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
+        console.log(
+            '\x1b[33m%s\x1b[0m',
+            `
 #####################################################################################
- THE RESIZE DIMENSION LEFT=${left} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
- OF '${screenshotWidth}x${screenshotHeight}' RESULTING IN A LEFT CROP POSITION=${sourceXStart}.
- THIS HAS BEEN DEFAULTED TO '0'
-#####################################################################################
-`,
-            )
-        }
-        sourceXStart = 0
-    }
-
-    let sourceXEnd = x + width + right
-
-    if (sourceXEnd > screenshotWidth) {
-        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-            console.log(
-                '\x1b[33m%s\x1b[0m',
-                `
-#####################################################################################
- THE RESIZE DIMENSION RIGHT=${right} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
- OF '${screenshotWidth}x${screenshotHeight}' RESULTING IN A RIGHT CROP POSITION=${sourceXEnd}.
- THIS HAS BEEN DEFAULTED TO '${screenshotWidth}'
+ THE RESIZE DIMENSION ${type}=${dimension} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ RESULTING IN A ${type} CROP POSITION=${position}.
+ THIS HAS BEEN DEFAULTED TO '${['TOP', 'LEFT'].includes(type) ? 0 : maxDimension}'
 #####################################################################################
 `,
-            )
-        }
-        sourceXEnd = screenshotWidth
+        )
+    }
+}
+
+/**
+ * Get the adjusted axis
+ */
+function getAdjustedAxis({
+    length,
+    logLevel,
+    maxDimension,
+    paddingEnd,
+    paddingStart,
+    start,
+    warningType,
+}: AdjustedAxis): [number, number] {
+    let adjustedStart = start - paddingStart
+    let adjustedEnd = start + length + paddingEnd
+
+    if (adjustedStart < 0) {
+        logDimensionWarning({
+            dimension: paddingStart,
+            logLevel,
+            maxDimension,
+            position: adjustedStart,
+            type: warningType === 'WIDTH' ? 'LEFT' : 'TOP',
+        })
+        adjustedStart = 0
+    }
+    if (adjustedEnd > maxDimension) {
+        logDimensionWarning({
+            dimension: paddingEnd,
+            logLevel,
+            maxDimension,
+            position: adjustedEnd,
+            type: warningType === 'WIDTH' ? 'RIGHT' : 'BOTTOM',
+        })
+        adjustedEnd = maxDimension
     }
 
-    if (sourceYStart < 0) {
-        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-            console.log(
-                '\x1b[33m%s\x1b[0m',
-                `
-#####################################################################################
- THE RESIZE DIMENSION TOP=${top} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
- OF '${screenshotWidth}x${screenshotHeight}' RESULTING IN A TOP CROP POSITION=${sourceYStart}.
- THIS HAS BEEN DEFAULTED TO '0'
-#####################################################################################
-`,
-            )
-        }
-        sourceYStart = 0
-    }
+    return [adjustedStart, adjustedEnd]
+}
 
-    let sourceYEnd = y + height + bottom
-
-    if (sourceYEnd > screenshotHeight ) {
-        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-            console.log(
-                '\x1b[33m%s\x1b[0m',
-                `
-#####################################################################################
- THE RESIZE DIMENSION BOTTOM=${bottom} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
- OF '${screenshotWidth}x${screenshotHeight}' RESULTING IN AN IMAGE CROP POSITION=${sourceYEnd}.
- THIS HAS BEEN DEFAULTED TO '${screenshotHeight}'
-#####################################################################################
-`,
-            )
-        }
-        sourceYEnd = screenshotHeight
-    }
-
-    const canvasWidth = sourceXEnd - sourceXStart
-    const canvasHeight = sourceYEnd - sourceYStart
-    const canvas = createCanvas(canvasWidth, canvasHeight)
-    const image = await loadImage(`data:image/png;base64,${newBase64Image}`)
-    const ctx = canvas.getContext('2d')
-
-    ctx.drawImage(
-        image,
-        // Start at x/y pixels from the left and the top of the image (crop)
-        sourceXStart,
-        sourceYStart,
-        // 'Get' a (w * h) area from the source image (crop)
-        canvasWidth,
-        canvasHeight,
-        // Place the result at 0, 0 in the canvas,
-        0,
-        0,
-        // With as width / height: 100 * 100 (scale)
-        canvasWidth,
-        canvasHeight,
-    )
-
+/**
+ * Handle the iOS bezel corners
+ */
+async function handleIOSBezelCorners({
+    addIOSBezelCorners,
+    ctx,
+    deviceName,
+    devicePixelRatio,
+    height,
+    isLandscape,
+    width,
+}: HandleIOSBezelCorners){
     // Add the bezel corners to the iOS image if we need to
     const normalizedDeviceName = deviceName
         .toLowerCase()
-        // (keep alphanumeric|remove simulator|remove inch|remove 1st/2nd/3rd/4th generation)
+    // (keep alphanumeric|remove simulator|remove inch|remove 1st/2nd/3rd/4th generation)
         .replace(/([^A-Za-z0-9]|simulator|inch|(\d(st|nd|rd|th)) generation)/gi, '')
     const isSupported =
         // For iPhone
         (normalizedDeviceName.includes('iphone') && supportedIosBezelDevices.includes(normalizedDeviceName)) ||
         // For iPad
         (normalizedDeviceName.includes('ipad') &&
-            supportedIosBezelDevices.includes(normalizedDeviceName) &&
-            (canvasHeight / devicePixelRatio >= 1133 || canvasWidth / devicePixelRatio >= 1133))
+        supportedIosBezelDevices.includes(normalizedDeviceName) &&
+        (width / devicePixelRatio >= 1133 || height / devicePixelRatio >= 1133))
     let isIosBezelError = false
 
-    if (addIOSBezelCorners && isIOS && isSupported) {
+    if (addIOSBezelCorners && isSupported) {
         // Determine the bezel images
         const { topImageName, bottomImageName } = getIosBezelImageNames(normalizedDeviceName)
 
@@ -244,15 +214,15 @@ export async function makeCroppedBase64Image({
             // y = heightScreen - heightBottom or x = widthScreen - heightBottom
             ctx.drawImage(
                 await loadImage(`data:image/png;base64,${bottomBase64Image}`),
-                isLandscape ? canvasWidth - getScreenshotSize(bottomImage).height : 0,
-                isLandscape ? 0 : canvasHeight - getScreenshotSize(bottomImage).height,
+                isLandscape ? width - getScreenshotSize(bottomImage).height : 0,
+                isLandscape ? 0 : height - getScreenshotSize(bottomImage).height,
             )
         } else {
             isIosBezelError = true
         }
     }
 
-    if (addIOSBezelCorners && isIOS && !isSupported) {
+    if (addIOSBezelCorners && !isSupported) {
         isIosBezelError = true
     }
 
@@ -261,17 +231,98 @@ export async function makeCroppedBase64Image({
             '\x1b[33m%s\x1b[0m',
             `
 #####################################################################################
- WARNING:
- We could not find the bezel corners for the device '${deviceName}'.
- The normalized device name is '${normalizedDeviceName}'
- and couldn't be found in the supported devices:
- ${supportedIosBezelDevices.join(', ')}
+WARNING:
+We could not find the bezel corners for the device '${deviceName}'.
+The normalized device name is '${normalizedDeviceName}'
+and couldn't be found in the supported devices:
+${supportedIosBezelDevices.join(', ')}
 #####################################################################################
 `,
         )
     }
+}
+
+/**
+ * Crop the image and convert it to a base64 image
+ */
+async function cropAndConvertToDataURL({
+    addIOSBezelCorners,
+    base64Image,
+    deviceName,
+    devicePixelRatio,
+    height,
+    isIOS,
+    isLandscape,
+    sourceX,
+    sourceY,
+    width,
+}: CropAndConvertToDataURL): Promise<string> {
+    const canvas = createCanvas(width, height)
+    const ctx = canvas.getContext('2d')
+    const image = await loadImage(`data:image/png;base64,${base64Image}`)
+    ctx.drawImage(image, sourceX, sourceY, width, height, 0, 0, width, height)
+
+    if (isIOS){
+        await handleIOSBezelCorners({ addIOSBezelCorners, ctx, deviceName, devicePixelRatio, height, isLandscape, width })
+    }
 
     return canvas.toDataURL().replace(/^data:image\/png;base64,/, '')
+}
+
+/**
+ * Make a cropped image with Canvas
+ */
+export async function makeCroppedBase64Image({
+    addIOSBezelCorners,
+    base64Image,
+    deviceName,
+    devicePixelRatio,
+    isIOS,
+    isLandscape,
+    logLevel,
+    rectangles,
+    resizeDimensions = DEFAULT_RESIZE_DIMENSIONS,
+}: CroppedBase64Image): Promise<string> {
+    // Rotate the image if needed and get the screenshot size
+    const newBase64Image = await getRotatedImageIfNeeded({ isLandscape, base64Image })
+    const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
+
+    // Determine/Get the size of the cropped screenshot and cut out dimensions
+    const { top, right, bottom, left } = { ...DEFAULT_RESIZE_DIMENSIONS, ...resizeDimensions }
+    const { height, width, x, y } = rectangles
+    const [sourceXStart, sourceXEnd] = getAdjustedAxis({
+        length: width,
+        logLevel,
+        maxDimension: screenshotWidth,
+        paddingEnd: right,
+        paddingStart: left,
+        start: x,
+        warningType: 'WIDTH'
+    })
+    const [sourceYStart, sourceYEnd] = getAdjustedAxis({
+        length: height,
+        logLevel,
+        maxDimension: screenshotHeight,
+        paddingEnd: bottom,
+        paddingStart: top,
+        start: y,
+        warningType: 'HEIGHT',
+    })
+
+    // Create the canvas and draw the image on it
+    return cropAndConvertToDataURL({
+        addIOSBezelCorners,
+        base64Image: newBase64Image,
+        deviceName,
+        devicePixelRatio,
+        height: sourceYEnd - sourceYStart,
+        isIOS,
+        isLandscape,
+        sourceX: sourceXStart,
+        sourceY: sourceYStart,
+        width: sourceXEnd - sourceXStart,
+    }
+    )
 }
 
 /**
