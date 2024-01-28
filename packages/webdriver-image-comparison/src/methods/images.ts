@@ -92,24 +92,20 @@ export async function makeCroppedBase64Image({
     resizeDimensions = DEFAULT_RESIZE_DIMENSIONS,
 }: CroppedBase64Image): Promise<string> {
     // Determine if the image is rotated
-    const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image, devicePixelRatio)
+    const { height: rawScreenshotHeight, width: rawScreenshotWidth } = getScreenshotSize(base64Image)
+    const screenshotHeight = Math.round(rawScreenshotHeight)
+    const screenshotWidth = Math.round(rawScreenshotWidth)
     const isRotated = isLandscape && screenshotHeight > screenshotWidth
     // If so we need to rotate is -90 degrees
     const newBase64Image = isRotated
         ? await rotateBase64Image({ base64Image, degrees: -90, newHeight: screenshotWidth, newWidth: screenshotHeight })
         : base64Image
 
-    const { top, right, bottom, left }: { top: number; right: number; bottom: number; left: number } = calculateDprData({
+    const { top, right, bottom, left }: { top: number; right: number; bottom: number; left: number } = {
         ...DEFAULT_RESIZE_DIMENSIONS,
         ...resizeDimensions,
-    }, isIOS ? devicePixelRatio : 1)
+    }
     const { height, width, x, y } = rectangles
-    const canvasWidth = width + left + right
-    const canvasHeight = height + top + bottom
-    const canvas = createCanvas(canvasWidth, canvasHeight)
-    const image = await loadImage(`data:image/png;base64,${newBase64Image}`)
-    const ctx = canvas.getContext('2d')
-
     let sourceXStart = x - left
     let sourceYStart = y - top
 
@@ -119,8 +115,8 @@ export async function makeCroppedBase64Image({
                 '\x1b[33m%s\x1b[0m',
                 `
 #####################################################################################
- THE RESIZE DIMENSION LEFT '${left}' MADE THE CROPPING GO OUT OF
- THE IMAGE BOUNDARIES RESULTING IN AN IMAGE STARTPOSITION '${sourceXStart}'.
+ THE RESIZE DIMENSION LEFT=${left} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ OF '${screenshotWidth}x${screenshotHeight}' RESULTING IN A LEFT CROP POSITION=${sourceXStart}.
  THIS HAS BEEN DEFAULTED TO '0'
 #####################################################################################
 `,
@@ -129,14 +125,32 @@ export async function makeCroppedBase64Image({
         sourceXStart = 0
     }
 
+    let sourceXEnd = x + width + right
+
+    if (sourceXEnd > screenshotWidth) {
+        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
+            console.log(
+                '\x1b[33m%s\x1b[0m',
+                `
+#####################################################################################
+ THE RESIZE DIMENSION RIGHT=${right} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ OF '${screenshotWidth}x${screenshotHeight}' RESULTING IN A RIGHT CROP POSITION=${sourceXEnd}.
+ THIS HAS BEEN DEFAULTED TO '${screenshotWidth}'
+#####################################################################################
+`,
+            )
+        }
+        sourceXEnd = screenshotWidth
+    }
+
     if (sourceYStart < 0) {
         if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
             console.log(
                 '\x1b[33m%s\x1b[0m',
                 `
 #####################################################################################
- THE RESIZE DIMENSION LEFT '${top}' MADE THE CROPPING GO OUT OF
- THE IMAGE BOUNDARIES RESULTING IN AN IMAGE STARTPOSITION '${sourceYStart}'.
+ THE RESIZE DIMENSION TOP=${top} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ OF '${screenshotWidth}x${screenshotHeight}' RESULTING IN A TOP CROP POSITION=${sourceYStart}.
  THIS HAS BEEN DEFAULTED TO '0'
 #####################################################################################
 `,
@@ -144,6 +158,30 @@ export async function makeCroppedBase64Image({
         }
         sourceYStart = 0
     }
+
+    let sourceYEnd = y + height + bottom
+
+    if (sourceYEnd > screenshotHeight ) {
+        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
+            console.log(
+                '\x1b[33m%s\x1b[0m',
+                `
+#####################################################################################
+ THE RESIZE DIMENSION BOTTOM=${bottom} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ OF '${screenshotWidth}x${screenshotHeight}' RESULTING IN AN IMAGE CROP POSITION=${sourceYEnd}.
+ THIS HAS BEEN DEFAULTED TO '${screenshotHeight}'
+#####################################################################################
+`,
+            )
+        }
+        sourceYEnd = screenshotHeight
+    }
+
+    const canvasWidth = sourceXEnd - sourceXStart
+    const canvasHeight = sourceYEnd - sourceYStart
+    const canvas = createCanvas(canvasWidth, canvasHeight)
+    const image = await loadImage(`data:image/png;base64,${newBase64Image}`)
+    const ctx = canvas.getContext('2d')
 
     ctx.drawImage(
         image,
@@ -540,6 +578,7 @@ async function takeResizedBase64Screenshot({
         devicePixelRatio,
         isIOS,
         isLandscape: false,
+        // @TODO:we need to fix this debug statement
         // @ts-ignore
         logLevel: 'debug',
         rectangles: calculateDprData({
@@ -548,7 +587,8 @@ async function takeResizedBase64Screenshot({
             x: elementRegion.x,
             y: elementRegion.y,
         }, isIOS ? devicePixelRatio : 1),
-        resizeDimensions,
+        // The assumption is that a user calculated the resizeDimensions from a screenshot which is with the devicePixelRatio
+        resizeDimensions: calculateDprData(resizeDimensions, 1/devicePixelRatio),
     })
 
     return resizedBase64Image
@@ -576,8 +616,7 @@ export async function takeBase64ElementScreenshot({
     }
     resizeDimensions: ResizeDimensions,
 }): Promise<string> {
-    let base64Image:string
-    let shouldTakeResizedScreenshot = resizeDimensions !== DEFAULT_RESIZE_DIMENSIONS
+    const shouldTakeResizedScreenshot = resizeDimensions !== DEFAULT_RESIZE_DIMENSIONS
 
     if (!shouldTakeResizedScreenshot) {
         try {
@@ -585,25 +624,20 @@ export async function takeBase64ElementScreenshot({
             if (!isWdioElement(awaitedElement)) {
                 console.error(' takeBase64ElementScreenshot element is not a valid element because of ', JSON.stringify(awaitedElement))
             }
-            base64Image = await awaitedElement.takeElementScreenshot(awaitedElement.elementId)
+            return await awaitedElement.takeElementScreenshot(awaitedElement.elementId)
         } catch (error) {
             console.error('Error taking an element screenshot with the default `element.takeElementScreenshot(elementId)` method:', error, ' We will retry with a resized screenshot')
-            shouldTakeResizedScreenshot = true
         }
     }
 
-    if (shouldTakeResizedScreenshot) {
-        base64Image = await takeResizedBase64Screenshot({
-            element,
-            devicePixelRatio,
-            isIOS,
-            methods: {
-                getElementRect,
-                screenShot,
-            },
-            resizeDimensions,
-        })
-    }
-
-    return base64Image
+    return await takeResizedBase64Screenshot({
+        element,
+        devicePixelRatio,
+        isIOS,
+        methods: {
+            getElementRect,
+            screenShot,
+        },
+        resizeDimensions,
+    })
 }
