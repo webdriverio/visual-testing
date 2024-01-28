@@ -14,6 +14,7 @@ describe('@wdio/visual-service mobile app', () => {
     const orientation = driver.requestedCapabilities.orientation
 
     beforeEach(async () => {
+        await relaunchApp()
         await $('~Home-screen').waitForDisplayed()
     })
 
@@ -22,26 +23,23 @@ describe('@wdio/visual-service mobile app', () => {
         wdioIcsCommands.includes('checkScreen')
     ) {
         it(`should compare a screen successful for '${deviceName}' in ${orientation}-mode`, async () => {
-            console.log('checkScreen')
-
-            // open safari or chrome on Android
-            // await (driver.isIOS ? driver.execute('mobile: launchApp', { bundleId: 'com.apple.mobilesafari' }) : driver.startActivity('com.android.chrome', 'com.google.android.apps.chrome.Main'))
-            // await driver.pause(5000)
-            // const contexts = await driver.getContexts()
-            // console.log('driver.getContexts()', contexts)
-            // // ts-ignore
-            // await driver.switchContext(contexts[1])
-            // await driver.pause(5000)
-            // console.log('driver.getContext() = ', await driver.getContext())
-
-            //afterCommand: function (commandName, args, result, error) {
+            await $('~Login').click()
+            const result = await driver.checkScreen('app-forms', {
+                ignore: [
+                    $('~button-LOGIN'),
+                    await $('~input-password'),
+                    {
+                        x: 150,
+                        y: 250,
+                        width: 100,
+                        height: 100,
+                    }
+                ]
+            }) as number
 
             // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
-            // const result = await browser.checkScreen('screenshot') as number
-            // await expect(result < 0.05 ? 0 : result).toEqual(0)
-
-            await driver.checkScreen('wdio-screen')
+            expect(result < 0.05 ? 0 : result).toEqual(0)
         })
     }
 
@@ -50,17 +48,42 @@ describe('@wdio/visual-service mobile app', () => {
         wdioIcsCommands.includes('checkElement')
     ) {
         it(`should compare an element successful for '${deviceName}' in ${orientation}-mode`, async () => {
-            console.log('checkElement')
-            // NOTE: The iOS image will be with text and logo, Android only text. This is expected
-            const selector = driver.isIOS
-                ? '-ios class chain:**/XCUIElementTypeOther[`name == "WEBDRIVER"`]'
-                : '//android.widget.TextView[@text="WEBDRIVER"]'
-            // await expect(
-            await driver.checkElement(
-                await $(selector),
-                'wdio-text'
+            await $('~Login').click()
+            const result = await driver.checkElement(
+                $('~button-LOGIN'),
+                'app-login-button',
             )
-            // ).toEqual(0)
+
+            expect(result).toEqual(0)
+        })
+        it(`should compare a resized element successful for '${deviceName}' in ${orientation}-mode`, async () => {
+            await $('~Login').click()
+            const result = await driver.checkElement(
+                $('~button-LOGIN'),
+                'app-login-button-resized',
+                {
+                    resizeDimensions: {
+                        top: 80,
+                        right: 10,
+                        bottom: 40,
+                        left: 90,
+                    }
+                }
+            )
+
+            expect(result).toEqual(0)
         })
     }
 })
+
+async function relaunchApp() {
+    const PACKAGE_NAME = 'com.wdiodemoapp'
+    const BUNDLE_ID = 'org.reactjs.native.example.wdiodemoapp'
+    const appIdentifier = driver.isAndroid ? { 'appId': PACKAGE_NAME } : { 'bundleId': BUNDLE_ID }
+    const terminateCommand = 'mobile: terminateApp'
+    const launchCommand = `mobile: ${driver.isAndroid ? 'activateApp' : 'launchApp'}`
+
+    await driver.execute(terminateCommand, appIdentifier)
+    await driver.execute(launchCommand, appIdentifier)
+
+}
