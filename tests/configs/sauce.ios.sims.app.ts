@@ -9,41 +9,24 @@ export function sauceIosSimApp({ buildName }: { buildName: string }) {
     // For all screen sizes see
     // https://github.com/wswebcreation/webdriver-image-comparison/blob/main/lib/helpers/constants.ts
     // We will use a mixture of iOS 14, 15 and 16 devices
+    // We will not support iPads for now
     const iOS14Devices = [
         // 667
         'iPhone 8 Simulator',
         // 736
         'iPhone 8 Plus Simulator',
-        // 812
-        'iPhone XS Simulator',
     ]
     const iOS15Devices = [
-        // 844
-        'iPhone 12 Simulator',
+        // 812
+        'iPhone XS Simulator',
         // 896
         'iPhone 11 Simulator',
-        // 926
-        'iPhone 12 Pro Max Simulator',
     ]
     const iOS16Devices = [
+        // 844
+        'iPhone 12 Simulator',
         // 926
         'iPhone 12 Pro Max Simulator',
-        // 1024
-        'iPad mini (5th generation) Simulator',
-        // 1080
-        'iPad (5th generation) Simulator',
-        // 1112
-        'iPad Pro (10.5 inch) Simulator',
-        // 1133
-        'iPad mini (6th generation) Simulator',
-        // 1180
-        'iPad Air (4th generation) Simulator',
-        // 1194
-        'iPad Pro (11 inch) (3rd generation) Simulator',
-        // 1366
-        'iPad Pro (12.9 inch) (1st generation) Simulator',
-        // 1366
-        'iPad Pro (12.9 inch) (5th generation) Simulator',
     ]
 
     return [
@@ -91,10 +74,6 @@ export function sauceIosSimApp({ buildName }: { buildName: string }) {
                             build: buildName,
                             deviceOrientation: orientation,
                         },
-                        wdioIcsCommands: [
-                            'checkElement',
-                            'checkFullPageScreen',
-                        ],
                     })
                 )
             )
