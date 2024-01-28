@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import type { DeviceOrientation, ExtendedSauceLabsCapabilities } from '../types/types.ts'
 
-export function sauceAndroidEmus({ buildName }: { buildName: string }) {
+export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
     const chromeDriverPhones = (
         ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]

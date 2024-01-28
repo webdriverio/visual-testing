@@ -4,10 +4,11 @@ import type {
     ExtendedSauceLabsCapabilities,
 } from '../types/types.ts'
 
-export function sauceIosSim({ buildName }: { buildName: string }) {
-    const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
+export function sauceIosSimApp({ buildName }: { buildName: string }) {
+    const mobileSpecs = join(process.cwd(), './tests/specs/mobile.app.spec.ts')
     // For all screen sizes see
     // https://github.com/wswebcreation/webdriver-image-comparison/blob/main/lib/helpers/constants.ts
+    // We will use a mixture of iOS 14, 15 and 16 devices
     const iOS14Devices = [
         // 667
         'iPhone 8 Simulator',
@@ -15,69 +16,16 @@ export function sauceIosSim({ buildName }: { buildName: string }) {
         'iPhone 8 Plus Simulator',
         // 812
         'iPhone XS Simulator',
-        // 844
-        'iPhone 12 Simulator',
-        // 896
-        'iPhone 11 Simulator',
-        // 926
-        'iPhone 12 Pro Max Simulator',
-        // 1024
-        'iPad Air 2 Simulator',
-        // 1080
-        'iPad (5th generation) Simulator',
-        // 1112
-        'iPad Pro (10.5 inch) Simulator',
-        // 1133 => not available for iOS 14
-        // 1180
-        'iPad Air (4th generation) Simulator',
-        // 1194
-        'iPad Pro (11 inch) (3rd generation) Simulator',
-        // 1366
-        'iPad Pro (12.9 inch) (1st generation) Simulator',
-        // 1366
-        'iPad Pro (12.9 inch) (5th generation) Simulator',
     ]
     const iOS15Devices = [
-        // 667
-        'iPhone 8 Simulator',
-        // 736
-        'iPhone 8 Plus Simulator',
-        // 812
-        'iPhone XS Simulator',
         // 844
         'iPhone 12 Simulator',
         // 896
         'iPhone 11 Simulator',
         // 926
         'iPhone 12 Pro Max Simulator',
-        // 1024
-        'iPad Air 2 Simulator',
-        // 1080
-        'iPad (5th generation) Simulator',
-        // 1112
-        'iPad Pro (10.5 inch) Simulator',
-        // 1133
-        'iPad mini (6th generation) Simulator',
-        // 1180
-        'iPad Air (4th generation) Simulator',
-        // 1194
-        'iPad Pro (11 inch) (3rd generation) Simulator',
-        // 1366
-        'iPad Pro (12.9 inch) (1st generation) Simulator',
-        // 1366
-        'iPad Pro (12.9 inch) (5th generation) Simulator',
     ]
     const iOS16Devices = [
-        // 667
-        'iPhone 8 Simulator',
-        // 736
-        'iPhone 8 Plus Simulator',
-        // 812
-        'iPhone XS Simulator',
-        // 844
-        'iPhone 12 Simulator',
-        // 896
-        'iPhone 11 Simulator',
         // 926
         'iPhone 12 Pro Max Simulator',
         // 1024
@@ -95,44 +43,11 @@ export function sauceIosSim({ buildName }: { buildName: string }) {
         // 1366
         'iPad Pro (12.9 inch) (1st generation) Simulator',
         // 1366
-        'iPad Pro (12.9 inch) (5th generation) Simulator',
-    ]
-    const iOS16BezelDevices = [
-        // iPhones
-        'iPhone X Simulator',
-        // 'iPhone XS Simulator', // => already done for 812
-        'iPhone XS Max Simulator',
-        'iPhone XR Simulator',
-        // 'iPhone 11 Simulator', // => already done for 896
-        'iPhone 11 Pro Simulator',
-        'iPhone 11 Pro Max Simulator',
-        // 'iPhone 12 Simulator', // => already done for 926
-        'iPhone 12 Mini Simulator',
-        'iPhone 12 Pro Simulator',
-        // 'iPhone 12 Pro Max Simulator', // => already done for 844
-        'iPhone 13 Simulator',
-        'iPhone 13 Mini Simulator',
-        'iPhone 13 Pro Simulator',
-        'iPhone 13 Pro Max Simulator',
-        'iPhone 14 Simulator',
-        'iPhone 14 Plus Simulator',
-        'iPhone 14 Pro Simulator',
-        'iPhone 14 Pro Max Simulator',
-        // iPads
-        'iPad mini (5th generation) Simulator',
-        'iPad mini (6th generation) Simulator',
-        'iPad Air (4th generation) Simulator',
-        'iPad Air (5th generation) Simulator',
-        'iPad Pro (11 inch) (1st generation) Simulator',
-        'iPad Pro (11 inch) (2nd generation) Simulator',
-        'iPad Pro (11 inch) (3rd generation) Simulator',
-        'iPad Pro (12.9 inch) (3rd generation) Simulator',
-        'iPad Pro (12.9 inch) (4th generation) Simulator',
         'iPad Pro (12.9 inch) (5th generation) Simulator',
     ]
 
     return [
-        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
+        ...(['PORTRAIT'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS14Devices.map((device) =>
                     createCaps({
@@ -148,7 +63,7 @@ export function sauceIosSim({ buildName }: { buildName: string }) {
                 )
             )
             .flat(1),
-        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
+        ...(['PORTRAIT'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS15Devices.map((device) =>
                     createCaps({
@@ -164,7 +79,7 @@ export function sauceIosSim({ buildName }: { buildName: string }) {
                 )
             )
             .flat(1),
-        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
+        ...(['PORTRAIT'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS16Devices.map((device) =>
                     createCaps({
@@ -180,23 +95,6 @@ export function sauceIosSim({ buildName }: { buildName: string }) {
                             'checkElement',
                             'checkFullPageScreen',
                         ],
-                    })
-                )
-            )
-            .flat(1),
-        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
-            .map((orientation) =>
-                iOS16BezelDevices.map((device) =>
-                    createCaps({
-                        deviceName: device,
-                        platformVersion: '16.2',
-                        orientation: orientation,
-                        mobileSpecs,
-                        sauceOptions: {
-                            build: buildName,
-                            deviceOrientation: orientation,
-                        },
-                        wdioIcsCommands: ['checkScreen'],
                     })
                 )
             )
@@ -223,8 +121,8 @@ function createCaps({
     sauceOptions: ExtendedSauceLabsCapabilities,
 }) {
     return {
-        browserName: 'safari',
         platformName: 'ios',
+        'appium:app': 'https://github.com/webdriverio/native-demo-app/releases/download/v1.0.8/ios.simulator.wdio.native.app.v1.0.8.zip',
         'appium:deviceName': deviceName,
         'appium:platformVersion': platformVersion,
         'appium:orientation': orientation,
