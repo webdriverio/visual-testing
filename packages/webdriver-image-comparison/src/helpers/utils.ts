@@ -159,7 +159,7 @@ export function getToolBarShadowPadding(options: GetToolBarShadowPaddingOptions)
 export function calculateDprData<T>(data: T, devicePixelRatio: number): T {
     // @ts-ignore
     // @TODO: need to figure this one out
-    Object.keys(data).map((key) => (data[key] = typeof data[key] === 'number' ? data[key] * devicePixelRatio : data[key]))
+    Object.keys(data).map((key) => (data[key] = typeof data[key] === 'number' ? Math.round(data[key] * devicePixelRatio) : data[key]))
 
     return data
 }
