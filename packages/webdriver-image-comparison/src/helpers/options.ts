@@ -16,7 +16,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
             ? Boolean(options.autoElementScroll)
             : true,
         addIOSBezelCorners: options.addIOSBezelCorners || false,
-        autoSaveBaseline: options.autoSaveBaseline || false,
+        autoSaveBaseline: options.autoSaveBaseline || true,
         clearFolder: options.clearRuntimeFolder || false,
         formatImageName: options.formatImageName || DEFAULT_FORMAT_STRING,
         isHybridApp: options.isHybridApp || false,

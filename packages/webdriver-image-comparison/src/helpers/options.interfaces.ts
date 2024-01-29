@@ -61,7 +61,7 @@ export interface ClassOptions {
     ignoreNothing?: boolean;
     // If true the return percentage will be like `0.12345678`, default is `0.12`
     rawMisMatchPercentage?: boolean;
-    // This will retun all compare data, not only the mismatch percentage
+    // This will return all compare data, not only the mismatch percentage
     returnAllCompareData?: boolean;
     // Allowable value of misMatchPercentage that prevents saving image with differences
     saveAboveTolerance?: number;

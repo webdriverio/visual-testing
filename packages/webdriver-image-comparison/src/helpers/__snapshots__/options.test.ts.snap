@@ -5,7 +5,7 @@ exports[`options > defaultOptions > should return the default options when no op
   "addIOSBezelCorners": false,
   "addressBarShadowPadding": 6,
   "autoElementScroll": true,
-  "autoSaveBaseline": false,
+  "autoSaveBaseline": true,
   "clearFolder": false,
   "compareOptions": {
     "blockOutSideBar": false,

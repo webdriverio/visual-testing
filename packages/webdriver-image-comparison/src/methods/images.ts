@@ -70,8 +70,6 @@ export async function checkBaselineImageExists(
  Baseline image not found, save the actual image manually to the baseline.
  The image can be found here:
  ${actualFilePath}
- If you want the module to auto save a non existing image to the baseline you
- can provide 'autoSaveBaseline: true' to the options.
 #####################################################################################
 `,
                     )
