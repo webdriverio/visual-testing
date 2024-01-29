@@ -7,11 +7,19 @@ export function sauceAndroidEmusApp({ buildName }: { buildName: string }) {
         ['PORTRAIT'] as DeviceOrientation[]
     )
         .map((orientation) =>
-            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0', '14.0'].map(
-                (platformVersion) =>
+            [
+                { deviceName:'Google Pixel C GoogleAPI Emulator', platformVersion:'8.1' },
+                { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'9.0' },
+                { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'10.0' },
+                { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'11.0' },
+                { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'12.0' },
+                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'13.0' },
+                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'14.0' },
+            ].map(
+                (cap) =>
                     createCaps({
-                        deviceName: 'Android GoogleAPI Emulator',
-                        platformVersion: platformVersion,
+                        deviceName: cap.deviceName,
+                        platformVersion: cap.platformVersion,
                         orientation: orientation,
                         mobileSpecs,
                         sauceOptions: {
@@ -33,7 +41,6 @@ function createCaps({
     wdioIcsCommands = [],
     deviceName,
     mobileSpecs,
-    nativeWebScreenshot = false,
     orientation,
     platformVersion,
     sauceOptions,
@@ -41,7 +48,6 @@ function createCaps({
     wdioIcsCommands?: string[];
     deviceName: string;
     mobileSpecs: string;
-    nativeWebScreenshot?: boolean;
     orientation: string;
     platformVersion: string;
     sauceOptions: ExtendedSauceLabsCapabilities;
@@ -59,16 +65,12 @@ function createCaps({
     'sauce:options': ExtendedSauceLabsCapabilities;
     specs: string[];
 } {
-    const driverScreenshotType = nativeWebScreenshot
-        ? 'NativeWebScreenshot'
-        : 'ChromeDriver'
     return {
         platformName: 'Android',
         'appium:app': 'https://github.com/webdriverio/native-demo-app/releases/download/v1.0.8/android.wdio.native.app.v1.0.8.apk',
         'appium:deviceName': deviceName,
         'appium:platformVersion': platformVersion,
         'appium:orientation': orientation,
-        ...(nativeWebScreenshot ? { 'appium:nativeWebScreenshot': true } : {}),
         'appium:automationName': 'UIAutomator2',
         'wdio-ics:options': {
             logName: `Emulator${deviceName.replace(
@@ -76,7 +78,7 @@ function createCaps({
                 ''
             )}${orientation.charAt(0).toUpperCase()}${orientation
                 .slice(1)
-                .toLowerCase()}${driverScreenshotType}${platformVersion}`,
+                .toLowerCase()}${platformVersion}`,
             commands: wdioIcsCommands,
         },
         'sauce:options': {
