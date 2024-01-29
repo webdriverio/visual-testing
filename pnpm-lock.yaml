@@ -55,8 +55,8 @@ importers:
         specifier: ^8.27.0
         version: 8.27.0
       '@wdio/types':
-        specifier: ^8.27.0
-        version: 8.27.0
+        specifier: ^8.29.1
+        version: 8.29.1
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -106,8 +106,8 @@ importers:
         specifier: ^8.24.12
         version: 8.24.12
       '@wdio/types':
-        specifier: ^8.26.2
-        version: 8.27.0
+        specifier: ^8.29.1
+        version: 8.29.1
       webdriver-image-comparison:
         specifier: ^3.0.0
         version: link:../webdriver-image-comparison
@@ -1713,6 +1713,13 @@ packages:
 
   /@wdio/types@8.27.0:
     resolution: {integrity: sha512-LbP9FKh8r0uW9/dKhTIUCC1Su8PsP9TmzGKXkWt6/IMacgJiB/zW3u1CgyaLw9lG0UiQORHGoeJX9zB2HZAh4w==}
+    engines: {node: ^16.13 || >=18}
+    dependencies:
+      '@types/node': 20.10.5
+    dev: true
+
+  /@wdio/types@8.29.1:
+    resolution: {integrity: sha512-rZYzu+sK8zY1PjCEWxNu4ELJPYKDZRn7HFcYNgR122ylHygfldwkb5TioI6Pn311hQH/S+663KEeoq//Jb0f8A==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.10.5
