@@ -43,8 +43,8 @@ importers:
         specifier: ^8.27.0
         version: 8.27.0(typescript@5.3.3)
       '@wdio/mocha-framework':
-        specifier: ^8.27.0
-        version: 8.27.0
+        specifier: ^8.29.1
+        version: 8.29.1
       '@wdio/sauce-service':
         specifier: ^8.27.0
         version: 8.27.0(typescript@5.3.3)
@@ -1602,15 +1602,25 @@ packages:
       loglevel-plugin-prefix: 0.8.4
       strip-ansi: 7.1.0
 
-  /@wdio/mocha-framework@8.27.0:
-    resolution: {integrity: sha512-NaFUPv90ks1XlZy0qdUaJ5/ilBtiCCgTIxaPexshJiaVDT5cV+Igjag/O80HIcvqknOZpdKAR0I1ArQzhJrmcA==}
+  /@wdio/logger@8.28.0:
+    resolution: {integrity: sha512-/s6zNCqwy1hoc+K4SJypis0Ud0dlJ+urOelJFO1x0G0rwDRWyFiUP6ijTaCcFxAm29jYEcEPWijl2xkVIHwOyA==}
+    engines: {node: ^16.13 || >=18}
+    dependencies:
+      chalk: 5.3.0
+      loglevel: 1.8.1
+      loglevel-plugin-prefix: 0.8.4
+      strip-ansi: 7.1.0
+    dev: true
+
+  /@wdio/mocha-framework@8.29.1:
+    resolution: {integrity: sha512-R9dKMNqWgtUvZo33ORjUQV8Z/WLX5h/pg9u/xIvZSGXuNSw1h+5DWF6UiNFscxBFblL9UvBi6V9ila2LHgE4ew==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/mocha': 10.0.6
       '@types/node': 20.10.5
-      '@wdio/logger': 8.24.12
-      '@wdio/types': 8.27.0
-      '@wdio/utils': 8.27.0
+      '@wdio/logger': 8.28.0
+      '@wdio/types': 8.29.1
+      '@wdio/utils': 8.29.1
       mocha: 10.2.0
     transitivePeerDependencies:
       - supports-color
@@ -1717,6 +1727,13 @@ packages:
     dependencies:
       '@types/node': 20.10.5
 
+  /@wdio/types@8.29.1:
+    resolution: {integrity: sha512-rZYzu+sK8zY1PjCEWxNu4ELJPYKDZRn7HFcYNgR122ylHygfldwkb5TioI6Pn311hQH/S+663KEeoq//Jb0f8A==}
+    engines: {node: ^16.13 || >=18}
+    dependencies:
+      '@types/node': 20.10.5
+    dev: true
+
   /@wdio/utils@8.27.0:
     resolution: {integrity: sha512-4BY+JBQssVn003P5lA289uDMie3LtGinHze5btkcW9timB6VaU+EeZS4eKTPC0pziizLhteVvXYxv3YTpeeRfA==}
     engines: {node: ^16.13 || >=18}
@@ -1724,6 +1741,27 @@ packages:
       '@puppeteer/browsers': 1.9.0
       '@wdio/logger': 8.24.12
       '@wdio/types': 8.27.0
+      decamelize: 6.0.0
+      deepmerge-ts: 5.1.0
+      edgedriver: 5.3.9
+      geckodriver: 4.3.0
+      get-port: 7.0.0
+      import-meta-resolve: 4.0.0
+      locate-app: 2.1.0
+      safaridriver: 0.1.1
+      split2: 4.2.0
+      wait-port: 1.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@wdio/utils@8.29.1:
+    resolution: {integrity: sha512-Dm91DKL/ZKeZ2QogWT8Twv0p+slEgKyB/5x9/kcCG0Q2nNa+tZedTjOhryzrsPiWc+jTSBmjGE4katRXpJRFJg==}
+    engines: {node: ^16.13 || >=18}
+    dependencies:
+      '@puppeteer/browsers': 1.9.0
+      '@wdio/logger': 8.28.0
+      '@wdio/types': 8.29.1
       decamelize: 6.0.0
       deepmerge-ts: 5.1.0
       edgedriver: 5.3.9
@@ -3050,7 +3088,7 @@ packages:
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@wdio/logger': 8.24.12
+      '@wdio/logger': 8.28.0
       decamelize: 6.0.0
       edge-paths: 3.0.5
       node-fetch: 3.3.2
@@ -3865,7 +3903,7 @@ packages:
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@wdio/logger': 8.24.12
+      '@wdio/logger': 8.28.0
       decamelize: 6.0.0
       http-proxy-agent: 7.0.0
       https-proxy-agent: 7.0.2
