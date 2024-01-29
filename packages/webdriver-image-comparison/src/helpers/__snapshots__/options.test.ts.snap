@@ -8,9 +8,9 @@ exports[`options > defaultOptions > should return the default options when no op
   "autoSaveBaseline": true,
   "clearFolder": false,
   "compareOptions": {
-    "blockOutSideBar": false,
-    "blockOutStatusBar": false,
-    "blockOutToolBar": false,
+    "blockOutSideBar": true,
+    "blockOutStatusBar": true,
+    "blockOutToolBar": true,
     "ignoreAlpha": false,
     "ignoreAntialiasing": false,
     "ignoreColors": false,
