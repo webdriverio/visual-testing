@@ -16,12 +16,18 @@ export default async function checkTabbablePage(
     folders: Folders,
     tag: string,
     checkTabbableOptions: CheckTabbableOptions,
+    isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
-    // 1. Inject drawing the tabbables
+    // 1a. Check if the method is supported in native context
+    if (isNativeContext) {
+        throw new Error('The method checkTabbablePage is not supported in native context for native mobile apps!')
+    }
+
+    // 1b. Inject drawing the tabbables
     await methods.executor(drawTabbableOnCanvas, checkTabbableOptions.wic.tabbableOptions)
 
     // 2. Create the screenshot
-    const fullPageCompareData = await checkFullPageScreen(methods, instanceData, folders, tag, checkTabbableOptions)
+    const fullPageCompareData = await checkFullPageScreen(methods, instanceData, folders, tag, checkTabbableOptions, isNativeContext)
 
     // 3. Remove the canvas
     await methods.executor(removeElementFromDom, 'wic-tabbable-canvas')
