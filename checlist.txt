@@ -1,2 +1,0 @@
-Things to check:
-- check what happens when people provide a tag with a browser name in it for a native app
