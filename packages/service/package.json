@@ -2,7 +2,7 @@
   "name": "@wdio/visual-service",
   "author": "Wim Selles - wswebcreation",
   "description": "Image comparison / visual regression testing for WebdriverIO",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "license": "MIT",
   "homepage": "https://webdriver.io/docs/visual-testing",
   "repository": {
@@ -28,6 +28,6 @@
   "dependencies": {
     "@wdio/logger": "^8.24.12",
     "@wdio/types": "^8.26.2",
-    "webdriver-image-comparison": "^3.0.0"
+    "webdriver-image-comparison": "^4.0.0"
   }
 }
