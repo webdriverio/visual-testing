@@ -17,8 +17,14 @@ export default async function checkFullPageScreen(
     folders: Folders,
     tag: string,
     checkFullPageOptions: CheckFullPageOptions,
+    isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
-    // 1. Take the actual full page screenshot and retrieve the needed data
+    // 1a. Check if the method is supported in native context
+    if (isNativeContext) {
+        throw new Error('The method checkFullPageScreen is not supported in native context for native mobile apps!')
+    }
+
+    // 1b. Take the actual full page screenshot and retrieve the needed data
     const saveFullPageOptions: SaveFullPageOptions = {
         wic: checkFullPageOptions.wic,
         method: {
@@ -40,6 +46,7 @@ export default async function checkFullPageScreen(
         folders,
         tag,
         saveFullPageOptions,
+        isNativeContext,
     )
 
     // 2a. Determine the options

@@ -8,7 +8,7 @@ export interface RectanglesOptions {
     // The inner height of a screen
     innerHeight: number;
     // If this is an iOS device
-    isIos: boolean;
+    isIOS: boolean;
 }
 
 export interface ElementRectanglesOptions extends RectanglesOptions {

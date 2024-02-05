@@ -1,3 +1,4 @@
+import type { ChainablePromiseElement } from 'webdriverio'
 import type { Folders } from '../base.interfaces'
 import type { DefaultOptions } from '../helpers/options.interfaces'
 import type { ResizeDimensions } from '../methods/images.interfaces'
@@ -15,8 +16,8 @@ export interface SaveElementMethodOptions extends Partial<Folders> {
     disableCSSAnimation?: boolean;
     // Hide all scrollbars
     hideScrollBars?: boolean;
-    // The resizeDimensions, for backwards compatibility this will be an object or a number
-    resizeDimensions?: ResizeDimensions | number;
+    // The resizeDimensions
+    resizeDimensions?: ResizeDimensions;
     // The padding that needs to be added to the tool bar on iOS and Android
     toolBarShadowPadding?: number;
     // Elements that need to be hidden (visibility: hidden) before saving a screenshot
@@ -31,3 +32,5 @@ export interface CheckElementOptions {
     wic: DefaultOptions;
     method: CheckElementMethodOptions;
 }
+
+export type WicElement = WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>

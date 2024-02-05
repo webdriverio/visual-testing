@@ -23,6 +23,8 @@ build
 .tmp
 .idea/
 localBaseline/
+apps/
+logs/
 
 # files
 .DS_Store
@@ -30,3 +32,4 @@ localBaseline/
 dist
 
 *.tgz
+bugreport*.zip

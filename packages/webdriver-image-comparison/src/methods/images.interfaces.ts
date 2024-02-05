@@ -1,3 +1,4 @@
+import type { CanvasRenderingContext2D } from 'canvas'
 import type { RectanglesOutput } from './rectangles.interfaces'
 import type { LogLevel } from '../helpers/options.interfaces'
 import type { Folders } from '../base.interfaces'
@@ -14,6 +15,8 @@ export interface ResizeDimensions {
 }
 
 export interface ImageCompareOptions {
+    // Optional ignore regions
+    ignoreRegions?: RectanglesOutput[];
     // The device pixel ratio of the device
     devicePixelRatio: number;
     // The compare options
@@ -27,6 +30,8 @@ export interface ImageCompareOptions {
     folderOptions: ImageCompareFolderOptions;
     // Is it an hybrid app or not
     isHybridApp: boolean;
+    // Is this an Android device
+    isAndroid?: boolean;
     // If it's in Landscape mode
     isLandscape: boolean;
     // Level to show logs
@@ -142,11 +147,11 @@ export interface CroppedBase64Image {
     base64Image: string;
     deviceName: string;
     devicePixelRatio: number;
-    isIos: boolean;
+    isIOS: boolean;
     isLandscape: boolean;
     logLevel: LogLevel;
     rectangles: RectanglesOutput;
-    resizeDimensions?: number | ResizeDimensions;
+    resizeDimensions?: ResizeDimensions;
 }
 
 export interface RotateBase64ImageOptions {
@@ -154,4 +159,47 @@ export interface RotateBase64ImageOptions {
     degrees: number;
     newHeight: number;
     newWidth: number;
+}
+
+export interface CropAndConvertToDataURL {
+    addIOSBezelCorners: boolean,
+    base64Image: string,
+    deviceName: string,
+    devicePixelRatio: number,
+    height: number,
+    isIOS: boolean,
+    isLandscape: boolean,
+    sourceX: number,
+    sourceY: number,
+    width: number,
+}
+
+export interface AdjustedAxis {
+    length: number,
+    logLevel: LogLevel,
+    maxDimension: number,
+    paddingEnd: number,
+    paddingStart: number,
+    start: number,
+    warningType: 'WIDTH' | 'HEIGHT',
+}
+
+export interface DimensionsWarning {
+    dimension: number,
+    logLevel: LogLevel
+    maxDimension: number,
+    position: number,
+    type: string,
+}
+
+export interface RotatedImage { isLandscape: boolean, base64Image:string }
+
+export interface HandleIOSBezelCorners {
+    addIOSBezelCorners: boolean,
+    ctx: CanvasRenderingContext2D,
+    deviceName: string,
+    devicePixelRatio: number,
+    height: number,
+    isLandscape: boolean,
+    width: number,
 }

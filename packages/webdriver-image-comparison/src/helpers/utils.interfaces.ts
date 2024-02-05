@@ -18,7 +18,7 @@ export interface FormatFileNameOptions {
     deviceName: string;
     // The device pixel ratio
     devicePixelRatio: number;
-    // The string that needs to be formated
+    // The string that needs to be formatted
     formatImageName: string;
     // Is this a mobile
     isMobile: boolean;
@@ -29,9 +29,9 @@ export interface FormatFileNameOptions {
     // The the name of the instance
     name: string;
     // The outer height of the screen
-    outerHeight: number;
+    outerHeight?: number;
     // The outer width of the screen
-    outerWidth: number;
+    outerWidth?: number;
     // The platform name
     platformName: string;
     // The platform version

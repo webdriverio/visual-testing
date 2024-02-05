@@ -1,3 +1,4 @@
+import type { ChainablePromiseElement } from 'webdriverio'
 import type { RectanglesOutput } from '../methods/rectangles.interfaces'
 
 export interface CheckMethodOptions {
@@ -9,11 +10,13 @@ export interface CheckMethodOptions {
     blockOutStatusBar?: boolean;
     // Block out the tool bar yes or no
     blockOutToolBar?: boolean;
+    // Ignore elements and or areas
+    ignore?: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>)[];
     // Compare images and discard alpha
     ignoreAlpha?: boolean;
     // Compare images an discard anti aliasing
     ignoreAntialiasing?: boolean;
-    // Even though the images are in colour, the comparison wil compare 2 black/white images
+    // Even though the images are in color, the comparison wil compare 2 black/white images
     ignoreColors?: boolean;
     // Compare images and compare with red = 16, green = 16, blue = 16, alpha = 16, minBrightness=16, maxBrightness=240
     ignoreLess?: boolean;

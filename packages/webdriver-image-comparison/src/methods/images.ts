@@ -5,18 +5,25 @@ import type { ComparisonOptions, ComparisonIgnoreOption } from 'resemblejs'
 import compareImages from '../resemble/compareImages.js'
 import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
-import { determineStatusAddressToolBarRectangles } from './rectangles.js'
+import { determineStatusAddressToolBarRectangles, isWdioElement } from './rectangles.js'
 import type {
+    AdjustedAxis,
+    CropAndConvertToDataURL,
     CroppedBase64Image,
+    DimensionsWarning,
+    HandleIOSBezelCorners,
     IgnoreBoxes,
     ImageCompareOptions,
     ImageCompareResult,
+    ResizeDimensions,
     RotateBase64ImageOptions,
+    RotatedImage,
 } from './images.interfaces'
 import type { FullPageScreenshotsData } from './screenshots.interfaces'
-import type { Executor } from './methods.interfaces'
+import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces'
 import type { CompareData } from '../resemble/compare.interfaces'
 import { LogLevel } from '../helpers/options.interfaces'
+import type { WicElement } from '../commands/element.interfaces.js'
 
 /**
  * Check if the image exists and create a new baseline image if needed
@@ -63,8 +70,6 @@ export async function checkBaselineImageExists(
  Baseline image not found, save the actual image manually to the baseline.
  The image can be found here:
  ${actualFilePath}
- If you want the module to auto save a non existing image to the baseline you
- can provide 'autoSaveBaseline: true' to the options.
 #####################################################################################
 `,
                     )
@@ -76,143 +81,107 @@ export async function checkBaselineImageExists(
 }
 
 /**
- * Make a cropped image with Canvas
+ * Get the rotated image if needed
  */
-export async function makeCroppedBase64Image({
-    addIOSBezelCorners,
-    base64Image,
-    deviceName,
-    devicePixelRatio,
-    isIos,
-    isLandscape,
-    logLevel,
-    rectangles,
-    resizeDimensions = DEFAULT_RESIZE_DIMENSIONS,
-}: CroppedBase64Image): Promise<string> {
-    // Determine if the image is rotated
-    const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image, devicePixelRatio)
+async function getRotatedImageIfNeeded({ isLandscape, base64Image }: RotatedImage): Promise<string> {
+    const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
     const isRotated = isLandscape && screenshotHeight > screenshotWidth
-    // If so we need to rotate is -90 degrees
-    const newBase64Image = isRotated
+
+    return isRotated
         ? await rotateBase64Image({ base64Image, degrees: -90, newHeight: screenshotWidth, newWidth: screenshotHeight })
         : base64Image
-    /**
-   * This is in for backwards compatibility, it will be removed in the future
-   */
-    let resizeValues
-    if (typeof resizeDimensions === 'number') {
-        resizeValues = {
-            top: resizeDimensions,
-            right: resizeDimensions,
-            bottom: resizeDimensions,
-            left: resizeDimensions,
-        }
-        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-            console.log(
-                '\x1b[33m%s\x1b[0m',
-                `
+}
+
+/**
+ * Log a warning when the crop goes out of the screen
+ */
+function logDimensionWarning({
+    dimension,
+    logLevel,
+    maxDimension,
+    position,
+    type,
+}: DimensionsWarning): void {
+    if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
+        console.log(
+            '\x1b[33m%s\x1b[0m',
+            `
 #####################################################################################
- WARNING:
- THE 'resizeDimensions' NEEDS TO BE AN OBJECT LIKE
- {
-    top: 10,
-    right: 20,
-    bottom: 15,
-    left: 25,
- }
- NOW IT WILL BE DEFAULTED TO
-  {
-    top: ${resizeDimensions},
-    right: ${resizeDimensions},
-    bottom: ${resizeDimensions},
-    left: ${resizeDimensions},
- }
- THIS IS DEPRECATED AND WILL BE REMOVED IN A NEW MAJOR RELEASE
+ THE RESIZE DIMENSION ${type}=${dimension} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ RESULTING IN A ${type} CROP POSITION=${position}.
+ THIS HAS BEEN DEFAULTED TO '${['TOP', 'LEFT'].includes(type) ? 0 : maxDimension}'
 #####################################################################################
 `,
-            )
-        }
-    } else {
-        resizeValues = resizeDimensions
+        )
+    }
+}
+
+/**
+ * Get the adjusted axis
+ */
+function getAdjustedAxis({
+    length,
+    logLevel,
+    maxDimension,
+    paddingEnd,
+    paddingStart,
+    start,
+    warningType,
+}: AdjustedAxis): [number, number] {
+    let adjustedStart = start - paddingStart
+    let adjustedEnd = start + length + paddingEnd
+
+    if (adjustedStart < 0) {
+        logDimensionWarning({
+            dimension: paddingStart,
+            logLevel,
+            maxDimension,
+            position: adjustedStart,
+            type: warningType === 'WIDTH' ? 'LEFT' : 'TOP',
+        })
+        adjustedStart = 0
+    }
+    if (adjustedEnd > maxDimension) {
+        logDimensionWarning({
+            dimension: paddingEnd,
+            logLevel,
+            maxDimension,
+            position: adjustedEnd,
+            type: warningType === 'WIDTH' ? 'RIGHT' : 'BOTTOM',
+        })
+        adjustedEnd = maxDimension
     }
 
-    const { top, right, bottom, left }: { top: number; right: number; bottom: number; left: number } = {
-        ...DEFAULT_RESIZE_DIMENSIONS,
-        ...resizeValues,
-    }
-    const { height, width, x, y } = rectangles
-    const canvasWidth = width + left + right
-    const canvasHeight = height + top + bottom
-    const canvas = createCanvas(canvasWidth, canvasHeight)
-    const image = await loadImage(`data:image/png;base64,${newBase64Image}`)
-    const ctx = canvas.getContext('2d')
+    return [adjustedStart, adjustedEnd]
+}
 
-    let sourceXStart = x - left
-    let sourceYStart = y - top
-
-    if (sourceXStart < 0) {
-        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-            console.log(
-                '\x1b[33m%s\x1b[0m',
-                `
-#####################################################################################
- THE RESIZE DIMENSION LEFT '${left}' MADE THE CROPPING GO OUT OF
- THE IMAGE BOUNDARIES RESULTING IN AN IMAGE STARTPOSITION '${sourceXStart}'.
- THIS HAS BEEN DEFAULTED TO '0'
-#####################################################################################
-`,
-            )
-        }
-        sourceXStart = 0
-    }
-
-    if (sourceYStart < 0) {
-        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-            console.log(
-                '\x1b[33m%s\x1b[0m',
-                `
-#####################################################################################
- THE RESIZE DIMENSION LEFT '${top}' MADE THE CROPPING GO OUT OF
- THE IMAGE BOUNDARIES RESULTING IN AN IMAGE STARTPOSITION '${sourceYStart}'.
- THIS HAS BEEN DEFAULTED TO '0'
-#####################################################################################
-`,
-            )
-        }
-        sourceYStart = 0
-    }
-
-    ctx.drawImage(
-        image,
-        // Start at x/y pixels from the left and the top of the image (crop)
-        sourceXStart,
-        sourceYStart,
-        // 'Get' a (w * h) area from the source image (crop)
-        canvasWidth,
-        canvasHeight,
-        // Place the result at 0, 0 in the canvas,
-        0,
-        0,
-        // With as width / height: 100 * 100 (scale)
-        canvasWidth,
-        canvasHeight,
-    )
-
+/**
+ * Handle the iOS bezel corners
+ */
+async function handleIOSBezelCorners({
+    addIOSBezelCorners,
+    ctx,
+    deviceName,
+    devicePixelRatio,
+    height,
+    isLandscape,
+    width,
+}: HandleIOSBezelCorners){
     // Add the bezel corners to the iOS image if we need to
     const normalizedDeviceName = deviceName
         .toLowerCase()
-        // (keep alphanumeric|remove simulator|remove inch|remove 1st/2nd/3rd/4th generation)
+    // (keep alphanumeric|remove simulator|remove inch|remove 1st/2nd/3rd/4th generation)
         .replace(/([^A-Za-z0-9]|simulator|inch|(\d(st|nd|rd|th)) generation)/gi, '')
     const isSupported =
         // For iPhone
         (normalizedDeviceName.includes('iphone') && supportedIosBezelDevices.includes(normalizedDeviceName)) ||
         // For iPad
         (normalizedDeviceName.includes('ipad') &&
-            supportedIosBezelDevices.includes(normalizedDeviceName) &&
-            (canvasHeight / devicePixelRatio >= 1133 || canvasWidth / devicePixelRatio >= 1133))
+        supportedIosBezelDevices.includes(normalizedDeviceName) &&
+        (width / devicePixelRatio >= 1133 || height / devicePixelRatio >= 1133))
     let isIosBezelError = false
 
-    if (addIOSBezelCorners && isIos && isSupported) {
+    if (addIOSBezelCorners && isSupported) {
         // Determine the bezel images
         const { topImageName, bottomImageName } = getIosBezelImageNames(normalizedDeviceName)
 
@@ -243,15 +212,15 @@ export async function makeCroppedBase64Image({
             // y = heightScreen - heightBottom or x = widthScreen - heightBottom
             ctx.drawImage(
                 await loadImage(`data:image/png;base64,${bottomBase64Image}`),
-                isLandscape ? canvasWidth - getScreenshotSize(bottomImage).height : 0,
-                isLandscape ? 0 : canvasHeight - getScreenshotSize(bottomImage).height,
+                isLandscape ? width - getScreenshotSize(bottomImage).height : 0,
+                isLandscape ? 0 : height - getScreenshotSize(bottomImage).height,
             )
         } else {
             isIosBezelError = true
         }
     }
 
-    if (addIOSBezelCorners && isIos && !isSupported) {
+    if (addIOSBezelCorners && !isSupported) {
         isIosBezelError = true
     }
 
@@ -260,17 +229,98 @@ export async function makeCroppedBase64Image({
             '\x1b[33m%s\x1b[0m',
             `
 #####################################################################################
- WARNING:
- We could not find the bezel corners for the device '${deviceName}'.
- The normalized device name is '${normalizedDeviceName}'
- and couldn't be found in the supported devices:
- ${supportedIosBezelDevices.join(', ')}
+WARNING:
+We could not find the bezel corners for the device '${deviceName}'.
+The normalized device name is '${normalizedDeviceName}'
+and couldn't be found in the supported devices:
+${supportedIosBezelDevices.join(', ')}
 #####################################################################################
 `,
         )
     }
+}
+
+/**
+ * Crop the image and convert it to a base64 image
+ */
+async function cropAndConvertToDataURL({
+    addIOSBezelCorners,
+    base64Image,
+    deviceName,
+    devicePixelRatio,
+    height,
+    isIOS,
+    isLandscape,
+    sourceX,
+    sourceY,
+    width,
+}: CropAndConvertToDataURL): Promise<string> {
+    const canvas = createCanvas(width, height)
+    const ctx = canvas.getContext('2d')
+    const image = await loadImage(`data:image/png;base64,${base64Image}`)
+    ctx.drawImage(image, sourceX, sourceY, width, height, 0, 0, width, height)
+
+    if (isIOS){
+        await handleIOSBezelCorners({ addIOSBezelCorners, ctx, deviceName, devicePixelRatio, height, isLandscape, width })
+    }
 
     return canvas.toDataURL().replace(/^data:image\/png;base64,/, '')
+}
+
+/**
+ * Make a cropped image with Canvas
+ */
+export async function makeCroppedBase64Image({
+    addIOSBezelCorners,
+    base64Image,
+    deviceName,
+    devicePixelRatio,
+    isIOS,
+    isLandscape,
+    logLevel,
+    rectangles,
+    resizeDimensions = DEFAULT_RESIZE_DIMENSIONS,
+}: CroppedBase64Image): Promise<string> {
+    // Rotate the image if needed and get the screenshot size
+    const newBase64Image = await getRotatedImageIfNeeded({ isLandscape, base64Image })
+    const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
+
+    // Determine/Get the size of the cropped screenshot and cut out dimensions
+    const { top, right, bottom, left } = { ...DEFAULT_RESIZE_DIMENSIONS, ...resizeDimensions }
+    const { height, width, x, y } = rectangles
+    const [sourceXStart, sourceXEnd] = getAdjustedAxis({
+        length: width,
+        logLevel,
+        maxDimension: screenshotWidth,
+        paddingEnd: right,
+        paddingStart: left,
+        start: x,
+        warningType: 'WIDTH'
+    })
+    const [sourceYStart, sourceYEnd] = getAdjustedAxis({
+        length: height,
+        logLevel,
+        maxDimension: screenshotHeight,
+        paddingEnd: bottom,
+        paddingStart: top,
+        start: y,
+        warningType: 'HEIGHT',
+    })
+
+    // Create the canvas and draw the image on it
+    return cropAndConvertToDataURL({
+        addIOSBezelCorners,
+        base64Image: newBase64Image,
+        deviceName,
+        devicePixelRatio,
+        height: sourceYEnd - sourceYStart,
+        isIOS,
+        isLandscape,
+        sourceX: sourceXStart,
+        sourceY: sourceYStart,
+        width: sourceXEnd - sourceXStart,
+    }
+    )
 }
 
 /**
@@ -280,9 +330,20 @@ export async function executeImageCompare(
     executor: Executor,
     options: ImageCompareOptions,
     isViewPortScreenshot = false,
+    isNativeContext = false,
 ): Promise<ImageCompareResult | number> {
     // 1. Set some variables
-    const { devicePixelRatio, fileName, isAndroidNativeWebScreenshot, isHybridApp, isLandscape, logLevel, platformName } = options
+    const {
+        ignoreRegions = [],
+        devicePixelRatio,
+        fileName,
+        isAndroidNativeWebScreenshot,
+        isAndroid,
+        isHybridApp,
+        isLandscape,
+        logLevel,
+        platformName,
+    } = options
     const { actualFolder, autoSaveBaseline, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
         options.folderOptions
     let diffFilePath
@@ -307,25 +368,32 @@ export async function executeImageCompare(
         ),
     ) as ComparisonIgnoreOption[]
 
-    // 4b. Determine the ignore rectangles for the blockouts
-    const blockOut = 'blockOut' in imageCompareOptions ? imageCompareOptions.blockOut : []
-    const statusAddressToolBarOptions = {
-        blockOutSideBar: imageCompareOptions.blockOutSideBar,
-        blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
-        blockOutToolBar: imageCompareOptions.blockOutToolBar,
-        isHybridApp,
-        isLandscape,
-        isMobile,
-        isViewPortScreenshot,
-        isAndroidNativeWebScreenshot,
-        platformName,
+    // 4b. Determine the ignore rectangles for the block outs
+    const blockOut = 'blockOut' in imageCompareOptions ? imageCompareOptions.blockOut || [] : []
+    const webStatusAddressToolBarOptions = []
+    if (!isNativeContext){
+        const statusAddressToolBarOptions = {
+            blockOutSideBar: imageCompareOptions.blockOutSideBar,
+            blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
+            blockOutToolBar: imageCompareOptions.blockOutToolBar,
+            isHybridApp,
+            isLandscape,
+            isMobile,
+            isViewPortScreenshot,
+            isAndroidNativeWebScreenshot,
+            platformName,
+        }
+        webStatusAddressToolBarOptions.push(...(await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions)) || [])
     }
-
-    const ignoredBoxes = (blockOut || [])
-        .concat(
-            // 4c. Add the mobile rectangles that need to be ignored
-            await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions),
-        )
+    const ignoredBoxes = [
+        // These come from the method
+        ...blockOut,
+        // @TODO: I'm defaulting ignore regions for devices
+        // Need to check if this is the right thing to do for web and mobile browser tests
+        ...ignoreRegions,
+        // Only get info about the status bars when we are in the web context
+        ...webStatusAddressToolBarOptions
+    ]
         .map(
             // 4d. Make sure all the rectangles are equal to the dpr for the screenshot
             (rectangles) => {
@@ -337,7 +405,8 @@ export async function executeImageCompare(
                         left: rectangles.x,
                         top: rectangles.y,
                     },
-                    devicePixelRatio,
+                    // For Android we don't need to do it times the pixel ratio, for all others we need to
+                    isAndroid ? 1 : devicePixelRatio,
                 )
             },
         )
@@ -512,4 +581,112 @@ async function rotateBase64Image({ base64Image, degrees, newHeight, newWidth }: 
     ctx.drawImage(image, image.width / -2, image.height / -2)
 
     return canvas.toDataURL().replace(/^data:image\/png;base64,/, '')
+}
+
+/**
+ * Take a based64 screenshot of an element and resize it
+ */
+async function takeResizedBase64Screenshot({
+    element,
+    devicePixelRatio,
+    isIOS,
+    methods:{
+        getElementRect,
+        screenShot,
+    },
+    resizeDimensions,
+}:{
+    element: WicElement,
+    devicePixelRatio: number,
+    isIOS: boolean,
+    methods:{
+        getElementRect: GetElementRect,
+        screenShot: TakeScreenShot,
+    }
+    resizeDimensions: ResizeDimensions,
+}
+): Promise<string> {
+    const awaitedElement = await element
+    if (!isWdioElement(awaitedElement)){
+        console.log('awaitedElement = ', JSON.stringify(awaitedElement))
+    }
+
+    // Get the element position
+    const elementRegion = await getElementRect(awaitedElement.elementId)
+
+    // Create a screenshot
+    const base64Image = await screenShot()
+    // Crop it out with the correct dimensions
+
+    // Make the image smaller
+    // Provide the size of the image with the resizeDimensions on left, right, top and bottom
+    const resizedBase64Image = await makeCroppedBase64Image({
+        addIOSBezelCorners: false,
+        base64Image,
+        deviceName: '',
+        devicePixelRatio,
+        isIOS,
+        isLandscape: false,
+        // @TODO:we need to fix this debug statement
+        // @ts-ignore
+        logLevel: 'debug',
+        rectangles: calculateDprData({
+            height: elementRegion.height,
+            width: elementRegion.width,
+            x: elementRegion.x,
+            y: elementRegion.y,
+        }, isIOS ? devicePixelRatio : 1),
+        // The assumption is that a user calculated the resizeDimensions from a screenshot which is with the devicePixelRatio
+        resizeDimensions: calculateDprData(resizeDimensions, 1/devicePixelRatio),
+    })
+
+    return resizedBase64Image
+}
+
+/**
+ * Take a base64 screenshot of an element
+ */
+export async function takeBase64ElementScreenshot({
+    element,
+    devicePixelRatio,
+    isIOS,
+    methods:{
+        getElementRect,
+        screenShot,
+    },
+    resizeDimensions,
+}:{
+    element: WicElement,
+    devicePixelRatio: number,
+    isIOS: boolean,
+    methods:{
+        getElementRect: GetElementRect,
+        screenShot: TakeScreenShot,
+    }
+    resizeDimensions: ResizeDimensions,
+}): Promise<string> {
+    const shouldTakeResizedScreenshot = resizeDimensions !== DEFAULT_RESIZE_DIMENSIONS
+
+    if (!shouldTakeResizedScreenshot) {
+        try {
+            const awaitedElement = await element
+            if (!isWdioElement(awaitedElement)) {
+                console.error(' takeBase64ElementScreenshot element is not a valid element because of ', JSON.stringify(awaitedElement))
+            }
+            return await awaitedElement.takeElementScreenshot(awaitedElement.elementId)
+        } catch (error) {
+            console.error('Error taking an element screenshot with the default `element.takeElementScreenshot(elementId)` method:', error, ' We will retry with a resized screenshot')
+        }
+    }
+
+    return await takeResizedBase64Screenshot({
+        element,
+        devicePixelRatio,
+        isIOS,
+        methods: {
+            getElementRect,
+            screenShot,
+        },
+        resizeDimensions,
+    })
 }

@@ -1,3 +1,4 @@
+import type { WicElement } from 'webdriver-image-comparison/dist/commands/element.interfaces.js'
 import WdioImageComparisonService from './service.js'
 import type {
     Output,
@@ -17,7 +18,7 @@ declare global {
              * Saves an image of an element
              */
             saveElement(
-                element: Element,
+                element: WicElement,
                 tag: string,
                 saveElementOptions?: WdioSaveElementMethodOptions
             ): Promise<Output>;
@@ -50,7 +51,7 @@ declare global {
              * Compare an image of an element
              */
             checkElement(
-                element: Element,
+                element: WicElement,
                 tag: string,
                 checkElementOptions?: WdioCheckElementMethodOptions
             ): Promise<Result>;
@@ -92,7 +93,7 @@ declare global {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R, T> {
             /**
-             * cks that if current screen matches with snapshot of baseline.
+             * Checks that if current screen matches with snapshot of baseline.
              * @param tag snapshot name
              * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
              * @param options options to pass into the `checkScreen` method

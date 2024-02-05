@@ -19,8 +19,14 @@ export default async function saveFullPageScreen(
     folders: Folders,
     tag: string,
     saveFullPageOptions: SaveFullPageOptions,
+    isNativeContext: boolean,
 ): Promise<ScreenshotOutput> {
-    // 1a. Set some variables
+    // 1a. Check if the method is supported in native context
+    if (isNativeContext) {
+        throw new Error('The method saveFullPageScreen is not supported in native context for native mobile apps!')
+    }
+
+    // 1b. Set some variables
     const {
         addressBarShadowPadding,
         formatImageName,
@@ -30,7 +36,7 @@ export default async function saveFullPageScreen(
         toolBarShadowPadding,
     } = saveFullPageOptions.wic
 
-    // 1b. Set the method options to the right values
+    // 1c. Set the method options to the right values
     const disableCSSAnimation: boolean = 'disableCSSAnimation' in saveFullPageOptions.method
         ? Boolean(saveFullPageOptions.method.disableCSSAnimation)
         : saveFullPageOptions.wic.disableCSSAnimation
@@ -70,7 +76,7 @@ export default async function saveFullPageScreen(
         isAndroidChromeDriverScreenshot: enrichedInstanceData.isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot: enrichedInstanceData.isAndroidNativeWebScreenshot,
         isHybridApp,
-        isIos: enrichedInstanceData.isIos,
+        isIOS: enrichedInstanceData.isIOS,
         isLandscape,
         logLevel: logLevel,
         screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
@@ -121,6 +127,7 @@ export default async function saveFullPageScreen(
         hideElements,
         hideScrollBars,
         isLandscape,
+        isNativeContext: false,
         logLevel,
         platformName: instanceData.platformName,
         removeElements,

@@ -4,14 +4,7 @@ import { setValue, getValue } from '@wdio/shared-store-service'
 import type { Job } from 'saucelabs'
 import SauceLabs from 'saucelabs'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
-import { sauceIosSim } from './sauce.ios.sims.ts'
-import { sauceAndroidEmus } from './sauce.android.emus.js'
-import { sauceDesktopBrowsers } from './sauce.desktop.browsers.js'
 import type { RetriesSpecs } from '../types/types.ts'
-
-const buildIdentifier = process.env.CI
-    ? `${process.env.GITHUB_WORKFLOW} - ${process.env.GITHUB_JOB}`
-    : `Local build-${new Date().getTime()}`
 
 const SPEC_FILE_RETRIES = 'specFileRetries'
 
@@ -26,23 +19,7 @@ export const config: Options.Testrunner = {
     // ============
     // Capabilities
     // ============
-    capabilities: [
-        ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'sims'
-            ? sauceIosSim({
-                buildName: buildIdentifier,
-            })
-            : []),
-        ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'emu'
-            ? sauceAndroidEmus({
-                buildName: buildIdentifier,
-            })
-            : []),
-        ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'desktop'
-            ? sauceDesktopBrowsers({
-                buildName: buildIdentifier,
-            })
-            : []),
-    ],
+    capabilities: [],
     // ========
     // Services
     // ========
@@ -63,7 +40,6 @@ export const config: Options.Testrunner = {
                 formatImageName: '{tag}-{logName}-{width}x{height}',
                 screenshotPath: join(process.cwd(), '.tmp/'),
                 savePerInstance: true,
-                autoSaveBaseline: true,
                 blockOutStatusBar: true,
                 blockOutToolBar: true,
                 blockOutSideBar: true,

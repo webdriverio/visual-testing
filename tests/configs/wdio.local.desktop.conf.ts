@@ -58,7 +58,6 @@ export const config: Options.Testrunner = {
                 debug: true,
                 formatImageName: '{tag}-{logName}-{width}x{height}',
                 screenshotPath: join(process.cwd(), '.tmp/'),
-                autoSaveBaseline: true,
                 savePerInstance: true,
                 blockOutStatusBar: true,
                 blockOutToolBar: true,

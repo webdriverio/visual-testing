@@ -25,6 +25,7 @@ export default async function afterScreenshot(executor: Executor, options: After
         hideElements,
         hideScrollBars: noScrollBars,
         isLandscape,
+        isNativeContext,
         logLevel,
         platformName,
         removeElements,
@@ -41,13 +42,15 @@ export default async function afterScreenshot(executor: Executor, options: After
 
     // Show the scrollbars again
     /* istanbul ignore else */
-    if (noScrollBars) {
+    if (!isNativeContext && noScrollBars) {
         await executor(hideScrollBars, !noScrollBars)
     }
 
     // Show elements again
     /* istanbul ignore else */
-    if (hideElements.length > 0 || removeElements.length > 0) {
+    if (!isNativeContext &&
+        ((hideElements && hideElements.length > 0) || (removeElements && removeElements.length > 0))
+    ) {
         try {
             await executor(hideRemoveElements, { hide: hideElements, remove: removeElements }, false)
         } catch (e) {
@@ -70,7 +73,7 @@ export default async function afterScreenshot(executor: Executor, options: After
 
     // Remove the custom set css
     /* istanbul ignore else */
-    if (disableCSSAnimation || checkIsMobile(platformName)) {
+    if (!isNativeContext && (disableCSSAnimation || checkIsMobile(platformName))) {
         await executor(removeElementFromDom, CUSTOM_CSS_ID)
     }
 

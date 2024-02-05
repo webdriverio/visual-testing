@@ -14,6 +14,11 @@ describe('@wdio/visual-service desktop', () => {
     afterEach(async () => await browser.execute('window.scrollTo(0, 0);', []))
 
     it(`should compare an element successful with a baseline for '${browserName}'`, async () => {
+        // For some reason the safari 16 browser on Sauce Labs doesn't load the page correctly for the first try
+        if (browserName === 'safari-16') {
+            await browser.url('')
+            await $('.hero__title-logo').waitForDisplayed()
+        }
         await expect($('.hero__title-logo')).toMatchElementSnapshot('wdioLogo', {
             removeElements: [await $('nav.navbar')]
         })

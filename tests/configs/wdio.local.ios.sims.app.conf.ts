@@ -1,52 +1,28 @@
 import type { Options } from '@wdio/types'
 import { join } from 'node:path'
-import { config as sharedConfig } from './wdio.shared.conf.ts'
+import { config as sharedConfig } from './wdio.local.appium.shared.conf.ts'
 
 export const config: Options.Testrunner = {
     ...sharedConfig,
-    // =========================
-    // Appium Configuration
-    // =========================
-    port: 4723,
     // ==================
     // Specify Test Files
     // ==================
-    specs: [join(process.cwd(), './tests/specs/mobile.spec.ts')],
+    specs: [join(process.cwd(), './tests/specs/mobile.app.spec.ts')],
     specFileRetries: 0,
     // ============
     // Capabilities
     // ============
     capabilities: [
-        // iOSCaps('iPhone 14', 'PORTRAIT', '16.0'),
-        // iOSCaps('iPhone 14', 'LANDSCAPE', '16.0'),
-        // iOSCaps('iPhone 14 Plus', 'PORTRAIT', '16.0'),
-        // iOSCaps('iPhone 14 Plus', 'LANDSCAPE', '16.0'),
-        // iOSCaps('iPhone 14 Pro', 'PORTRAIT', '16.0'),
-        // iOSCaps('iPhone 14 Pro', 'LANDSCAPE', '16.0'),
-        // iOSCaps("iPhone 14 Pro Max", "PORTRAIT", "16.0"),
-        // iOSCaps('iPhone 14 Pro Max', 'LANDSCAPE', '16.0'),
-        iOSCaps('iPhone 15', 'PORTRAIT', '17.0'),
-        // iOSCaps('iPhone 15', 'LANDSCAPE', '17.0'),
-    ],
-    // ===================
-    // Image compare setup
-    // ===================
-    services: [
-        [
-            'visual',
-            {
-                addIOSBezelCorners: true,
-                baselineFolder: join(process.cwd(), './tests/localBaseline/'),
-                formatImageName: '{tag}-{logName}-{width}x{height}',
-                screenshotPath: join(process.cwd(), '.tmp/'),
-                savePerInstance: true,
-                autoSaveBaseline: true,
-                blockOutStatusBar: true,
-                blockOutToolBar: true,
-                blockOutSideBar: true,
-                logLevel: 'debug',
-            },
-        ],
+        // iOSCaps('iPhone 14', 'PORTRAIT', '17.2'),
+        // iOSCaps('iPhone 14', 'LANDSCAPE', '17.2'),
+        // iOSCaps('iPhone 14 Plus', 'PORTRAIT', '17.2'),
+        // iOSCaps('iPhone 14 Plus', 'LANDSCAPE', '17.2'),
+        // iOSCaps('iPhone 14 Pro', 'PORTRAIT', '17.2'),
+        // iOSCaps('iPhone 14 Pro', 'LANDSCAPE', '17.2'),
+        // iOSCaps("iPhone 14 Pro Max", "PORTRAIT", "17.2"),
+        // iOSCaps('iPhone 14 Pro Max', 'LANDSCAPE', '17.2'),
+        iOSCaps('iPhone 15', 'PORTRAIT', '17.2'),
+        // iOSCaps('iPhone 15', 'LANDSCAPE', '17.2'),
     ],
 }
 
@@ -60,11 +36,17 @@ function iOSCaps(
     wdioIcsCommands: string[] = []
 ) {
     return {
-        browserName: 'Safari',
         platformName: 'iOS',
         'appium:automationName': 'XCUITest',
         'appium:deviceName': deviceName,
         'appium:platformVersion': osVersion,
+        // The path to the app
+        'appium:app': join(
+            process.cwd(),
+            'apps',
+            // Change this name according to the app version you downloaded
+            'ios.simulator.wdio.native.app.v1.0.8.zip'
+        ),
         'appium:orientation': orientation,
         'appium:newCommandTimeout': 240,
         'appium:language': 'en',
@@ -86,5 +68,9 @@ function iOSCaps(
             ),
             commands: wdioIcsCommands,
         },
+        // @TODO: needs to be removed before we merge
+        'appium:includeSafariInWebviews': true,
+        // This is needed to wait for the webview context to become available
+        'appium:webviewConnectTimeout': 5000,
     }
 }

@@ -20,6 +20,7 @@ export const DEFAULT_SHADOW = {
     TOOL_BAR: 6,
 }
 export const DESKTOP = 'desktop'
+export const NOT_KNOWN = 'not_known'
 export const CUSTOM_CSS_ID = 'pic-css'
 export const DEFAULT_RESIZE_DIMENSIONS: Required<ResizeDimensions> = {
     top: 0,
@@ -61,6 +62,8 @@ export const ANDROID_OFFSETS = {
     10: { ...ANDROID_DEFAULT_OFFSETS },
     11: { ...ANDROID_DEFAULT_OFFSETS },
     12: { ...ANDROID_DEFAULT_OFFSETS },
+    13: { ...ANDROID_DEFAULT_OFFSETS },
+    14: { ...ANDROID_DEFAULT_OFFSETS },
 }
 
 //=========================
@@ -160,7 +163,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 124, y: 829, height: 9, width: 143 },
             },
         },
-        // 14Pro (notch)
+        // 14Pro|15 (dynamic island)
         852: {
             LANDSCAPE: {
                 SAFE_AREA: 59,
@@ -354,6 +357,7 @@ export const supportedIosBezelDevices = [
     'iphone14plus',
     'iphone14pro',
     'iphone14promax',
+    'iphone15',
     // // iPads
     'ipadmini', // 1133
     'ipadair', // 1180

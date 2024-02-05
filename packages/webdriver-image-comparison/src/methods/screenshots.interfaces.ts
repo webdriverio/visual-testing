@@ -45,7 +45,7 @@ export interface FullPageScreenshotDataOptions {
     // Is it an hybrid app or not
     isHybridApp: boolean;
     // If the instance is an iOS device
-    isIos: boolean;
+    isIOS: boolean;
     // If it's landscape or not
     isLandscape: boolean;
     // Level to show logs

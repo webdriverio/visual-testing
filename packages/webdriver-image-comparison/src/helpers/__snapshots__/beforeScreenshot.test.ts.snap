@@ -3,13 +3,33 @@
 exports[`beforeScreenshot > should be able to return the enriched instance data with \`addShadowPadding: true\` 1`] = `
 {
   "addressBarShadowPadding": 0,
+  "appName": "appName",
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
+  "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
+  "deviceScreenSize": {
+    "height": 1,
+    "width": 1,
+  },
   "isAndroid": false,
   "isAndroidChromeDriverScreenshot": false,
   "isAndroidNativeWebScreenshot": false,
-  "isIos": false,
+  "isIOS": false,
   "isMobile": false,
   "isTestInBrowser": true,
   "isTestInMobileBrowser": false,
@@ -25,13 +45,33 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
 exports[`beforeScreenshot > should be able to return the enriched instance data with default options 1`] = `
 {
   "addressBarShadowPadding": 0,
+  "appName": "appName",
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
+  "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
+  "deviceScreenSize": {
+    "height": 1,
+    "width": 1,
+  },
   "isAndroid": false,
   "isAndroidChromeDriverScreenshot": false,
   "isAndroidNativeWebScreenshot": false,
-  "isIos": false,
+  "isIOS": false,
   "isMobile": false,
   "isTestInBrowser": true,
   "isTestInMobileBrowser": false,

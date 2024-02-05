@@ -4,8 +4,8 @@ import type {
     ExtendedSauceLabsCapabilities,
 } from '../types/types.ts'
 
-export function sauceIosSim({ buildName }: { buildName: string }) {
-    const mobileSpecs = join(process.cwd(), './tests/specs/mobile.spec.ts')
+export function sauceIosSimWeb({ buildName }: { buildName: string }) {
+    const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
     // For all screen sizes see
     // https://github.com/wswebcreation/webdriver-image-comparison/blob/main/lib/helpers/constants.ts
     const iOS14Devices = [

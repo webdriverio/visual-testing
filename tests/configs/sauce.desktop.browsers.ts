@@ -138,6 +138,9 @@ export function sauceDesktopBrowsers({
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest',
             },
+            'ms:edgeOptions':{
+                args: ['--guest']
+            },
         },
         {
             browserName: 'MicrosoftEdge',
@@ -148,6 +151,9 @@ export function sauceDesktopBrowsers({
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest-1',
             },
+            'ms:edgeOptions':{
+                args: ['--guest']
+            },
         },
         {
             browserName: 'MicrosoftEdge',
@@ -157,6 +163,9 @@ export function sauceDesktopBrowsers({
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest-2',
+            },
+            'ms:edgeOptions':{
+                args: ['--guest']
             },
         },
 

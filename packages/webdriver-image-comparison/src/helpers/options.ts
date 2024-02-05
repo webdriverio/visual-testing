@@ -11,24 +11,24 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         /**
          * Module options
          */
-        addressBarShadowPadding: options.addressBarShadowPadding || DEFAULT_SHADOW.ADDRESS_BAR,
+        addressBarShadowPadding: options.addressBarShadowPadding ?? DEFAULT_SHADOW.ADDRESS_BAR,
         autoElementScroll: Object.prototype.hasOwnProperty.call(options, 'autoElementScroll')
             ? Boolean(options.autoElementScroll)
             : true,
-        addIOSBezelCorners: options.addIOSBezelCorners || false,
-        autoSaveBaseline: options.autoSaveBaseline || false,
-        clearFolder: options.clearRuntimeFolder || false,
-        formatImageName: options.formatImageName || DEFAULT_FORMAT_STRING,
-        isHybridApp: options.isHybridApp || false,
-        logLevel: options.logLevel || LogLevel.info,
-        savePerInstance: options.savePerInstance || false,
-        toolBarShadowPadding: options.toolBarShadowPadding || DEFAULT_SHADOW.TOOL_BAR,
+        addIOSBezelCorners: options.addIOSBezelCorners ?? false,
+        autoSaveBaseline: options.autoSaveBaseline ?? true,
+        clearFolder: options.clearRuntimeFolder ?? false,
+        formatImageName: options.formatImageName ?? DEFAULT_FORMAT_STRING,
+        isHybridApp: options.isHybridApp ?? false,
+        logLevel: options.logLevel ?? LogLevel.info,
+        savePerInstance: options.savePerInstance ?? false,
+        toolBarShadowPadding: options.toolBarShadowPadding ?? DEFAULT_SHADOW.TOOL_BAR,
 
         /**
      * Module and method options
      */
-        disableCSSAnimation: options.disableCSSAnimation || false,
-        fullPageScrollTimeout: options.fullPageScrollTimeout || FULL_PAGE_SCROLL_TIMEOUT,
+        disableCSSAnimation: options.disableCSSAnimation ?? false,
+        fullPageScrollTimeout: options.fullPageScrollTimeout ?? FULL_PAGE_SCROLL_TIMEOUT,
         hideScrollBars: Object.prototype.hasOwnProperty.call(options, 'hideScrollBars')
             ? Boolean(options.hideScrollBars)
             : true,
@@ -37,18 +37,18 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
      * Compare options
      */
         compareOptions: {
-            blockOutSideBar: !!options.blockOutSideBar,
-            blockOutStatusBar: !!options.blockOutStatusBar,
-            blockOutToolBar: !!options.blockOutToolBar,
-            ignoreAlpha: options.ignoreAlpha || false,
-            ignoreAntialiasing: options.ignoreAntialiasing || false,
-            ignoreColors: options.ignoreColors || false,
-            ignoreLess: options.ignoreLess || false,
-            ignoreNothing: options.ignoreNothing || false,
-            rawMisMatchPercentage: options.rawMisMatchPercentage || false,
-            returnAllCompareData: options.returnAllCompareData || false,
-            saveAboveTolerance: options.saveAboveTolerance || 0,
-            scaleImagesToSameSize: options.scaleImagesToSameSize || false,
+            blockOutSideBar: options.blockOutSideBar ?? true,
+            blockOutStatusBar: options.blockOutStatusBar ?? true,
+            blockOutToolBar: options.blockOutToolBar ?? true,
+            ignoreAlpha: options.ignoreAlpha ?? false,
+            ignoreAntialiasing: options.ignoreAntialiasing ?? false,
+            ignoreColors: options.ignoreColors ?? false,
+            ignoreLess: options.ignoreLess ?? false,
+            ignoreNothing: options.ignoreNothing ?? false,
+            rawMisMatchPercentage: options.rawMisMatchPercentage ?? false,
+            returnAllCompareData: options.returnAllCompareData ?? false,
+            saveAboveTolerance: options.saveAboveTolerance ?? 0,
+            scaleImagesToSameSize: options.scaleImagesToSameSize ?? false,
         },
 
         /**

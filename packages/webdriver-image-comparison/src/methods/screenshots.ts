@@ -34,7 +34,7 @@ export async function getBase64FullPageScreenshotsData(
         isAndroidNativeWebScreenshot,
         isAndroidChromeDriverScreenshot,
         isHybridApp,
-        isIos,
+        isIOS,
         isLandscape,
         logLevel,
         screenHeight,
@@ -84,7 +84,7 @@ export async function getBase64FullPageScreenshotsData(
 
         // Create a fullpage screenshot for Android when the ChromeDriver provides the screenshots
         return getFullPageScreenshotsDataAndroidChromeDriver(takeScreenshot, executor, chromeDriverOptions)
-    } else if (isIos) {
+    } else if (isIOS) {
         // Create a fullpage screenshot for iOS. iOS screenshots will hold the status, address and toolbar so they need to be removed
         const {
             safeArea,

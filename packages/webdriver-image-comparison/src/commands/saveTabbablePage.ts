@@ -16,12 +16,18 @@ export default async function saveTabbablePage(
     folders: Folders,
     tag: string,
     saveTabbableOptions: SaveTabbableOptions,
+    isNativeContext: boolean,
 ): Promise<ScreenshotOutput> {
-    // 1. Inject drawing the tabbables
+    // 1a. Check if the method is supported in native context
+    if (isNativeContext) {
+        throw new Error('The method saveTabbablePage is not supported in native context for native mobile apps!')
+    }
+
+    // 1b. Inject drawing the tabbables
     await methods.executor(drawTabbableOnCanvas, saveTabbableOptions.wic.tabbableOptions)
 
     // 2. Create the screenshot
-    const fullPageData = await saveFullPageScreen(methods, instanceData, folders, tag, saveTabbableOptions)
+    const fullPageData = await saveFullPageScreen(methods, instanceData, folders, tag, saveTabbableOptions, isNativeContext)
 
     // 3. Remove the canvas
     await methods.executor(removeElementFromDom, 'wic-tabbable-canvas')

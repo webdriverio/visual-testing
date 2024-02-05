@@ -1,6 +1,6 @@
 import logger from '@wdio/logger'
 import { expect } from '@wdio/globals'
-import type { Capabilities, Options } from '@wdio/types'
+import type { Capabilities } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import {
     BaseClass,
@@ -13,8 +13,7 @@ import {
     saveTabbablePage,
     checkTabbablePage,
 } from 'webdriver-image-comparison'
-
-import { getFolders, getInstanceData } from './utils.js'
+import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
     toMatchFullPageSnapshot,
@@ -36,22 +35,25 @@ const pageCommands = {
 
 export default class WdioImageComparisonService extends BaseClass {
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+    private _isNativeContext: boolean | undefined
 
     constructor(options: ClassOptions) {
         super(options)
+        this._isNativeContext = undefined
     }
-    before(
+    async before(
         capabilities: WebdriverIO.Capabilities,
         _specs: string[],
         browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     ) {
         this._browser = browser
+        this._isNativeContext = determineNativeContext(this._browser)
 
         if (!this._browser.isMultiremote) {
             log.info('Adding commands to global browser')
-            this.#addCommandsToBrowser(capabilities, this._browser)
+            await this.#addCommandsToBrowser(this._browser)
         } else {
-            this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
+            await this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
         }
 
         /**
@@ -65,7 +67,14 @@ export default class WdioImageComparisonService extends BaseClass {
         })
     }
 
-    #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
+    afterCommand (commandName:string, _args:string[], result:number|string, error:any) {
+        // This is for the cases where in the E2E tests we switch to a WEBVIEW or back to NATIVE_APP context
+        if (commandName === 'getContext' && error === undefined && typeof result === 'string') {
+            this._isNativeContext = result.includes('NATIVE')
+        }
+    }
+
+    async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
         const browser = this._browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
         log.info(`Adding commands to Multi Browser: ${browserNames.join(', ')}`)
@@ -73,10 +82,7 @@ export default class WdioImageComparisonService extends BaseClass {
         for (const browserName of browserNames) {
             const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
             const browserInstance = multiremoteBrowser.getInstance(browserName)
-            this.#addCommandsToBrowser(
-                (capabilities[browserName] as Options.MultiRemoteBrowserOptions).capabilities,
-                browserInstance
-            )
+            await this.#addCommandsToBrowser(browserInstance)
         }
 
         /**
@@ -105,14 +111,9 @@ export default class WdioImageComparisonService extends BaseClass {
         }
     }
 
-    #addCommandsToBrowser(
-        capabilities: WebdriverIO.Capabilities,
-        currentBrowser: WebdriverIO.Browser
-    ) {
-        const instanceData = getInstanceData(capabilities, currentBrowser)
-
-        const folders = this.folders
-        const defaultOptions = this.defaultOptions
+    async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
+        const instanceData = await getInstanceData(currentBrowser)
+        const self = this
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
@@ -122,22 +123,25 @@ export default class WdioImageComparisonService extends BaseClass {
                     this: typeof currentBrowser,
                     element,
                     tag,
-                    elementOptions = {}
+                    elementOptions = {},
                 ) {
                     return command(
                         {
-                            executor: this.execute.bind(currentBrowser),
-                            screenShot:
-                                this.takeScreenshot.bind(currentBrowser),
+                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
+                            },
+                            getElementRect: this.getElementRect.bind(currentBrowser),
+                            screenShot: this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(elementOptions, folders),
+                        getFolders(elementOptions, self.folders),
                         element,
                         tag,
                         {
-                            wic: defaultOptions,
+                            wic: self.defaultOptions,
                             method: elementOptions,
-                        }
+                        },
+                        self._isNativeContext as boolean,
                     )
                 }
             )
@@ -150,17 +154,21 @@ export default class WdioImageComparisonService extends BaseClass {
                 function (this: typeof currentBrowser, tag, pageOptions = {}) {
                     return command(
                         {
-                            executor: this.execute.bind(currentBrowser),
+                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
+                            },
+                            getElementRect: this.getElementRect.bind(currentBrowser),
                             screenShot:
                                 this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(pageOptions, folders),
+                        getFolders(pageOptions, self.folders),
                         tag,
                         {
-                            wic: defaultOptions,
+                            wic: self.defaultOptions,
                             method: pageOptions,
-                        }
+                        },
+                        self._isNativeContext as boolean,
                     )
                 }
             )
