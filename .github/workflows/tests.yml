@@ -5,10 +5,17 @@ on:
     branches:
       - main
   pull_request:
+  pull_request_target:
 
 jobs:
   ci-web:
     runs-on: ubuntu-latest
+    # Src: https://hugo.alliau.me/posts/2021-05-04-migration-to-github-native-dependabot-solutions-for-auto-merge-and-action-secrets.html#share-your-secrets-with-dependabot
+    # If the PR is coming from a fork (pull_request_target), ensure it's opened by "dependabot[bot]".
+    # Otherwise, clone it normally.
+    if: |
+        (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
+        (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
 
     strategy:
       matrix:
@@ -16,7 +23,14 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        uses: actions/checkout@v2
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Checkout PR Repository
+        if: ${{ github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v3
+        with:
+            ref: ${{ github.event.pull_request.head.sha }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
@@ -62,6 +76,12 @@ jobs:
 
   ci-app:
     runs-on: ubuntu-latest
+    # Src: https://hugo.alliau.me/posts/2021-05-04-migration-to-github-native-dependabot-solutions-for-auto-merge-and-action-secrets.html#share-your-secrets-with-dependabot
+    # If the PR is coming from a fork (pull_request_target), ensure it's opened by "dependabot[bot]".
+    # Otherwise, clone it normally.
+    if: |
+        (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
+        (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
 
     strategy:
       matrix:
@@ -69,7 +89,14 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        uses: actions/checkout@v2
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Checkout PR Repository
+        if: ${{ github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v3
+        with:
+            ref: ${{ github.event.pull_request.head.sha }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
