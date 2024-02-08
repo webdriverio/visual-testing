@@ -1,5 +1,5 @@
 ---
-"@wdio/visual-service": patch
+"@wdio/visual-service": major
 "webdriver-image-comparison": patch
 ---
 
