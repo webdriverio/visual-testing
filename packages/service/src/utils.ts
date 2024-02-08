@@ -2,7 +2,7 @@ import path from 'node:path'
 
 import type { Capabilities } from '@wdio/types'
 import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
-import { IOS_OFFSETS } from 'webdriver-image-comparison'
+import { IOS_OFFSETS, FOLDERS } from 'webdriver-image-comparison'
 import type {
     Folders,
     InstanceData,
@@ -42,7 +42,7 @@ export function getFolders(
      * next to the test file, unless the user provides a custom folder
      */
     const baselineFolder = currentTestPath
-        ? path.resolve(path.dirname(currentTestPath), '__snapshots__')
+        ? path.resolve(path.dirname(currentTestPath), FOLDERS.DEFAULT.BASE)
         : undefined
     return {
         actualFolder: methodOptions.actualFolder ?? folders.actualFolder,
