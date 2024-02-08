@@ -34,14 +34,17 @@ const pageCommands = {
 }
 
 export default class WdioImageComparisonService extends BaseClass {
+    #config: WebdriverIO.Config
     #currentFilePath?: string
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _isNativeContext: boolean | undefined
 
-    constructor(options: ClassOptions) {
+    constructor(options: ClassOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
         super(options)
+        this.#config = config
         this._isNativeContext = undefined
     }
+
     async before(
         capabilities: WebdriverIO.Capabilities,
         _specs: string[],
@@ -77,6 +80,18 @@ export default class WdioImageComparisonService extends BaseClass {
         if (commandName === 'getContext' && error === undefined && typeof result === 'string') {
             this._isNativeContext = result.includes('NATIVE')
         }
+    }
+
+    #getBaselineFolder() {
+        /**
+         * support `resolveSnapshotPath` WebdriverIO option
+         * @ref https://webdriver.io/docs/configuration#resolvesnapshotpath
+         */
+        if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFilePath) {
+            return this.#config.resolveSnapshotPath(this.#currentFilePath, '.png')
+        }
+
+        return this.#currentFilePath
     }
 
     async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
@@ -139,7 +154,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             screenShot: this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(elementOptions, self.folders, self.#currentFilePath),
+                        getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
                         element,
                         tag,
                         {
@@ -167,7 +182,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(pageOptions, self.folders, self.#currentFilePath),
+                        getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
                         tag,
                         {
                             wic: self.defaultOptions,
