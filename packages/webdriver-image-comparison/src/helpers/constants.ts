@@ -11,7 +11,7 @@ export const FOLDERS = {
     DIFF: 'diff',
     TEMP_FULL_SCREEN: 'tempFullScreen',
     DEFAULT: {
-        BASE: './wic/baseline/',
+        BASE: './__snapshots__/',
         SCREENSHOTS: '.tmp/',
     },
 }

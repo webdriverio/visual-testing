@@ -27,6 +27,21 @@ describe('utils', () => {
             }
             expect(getFolders(methodOptions, folders)).toMatchSnapshot()
         })
+
+        it('should be able to return the correct baseline folder if a currentTestPath is provided', () => {
+            const baselineFolder = '/foo/bar'
+            const methodOptions = {}
+            const folders = {
+                baselineFolder: 'folderBase',
+                diffFolder: 'folderDiff',
+                actualFolder: 'folderActual',
+            }
+            const currentTestPath = '/path/to/test.ts'
+            expect(getFolders(methodOptions, folders, currentTestPath).baselineFolder)
+                .toBe('/path/to/__snapshots__')
+            expect(getFolders({ baselineFolder }, folders, currentTestPath).baselineFolder)
+                .toBe(baselineFolder)
+        })
     })
 
     describe('getScreenshotSize', () => {

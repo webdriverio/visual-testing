@@ -1,6 +1,6 @@
 import logger from '@wdio/logger'
 import { expect } from '@wdio/globals'
-import type { Capabilities } from '@wdio/types'
+import type { Capabilities, Frameworks } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import {
     BaseClass,
@@ -34,6 +34,7 @@ const pageCommands = {
 }
 
 export default class WdioImageComparisonService extends BaseClass {
+    #currentFilePath?: string
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _isNativeContext: boolean | undefined
 
@@ -65,6 +66,10 @@ export default class WdioImageComparisonService extends BaseClass {
             toMatchElementSnapshot,
             toMatchTabbablePageSnapshot,
         })
+    }
+
+    beforeTest(test: Frameworks.Test) {
+        this.#currentFilePath = test.file
     }
 
     afterCommand (commandName:string, _args:string[], result:number|string, error:any) {
@@ -134,7 +139,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             screenShot: this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(elementOptions, self.folders),
+                        getFolders(elementOptions, self.folders, self.#currentFilePath),
                         element,
                         tag,
                         {
@@ -162,7 +167,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(pageOptions, self.folders),
+                        getFolders(pageOptions, self.folders, self.#currentFilePath),
                         tag,
                         {
                             wic: self.defaultOptions,
