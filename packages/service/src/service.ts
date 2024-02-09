@@ -1,6 +1,6 @@
 import logger from '@wdio/logger'
 import { expect } from '@wdio/globals'
-import type { Capabilities } from '@wdio/types'
+import type { Capabilities, Frameworks } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import {
     BaseClass,
@@ -34,13 +34,17 @@ const pageCommands = {
 }
 
 export default class WdioImageComparisonService extends BaseClass {
+    #config: WebdriverIO.Config
+    #currentFilePath?: string
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _isNativeContext: boolean | undefined
 
-    constructor(options: ClassOptions) {
+    constructor(options: ClassOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
         super(options)
+        this.#config = config
         this._isNativeContext = undefined
     }
+
     async before(
         capabilities: WebdriverIO.Capabilities,
         _specs: string[],
@@ -67,11 +71,27 @@ export default class WdioImageComparisonService extends BaseClass {
         })
     }
 
+    beforeTest(test: Frameworks.Test) {
+        this.#currentFilePath = test.file
+    }
+
     afterCommand (commandName:string, _args:string[], result:number|string, error:any) {
         // This is for the cases where in the E2E tests we switch to a WEBVIEW or back to NATIVE_APP context
         if (commandName === 'getContext' && error === undefined && typeof result === 'string') {
             this._isNativeContext = result.includes('NATIVE')
         }
+    }
+
+    #getBaselineFolder() {
+        /**
+         * support `resolveSnapshotPath` WebdriverIO option
+         * @ref https://webdriver.io/docs/configuration#resolvesnapshotpath
+         */
+        if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFilePath) {
+            return this.#config.resolveSnapshotPath(this.#currentFilePath, '.png')
+        }
+
+        return this.#currentFilePath
     }
 
     async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
@@ -134,7 +154,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             screenShot: this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(elementOptions, self.folders),
+                        getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
                         element,
                         tag,
                         {
@@ -162,7 +182,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
-                        getFolders(pageOptions, self.folders),
+                        getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
                         tag,
                         {
                             wic: self.defaultOptions,

@@ -10,10 +10,6 @@ export interface ClassOptions {
     autoElementScroll?: boolean;
     // Add iOS bezel corners and notch/dynamic island to the screenshot
     addIOSBezelCorners?: boolean;
-    // If no baseline image is found during the comparison the image is automatically copied to the baseline folder when this is set to `true`
-    autoSaveBaseline?: boolean;
-    // The directory that will hold all the baseline images that are used to during the comparison
-    baselineFolder?: any;
     // Delete runtime folder (actual & diff) on initialization
     clearRuntimeFolder?: boolean;
     // The naming of the saved images can be customized by passing the parameter `formatImageName` with a format string
@@ -24,10 +20,18 @@ export interface ClassOptions {
     logLevel?: LogLevel;
     // Save the images per instance in a separate folder.
     savePerInstance?: boolean;
-    // The directory that will hold all the actual / difference screenshots
-    screenshotPath?: any;
     // The padding that needs to be added to the toolbar bar on iOS and Android to do a proper cutout of the the viewport.
     toolBarShadowPadding?: number;
+
+    /**
+     * Baseline options
+     */
+    // If no baseline image is found during the comparison the image is automatically copied to the baseline folder when this is set to `true`
+    autoSaveBaseline?: boolean;
+    // The directory that will hold all the actual / difference screenshots
+    screenshotPath?: string | ((options: ClassOptions) => string);
+    // The directory that will hold all the baseline images that are used to during the comparison
+    baselineFolder?: string | ((options: ClassOptions) => string);
 
     /**
      * Class and method options

@@ -11,10 +11,10 @@ export const FOLDERS = {
     DIFF: 'diff',
     TEMP_FULL_SCREEN: 'tempFullScreen',
     DEFAULT: {
-        BASE: './wic/baseline/',
+        BASE: './__snapshots__/',
         SCREENSHOTS: '.tmp/',
     },
-}
+} as const
 export const DEFAULT_SHADOW = {
     ADDRESS_BAR: 6,
     TOOL_BAR: 6,

@@ -9,7 +9,7 @@ import checkFullPageScreen from './commands/checkFullPageScreen.js'
 import checkTabbablePage from './commands/checkTabbablePage.js'
 import { ClassOptions } from './helpers/options.interfaces'
 import { ImageCompareResult } from './methods/images.interfaces'
-import { IOS_OFFSETS } from './helpers/constants.js'
+import { IOS_OFFSETS, FOLDERS } from './helpers/constants.js'
 
 export type { ScreenshotOutput } from './helpers/afterScreenshot.interfaces'
 export type {
@@ -33,6 +33,7 @@ export {
     ClassOptions,
     ImageCompareResult,
     IOS_OFFSETS,
+    FOLDERS,
     saveScreen,
     saveElement,
     saveFullPageScreen,
