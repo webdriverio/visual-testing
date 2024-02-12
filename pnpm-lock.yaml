@@ -61,8 +61,8 @@ importers:
         specifier: ^8.31.0
         version: 8.31.0
       '@wdio/types':
-        specifier: ^8.31.0
-        version: 8.31.0
+        specifier: ^8.31.1
+        version: 8.31.1
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -112,8 +112,8 @@ importers:
         specifier: ^8.24.12
         version: 8.28.0
       '@wdio/types':
-        specifier: ^8.26.2
-        version: 8.28.6
+        specifier: ^8.31.1
+        version: 8.31.1
       webdriver-image-comparison:
         specifier: ^4.0.0
         version: link:../webdriver-image-comparison
@@ -1237,7 +1237,7 @@ packages:
   /@types/jsonfile@6.1.4:
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
     dev: true
 
   /@types/keyv@3.1.4:
@@ -1262,12 +1262,12 @@ packages:
     resolution: {integrity: sha512-gKb0enTmRCzXSSUJDq6/sPcqrfCv2mkkG6Jt/clpn5eiCbKTY+SgZUxo+p8ZKMof5dCp9vHQUAB7wOUTod22wQ==}
     dependencies:
       undici-types: 5.26.5
-    dev: true
 
   /@types/node@20.11.5:
     resolution: {integrity: sha512-g557vgQjUUfN76MZAN/dt1z3dzcUsimuysco0KeluHgrPdJXkP/XdAURgyO2W9fZWHRtRBiVKzKn8vyOAwlG+w==}
     dependencies:
       undici-types: 5.26.5
+    dev: true
 
   /@types/normalize-package-data@2.4.4:
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -1303,7 +1303,7 @@ packages:
   /@types/ws@8.5.10:
     resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
     dev: true
 
   /@types/yargs-parser@21.0.3:
@@ -1680,7 +1680,7 @@ packages:
     resolution: {integrity: sha512-321F3sWafnlw93uRTSjEBVuvWCxTkWNDs7ektQS15drrroL3TMeFOynu4rDrIz0jXD9Vas0HCD2Tq/P0uxFLdw==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
     dev: true
 
   /@wdio/reporter@8.31.0:
@@ -1767,18 +1767,11 @@ packages:
       pretty-ms: 7.0.1
     dev: true
 
-  /@wdio/types@8.28.6:
-    resolution: {integrity: sha512-FU3mMRqULpc2XYh6DrSo/KgNoaS6EO9GFJQX5q7+EiOAqVeo1TCLggvAWIPayKyjfD1/ctd9q+uW9vmNicaOjw==}
-    engines: {node: ^16.13 || >=18}
-    dependencies:
-      '@types/node': 20.11.5
-    dev: false
-
   /@wdio/types@8.29.1:
     resolution: {integrity: sha512-rZYzu+sK8zY1PjCEWxNu4ELJPYKDZRn7HFcYNgR122ylHygfldwkb5TioI6Pn311hQH/S+663KEeoq//Jb0f8A==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
     dev: true
 
   /@wdio/types@8.31.0:
@@ -1787,6 +1780,12 @@ packages:
     dependencies:
       '@types/node': 20.11.16
     dev: true
+
+  /@wdio/types@8.31.1:
+    resolution: {integrity: sha512-KQ0EmjeVdshufhsxygaPzkJ8WD7hm8WlflZcLwKMZ0OM6f8pV9NMGGOvfBQXgTs447ScK6/6rX+lbJk3yvg65g==}
+    engines: {node: ^16.13 || >=18}
+    dependencies:
+      '@types/node': 20.11.16
 
   /@wdio/utils@8.29.3:
     resolution: {integrity: sha512-WnZ5vZrc0oKX0u6dteB9j04Yl2EUKBLi6GtRCNTRPTpCRYiGfqSLhs0pUddTNXye7gErlqIzsVwh64q19Z5KIQ==}
@@ -8002,7 +8001,7 @@ packages:
     resolution: {integrity: sha512-V9Wc2kXoK7sRbCJV6wzrOgbV2ZfWxYfCHbZZRCUuZxnAVhSrhWtciGND7F8nuZpoVXM4Hbr54hXulEl8Z6oWQg==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
       '@types/ws': 8.5.10
       '@wdio/config': 8.29.3
       '@wdio/logger': 8.28.0
