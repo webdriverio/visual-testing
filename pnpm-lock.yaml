@@ -58,8 +58,8 @@ importers:
         specifier: ^8.31.0
         version: 8.31.0(typescript@5.3.3)
       '@wdio/spec-reporter':
-        specifier: ^8.31.0
-        version: 8.31.0
+        specifier: ^8.31.1
+        version: 8.31.1
       '@wdio/types':
         specifier: ^8.31.0
         version: 8.31.0
@@ -1237,7 +1237,7 @@ packages:
   /@types/jsonfile@6.1.4:
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
     dev: true
 
   /@types/keyv@3.1.4:
@@ -1303,7 +1303,7 @@ packages:
   /@types/ws@8.5.10:
     resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
     dev: true
 
   /@types/yargs-parser@21.0.3:
@@ -1680,16 +1680,16 @@ packages:
     resolution: {integrity: sha512-321F3sWafnlw93uRTSjEBVuvWCxTkWNDs7ektQS15drrroL3TMeFOynu4rDrIz0jXD9Vas0HCD2Tq/P0uxFLdw==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
     dev: true
 
-  /@wdio/reporter@8.31.0:
-    resolution: {integrity: sha512-3eRYGvmtMFq/vlUZfGM7qMaiOfFq/bLDj/u3PZfgV6vP601VT4tmqJMz8fYFgdHj6yxJp7iHInOGQ40aALB0qA==}
+  /@wdio/reporter@8.31.1:
+    resolution: {integrity: sha512-ayZipzyr9dSwpbKYbV4PoXuw91A1H7fjadJ5R5oMYUETx+pfBJqjR2UIHZhhPAa0lJ7bWHEn7eCsGB1PXp47Og==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.11.16
       '@wdio/logger': 8.28.0
-      '@wdio/types': 8.31.0
+      '@wdio/types': 8.31.1
       diff: 5.1.0
       object-inspect: 1.13.1
     dev: true
@@ -1756,12 +1756,12 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@wdio/spec-reporter@8.31.0:
-    resolution: {integrity: sha512-RTioV786Oa4wUaQE7SSTswMUqP8ao7ZeB4/co6asGGs29H1l2kgvGPZElMb14h5BgbwCn01Na3jctUc0Ada4Xg==}
+  /@wdio/spec-reporter@8.31.1:
+    resolution: {integrity: sha512-t2isqf/yDvc3xfNnkuR8XdRaKf34I6/40f1DHfojHZUpTF94jrt7CLACkFiDZhu5sz0KCuDWzy56aycd6IUz3w==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@wdio/reporter': 8.31.0
-      '@wdio/types': 8.31.0
+      '@wdio/reporter': 8.31.1
+      '@wdio/types': 8.31.1
       chalk: 5.3.0
       easy-table: 1.2.0
       pretty-ms: 7.0.1
@@ -1778,11 +1778,18 @@ packages:
     resolution: {integrity: sha512-rZYzu+sK8zY1PjCEWxNu4ELJPYKDZRn7HFcYNgR122ylHygfldwkb5TioI6Pn311hQH/S+663KEeoq//Jb0f8A==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
     dev: true
 
   /@wdio/types@8.31.0:
     resolution: {integrity: sha512-uHAeJ5JMHCOkLXdwht+uS4QC7Pz3piEcEKGzsz6TJzvTgZLhxRlUfYkkxogbae05DZBHnRKfZD+XWH92cjgsIg==}
+    engines: {node: ^16.13 || >=18}
+    dependencies:
+      '@types/node': 20.11.16
+    dev: true
+
+  /@wdio/types@8.31.1:
+    resolution: {integrity: sha512-KQ0EmjeVdshufhsxygaPzkJ8WD7hm8WlflZcLwKMZ0OM6f8pV9NMGGOvfBQXgTs447ScK6/6rX+lbJk3yvg65g==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.11.16
@@ -8002,7 +8009,7 @@ packages:
     resolution: {integrity: sha512-V9Wc2kXoK7sRbCJV6wzrOgbV2ZfWxYfCHbZZRCUuZxnAVhSrhWtciGND7F8nuZpoVXM4Hbr54hXulEl8Z6oWQg==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
       '@types/ws': 8.5.10
       '@wdio/config': 8.29.3
       '@wdio/logger': 8.28.0
