@@ -85,15 +85,17 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     #getBaselineFolder() {
-        const baselineFolder =(normalize(FOLDERS.DEFAULT.BASE) === this.folders.baselineFolder
-            ? this.#currentFilePath
-            : this.folders.baselineFolder) as string
+        const isDefaultBaselineFolder = normalize(FOLDERS.DEFAULT.BASE) === this.folders.baselineFolder
+        const baselineFolder =(isDefaultBaselineFolder? this.#currentFilePath : this.folders.baselineFolder) as string
 
         /**
          * support `resolveSnapshotPath` WebdriverIO option
          * @ref https://webdriver.io/docs/configuration#resolvesnapshotpath
+         *
+         * We only use this option if the baselineFolder is the default one, otherwise the
+         * service option for setting the baselineFolder should be used
          */
-        if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFilePath) {
+        if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFilePath && isDefaultBaselineFolder) {
             return this.#config.resolveSnapshotPath(this.#currentFilePath, '.png')
         }
 
