@@ -37,6 +37,7 @@ const pageCommands = {
 
 export default class WdioImageComparisonService extends BaseClass {
     #config: WebdriverIO.Config
+    #currentFile?: string
     #currentFilePath?: string
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _isNativeContext: boolean | undefined
@@ -74,6 +75,7 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     beforeTest(test: Frameworks.Test) {
+        this.#currentFile = test.file
         this.#currentFilePath = resolve(dirname(test.file), FOLDERS.DEFAULT.BASE)
     }
 
@@ -95,8 +97,8 @@ export default class WdioImageComparisonService extends BaseClass {
          * We only use this option if the baselineFolder is the default one, otherwise the
          * service option for setting the baselineFolder should be used
          */
-        if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFilePath && isDefaultBaselineFolder) {
-            return this.#config.resolveSnapshotPath(this.#currentFilePath, '.png')
+        if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFile && isDefaultBaselineFolder) {
+            return this.#config.resolveSnapshotPath(this.#currentFile, '.png')
         }
 
         return baselineFolder
