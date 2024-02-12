@@ -52,7 +52,7 @@ export default function hideRemoveElements(
     }
 
     function setPropertyToElement(el: HTMLElement, prop: string, hideRemove: boolean) {
-        const value = prop === 'visibility' ? 'hidden' : 'none'
+        const value = prop === 'visibility' ? 'hidden !important' : 'none !important'
         // @ts-ignore
         el.style[prop] = hideRemove ? value : ''
     }
