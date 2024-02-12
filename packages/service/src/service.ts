@@ -94,7 +94,7 @@ export default class WdioImageComparisonService extends BaseClass {
          * @ref https://webdriver.io/docs/configuration#resolvesnapshotpath
          */
         if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFilePath) {
-            return this.#config.resolveSnapshotPath(baselineFolder, '.png')
+            return this.#config.resolveSnapshotPath(this.#currentFilePath, '.png')
         }
 
         return baselineFolder
