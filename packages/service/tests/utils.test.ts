@@ -11,7 +11,8 @@ describe('utils', () => {
                 diffFolder: 'folderDiff',
                 actualFolder: 'folderActual',
             }
-            expect(getFolders(methodOptions, folders)).toMatchSnapshot()
+            const currentTestPath = '/current/test/path/'
+            expect(getFolders(methodOptions, folders, currentTestPath)).toMatchSnapshot()
         })
 
         it('should be able to return the correct folders when method options are provided', () => {
@@ -25,22 +26,8 @@ describe('utils', () => {
                 diffFolder: 'folderDiff',
                 actualFolder: 'folderActual',
             }
-            expect(getFolders(methodOptions, folders)).toMatchSnapshot()
-        })
-
-        it('should be able to return the correct baseline folder if a currentTestPath is provided', () => {
-            const baselineFolder = '/foo/bar'
-            const methodOptions = {}
-            const folders = {
-                baselineFolder: 'folderBase',
-                diffFolder: 'folderDiff',
-                actualFolder: 'folderActual',
-            }
-            const currentTestPath = '/path/to/test.ts'
-            expect(getFolders(methodOptions, folders, currentTestPath).baselineFolder)
-                .toBe('/path/to/__snapshots__')
-            expect(getFolders({ baselineFolder }, folders, currentTestPath).baselineFolder)
-                .toBe(baselineFolder)
+            const currentTestPath = '/current/test/path/'
+            expect(getFolders(methodOptions, folders, currentTestPath)).toMatchSnapshot()
         })
     })
 

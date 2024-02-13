@@ -1,5 +1,6 @@
 import logger from '@wdio/logger'
 import { expect } from '@wdio/globals'
+import { dirname, normalize, resolve } from 'node:path'
 import type { Capabilities, Frameworks } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import {
@@ -12,6 +13,7 @@ import {
     saveScreen,
     saveTabbablePage,
     checkTabbablePage,
+    FOLDERS,
 } from 'webdriver-image-comparison'
 import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
@@ -35,6 +37,7 @@ const pageCommands = {
 
 export default class WdioImageComparisonService extends BaseClass {
     #config: WebdriverIO.Config
+    #currentFile?: string
     #currentFilePath?: string
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _isNativeContext: boolean | undefined
@@ -72,7 +75,8 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     beforeTest(test: Frameworks.Test) {
-        this.#currentFilePath = test.file
+        this.#currentFile = test.file
+        this.#currentFilePath = resolve(dirname(test.file), FOLDERS.DEFAULT.BASE)
     }
 
     afterCommand (commandName:string, _args:string[], result:number|string, error:any) {
@@ -83,15 +87,21 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     #getBaselineFolder() {
+        const isDefaultBaselineFolder = normalize(FOLDERS.DEFAULT.BASE) === this.folders.baselineFolder
+        const baselineFolder =(isDefaultBaselineFolder? this.#currentFilePath : this.folders.baselineFolder) as string
+
         /**
          * support `resolveSnapshotPath` WebdriverIO option
          * @ref https://webdriver.io/docs/configuration#resolvesnapshotpath
+         *
+         * We only use this option if the baselineFolder is the default one, otherwise the
+         * service option for setting the baselineFolder should be used
          */
-        if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFilePath) {
-            return this.#config.resolveSnapshotPath(this.#currentFilePath, '.png')
+        if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFile && isDefaultBaselineFolder) {
+            return this.#config.resolveSnapshotPath(this.#currentFile, '.png')
         }
 
-        return this.#currentFilePath
+        return baselineFolder
     }
 
     async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {

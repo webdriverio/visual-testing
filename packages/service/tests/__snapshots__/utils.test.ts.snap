@@ -11,7 +11,7 @@ exports[`utils > getFolders > should be able to return the correct folders when 
 exports[`utils > getFolders > should be able to return the correct folders when no method options are provided 1`] = `
 {
   "actualFolder": "folderActual",
-  "baselineFolder": "folderBase",
+  "baselineFolder": "/current/test/path/",
   "diffFolder": "folderDiff",
 }
 `;
