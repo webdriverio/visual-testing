@@ -1,8 +1,6 @@
-import path from 'node:path'
-
 import type { Capabilities } from '@wdio/types'
 import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
-import { IOS_OFFSETS, FOLDERS } from 'webdriver-image-comparison'
+import { IOS_OFFSETS } from 'webdriver-image-comparison'
 import type {
     Folders,
     InstanceData,
@@ -32,21 +30,15 @@ type getFolderMethodOptions =
     | SaveElementMethodOptions
     | SaveFullPageMethodOptions
     | SaveScreenMethodOptions;
+
 export function getFolders(
     methodOptions: getFolderMethodOptions,
     folders: Folders,
-    currentTestPath?: string
+    currentTestPath: string
 ): Folders {
-    /**
-     * by default we storing the screenshots in the `__snapshots__` folder
-     * next to the test file, unless the user provides a custom folder
-     */
-    const baselineFolder = currentTestPath
-        ? path.resolve(path.dirname(currentTestPath), FOLDERS.DEFAULT.BASE)
-        : undefined
     return {
         actualFolder: methodOptions.actualFolder ?? folders.actualFolder,
-        baselineFolder: methodOptions.baselineFolder ?? baselineFolder ?? folders.baselineFolder,
+        baselineFolder: methodOptions.baselineFolder ?? currentTestPath,
         diffFolder: methodOptions.diffFolder ?? folders.diffFolder,
     }
 }
@@ -246,3 +238,4 @@ export function determineNativeContext(
 
     return false
 }
+
