@@ -1,5 +1,13 @@
 # @wdio/visual-service
 
+## 3.0.1
+
+### Patch Changes
+
+- c8fdcd3: Fix to override visibility/display value
+- Updated dependencies [c8fdcd3]
+  - webdriver-image-comparison@4.0.2
+
 ## 3.0.0
 
 ### Major Changes
