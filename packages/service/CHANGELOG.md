@@ -1,5 +1,17 @@
 # @wdio/visual-service
 
+## 3.0.0
+
+### Major Changes
+
+- fd74a35: (feat): set default baseline folder next to test file
+
+### Patch Changes
+
+- e93a878: fix default snapshot path to be overwritten through method/service options
+- Updated dependencies [fd74a35]
+  - webdriver-image-comparison@4.0.1
+
 ## 2.0.0
 
 ### Major Changes
