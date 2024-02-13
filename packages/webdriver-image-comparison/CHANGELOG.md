@@ -1,5 +1,11 @@
 # webdriver-image-comparison
 
+## 4.0.1
+
+### Patch Changes
+
+- fd74a35: (feat): set default baseline folder next to test file
+
 ## 4.0.0
 
 ### Major Changes
