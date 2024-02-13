@@ -1,5 +1,11 @@
 # webdriver-image-comparison
 
+## 4.0.2
+
+### Patch Changes
+
+- c8fdcd3: Fix to override visibility/display value
+
 ## 4.0.1
 
 ### Patch Changes
