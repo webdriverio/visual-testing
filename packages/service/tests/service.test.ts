@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
-import { expect as wdioExpect } from '@wdio/globals'
+import { _setGlobal, expect as wdioExpect } from '@wdio/globals'
 import VisualService from '../src/index.js'
+import {  } from '@wdio/globals'
 
 vi.mock('webdriver-image-comparison', () => ({
     BaseClass: class {},
@@ -14,7 +15,8 @@ vi.mock('webdriver-image-comparison', () => ({
     checkTabbablePage: vi.fn(),
 }))
 
-vi.mock('@wdio/globals', () => ({
+vi.mock('@wdio/globals', async (original) => ({
+    ...(await original() as object),
     expect: {
         extend: vi.fn()
     }
@@ -22,6 +24,7 @@ vi.mock('@wdio/globals', () => ({
 
 describe('@wdio/visual-service', () => {
     it('should register custom matchers', async () => {
+        _setGlobal('expect', () => {}, false)
         const service = new VisualService({})
         const browser = {
             isMultiremote: false,

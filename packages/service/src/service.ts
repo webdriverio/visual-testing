@@ -35,6 +35,12 @@ const pageCommands = {
     checkTabbablePage,
 }
 
+console.log('globalThis = ', globalThis._wdioGlobals)
+// Reused this from
+// https://github.com/webdriverio/webdriverio/blob/main/packages/wdio-globals/src/index.ts#L18
+type SupportedGlobals = 'browser' | 'driver' | 'multiremotebrowser' | '$' | '$$' | 'expect'
+const globals: Map<SupportedGlobals, any> = globalThis._wdioGlobals = globalThis._wdioGlobals || new Map()
+
 export default class WdioImageComparisonService extends BaseClass {
     #config: WebdriverIO.Config
     #currentFile?: string
@@ -46,6 +52,13 @@ export default class WdioImageComparisonService extends BaseClass {
         super(options)
         this.#config = config
         this._isNativeContext = undefined
+    }
+
+    /**
+     * Set up the service if users want to use it in standalone mode
+     */
+    async remoteSetup(browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser) {
+        await this.before(browser.capabilities as WebdriverIO.Capabilities, [], browser)
     }
 
     async before(
@@ -64,14 +77,18 @@ export default class WdioImageComparisonService extends BaseClass {
         }
 
         /**
-         * add custom matcher for visual comparison
+         * add custom matcher for visual comparison when expect has been added.
+         * this is not the case in standalone mode
          */
-        expect.extend({
-            toMatchScreenSnapshot,
-            toMatchFullPageSnapshot,
-            toMatchElementSnapshot,
-            toMatchTabbablePageSnapshot,
-        })
+        console.log('globals', globals)
+        if (globals.has('expect')) {
+            expect.extend({
+                toMatchScreenSnapshot,
+                toMatchFullPageSnapshot,
+                toMatchElementSnapshot,
+                toMatchTabbablePageSnapshot,
+            })
+        }
     }
 
     beforeTest(test: Frameworks.Test) {
@@ -88,7 +105,7 @@ export default class WdioImageComparisonService extends BaseClass {
 
     #getBaselineFolder() {
         const isDefaultBaselineFolder = normalize(FOLDERS.DEFAULT.BASE) === this.folders.baselineFolder
-        const baselineFolder =(isDefaultBaselineFolder? this.#currentFilePath : this.folders.baselineFolder) as string
+        const baselineFolder =(isDefaultBaselineFolder && this.#currentFilePath ? this.#currentFilePath : this.folders.baselineFolder) as string
 
         /**
          * support `resolveSnapshotPath` WebdriverIO option
@@ -96,8 +113,10 @@ export default class WdioImageComparisonService extends BaseClass {
          *
          * We only use this option if the baselineFolder is the default one, otherwise the
          * service option for setting the baselineFolder should be used
+         *
+         * We also check `this.#config` because for standalone usage of the service, the config is not available
          */
-        if (typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFile && isDefaultBaselineFolder) {
+        if (this.#config && typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFile && isDefaultBaselineFolder) {
             return this.#config.resolveSnapshotPath(this.#currentFile, '.png')
         }
 

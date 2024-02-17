@@ -21,6 +21,7 @@ build
 
 # folders
 .tmp
+__snapshots__/
 .idea/
 localBaseline/
 apps/

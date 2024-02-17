@@ -17,21 +17,22 @@ export const config: Options.Testrunner = {
             // (property) WebdriverIO.Capabilities.browserName?: string | undefined
             // ```
             // @ts-ignore
-            browserName: 'chrome',
-            'goog:chromeOptions': {
-                // @TODO: Getting this error, not during runtime, but in VSCode
-                // Need to figure out why this is happening
-                // ```
-                // Type '{ args: string[]; }' is not assignable to type 'WebdriverIO'.
-                //  Object literal may only specify known properties, and 'args' does not exist in type 'WebdriverIO'.ts(2322)
-                // Capabilities.d.ts(87, 5): The expected type comes from this index signature.
-                // ```
-                // @ts-ignore
-                args: ['disable-infobars', '--headless'],
-            },
-            'wdio-ics:options': {
-                logName: 'local-chrome-latest',
-            },
+            // browserName: 'chrome',
+            // 'goog:chromeOptions': {
+            //     // @TODO: Getting this error, not during runtime, but in VSCode
+            //     // Need to figure out why this is happening
+            //     // ```
+            //     // Type '{ args: string[]; }' is not assignable to type 'WebdriverIO'.
+            //     //  Object literal may only specify known properties, and 'args' does not exist in type 'WebdriverIO'.ts(2322)
+            //     // Capabilities.d.ts(87, 5): The expected type comes from this index signature.
+            //     // ```
+            //     // @ts-ignore
+            //     args: ['disable-infobars', '--headless'],
+            // },
+            // 'wdio-ics:options': {
+            //     logName: 'local-chrome-latest',
+            // },
+            browserName: 'firefox',
         },
     ],
     // =====
