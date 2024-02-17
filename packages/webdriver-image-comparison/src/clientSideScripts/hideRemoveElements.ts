@@ -52,9 +52,11 @@ export default function hideRemoveElements(
     }
 
     function setPropertyToElement(el: HTMLElement, prop: string, hideRemove: boolean) {
-        const value = prop === 'visibility' ? 'hidden !important' : 'none !important'
+        const value = prop === 'visibility' ? 'hidden' : 'none'
         // @ts-ignore
         el.style[prop] = hideRemove ? value : ''
+
+        hideRemove ? el.style.setProperty(prop, value, 'important') : el.style.removeProperty(prop)
     }
 
     // Stupid TypeScript =)

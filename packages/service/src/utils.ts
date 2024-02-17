@@ -11,6 +11,7 @@ import type {
     CheckElementMethodOptions,
     SaveElementMethodOptions,
 } from 'webdriver-image-comparison'
+import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
 
 interface WdioIcsOptions {
     logName?: string;
@@ -149,6 +150,32 @@ async function getMobileInstanceData({
 }
 
 /**
+ * Get the device name
+ */
+function getDeviceName(currentBrowser: WebdriverIO.Browser): string {
+    const { capabilities: {
+        // We use a few `@ts-ignore` here because this is returned by the driver
+        // and not recognized by the types because they are not requested
+        // @ts-ignore
+        deviceName: returnedDeviceName = NOT_KNOWN,
+    }, requestedCapabilities } = currentBrowser
+    let deviceName = NOT_KNOWN
+
+    // First check if it's a BrowserStack session, they don't:
+    // - return the "requested" deviceName in the session capabilities
+    // - don't use the `appium:deviceName` capability
+    const isBrowserStack = 'bstack:options' in requestedCapabilities
+    const bsOptions = (requestedCapabilities as WebdriverIO.Capabilities)['bstack:options']
+    const capName = 'deviceName'
+    if (isBrowserStack && bsOptions && capName in bsOptions){
+        deviceName = bsOptions[capName as keyof typeof bsOptions] as string
+    }
+    const { 'appium:deviceName': requestedDeviceName } = requestedCapabilities as AppiumCapabilities
+
+    return (deviceName !== NOT_KNOWN ? deviceName : requestedDeviceName || returnedDeviceName || NOT_KNOWN).toLowerCase()
+}
+
+/**
  * Get the instance data
  */
 export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Promise<InstanceData> {
@@ -182,15 +209,12 @@ export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Prom
         // @ts-ignore
         app: rawApp = NOT_KNOWN,
         // @ts-ignore
-        deviceName: rawDeviceName = NOT_KNOWN,
-        // @ts-ignore
         platformVersion: rawPlatformVersion = NOT_KNOWN,
     } = currentCapabilities as WebdriverIO.Capabilities
-    const { 'appium:deviceName': requestedDeviceName } = requestedCapabilities as AppiumCapabilities
     const appName = rawApp !== NOT_KNOWN
         ? rawApp.replace(/\\/g, '/').split('/').pop().replace(/[^a-zA-Z0-9]/g, '_')
         : NOT_KNOWN
-    const deviceName = (requestedDeviceName || rawDeviceName || '').toLowerCase()
+    const deviceName = getDeviceName(currentBrowser)
     const nativeWebScreenshot = !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
     const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? NOT_KNOWN : rawPlatformVersion.toLowerCase()
 
