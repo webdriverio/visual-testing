@@ -3,3 +3,4 @@
 ---
 
 Support BS real device names
+Fix hide/remove elements
