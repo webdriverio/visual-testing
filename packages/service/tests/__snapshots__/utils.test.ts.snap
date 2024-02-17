@@ -21,7 +21,7 @@ exports[`utils > getInstanceData > should return instance data for a mobile app 
   "appName": "",
   "browserName": "not-known",
   "browserVersion": "not-known",
-  "deviceName": "",
+  "deviceName": "not_known",
   "devicePixelRatio": 3.5,
   "devicePlatformRect": {
     "homeBar": {
@@ -232,12 +232,48 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPhone
 }
 `;
 
+exports[`utils > getInstanceData > should return instance data when the browserstack capabilities are provided 1`] = `
+{
+  "appName": "not-known",
+  "browserName": "chrome",
+  "browserVersion": "75.123",
+  "deviceName": "samsung galaxy s22",
+  "devicePixelRatio": 1,
+  "devicePlatformRect": {
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
+  "deviceScreenSize": {
+    "height": 200,
+    "width": 100,
+  },
+  "isAndroid": true,
+  "isIOS": false,
+  "isMobile": true,
+  "logName": "",
+  "name": "",
+  "nativeWebScreenshot": false,
+  "platformName": "osx",
+  "platformVersion": "not-known",
+}
+`;
+
 exports[`utils > getInstanceData > should return instance data when the minimum of capabilities is provided 1`] = `
 {
   "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "75.123",
-  "deviceName": "not-known",
+  "deviceName": "not_known",
   "devicePixelRatio": 1,
   "devicePlatformRect": {
     "homeBar": {
@@ -273,7 +309,7 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
   "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "75.123",
-  "deviceName": "not-known",
+  "deviceName": "not_known",
   "devicePixelRatio": 1,
   "devicePlatformRect": {
     "homeBar": {
@@ -309,7 +345,7 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
   "appName": "not-known",
   "browserName": "chrome",
   "browserVersion": "75.123",
-  "deviceName": "not-known",
+  "deviceName": "not_known",
   "devicePixelRatio": 1,
   "devicePlatformRect": {
     "homeBar": {

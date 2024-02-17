@@ -198,7 +198,6 @@ describe('utils', () => {
             const driver =  createDriverMock( {
                 capabilities: {
                     ...DEFAULT_DESKTOP_BROWSER.capabilities,
-
                     browserName: '',
                     browserVersion: '',
                     // @ts-ignore
@@ -232,7 +231,6 @@ describe('utils', () => {
             const driver =  createDriverMock( {
                 capabilities: {
                     ...DEFAULT_DESKTOP_BROWSER.capabilities,
-
                     browserName: '',
                     browserVersion: '',
                     // @ts-ignore
@@ -317,6 +315,23 @@ describe('utils', () => {
                     'appium:platformVersion': '',
                     'appium:app': '/',
                 } as WebdriverIO.Capabilities,
+                isAndroid: true,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
+        })
+
+        it('should return instance data when the browserstack capabilities are provided', async() => {
+            const driver = createDriverMock({
+                ...DEFAULT_DESKTOP_BROWSER,
+                requestedCapabilities:{
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    'bstack:options': {
+                        deviceName: 'Samsung Galaxy S22',
+                        osVersion: '12.0'
+                    },
+                },
                 isAndroid: true,
                 isMobile: true,
                 getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
