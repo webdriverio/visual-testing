@@ -1,5 +1,12 @@
 # @wdio/visual-service
 
+## 3.0.2
+
+### Patch Changes
+
+- 14b6ae6: Support BS real device names
+  Fix hide/remove elements
+
 ## 3.0.1
 
 ### Patch Changes
