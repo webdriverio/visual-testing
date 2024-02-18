@@ -75,6 +75,9 @@ export default async function beforeScreenshot(
     // Make all text transparent
     if (enableLayoutTesting){
         await executor(toggleTextTransparency, enableLayoutTesting)
+        // Wait at least 500 milliseconds to make sure the css is applied
+        // Not every device is fast enough to apply the css faster
+        await waitFor(500)
     }
 
     // Get all the needed instance data
