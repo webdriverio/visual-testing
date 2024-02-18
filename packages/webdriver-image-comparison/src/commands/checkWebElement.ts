@@ -25,15 +25,12 @@ export default async function checkWebElement(
     const saveElementOptions: SaveElementOptions = {
         wic: checkElementOptions.wic,
         method: {
-            ...('disableCSSAnimation' in checkElementOptions.method
-                ? { disableCSSAnimation: checkElementOptions.method.disableCSSAnimation }
-                : {}),
-            ...('hideScrollBars' in checkElementOptions.method ? { hideScrollBars: checkElementOptions.method.hideScrollBars } : {}),
-            ...('resizeDimensions' in checkElementOptions.method
-                ? { resizeDimensions: checkElementOptions.method.resizeDimensions }
-                : {}),
-            ...{ hideElements: checkElementOptions.method.hideElements || [] },
-            ...{ removeElements: checkElementOptions.method.removeElements || [] },
+            disableCSSAnimation: checkElementOptions.method.disableCSSAnimation,
+            enableLayoutTesting: checkElementOptions.method.enableLayoutTesting,
+            hideScrollBars: checkElementOptions.method.hideScrollBars,
+            resizeDimensions: checkElementOptions.method.resizeDimensions,
+            hideElements: checkElementOptions.method.hideElements || [],
+            removeElements: checkElementOptions.method.removeElements || [],
         },
     }
     const { devicePixelRatio, fileName, isLandscape } = await saveWebElement(

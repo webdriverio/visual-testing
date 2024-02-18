@@ -8,6 +8,8 @@ export interface BeforeScreenshotOptions {
     addressBarShadowPadding: number;
     // Disable all css animations
     disableCSSAnimation: boolean;
+    // Make all text on a page transparent to only focus on the layout
+    enableLayoutTesting: boolean;
     // Level to show logs
     logLevel: LogLevel;
     // Hide all scrollbars

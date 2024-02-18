@@ -7,6 +7,7 @@ import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeSc
 import type { Executor } from '../methods/methods.interfaces'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import { LogLevel } from './options.interfaces'
+import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
 
 /**
  * Methods that need to be executed before a screenshot will be taken
@@ -20,6 +21,7 @@ export default async function beforeScreenshot(
     const {
         addressBarShadowPadding,
         disableCSSAnimation,
+        enableLayoutTesting,
         hideElements,
         logLevel,
         noScrollBars,
@@ -68,6 +70,11 @@ export default async function beforeScreenshot(
         // Wait at least 500 milliseconds to make sure the css is applied
         // Not every device is fast enough to apply the css faster
         await waitFor(500)
+    }
+
+    // Make all text transparent
+    if (enableLayoutTesting){
+        await executor(toggleTextTransparency, enableLayoutTesting)
     }
 
     // Get all the needed instance data

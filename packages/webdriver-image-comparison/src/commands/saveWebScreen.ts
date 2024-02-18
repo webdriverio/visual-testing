@@ -27,10 +27,13 @@ export default async function saveWebScreen(
         saveScreenOptions.wic
 
     // 1b. Set the method options to the right values
-    const disableCSSAnimation: boolean = 'disableCSSAnimation' in saveScreenOptions.method
+    const disableCSSAnimation: boolean = saveScreenOptions.method.disableCSSAnimation !== undefined
         ? Boolean(saveScreenOptions.method.disableCSSAnimation)
         : saveScreenOptions.wic.disableCSSAnimation
-    const hideScrollBars: boolean = 'hideScrollBars' in saveScreenOptions.method
+    const enableLayoutTesting: boolean = saveScreenOptions.method.enableLayoutTesting !== undefined
+        ? Boolean(saveScreenOptions.method.enableLayoutTesting)
+        : saveScreenOptions.wic.enableLayoutTesting
+    const hideScrollBars: boolean = saveScreenOptions.method.hideScrollBars !== undefined
         ? Boolean(saveScreenOptions.method.hideScrollBars)
         : saveScreenOptions.wic.hideScrollBars
     const hideElements: HTMLElement[] = saveScreenOptions.method.hideElements || []
@@ -41,6 +44,7 @@ export default async function saveWebScreen(
         instanceData,
         addressBarShadowPadding,
         disableCSSAnimation,
+        enableLayoutTesting,
         hideElements,
         logLevel,
         noScrollBars: hideScrollBars,
@@ -97,6 +101,7 @@ export default async function saveWebScreen(
         actualFolder: folders.actualFolder,
         base64Image: croppedBase64Image,
         disableCSSAnimation,
+        enableLayoutTesting,
         filePath: {
             browserName,
             deviceName,

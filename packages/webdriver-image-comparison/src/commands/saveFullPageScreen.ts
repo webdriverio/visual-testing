@@ -37,13 +37,16 @@ export default async function saveFullPageScreen(
     } = saveFullPageOptions.wic
 
     // 1c. Set the method options to the right values
-    const disableCSSAnimation: boolean = 'disableCSSAnimation' in saveFullPageOptions.method
+    const disableCSSAnimation: boolean = saveFullPageOptions.method.disableCSSAnimation !== undefined
         ? Boolean(saveFullPageOptions.method.disableCSSAnimation)
         : saveFullPageOptions.wic.disableCSSAnimation
-    const hideScrollBars: boolean = 'hideScrollBars' in saveFullPageOptions.method
+    const enableLayoutTesting: boolean = saveFullPageOptions.method.enableLayoutTesting !== undefined
+        ? Boolean(saveFullPageOptions.method.enableLayoutTesting)
+        : saveFullPageOptions.wic.enableLayoutTesting
+    const hideScrollBars: boolean = saveFullPageOptions.method.hideScrollBars !== undefined
         ? Boolean(saveFullPageOptions.method.hideScrollBars)
         : saveFullPageOptions.wic.hideScrollBars
-    const fullPageScrollTimeout: number = 'fullPageScrollTimeout' in saveFullPageOptions.method
+    const fullPageScrollTimeout: number = saveFullPageOptions.method.fullPageScrollTimeout !== undefined
         ? saveFullPageOptions.method.fullPageScrollTimeout!
         : saveFullPageOptions.wic.fullPageScrollTimeout
     const hideElements: HTMLElement[] = saveFullPageOptions.method.hideElements || []
@@ -55,6 +58,7 @@ export default async function saveFullPageScreen(
         instanceData,
         addressBarShadowPadding,
         disableCSSAnimation,
+        enableLayoutTesting,
         hideElements,
         logLevel,
         noScrollBars: hideScrollBars,
@@ -100,6 +104,7 @@ export default async function saveFullPageScreen(
         actualFolder: folders.actualFolder,
         base64Image: fullPageBase64Image,
         disableCSSAnimation,
+        enableLayoutTesting,
         filePath: {
             browserName: enrichedInstanceData.browserName,
             deviceName: enrichedInstanceData.deviceName,

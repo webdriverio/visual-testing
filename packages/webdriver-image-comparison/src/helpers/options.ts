@@ -28,6 +28,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
      * Module and method options
      */
         disableCSSAnimation: options.disableCSSAnimation ?? false,
+        enableLayoutTesting: options.enableLayoutTesting ?? false,
         fullPageScrollTimeout: options.fullPageScrollTimeout ?? FULL_PAGE_SCROLL_TIMEOUT,
         hideScrollBars: Object.prototype.hasOwnProperty.call(options, 'hideScrollBars')
             ? Boolean(options.hideScrollBars)

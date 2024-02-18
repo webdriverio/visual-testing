@@ -34,14 +34,15 @@ export default async function saveWebElement(
         saveElementOptions.wic
     const { executor } = methods
     // 1b. Set the method options to the right values
-    const disableCSSAnimation: boolean =
-        'disableCSSAnimation' in saveElementOptions.method
-            ? Boolean(saveElementOptions.method.disableCSSAnimation)
-            : saveElementOptions.wic.disableCSSAnimation
-    const hideScrollBars: boolean =
-        'hideScrollBars' in saveElementOptions.method
-            ? Boolean(saveElementOptions.method.hideScrollBars)
-            : saveElementOptions.wic.hideScrollBars
+    const disableCSSAnimation: boolean = saveElementOptions.method.disableCSSAnimation !== undefined
+        ? Boolean(saveElementOptions.method.disableCSSAnimation)
+        : saveElementOptions.wic.disableCSSAnimation
+    const enableLayoutTesting: boolean = saveElementOptions.method.enableLayoutTesting !== undefined
+        ? Boolean(saveElementOptions.method.enableLayoutTesting)
+        : saveElementOptions.wic.enableLayoutTesting
+    const hideScrollBars: boolean = saveElementOptions.method.hideScrollBars !== undefined
+        ? Boolean(saveElementOptions.method.hideScrollBars)
+        : saveElementOptions.wic.hideScrollBars
     const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
     const hideElements: HTMLElement[] = saveElementOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveElementOptions.method.removeElements || []
@@ -51,6 +52,7 @@ export default async function saveWebElement(
         instanceData,
         addressBarShadowPadding,
         disableCSSAnimation,
+        enableLayoutTesting,
         hideElements,
         logLevel,
         noScrollBars: hideScrollBars,
@@ -131,6 +133,7 @@ export default async function saveWebElement(
         actualFolder: folders.actualFolder,
         base64Image: croppedBase64Image,
         disableCSSAnimation,
+        enableLayoutTesting,
         filePath: {
             browserName,
             deviceName,

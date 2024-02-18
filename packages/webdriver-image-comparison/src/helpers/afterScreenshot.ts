@@ -10,6 +10,7 @@ import type { Executor } from '../methods/methods.interfaces'
 import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot.interfaces'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import { LogLevel } from './options.interfaces'
+import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
 
 /**
  * Methods that need to be executed after a screenshot has been taken
@@ -20,6 +21,7 @@ export default async function afterScreenshot(executor: Executor, options: After
         actualFolder,
         base64Image,
         disableCSSAnimation,
+        enableLayoutTesting,
         fileName: fileNameOptions,
         filePath,
         hideElements,
@@ -40,24 +42,21 @@ export default async function afterScreenshot(executor: Executor, options: After
     // Save the screenshot
     await saveBase64Image(base64Image, join(path, fileName))
 
-    // Show the scrollbars again
-    /* istanbul ignore else */
-    if (!isNativeContext && noScrollBars) {
-        await executor(hideScrollBars, !noScrollBars)
-    }
+    if (!isNativeContext){
+        // Show the scrollbars again
+        if (noScrollBars) {
+            await executor(hideScrollBars, !noScrollBars)
+        }
 
-    // Show elements again
-    /* istanbul ignore else */
-    if (!isNativeContext &&
-        ((hideElements && hideElements.length > 0) || (removeElements && removeElements.length > 0))
-    ) {
-        try {
-            await executor(hideRemoveElements, { hide: hideElements, remove: removeElements }, false)
-        } catch (e) {
-            if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-                console.log(
-                    '\x1b[33m%s\x1b[0m',
-                    `
+        // Show elements again
+        if ((hideElements && hideElements.length > 0) || (removeElements && removeElements.length > 0)) {
+            try {
+                await executor(hideRemoveElements, { hide: hideElements, remove: removeElements }, false)
+            } catch (e) {
+                if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
+                    console.log(
+                        '\x1b[33m%s\x1b[0m',
+                        `
 #####################################################################################
  WARNING:
  (One of) the elements that needed to be hidden or removed could not be found on the
@@ -66,15 +65,21 @@ export default async function afterScreenshot(executor: Executor, options: After
  We made sure the test didn't break.
 #####################################################################################
 `,
-                )
+                    )
+                }
             }
         }
-    }
 
-    // Remove the custom set css
-    /* istanbul ignore else */
-    if (!isNativeContext && (disableCSSAnimation || checkIsMobile(platformName))) {
-        await executor(removeElementFromDom, CUSTOM_CSS_ID)
+        // Remove the custom set css
+        if (disableCSSAnimation || checkIsMobile(platformName)) {
+            await executor(removeElementFromDom, CUSTOM_CSS_ID)
+        }
+
+        // Show the text again
+        if (enableLayoutTesting){
+            await executor(toggleTextTransparency, !enableLayoutTesting)
+        }
+
     }
 
     // Return the needed data

@@ -24,12 +24,11 @@ export default async function checkWebScreen(
     const saveScreenOptions: SaveScreenOptions = {
         wic: checkScreenOptions.wic,
         method: {
-            ...('disableCSSAnimation' in checkScreenOptions.method
-                ? { disableCSSAnimation: checkScreenOptions.method.disableCSSAnimation }
-                : {}),
-            ...('hideScrollBars' in checkScreenOptions.method ? { hideScrollBars: checkScreenOptions.method.hideScrollBars } : {}),
-            ...{ hideElements: checkScreenOptions.method.hideElements || [] },
-            ...{ removeElements: checkScreenOptions.method.removeElements || [] },
+            disableCSSAnimation: checkScreenOptions.method.disableCSSAnimation,
+            enableLayoutTesting: checkScreenOptions.method.enableLayoutTesting,
+            hideScrollBars: checkScreenOptions.method.hideScrollBars,
+            hideElements: checkScreenOptions.method.hideElements || [],
+            removeElements: checkScreenOptions.method.removeElements || [],
         },
     }
     const { devicePixelRatio, fileName, isLandscape } = await saveWebScreen(methods, instanceData, folders, tag, saveScreenOptions, false)

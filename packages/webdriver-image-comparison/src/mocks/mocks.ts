@@ -27,6 +27,7 @@ export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
     },
     addressBarShadowPadding: 6,
     disableCSSAnimation: true,
+    enableLayoutTesting: false,
     logLevel: LogLevel.debug,
     noScrollBars: true,
     toolBarShadowPadding: 6,

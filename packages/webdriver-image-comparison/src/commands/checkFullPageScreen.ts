@@ -28,16 +28,13 @@ export default async function checkFullPageScreen(
     const saveFullPageOptions: SaveFullPageOptions = {
         wic: checkFullPageOptions.wic,
         method: {
-            ...('disableCSSAnimation' in checkFullPageOptions.method
-                ? { disableCSSAnimation: checkFullPageOptions.method.disableCSSAnimation }
-                : {}),
-            ...('fullPageScrollTimeout' in checkFullPageOptions.method
-                ? { fullPageScrollTimeout: checkFullPageOptions.method.fullPageScrollTimeout }
-                : {}),
-            ...('hideScrollBars' in checkFullPageOptions.method ? { hideScrollBars: checkFullPageOptions.method.hideScrollBars } : {}),
-            ...{ hideElements: checkFullPageOptions.method.hideElements || [] },
-            ...{ removeElements: checkFullPageOptions.method.removeElements || [] },
-            ...{ hideAfterFirstScroll: checkFullPageOptions.method.hideAfterFirstScroll || [] },
+            disableCSSAnimation: checkFullPageOptions.method.disableCSSAnimation,
+            enableLayoutTesting: checkFullPageOptions.method.enableLayoutTesting,
+            fullPageScrollTimeout: checkFullPageOptions.method.fullPageScrollTimeout,
+            hideAfterFirstScroll: checkFullPageOptions.method.hideAfterFirstScroll || [],
+            hideScrollBars: checkFullPageOptions.method.hideScrollBars,
+            hideElements: checkFullPageOptions.method.hideElements || [],
+            removeElements: checkFullPageOptions.method.removeElements || [],
         },
     }
     const { devicePixelRatio, fileName, isLandscape } = await saveFullPageScreen(

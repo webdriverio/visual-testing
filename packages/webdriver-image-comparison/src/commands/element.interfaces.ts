@@ -14,6 +14,8 @@ export interface SaveElementMethodOptions extends Partial<Folders> {
     addressBarShadowPadding?: number;
     // Disable all css animations
     disableCSSAnimation?: boolean;
+    // Make all text on a page transparent to only focus on the layout
+    enableLayoutTesting?: boolean;
     // Hide all scrollbars
     hideScrollBars?: boolean;
     // The resizeDimensions

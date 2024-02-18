@@ -34,6 +34,13 @@ describe('@wdio/visual-service mobile web', () => {
             const result = await browser.checkScreen('screenshot') as number
             await expect(result < 0.05 ? 0 : result).toEqual(0)
         })
+
+        it(`should compare a screen layout successful for '${deviceName}' in ${orientation}-mode`, async () => {
+            // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
+            // We're accepting 0.05%, which is 500 pixels, to be a max difference
+            const result = await browser.checkScreen('layoutScreenshot', { enableLayoutTesting: true }) as number
+            await expect(result < 0.05 ? 0 : result).toEqual(0)
+        })
     }
 
     if (
@@ -47,6 +54,18 @@ describe('@wdio/visual-service mobile web', () => {
                     'wdioLogo',
                     {
                         removeElements: [await $('nav.navbar')]
+                    }
+                )
+            ).toEqual(0)
+        })
+
+        it(`should compare an element layout successful for '${deviceName}' in ${orientation}-mode`, async () => {
+            await expect(
+                await browser.checkElement(
+                    await $('nav.navbar'),
+                    'wdioLayoutNavBar',
+                    {
+                        enableLayoutTesting: true
                     }
                 )
             ).toEqual(0)
@@ -65,6 +84,19 @@ describe('@wdio/visual-service mobile web', () => {
                 hideAfterFirstScroll: [
                     await $('nav.navbar'),
                 ],
+            }) as number
+            await expect(result < 0.05 ? 0 : result).toEqual(0)
+        })
+
+        it(`should compare a full page layout screenshot successful for '${deviceName}' in ${orientation}-mode`, async () => {
+            // This is normally a bad practice, but a mobile full page screenshot is normally around 4M pixels
+            // We're accepting 0.05%, which is 2000 pixels, to be a max difference
+            const result = await browser.checkFullPageScreen('fullPageLayout', {
+                fullPageScrollTimeout: 1500,
+                hideAfterFirstScroll: [
+                    await $('nav.navbar'),
+                ],
+                enableLayoutTesting: true
             }) as number
             await expect(result < 0.05 ? 0 : result).toEqual(0)
         })
