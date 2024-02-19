@@ -54,7 +54,7 @@
     "@wdio/sauce-service": "^8.32.1",
     "@wdio/shared-store-service": "^8.32.1",
     "@wdio/spec-reporter": "^8.31.1",
-    "@wdio/types": "^8.31.1",
+    "@wdio/types": "^8.32.2",
     "eslint": "^8.56.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-unicorn": "^51.0.1",
