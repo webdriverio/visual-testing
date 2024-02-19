@@ -26,6 +26,8 @@ export interface SaveElementMethodOptions extends Partial<Folders> {
     hideElements?: HTMLElement[];
     // Elements that need to be removed (display: none) before saving a screenshot
     removeElements?: HTMLElement[];
+    // Wait for the fonts to be loaded
+    waitForFontsLoaded?: boolean;
 }
 
 export interface CheckElementMethodOptions extends SaveElementMethodOptions, CheckMethodOptions { }

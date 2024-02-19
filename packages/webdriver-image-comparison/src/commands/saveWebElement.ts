@@ -46,6 +46,9 @@ export default async function saveWebElement(
     const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
     const hideElements: HTMLElement[] = saveElementOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveElementOptions.method.removeElements || []
+    const waitForFontsLoaded: boolean = saveElementOptions.method.waitForFontsLoaded !== undefined
+        ? Boolean(saveElementOptions.method.waitForFontsLoaded)
+        : saveElementOptions.wic.waitForFontsLoaded
 
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {
@@ -58,6 +61,7 @@ export default async function saveWebElement(
         noScrollBars: hideScrollBars,
         removeElements,
         toolBarShadowPadding,
+        waitForFontsLoaded,
     }
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(executor, beforeOptions, true)
     const {

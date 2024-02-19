@@ -46,6 +46,7 @@ exports[`options > defaultOptions > should return the default options when no op
     },
   },
   "toolBarShadowPadding": 6,
+  "waitForFontsLoaded": true,
 }
 `;
 
@@ -95,6 +96,7 @@ exports[`options > defaultOptions > should return the provided options when opti
     },
   },
   "toolBarShadowPadding": 1,
+  "waitForFontsLoaded": true,
 }
 `;
 

@@ -29,6 +29,8 @@ export interface SaveFullPageMethodOptions extends Partial<Folders> {
     removeElements?: HTMLElement[];
     // Elements that need to be hidden after the first scroll for a fullpage scroll
     hideAfterFirstScroll?: HTMLElement[];
+    // Wait for the fonts to be loaded
+    waitForFontsLoaded?: boolean;
 }
 
 export interface CheckFullPageMethodOptions extends SaveFullPageMethodOptions, CheckMethodOptions { }

@@ -52,6 +52,9 @@ export default async function saveFullPageScreen(
     const hideElements: HTMLElement[] = saveFullPageOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveFullPageOptions.method.removeElements || []
     const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
+    const waitForFontsLoaded: boolean = saveFullPageOptions.method.waitForFontsLoaded !== undefined
+        ? Boolean(saveFullPageOptions.method.waitForFontsLoaded)
+        : saveFullPageOptions.wic.waitForFontsLoaded
 
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {
@@ -64,6 +67,7 @@ export default async function saveFullPageScreen(
         noScrollBars: hideScrollBars,
         removeElements,
         toolBarShadowPadding,
+        waitForFontsLoaded,
     }
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(methods.executor, beforeOptions, true)
     const devicePixelRatio = enrichedInstanceData.dimensions.window.devicePixelRatio

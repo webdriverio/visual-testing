@@ -23,6 +23,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         logLevel: options.logLevel ?? LogLevel.info,
         savePerInstance: options.savePerInstance ?? false,
         toolBarShadowPadding: options.toolBarShadowPadding ?? DEFAULT_SHADOW.TOOL_BAR,
+        waitForFontsLoaded: options.waitForFontsLoaded ?? true,
 
         /**
      * Module and method options

@@ -35,6 +35,7 @@ export default async function checkFullPageScreen(
             hideScrollBars: checkFullPageOptions.method.hideScrollBars,
             hideElements: checkFullPageOptions.method.hideElements || [],
             removeElements: checkFullPageOptions.method.removeElements || [],
+            waitForFontsLoaded: checkFullPageOptions.method.waitForFontsLoaded,
         },
     }
     const { devicePixelRatio, fileName, isLandscape } = await saveFullPageScreen(

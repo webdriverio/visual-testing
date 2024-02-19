@@ -38,6 +38,9 @@ export default async function saveWebScreen(
         : saveScreenOptions.wic.hideScrollBars
     const hideElements: HTMLElement[] = saveScreenOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveScreenOptions.method.removeElements || []
+    const waitForFontsLoaded: boolean = saveScreenOptions.method.waitForFontsLoaded !== undefined
+        ? Boolean(saveScreenOptions.method.waitForFontsLoaded)
+        : saveScreenOptions.wic.waitForFontsLoaded
 
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {
@@ -50,6 +53,7 @@ export default async function saveWebScreen(
         noScrollBars: hideScrollBars,
         removeElements,
         toolBarShadowPadding,
+        waitForFontsLoaded,
     }
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(methods.executor, beforeOptions)
     const {

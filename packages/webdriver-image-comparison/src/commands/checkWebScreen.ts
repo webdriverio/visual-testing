@@ -29,6 +29,7 @@ export default async function checkWebScreen(
             hideScrollBars: checkScreenOptions.method.hideScrollBars,
             hideElements: checkScreenOptions.method.hideElements || [],
             removeElements: checkScreenOptions.method.removeElements || [],
+            waitForFontsLoaded: checkScreenOptions.method.waitForFontsLoaded,
         },
     }
     const { devicePixelRatio, fileName, isLandscape } = await saveWebScreen(methods, instanceData, folders, tag, saveScreenOptions, false)

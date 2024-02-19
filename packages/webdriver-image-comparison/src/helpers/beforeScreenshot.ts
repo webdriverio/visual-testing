@@ -8,6 +8,7 @@ import type { Executor } from '../methods/methods.interfaces'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import { LogLevel } from './options.interfaces'
 import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
+import waitForFonts from '../clientSideScripts/waitForFonts.js'
 
 /**
  * Methods that need to be executed before a screenshot will be taken
@@ -27,6 +28,7 @@ export default async function beforeScreenshot(
         noScrollBars,
         removeElements,
         toolBarShadowPadding,
+        waitForFontsLoaded,
     } = options
     const addressBarPadding = getAddressBarShadowPadding({
         platformName,
@@ -36,6 +38,17 @@ export default async function beforeScreenshot(
         addShadowPadding,
     })
     const toolBarPadding = getToolBarShadowPadding({ platformName, browserName, toolBarShadowPadding, addShadowPadding })
+
+    // Wait for the fonts to be loaded
+    if (waitForFontsLoaded){
+        try {
+            await executor(waitForFonts)
+        } catch (e) {
+            if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
+                console.log('Waiting for fonts to load threw an error:', e)
+            }
+        }
+    }
 
     // Hide the scrollbars
     if (noScrollBars) {

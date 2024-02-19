@@ -20,6 +20,8 @@ export interface BeforeScreenshotOptions {
     hideElements: HTMLElement[];
     // Elements that need to be removed (display: none) before saving a screenshot
     removeElements: HTMLElement[];
+    // Wait for the fonts to be loaded
+    waitForFontsLoaded: boolean;
 }
 
 export type BeforeScreenshotResult = EnrichedInstanceData;

@@ -22,6 +22,8 @@ export interface ClassOptions {
     savePerInstance?: boolean;
     // The padding that needs to be added to the toolbar bar on iOS and Android to do a proper cutout of the the viewport.
     toolBarShadowPadding?: number;
+    // Wait for the fonts to be loaded before taking a screenshot
+    waitForFontsLoaded: boolean;
 
     /**
      * Baseline options
@@ -97,6 +99,7 @@ export interface DefaultOptions {
     savePerInstance: boolean;
     tabbableOptions: TabbableOptions;
     toolBarShadowPadding: number;
+    waitForFontsLoaded: boolean;
 }
 
 interface CompareOptions {

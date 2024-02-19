@@ -31,6 +31,7 @@ export default async function checkWebElement(
             resizeDimensions: checkElementOptions.method.resizeDimensions,
             hideElements: checkElementOptions.method.hideElements || [],
             removeElements: checkElementOptions.method.removeElements || [],
+            waitForFontsLoaded: checkElementOptions.method.waitForFontsLoaded,
         },
     }
     const { devicePixelRatio, fileName, isLandscape } = await saveWebElement(
