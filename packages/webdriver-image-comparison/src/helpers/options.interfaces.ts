@@ -23,7 +23,7 @@ export interface ClassOptions {
     // The padding that needs to be added to the toolbar bar on iOS and Android to do a proper cutout of the the viewport.
     toolBarShadowPadding?: number;
     // Wait for the fonts to be loaded before taking a screenshot
-    waitForFontsLoaded: boolean;
+    waitForFontsLoaded?: boolean;
 
     /**
      * Baseline options

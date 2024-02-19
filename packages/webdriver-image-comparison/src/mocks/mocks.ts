@@ -33,6 +33,7 @@ export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
     toolBarShadowPadding: 6,
     hideElements: [<HTMLElement>(<any>'<div></div>')],
     removeElements: [<HTMLElement>(<any>'<div></div>')],
+    waitForFontsLoaded: true,
 }
 export const CONFIGURABLE = {
     writable: true,

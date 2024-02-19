@@ -38,6 +38,7 @@ describe('beforeScreenshot', () => {
             toolBarShadowPadding: 6,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
             removeElements: [<HTMLElement>(<any>'<div></div>')],
+            waitForFontsLoaded: true,
         }
 
         expect(await beforeScreenshot(MOCKED_EXECUTOR, options)).toMatchSnapshot()
@@ -78,6 +79,7 @@ describe('beforeScreenshot', () => {
             toolBarShadowPadding: 6,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
             removeElements: [<HTMLElement>(<any>'<div></div>')],
+            waitForFontsLoaded: true,
         }
 
         expect(await beforeScreenshot(MOCKED_EXECUTOR, options, true)).toMatchSnapshot()
