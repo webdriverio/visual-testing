@@ -58,8 +58,8 @@ importers:
         specifier: ^8.32.1
         version: 8.32.1(typescript@5.3.3)
       '@wdio/spec-reporter':
-        specifier: ^8.31.1
-        version: 8.31.1
+        specifier: ^8.32.2
+        version: 8.32.2
       '@wdio/types':
         specifier: ^8.31.1
         version: 8.31.1
@@ -1237,7 +1237,7 @@ packages:
   /@types/jsonfile@6.1.4:
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
     dependencies:
-      '@types/node': 20.11.5
+      '@types/node': 20.11.16
     dev: true
 
   /@types/keyv@3.1.4:
@@ -1695,13 +1695,13 @@ packages:
       '@types/node': 20.11.16
     dev: true
 
-  /@wdio/reporter@8.31.1:
-    resolution: {integrity: sha512-ayZipzyr9dSwpbKYbV4PoXuw91A1H7fjadJ5R5oMYUETx+pfBJqjR2UIHZhhPAa0lJ7bWHEn7eCsGB1PXp47Og==}
+  /@wdio/reporter@8.32.2:
+    resolution: {integrity: sha512-BZdReAFfRCtgtYbyhkKgSGqqoIn/yG5/Z4COjvRvon9NJkz+eA4PiHCKdEP7+ekBIjud7H8Gy+6mPBDEu+wllw==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.11.16
       '@wdio/logger': 8.28.0
-      '@wdio/types': 8.31.1
+      '@wdio/types': 8.32.2
       diff: 5.1.0
       object-inspect: 1.13.1
     dev: true
@@ -1768,12 +1768,12 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@wdio/spec-reporter@8.31.1:
-    resolution: {integrity: sha512-t2isqf/yDvc3xfNnkuR8XdRaKf34I6/40f1DHfojHZUpTF94jrt7CLACkFiDZhu5sz0KCuDWzy56aycd6IUz3w==}
+  /@wdio/spec-reporter@8.32.2:
+    resolution: {integrity: sha512-3hUXpE+idC4KOXofJnpubdDDCE8X0OTd6ykypiaXMI2hJTA2nIZcHtpRQnAE0E4JT9OzLnPWODcMq54GGBDRkg==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@wdio/reporter': 8.31.1
-      '@wdio/types': 8.31.1
+      '@wdio/reporter': 8.32.2
+      '@wdio/types': 8.32.2
       chalk: 5.3.0
       easy-table: 1.2.0
       pretty-ms: 7.0.1
@@ -1795,6 +1795,13 @@ packages:
 
   /@wdio/types@8.31.1:
     resolution: {integrity: sha512-KQ0EmjeVdshufhsxygaPzkJ8WD7hm8WlflZcLwKMZ0OM6f8pV9NMGGOvfBQXgTs447ScK6/6rX+lbJk3yvg65g==}
+    engines: {node: ^16.13 || >=18}
+    dependencies:
+      '@types/node': 20.11.16
+    dev: true
+
+  /@wdio/types@8.32.2:
+    resolution: {integrity: sha512-jq8LcBBQpBP9ZF5kECKEpXv8hN7irCGCjLFAN0Bd5ScRR6qu6MGWvwkDkau2sFPr0b++sKDCEaMzQlwrGFjZXg==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.11.16
