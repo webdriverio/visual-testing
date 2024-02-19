@@ -26,8 +26,8 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         waitForFontsLoaded: options.waitForFontsLoaded ?? true,
 
         /**
-     * Module and method options
-     */
+         * Module and method options
+         */
         disableCSSAnimation: options.disableCSSAnimation ?? false,
         enableLayoutTesting: options.enableLayoutTesting ?? false,
         fullPageScrollTimeout: options.fullPageScrollTimeout ?? FULL_PAGE_SCROLL_TIMEOUT,
@@ -36,8 +36,8 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
             : true,
 
         /**
-     * Compare options
-     */
+         * Compare options
+         */
         compareOptions: {
             blockOutSideBar: options.blockOutSideBar ?? true,
             blockOutStatusBar: options.blockOutStatusBar ?? true,
@@ -54,8 +54,8 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         },
 
         /**
-     * Tabbable options
-     */
+         * Tabbable options
+         */
         tabbableOptions: {
             circle: {
                 ...DEFAULT_TABBABLE_OPTIONS.circle,

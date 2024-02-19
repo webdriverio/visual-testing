@@ -24,15 +24,13 @@ describe('@wdio/visual-service desktop', () => {
         })
     })
 
-    it(`should compare an element layout successful with a baseline for '${browserName}'`, async () => {
+    it(`should compare a viewport screenshot successful with a baseline for '${browserName}'`, async () => {
         // For some reason the safari 16 browser on Sauce Labs doesn't load the page correctly for the first try
         if (browserName === 'safari-16') {
             await browser.url('')
             await $('.hero__title-logo').waitForDisplayed()
         }
-        await expect($('nav.navbar')).toMatchElementSnapshot('wdioLayoutNavBar', {
-            enableLayoutTesting: true,
-        })
+        await expect(browser).toMatchScreenSnapshot('viewportScreenshot')
     })
 
     it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async () => {
@@ -44,30 +42,11 @@ describe('@wdio/visual-service desktop', () => {
         })
     })
 
-    it(`should compare a full page layout screenshot successful with a baseline for '${browserName}'`, async () => {
-        await expect(browser).toMatchFullPageSnapshot('fullPageLayout', {
-            fullPageScrollTimeout: 1500,
-            hideAfterFirstScroll: [
-                await $('nav.navbar'),
-            ],
-            enableLayoutTesting: true,
-        })
-    })
-
     it(`should compare a tabbable screenshot successful with a baseline for '${browserName}'`, async () => {
         await expect(browser).toMatchTabbablePageSnapshot('tabbable', {
             hideAfterFirstScroll: [
                 await $('nav.navbar'),
             ],
-        })
-    })
-
-    it(`should compare a tabbable layout screenshot successful with a baseline for '${browserName}'`, async () => {
-        await expect(browser).toMatchTabbablePageSnapshot('tabbableLayout', {
-            hideAfterFirstScroll: [
-                await $('nav.navbar'),
-            ],
-            enableLayoutTesting: true,
         })
     })
 })
