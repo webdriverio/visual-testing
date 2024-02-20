@@ -27,25 +27,33 @@ export default async function saveWebScreen(
         saveScreenOptions.wic
 
     // 1b. Set the method options to the right values
-    const disableCSSAnimation: boolean = 'disableCSSAnimation' in saveScreenOptions.method
+    const disableCSSAnimation: boolean = saveScreenOptions.method.disableCSSAnimation !== undefined
         ? Boolean(saveScreenOptions.method.disableCSSAnimation)
         : saveScreenOptions.wic.disableCSSAnimation
-    const hideScrollBars: boolean = 'hideScrollBars' in saveScreenOptions.method
+    const enableLayoutTesting: boolean = saveScreenOptions.method.enableLayoutTesting !== undefined
+        ? Boolean(saveScreenOptions.method.enableLayoutTesting)
+        : saveScreenOptions.wic.enableLayoutTesting
+    const hideScrollBars: boolean = saveScreenOptions.method.hideScrollBars !== undefined
         ? Boolean(saveScreenOptions.method.hideScrollBars)
         : saveScreenOptions.wic.hideScrollBars
     const hideElements: HTMLElement[] = saveScreenOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveScreenOptions.method.removeElements || []
+    const waitForFontsLoaded: boolean = saveScreenOptions.method.waitForFontsLoaded !== undefined
+        ? Boolean(saveScreenOptions.method.waitForFontsLoaded)
+        : saveScreenOptions.wic.waitForFontsLoaded
 
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {
         instanceData,
         addressBarShadowPadding,
         disableCSSAnimation,
+        enableLayoutTesting,
         hideElements,
         logLevel,
         noScrollBars: hideScrollBars,
         removeElements,
         toolBarShadowPadding,
+        waitForFontsLoaded,
     }
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(methods.executor, beforeOptions)
     const {
@@ -97,6 +105,7 @@ export default async function saveWebScreen(
         actualFolder: folders.actualFolder,
         base64Image: croppedBase64Image,
         disableCSSAnimation,
+        enableLayoutTesting,
         filePath: {
             browserName,
             deviceName,

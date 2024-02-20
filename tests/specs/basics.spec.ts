@@ -67,7 +67,7 @@ describe('@wdio/visual-service basics', () => {
                 await $('.hero__subtitle')
             )
 
-            await expect(await browser.checkScreen(tag)).toBeGreaterThan(0)
+            await expect(await browser.checkScreen(tag, { enableLayoutTesting: false })).toBeGreaterThan(0)
         })
     })
 })

@@ -45,6 +45,7 @@ export const config: Options.Testrunner = {
                 blockOutSideBar: true,
                 logLevel: 'debug',
                 rawMisMatchPercentage: process.env.RAW_MISMATCH || false,
+                enableLayoutTesting: true,
             },
         ],
     ],

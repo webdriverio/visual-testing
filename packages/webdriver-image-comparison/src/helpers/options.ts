@@ -25,17 +25,19 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         toolBarShadowPadding: options.toolBarShadowPadding ?? DEFAULT_SHADOW.TOOL_BAR,
 
         /**
-     * Module and method options
-     */
+         * Module and method options
+         */
         disableCSSAnimation: options.disableCSSAnimation ?? false,
+        enableLayoutTesting: options.enableLayoutTesting ?? false,
         fullPageScrollTimeout: options.fullPageScrollTimeout ?? FULL_PAGE_SCROLL_TIMEOUT,
         hideScrollBars: Object.prototype.hasOwnProperty.call(options, 'hideScrollBars')
             ? Boolean(options.hideScrollBars)
             : true,
+        waitForFontsLoaded: options.waitForFontsLoaded ?? true,
 
         /**
-     * Compare options
-     */
+         * Compare options
+         */
         compareOptions: {
             blockOutSideBar: options.blockOutSideBar ?? true,
             blockOutStatusBar: options.blockOutStatusBar ?? true,
@@ -52,8 +54,8 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         },
 
         /**
-     * Tabbable options
-     */
+         * Tabbable options
+         */
         tabbableOptions: {
             circle: {
                 ...DEFAULT_TABBABLE_OPTIONS.circle,

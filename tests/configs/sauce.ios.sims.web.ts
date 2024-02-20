@@ -97,39 +97,6 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
         // 1366
         'iPad Pro (12.9 inch) (5th generation) Simulator',
     ]
-    const iOS16BezelDevices = [
-        // iPhones
-        'iPhone X Simulator',
-        // 'iPhone XS Simulator', // => already done for 812
-        'iPhone XS Max Simulator',
-        'iPhone XR Simulator',
-        // 'iPhone 11 Simulator', // => already done for 896
-        'iPhone 11 Pro Simulator',
-        'iPhone 11 Pro Max Simulator',
-        // 'iPhone 12 Simulator', // => already done for 926
-        'iPhone 12 Mini Simulator',
-        'iPhone 12 Pro Simulator',
-        // 'iPhone 12 Pro Max Simulator', // => already done for 844
-        'iPhone 13 Simulator',
-        'iPhone 13 Mini Simulator',
-        'iPhone 13 Pro Simulator',
-        'iPhone 13 Pro Max Simulator',
-        'iPhone 14 Simulator',
-        'iPhone 14 Plus Simulator',
-        'iPhone 14 Pro Simulator',
-        'iPhone 14 Pro Max Simulator',
-        // iPads
-        'iPad mini (5th generation) Simulator',
-        'iPad mini (6th generation) Simulator',
-        'iPad Air (4th generation) Simulator',
-        'iPad Air (5th generation) Simulator',
-        'iPad Pro (11 inch) (1st generation) Simulator',
-        'iPad Pro (11 inch) (2nd generation) Simulator',
-        'iPad Pro (11 inch) (3rd generation) Simulator',
-        'iPad Pro (12.9 inch) (3rd generation) Simulator',
-        'iPad Pro (12.9 inch) (4th generation) Simulator',
-        'iPad Pro (12.9 inch) (5th generation) Simulator',
-    ]
 
     return [
         ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
@@ -176,31 +143,34 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                             build: buildName,
                             deviceOrientation: orientation,
                         },
-                        wdioIcsCommands: [
-                            'checkElement',
-                            'checkFullPageScreen',
-                        ],
+                        // wdioIcsCommands: [
+                        //     'checkElement',
+                        //     'checkFullPageScreen',
+                        // ],
                     })
                 )
             )
             .flat(1),
-        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
-            .map((orientation) =>
-                iOS16BezelDevices.map((device) =>
-                    createCaps({
-                        deviceName: device,
-                        platformVersion: '16.2',
-                        orientation: orientation,
-                        mobileSpecs,
-                        sauceOptions: {
-                            build: buildName,
-                            deviceOrientation: orientation,
-                        },
-                        wdioIcsCommands: ['checkScreen'],
-                    })
-                )
-            )
-            .flat(1),
+        /**
+         * We disabled the bezel devices for now. 7 devices are already checked in the iOS16Devices
+         */
+        // ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
+        //     .map((orientation) =>
+        //         iOS16BezelDevices.map((device) =>
+        //             createCaps({
+        //                 deviceName: device,
+        //                 platformVersion: '16.2',
+        //                 orientation: orientation,
+        //                 mobileSpecs,
+        //                 sauceOptions: {
+        //                     build: buildName,
+        //                     deviceOrientation: orientation,
+        //                 },
+        //                 wdioIcsCommands: ['checkScreen'],
+        //             })
+        //         )
+        //     )
+        //     .flat(1),
     ]
 }
 

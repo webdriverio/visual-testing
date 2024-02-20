@@ -27,11 +27,13 @@ export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
     },
     addressBarShadowPadding: 6,
     disableCSSAnimation: true,
+    enableLayoutTesting: false,
     logLevel: LogLevel.debug,
     noScrollBars: true,
     toolBarShadowPadding: 6,
     hideElements: [<HTMLElement>(<any>'<div></div>')],
     removeElements: [<HTMLElement>(<any>'<div></div>')],
+    waitForFontsLoaded: true,
 }
 export const CONFIGURABLE = {
     writable: true,
