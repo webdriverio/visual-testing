@@ -79,7 +79,6 @@ export default class WdioImageComparisonService extends BaseClass {
          * add custom matcher for visual comparison when expect has been added.
          * this is not the case in standalone mode
          */
-        console.log('globals', globals)
         if (globals.has('expect')) {
             expect.extend({
                 toMatchScreenSnapshot,
