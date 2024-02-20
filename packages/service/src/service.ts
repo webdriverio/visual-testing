@@ -35,7 +35,6 @@ const pageCommands = {
     checkTabbablePage,
 }
 
-console.log('globalThis = ', globalThis._wdioGlobals)
 // Reused this from
 // https://github.com/webdriverio/webdriverio/blob/main/packages/wdio-globals/src/index.ts#L18
 type SupportedGlobals = 'browser' | 'driver' | 'multiremotebrowser' | '$' | '$$' | 'expect'
