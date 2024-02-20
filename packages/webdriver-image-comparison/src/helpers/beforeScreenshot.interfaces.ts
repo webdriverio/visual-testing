@@ -8,6 +8,8 @@ export interface BeforeScreenshotOptions {
     addressBarShadowPadding: number;
     // Disable all css animations
     disableCSSAnimation: boolean;
+    // Make all text on a page transparent to only focus on the layout
+    enableLayoutTesting: boolean;
     // Level to show logs
     logLevel: LogLevel;
     // Hide all scrollbars
@@ -18,6 +20,8 @@ export interface BeforeScreenshotOptions {
     hideElements: HTMLElement[];
     // Elements that need to be removed (display: none) before saving a screenshot
     removeElements: HTMLElement[];
+    // Wait for the fonts to be loaded
+    waitForFontsLoaded: boolean;
 }
 
 export type BeforeScreenshotResult = EnrichedInstanceData;

@@ -13,6 +13,8 @@ export interface SaveFullPageMethodOptions extends Partial<Folders> {
     addressBarShadowPadding?: number;
     // Disable all css animations
     disableCSSAnimation?: boolean;
+    // Make all text on a page transparent to only focus on the layout
+    enableLayoutTesting?: boolean;
     // Hide all scrollbars
     hideScrollBars?: boolean;
     // The amount of milliseconds to wait for a new scroll
@@ -27,6 +29,8 @@ export interface SaveFullPageMethodOptions extends Partial<Folders> {
     removeElements?: HTMLElement[];
     // Elements that need to be hidden after the first scroll for a fullpage scroll
     hideAfterFirstScroll?: HTMLElement[];
+    // Wait for the fonts to be loaded
+    waitForFontsLoaded?: boolean;
 }
 
 export interface CheckFullPageMethodOptions extends SaveFullPageMethodOptions, CheckMethodOptions { }

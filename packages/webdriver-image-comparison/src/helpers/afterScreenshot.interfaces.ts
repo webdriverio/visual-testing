@@ -18,6 +18,8 @@ export interface AfterScreenshotOptions {
     base64Image: string;
     // Disable all css animations
     disableCSSAnimation?: boolean;
+    // Make all text on a page transparent to only focus on the layout
+    enableLayoutTesting?: boolean;
     // If scrollbars need to be hidden
     hideScrollBars?: boolean;
     // The file path options

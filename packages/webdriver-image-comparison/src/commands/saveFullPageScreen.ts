@@ -37,29 +37,37 @@ export default async function saveFullPageScreen(
     } = saveFullPageOptions.wic
 
     // 1c. Set the method options to the right values
-    const disableCSSAnimation: boolean = 'disableCSSAnimation' in saveFullPageOptions.method
+    const disableCSSAnimation: boolean = saveFullPageOptions.method.disableCSSAnimation !== undefined
         ? Boolean(saveFullPageOptions.method.disableCSSAnimation)
         : saveFullPageOptions.wic.disableCSSAnimation
-    const hideScrollBars: boolean = 'hideScrollBars' in saveFullPageOptions.method
+    const enableLayoutTesting: boolean = saveFullPageOptions.method.enableLayoutTesting !== undefined
+        ? Boolean(saveFullPageOptions.method.enableLayoutTesting)
+        : saveFullPageOptions.wic.enableLayoutTesting
+    const hideScrollBars: boolean = saveFullPageOptions.method.hideScrollBars !== undefined
         ? Boolean(saveFullPageOptions.method.hideScrollBars)
         : saveFullPageOptions.wic.hideScrollBars
-    const fullPageScrollTimeout: number = 'fullPageScrollTimeout' in saveFullPageOptions.method
+    const fullPageScrollTimeout: number = saveFullPageOptions.method.fullPageScrollTimeout !== undefined
         ? saveFullPageOptions.method.fullPageScrollTimeout!
         : saveFullPageOptions.wic.fullPageScrollTimeout
     const hideElements: HTMLElement[] = saveFullPageOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveFullPageOptions.method.removeElements || []
     const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
+    const waitForFontsLoaded: boolean = saveFullPageOptions.method.waitForFontsLoaded !== undefined
+        ? Boolean(saveFullPageOptions.method.waitForFontsLoaded)
+        : saveFullPageOptions.wic.waitForFontsLoaded
 
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {
         instanceData,
         addressBarShadowPadding,
         disableCSSAnimation,
+        enableLayoutTesting,
         hideElements,
         logLevel,
         noScrollBars: hideScrollBars,
         removeElements,
         toolBarShadowPadding,
+        waitForFontsLoaded,
     }
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(methods.executor, beforeOptions, true)
     const devicePixelRatio = enrichedInstanceData.dimensions.window.devicePixelRatio
@@ -100,6 +108,7 @@ export default async function saveFullPageScreen(
         actualFolder: folders.actualFolder,
         base64Image: fullPageBase64Image,
         disableCSSAnimation,
+        enableLayoutTesting,
         filePath: {
             browserName: enrichedInstanceData.browserName,
             deviceName: enrichedInstanceData.deviceName,

@@ -22,6 +22,8 @@ export interface ClassOptions {
     savePerInstance?: boolean;
     // The padding that needs to be added to the toolbar bar on iOS and Android to do a proper cutout of the the viewport.
     toolBarShadowPadding?: number;
+    // Wait for the fonts to be loaded before taking a screenshot
+    waitForFontsLoaded?: boolean;
 
     /**
      * Baseline options
@@ -38,6 +40,8 @@ export interface ClassOptions {
      */
     // En/Disable all css animations and the input caret in the application.
     disableCSSAnimation?: boolean;
+    // Make all text on a page transparent to only focus on the layout.
+    enableLayoutTesting?: boolean;
     // The timeout in milliseconds to wait after a scroll. This might help identifying pages with lazy loading.
     fullPageScrollTimeout?: number;
     // Hide scrollbars
@@ -86,6 +90,7 @@ export interface DefaultOptions {
     clearFolder: boolean;
     compareOptions: CompareOptions;
     disableCSSAnimation: boolean;
+    enableLayoutTesting: boolean;
     formatImageName: string;
     fullPageScrollTimeout: number;
     hideScrollBars: boolean;
@@ -94,6 +99,7 @@ export interface DefaultOptions {
     savePerInstance: boolean;
     tabbableOptions: TabbableOptions;
     toolBarShadowPadding: number;
+    waitForFontsLoaded: boolean;
 }
 
 interface CompareOptions {

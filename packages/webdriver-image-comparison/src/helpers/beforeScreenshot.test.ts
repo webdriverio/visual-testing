@@ -32,11 +32,13 @@ describe('beforeScreenshot', () => {
             },
             addressBarShadowPadding: 6,
             disableCSSAnimation: true,
+            enableLayoutTesting: false,
             logLevel: LogLevel.debug,
             noScrollBars: true,
             toolBarShadowPadding: 6,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
             removeElements: [<HTMLElement>(<any>'<div></div>')],
+            waitForFontsLoaded: true,
         }
 
         expect(await beforeScreenshot(MOCKED_EXECUTOR, options)).toMatchSnapshot()
@@ -71,11 +73,13 @@ describe('beforeScreenshot', () => {
             },
             addressBarShadowPadding: 6,
             disableCSSAnimation: true,
+            enableLayoutTesting: false,
             noScrollBars: true,
             logLevel: LogLevel.debug,
             toolBarShadowPadding: 6,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
             removeElements: [<HTMLElement>(<any>'<div></div>')],
+            waitForFontsLoaded: true,
         }
 
         expect(await beforeScreenshot(MOCKED_EXECUTOR, options, true)).toMatchSnapshot()

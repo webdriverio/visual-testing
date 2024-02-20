@@ -22,6 +22,7 @@ exports[`options > defaultOptions > should return the default options when no op
     "scaleImagesToSameSize": false,
   },
   "disableCSSAnimation": false,
+  "enableLayoutTesting": false,
   "formatImageName": "{tag}-{browserName}-{width}x{height}-dpr-{dpr}",
   "fullPageScrollTimeout": 1500,
   "hideScrollBars": true,
@@ -45,6 +46,7 @@ exports[`options > defaultOptions > should return the default options when no op
     },
   },
   "toolBarShadowPadding": 6,
+  "waitForFontsLoaded": true,
 }
 `;
 
@@ -70,6 +72,7 @@ exports[`options > defaultOptions > should return the provided options when opti
     "scaleImagesToSameSize": true,
   },
   "disableCSSAnimation": true,
+  "enableLayoutTesting": false,
   "formatImageName": "{foo}-{bar}",
   "fullPageScrollTimeout": 12345,
   "hideScrollBars": true,
@@ -93,6 +96,7 @@ exports[`options > defaultOptions > should return the provided options when opti
     },
   },
   "toolBarShadowPadding": 1,
+  "waitForFontsLoaded": true,
 }
 `;
 

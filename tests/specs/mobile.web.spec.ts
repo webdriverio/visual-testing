@@ -11,7 +11,7 @@ describe('@wdio/visual-service mobile web', () => {
     // @ts-ignore
     const deviceName = driver.requestedCapabilities.deviceName
     // @ts-ignore
-    const orientation = driver.requestedCapabilities.orientation
+    const orientation = driver.requestedCapabilities.orientation.toLowerCase()
 
     beforeEach(async () => {
         await browser.url('')
@@ -32,6 +32,9 @@ describe('@wdio/visual-service mobile web', () => {
             // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
             const result = await browser.checkScreen('screenshot') as number
+            if (result > 0 && result < 0.05) {
+                console.log(`\n\n\n'Screenshot for ${deviceName}' in ${orientation}-mode has a difference of ${result}%\n\n\n`)
+            }
             await expect(result < 0.05 ? 0 : result).toEqual(0)
         })
     }
@@ -66,6 +69,9 @@ describe('@wdio/visual-service mobile web', () => {
                     await $('nav.navbar'),
                 ],
             }) as number
+            if (result > 0 && result < 0.05) {
+                console.log(`\n\n\nFull page layout screenshot for '${deviceName}' in ${orientation}-mode has a difference of ${result}%\n\n\n`)
+            }
             await expect(result < 0.05 ? 0 : result).toEqual(0)
         })
     }

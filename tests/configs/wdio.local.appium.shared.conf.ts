@@ -35,6 +35,7 @@ export const config: Options.Testrunner = {
                 blockOutToolBar: true,
                 blockOutSideBar: true,
                 logLevel: 'debug',
+                enableLayoutTesting: true,
             },
         ],
     ],
