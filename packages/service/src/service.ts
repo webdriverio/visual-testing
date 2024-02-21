@@ -35,11 +35,6 @@ const pageCommands = {
     checkTabbablePage,
 }
 
-// Reused this from
-// https://github.com/webdriverio/webdriverio/blob/main/packages/wdio-globals/src/index.ts#L18
-type SupportedGlobals = 'browser' | 'driver' | 'multiremotebrowser' | '$' | '$$' | 'expect'
-const globals: Map<SupportedGlobals, any> = globalThis._wdioGlobals = globalThis._wdioGlobals || new Map()
-
 export default class WdioImageComparisonService extends BaseClass {
     #config: WebdriverIO.Config
     #currentFile?: string
@@ -79,13 +74,15 @@ export default class WdioImageComparisonService extends BaseClass {
          * add custom matcher for visual comparison when expect has been added.
          * this is not the case in standalone mode
          */
-        if (globals.has('expect')) {
+        try {
             expect.extend({
                 toMatchScreenSnapshot,
                 toMatchFullPageSnapshot,
                 toMatchElementSnapshot,
                 toMatchTabbablePageSnapshot,
             })
+        } catch (err) {
+            log.warn('Expect package not found. This means that the custom matchers `toMatchScreenSnapshot|toMatchFullPageSnapshot|toMatchElementSnapshot|toMatchTabbablePageSnapshot` are not added and can not be used. Please make sure to add it to your `package.json` if you want to use the Visual custom matchers.')
         }
     }
 
