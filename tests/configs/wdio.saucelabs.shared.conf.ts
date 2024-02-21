@@ -9,6 +9,10 @@ const SPEC_FILE_RETRIES = 'specFileRetries'
 
 export const config: Options.Testrunner = {
     ...sharedConfig,
+    // ===================
+    // Test Configurations
+    // ===================
+    specFileRetries: 2,
     // =====================
     // Sauce specific config
     // =====================
