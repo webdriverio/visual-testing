@@ -24,8 +24,7 @@ export const config: Options.Testrunner = {
     // ===================
     // Test Configurations
     // ===================
-    logLevel: 'error',
-    // outputDir: './logs',
+    logLevel: 'silent',
     baseUrl: 'http://guinea-pig.webdriver.io/image-compare.html',
     waitforTimeout: 15000,
     connectionRetryTimeout: 90000,
@@ -38,7 +37,6 @@ export const config: Options.Testrunner = {
         timeout: 10 * 60 * 1000,
     },
     reporters: ['spec'],
-    specFileRetries: 2,
     specFileRetriesDelay: 0,
 
     // =====

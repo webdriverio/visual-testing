@@ -1,8 +1,7 @@
 import type { Options } from '@wdio/types'
 import { join } from 'node:path'
 import { setValue, getValue } from '@wdio/shared-store-service'
-import type { Job } from 'saucelabs'
-import SauceLabs from 'saucelabs'
+import { default as SauceLabs, type Job } from 'saucelabs'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 import type { RetriesSpecs } from '../types/types.ts'
 
@@ -10,6 +9,10 @@ const SPEC_FILE_RETRIES = 'specFileRetries'
 
 export const config: Options.Testrunner = {
     ...sharedConfig,
+    // ===================
+    // Test Configurations
+    // ===================
+    specFileRetries: 2,
     // =====================
     // Sauce specific config
     // =====================
@@ -102,7 +105,8 @@ export const config: Options.Testrunner = {
             // If there is a matching session
             if (matchingSession) {
                 // Then update the test in Sauce Labs with the API
-                const api = new SauceLabs({
+                // @ts-ignore
+                const api = new SauceLabs.default({
                     user: process.env.SAUCE_USERNAME_WDIO_ICS as string,
                     key: process.env.SAUCE_ACCESS_KEY_WDIO_ICS as string,
                     region: 'eu',

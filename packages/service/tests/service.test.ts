@@ -14,7 +14,7 @@ vi.mock('webdriver-image-comparison', () => ({
     checkTabbablePage: vi.fn(),
 }))
 
-vi.mock('@wdio/globals', () => ({
+vi.mock('@wdio/globals', async () => ({
     expect: {
         extend: vi.fn()
     }
@@ -22,7 +22,7 @@ vi.mock('@wdio/globals', () => ({
 
 describe('@wdio/visual-service', () => {
     it('should register custom matchers', async () => {
-        const service = new VisualService({})
+        const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
         const browser = {
             isMultiremote: false,
             addCommand: vi.fn(),
@@ -34,7 +34,7 @@ describe('@wdio/visual-service', () => {
     })
 
     it('adds command to normal browser in before hook', async () => {
-        const service = new VisualService({})
+        const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
         const browser = {
             isMultiremote: false,
             addCommand: vi.fn(),
@@ -54,7 +54,7 @@ describe('@wdio/visual-service', () => {
     })
 
     it('adds command to multiremote browser in before hook', async () => {
-        const service = new VisualService({})
+        const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
         const browserInstance = {
             addCommand: vi.fn(),
             capabilities: {},
