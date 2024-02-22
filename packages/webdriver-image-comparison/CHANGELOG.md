@@ -1,5 +1,15 @@
 # webdriver-image-comparison
 
+## 4.1.0
+
+### Minor Changes
+
+- 43ed502: Add font loading features:
+  - add `waitForFontsLoaded` so the module automatically waits for all fonts to be loaded, enabled by default
+  - add `enableLayoutTesting` so all text will become transparent so
+    - font rendering issues won't cause flakiness
+    - image comparison can be done on layout
+
 ## 4.0.2
 
 ### Patch Changes
