@@ -49,8 +49,8 @@ importers:
         specifier: ^8.32.2
         version: 8.32.2(typescript@5.3.3)
       '@wdio/mocha-framework':
-        specifier: ^8.32.2
-        version: 8.32.2
+        specifier: ^8.32.3
+        version: 8.32.3
       '@wdio/sauce-service':
         specifier: ^8.32.3
         version: 8.32.3(typescript@5.3.3)
@@ -1688,15 +1688,15 @@ packages:
       loglevel-plugin-prefix: 0.8.4
       strip-ansi: 7.1.0
 
-  /@wdio/mocha-framework@8.32.2:
-    resolution: {integrity: sha512-76DA95u0Z2AfyZSQglJn9BFJ+XveRR6+oH1K/J8rDOWoIHgMcASGEj+fsXAPSDNcSVDBe0QN5HLnVi3tciuyQw==}
+  /@wdio/mocha-framework@8.32.3:
+    resolution: {integrity: sha512-wwQ6rDd6TMPqwGfkwvtcBmcirYZUi9GUiwH2OsHvMJ4i+YY7H2dLyZon1ghcIan7r4ufr8KlljbwyerCpUzvcw==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/mocha': 10.0.6
       '@types/node': 20.11.16
       '@wdio/logger': 8.28.0
       '@wdio/types': 8.32.2
-      '@wdio/utils': 8.32.2
+      '@wdio/utils': 8.32.3
       mocha: 10.2.0
     transitivePeerDependencies:
       - supports-color
@@ -3102,6 +3102,7 @@ packages:
 
   /devtools-protocol@0.0.1262051:
     resolution: {integrity: sha512-YJe4CT5SA8on3Spa+UDtNhEqtuV6Epwz3OZ4HQVLhlRccpZ9/PAYk0/cy/oKxFKRrZPBUPyxympQci4yWNWZ9g==}
+    requiresBuild: true
     dev: true
 
   /diff-sequences@29.6.3:
@@ -3672,9 +3673,9 @@ packages:
       jest-matcher-utils: 29.7.0
       lodash.isequal: 4.5.0
     optionalDependencies:
-      '@wdio/globals': 8.32.2(typescript@5.3.3)
+      '@wdio/globals': 8.32.3(typescript@5.3.3)
       '@wdio/logger': 8.28.0
-      webdriverio: 8.32.2(typescript@5.3.3)
+      webdriverio: 8.32.3(typescript@5.3.3)
     transitivePeerDependencies:
       - bufferutil
       - devtools
@@ -8128,6 +8129,7 @@ packages:
   /webdriver@8.32.3:
     resolution: {integrity: sha512-1/kpZvuftt59oikHs+6FvWXNfOM5tgMMMAk3LnMe7D938dVOoNGAe46fq0oL/xsxxPicbMRTRgIy1OifLiglaA==}
     engines: {node: ^16.13 || >=18}
+    requiresBuild: true
     dependencies:
       '@types/node': 20.11.16
       '@types/ws': 8.5.10
