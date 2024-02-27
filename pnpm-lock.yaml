@@ -37,8 +37,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0(vitest@1.3.0)
       '@wdio/appium-service':
-        specifier: ^8.32.2
-        version: 8.32.2(typescript@5.3.3)
+        specifier: ^8.32.3
+        version: 8.32.3(typescript@5.3.3)
       '@wdio/cli':
         specifier: ^8.32.3
         version: 8.32.3(typescript@5.3.3)
@@ -1524,18 +1524,18 @@ packages:
       pretty-format: 29.7.0
     dev: true
 
-  /@wdio/appium-service@8.32.2(typescript@5.3.3):
-    resolution: {integrity: sha512-+LEjka8hmo8YtfT3u7b043XvR4mfsXeGWqe1/OuLXGv54QO4/busmo/BAT5De0UGHewF4O/5AvTr9ub2W/slyQ==}
+  /@wdio/appium-service@8.32.3(typescript@5.3.3):
+    resolution: {integrity: sha512-8SL38YcNPjB8gWWOinjDD/dvwIrrEDr9sq2ZVqX+QKOZTEVkGG3OcjtuPONJoZ0V2D/arwP41vk6nlAS7GFzjw==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@wdio/config': 8.32.2
+      '@wdio/config': 8.32.3
       '@wdio/logger': 8.28.0
       '@wdio/types': 8.32.2
-      '@wdio/utils': 8.32.2
+      '@wdio/utils': 8.32.3
       get-port: 7.0.0
       import-meta-resolve: 4.0.0
       param-case: 4.0.0
-      webdriverio: 8.32.2(typescript@5.3.3)
+      webdriverio: 8.32.3(typescript@5.3.3)
     transitivePeerDependencies:
       - bufferutil
       - devtools
@@ -3672,9 +3672,9 @@ packages:
       jest-matcher-utils: 29.7.0
       lodash.isequal: 4.5.0
     optionalDependencies:
-      '@wdio/globals': 8.32.2(typescript@5.3.3)
+      '@wdio/globals': 8.32.3(typescript@5.3.3)
       '@wdio/logger': 8.28.0
-      webdriverio: 8.32.2(typescript@5.3.3)
+      webdriverio: 8.32.3(typescript@5.3.3)
     transitivePeerDependencies:
       - bufferutil
       - devtools
