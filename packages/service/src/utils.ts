@@ -1,5 +1,8 @@
-import type { Capabilities } from '@wdio/types'
-import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
+import { join } from 'node:path'
+import { writeFileSync } from 'node:fs'
+import type { Capabilities, Options } from '@wdio/types'
+import fetch from 'node-fetch'
+import type { AppiumCapabilities, RemoteCapability } from 'node_modules/@wdio/types/build/Capabilities.js'
 import { IOS_OFFSETS } from 'webdriver-image-comparison'
 import type {
     Folders,
@@ -10,8 +13,12 @@ import type {
     SaveFullPageMethodOptions,
     CheckElementMethodOptions,
     SaveElementMethodOptions,
+    ClassOptions,
 } from 'webdriver-image-comparison'
 import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
+import type { CapabilityMap, CreateTestFileOptions, IndexRes, Stories, StoriesRes, StorybookData } from './storybookTypes.js'
+import type { Logger } from '@wdio/logger'
+import { temporaryDirectory } from 'tempy'
 
 interface WdioIcsOptions {
     logName?: string;
@@ -263,3 +270,273 @@ export function determineNativeContext(
     return false
 }
 
+/**
+ * Check if we run for Storybook
+ */
+export function isStorybookMode(): boolean {
+    return process.argv.includes('--storybook')
+}
+
+/**
+ * Get the process argument value
+ */
+export function getProcessArgv(argName: string): string {
+    return process.argv[process.argv.indexOf(argName) + 1]
+}
+
+/**
+ * Check if there is an instance of Storybook running
+ */
+export async function checkStorybookIsRunning(url: string) {
+    try {
+        const res = await fetch(url, { method: 'GET', headers: {} })
+        if (res.status !== 200) {
+            throw new Error(`Unxpected status: ${res.status}`)
+        }
+    } catch (e) {
+        console.error(`It seems that the Storybook instance is not running at: ${url}. Are you sure it's running?`)
+        process.exit(1)
+    }
+}
+
+/**
+ * Sanitize the URL to ensure it's in a proper format
+ */
+export function sanitizeURL(url:string): string {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'http://' + url
+    }
+
+    url = url.replace(/(iframe\.html|index\.html)\s*$/, '')
+
+    if (!url.endsWith('/')) {
+        url += '/'
+    }
+
+    return url
+}
+
+/**
+ * Get the stories JSON from the Storybook instance
+ */
+export async function getStoriesJson(url:string):  Promise<Stories>{
+    const indexJsonUrl = new URL('index.json', url).toString()
+    const storiesJsonUrl = new URL('stories.json', url).toString()
+    const fetchOptions = { headers: {} }
+
+    try {
+        const [indexRes, storiesRes] = await Promise.all([
+            fetch(indexJsonUrl, fetchOptions),
+            fetch(storiesJsonUrl, fetchOptions),
+        ])
+
+        for (const response of [storiesRes, indexRes]) {
+            if (response.ok) {
+                const data = await response.json() as StoriesRes | IndexRes
+                return (data as StoriesRes).stories || (data as IndexRes).entries
+            }
+        }
+    } catch (err) {
+        console.error(err)
+    }
+
+    throw new Error(`Failed to fetch index data from the project. Ensure URLs are available with valid data: ${storiesJsonUrl}, ${indexJsonUrl}.`)
+}
+
+/**
+ * Get arg value from the process.argv
+ */
+export function getArgvValue(argName: string, parseFunc: (value: string) => any): any {
+    const index = process.argv.indexOf(argName) + 1
+    if (index > 0 && index < process.argv.length) {
+        return parseFunc(process.argv[index])
+    }
+    return undefined
+}
+
+/**
+ * Creates a it function for the test file
+ * @TODO: improve this
+ */
+function itFunction(clip: boolean, clipSelector: string, data: {id:string}) {
+    const { id } = data
+    const screenshotType = clip ? 'n element' : ' viewport'
+    const it = `
+    it(\`should take a${screenshotType} screenshot of ${id}\`, async () => {
+        await browser.url(\`http://localhost:6006/iframe.html?id=${id}\`);
+        await $('#storybook-root').waitForDisplayed();
+
+        startTime = performance.now();
+        ${clip
+        ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element')`
+        : `await expect(browser).toMatchScreenSnapshot('${id}')`
+}
+        // await $('${clipSelector}').saveScreenshot('${id}.png');
+        endTime = performance.now();
+        timeTaken = endTime - startTime;
+        console.log(\`Time taken to take a visual snapshot of ${id}: \${timeTaken}ms\`);
+    });
+    `
+    return it
+}
+
+/**
+ * Write the test file
+ */
+function writeTestFile(directoryPath: string, fileID: string, log: Logger, testContent: string) {
+    const filePath = join(directoryPath, `${fileID}.test.js`)
+    try {
+        writeFileSync(filePath, testContent)
+        log.info(`Test file created at: ${filePath}`)
+    } catch (err) {
+        console.error(`It seems that the writing the file to '${filePath}' didn't succeed due to the following error: ${err}`)
+        process.exit(1)
+    }
+}
+
+/**
+ * Create the test content
+ */
+function createTestContent ({ clip, clipSelector, stories }:{clip: boolean; clipSelector: string;stories: StorybookData[]}):string {
+    return stories.reduce((acc, storyData) => acc + itFunction(clip, clipSelector, storyData), '')
+}
+
+/**
+ * Create the file data
+ */
+function createFileData (describeTitle: string, testContent: string):string {
+    return `\ndescribe(\`${describeTitle}\`, () => {\n    ${testContent}\n});\n`
+}
+
+/**
+ * Create the test files
+ */
+export function createTestFiles({
+    clip,
+    clipSelector,
+    directoryPath,
+    log,
+    numShards,
+    storiesJson,
+}: CreateTestFileOptions) {
+    const storiesArray = Object.values(storiesJson)
+        // By default only filter the stories, not the docs
+        .filter((storyData: StorybookData) => storyData?.type === 'story' || !storyData.parameters?.docsOnly)
+    const fileNamePrefix = 'visual-storybook'
+
+    if (numShards === 1){
+        const testContent = createTestContent({ clip, clipSelector, stories: storiesArray })
+        const fileData = createFileData('All stories', testContent)
+        writeTestFile(directoryPath, `${fileNamePrefix}-1-1`, log, fileData)
+    } else {
+        const totalStories = storiesArray.length
+        const storiesPerShard = Math.ceil(totalStories / numShards)
+
+        for (let shard = 0; shard < numShards; shard++) {
+            const startIndex = shard * storiesPerShard
+            const endIndex = Math.min(startIndex + storiesPerShard, totalStories)
+            const shardStories = storiesArray.slice(startIndex, endIndex)
+            const testContent = createTestContent({ clip, clipSelector, stories: shardStories })
+            const fileId = `${fileNamePrefix}-${shard + 1}-${numShards}`
+            const describeTitle = `Shard ${shard + 1} of ${numShards}`
+            const fileData = createFileData(describeTitle, testContent)
+
+            writeTestFile(directoryPath, fileId, log, fileData)
+        }
+    }
+}
+
+/**
+ * Create the storybook capabilities based on the specified browsers
+ */
+export function createStorybookCapabilities(capabilities: Capabilities.RemoteCapabilities, log: Logger) {
+    const isHeadless = process.argv.includes('--headless')
+    const browsers = process.argv.includes('--browsers') ? process.argv[process.argv.indexOf('--browsers') + 1].split(',') : ['chrome']
+
+    if (Array.isArray(capabilities)) {
+        const chromeCapability: RemoteCapability = {
+            browserName: 'chrome',
+            'goog:chromeOptions': {
+                args: [
+                    'disable-infobars',
+                    ...(isHeadless ? ['--headless'] : []),
+                ],
+            },
+            'wdio-ics:options': {
+                logName: 'local-chrome',
+            },
+        }
+        const firefoxCapability: RemoteCapability = {
+            browserName: 'firefox',
+            'moz:firefoxOptions': {
+                args: [...(isHeadless ? ['-headless'] : []),]
+            },
+            'wdio-ics:options': {
+                logName: 'local-firefox',
+            },
+        }
+        const safariCapability: RemoteCapability = {
+            browserName: 'safari',
+            'wdio-ics:options': {
+                logName: 'local-safari',
+            },
+        }
+        const edgeCapability: RemoteCapability = {
+            browserName: 'MicrosoftEdge',
+            'ms:edgeOptions': {
+                args: [...(isHeadless ? ['--headless'] : [])]
+            },
+            'wdio-ics:options': {
+                logName: 'local-edge',
+            },
+        }
+
+        // Create a map for easy lookup
+        const capabilityMap: CapabilityMap = {
+            chrome: chromeCapability,
+            firefox: firefoxCapability,
+            safari: safariCapability,
+            edge: edgeCapability,
+        }
+
+        // Create new capabilities based on the specified browsers
+        const newCapabilities = browsers
+            .filter((browser): browser is keyof CapabilityMap => browser in capabilityMap)
+            .map(browser => capabilityMap[browser])
+
+        capabilities.length = 0
+        // Add the new capability to the capabilities array
+        // @ts-ignore
+        capabilities.push(...newCapabilities)
+    } else {
+        log.error('The capabilities are not an array')
+    }
+}
+
+/**
+ * Scan the storybook instance
+ */
+export async function scanStorybook(
+    config:Options.Testrunner,
+    log: Logger,
+    options:ClassOptions
+): Promise<{storiesJson: Stories, tempDir: string}>{
+    // Prepare storybook scanning
+    const rawStorybookUrl = process.env.STORYBOOK_URL ?? options?.storybook?.url ?? 'http://127.0.0.1:6006'
+    await checkStorybookIsRunning(rawStorybookUrl)
+    const storybookUrl = sanitizeURL(rawStorybookUrl)
+
+    // Create a temporary folder for test files and add that to the specs
+    const tempDir = temporaryDirectory()
+    log.info(`Using temporary folder for storybook specs: ${tempDir}`)
+    config.specs = [join(tempDir, '*.js')]
+    // Store it so we can clean it up later
+    process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER = tempDir
+
+    const storiesJson = await getStoriesJson(storybookUrl)
+
+    return {
+        storiesJson,
+        tempDir,
+    }
+}
