@@ -32,7 +32,7 @@ export default async function saveWebElement(
     // 1a. Set some variables
     const { addressBarShadowPadding, autoElementScroll, formatImageName, logLevel, savePerInstance, toolBarShadowPadding } =
         saveElementOptions.wic
-    const { executor } = methods
+    const { executor, screenShot, takeElementScreenshot } = methods
     // 1b. Set the method options to the right values
     const disableCSSAnimation: boolean = saveElementOptions.method.disableCSSAnimation !== undefined
         ? Boolean(saveElementOptions.method.disableCSSAnimation)
@@ -89,27 +89,41 @@ export default async function saveWebElement(
         await waitFor(500)
     }
 
-    // 3.  Take the screenshot
-    const base64Image: string = await takeBase64Screenshot(methods.screenShot)
+    let base64Image: string
+    let rectangles: RectanglesOutput = { x: 0, y: 0, width: 0, height: 0 }
 
-    // 4.  Determine the rectangles
-    const elementRectangleOptions: ElementRectanglesOptions = {
-        /**
-         * ToDo: handle NaA case
-         */
-        devicePixelRatio: devicePixelRatio || NaN,
-        innerHeight: innerHeight || NaN,
-        isAndroidNativeWebScreenshot,
-        isAndroid,
-        isIOS,
-        isLandscape,
+    try {
+
+        base64Image = await takeElementScreenshot!((await element as WebdriverIO.Element).elementId)
+        const { height, width } = getScreenshotSize(base64Image)
+        rectangles = { x: 0, y: 0, width, height }
+        if (rectangles.width === 0 || rectangles.height === 0) {
+            throw new Error('The element has no width or height.')
+        }
+    } catch (e) {
+        console.error(`\x1b[31m\nAn error occurred while trying to take the element screenshot: ${e}. We'll use the fallback.\x1b[0m\n`)
+        // 3.  Take the screenshot
+        base64Image = await takeBase64Screenshot(screenShot)
+
+        // 4.  Determine the rectangles
+        const elementRectangleOptions: ElementRectanglesOptions = {
+            /**
+             * ToDo: handle NaA case
+             */
+            devicePixelRatio: devicePixelRatio || NaN,
+            innerHeight: innerHeight || NaN,
+            isAndroidNativeWebScreenshot,
+            isAndroid,
+            isIOS,
+            isLandscape,
+        }
+        rectangles = await determineElementRectangles({
+            executor,
+            base64Image,
+            options: elementRectangleOptions,
+            element,
+        })
     }
-    const rectangles: RectanglesOutput = await determineElementRectangles({
-        executor,
-        base64Image,
-        options: elementRectangleOptions,
-        element,
-    })
 
     // When the screenshot has been taken and the element position has been determined,
     // we can scroll back to the original position
