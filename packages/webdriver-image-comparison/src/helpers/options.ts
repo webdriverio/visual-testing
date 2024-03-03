@@ -2,6 +2,7 @@ import { DEFAULT_FORMAT_STRING, DEFAULT_SHADOW, DEFAULT_TABBABLE_OPTIONS, FULL_P
 import type { ClassOptions, DefaultOptions } from './options.interfaces'
 import { LogLevel } from './options.interfaces'
 import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces'
+import { isStorybook } from './utils.js'
 
 /**
  * Determine the default options
@@ -32,8 +33,8 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         fullPageScrollTimeout: options.fullPageScrollTimeout ?? FULL_PAGE_SCROLL_TIMEOUT,
         hideScrollBars: Object.prototype.hasOwnProperty.call(options, 'hideScrollBars')
             ? Boolean(options.hideScrollBars)
-            : true,
-        waitForFontsLoaded: options.waitForFontsLoaded ?? true,
+            : isStorybook() ? false : true,
+        waitForFontsLoaded: options.waitForFontsLoaded ?? isStorybook() ? false : true,
 
         /**
          * Compare options
