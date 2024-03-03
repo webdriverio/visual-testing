@@ -32,7 +32,7 @@
     "test.saucelabs.desktop": "SAUCE_ENV=desktop wdio ./tests/configs/wdio.saucelabs.web.conf.ts",
     "test.saucelabs.emu.web": "SAUCE_ENV=emu wdio ./tests/configs/wdio.saucelabs.web.conf.ts",
     "test.saucelabs.sims.web": "SAUCE_ENV=sims wdio ./tests/configs/wdio.saucelabs.web.conf.ts",
-    "prepare": "husky install",
+    "prepare": "husky",
     "watch": "pnpm run -r --parallel watch"
   },
   "dependencies": {
