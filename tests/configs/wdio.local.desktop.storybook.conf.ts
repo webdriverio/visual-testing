@@ -16,6 +16,13 @@ export const config: Options.Testrunner = {
             {
                 baselineFolder: join(process.cwd(), './__snapshots__/'),
                 debug: true,
+                // storybook: {
+                //     /**
+                //      * Demo storybook URLs with a lot of components
+                //      */
+                //     // url: 'https://www.bbc.co.uk/iplayer/storybook/',
+                //     // url: 'https://angular.carbondesignsystem.com/',
+                // }
             },
         ]
     ],

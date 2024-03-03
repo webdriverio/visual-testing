@@ -2,7 +2,9 @@ import { join } from 'node:path'
 import { writeFileSync } from 'node:fs'
 import type { Capabilities, Options } from '@wdio/types'
 import fetch from 'node-fetch'
-import type { AppiumCapabilities, RemoteCapability } from 'node_modules/@wdio/types/build/Capabilities.js'
+import { temporaryDirectory } from 'tempy'
+import type { Logger } from '@wdio/logger'
+import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
 import { IOS_OFFSETS } from 'webdriver-image-comparison'
 import type {
     Folders,
@@ -16,9 +18,15 @@ import type {
     ClassOptions,
 } from 'webdriver-image-comparison'
 import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
-import type { CapabilityMap, CreateTestFileOptions, IndexRes, Stories, StoriesRes, StorybookData } from './storybookTypes.js'
-import type { Logger } from '@wdio/logger'
-import { temporaryDirectory } from 'tempy'
+import type {
+    CapabilityMap,
+    CreateTestContent,
+    CreateTestFileOptions,
+    IndexRes,
+    Stories,
+    StoriesRes,
+    StorybookData,
+} from './storybookTypes.js'
 
 interface WdioIcsOptions {
     logName?: string;
@@ -358,12 +366,12 @@ export function getArgvValue(argName: string, parseFunc: (value: string) => any)
  * Creates a it function for the test file
  * @TODO: improve this
  */
-function itFunction(clip: boolean, clipSelector: string, data: {id:string}) {
+function itFunction(clip: boolean, clipSelector: string, data: {id:string}, storybookUrl: string) {
     const { id } = data
     const screenshotType = clip ? 'n element' : ' viewport'
     const it = `
     it(\`should take a${screenshotType} screenshot of ${id}\`, async () => {
-        await browser.url(\`http://localhost:6006/iframe.html?id=${id}\`);
+        await browser.url(\`${storybookUrl}iframe.html?id=${id}\`);
         await $('#storybook-root').waitForDisplayed();
 
         startTime = performance.now();
@@ -397,8 +405,8 @@ function writeTestFile(directoryPath: string, fileID: string, log: Logger, testC
 /**
  * Create the test content
  */
-function createTestContent ({ clip, clipSelector, stories }:{clip: boolean; clipSelector: string;stories: StorybookData[]}):string {
-    return stories.reduce((acc, storyData) => acc + itFunction(clip, clipSelector, storyData), '')
+function createTestContent ({ clip, clipSelector, stories, storybookUrl }:CreateTestContent):string {
+    return stories.reduce((acc, storyData) => acc + itFunction(clip, clipSelector, storyData, storybookUrl), '')
 }
 
 /**
@@ -418,14 +426,15 @@ export function createTestFiles({
     log,
     numShards,
     storiesJson,
+    storybookUrl,
 }: CreateTestFileOptions) {
     const storiesArray = Object.values(storiesJson)
-        // By default only filter the stories, not the docs
+        // By default only keep the stories, not the docs
         .filter((storyData: StorybookData) => storyData?.type === 'story' || !storyData.parameters?.docsOnly)
     const fileNamePrefix = 'visual-storybook'
 
     if (numShards === 1){
-        const testContent = createTestContent({ clip, clipSelector, stories: storiesArray })
+        const testContent = createTestContent({ clip, clipSelector, stories: storiesArray, storybookUrl })
         const fileData = createFileData('All stories', testContent)
         writeTestFile(directoryPath, `${fileNamePrefix}-1-1`, log, fileData)
     } else {
@@ -436,7 +445,7 @@ export function createTestFiles({
             const startIndex = shard * storiesPerShard
             const endIndex = Math.min(startIndex + storiesPerShard, totalStories)
             const shardStories = storiesArray.slice(startIndex, endIndex)
-            const testContent = createTestContent({ clip, clipSelector, stories: shardStories })
+            const testContent = createTestContent({ clip, clipSelector, stories: shardStories, storybookUrl })
             const fileId = `${fileNamePrefix}-${shard + 1}-${numShards}`
             const describeTitle = `Shard ${shard + 1} of ${numShards}`
             const fileData = createFileData(describeTitle, testContent)
@@ -454,7 +463,7 @@ export function createStorybookCapabilities(capabilities: Capabilities.RemoteCap
     const browsers = process.argv.includes('--browsers') ? process.argv[process.argv.indexOf('--browsers') + 1].split(',') : ['chrome']
 
     if (Array.isArray(capabilities)) {
-        const chromeCapability: RemoteCapability = {
+        const chromeCapability = {
             browserName: 'chrome',
             'goog:chromeOptions': {
                 args: [
@@ -466,7 +475,7 @@ export function createStorybookCapabilities(capabilities: Capabilities.RemoteCap
                 logName: 'local-chrome',
             },
         }
-        const firefoxCapability: RemoteCapability = {
+        const firefoxCapability = {
             browserName: 'firefox',
             'moz:firefoxOptions': {
                 args: [...(isHeadless ? ['-headless'] : []),]
@@ -475,13 +484,13 @@ export function createStorybookCapabilities(capabilities: Capabilities.RemoteCap
                 logName: 'local-firefox',
             },
         }
-        const safariCapability: RemoteCapability = {
+        const safariCapability = {
             browserName: 'safari',
             'wdio-ics:options': {
                 logName: 'local-safari',
             },
         }
-        const edgeCapability: RemoteCapability = {
+        const edgeCapability = {
             browserName: 'MicrosoftEdge',
             'ms:edgeOptions': {
                 args: [...(isHeadless ? ['--headless'] : [])]
@@ -520,7 +529,7 @@ export async function scanStorybook(
     config:Options.Testrunner,
     log: Logger,
     options:ClassOptions
-): Promise<{storiesJson: Stories, tempDir: string}>{
+): Promise<{storiesJson: Stories, storybookUrl: string, tempDir: string}>{
     // Prepare storybook scanning
     const rawStorybookUrl = process.env.STORYBOOK_URL ?? options?.storybook?.url ?? 'http://127.0.0.1:6006'
     await checkStorybookIsRunning(rawStorybookUrl)
@@ -530,13 +539,13 @@ export async function scanStorybook(
     const tempDir = temporaryDirectory()
     log.info(`Using temporary folder for storybook specs: ${tempDir}`)
     config.specs = [join(tempDir, '*.js')]
-    // Store it so we can clean it up later
-    process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER = tempDir
 
+    // Get the stories
     const storiesJson = await getStoriesJson(storybookUrl)
 
     return {
         storiesJson,
+        storybookUrl,
         tempDir,
     }
 }

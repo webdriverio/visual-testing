@@ -87,12 +87,14 @@ export interface ClassOptions {
     storybook?:{
         // If true, the story will be clipped component preventing extraneous whitespace. Enabled by default
         clip?: boolean;
-        // The selector to clip to when clip = true. Defaults to Storybook's default root element, `#storybook-root > :first-child`
+        // The selector to clip to when clip = true. Defaults to Storybook's V7 root element
         clipSelector?: string;
-        // Specify the number of separate shards to create
+        // Specify the number of separate shards to create, default is 1
         numShards?: number
-        // The URL of the storybook
+        // The URL of the storybook, default will be 'http://127.0.0.1:6006'
         url?: string;
+        // Version of the storybook, default is 7
+        version?: number
     }
 }
 

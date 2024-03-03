@@ -37,6 +37,7 @@ export type CreateTestFileOptions = {
     numShards:number,
     log: Logger,
     storiesJson: Stories,
+    storybookUrl: string;
 }
 
 export interface CapabilityMap {
@@ -44,4 +45,11 @@ export interface CapabilityMap {
     firefox: RemoteCapability;
     safari: RemoteCapability;
     edge: RemoteCapability;
+}
+
+export type CreateTestContent = {
+    clip: boolean;
+    clipSelector: string;
+    stories: StorybookData[];
+    storybookUrl: string;
 }
