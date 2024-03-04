@@ -3,38 +3,33 @@
  */
 export default function scrollElementIntoView(element: HTMLElement, addressBarShadowPadding: number): number {
     let currentPosition = 0
+    const htmlNode = document.documentElement
+    const bodyNode = document.body
+
+    // Apply new global style
+    const styleTag = document.createElement('style')
+    styleTag.innerHTML = '* { scroll-behavior: unset !important; }'
+    document.head.appendChild(styleTag)
+
     // Determine the current scroll position
-    const htmlNode = document.querySelector('html')!
-    const bodyNode = document.querySelector('body')!
-    // If could be that we can't calculate the scroll position on the html but on the body node
     if (htmlNode.scrollTop > 0) {
         currentPosition = htmlNode.scrollTop
-    }
-    if (bodyNode.scrollTop > 0) {
+    } else if (bodyNode.scrollTop > 0) {
         currentPosition = bodyNode.scrollTop
     }
 
     const { top } = element.getBoundingClientRect()
-    // Add the extra padding for the address bar
     const yPosition = top - addressBarShadowPadding
 
-    // Now scroll to the top of the screen
+    // Scroll to the position
     if (htmlNode.scrollHeight > htmlNode.clientHeight) {
         htmlNode.scrollTop = yPosition
-        // Did we scroll to the right position?
-        if (htmlNode.scrollTop === yPosition) {
-            return currentPosition
-        }
+    } else if (bodyNode.scrollHeight > bodyNode.clientHeight) {
+        bodyNode.scrollTop = yPosition
     }
 
-    // If not then try the body
-    if (bodyNode.scrollHeight > bodyNode.clientHeight) {
-        bodyNode.scrollTop = yPosition
-        // Did we scroll to the right position?
-        if (bodyNode.scrollTop === yPosition) {
-            return currentPosition
-        }
-    }
+    // Remove the injected style
+    document.head.removeChild(styleTag)
 
     return currentPosition
 }

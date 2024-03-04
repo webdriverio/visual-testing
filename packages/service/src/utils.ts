@@ -374,15 +374,15 @@ function itFunction(clip: boolean, clipSelector: string, data: {id:string}, stor
         await browser.url(\`${storybookUrl}iframe.html?id=${id}\`);
         await $('#storybook-root').waitForDisplayed();
 
-        startTime = performance.now();
+        const startTime = performance.now();
         ${clip
         ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element')`
         : `await expect(browser).toMatchScreenSnapshot('${id}')`
 }
         // await $('${clipSelector}').saveScreenshot('${id}.png');
-        endTime = performance.now();
-        timeTaken = endTime - startTime;
-        console.log(\`Time taken to take a visual snapshot of ${id}: \${timeTaken}ms\`);
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        console.log('Visual snapshot of \`${id}\` took: ', Math.round(timeTaken), ' ms')
     });
     `
     return it

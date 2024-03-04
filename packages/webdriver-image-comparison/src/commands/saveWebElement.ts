@@ -13,7 +13,7 @@ import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
-import { getScreenshotSize, waitFor } from '../helpers/utils.js'
+import { getScreenshotSize } from '../helpers/utils.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 
 /**
@@ -86,7 +86,6 @@ export default async function saveWebElement(
     let currentPosition: number | undefined
     if (autoElementScroll) {
         currentPosition = await executor(scrollElementIntoView, element, addressBarShadowPadding)
-        await waitFor(500)
     }
 
     let base64Image: string
