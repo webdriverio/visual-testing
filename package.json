@@ -52,7 +52,7 @@
     "@wdio/local-runner": "^8.32.3",
     "@wdio/mocha-framework": "^8.32.3",
     "@wdio/sauce-service": "^8.32.3",
-    "@wdio/shared-store-service": "^8.32.3",
+    "@wdio/shared-store-service": "^8.32.4",
     "@wdio/spec-reporter": "^8.32.2",
     "@wdio/types": "^8.32.2",
     "eslint": "^8.57.0",
