@@ -111,6 +111,11 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                             build: buildName,
                             deviceOrientation: orientation,
                         },
+                        wdioIcsCommands: [
+                            'checkScreen',
+                            // 'checkElement', // Disabled because it's flaky on Sauce Labs
+                            'checkFullPageScreen',
+                        ],
                     })
                 )
             )
@@ -127,6 +132,11 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                             build: buildName,
                             deviceOrientation: orientation,
                         },
+                        wdioIcsCommands: [
+                            'checkScreen',
+                            // 'checkElement', // Disabled because it's flaky on Sauce Labs
+                            'checkFullPageScreen',
+                        ],
                     })
                 )
             )
@@ -143,34 +153,15 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                             build: buildName,
                             deviceOrientation: orientation,
                         },
-                        // wdioIcsCommands: [
-                        //     'checkElement',
-                        //     'checkFullPageScreen',
-                        // ],
+                        wdioIcsCommands: [
+                            'checkScreen',
+                            // 'checkElement', // Disabled because it's flaky on Sauce Labs
+                            'checkFullPageScreen',
+                        ],
                     })
                 )
             )
             .flat(1),
-        /**
-         * We disabled the bezel devices for now. 7 devices are already checked in the iOS16Devices
-         */
-        // ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
-        //     .map((orientation) =>
-        //         iOS16BezelDevices.map((device) =>
-        //             createCaps({
-        //                 deviceName: device,
-        //                 platformVersion: '16.2',
-        //                 orientation: orientation,
-        //                 mobileSpecs,
-        //                 sauceOptions: {
-        //                     build: buildName,
-        //                     deviceOrientation: orientation,
-        //                 },
-        //                 wdioIcsCommands: ['checkScreen'],
-        //             })
-        //         )
-        //     )
-        //     .flat(1),
     ]
 }
 

@@ -1,14 +1,12 @@
-import { takeBase64Screenshot } from '../methods/screenshots.js'
+import { takeWebElementScreenshot } from '../methods/screenshots.js'
 import { makeCroppedBase64Image } from '../methods/images.js'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
-import { determineElementRectangles } from '../methods/rectangles.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import type { Methods } from '../methods/methods.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
 import type { SaveElementOptions, WicElement } from './element.interfaces.js'
-import type { ElementRectanglesOptions, RectanglesOutput } from '../methods/rectangles.interfaces.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
@@ -88,41 +86,20 @@ export default async function saveWebElement(
         currentPosition = await executor(scrollElementIntoView, element, addressBarShadowPadding)
     }
 
-    let base64Image: string
-    let rectangles: RectanglesOutput = { x: 0, y: 0, width: 0, height: 0 }
+    // 3.  Take the screenshot and determine the rectangles
+    const { base64Image, rectangles, isWebDriverElementScreenshot } = await takeWebElementScreenshot({
+        devicePixelRatio,
+        element,
+        executor,
+        innerHeight,
+        isAndroidNativeWebScreenshot,
+        isAndroid,
+        isIOS,
+        isLandscape,
+        screenShot,
+        takeElementScreenshot,
 
-    try {
-
-        base64Image = await takeElementScreenshot!((await element as WebdriverIO.Element).elementId)
-        const { height, width } = getScreenshotSize(base64Image)
-        rectangles = { x: 0, y: 0, width, height }
-        if (rectangles.width === 0 || rectangles.height === 0) {
-            throw new Error('The element has no width or height.')
-        }
-    } catch (e) {
-        console.error(`\x1b[31m\nAn error occurred while trying to take the element screenshot: ${e}. We'll use the fallback.\x1b[0m\n`)
-        // 3.  Take the screenshot
-        base64Image = await takeBase64Screenshot(screenShot)
-
-        // 4.  Determine the rectangles
-        const elementRectangleOptions: ElementRectanglesOptions = {
-            /**
-             * ToDo: handle NaA case
-             */
-            devicePixelRatio: devicePixelRatio || NaN,
-            innerHeight: innerHeight || NaN,
-            isAndroidNativeWebScreenshot,
-            isAndroid,
-            isIOS,
-            isLandscape,
-        }
-        rectangles = await determineElementRectangles({
-            executor,
-            base64Image,
-            options: elementRectangleOptions,
-            element,
-        })
-    }
+    })
 
     // When the screenshot has been taken and the element position has been determined,
     // we can scroll back to the original position
@@ -148,6 +125,7 @@ export default async function saveWebElement(
         base64Image,
         deviceName,
         devicePixelRatio: devicePixelRatio || NaN,
+        isWebDriverElementScreenshot,
         isIOS,
         isLandscape,
         logLevel,

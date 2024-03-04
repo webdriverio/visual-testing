@@ -147,6 +147,7 @@ export interface CroppedBase64Image {
     base64Image: string;
     deviceName: string;
     devicePixelRatio: number;
+    isWebDriverElementScreenshot?: boolean;
     isIOS: boolean;
     isLandscape: boolean;
     logLevel: LogLevel;
@@ -192,7 +193,11 @@ export interface DimensionsWarning {
     type: string,
 }
 
-export interface RotatedImage { isLandscape: boolean, base64Image:string }
+export interface RotatedImage {
+    isWebDriverElementScreenshot: boolean,
+    isLandscape: boolean,
+    base64Image:string,
+}
 
 export interface HandleIOSBezelCorners {
     addIOSBezelCorners: boolean,
