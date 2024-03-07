@@ -531,7 +531,8 @@ export async function scanStorybook(
     options:ClassOptions
 ): Promise<{storiesJson: Stories, storybookUrl: string, tempDir: string}>{
     // Prepare storybook scanning
-    const rawStorybookUrl = process.env.STORYBOOK_URL ?? options?.storybook?.url ?? 'http://127.0.0.1:6006'
+    const cliUrl = getArgvValue('--url', value => value)
+    const rawStorybookUrl = cliUrl ?? process.env.STORYBOOK_URL ?? options?.storybook?.url ?? 'http://127.0.0.1:6006'
     await checkStorybookIsRunning(rawStorybookUrl)
     const storybookUrl = sanitizeURL(rawStorybookUrl)
 
