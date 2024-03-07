@@ -51,7 +51,7 @@ export default class VisualLauncher extends BaseClass  {
             const clipSelectorOption = this.#options?.storybook?.clipSelector
             const clipSelectorArgv = getArgvValue('--clipSelector', value => value)
             // V6 has '#root' as the root element, V7 has '#storybook-root'
-            const clipSelector = clipSelectorOption ?? clipSelectorArgv ?? version === 6 ? V6_CLIP_SELECTOR : CLIP_SELECTOR
+            const clipSelector = (clipSelectorOption ?? clipSelectorArgv) ?? (version === 6 ? V6_CLIP_SELECTOR : CLIP_SELECTOR)
 
             // Create the test files
             createTestFiles({
