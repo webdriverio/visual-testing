@@ -34,7 +34,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         hideScrollBars: Object.prototype.hasOwnProperty.call(options, 'hideScrollBars')
             ? Boolean(options.hideScrollBars)
             : isStorybook() ? false : true,
-        waitForFontsLoaded: options.waitForFontsLoaded ?? isStorybook() ? false : true,
+        waitForFontsLoaded: options.waitForFontsLoaded ?? true,
 
         /**
          * Compare options
