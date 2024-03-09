@@ -56,7 +56,7 @@ export default class VisualLauncher extends BaseClass  {
             // --skipStories
             const skipStoriesOption = this.#options?.storybook?.skipStories
             const skipStoriesArgv = getArgvValue('--skipStories', value => value)
-            const skipStories = skipStoriesOption ?? skipStoriesArgv
+            const skipStories = skipStoriesOption ?? skipStoriesArgv ?? []
             const parsedSkipStories = parseSkipStories(skipStories, log)
 
             // Create the test files
@@ -64,6 +64,7 @@ export default class VisualLauncher extends BaseClass  {
                 clip,
                 clipSelector,
                 directoryPath: tempDir,
+                folders: this.folders,
                 framework,
                 log,
                 numShards,

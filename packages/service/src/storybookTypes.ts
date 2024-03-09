@@ -1,5 +1,6 @@
 import type { Logger } from '@wdio/logger'
 import type { RemoteCapability } from 'node_modules/@wdio/types/build/Capabilities.js'
+import type { Folders } from 'webdriver-image-comparison'
 
 export interface StorybookData {
     id: string;
@@ -34,6 +35,7 @@ export type CreateTestFileOptions = {
     clip: boolean;
     clipSelector: string;
     directoryPath: string,
+    folders: Folders,
     framework: string,
     numShards:number,
     log: Logger,
@@ -52,6 +54,7 @@ export interface CapabilityMap {
 export type CreateTestContent = {
     clip: boolean;
     clipSelector: string;
+    folders: Folders;
     framework: string;
     skipStories: string[] | RegExp;
     stories: StorybookData[];
@@ -61,8 +64,11 @@ export type CreateTestContent = {
 export type CreateItContent = {
     clip: boolean;
     clipSelector: string;
+    folders: Folders;
     framework: string;
     skipStories: string[] | RegExp;
     storyData: StorybookData;
     storybookUrl: string;
 }
+
+export type CategoryComponent = { category: string, component: string }

@@ -20,6 +20,7 @@ import type {
 import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
 import type {
     CapabilityMap,
+    CategoryComponent,
     CreateItContent,
     CreateTestContent,
     CreateTestFileOptions,
@@ -347,6 +348,17 @@ export function sanitizeURL(url:string): string {
 }
 
 /**
+ * Extract the category and component from the story ID
+ */
+export function extractCategoryAndComponent(id: string): CategoryComponent {
+    // The ID is in the format of `category-component--storyName`
+    const [categoryComponent] = id.split('--')
+    const [category, component] = categoryComponent.split('-')
+
+    return { category, component }
+}
+
+/**
  * Get the stories JSON from the Storybook instance
  */
 export async function getStoriesJson(url:string):  Promise<Stories>{
@@ -396,7 +408,7 @@ export function getArgvValue(argName: string, parseFunc: (value: string) => any)
  * Creates a it function for the test file
  * @TODO: improve this
  */
-function itFunction({ clip, clipSelector, framework, skipStories, storyData, storybookUrl }:CreateItContent) {
+function itFunction({ clip, clipSelector, folders:{ baselineFolder }, framework, skipStories, storyData, storybookUrl }:CreateItContent) {
     const { id } = storyData
     const screenshotType = clip ? 'n element' : ' viewport'
     const skipIt = isJasmineFramework(framework) ? 'xit' : isMochaFramework(framework) ? 'it.skip' : 'it'
@@ -408,6 +420,11 @@ function itFunction({ clip, clipSelector, framework, skipStories, storyData, sto
     } else if (typeof skipStories === 'string' ) {
         itText = 'it'
     }
+    // Setup the folder structure
+    const { category, component } = extractCategoryAndComponent(id)
+    const methodOptions = {
+        baselineFolder: join(baselineFolder, `./${category}/${component}/`),
+    }
 
     const it = `
     ${itText}(\`should take a${screenshotType} screenshot of ${id}\`, async () => {
@@ -416,8 +433,8 @@ function itFunction({ clip, clipSelector, framework, skipStories, storyData, sto
 
         const startTime = performance.now();
         ${clip
-        ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element')`
-        : `await expect(browser).toMatchScreenSnapshot('${id}')`
+        ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(methodOptions)})`
+        : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(methodOptions)})`
 }
         // await $('${clipSelector}').saveScreenshot('${id}.png');
         const endTime = performance.now();
@@ -445,8 +462,10 @@ function writeTestFile(directoryPath: string, fileID: string, log: Logger, testC
 /**
  * Create the test content
  */
-function createTestContent ({ clip, clipSelector, framework, skipStories, stories, storybookUrl }:CreateTestContent):string {
-    return stories.reduce((acc, storyData) => acc + itFunction({ clip, clipSelector, framework, skipStories, storyData, storybookUrl }), '')
+function createTestContent ({ clip, clipSelector, folders, framework, skipStories, stories, storybookUrl }:CreateTestContent):string {
+    const itFunctionOptions = { clip, clipSelector, folders, framework, skipStories, storybookUrl }
+
+    return stories.reduce((acc, storyData) => acc + itFunction({ ...itFunctionOptions, storyData }), '')
 }
 
 /**
@@ -463,6 +482,7 @@ export function createTestFiles({
     clip,
     clipSelector,
     directoryPath,
+    folders,
     framework,
     log,
     numShards,
@@ -474,9 +494,10 @@ export function createTestFiles({
         // By default only keep the stories, not the docs
         .filter((storyData: StorybookData) => storyData?.type === 'story' || !storyData.parameters?.docsOnly)
     const fileNamePrefix = 'visual-storybook'
+    const createTestContentData = { clip, clipSelector, folders, framework, skipStories, stories: storiesArray, storybookUrl }
 
     if (numShards === 1){
-        const testContent = createTestContent({ clip, clipSelector, framework, skipStories, stories: storiesArray, storybookUrl })
+        const testContent = createTestContent(createTestContentData)
         const fileData = createFileData('All stories', testContent)
         writeTestFile(directoryPath, `${fileNamePrefix}-1-1`, log, fileData)
     } else {
@@ -487,7 +508,7 @@ export function createTestFiles({
             const startIndex = shard * storiesPerShard
             const endIndex = Math.min(startIndex + storiesPerShard, totalStories)
             const shardStories = storiesArray.slice(startIndex, endIndex)
-            const testContent = createTestContent({ clip, clipSelector, framework, skipStories, stories: shardStories, storybookUrl })
+            const testContent = createTestContent({ ...createTestContentData, stories: shardStories })
             const fileId = `${fileNamePrefix}-${shard + 1}-${numShards}`
             const describeTitle = `Shard ${shard + 1} of ${numShards}`
             const fileData = createFileData(describeTitle, testContent)
