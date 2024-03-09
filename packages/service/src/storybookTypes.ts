@@ -34,8 +34,10 @@ export type CreateTestFileOptions = {
     clip: boolean;
     clipSelector: string;
     directoryPath: string,
+    framework: string,
     numShards:number,
     log: Logger,
+    skipStories: string[] | RegExp,
     storiesJson: Stories,
     storybookUrl: string;
 }
@@ -50,6 +52,17 @@ export interface CapabilityMap {
 export type CreateTestContent = {
     clip: boolean;
     clipSelector: string;
+    framework: string;
+    skipStories: string[] | RegExp;
     stories: StorybookData[];
+    storybookUrl: string;
+}
+
+export type CreateItContent = {
+    clip: boolean;
+    clipSelector: string;
+    framework: string;
+    skipStories: string[] | RegExp;
+    storyData: StorybookData;
     storybookUrl: string;
 }

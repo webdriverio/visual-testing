@@ -91,6 +91,8 @@ export interface ClassOptions {
         clipSelector?: string;
         // Specify the number of separate shards to create, default is 1
         numShards?: number
+        // Skip stories that match the given string or regex
+        skipStories?: string | string[];
         // The URL of the storybook, default will be 'http://127.0.0.1:6006'
         url?: string;
         // Version of the storybook, default is 7

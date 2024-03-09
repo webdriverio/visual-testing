@@ -22,6 +22,9 @@ export const config: Options.Testrunner = {
                 //      */
                 //     // url: 'https://www.bbc.co.uk/iplayer/storybook/',
                 //     // url: 'https://angular.carbondesignsystem.com/',
+                //     // skipStories: ['example-button--secondary', 'example-button--small']
+                //     // skipStories: 'example-button--secondary,example-button--small'
+                //     // skipStories: '/.*button.*/gm'
                 // }
             },
         ]

@@ -4,7 +4,7 @@ import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import { BaseClass } from 'webdriver-image-comparison'
-import { createStorybookCapabilities, createTestFiles, getArgvValue, isStorybookMode, scanStorybook } from './utils.js'
+import { createStorybookCapabilities, createTestFiles, getArgvValue, isCucumberFramework, isStorybookMode, parseSkipStories, scanStorybook } from './utils.js'
 import { CLIP_SELECTOR, NUM_SHARDS, V6_CLIP_SELECTOR } from './constants.js'
 
 const log = logger('@wdio/visual-service')
@@ -22,9 +22,10 @@ export default class VisualLauncher extends BaseClass  {
         capabilities: Capabilities.RemoteCapabilities
     ) {
         const isStorybook = isStorybookMode()
-        const isCucumberFramework = config.framework === 'cucumber'
+        const framework = config.framework as string
+        const isCucumber = isCucumberFramework(framework)
 
-        if (isCucumberFramework && isStorybook) {
+        if (isCucumber && isStorybook) {
             throw new SevereServiceError('\n\nRunning Storybook in combination with the cucumber framework adapter is not supported.\nOnly Jasmine and Mocha are supported.\n\n')
         } else if (isStorybook) {
             log.info('Running `@wdio/visual-service` in Storybook mode.')
@@ -52,14 +53,21 @@ export default class VisualLauncher extends BaseClass  {
             const clipSelectorArgv = getArgvValue('--clipSelector', value => value)
             // V6 has '#root' as the root element, V7 has '#storybook-root'
             const clipSelector = (clipSelectorOption ?? clipSelectorArgv) ?? (version === 6 ? V6_CLIP_SELECTOR : CLIP_SELECTOR)
+            // --skipStories
+            const skipStoriesOption = this.#options?.storybook?.skipStories
+            const skipStoriesArgv = getArgvValue('--skipStories', value => value)
+            const skipStories = skipStoriesOption ?? skipStoriesArgv
+            const parsedSkipStories = parseSkipStories(skipStories, log)
 
             // Create the test files
             createTestFiles({
                 clip,
                 clipSelector,
                 directoryPath: tempDir,
+                framework,
                 log,
                 numShards,
+                skipStories: parsedSkipStories,
                 storiesJson,
                 storybookUrl,
             })

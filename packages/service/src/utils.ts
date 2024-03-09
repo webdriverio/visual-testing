@@ -20,6 +20,7 @@ import type {
 import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
 import type {
     CapabilityMap,
+    CreateItContent,
     CreateTestContent,
     CreateTestFileOptions,
     IndexRes,
@@ -286,6 +287,27 @@ export function isStorybookMode(): boolean {
 }
 
 /**
+ * Check if the framework is cucumber
+ */
+export function isCucumberFramework(framework: string): boolean {
+    return framework.toLowerCase() === 'cucumber'
+}
+
+/**
+ * Check if the framework is Jasmine
+ */
+export function isJasmineFramework(framework: string): boolean {
+    return framework.toLowerCase() === 'jasmine'
+}
+
+/**
+ * Check if the framework is Mocha
+ */
+export function isMochaFramework(framework: string): boolean {
+    return framework.toLowerCase() === 'mocha'
+}
+
+/**
  * Get the process argument value
  */
 export function getProcessArgv(argName: string): string {
@@ -355,10 +377,18 @@ export async function getStoriesJson(url:string):  Promise<Stories>{
  * Get arg value from the process.argv
  */
 export function getArgvValue(argName: string, parseFunc: (value: string) => any): any {
-    const index = process.argv.indexOf(argName) + 1
-    if (index > 0 && index < process.argv.length) {
-        return parseFunc(process.argv[index])
+    const argWithEqual = argName + '='
+    const argv = process.argv
+
+    for (let i = 0; i < argv.length; i++) {
+        if (argv[i] === argName && i + 1 < argv.length) {
+            return parseFunc(argv[i + 1])
+        } else if (argv[i].startsWith(argWithEqual)) {
+            const value = argv[i].slice(argWithEqual.length)
+            return parseFunc(value)
+        }
     }
+
     return undefined
 }
 
@@ -366,11 +396,21 @@ export function getArgvValue(argName: string, parseFunc: (value: string) => any)
  * Creates a it function for the test file
  * @TODO: improve this
  */
-function itFunction(clip: boolean, clipSelector: string, data: {id:string}, storybookUrl: string) {
-    const { id } = data
+function itFunction({ clip, clipSelector, framework, skipStories, storyData, storybookUrl }:CreateItContent) {
+    const { id } = storyData
     const screenshotType = clip ? 'n element' : ' viewport'
+    const skipIt = isJasmineFramework(framework) ? 'xit' : isMochaFramework(framework) ? 'it.skip' : 'it'
+    let itText = 'it'
+    if (Array.isArray(skipStories)) {
+        itText = skipStories.includes(id) ? skipIt : 'it'
+    } else if (skipStories instanceof RegExp) {
+        itText = skipStories.test(id) ? skipIt : 'it'
+    } else if (typeof skipStories === 'string' ) {
+        itText = 'it'
+    }
+
     const it = `
-    it(\`should take a${screenshotType} screenshot of ${id}\`, async () => {
+    ${itText}(\`should take a${screenshotType} screenshot of ${id}\`, async () => {
         await browser.url(\`${storybookUrl}iframe.html?id=${id}\`);
         await $('#storybook-root').waitForDisplayed();
 
@@ -405,8 +445,8 @@ function writeTestFile(directoryPath: string, fileID: string, log: Logger, testC
 /**
  * Create the test content
  */
-function createTestContent ({ clip, clipSelector, stories, storybookUrl }:CreateTestContent):string {
-    return stories.reduce((acc, storyData) => acc + itFunction(clip, clipSelector, storyData, storybookUrl), '')
+function createTestContent ({ clip, clipSelector, framework, skipStories, stories, storybookUrl }:CreateTestContent):string {
+    return stories.reduce((acc, storyData) => acc + itFunction({ clip, clipSelector, framework, skipStories, storyData, storybookUrl }), '')
 }
 
 /**
@@ -423,8 +463,10 @@ export function createTestFiles({
     clip,
     clipSelector,
     directoryPath,
+    framework,
     log,
     numShards,
+    skipStories,
     storiesJson,
     storybookUrl,
 }: CreateTestFileOptions) {
@@ -434,7 +476,7 @@ export function createTestFiles({
     const fileNamePrefix = 'visual-storybook'
 
     if (numShards === 1){
-        const testContent = createTestContent({ clip, clipSelector, stories: storiesArray, storybookUrl })
+        const testContent = createTestContent({ clip, clipSelector, framework, skipStories, stories: storiesArray, storybookUrl })
         const fileData = createFileData('All stories', testContent)
         writeTestFile(directoryPath, `${fileNamePrefix}-1-1`, log, fileData)
     } else {
@@ -445,7 +487,7 @@ export function createTestFiles({
             const startIndex = shard * storiesPerShard
             const endIndex = Math.min(startIndex + storiesPerShard, totalStories)
             const shardStories = storiesArray.slice(startIndex, endIndex)
-            const testContent = createTestContent({ clip, clipSelector, stories: shardStories, storybookUrl })
+            const testContent = createTestContent({ clip, clipSelector, framework, skipStories, stories: shardStories, storybookUrl })
             const fileId = `${fileNamePrefix}-${shard + 1}-${numShards}`
             const describeTitle = `Shard ${shard + 1} of ${numShards}`
             const fileData = createFileData(describeTitle, testContent)
@@ -549,4 +591,28 @@ export async function scanStorybook(
         storybookUrl,
         tempDir,
     }
+}
+
+/**
+ * Parse the stories to skip
+ */
+export function parseSkipStories(skipStories: string|string[], log: Logger): RegExp|string[] {
+    if (Array.isArray(skipStories)) {
+        return skipStories
+    }
+
+    const regexPattern = /^\/.*\/[gimyus]*$/
+    if (regexPattern.test(skipStories)) {
+        try {
+            const match = skipStories.match(/^\/(.+)\/([gimyus]*)$/)
+            if (match) {
+                const [, pattern, flags] = match
+                return new RegExp(pattern, flags)
+            }
+        } catch (error) {
+            log.error('Invalid regular expression:', error, '. Not using a regular expression to skip stories.')
+        }
+    }
+
+    return skipStories.split(',').map(skipped => skipped.trim())
 }
