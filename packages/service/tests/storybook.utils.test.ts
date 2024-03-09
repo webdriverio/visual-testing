@@ -1,11 +1,17 @@
 import { join } from 'node:path'
-import { writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import fetch from 'node-fetch'
+import type { Logger } from '@wdio/logger'
 import logger from '@wdio/logger'
+import type { Mock } from 'vitest'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import {
     checkStorybookIsRunning,
     createFileData,
+    createStorybookCapabilities,
+    createTestContent,
+    createTestFiles,
     extractCategoryAndComponent,
     getArgvValue,
     getStoriesJson,
@@ -14,14 +20,19 @@ import {
     isMochaFramework,
     isStorybookMode,
     itFunction,
+    parseSkipStories,
     sanitizeURL,
+    scanStorybook,
     writeTestFile,
 } from '../src/storybook.utils.js'
+import type { Capabilities, Options } from '@wdio/types'
+import type { ScanStorybookReturnData } from '../src/storybookTypes.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('node-fetch')
-vi.mock('fs')
+vi.mock('node:fs')
+vi.mock('node:os')
 
 describe('Storybook utils', () => {
     beforeEach(() => {
@@ -214,114 +225,70 @@ describe('Storybook utils', () => {
     })
 
     describe('itFunction', () => {
+        const commonSetup = (framework: string, skipStories: string[] | RegExp, clip: boolean = false) => ({
+            clip,
+            clipSelector: '#id',
+            folders: { baselineFolder: 'baseline' },
+            framework,
+            skipStories,
+            storyData: { id: 'category-component--story1' },
+            storybookUrl: 'http://storybook.com/',
+        })
+
         it('generates correct test code with Jasmine framework and skip array', () => {
-            const result = itFunction({
-                clip: false,
-                clipSelector: '#id',
-                // @ts-ignore
-                folders: { baselineFolder: 'baseline' },
-                framework: 'jasmine',
-                skipStories: ['category-component--story1', 'category-component--story2'],
-                // @ts-ignore
-                storyData: { id: 'category-component--story1' },
-                storybookUrl: 'http://storybook.com/',
-            })
+            const testArgs = commonSetup('jasmine', ['category-component--story1', 'category-component--story2'])
+            // @ts-ignore
+            const result = itFunction(testArgs)
 
             expect(result).toMatchSnapshot()
         })
 
         it('generates correct test code with Jasmine framework and no skip array', () => {
-            const result = itFunction({
-                clip: false,
-                clipSelector: '#id',
-                // @ts-ignore
-                folders: { baselineFolder: 'baseline' },
-                framework: 'jasmine',
-                skipStories: [],
-                // @ts-ignore
-                storyData: { id: 'category-component--story1' },
-                storybookUrl: 'http://storybook.com/',
-            })
+            const testArgs = commonSetup('jasmine', [])
+            // @ts-ignore
+            const result = itFunction(testArgs)
 
             expect(result).toMatchSnapshot()
         })
 
         it('generates correct test code with mocha framework and skip array', () => {
-            const result = itFunction({
-                clip: false,
-                clipSelector: '#id',
-                // @ts-ignore
-                folders: { baselineFolder: 'baseline' },
-                framework: 'mocha',
-                skipStories: ['category-component--story1'],
-                // @ts-ignore
-                storyData: { id: 'category-component--story1' },
-                storybookUrl: 'http://storybook.com/',
-            })
+            const testArgs = commonSetup('mocha', ['category-component--story1'])
+            // @ts-ignore
+            const result = itFunction(testArgs)
 
             expect(result).toMatchSnapshot()
         })
 
         it('generates correct test code with mocha framework and no skipped array', () => {
-            const result = itFunction({
-                clip: false,
-                clipSelector: '#id',
-                // @ts-ignore
-                folders: { baselineFolder: 'baseline' },
-                framework: 'mocha',
-                skipStories: [],
-                // @ts-ignore
-                storyData: { id: 'category-component--story1' },
-                storybookUrl: 'http://storybook.com/',
-            })
+            const testArgs = commonSetup('mocha', [])
+            // @ts-ignore
+            const result = itFunction(testArgs)
 
             expect(result).toMatchSnapshot()
         })
 
         it('generates correct mocha test code with skipped regex', () => {
-            const result = itFunction({
-                clip: false,
-                clipSelector: '#id',
-                // @ts-ignore
-                folders: { baselineFolder: 'baseline' },
-                framework: 'mocha',
-                skipStories: /story.*/gm,
-                // @ts-ignore
-                storyData: { id: 'category-component--story1' },
-                storybookUrl: 'http://storybook.com/',
-            })
+            const testArgs = commonSetup('mocha', /story.*/gm)
+            // @ts-ignore
+            const result = itFunction(testArgs)
 
             expect(result).toMatchSnapshot()
         })
 
         it('generates correct mocha test code with non skipped regex', () => {
-            const result = itFunction({
-                clip: false,
-                clipSelector: '#id',
-                // @ts-ignore
-                folders: { baselineFolder: 'baseline' },
-                framework: 'mocha',
-                skipStories: /foo.*/gm,
-                // @ts-ignore
-                storyData: { id: 'category-component--story1' },
-                storybookUrl: 'http://storybook.com/',
-            })
+            const testArgs = commonSetup('mocha', /foo.*/gm)
+            // @ts-ignore
+            const result = itFunction(testArgs)
 
             expect(result).toMatchSnapshot()
         })
 
         it('generates correct test code with for a clipped test', () => {
-            const result = itFunction({
-                clip: true,
-                clipSelector: '#id',
-                // @ts-ignore
-                folders: { baselineFolder: 'baseline' },
-                framework: 'mocha',
-                skipStories: [],
-                // @ts-ignore
-                storyData: { id: 'category-component--story1' },
-                storybookUrl: 'http://storybook.com/',
-            })
+            const testArgs = commonSetup('mocha', [], true)
+            // @ts-ignore
+            const result = itFunction(testArgs)
+
+            expect(result).toMatchSnapshot()
 
             expect(result).toMatchSnapshot()
         })
@@ -372,7 +339,6 @@ describe('Storybook utils', () => {
             const directoryPath = '/path/to/dir'
             const fileID = 'testFile'
             const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as unknown as () => never)
-
             vi.mocked(writeFileSync).mockImplementation(() => {throw new Error('test error') as never})
 
             writeTestFile(directoryPath, fileID, log, testContent)
@@ -380,6 +346,283 @@ describe('Storybook utils', () => {
             expect(writeFileSync).toHaveBeenCalledWith(`${directoryPath}/${fileID}.test.js`, testContent)
             expect(logErrorMock.mock.calls[0][0]).toContain(`It seems that the writing the file to '${directoryPath}/${fileID}.test.js' didn't succeed due to the following error: Error: test error`)
             expect(exitSpy).toHaveBeenCalledOnce()
+        })
+    })
+
+    describe('createTestContent', () => {
+        it('calls itFunction with correct arguments for each story and accumulates results', () => {
+            const mockItFunction = vi.fn(({ storyData }) => `Test for ${storyData.id}\n`)
+            const testArgs = {
+                clip: false,
+                clipSelector: '#selector',
+                folders: {
+                    actualFolder: 'actual',
+                    baselineFolder: 'baseline',
+                    diffFolder: 'diff',
+                },
+                framework: 'mocha',
+                skipStories: [],
+                stories: [{
+                    id: 'example-button--primary',
+                    name: 'Primary',
+                    title: 'Example/Button',
+                    importPath: './src/stories/Button.stories.ts',
+                    tags: ['autodocs', 'story'],
+                    kind: 'Example/Button',
+                    story: 'Primary',
+                    parameters: {
+                        __id: 'example-button--primary',
+                        docsOnly: false,
+                        fileName: './src/stories/Button.stories.ts'
+                    }
+                },
+                {
+                    id: 'example-button--secondary',
+                    name: 'Secondary',
+                    title: 'Example/Button',
+                    importPath: './src/stories/Button.stories.ts',
+                    tags: ['autodocs', 'story'],
+                    kind: 'Example/Button',
+                    story: 'Secondary',
+                    parameters: {
+                        __id: 'example-button--secondary',
+                        docsOnly: false,
+                        fileName: './src/stories/Button.stories.ts'
+                    }
+                },
+                {
+                    id: 'example-button--large',
+                    name: 'Large',
+                    title: 'Example/Button',
+                    importPath: './src/stories/Button.stories.ts',
+                    tags: ['autodocs', 'story'],
+                    kind: 'Example/Button',
+                    story: 'Large',
+                    parameters: {
+                        __id: 'example-button--large',
+                        docsOnly: false,
+                        fileName: './src/stories/Button.stories.ts'
+                    }
+                }],
+                storybookUrl: 'http://storybook.com/',
+                itFunc: mockItFunction
+            }
+
+            const result = createTestContent(testArgs, mockItFunction)
+
+            expect(mockItFunction).toHaveBeenCalledTimes(testArgs.stories.length)
+            expect(result).toMatchSnapshot()
+        })
+    })
+
+    describe('createTestFiles', () => {
+        const mockCreateTestContent = vi.fn()
+        const mockCreateFileData = vi.fn()
+        const mockWriteTestFile = vi.fn()
+        const logMock = { info: vi.fn() }
+
+        const baseTestOptions = {
+            clip: false,
+            clipSelector: '#selector',
+            directoryPath: '/path/to/dir',
+            folders: {},
+            framework: 'mocha',
+            log: logMock,
+            skipStories: [],
+            storybookUrl: 'http://storybook.com/',
+        }
+
+        const runTest = (numShards: number, expectedCalls: number) => {
+            const testOptions = {
+                ...baseTestOptions,
+                numShards,
+                storiesJson: {
+                    story1: { parameters: { docsOnly: true } },
+                    story2: { type: 'story' },
+                    story3: {},
+                    story4: {},
+                },
+            }
+
+            // @ts-ignore
+            createTestFiles(testOptions, mockCreateTestContent, mockCreateFileData, mockWriteTestFile)
+
+            expect(mockCreateTestContent).toHaveBeenCalledTimes(expectedCalls)
+            expect(mockCreateFileData).toHaveBeenCalledTimes(expectedCalls)
+            expect(mockWriteTestFile).toHaveBeenCalledTimes(expectedCalls)
+        }
+
+        beforeEach(() => {
+            mockCreateTestContent.mockClear()
+            mockCreateFileData.mockClear()
+            mockWriteTestFile.mockClear()
+            logMock.info.mockClear()
+        })
+
+        it('properly creates a single test file', () => {
+            runTest(1, 1)
+        })
+
+        it('properly creates multiple test files', () => {
+            runTest(4, 4)
+        })
+
+    })
+
+    describe('createStorybookCapabilities', () => {
+        let originalArgv: NodeJS.Process['argv']
+        let logMock: Logger
+        let capabilities: Capabilities.RemoteCapabilities
+
+        beforeEach(() => {
+            originalArgv = [...process.argv]
+            logMock = { error: vi.fn() } as unknown as Logger
+            capabilities = []
+        })
+
+        afterEach(() => {
+            process.argv = originalArgv
+        })
+
+        it('should modify capabilities based on provided browsers', () => {
+            process.argv.push('--browsers', 'chrome,firefox')
+            createStorybookCapabilities(capabilities, logMock)
+
+            expect(capabilities).toHaveLength(2)
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[0]).browserName).toBe('chrome')
+            expect((capabilities as Capabilities.DesiredCapabilities[])[1].browserName).toBe('firefox')
+        })
+
+        it('defaults to chrome if no browsers are specified', () => {
+            createStorybookCapabilities(capabilities, logMock)
+
+            expect(capabilities).toHaveLength(1)
+            expect((capabilities as Capabilities.DesiredCapabilities[])[0].browserName).toBe('chrome')
+        })
+
+        it('handles headless mode', () => {
+            process.argv.push('--headless')
+            createStorybookCapabilities(capabilities, logMock)
+
+            // @ts-ignore
+            expect(capabilities[0]['goog:chromeOptions'].args).toContain('--headless')
+        })
+
+        it('logs an error if capabilities are not an array', () => {
+            const invalidCapabilities = {}
+            createStorybookCapabilities(invalidCapabilities, logMock)
+
+            expect(logMock.error).toHaveBeenCalledWith('The capabilities are not an array')
+        })
+    })
+
+    describe('scanStorybook', () => {
+        let originalEnv: NodeJS.ProcessEnv
+        const mockLog = { info: vi.fn() } as unknown as Logger
+        const config = {} as Options.Testrunner
+        let mockGetArgvVal: Mock
+        let mockCheckStorybookIsRun: Mock
+        let mockSanitizeURLFunc: Mock
+        let mockGetStoriesJsonFunc: Mock
+
+        const setupMocks = (storybookUrl?: string) => {
+            mockGetArgvVal = vi.fn().mockReturnValue(undefined)
+            mockCheckStorybookIsRun = vi.fn().mockResolvedValue({})
+            mockSanitizeURLFunc = vi.fn().mockImplementation(url => url)
+            mockGetStoriesJsonFunc = vi.fn().mockResolvedValue({ stories: ['story1', 'story2'] })
+            // @ts-ignore
+            mkdirSync.mockImplementation(() => {})
+            // @ts-ignore
+            tmpdir.mockReturnValue('/tmp')
+            process.env.STORYBOOK_URL = storybookUrl
+        }
+
+        const assertResults = (mockStorybookUrl: string, result: ScanStorybookReturnData) => {
+            expect(mockCheckStorybookIsRun).toHaveBeenCalledWith(mockStorybookUrl)
+            expect(mockSanitizeURLFunc).toHaveBeenCalledWith(mockStorybookUrl)
+            expect(mockGetStoriesJsonFunc).toHaveBeenCalledWith(mockStorybookUrl)
+            expect(mkdirSync).toHaveBeenCalled()
+            expect(result).toEqual({
+                storiesJson: { stories: ['story1', 'story2'] },
+                storybookUrl: mockStorybookUrl,
+                tempDir: expect.any(String),
+            })
+        }
+
+        beforeEach(() => {
+            originalEnv = process.env
+            process.env = { ...process.env }
+        })
+
+        afterEach(() => {
+            process.env = originalEnv
+        })
+
+        it('uses STORYBOOK_URL from process.env when available', async () => {
+            const mockStorybookUrl = 'http://storybook-from-env.com'
+            setupMocks(mockStorybookUrl)
+            const result = await scanStorybook(config, mockLog, {}, mockGetArgvVal, mockCheckStorybookIsRun, mockSanitizeURLFunc, mockGetStoriesJsonFunc)
+
+            assertResults(mockStorybookUrl, result)
+        })
+
+        it('uses options?.storybook?.url when available', async () => {
+            setupMocks(undefined)
+            const mockStorybookUrl = 'http://storybook-from-options.com'
+            const result = await scanStorybook(
+                config, mockLog, { storybook: { url: mockStorybookUrl } },
+                mockGetArgvVal, mockCheckStorybookIsRun, mockSanitizeURLFunc, mockGetStoriesJsonFunc,
+            )
+
+            assertResults(mockStorybookUrl, result)
+        })
+
+        it('uses default url when all other options are not available', async () => {
+            const mockStorybookUrl = 'http://127.0.0.1:6006'
+            setupMocks(undefined)
+            const result = await scanStorybook(
+                config, mockLog, {},
+                mockGetArgvVal, mockCheckStorybookIsRun, mockSanitizeURLFunc, mockGetStoriesJsonFunc,
+            )
+
+            assertResults(mockStorybookUrl, result)
+        })
+    })
+
+    describe('parseSkipStories', () => {
+        let logMock: Logger
+        beforeEach(() => {
+            logMock = { error: vi.fn() } as unknown as Logger
+        })
+
+        it('returns the input array if skipStories is an array', () => {
+            const skipStories = ['story1', 'story2']
+            const result = parseSkipStories(skipStories, logMock)
+
+            expect(result).toEqual(skipStories)
+        })
+
+        it('returns a RegExp if skipStories is a valid regex string', () => {
+            const skipStories = '/story[0-9]+/i'
+            const result = parseSkipStories(skipStories, logMock)
+
+            expect(result).toBeInstanceOf(RegExp)
+            expect(result).toEqual(new RegExp('story[0-9]+', 'i'))
+        })
+
+        it('logs an error and returns an array if skipStories is an invalid regex string', () => {
+            const skipStories = '/[unclosed-regex/'
+            const result = parseSkipStories(skipStories, logMock)
+
+            expect(logMock.error).toHaveBeenCalled()
+            expect(result).toEqual([skipStories])
+        })
+
+        it('splits and trims a comma-separated string', () => {
+            const skipStories = 'story1, story2,story3'
+            const result = parseSkipStories(skipStories, logMock)
+
+            expect(result).toEqual(['story1', 'story2', 'story3'])
         })
     })
 })

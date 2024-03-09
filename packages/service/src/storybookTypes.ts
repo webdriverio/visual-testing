@@ -72,3 +72,5 @@ export type CreateItContent = {
 }
 
 export type CategoryComponent = { category: string, component: string }
+
+export type ScanStorybookReturnData = { storiesJson: Stories; storybookUrl: string; tempDir: string}

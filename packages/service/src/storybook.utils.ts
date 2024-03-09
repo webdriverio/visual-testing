@@ -12,6 +12,7 @@ import type {
     CreateTestContent,
     CreateTestFileOptions,
     IndexRes,
+    ScanStorybookReturnData,
     Stories,
     StoriesRes,
     StorybookData,
@@ -197,10 +198,14 @@ export function writeTestFile(directoryPath: string, fileID: string, log: Logger
 /**
  * Create the test content
  */
-export function createTestContent({ clip, clipSelector, folders, framework, skipStories, stories, storybookUrl }: CreateTestContent): string {
+export function createTestContent(
+    { clip, clipSelector, folders, framework, skipStories, stories, storybookUrl }: CreateTestContent,
+    // For testing purposes only
+    itFunc = itFunction
+): string {
     const itFunctionOptions = { clip, clipSelector, folders, framework, skipStories, storybookUrl }
 
-    return stories.reduce((acc, storyData) => acc + itFunction({ ...itFunctionOptions, storyData }), '')
+    return stories.reduce((acc, storyData) => acc + itFunc({ ...itFunctionOptions, storyData }), '')
 }
 
 /**
@@ -213,9 +218,13 @@ export function createFileData(describeTitle: string, testContent: string): stri
 /**
  * Create the test files
  */
-export function createTestFiles({
-    clip, clipSelector, directoryPath, folders, framework, log, numShards, skipStories, storiesJson, storybookUrl,
-}: CreateTestFileOptions) {
+export function createTestFiles(
+    { clip, clipSelector, directoryPath, folders, framework, log, numShards, skipStories, storiesJson, storybookUrl }: CreateTestFileOptions,
+    // For testing purposes only
+    createTestCont = createTestContent,
+    createFileD = createFileData,
+    writeTestF = writeTestFile
+) {
     const storiesArray = Object.values(storiesJson)
         // By default only keep the stories, not the docs
         .filter((storyData: StorybookData) => storyData?.type === 'story' || !storyData.parameters?.docsOnly)
@@ -223,9 +232,9 @@ export function createTestFiles({
     const createTestContentData = { clip, clipSelector, folders, framework, skipStories, stories: storiesArray, storybookUrl }
 
     if (numShards === 1) {
-        const testContent = createTestContent(createTestContentData)
-        const fileData = createFileData('All stories', testContent)
-        writeTestFile(directoryPath, `${fileNamePrefix}-1-1`, log, fileData)
+        const testContent = createTestCont(createTestContentData)
+        const fileData = createFileD('All stories', testContent)
+        writeTestF(directoryPath, `${fileNamePrefix}-1-1`, log, fileData)
     } else {
         const totalStories = storiesArray.length
         const storiesPerShard = Math.ceil(totalStories / numShards)
@@ -234,12 +243,12 @@ export function createTestFiles({
             const startIndex = shard * storiesPerShard
             const endIndex = Math.min(startIndex + storiesPerShard, totalStories)
             const shardStories = storiesArray.slice(startIndex, endIndex)
-            const testContent = createTestContent({ ...createTestContentData, stories: shardStories })
+            const testContent = createTestCont({ ...createTestContentData, stories: shardStories })
             const fileId = `${fileNamePrefix}-${shard + 1}-${numShards}`
             const describeTitle = `Shard ${shard + 1} of ${numShards}`
-            const fileData = createFileData(describeTitle, testContent)
+            const fileData = createFileD(describeTitle, testContent)
 
-            writeTestFile(directoryPath, fileId, log, fileData)
+            writeTestF(directoryPath, fileId, log, fileData)
         }
     }
 }
@@ -317,13 +326,18 @@ export function createStorybookCapabilities(capabilities: Capabilities.RemoteCap
 export async function scanStorybook(
     config: Options.Testrunner,
     log: Logger,
-    options: ClassOptions
-): Promise<{ storiesJson: Stories; storybookUrl: string; tempDir: string} > {
+    options: ClassOptions,
+    // For testing purposes only
+    getArgvVal = getArgvValue,
+    checkStorybookIsRun = checkStorybookIsRunning,
+    sanitizeURLFunc = sanitizeURL,
+    getStoriesJsonFunc = getStoriesJson,
+): Promise<ScanStorybookReturnData> {
     // Prepare storybook scanning
-    const cliUrl = getArgvValue('--url', value => value)
+    const cliUrl = getArgvVal('--url', value => value)
     const rawStorybookUrl = cliUrl ?? process.env.STORYBOOK_URL ?? options?.storybook?.url ?? 'http://127.0.0.1:6006'
-    await checkStorybookIsRunning(rawStorybookUrl)
-    const storybookUrl = sanitizeURL(rawStorybookUrl)
+    await checkStorybookIsRun(rawStorybookUrl)
+    const storybookUrl = sanitizeURLFunc(rawStorybookUrl)
 
     // Create a temporary folder for test files and add that to the specs
     const tempDir = resolve(tmpdir(), `wdio-storybook-tests-${Date.now()}`)
@@ -332,7 +346,7 @@ export async function scanStorybook(
     config.specs = [join(tempDir, '*.js')]
 
     // Get the stories
-    const storiesJson = await getStoriesJson(storybookUrl)
+    const storiesJson = await getStoriesJsonFunc(storybookUrl)
 
     return {
         storiesJson,
