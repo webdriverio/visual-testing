@@ -20,42 +20,34 @@ import type {
 /**
  * Check if we run for Storybook
  */
-
 export function isStorybookMode(): boolean {
     return process.argv.includes('--storybook')
 }
+
 /**
  * Check if the framework is cucumber
  */
-
 export function isCucumberFramework(framework: string): boolean {
     return framework.toLowerCase() === 'cucumber'
 }
+
 /**
  * Check if the framework is Jasmine
  */
-
 export function isJasmineFramework(framework: string): boolean {
     return framework.toLowerCase() === 'jasmine'
 }
+
 /**
  * Check if the framework is Mocha
  */
-
 export function isMochaFramework(framework: string): boolean {
     return framework.toLowerCase() === 'mocha'
 }
-/**
- * Get the process argument value
- */
 
-export function getProcessArgv(argName: string): string {
-    return process.argv[process.argv.indexOf(argName) + 1]
-}
 /**
  * Check if there is an instance of Storybook running
  */
-
 export async function checkStorybookIsRunning(url: string) {
     try {
         const res = await fetch(url, { method: 'GET', headers: {} })
@@ -67,10 +59,10 @@ export async function checkStorybookIsRunning(url: string) {
         process.exit(1)
     }
 }
+
 /**
  * Sanitize the URL to ensure it's in a proper format
  */
-
 export function sanitizeURL(url: string): string {
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = 'http://' + url
@@ -84,10 +76,10 @@ export function sanitizeURL(url: string): string {
 
     return url
 }
+
 /**
  * Extract the category and component from the story ID
  */
-
 export function extractCategoryAndComponent(id: string): CategoryComponent {
     // The ID is in the format of `category-component--storyName`
     const [categoryComponent] = id.split('--')
@@ -95,10 +87,10 @@ export function extractCategoryAndComponent(id: string): CategoryComponent {
 
     return { category, component }
 }
+
 /**
  * Get the stories JSON from the Storybook instance
  */
-
 export async function getStoriesJson(url: string): Promise<Stories> {
     const indexJsonUrl = new URL('index.json', url).toString()
     const storiesJsonUrl = new URL('stories.json', url).toString()
@@ -122,10 +114,10 @@ export async function getStoriesJson(url: string): Promise<Stories> {
 
     throw new Error(`Failed to fetch index data from the project. Ensure URLs are available with valid data: ${storiesJsonUrl}, ${indexJsonUrl}.`)
 }
+
 /**
  * Get arg value from the process.argv
  */
-
 export function getArgvValue(argName: string, parseFunc: (value: string) => any): any {
     const argWithEqual = argName + '='
     const argv = process.argv
@@ -141,6 +133,7 @@ export function getArgvValue(argName: string, parseFunc: (value: string) => any)
 
     return undefined
 }
+
 /**
  * Creates a it function for the test file
  * @TODO: improve this
@@ -148,15 +141,21 @@ export function getArgvValue(argName: string, parseFunc: (value: string) => any)
 export function itFunction({ clip, clipSelector, folders: { baselineFolder }, framework, skipStories, storyData, storybookUrl }: CreateItContent) {
     const { id } = storyData
     const screenshotType = clip ? 'n element' : ' viewport'
-    const skipIt = isJasmineFramework(framework) ? 'xit' : isMochaFramework(framework) ? 'it.skip' : 'it'
-    let itText = 'it'
-    if (Array.isArray(skipStories)) {
-        itText = skipStories.includes(id) ? skipIt : 'it'
-    } else if (skipStories instanceof RegExp) {
-        itText = skipStories.test(id) ? skipIt : 'it'
-    } else if (typeof skipStories === 'string') {
-        itText = 'it'
+    const DEFAULT_IT_TEXT = 'it'
+    let itText = DEFAULT_IT_TEXT
+
+    if (isJasmineFramework(framework)) {
+        itText = 'xit'
+    } else if (isMochaFramework(framework)) {
+        itText = 'it.skip'
     }
+
+    if (Array.isArray(skipStories)) {
+        itText = skipStories.includes(id) ? itText : DEFAULT_IT_TEXT
+    } else if (skipStories instanceof RegExp) {
+        itText = skipStories.test(id) ? itText : DEFAULT_IT_TEXT
+    }
+
     // Setup the folder structure
     const { category, component } = extractCategoryAndComponent(id)
     const methodOptions = {
@@ -190,7 +189,7 @@ export function writeTestFile(directoryPath: string, fileID: string, log: Logger
         writeFileSync(filePath, testContent)
         log.info(`Test file created at: ${filePath}`)
     } catch (err) {
-        console.error(`It seems that the writing the file to '${filePath}' didn't succeed due to the following error: ${err}`)
+        log.error(`It seems that the writing the file to '${filePath}' didn't succeed due to the following error: ${err}`)
         process.exit(1)
     }
 }
