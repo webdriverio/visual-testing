@@ -4,7 +4,15 @@ import { SevereServiceError } from 'webdriverio'
 import type { Capabilities, Options } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import { BaseClass } from 'webdriver-image-comparison'
-import { createStorybookCapabilities, createTestFiles, getArgvValue, isCucumberFramework, isStorybookMode, parseSkipStories, scanStorybook } from './utils.js'
+import {
+    createStorybookCapabilities,
+    createTestFiles,
+    getArgvValue,
+    isCucumberFramework,
+    isStorybookMode,
+    parseSkipStories,
+    scanStorybook,
+} from './storybook.utils.js'
 import { CLIP_SELECTOR, NUM_SHARDS, V6_CLIP_SELECTOR } from './constants.js'
 
 const log = logger('@wdio/visual-service')
