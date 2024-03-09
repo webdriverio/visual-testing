@@ -1,8 +1,8 @@
-import { join } from 'node:path'
-import { writeFileSync } from 'node:fs'
+import { join, resolve } from 'node:path'
+import { tmpdir } from 'node:os'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import type { Capabilities, Options } from '@wdio/types'
 import fetch from 'node-fetch'
-import { temporaryDirectory } from 'tempy'
 import type { Logger } from '@wdio/logger'
 import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
 import { IOS_OFFSETS } from 'webdriver-image-comparison'
@@ -600,7 +600,8 @@ export async function scanStorybook(
     const storybookUrl = sanitizeURL(rawStorybookUrl)
 
     // Create a temporary folder for test files and add that to the specs
-    const tempDir = temporaryDirectory()
+    const tempDir = resolve(tmpdir(), `wdio-storybook-tests-${Date.now()}`)
+    mkdirSync(tempDir)
     log.info(`Using temporary folder for storybook specs: ${tempDir}`)
     config.specs = [join(tempDir, '*.js')]
 
