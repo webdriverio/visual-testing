@@ -6,7 +6,6 @@ import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import type {
-    CapabilityMap,
     CategoryComponent,
     CreateItContent,
     CreateTestContent,
@@ -297,20 +296,21 @@ export function createStorybookCapabilities(capabilities: Capabilities.RemoteCap
                 logName: 'local-edge',
             },
         }
-
-        // Create a map for easy lookup
+        interface CapabilityMap {
+            chrome: typeof chromeCapability;
+            firefox: typeof firefoxCapability;
+            safari: typeof safariCapability;
+            edge: typeof edgeCapability;
+        }
         const capabilityMap: CapabilityMap = {
             chrome: chromeCapability,
             firefox: firefoxCapability,
             safari: safariCapability,
             edge: edgeCapability,
         }
-
-        // Create new capabilities based on the specified browsers
         const newCapabilities = browsers
-            .filter((browser): browser is keyof CapabilityMap => browser in capabilityMap)
-            .map(browser => capabilityMap[browser])
-
+            .filter((browser:string): browser is keyof CapabilityMap => browser in capabilityMap)
+            .map((browser:string) => capabilityMap[browser as keyof CapabilityMap])
         capabilities.length = 0
         // Add the new capability to the capabilities array
         // @ts-ignore
