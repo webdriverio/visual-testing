@@ -1,0 +1,160 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Storybook utils > createFileData > formats test content correctly for standard inputs 1`] = `
+"
+describe(\`My Test Suite\`, () => {
+    it("does something", () => {});
+});
+"
+`;
+
+exports[`Storybook utils > createFileData > handles empty describe title and test content 1`] = `
+"
+describe(\`\`, () => {
+    
+});
+"
+`;
+
+exports[`Storybook utils > createFileData > handles special characters in describe title and test content 1`] = `
+"
+describe(\`Special\`Characters\`, () => {
+    it("handles \`special\` characters", () => {});
+});
+"
+`;
+
+exports[`Storybook utils > createTestContent > calls itFunction with correct arguments for each story and accumulates results 1`] = `
+"Test for example-button--primary
+Test for example-button--secondary
+Test for example-button--large
+"
+`;
+
+exports[`Storybook utils > itFunction > generates correct mocha test code with non skipped regex 1`] = `
+"
+    it(\`should take a viewport screenshot of category-component--story1\`, async () => {
+        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
+        await $('#storybook-root').waitForDisplayed();
+
+        const startTime = performance.now();
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        // await $('#id').saveScreenshot('category-component--story1.png');
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
+    });
+    "
+`;
+
+exports[`Storybook utils > itFunction > generates correct mocha test code with skipped regex 1`] = `
+"
+    it.skip(\`should take a viewport screenshot of category-component--story1\`, async () => {
+        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
+        await $('#storybook-root').waitForDisplayed();
+
+        const startTime = performance.now();
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        // await $('#id').saveScreenshot('category-component--story1.png');
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
+    });
+    "
+`;
+
+exports[`Storybook utils > itFunction > generates correct test code with Jasmine framework and no skip array 1`] = `
+"
+    it(\`should take a viewport screenshot of category-component--story1\`, async () => {
+        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
+        await $('#storybook-root').waitForDisplayed();
+
+        const startTime = performance.now();
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        // await $('#id').saveScreenshot('category-component--story1.png');
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
+    });
+    "
+`;
+
+exports[`Storybook utils > itFunction > generates correct test code with Jasmine framework and skip array 1`] = `
+"
+    xit(\`should take a viewport screenshot of category-component--story1\`, async () => {
+        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
+        await $('#storybook-root').waitForDisplayed();
+
+        const startTime = performance.now();
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        // await $('#id').saveScreenshot('category-component--story1.png');
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
+    });
+    "
+`;
+
+exports[`Storybook utils > itFunction > generates correct test code with for a clipped test 1`] = `
+"
+    it(\`should take an element screenshot of category-component--story1\`, async () => {
+        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
+        await $('#storybook-root').waitForDisplayed();
+
+        const startTime = performance.now();
+        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"baselineFolder":"baseline/category/component/"})
+        // await $('#id').saveScreenshot('category-component--story1.png');
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
+    });
+    "
+`;
+
+exports[`Storybook utils > itFunction > generates correct test code with for a clipped test 2`] = `
+"
+    it(\`should take an element screenshot of category-component--story1\`, async () => {
+        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
+        await $('#storybook-root').waitForDisplayed();
+
+        const startTime = performance.now();
+        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"baselineFolder":"baseline/category/component/"})
+        // await $('#id').saveScreenshot('category-component--story1.png');
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
+    });
+    "
+`;
+
+exports[`Storybook utils > itFunction > generates correct test code with mocha framework and no skipped array 1`] = `
+"
+    it(\`should take a viewport screenshot of category-component--story1\`, async () => {
+        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
+        await $('#storybook-root').waitForDisplayed();
+
+        const startTime = performance.now();
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        // await $('#id').saveScreenshot('category-component--story1.png');
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
+    });
+    "
+`;
+
+exports[`Storybook utils > itFunction > generates correct test code with mocha framework and skip array 1`] = `
+"
+    it.skip(\`should take a viewport screenshot of category-component--story1\`, async () => {
+        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
+        await $('#storybook-root').waitForDisplayed();
+
+        const startTime = performance.now();
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        // await $('#id').saveScreenshot('category-component--story1.png');
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
+    });
+    "
+`;
