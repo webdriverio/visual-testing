@@ -256,13 +256,9 @@ export function createTestFiles(
 /**
  * Create the storybook capabilities based on the specified browsers
  */
-export function createStorybookCapabilities(
-    capabilities: Capabilities.RemoteCapabilities, log: Logger,
-    // For testing purposes only
-    getArgvValueFunc = getArgvValue,
-) {
-    const isHeadless = getArgvValueFunc('--headless', value => value !== 'false') ?? true
-    const browsers = process.argv.includes('--browsers') ? process.argv[process.argv.indexOf('--browsers') + 1].split(',') : ['chrome']
+export function createStorybookCapabilities(capabilities: Capabilities.RemoteCapabilities, log: Logger) {
+    const isHeadless = getArgvValue('--headless', value => value !== 'false') ?? true
+    const browsers = getArgvValue('--browsers', (value: string) => value.split(',')) ?? ['chrome']
 
     if (Array.isArray(capabilities)) {
         const chromeCapability = {
