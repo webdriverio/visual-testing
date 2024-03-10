@@ -22,7 +22,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         formatImageName: options.formatImageName ?? DEFAULT_FORMAT_STRING,
         isHybridApp: options.isHybridApp ?? false,
         logLevel: options.logLevel ?? LogLevel.info,
-        savePerInstance: options.savePerInstance ?? false,
+        savePerInstance: options.savePerInstance ?? isStorybook() ? true : false,
         toolBarShadowPadding: options.toolBarShadowPadding ?? DEFAULT_SHADOW.TOOL_BAR,
 
         /**
