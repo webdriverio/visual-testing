@@ -484,15 +484,6 @@ describe('Storybook utils', () => {
             process.argv = originalArgv
         })
 
-        it('should modify capabilities based on provided browsers', () => {
-            process.argv.push('--browsers', 'chrome,firefox')
-            createStorybookCapabilities(capabilities, logMock)
-
-            expect(capabilities).toHaveLength(2)
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[0]).browserName).toBe('chrome')
-            expect((capabilities as Capabilities.DesiredCapabilities[])[1].browserName).toBe('firefox')
-        })
-
         it('defaults to chrome if no browsers are specified', () => {
             createStorybookCapabilities(capabilities, logMock)
 
@@ -500,12 +491,30 @@ describe('Storybook utils', () => {
             expect((capabilities as Capabilities.DesiredCapabilities[])[0].browserName).toBe('chrome')
         })
 
-        it('handles headless mode', () => {
-            process.argv.push('--headless')
+        it('should modify capabilities based on provided browsers', () => {
+            process.argv.push('--browsers', 'chrome,firefox,edge')
             createStorybookCapabilities(capabilities, logMock)
 
-            // @ts-ignore
-            expect(capabilities[0]['goog:chromeOptions'].args).toContain('--headless')
+            expect(capabilities).toHaveLength(3)
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[0]).browserName).toBe('chrome')
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[0])['goog:chromeOptions']?.args).toContain('--headless')
+            expect((capabilities as Capabilities.DesiredCapabilities[])[1].browserName).toBe('firefox')
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[1])['moz:firefoxOptions']?.args).toContain('-headless')
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[2]).browserName).toBe('MicrosoftEdge')
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[2])['ms:edgeOptions']?.args).toContain('--headless')
+        })
+
+        it('should not have headless if provided', () => {
+            process.argv.push('--browsers', 'chrome,firefox,edge', '--headless=false')
+            createStorybookCapabilities(capabilities, logMock)
+
+            expect(capabilities).toHaveLength(3)
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[0]).browserName).toBe('chrome')
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[0])['goog:chromeOptions']?.args).not.toContain('--headless')
+            expect((capabilities as Capabilities.DesiredCapabilities[])[1].browserName).toBe('firefox')
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[1])['moz:firefoxOptions']?.args).not.toContain('-headless')
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[2]).browserName).toBe('MicrosoftEdge')
+            expect(((capabilities as Capabilities.DesiredCapabilities[])[2])['ms:edgeOptions']?.args).not.toContain('--headless')
         })
 
         it('logs an error if capabilities are not an array', () => {
