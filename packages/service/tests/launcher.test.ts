@@ -6,43 +6,34 @@ import type { Mock } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import VisualLauncher from '../src/launcher.js'
 import type { ClassOptions } from 'webdriver-image-comparison'
+import * as storybookUtils from '../src/storybook.utils.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('fs')
 
-interface MockFunctions {
-    isStorybookModeFunc: Mock;
-    isCucumberFrameworkFunc: Mock;
-    scanStorybookFunc: Mock;
-    getArgvValueFunc: Mock;
-    parseSkipStoriesFunc: Mock;
-    createTestFilesFunc: Mock;
-    createStorybookCapabilitiesFunc: Mock;
-}
+vi.mock('../src/storybook.utils.js', ()=>({
+    isStorybookMode: vi.fn(() => true),
+    isCucumberFramework: vi.fn(() => false),
+    scanStorybook: vi.fn(() => ({
+        storiesJson: {},
+        storybookUrl: 'storybookUrl',
+        tempDir: 'tempDir',
+    })),
+    getArgvValue: vi.fn(),
+    parseSkipStories: vi.fn(() => []),
+    createTestFiles: vi.fn(),
+    createStorybookCapabilities: vi.fn(),
+}))
 
 describe('Visual Launcher for Storybook', () => {
     describe('onPrepare', () => {
-        let mockFunctions:MockFunctions,
-            options: ClassOptions,
+        let options: ClassOptions,
             caps: Capabilities.DesiredCapabilities[],
             config: Options.Testrunner,
             Launcher: Services.ServiceInstance
 
         beforeEach(() => {
-            mockFunctions = {
-                isStorybookModeFunc: vi.fn(() => true),
-                isCucumberFrameworkFunc: vi.fn(() => false),
-                scanStorybookFunc: vi.fn(() => ({
-                    storiesJson: {},
-                    storybookUrl: 'storybookUrl',
-                    tempDir: 'tempDir',
-                })),
-                getArgvValueFunc: vi.fn(),
-                parseSkipStoriesFunc: vi.fn(() => []),
-                createTestFilesFunc: vi.fn(),
-                createStorybookCapabilitiesFunc: vi.fn(),
-            }
 
             options = {}
             caps = [{}]
@@ -61,39 +52,30 @@ describe('Visual Launcher for Storybook', () => {
 
             const logInfoMock = vi.spyOn(log, 'info')
 
-            await Launcher!.onPrepare(
-                config, caps,
-                // @ts-ignore
-                ...Object.values(mockFunctions)
-            )
+            await Launcher!.onPrepare(config, caps)
 
-            expect(mockFunctions.isStorybookModeFunc).toHaveBeenCalledOnce()
-            expect(mockFunctions.isCucumberFrameworkFunc).toHaveBeenCalledOnce()
+            expect(vi.mocked(storybookUtils.isStorybookMode)).toHaveBeenCalledOnce()
+            expect(vi.mocked(storybookUtils.isCucumberFramework)).toHaveBeenCalledOnce()
             expect(logInfoMock.mock.calls[0][0]).toContain('Running `@wdio/visual-service` in Storybook mode.')
-            expect(mockFunctions.getArgvValueFunc).toHaveBeenCalledTimes(5)
-            expect(mockFunctions.parseSkipStoriesFunc).toHaveBeenCalledWith([], log)
-        // other expectations...
+            expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
+            expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith([], log)
         })
 
         it('should process all process.argv data', async () => {
             if (!Launcher.onPrepare) {
                 throw new Error('onPrepare method is not defined on Launcher')
             }
-            mockFunctions.getArgvValueFunc.mockReturnValueOnce(6) // --version
+            vi.mocked(storybookUtils.getArgvValue)
+                .mockReturnValueOnce(6) // --version
                 .mockReturnValueOnce(2) // --numShards
                 .mockReturnValueOnce(false) // --clip
                 .mockReturnValueOnce(undefined) // --clipSelector
                 .mockReturnValueOnce(['foo-bar-foo']) // --skipStories
 
-            await Launcher.onPrepare(
-                config, caps,
-                // @ts-ignore
-                ...Object.values(mockFunctions)
-            )
+            await Launcher.onPrepare(config, caps)
 
-            expect(mockFunctions.getArgvValueFunc).toHaveBeenCalledTimes(5)
-            expect(mockFunctions.parseSkipStoriesFunc).toHaveBeenCalledWith(['foo-bar-foo'], log)
-        // other expectations...
+            expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
+            expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith(['foo-bar-foo'], log)
         })
 
         it('should process all options data', async () => {
@@ -103,15 +85,10 @@ describe('Visual Launcher for Storybook', () => {
 
             options.storybook = { version: 7, numShards: 16, clip: false, clipSelector: 'clipSelector', skipStories: 'skipStories' }
 
-            await Launcher.onPrepare(
-                config, caps,
-                // @ts-ignore
-                ...Object.values(mockFunctions)
-            )
+            await Launcher.onPrepare(config, caps)
 
-            expect(mockFunctions.getArgvValueFunc).toHaveBeenCalledTimes(5)
-            expect(mockFunctions.parseSkipStoriesFunc).toHaveBeenCalledWith('skipStories', log)
-        // other expectations...
+            expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
+            expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith('skipStories', log)
         })
 
         it('should throw an error for storybook and cucumber', async () => {
@@ -120,29 +97,25 @@ describe('Visual Launcher for Storybook', () => {
             }
 
             const logInfoMock = vi.spyOn(log, 'info')
-            mockFunctions.isCucumberFrameworkFunc.mockReturnValue(true)
+            vi.mocked(storybookUtils.isCucumberFramework).mockReturnValue(true)
 
             let error
             try {
-                await Launcher.onPrepare(
-                    config, caps,
-                    // @ts-ignore
-                    ...Object.values(mockFunctions)
-                )
+                await Launcher.onPrepare(config, caps)
             } catch (e) {
                 error = e
             }
 
             expect(error).toBeDefined()
             expect((error as Error).message).toContain('Running Storybook in combination with the cucumber framework adapter is not supported.')
-            expect(mockFunctions.isStorybookModeFunc).toHaveBeenCalledOnce()
-            expect(mockFunctions.isCucumberFrameworkFunc).toHaveBeenCalledOnce()
+            expect(vi.mocked(storybookUtils.isStorybookMode)).toHaveBeenCalledOnce()
+            expect(vi.mocked(storybookUtils.isCucumberFramework)).toHaveBeenCalledOnce()
             expect(logInfoMock).not.toHaveBeenCalled()
             // Ensure other mocks were not called
-            expect(mockFunctions.getArgvValueFunc).not.toHaveBeenCalled()
-            expect(mockFunctions.parseSkipStoriesFunc).not.toHaveBeenCalled()
-            expect(mockFunctions.createTestFilesFunc).not.toHaveBeenCalled()
-            expect(mockFunctions.createStorybookCapabilitiesFunc).not.toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.getArgvValue)).not.toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.parseSkipStories)).not.toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.createTestFiles)).not.toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.createStorybookCapabilities)).not.toHaveBeenCalled()
         })
     })
 

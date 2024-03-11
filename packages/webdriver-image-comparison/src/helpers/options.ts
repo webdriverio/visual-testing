@@ -22,6 +22,8 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         formatImageName: options.formatImageName ?? DEFAULT_FORMAT_STRING,
         isHybridApp: options.isHybridApp ?? false,
         logLevel: options.logLevel ?? LogLevel.info,
+        // Running in storybook mode with a min of 2 browsers can cause huge amount of images to be saved
+        // by defaulting this to true the user will have a better overview
         savePerInstance: options.savePerInstance ?? isStorybook() ? true : false,
         toolBarShadowPadding: options.toolBarShadowPadding ?? DEFAULT_SHADOW.TOOL_BAR,
 
@@ -33,6 +35,8 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         fullPageScrollTimeout: options.fullPageScrollTimeout ?? FULL_PAGE_SCROLL_TIMEOUT,
         hideScrollBars: Object.prototype.hasOwnProperty.call(options, 'hideScrollBars')
             ? Boolean(options.hideScrollBars)
+            // Default to false for storybook mode, by default element screenshots are taken with the
+            // W3C protocol which will not show the scrollbars. Secondly, it saves an extra webdriver call
             : isStorybook() ? false : true,
         waitForFontsLoaded: options.waitForFontsLoaded ?? true,
 

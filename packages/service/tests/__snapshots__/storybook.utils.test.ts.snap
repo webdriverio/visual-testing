@@ -35,14 +35,9 @@ exports[`Storybook utils > itFunction > generates correct mocha test code with n
 "
     it(\`should take a viewport screenshot of category-component--story1\`, async () => {
         await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#storybook-root').waitForDisplayed();
+        await $('#id').waitForDisplayed();
 
-        const startTime = performance.now();
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
-        // await $('#id').saveScreenshot('category-component--story1.png');
-        const endTime = performance.now();
-        const timeTaken = endTime - startTime;
-        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
     });
     "
 `;
@@ -51,14 +46,9 @@ exports[`Storybook utils > itFunction > generates correct mocha test code with s
 "
     it.skip(\`should take a viewport screenshot of category-component--story1\`, async () => {
         await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#storybook-root').waitForDisplayed();
+        await $('#id').waitForDisplayed();
 
-        const startTime = performance.now();
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
-        // await $('#id').saveScreenshot('category-component--story1.png');
-        const endTime = performance.now();
-        const timeTaken = endTime - startTime;
-        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
     });
     "
 `;
@@ -67,14 +57,9 @@ exports[`Storybook utils > itFunction > generates correct test code with Jasmine
 "
     it(\`should take a viewport screenshot of category-component--story1\`, async () => {
         await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#storybook-root').waitForDisplayed();
+        await $('#id').waitForDisplayed();
 
-        const startTime = performance.now();
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
-        // await $('#id').saveScreenshot('category-component--story1.png');
-        const endTime = performance.now();
-        const timeTaken = endTime - startTime;
-        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
     });
     "
 `;
@@ -83,14 +68,9 @@ exports[`Storybook utils > itFunction > generates correct test code with Jasmine
 "
     xit(\`should take a viewport screenshot of category-component--story1\`, async () => {
         await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#storybook-root').waitForDisplayed();
+        await $('#id').waitForDisplayed();
 
-        const startTime = performance.now();
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
-        // await $('#id').saveScreenshot('category-component--story1.png');
-        const endTime = performance.now();
-        const timeTaken = endTime - startTime;
-        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
     });
     "
 `;
@@ -99,14 +79,9 @@ exports[`Storybook utils > itFunction > generates correct test code with for a c
 "
     it(\`should take an element screenshot of category-component--story1\`, async () => {
         await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#storybook-root').waitForDisplayed();
+        await $('#id').waitForDisplayed();
 
-        const startTime = performance.now();
         await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"baselineFolder":"baseline/category/component/"})
-        // await $('#id').saveScreenshot('category-component--story1.png');
-        const endTime = performance.now();
-        const timeTaken = endTime - startTime;
-        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
     });
     "
 `;
@@ -115,14 +90,9 @@ exports[`Storybook utils > itFunction > generates correct test code with for a c
 "
     it(\`should take an element screenshot of category-component--story1\`, async () => {
         await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#storybook-root').waitForDisplayed();
+        await $('#id').waitForDisplayed();
 
-        const startTime = performance.now();
         await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"baselineFolder":"baseline/category/component/"})
-        // await $('#id').saveScreenshot('category-component--story1.png');
-        const endTime = performance.now();
-        const timeTaken = endTime - startTime;
-        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
     });
     "
 `;
@@ -131,14 +101,9 @@ exports[`Storybook utils > itFunction > generates correct test code with mocha f
 "
     it(\`should take a viewport screenshot of category-component--story1\`, async () => {
         await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#storybook-root').waitForDisplayed();
+        await $('#id').waitForDisplayed();
 
-        const startTime = performance.now();
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
-        // await $('#id').saveScreenshot('category-component--story1.png');
-        const endTime = performance.now();
-        const timeTaken = endTime - startTime;
-        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
     });
     "
 `;
@@ -147,14 +112,9 @@ exports[`Storybook utils > itFunction > generates correct test code with mocha f
 "
     it.skip(\`should take a viewport screenshot of category-component--story1\`, async () => {
         await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#storybook-root').waitForDisplayed();
+        await $('#id').waitForDisplayed();
 
-        const startTime = performance.now();
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
-        // await $('#id').saveScreenshot('category-component--story1.png');
-        const endTime = performance.now();
-        const timeTaken = endTime - startTime;
-        console.log('Visual snapshot of \`category-component--story1\` took: ', Math.round(timeTaken), ' ms')
     });
     "
 `;

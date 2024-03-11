@@ -165,16 +165,11 @@ export function itFunction({ clip, clipSelector, folders: { baselineFolder }, fr
     const it = `
     ${itText}(\`should take a${screenshotType} screenshot of ${id}\`, async () => {
         await browser.url(\`${storybookUrl}iframe.html?id=${id}\`);
-        await $('#storybook-root').waitForDisplayed();
+        await $('${clipSelector}').waitForDisplayed();
 
-        const startTime = performance.now();
         ${clip
         ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(methodOptions)})`
         : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(methodOptions)})`}
-        // await $('${clipSelector}').saveScreenshot('${id}.png');
-        const endTime = performance.now();
-        const timeTaken = endTime - startTime;
-        console.log('Visual snapshot of \`${id}\` took: ', Math.round(timeTaken), ' ms')
     });
     `
     return it
@@ -260,7 +255,7 @@ export function createStorybookCapabilities(capabilities: Capabilities.RemoteCap
     const browsers = getArgvValue('--browsers', (value: string) => value.split(',')) ?? ['chrome']
 
     if (Array.isArray(capabilities)) {
-        const chromeCapability = {
+        const chromeCapability: WebdriverIO.Capabilities = {
             browserName: 'chrome',
             'goog:chromeOptions': {
                 args: [
@@ -272,7 +267,7 @@ export function createStorybookCapabilities(capabilities: Capabilities.RemoteCap
                 logName: 'local-chrome',
             },
         }
-        const firefoxCapability = {
+        const firefoxCapability: WebdriverIO.Capabilities = {
             browserName: 'firefox',
             'moz:firefoxOptions': {
                 args: [...(isHeadless ? ['-headless'] : []),]
@@ -281,13 +276,13 @@ export function createStorybookCapabilities(capabilities: Capabilities.RemoteCap
                 logName: 'local-firefox',
             },
         }
-        const safariCapability = {
+        const safariCapability: WebdriverIO.Capabilities = {
             browserName: 'safari',
             'wdio-ics:options': {
                 logName: 'local-safari',
             },
         }
-        const edgeCapability = {
+        const edgeCapability: WebdriverIO.Capabilities = {
             browserName: 'MicrosoftEdge',
             'ms:edgeOptions': {
                 args: [...(isHeadless ? ['--headless'] : [])]
@@ -313,7 +308,6 @@ export function createStorybookCapabilities(capabilities: Capabilities.RemoteCap
             .map((browser:string) => capabilityMap[browser as keyof CapabilityMap])
         capabilities.length = 0
         // Add the new capability to the capabilities array
-        // @ts-ignore
         capabilities.push(...newCapabilities)
     } else {
         log.error('The capabilities are not an array')
