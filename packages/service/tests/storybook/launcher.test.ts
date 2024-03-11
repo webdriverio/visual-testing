@@ -3,15 +3,15 @@ import { join } from 'node:path'
 import logger from '@wdio/logger'
 import type { Capabilities, Options, Services } from '@wdio/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import VisualLauncher from '../src/launcher.js'
+import VisualLauncher from '../../src/storybook/launcher.js'
 import type { ClassOptions } from 'webdriver-image-comparison'
-import * as storybookUtils from '../src/storybook.utils.js'
+import * as storybookUtils from '../../src/storybook/utils.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('fs')
 
-vi.mock('../src/storybook.utils.js', ()=>({
+vi.mock('../../src/storybook/utils.js', ()=>({
     isStorybookMode: vi.fn(() => true),
     isCucumberFramework: vi.fn(() => false),
     scanStorybook: vi.fn(() => ({

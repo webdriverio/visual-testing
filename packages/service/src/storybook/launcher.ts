@@ -12,8 +12,8 @@ import {
     isStorybookMode,
     parseSkipStories,
     scanStorybook,
-} from './storybook.utils.js'
-import { CLIP_SELECTOR, NUM_SHARDS, V6_CLIP_SELECTOR } from './constants.js'
+} from './utils.js'
+import { CLIP_SELECTOR, NUM_SHARDS, V6_CLIP_SELECTOR } from '../constants.js'
 
 const log = logger('@wdio/visual-service')
 

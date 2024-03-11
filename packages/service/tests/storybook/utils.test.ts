@@ -24,9 +24,9 @@ import {
     sanitizeURL,
     scanStorybook,
     writeTestFile,
-} from '../src/storybook.utils.js'
+} from '../../src/storybook/utils.js'
 import type { Capabilities, Options } from '@wdio/types'
-import type { ScanStorybookReturnData } from '../src/storybookTypes.js'
+import type { ScanStorybookReturnData } from '../../src/storybook/Types.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))

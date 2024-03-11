@@ -15,7 +15,7 @@ import type {
     Stories,
     StoriesRes,
     StorybookData,
-} from './storybookTypes.js'
+} from './Types.js'
 
 /**
  * Check if we run for Storybook
