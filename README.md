@@ -5,6 +5,150 @@ For documentation on visual testing with WebdriverIO, please refer to the [docs]
 - `@wdio/visual-testing`: the WebdriverIO service for integrating visual testing
 - `webdriver-image-comparison`: An image compare module that can be used for different NodeJS Test automation frameworks that support the WebDriver protocol
 
+## Storybook Runner (BETA)
+
+> [!NOTE]
+> Storybook Runner is still in BETA, the docs will later move to the [WebdriverIO](https://webdriver.io/docs/visual-testing) documentation pages.
+
+This module now supports Storybook with a new Visual Runner. This runner automatically scans for a local/remote storybook instance and will create element screenshots of each component. This can be done by adding
+
+```ts
+export const config: Options.Testrunner = {
+    // ...
+    services: ['visual'],
+    // ....
+}
+```
+
+to your `services` and running `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook` through the command line.
+It will use Chrome in headless mode as the default browser.
+
+> [!NOTE]
+> - Most of the Visual Testing options will also work for the Storybook Runner, see the [WebdriverIO](https://webdriver.io/docs/visual-testing) documentation.
+> - The Storybook Runner will overwrite all your capabilities and can only run on the browsers that it supports, see [`--browsers`](#browsers).
+> - The Storybook Runner only supports Desktop Web, not Mobile Web.
+> - Desktop Mobile Emulation will be released later this year
+
+### Service Options
+Service options can be provided like this
+
+```ts
+export const config: Options.Testrunner = {
+    // ...
+    services: [
+      [
+        'visual',
+        {
+            // Some default options
+            baselineFolder: join(process.cwd(), './__snapshots__/'),
+            debug: true,
+            // The storybook options, see cli options for the description
+            storybook: {
+                clip: false,
+                clipSelector: ''#some-id,
+                numShards: 4,
+                // `skipStories` can be a string ('example-button--secondary'),
+                // an array (['example-button--secondary', 'example-button--small'])
+                // or a regex which needs to be provided as as string ("/.*button.*/gm")
+                skipStories: ['example-button--secondary', 'example-button--small'],
+                url: 'https://www.bbc.co.uk/iplayer/storybook/',
+                version: 6,
+            },
+        },
+      ],
+    ],
+    // ....
+}
+```
+
+### CLI options
+
+#### `--browsers`
+
+- **Type:** `string`
+- **Mandatory:** No
+- **Default:** `chrome`, you can select from `chrome|firefox|edge|safari`
+- **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --browsers=chrome,firefox,edge,safari`
+- **NOTE:** Only available through the CLI
+
+It will use the provided browsers to take component screenshots
+
+> [!NOTE]
+> Make sure you have the browsers you want to run on installed on your local machine
+
+#### `--clip`
+
+- **Type:** `boolean`
+- **Mandatory:** No
+- **Default:** `true`
+- **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --clip=false`
+
+When disabled it will create a viewport screenshot. When enabled it will create element screenshots based on the [`--clipSelector`](#clipselector) which will reduce the amount of whitespace around the component screenshot and reduce the screenshot size.
+
+#### `--clipSelector`
+
+- **Type:** `string`
+- **Mandatory:** No
+- **Default:** `#storybook-root > :first-child` for Storybook V7 and `#root > :first-child:not(script):not(style)` for Storybook V6, see also [`--version`](#version)
+- **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --clipSelector="#some-id"`
+
+This is the selector that will be used:
+  - to select the element to take the screenshot of
+  - for the element to wait to be visible before a screenshot is taken
+
+#### `--headless`
+
+- **Type:** `boolean`
+- **Mandatory:** No
+- **Default:** `true`
+- **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --headless=false`
+- **NOTE:** Only available through the CLI
+
+This will run the tests by default in headless mode (when the browser supports it) or can be disabled
+
+#### `--numShards`
+
+- **Type:** `number`
+- **Mandatory:** No
+- **Default:** `true`
+- **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --numShards=10`
+
+This will be the number of parallel instances that will be used to run the stories. This will be limited by the `maxInstances` in your `wdio.conf`-file.
+
+> [!IMPORTANT]
+> When running in `headless`-mode then do not increase the number to more than 20 to prevent flakiness due to resource restrictions
+
+#### `--skipStories`
+
+- **Type:** `string|regex`
+- **Mandatory:** No
+- **Default:** null
+- **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --skipStories="/.*button.*/gm"`
+
+ This can be:
+  -  a string (`example-button--secondary,example-button--small`)
+  - or a regex (`"/.*button.*/gm"`)
+
+to skip certain stories. Use the `id` of the story that can be found in the URL of the story. For example, the `id` in this URL `http://localhost:6006/?path=/story/example-page--logged-out` is `example-page--logged-out`
+
+#### `--url`
+
+- **Type:** `string`
+- **Mandatory:** No
+- **Default:** `http://127.0.0.1:6006`
+- **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --url="https://example.com"`
+
+The URL where your Storybook instance is hosted.
+
+#### `--version`
+
+- **Type:** `number`
+- **Mandatory:** No
+- **Default:** 7
+- **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --version=6`
+
+ This is the version of Storybook, it defaults to `7`. This is needed to know if the V6 [`clipSelector`](#clipselector) needs to be used.
+
 ## Contributing
 
 This package depends on `node-canvas`, make sure you have all [required dependencies](https://github.com/Automattic/node-canvas?tab=readme-ov-file#compiling) installed before starting development.
@@ -85,6 +229,25 @@ npm run test.local.desktop
 ```
 
 This will run all tests on a local machine on Chrome.
+
+#### Local Storybook Runner Testing (Beta)
+
+First, a local baseline needs to be created. This can be done with:
+
+```sh
+npm run test.local.desktop.storybook
+```
+
+This will Storybook tests with Chrome in headless mode against a Demo Storybook repo located at https://govuk-react.github.io/govuk-react/.
+
+To run the tests with more browsers you can run
+
+```sh
+npm run test.local.desktop.storybook -- --browsers=chrome,firefox,edge,safari
+```
+
+> [!NOTE]
+> Make sure you have the browsers you want to run on installed on your local machine
 
 #### CI testing with Sauce Labs (not needed for a PR)
 
