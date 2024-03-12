@@ -10,7 +10,6 @@ For documentation on visual testing with WebdriverIO, please refer to the [docs]
 <details>
   <summary>Click to find out more documentation about the Storybook Runner BETA</summary>
 
-> [!NOTE]
 > Storybook Runner is still in BETA, the docs will later move to the [WebdriverIO](https://webdriver.io/docs/visual-testing) documentation pages.
 
 This module now supports Storybook with a new Visual Runner. This runner automatically scans for a local/remote storybook instance and will create element screenshots of each component. This can be done by adding
