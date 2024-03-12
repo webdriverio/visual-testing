@@ -176,6 +176,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             },
                             getElementRect: this.getElementRect.bind(currentBrowser),
                             screenShot: this.takeScreenshot.bind(currentBrowser),
+                            takeElementScreenshot: this.takeElementScreenshot.bind(currentBrowser),
                         },
                         instanceData,
                         getFolders(elementOptions, self.folders, self.#getBaselineFolder()),

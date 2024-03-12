@@ -1,4 +1,6 @@
 import type { LogLevel } from '../helpers/options.interfaces'
+import type { Executor, TakeElementScreenshot, TakeScreenShot } from './methods.interfaces'
+import type { RectanglesOutput } from './rectangles.interfaces'
 
 export interface FullPageScreenshotsData {
     // The height of the full page
@@ -100,4 +102,24 @@ export interface FullPageScreenshotOptions {
     hideAfterFirstScroll: (HTMLElement | HTMLElement[])[];
     // Level to show logs
     logLevel: LogLevel;
+}
+
+export interface TakeWebElementScreenshot {
+    devicePixelRatio?: number,
+    element: any,
+    executor: Executor,
+    fallback?: boolean,
+    innerHeight?: number,
+    isAndroidNativeWebScreenshot: boolean,
+    isAndroid: boolean,
+    isIOS: boolean,
+    isLandscape: boolean,
+    screenShot:TakeScreenShot,
+    takeElementScreenshot?: TakeElementScreenshot,
+}
+
+export interface TakeWebElementScreenshotData {
+    base64Image: string;
+    isWebDriverElementScreenshot: boolean;
+    rectangles: RectanglesOutput;
 }

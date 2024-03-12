@@ -4,6 +4,7 @@ import type { RectanglesOutput } from './rectangles.interfaces'
 export type Executor = <T>(script: string | Function, ...varArgs: any[]) => Promise<T>;
 export type GetElementRect = (elementId:string) => Promise<RectanglesOutput>
 export type TakeScreenShot = () => Promise<string>;
+export type TakeElementScreenshot = (elementId: string) => Promise<string>;
 
 export interface Methods {
     // The method to inject JS in the running instance
@@ -12,4 +13,6 @@ export interface Methods {
     getElementRect?: GetElementRect
     // The screenshot method
     screenShot: TakeScreenShot;
+    // The method to take an element screenshot
+    takeElementScreenshot?: TakeElementScreenshot;
 }

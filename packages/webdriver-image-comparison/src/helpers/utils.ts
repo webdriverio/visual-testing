@@ -311,3 +311,10 @@ export function getIosBezelImageNames(normalizedDeviceName: string): { topImageN
 export function isObject(item:unknown) {
     return (typeof item === 'object' && item !== null) || typeof item === 'function'
 }
+
+/**
+ * Validate if i's storybook
+ */
+export function isStorybook(){
+    return process.argv.includes('--storybook')
+}

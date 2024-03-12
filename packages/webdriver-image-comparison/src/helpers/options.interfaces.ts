@@ -80,6 +80,24 @@ export interface ClassOptions {
      * Tabbable options
      */
     tabbableOptions?: TabbableOptions;
+
+    /**
+     * Storybook options
+     */
+    storybook?:{
+        // If true, the story will be clipped component preventing extraneous whitespace. Enabled by default
+        clip?: boolean;
+        // The selector to clip to when clip = true. Defaults to Storybook's V7 root element
+        clipSelector?: string;
+        // Specify the number of separate shards to create, default is 1
+        numShards?: number
+        // Skip stories that match the given string or regex
+        skipStories?: string | string[];
+        // The URL of the storybook, default will be 'http://127.0.0.1:6006'
+        url?: string;
+        // Version of the storybook, default is 7
+        version?: number
+    }
 }
 
 export interface DefaultOptions {

@@ -10,11 +10,15 @@ import type {
     FullPageScreenshotNativeMobileOptions,
     FullPageScreenshotDataOptions,
     FullPageScreenshotsData,
+    TakeWebElementScreenshot,
+    TakeWebElementScreenshotData,
 } from './screenshots.interfaces'
 import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import { LogLevel } from '../helpers/options.interfaces'
+import type { ElementRectanglesOptions } from './rectangles.interfaces.js'
+import { determineElementRectangles } from './rectangles.js'
 
 /**
  * Take a full page screenshots for desktop / iOS / Android
@@ -478,4 +482,79 @@ function logHiddenRemovedError(error: any, logLevel: LogLevel) {
 `,
         )
     }
+}
+
+/**
+ * Take an element screenshot on the web
+ */
+export async function takeWebElementScreenshot({
+    devicePixelRatio,
+    element,
+    executor,
+    fallback = false,
+    innerHeight,
+    isAndroidNativeWebScreenshot,
+    isAndroid,
+    isIOS,
+    isLandscape,
+    screenShot,
+    takeElementScreenshot,
+}:TakeWebElementScreenshot): Promise<TakeWebElementScreenshotData>{
+    if (isIOS || fallback){
+        const base64Image = await takeBase64Screenshot(screenShot)
+        const elementRectangleOptions: ElementRectanglesOptions = {
+            /**
+             * ToDo: handle NaA case
+             */
+            devicePixelRatio: devicePixelRatio || NaN,
+            innerHeight: innerHeight || NaN,
+            isAndroidNativeWebScreenshot,
+            isAndroid,
+            isIOS,
+            isLandscape,
+        }
+        const rectangles = await determineElementRectangles({
+            executor,
+            base64Image,
+            options: elementRectangleOptions,
+            element,
+        })
+
+        return {
+            base64Image,
+            isWebDriverElementScreenshot: false,
+            rectangles,
+        }
+    }
+
+    try {
+        const   base64Image = await takeElementScreenshot!((await element as WebdriverIO.Element).elementId)
+        const { height, width } = getScreenshotSize(base64Image)
+        const rectangles = { x: 0, y: 0, width, height }
+
+        if (rectangles.width === 0 || rectangles.height === 0) {
+            throw new Error('The element has no width or height.')
+        }
+
+        return {
+            base64Image,
+            isWebDriverElementScreenshot: true,
+            rectangles,
+        }
+    } catch (e) {
+        return takeWebElementScreenshot({
+            devicePixelRatio,
+            element,
+            executor,
+            fallback: true,
+            innerHeight,
+            isAndroidNativeWebScreenshot,
+            isAndroid,
+            isIOS,
+            isLandscape,
+            screenShot,
+            takeElementScreenshot,
+        })
+    }
+
 }

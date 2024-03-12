@@ -15,6 +15,7 @@ export default defineConfig({
                 '.eslintrc.cjs',
                 'tests/**',
                 '**/*.interfaces.ts',
+                '**/storybookTypes.ts'
             ]
         },
         /**

@@ -83,9 +83,9 @@ export async function checkBaselineImageExists(
 /**
  * Get the rotated image if needed
  */
-async function getRotatedImageIfNeeded({ isLandscape, base64Image }: RotatedImage): Promise<string> {
+async function getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandscape, base64Image }: RotatedImage): Promise<string> {
     const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
-    const isRotated = isLandscape && screenshotHeight > screenshotWidth
+    const isRotated = !isWebDriverElementScreenshot && isLandscape && screenshotHeight > screenshotWidth
 
     return isRotated
         ? await rotateBase64Image({ base64Image, degrees: -90, newHeight: screenshotWidth, newWidth: screenshotHeight })
@@ -275,6 +275,7 @@ export async function makeCroppedBase64Image({
     base64Image,
     deviceName,
     devicePixelRatio,
+    isWebDriverElementScreenshot = false,
     isIOS,
     isLandscape,
     logLevel,
@@ -282,7 +283,7 @@ export async function makeCroppedBase64Image({
     resizeDimensions = DEFAULT_RESIZE_DIMENSIONS,
 }: CroppedBase64Image): Promise<string> {
     // Rotate the image if needed and get the screenshot size
-    const newBase64Image = await getRotatedImageIfNeeded({ isLandscape, base64Image })
+    const newBase64Image = await getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandscape, base64Image })
     const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
 
     // Determine/Get the size of the cropped screenshot and cut out dimensions
