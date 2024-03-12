@@ -166,7 +166,7 @@ export function itFunction({ clip, clipSelector, folders: { baselineFolder }, fr
     ${itText}(\`should take a${screenshotType} screenshot of ${id}\`, async () => {
         await browser.url(\`${storybookUrl}iframe.html?id=${id}\`);
         await $('${clipSelector}').waitForDisplayed();
-
+        await waitForAllImagesLoaded();
         ${clip
         ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(methodOptions)})`
         : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(methodOptions)})`}
@@ -202,11 +202,64 @@ export function createTestContent(
     return stories.reduce((acc, storyData) => acc + itFunc({ ...itFunctionOptions, storyData }), '')
 }
 
+const waitForAllImagesLoaded = `
+async function waitForAllImagesLoaded() {
+    await browser.executeAsync(async (done) => {
+        const timeout = 11000; // 11 seconds
+        let timedOut = false;
+
+        const timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                timedOut = true;
+                reject('Timeout: Not all images loaded within 11 seconds');
+            }, timeout);
+        });
+
+        const isImageLoaded = (img) => img.complete && img.naturalWidth > 0;
+
+        // Check for <img> elements
+        const imgElements = Array.from(document.querySelectorAll('img'));
+        const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise(resolve => {
+            img.onload = () => !timedOut && resolve();
+            img.onerror = () => !timedOut && resolve();
+        }));
+
+        // Check for CSS background images
+        const allElements = Array.from(document.querySelectorAll('*'));
+        const bgImagePromises = allElements.map(el => {
+            const bgImage = window.getComputedStyle(el).backgroundImage;
+            if (bgImage && bgImage !== 'none' && bgImage.startsWith('url')) {
+                const imageUrl = bgImage.slice(5, -2); // Extract URL from the 'url("")'
+                const image = new Image();
+                image.src = imageUrl;
+                return isImageLoaded(image) ? Promise.resolve() : new Promise(resolve => {
+                    image.onload = () => !timedOut && resolve();
+                    image.onerror = () => !timedOut && resolve();
+                });
+            }
+            return Promise.resolve();
+        });
+
+        try {
+            await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise]);
+            done();
+        } catch (error) {
+            done(error);
+        }
+    });
+}
+`
+
 /**
  * Create the file data
  */
 export function createFileData(describeTitle: string, testContent: string): string {
-    return `\ndescribe(\`${describeTitle}\`, () => {\n    ${testContent}\n});\n`
+    return `
+describe(\`${describeTitle}\`, () => {
+    ${testContent}
+});
+${waitForAllImagesLoaded}
+`
 }
 
 /**
