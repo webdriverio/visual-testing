@@ -7,6 +7,9 @@ For documentation on visual testing with WebdriverIO, please refer to the [docs]
 
 ## Storybook Runner (BETA)
 
+<details>
+  <summary>Click to find out more documentation about the Storybook Runner BETA</summary>
+
 > [!NOTE]
 > Storybook Runner is still in BETA, the docs will later move to the [WebdriverIO](https://webdriver.io/docs/visual-testing) documentation pages.
 
@@ -29,7 +32,7 @@ It will use Chrome in headless mode as the default browser.
 > - The Storybook Runner only supports Desktop Web, not Mobile Web.
 > - Desktop Mobile Emulation will be released later this year
 
-### Service Options
+### Storybook Runner Service Options
 Service options can be provided like this
 
 ```ts
@@ -61,7 +64,7 @@ export const config: Options.Testrunner = {
 }
 ```
 
-### CLI options
+### Storybook Runner CLI options
 
 #### `--browsers`
 
@@ -148,6 +151,8 @@ The URL where your Storybook instance is hosted.
 - **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --version=6`
 
  This is the version of Storybook, it defaults to `7`. This is needed to know if the V6 [`clipSelector`](#clipselector) needs to be used.
+
+</details>
 
 ## Contributing
 
