@@ -274,7 +274,9 @@ export function createTestFiles(
 ) {
     const storiesArray = Object.values(storiesJson)
         // By default only keep the stories, not the docs
-        .filter((storyData: StorybookData) => storyData?.type === 'story' || !storyData.parameters?.docsOnly)
+        // storyData?.type === 'story' is V7+, storyData.parameters?.docsOnly is V6
+        .filter((storyData: StorybookData) => storyData.type === 'story' || (storyData.parameters && !storyData.parameters.docsOnly))
+
     const fileNamePrefix = 'visual-storybook'
     const createTestContentData = { clip, clipSelector, folders, framework, skipStories, stories: storiesArray, storybookUrl }
 
