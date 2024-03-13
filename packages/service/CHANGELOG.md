@@ -1,5 +1,11 @@
 # @wdio/visual-service
 
+## 4.0.1
+
+### Patch Changes
+
+- bb4ece7: Fix storybook filtering
+
 ## 4.0.0
 
 ### Major Changes
