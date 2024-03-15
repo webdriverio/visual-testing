@@ -73,7 +73,7 @@ exports[`options > defaultOptions > should return the provided options when opti
   },
   "disableCSSAnimation": true,
   "enableLayoutTesting": false,
-  "formatImageName": "{foo}-{bar}",
+  "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
   "fullPageScrollTimeout": 12345,
   "hideScrollBars": true,
   "isHybridApp": false,

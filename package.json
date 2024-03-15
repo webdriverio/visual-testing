@@ -24,6 +24,7 @@
     "test.local.sims.web": "wdio tests/configs/wdio.local.ios.sims.web.conf.ts",
     "test.local.desktop.multi": "wdio tests/configs/wdio.local.desktop.multi.conf.ts",
     "test.local.desktop.storybook": "wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --numShards=10 --url=https://govuk-react.github.io/govuk-react/ --skipStories=\"/.*(loading-box|spinner).*/\"",
+    "test.local.desktop.storybook.localhost": "wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --numShards=10",
     "test.unit.coverage": "vitest --coverage",
     "test.saucelabs.app": "wdio ./tests/configs/wdio.saucelabs.app.conf.ts",
     "test.saucelabs.emu.app": "SAUCE_ENV=emu wdio ./tests/configs/wdio.saucelabs.app.conf.ts",

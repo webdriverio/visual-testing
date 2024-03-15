@@ -15,7 +15,10 @@ import type {
     Stories,
     StoriesRes,
     StorybookData,
+    EmulatedDeviceType,
+    CapabilityMap,
 } from './Types.js'
+import { deviceDescriptors } from './deviceDescriptors.js'
 
 /**
  * Check if we run for Storybook
@@ -302,71 +305,158 @@ export function createTestFiles(
     }
 }
 
+export function createChromeCapabilityWithEmulation(
+    { screen:{ width, height, dpr }, name, userAgent }: EmulatedDeviceType,
+    isHeadless: boolean,
+): WebdriverIO.Capabilities {
+    return {
+        browserName: 'chrome',
+        'goog:chromeOptions': {
+            args: [
+                'disable-infobars',
+                ...(isHeadless ? ['--headless'] : []),
+            ],
+            mobileEmulation: {
+                deviceMetrics: {
+                    width,
+                    height,
+                    pixelRatio: dpr,
+                },
+                userAgent,
+            },
+        },
+        'wdio-ics:options': {
+            logName: `local-chrome-${name.replace(/\s+/g, '-')}`,
+        },
+    }
+}
+
+/**
+ * Throw an error message if the capabilities are not set up correctly
+ */
+export function capabilitiesErrorMessage(
+    browsers: string[],
+    capabilityMap: CapabilityMap,
+    devices: string[],
+    deviceDescriptors: EmulatedDeviceType[],
+    isMobileEmulation: boolean,
+) {
+    let errorMessage = 'No capabilities were added. Please ensure that '
+    const browserIssues = browsers.some((browser:string) => !(browser in capabilityMap))
+    const deviceIssues = isMobileEmulation && devices.some((deviceName:string) => !deviceDescriptors.some(device => device.name === deviceName))
+
+    if (browserIssues && deviceIssues) {
+        errorMessage += `the browsers '${browsers.join(',')}' and devices '${devices.join(',')}' are supported.`
+    } else if (browserIssues) {
+        errorMessage += `the browsers '${browsers.join(',')}' are supported.`
+    } else if (deviceIssues) {
+        errorMessage += `the devices '${devices.join(',')}' are supported.`
+    } else {
+        errorMessage += 'the specified configuration is correct.'
+    }
+
+    throw new Error(errorMessage)
+}
+
 /**
  * Create the storybook capabilities based on the specified browsers
  */
-export function createStorybookCapabilities(capabilities: Capabilities.RemoteCapabilities, log: Logger) {
+export function createStorybookCapabilities(
+    capabilities: Capabilities.RemoteCapabilities, log: Logger,
+    // For testing purposes only
+    createChromeCapabilityWithEmulationFunc = createChromeCapabilityWithEmulation,
+    capabilitiesErrorMessageFunc = capabilitiesErrorMessage,
+) {
+    if (!Array.isArray(capabilities)) {
+        log.error('The capabilities are not an array')
+        return
+    }
+
     const isHeadless = getArgvValue('--headless', value => value !== 'false') ?? true
     const browsers = getArgvValue('--browsers', (value: string) => value.split(',')) ?? ['chrome']
+    const devices = getArgvValue('--devices', (value: string) => value.split(',')) ?? []
+    const isMobileEmulation = devices.length > 0
 
-    if (Array.isArray(capabilities)) {
-        const chromeCapability: WebdriverIO.Capabilities = {
-            browserName: 'chrome',
-            'goog:chromeOptions': {
-                args: [
-                    'disable-infobars',
-                    ...(isHeadless ? ['--headless'] : []),
-                ],
-            },
-            'wdio-ics:options': {
-                logName: 'local-chrome',
-            },
-        }
-        const firefoxCapability: WebdriverIO.Capabilities = {
-            browserName: 'firefox',
-            'moz:firefoxOptions': {
-                args: [...(isHeadless ? ['-headless'] : []),]
-            },
-            'wdio-ics:options': {
-                logName: 'local-firefox',
-            },
-        }
-        const safariCapability: WebdriverIO.Capabilities = {
-            browserName: 'safari',
-            'wdio-ics:options': {
-                logName: 'local-safari',
-            },
-        }
-        const edgeCapability: WebdriverIO.Capabilities = {
-            browserName: 'MicrosoftEdge',
-            'ms:edgeOptions': {
-                args: [...(isHeadless ? ['--headless'] : [])]
-            },
-            'wdio-ics:options': {
-                logName: 'local-edge',
-            },
-        }
-        interface CapabilityMap {
+    // Clear the current capabilities
+    capabilities.length = 0
+    log.info('Clearing the current capabilities.')
+
+    const chromeCapability: WebdriverIO.Capabilities = {
+        browserName: 'chrome',
+        'goog:chromeOptions': {
+            args: [
+                'disable-infobars',
+                ...(isHeadless ? ['--headless'] : []),
+            ],
+
+        },
+        'wdio-ics:options': {
+            logName: 'local-chrome',
+        },
+    }
+    const edgeCapability: WebdriverIO.Capabilities = {
+        browserName: 'MicrosoftEdge',
+        'ms:edgeOptions': {
+            args: [...(isHeadless ? ['--headless'] : [])],
+        },
+        'wdio-ics:options': {
+            logName: 'local-edge',
+        },
+    }
+    const firefoxCapability: WebdriverIO.Capabilities = {
+        browserName: 'firefox',
+        'moz:firefoxOptions': {
+            args: [...(isHeadless ? ['-headless'] : []),]
+        },
+        'wdio-ics:options': {
+            logName: 'local-firefox',
+        },
+    }
+    const safariCapability: WebdriverIO.Capabilities = {
+        browserName: 'safari',
+        'wdio-ics:options': {
+            logName: 'local-safari',
+        },
+    }
+    interface CapabilityMap {
             chrome: typeof chromeCapability;
+            edge: typeof edgeCapability;
             firefox: typeof firefoxCapability;
             safari: typeof safariCapability;
-            edge: typeof edgeCapability;
         }
-        const capabilityMap: CapabilityMap = {
-            chrome: chromeCapability,
-            firefox: firefoxCapability,
-            safari: safariCapability,
-            edge: edgeCapability,
-        }
-        const newCapabilities = browsers
-            .filter((browser:string): browser is keyof CapabilityMap => browser in capabilityMap)
-            .map((browser:string) => capabilityMap[browser as keyof CapabilityMap])
-        capabilities.length = 0
-        // Add the new capability to the capabilities array
-        capabilities.push(...newCapabilities)
-    } else {
-        log.error('The capabilities are not an array')
+    const capabilityMap: CapabilityMap = {
+        chrome: chromeCapability,
+        edge: edgeCapability,
+        firefox: firefoxCapability,
+        safari: safariCapability,
     }
+    const standardCapabilities = browsers
+        .filter((browser: string): browser is keyof CapabilityMap => browser in capabilityMap && browser.toLowerCase() !== 'chrome')
+        .map((browser: string) => capabilityMap[browser as keyof CapabilityMap])
+
+    capabilities.push(...standardCapabilities)
+
+    if (isMobileEmulation) {
+        devices.forEach((deviceName: string) => {
+            const foundDevice = deviceDescriptors.find((device: EmulatedDeviceType) => device.name === deviceName)
+            if (foundDevice) {
+                const chromeMobileCapability = createChromeCapabilityWithEmulationFunc(foundDevice, isHeadless)
+                // @ts-ignore because of "Argument of type 'Capabilities' is not assignable to parameter of type '(DesiredCapabilities | W3CCapabilities) & MultiRemoteCapabilities'."
+                capabilities.push(chromeMobileCapability)
+            } else {
+                log.error(`The device ${deviceName} is not supported. Please choose from the following devices: ${deviceDescriptors.map(device => device.name).join(', ')}`)
+            }
+        })
+    } else if (browsers.includes('chrome')) {
+        // @ts-ignore because of "Argument of type 'Capabilities' is not assignable to parameter of type '(DesiredCapabilities | W3CCapabilities) & MultiRemoteCapabilities'."
+        capabilities.push(chromeCapability)
+    }
+
+    if (capabilities.length === 0) {
+        capabilitiesErrorMessageFunc(browsers, capabilityMap, devices, deviceDescriptors, isMobileEmulation)
+    }
+
+    log.info('Added new storybook capabilities:', JSON.stringify(capabilities, null, 2))
 }
 
 /**

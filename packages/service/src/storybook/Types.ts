@@ -74,3 +74,13 @@ export type CreateItContent = {
 export type CategoryComponent = { category: string, component: string }
 
 export type ScanStorybookReturnData = { storiesJson: Stories; storybookUrl: string; tempDir: string}
+
+export type EmulatedDeviceType = {
+    name: string,
+    screen: {
+        dpr: number,
+        width: number,
+        height: number
+    },
+    userAgent: string
+}
