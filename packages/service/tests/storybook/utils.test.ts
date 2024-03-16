@@ -508,13 +508,13 @@ describe('Storybook utils', () => {
 
         it('should throw an error when unsupported browsers are provided', () => {
             const browsers = ['chrome', 'safari']
-            const devices = []
+            const devices: string[] = []
             const isMobileEmulation = false
 
             try {
                 capabilitiesErrorMessage(browsers, capabilityMap, devices, deviceDescriptors, isMobileEmulation)
                 throw new Error('Test failed - should have thrown an error')
-            } catch (error) {
+            } catch (error: any) {
                 expect(error.message).toMatchSnapshot()
             }
         })
@@ -527,7 +527,7 @@ describe('Storybook utils', () => {
             try {
                 capabilitiesErrorMessage(browsers, capabilityMap, devices, deviceDescriptors, isMobileEmulation)
                 throw new Error('Test failed - should have thrown an error')
-            } catch (error) {
+            } catch (error: any) {
                 expect(error.message).toMatchSnapshot()
             }
         })
@@ -540,20 +540,20 @@ describe('Storybook utils', () => {
             try {
                 capabilitiesErrorMessage(browsers, capabilityMap, devices, deviceDescriptors, isMobileEmulation)
                 throw new Error('Test failed - should have thrown an error')
-            } catch (error) {
+            } catch (error: any) {
                 expect(error.message).toMatchSnapshot()
             }
         })
 
         it('should throw an error when nothing is provided', () => {
-            const browsers = []
-            const devices = []
+            const browsers: string[] = []
+            const devices: string[] = []
             const isMobileEmulation = false
 
             try {
                 capabilitiesErrorMessage(browsers, capabilityMap, devices, deviceDescriptors, isMobileEmulation)
                 throw new Error('Test failed - should have thrown an error')
-            } catch (error) {
+            } catch (error: any) {
                 expect(error.message).toMatchSnapshot()
             }
         })

@@ -98,6 +98,24 @@ This is the selector that will be used:
   - to select the element to take the screenshot of
   - for the element to wait to be visible before a screenshot is taken
 
+#### `--devices`
+
+- **Type:** `string`
+- **Mandatory:** No
+- **Default:** You can select from the [`deviceDescriptors.ts`](./packages/service/src/storybook/deviceDescriptors.ts)
+- **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --devices="iPhone 14 Pro Max","Pixel 3 XL"`
+- **NOTE:** Only available through the CLI
+
+It will use the provided devices that match the [`deviceDescriptors.ts`](./packages/service/src/storybook/deviceDescriptors.ts) to take component screenshots
+
+> [!NOTE]
+> - This will only work with Chrome, if you provide `--devices` then all Chrome instances will run in **Mobile Emulation**.
+> - **[SRC:](https://chromedriver.chromium.org/mobile-emulation#h.p_ID_167)** Testing a mobile website on a desktop using mobile emulation can be useful, but testers should be aware that there are many subtle differences such as:
+>   - entirely different GPU, which may lead to big performance changes;
+>   - mobile UI is not emulated (in particular, the hiding url bar affects page height);
+>   - disambiguation popup (where you select one of a few touch targets) is not supported;
+>   - many hardware APIs (for example, orientationchange event) are unavailable.
+
 #### `--headless`
 
 - **Type:** `boolean`
