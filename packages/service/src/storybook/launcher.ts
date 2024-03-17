@@ -78,8 +78,12 @@ export default class VisualLauncher extends BaseClass  {
                 storybookUrl,
             })
 
+            // Clear the current capabilities
+            capabilities.length = 0
+            log.info('Clearing the current capabilities.')
+
             // Create the capabilities
-            createStorybookCapabilities(capabilities, log)
+            createStorybookCapabilities(capabilities as WebdriverIO.Capabilities[], log)
         }
     }
 

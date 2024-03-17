@@ -1,5 +1,5 @@
 import type { Logger } from '@wdio/logger'
-import type { Capabilities, Options } from '@wdio/types'
+import type { Options } from '@wdio/types'
 import fetch from 'node-fetch'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -362,7 +362,7 @@ export function capabilitiesErrorMessage(
  * Create the storybook capabilities based on the specified browsers
  */
 export function createStorybookCapabilities(
-    capabilities: Capabilities.RemoteCapabilities, log: Logger,
+    capabilities: WebdriverIO.Capabilities[], log: Logger,
     // For testing purposes only
     createChromeCapabilityWithEmulationFunc = createChromeCapabilityWithEmulation,
     capabilitiesErrorMessageFunc = capabilitiesErrorMessage,
@@ -376,10 +376,6 @@ export function createStorybookCapabilities(
     const browsers = getArgvValue('--browsers', (value: string) => value.split(',')) ?? ['chrome']
     const devices = getArgvValue('--devices', (value: string) => value.split(',')) ?? []
     const isMobileEmulation = devices.length > 0
-
-    // Clear the current capabilities
-    capabilities.length = 0
-    log.info('Clearing the current capabilities.')
 
     const chromeCapability: WebdriverIO.Capabilities = {
         browserName: 'chrome',
@@ -441,14 +437,12 @@ export function createStorybookCapabilities(
             const foundDevice = deviceDescriptors.find((device: EmulatedDeviceType) => device.name === deviceName)
             if (foundDevice) {
                 const chromeMobileCapability = createChromeCapabilityWithEmulationFunc(foundDevice, isHeadless)
-                // @ts-ignore because of "Argument of type 'Capabilities' is not assignable to parameter of type '(DesiredCapabilities | W3CCapabilities) & MultiRemoteCapabilities'."
                 capabilities.push(chromeMobileCapability)
             } else {
                 log.error(`The device ${deviceName} is not supported. Please choose from the following devices: ${deviceDescriptors.map(device => device.name).join(', ')}`)
             }
         })
     } else if (browsers.includes('chrome')) {
-        // @ts-ignore because of "Argument of type 'Capabilities' is not assignable to parameter of type '(DesiredCapabilities | W3CCapabilities) & MultiRemoteCapabilities'."
         capabilities.push(chromeCapability)
     }
 

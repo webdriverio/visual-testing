@@ -27,7 +27,7 @@ import {
     scanStorybook,
     writeTestFile,
 } from '../../src/storybook/utils.js'
-import type { Capabilities, Options } from '@wdio/types'
+import type { Options } from '@wdio/types'
 import type { CapabilityMap, EmulatedDeviceType, ScanStorybookReturnData } from '../../src/storybook/Types.js'
 
 const log = logger('test')
@@ -594,7 +594,7 @@ describe('Storybook utils', () => {
     describe('createStorybookCapabilities', () => {
         let originalArgv: NodeJS.Process['argv']
         let logMock: Logger
-        let capabilities: Capabilities.RemoteCapabilities
+        let capabilities: WebdriverIO.Capabilities[]
 
         beforeEach(() => {
             originalArgv = [...process.argv]
@@ -610,7 +610,7 @@ describe('Storybook utils', () => {
             createStorybookCapabilities(capabilities, logMock)
 
             expect(capabilities).toHaveLength(1)
-            expect((capabilities as Capabilities.DesiredCapabilities[])[0].browserName).toBe('chrome')
+            expect((capabilities)[0].browserName).toBe('chrome')
         })
 
         it('should modify capabilities based on provided browsers', () => {
@@ -619,12 +619,12 @@ describe('Storybook utils', () => {
 
             expect(capabilities).toHaveLength(3)
             console.log('capabilities = ', capabilities)
-            expect((capabilities as Capabilities.DesiredCapabilities[])[0].browserName).toBe('firefox')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[0])['moz:firefoxOptions']?.args).toContain('-headless')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[1]).browserName).toBe('MicrosoftEdge')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[1])['ms:edgeOptions']?.args).toContain('--headless')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[2]).browserName).toBe('chrome')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[2])['goog:chromeOptions']?.args).toContain('--headless')
+            expect((capabilities)[0].browserName).toBe('firefox')
+            expect(((capabilities)[0])['moz:firefoxOptions']?.args).toContain('-headless')
+            expect(((capabilities)[1]).browserName).toBe('MicrosoftEdge')
+            expect(((capabilities)[1])['ms:edgeOptions']?.args).toContain('--headless')
+            expect(((capabilities)[2]).browserName).toBe('chrome')
+            expect(((capabilities)[2])['goog:chromeOptions']?.args).toContain('--headless')
         })
 
         it('should not have headless if provided', () => {
@@ -632,18 +632,19 @@ describe('Storybook utils', () => {
             createStorybookCapabilities(capabilities, logMock)
 
             expect(capabilities).toHaveLength(3)
-            expect((capabilities as Capabilities.DesiredCapabilities[])[0].browserName).toBe('firefox')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[0])['moz:firefoxOptions']?.args).not.toContain('-headless')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[1]).browserName).toBe('MicrosoftEdge')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[1])['ms:edgeOptions']?.args).not.toContain('--headless')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[2]).browserName).toBe('chrome')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[2])['goog:chromeOptions']?.args).not.toContain('--headless')
+            expect((capabilities)[0].browserName).toBe('firefox')
+            expect(((capabilities)[0])['moz:firefoxOptions']?.args).not.toContain('-headless')
+            expect(((capabilities)[1]).browserName).toBe('MicrosoftEdge')
+            expect(((capabilities)[1])['ms:edgeOptions']?.args).not.toContain('--headless')
+            expect(((capabilities)[2]).browserName).toBe('chrome')
+            expect(((capabilities)[2])['goog:chromeOptions']?.args).not.toContain('--headless')
         })
 
         it('logs an error if capabilities are not an array', () => {
             const invalidCapabilities = {}
             const createChromeCapabilityWithEmulationMock = vi.fn()
             const mockErrorMessageFunc = vi.fn()
+            // @ts-ignore, ignoring because we need to provide invalid capabilities
             createStorybookCapabilities(invalidCapabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
 
             expect(logMock.error).toMatchSnapshot()
@@ -655,7 +656,7 @@ describe('Storybook utils', () => {
             const mockErrorMessageFunc = vi.fn()
             createStorybookCapabilities(capabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
 
-            expect(logMock.info).toHaveBeenCalledTimes(2)
+            expect(logMock.info).toHaveBeenCalledTimes(1)
             expect(createChromeCapabilityWithEmulationMock).toHaveBeenCalledTimes(2)
         })
 

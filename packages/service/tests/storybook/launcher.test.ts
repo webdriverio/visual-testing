@@ -58,6 +58,9 @@ describe('Visual Launcher for Storybook', () => {
             expect(logInfoMock.mock.calls[0][0]).toContain('Running `@wdio/visual-service` in Storybook mode.')
             expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
             expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith([], log)
+            expect(vi.mocked(storybookUtils.createTestFiles)).toHaveBeenCalled()
+            expect(logInfoMock.mock.calls[1][0]).toContain('Clearing the current capabilities.')
+            expect(vi.mocked(storybookUtils.createStorybookCapabilities)).toHaveBeenCalled()
         })
 
         it('should process all process.argv data', async () => {
