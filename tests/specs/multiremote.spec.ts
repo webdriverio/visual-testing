@@ -33,8 +33,8 @@ describe('@wdio/visual-service check that multi remote is working', () => {
 
         const logNameOne =
             'wdio-ics:options' in
-            multiremotebrowser.chromeBrowserOne.capabilities
-                ? multiremotebrowser.chromeBrowserOne.capabilities[
+            multiremotebrowser.chromeBrowserOne.requestedCapabilities
+                ? multiremotebrowser.chromeBrowserOne.requestedCapabilities[
                     'wdio-ics:options'
                 // @ts-ignore
                 ]?.logName
@@ -45,8 +45,8 @@ describe('@wdio/visual-service check that multi remote is working', () => {
 
         const logNameTwo =
             'wdio-ics:options' in
-            multiremotebrowser.chromeBrowserTwo.capabilities
-                ? multiremotebrowser.chromeBrowserTwo.capabilities[
+            multiremotebrowser.chromeBrowserTwo.requestedCapabilities
+                ? multiremotebrowser.chromeBrowserTwo.requestedCapabilities[
                     'wdio-ics:options'
                 // @ts-ignore
                 ]?.logName
@@ -58,23 +58,18 @@ describe('@wdio/visual-service check that multi remote is working', () => {
 
     it('take a screenshot of each browser using the global browser', async () => {
         const tag = 'homepage-multi'
-        const imageDatas = await browser.saveScreen(tag)
+        const imageDatasPromises = await browser.saveScreen(tag)
 
-        // Result is
-        // [0-0] imageDatas =  {
-        // [0-0]   chromeBrowserOne: Promise { <pending> },
-        // [0-0]   chromeBrowserTwo: Promise { <pending> }
-        // [0-0] }
+        const resolvedImageDatas = await Promise.all(Object.values(imageDatasPromises))
+        const imageDatas = Object.fromEntries(Object.keys(imageDatasPromises).map((key, index) => [key, resolvedImageDatas[index]]))
 
         for (const [browserName, imageData] of Object.entries(imageDatas)) {
             // @ts-ignore
-            const logName =
-                // @ts-ignore
-                'wdio-ics:options' in global[browserName].capabilities
-                    ? // @ts-ignore
-                    global[browserName].capabilities['wdio-ics:options']
-                        ?.logName
-                    : ''
+            const globalBrowser = global[browserName]
+
+            const logName = 'wdio-ics:options' in globalBrowser.requestedCapabilities
+                ? globalBrowser.requestedCapabilities['wdio-ics:options']?.logName
+                : ''
             const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
 
             expect(fileExists(filePath)).toBe(true)

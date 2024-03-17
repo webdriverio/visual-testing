@@ -18,8 +18,9 @@ describe('@wdio/visual-service desktop', () => {
         // this suite retry should result in a successful test run, otherwise the specFileRetries will retry the whole file
         // in a new session
         if (browserName === 'safari-16') {
+            // This is like firing with a bazooka, but it's the only way to make it work
             // @ts-ignore
-            this.retries(2)
+            this.retries(5)
             // For some reason the safari 16 browser on Sauce Labs doesn't load the page correctly for the first try
             await browser.url('')
             await $('.hero__title-logo').waitForDisplayed()
@@ -34,8 +35,9 @@ describe('@wdio/visual-service desktop', () => {
         // this suite retry should result in a successful test run, otherwise the specFileRetries will retry the whole file
         // in a new session
         if (browserName === 'safari-16') {
+            // This is like firing with a bazooka, but it's the only way to make it work
             // @ts-ignore
-            this.retries(2)
+            this.retries(5)
             // For some reason the safari 16 browser on Sauce Labs doesn't load the page correctly for the first try
             await browser.url('')
             await $('.hero__title-logo').waitForDisplayed()
@@ -48,8 +50,9 @@ describe('@wdio/visual-service desktop', () => {
         // this suite retry should result in a successful test run, otherwise the specFileRetries will retry the whole file
         // in a new session
         if (browserName === 'safari-16') {
+            // This is like firing with a bazooka, but it's the only way to make it work
             // @ts-ignore
-            this.retries(2)
+            this.retries(5)
             // For some reason the safari 16 browser on Sauce Labs doesn't load the page correctly for the first try
             await browser.url('')
             await $('.hero__title-logo').waitForDisplayed()
@@ -67,8 +70,9 @@ describe('@wdio/visual-service desktop', () => {
         // this suite retry should result in a successful test run, otherwise the specFileRetries will retry the whole file
         // in a new session
         if (browserName === 'safari-16') {
+            // This is like firing with a bazooka, but it's the only way to make it work
             // @ts-ignore
-            this.retries(2)
+            this.retries(5)
             // For some reason the safari 16 browser on Sauce Labs doesn't load the page correctly for the first try
             await browser.url('')
             await $('.hero__title-logo').waitForDisplayed()
