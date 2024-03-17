@@ -202,5 +202,15 @@ export function sauceDesktopBrowsers({
                 logName: 'macOS12-16',
             },
         },
+        {
+            browserName: 'safari',
+            browserVersion: '17',
+            platformName: 'macOS 13',
+            specs: [deskSpecs],
+            ...defaultBrowserSauceOptions,
+            'wdio-ics:options': {
+                logName: 'macOS13-17',
+            },
+        },
     ]
 }
