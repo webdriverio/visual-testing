@@ -1,6 +1,6 @@
-import { copy } from 'fs-extra'
 import { normalize, join } from 'node:path'
 import { browser } from '@wdio/globals'
+import copy from '../helpers/copy.js'
 
 describe('webdriverio image comparison local development initialization', () => {
     const localBaseline = 'localBaseline'
@@ -16,7 +16,7 @@ describe('webdriverio image comparison local development initialization', () => 
 
     it('should save the compare screenshot screenshot', async () => {
         const examplePage = 'examplePage'
-        const { fileName, path } = (await browser.saveScreen(examplePage)) as {
+        const { fileName, path } = (await browser.saveScreen(examplePage, { enableLayoutTesting: false })) as {
             fileName: string;
             path: string;
         }
