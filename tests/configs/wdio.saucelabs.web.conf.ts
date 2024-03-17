@@ -5,7 +5,7 @@ import { sauceAndroidEmusWeb } from './sauce.android.emus.web.js'
 import { sauceDesktopBrowsers } from './sauce.desktop.browsers.js'
 
 const buildIdentifier = process.env.CI
-    ? `Web-${process.env.GITHUB_WORKFLOW} - ${process.env.GITHUB_JOB}`
+    ? `Web-${process.env.GITHUB_WORKFLOW} - ${process.env.GITHUB_JOB} - ${new Date().getTime()}`
     : `Local Web-build-${new Date().getTime()}`
 
 export const config: Options.Testrunner = {
