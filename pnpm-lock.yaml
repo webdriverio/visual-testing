@@ -118,11 +118,7 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       webdriver-image-comparison:
-<<<<<<< HEAD
         specifier: ^5.0.1
-=======
-        specifier: ^4.1.0
->>>>>>> 6c99207 (chore: update lock)
         version: link:../webdriver-image-comparison
 
   packages/webdriver-image-comparison:
