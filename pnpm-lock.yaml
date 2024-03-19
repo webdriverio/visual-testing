@@ -95,13 +95,13 @@ importers:
         version: 7.5.0
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.11.16)(typescript@5.4.2)
+        version: 10.9.2(@types/node@20.11.29)(typescript@5.4.2)
       typescript:
         specifier: ^5.4.2
         version: 5.4.2
       vitest:
         specifier: ^1.4.0
-        version: 1.4.0(@types/node@20.11.16)(jsdom@24.0.0)
+        version: 1.4.0(@types/node@20.11.29)(jsdom@24.0.0)
       webdriverio:
         specifier: ^8.34.1
         version: 8.34.1(typescript@5.4.2)
@@ -118,7 +118,7 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       webdriver-image-comparison:
-        specifier: ^5.0.0
+        specifier: ^5.0.1
         version: link:../webdriver-image-comparison
 
   packages/webdriver-image-comparison:
@@ -1498,7 +1498,7 @@ packages:
       strip-literal: 2.0.0
       test-exclude: 6.0.0
       v8-to-istanbul: 9.2.0
-      vitest: 1.4.0(@types/node@20.11.16)(jsdom@24.0.0)
+      vitest: 1.4.0(@types/node@20.11.29)(jsdom@24.0.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1643,7 +1643,7 @@ packages:
     resolution: {integrity: sha512-snN9o23a9EKfNgV0TqwiWeoeWrj6BCopBVDa6Pdx4GUw6RyRDIX2StqT9mB3n8v3FPlLjs0Lym0DL9tNbV39uA==}
     engines: {node: ^16.13 || >=18}
     optionalDependencies:
-      expect-webdriverio: 4.11.2(typescript@5.4.2)
+      expect-webdriverio: 4.12.2(typescript@5.4.2)
       webdriverio: 8.34.1(typescript@5.4.2)
     transitivePeerDependencies:
       - bufferutil
@@ -3650,29 +3650,6 @@ packages:
       signal-exit: 4.1.0
       strip-final-newline: 3.0.0
     dev: true
-
-  /expect-webdriverio@4.11.2(typescript@5.4.2):
-    resolution: {integrity: sha512-PK8lrQmRhK8NRtE8i/CJsnKS/QGrHULQW5EfmyKxIiLHnXd7t8dX0dWJn/fiYVtrPKBUyXSL6h52QqvZVc9yGQ==}
-    engines: {node: '>=16 || >=18 || >=20'}
-    requiresBuild: true
-    dependencies:
-      '@vitest/snapshot': 1.3.1
-      expect: 29.7.0
-      jest-matcher-utils: 29.7.0
-      lodash.isequal: 4.5.0
-    optionalDependencies:
-      '@wdio/globals': 8.34.1(typescript@5.4.2)
-      '@wdio/logger': 8.28.0
-      webdriverio: 8.34.1(typescript@5.4.2)
-    transitivePeerDependencies:
-      - bufferutil
-      - devtools
-      - encoding
-      - supports-color
-      - typescript
-      - utf-8-validate
-    dev: true
-    optional: true
 
   /expect-webdriverio@4.12.2(typescript@5.4.2):
     resolution: {integrity: sha512-tmfOzPWTWzGa0678Ru5qmGX1g8v3AtDdK4Ko64WV4l3jSrcudMTxCOyeY0LWSN30923BBqZaWJwlx/u+T6UNBw==}
@@ -7670,7 +7647,7 @@ packages:
       typescript: 5.4.2
     dev: true
 
-  /ts-node@10.9.2(@types/node@20.11.16)(typescript@5.4.2):
+  /ts-node@10.9.2(@types/node@20.11.29)(typescript@5.4.2):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
     peerDependencies:
@@ -7689,7 +7666,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.11.16
+      '@types/node': 20.11.29
       acorn: 8.11.3
       acorn-walk: 8.3.2
       arg: 4.1.3
@@ -8011,7 +7988,7 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-node@1.4.0(@types/node@20.11.16):
+  /vite-node@1.4.0(@types/node@20.11.29):
     resolution: {integrity: sha512-VZDAseqjrHgNd4Kh8icYHWzTKSCZMhia7GyHfhtzLW33fZlG9SwsB6CEhgyVOWkJfJ2pFLrp/Gj1FSfAiqH9Lw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -8020,7 +7997,7 @@ packages:
       debug: 4.3.4(supports-color@8.1.1)
       pathe: 1.1.2
       picocolors: 1.0.0
-      vite: 5.0.12(@types/node@20.11.16)
+      vite: 5.0.12(@types/node@20.11.29)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -8032,7 +8009,7 @@ packages:
       - terser
     dev: true
 
-  /vite@5.0.12(@types/node@20.11.16):
+  /vite@5.0.12(@types/node@20.11.29):
     resolution: {integrity: sha512-4hsnEkG3q0N4Tzf1+t6NdN9dg/L3BM+q8SWgbSPnJvrgH2kgdyzfVJwbR1ic69/4uMJJ/3dqDZZE5/WwqW8U1w==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -8060,7 +8037,7 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 20.11.16
+      '@types/node': 20.11.29
       esbuild: 0.19.12
       postcss: 8.4.35
       rollup: 4.9.6
@@ -8068,7 +8045,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitest@1.4.0(@types/node@20.11.16)(jsdom@24.0.0):
+  /vitest@1.4.0(@types/node@20.11.29)(jsdom@24.0.0):
     resolution: {integrity: sha512-gujzn0g7fmwf83/WzrDTnncZt2UiXP41mHuFYFrdwaLRVQ6JYQEiME2IfEjU3vcFL3VKa75XhI3lFgn+hfVsQw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -8093,7 +8070,7 @@ packages:
       jsdom:
         optional: true
     dependencies:
-      '@types/node': 20.11.16
+      '@types/node': 20.11.29
       '@vitest/expect': 1.4.0
       '@vitest/runner': 1.4.0
       '@vitest/snapshot': 1.4.0
@@ -8112,8 +8089,8 @@ packages:
       strip-literal: 2.0.0
       tinybench: 2.6.0
       tinypool: 0.8.2
-      vite: 5.0.12(@types/node@20.11.16)
-      vite-node: 1.4.0(@types/node@20.11.16)
+      vite: 5.0.12(@types/node@20.11.29)
+      vite-node: 1.4.0(@types/node@20.11.29)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
