@@ -7,7 +7,9 @@ import logger from '@wdio/logger'
 import type { Mock } from 'vitest'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import {
+    capabilitiesErrorMessage,
     checkStorybookIsRunning,
+    createChromeCapabilityWithEmulation,
     createFileData,
     createStorybookCapabilities,
     createTestContent,
@@ -25,14 +27,38 @@ import {
     scanStorybook,
     writeTestFile,
 } from '../../src/storybook/utils.js'
-import type { Capabilities, Options } from '@wdio/types'
-import type { ScanStorybookReturnData } from '../../src/storybook/Types.js'
+import type { Options } from '@wdio/types'
+import type { CapabilityMap, EmulatedDeviceType, ScanStorybookReturnData } from '../../src/storybook/Types.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('node-fetch')
 vi.mock('node:fs')
 vi.mock('node:os')
+vi.mock('../../src/storybook/deviceDescriptors.ts', () => {
+    return {
+        deviceDescriptors: [
+            {
+                name: 'iPhone 14 Pro Max',
+                screen: {
+                    dpr: 3,
+                    width: 430,
+                    height: 932
+                },
+                userAgent: ''
+            },
+            {
+                name: 'Pixel 7',
+                screen: {
+                    dpr: 3,
+                    width: 430,
+                    height: 932
+                },
+                userAgent: ''
+            },
+        ]
+    }
+})
 
 describe('Storybook utils', () => {
     beforeEach(() => {
@@ -469,14 +495,110 @@ describe('Storybook utils', () => {
 
     })
 
+    describe('capabilitiesErrorMessage', () => {
+        const capabilityMap = {
+            chrome: {},
+            firefox: {},
+        } as CapabilityMap
+
+        const deviceDescriptors = [
+            { name: 'iPhone 14',  },
+            { name: 'Pixel 7', },
+        ] as EmulatedDeviceType[]
+
+        it('should throw an error when unsupported browsers are provided', () => {
+            const browsers = ['chrome', 'safari']
+            const devices: string[] = []
+            const isMobileEmulation = false
+
+            try {
+                capabilitiesErrorMessage(browsers, capabilityMap, devices, deviceDescriptors, isMobileEmulation)
+                throw new Error('Test failed - should have thrown an error')
+            } catch (error: any) {
+                expect(error.message).toMatchSnapshot()
+            }
+        })
+
+        it('should throw an error when unsupported devices are provided', () => {
+            const browsers = ['chrome']
+            const devices = ['iPhone 14', 'Unknown Device']
+            const isMobileEmulation = true
+
+            try {
+                capabilitiesErrorMessage(browsers, capabilityMap, devices, deviceDescriptors, isMobileEmulation)
+                throw new Error('Test failed - should have thrown an error')
+            } catch (error: any) {
+                expect(error.message).toMatchSnapshot()
+            }
+        })
+
+        it('should throw an error when both unsupported browsers and devices are provided', () => {
+            const browsers = ['chrome', 'safari']
+            const devices = ['Unknown Device']
+            const isMobileEmulation = true
+
+            try {
+                capabilitiesErrorMessage(browsers, capabilityMap, devices, deviceDescriptors, isMobileEmulation)
+                throw new Error('Test failed - should have thrown an error')
+            } catch (error: any) {
+                expect(error.message).toMatchSnapshot()
+            }
+        })
+
+        it('should throw an error when nothing is provided', () => {
+            const browsers: string[] = []
+            const devices: string[] = []
+            const isMobileEmulation = false
+
+            try {
+                capabilitiesErrorMessage(browsers, capabilityMap, devices, deviceDescriptors, isMobileEmulation)
+                throw new Error('Test failed - should have thrown an error')
+            } catch (error: any) {
+                expect(error.message).toMatchSnapshot()
+            }
+        })
+    })
+
+    describe('createChromeCapabilityWithEmulation', () => {
+        it('should create a Chrome capability with mobile emulation for a given device and headless mode', () => {
+            const device: EmulatedDeviceType = {
+                name: 'iPhone 14 Pro',
+                screen: {
+                    dpr: 3,
+                    width: 1170,
+                    height: 2532
+                },
+                userAgent: 'some-user-agent-string-for-iPhone'
+            }
+            const capability = createChromeCapabilityWithEmulation(device, true)
+
+            expect(capability).toMatchSnapshot()
+        })
+
+        it('should create a Chrome capability with mobile emulation for a given device in non-headless mode', () => {
+            const device: EmulatedDeviceType = {
+                name: 'Pixel 7',
+                screen: {
+                    dpr: 2.5,
+                    width: 1080,
+                    height: 2340
+                },
+                userAgent: 'some-user-agent-string-for-Pixel'
+            }
+            const capability = createChromeCapabilityWithEmulation(device, false)
+
+            expect(capability).toMatchSnapshot()
+        })
+    })
+
     describe('createStorybookCapabilities', () => {
         let originalArgv: NodeJS.Process['argv']
         let logMock: Logger
-        let capabilities: Capabilities.RemoteCapabilities
+        let capabilities: WebdriverIO.Capabilities[]
 
         beforeEach(() => {
             originalArgv = [...process.argv]
-            logMock = { error: vi.fn() } as unknown as Logger
+            logMock = { error: vi.fn(), info: vi.fn() } as unknown as Logger
             capabilities = []
         })
 
@@ -488,7 +610,7 @@ describe('Storybook utils', () => {
             createStorybookCapabilities(capabilities, logMock)
 
             expect(capabilities).toHaveLength(1)
-            expect((capabilities as Capabilities.DesiredCapabilities[])[0].browserName).toBe('chrome')
+            expect((capabilities)[0].browserName).toBe('chrome')
         })
 
         it('should modify capabilities based on provided browsers', () => {
@@ -496,12 +618,13 @@ describe('Storybook utils', () => {
             createStorybookCapabilities(capabilities, logMock)
 
             expect(capabilities).toHaveLength(3)
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[0]).browserName).toBe('chrome')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[0])['goog:chromeOptions']?.args).toContain('--headless')
-            expect((capabilities as Capabilities.DesiredCapabilities[])[1].browserName).toBe('firefox')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[1])['moz:firefoxOptions']?.args).toContain('-headless')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[2]).browserName).toBe('MicrosoftEdge')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[2])['ms:edgeOptions']?.args).toContain('--headless')
+            console.log('capabilities = ', capabilities)
+            expect((capabilities)[0].browserName).toBe('firefox')
+            expect(((capabilities)[0])['moz:firefoxOptions']?.args).toContain('-headless')
+            expect(((capabilities)[1]).browserName).toBe('MicrosoftEdge')
+            expect(((capabilities)[1])['ms:edgeOptions']?.args).toContain('--headless')
+            expect(((capabilities)[2]).browserName).toBe('chrome')
+            expect(((capabilities)[2])['goog:chromeOptions']?.args).toContain('--headless')
         })
 
         it('should not have headless if provided', () => {
@@ -509,19 +632,59 @@ describe('Storybook utils', () => {
             createStorybookCapabilities(capabilities, logMock)
 
             expect(capabilities).toHaveLength(3)
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[0]).browserName).toBe('chrome')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[0])['goog:chromeOptions']?.args).not.toContain('--headless')
-            expect((capabilities as Capabilities.DesiredCapabilities[])[1].browserName).toBe('firefox')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[1])['moz:firefoxOptions']?.args).not.toContain('-headless')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[2]).browserName).toBe('MicrosoftEdge')
-            expect(((capabilities as Capabilities.DesiredCapabilities[])[2])['ms:edgeOptions']?.args).not.toContain('--headless')
+            expect((capabilities)[0].browserName).toBe('firefox')
+            expect(((capabilities)[0])['moz:firefoxOptions']?.args).not.toContain('-headless')
+            expect(((capabilities)[1]).browserName).toBe('MicrosoftEdge')
+            expect(((capabilities)[1])['ms:edgeOptions']?.args).not.toContain('--headless')
+            expect(((capabilities)[2]).browserName).toBe('chrome')
+            expect(((capabilities)[2])['goog:chromeOptions']?.args).not.toContain('--headless')
         })
 
         it('logs an error if capabilities are not an array', () => {
             const invalidCapabilities = {}
-            createStorybookCapabilities(invalidCapabilities, logMock)
+            const createChromeCapabilityWithEmulationMock = vi.fn()
+            const mockErrorMessageFunc = vi.fn()
+            // @ts-ignore, ignoring because we need to provide invalid capabilities
+            createStorybookCapabilities(invalidCapabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
 
-            expect(logMock.error).toHaveBeenCalledWith('The capabilities are not an array')
+            expect(logMock.error).toMatchSnapshot()
+        })
+
+        it('adds Chrome capabilities with mobile emulation for specified devices', () => {
+            process.argv.push('--devices', 'iPhone 14 Pro Max,Pixel 7')
+            const createChromeCapabilityWithEmulationMock = vi.fn()
+            const mockErrorMessageFunc = vi.fn()
+            createStorybookCapabilities(capabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
+
+            expect(logMock.info).toHaveBeenCalledTimes(1)
+            expect(createChromeCapabilityWithEmulationMock).toHaveBeenCalledTimes(2)
+        })
+
+        it('logs an error for unsupported devices', () => {
+            process.argv.push('--devices', 'Unsupported Device')
+            const createChromeCapabilityWithEmulationMock = vi.fn()
+            const mockErrorMessageFunc = vi.fn()
+            createStorybookCapabilities(capabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
+
+            expect(mockErrorMessageFunc).toHaveBeenCalledOnce()
+        })
+
+        it('calls error message function for unsupported browsers', () => {
+            process.argv.push('--browsers', 'unsupportedBrowser')
+            const createChromeCapabilityWithEmulationMock = vi.fn()
+            const mockErrorMessageFunc = vi.fn()
+            createStorybookCapabilities(capabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
+
+            expect(mockErrorMessageFunc).toHaveBeenCalled()
+        })
+
+        it('calls error message function when no capabilities are added', () => {
+            process.argv.push('--browsers', 'unsupportedBrowser', '--devices', 'Unsupported Device')
+            const createChromeCapabilityWithEmulationMock = vi.fn()
+            const mockErrorMessageFunc = vi.fn()
+            createStorybookCapabilities(capabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
+
+            expect(mockErrorMessageFunc).toHaveBeenCalled()
         })
     })
 

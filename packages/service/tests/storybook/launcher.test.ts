@@ -55,9 +55,12 @@ describe('Visual Launcher for Storybook', () => {
 
             expect(vi.mocked(storybookUtils.isStorybookMode)).toHaveBeenCalledOnce()
             expect(vi.mocked(storybookUtils.isCucumberFramework)).toHaveBeenCalledOnce()
-            expect(logInfoMock.mock.calls[0][0]).toContain('Running `@wdio/visual-service` in Storybook mode.')
+            expect(logInfoMock.mock.calls[0][0]).toMatchSnapshot()
+            expect(logInfoMock.mock.calls[1][0]).toMatchSnapshot()
             expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
             expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith([], log)
+            expect(vi.mocked(storybookUtils.createTestFiles)).toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.createStorybookCapabilities)).toHaveBeenCalled()
         })
 
         it('should process all process.argv data', async () => {
@@ -96,7 +99,7 @@ describe('Visual Launcher for Storybook', () => {
             }
 
             const logInfoMock = vi.spyOn(log, 'info')
-            vi.mocked(storybookUtils.isCucumberFramework).mockReturnValue(true)
+            vi.mocked(storybookUtils.isCucumberFramework).mockReturnValueOnce(true)
 
             let error
             try {
@@ -106,10 +109,47 @@ describe('Visual Launcher for Storybook', () => {
             }
 
             expect(error).toBeDefined()
-            expect((error as Error).message).toContain('Running Storybook in combination with the cucumber framework adapter is not supported.')
+            expect((error as Error).message).toMatchSnapshot()
             expect(vi.mocked(storybookUtils.isStorybookMode)).toHaveBeenCalledOnce()
             expect(vi.mocked(storybookUtils.isCucumberFramework)).toHaveBeenCalledOnce()
             expect(logInfoMock).not.toHaveBeenCalled()
+            // Ensure other mocks were not called
+            expect(vi.mocked(storybookUtils.getArgvValue)).not.toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.parseSkipStories)).not.toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.createTestFiles)).not.toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.createStorybookCapabilities)).not.toHaveBeenCalled()
+        })
+
+        it('should throw an error for storybook multiremote', async () => {
+            if (!Launcher.onPrepare) {
+                throw new Error('onPrepare method is not defined on Launcher')
+            }
+
+            const logInfoMock = vi.spyOn(log, 'info')
+            const multiremoteCaps = {
+                myChromeBrowser: {
+                    capabilities: {
+                        browserName: 'chrome'
+                    }
+                },
+                myFirefoxBrowser: {
+                    capabilities: {
+                        browserName: 'firefox'
+                    }
+                }
+            }
+            let error
+            try {
+                await Launcher.onPrepare(config, multiremoteCaps)
+            } catch (e) {
+                error = e
+            }
+
+            console.log(error)
+
+            expect(error).toBeDefined()
+            expect((error as Error).message).toMatchSnapshot()
+            expect(logInfoMock).toHaveBeenCalledOnce()
             // Ensure other mocks were not called
             expect(vi.mocked(storybookUtils.getArgvValue)).not.toHaveBeenCalled()
             expect(vi.mocked(storybookUtils.parseSkipStories)).not.toHaveBeenCalled()

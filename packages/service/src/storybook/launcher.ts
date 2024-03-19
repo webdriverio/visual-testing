@@ -39,6 +39,16 @@ export default class VisualLauncher extends BaseClass  {
             // Set an environment variable so it can be used in the onComplete hook
             process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER = tempDir
 
+            // Check the capabilities
+            // Multiremote capabilities are not supported
+            if (typeof capabilities === 'object' && !Array.isArray(capabilities)) {
+                throw new SevereServiceError('\n\nRunning Storybook in combination with Multiremote is not supported.\nRemove your `capabilities` property from your config or assign an empty array to it like `capabilities: [],`.\n\n')
+            }
+
+            // Clear the capabilities
+            capabilities.length = 0
+            log.info('Clearing the current capabilities.')
+
             // Determine some run options
             // --version
             const versionOption = this.#options?.storybook?.version
@@ -79,7 +89,7 @@ export default class VisualLauncher extends BaseClass  {
             })
 
             // Create the capabilities
-            createStorybookCapabilities(capabilities, log)
+            createStorybookCapabilities(capabilities as WebdriverIO.Capabilities[], log)
         }
     }
 

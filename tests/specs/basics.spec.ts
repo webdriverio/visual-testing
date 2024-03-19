@@ -1,18 +1,8 @@
+import { join } from 'node:path'
 import { browser, expect } from '@wdio/globals'
 import { fileExists } from '../helpers/fileExists.ts'
 
 describe('@wdio/visual-service basics', () => {
-    let logName: string
-    const resolution = '1366x768'
-
-    before(() => {
-        logName =
-            'wdio-ics:options' in browser.requestedCapabilities
-                ? // @ts-ignore
-                browser.requestedCapabilities['wdio-ics:options']?.logName
-                : ''
-    })
-
     beforeEach(async () => {
         await browser.url('')
         await browser.pause(500)
@@ -23,36 +13,33 @@ describe('@wdio/visual-service basics', () => {
 
     describe('save methods', () => {
         it('should do a save screen', async () => {
-            const tag = 'examplePage'
-            const imageData = await browser.saveScreen('examplePage')
-            const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
+            const { fileName, path } = await browser.saveScreen('examplePage')
+            const filePath = join(path as string, fileName as string)
 
             expect(fileExists(filePath)).toBe(true)
         })
 
         it('should do a save element', async () => {
-            const tag = 'wdioLogo'
-            const imageData = await browser.saveElement(
+            const { fileName, path } = await browser.saveElement(
                 await $('.hero__title-logo'),
-                tag,
+                'wdioLogo',
                 {
                     removeElements: [await $('nav.navbar')]
                 }
             )
-            const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
+            const filePath = join(path as string, fileName as string)
 
             expect(fileExists(filePath)).toBe(true)
         })
 
         it('should save a fullpage screenshot', async () => {
-            const tag = 'fullPage'
-            const imageData = await browser.saveFullPageScreen(tag, {
+            const { fileName, path } = await browser.saveFullPageScreen('fullPage', {
                 fullPageScrollTimeout: 1500,
                 hideAfterFirstScroll: [
                     await $('nav.navbar'),
                 ],
             })
-            const filePath = `${imageData.path}/${tag}-${logName}-${resolution}.png`
+            const filePath = join(path as string, fileName as string)
 
             expect(fileExists(filePath)).toBe(true)
         })
