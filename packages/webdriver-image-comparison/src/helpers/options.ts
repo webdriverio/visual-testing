@@ -20,12 +20,12 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         autoSaveBaseline: options.autoSaveBaseline ?? true,
         clearFolder: options.clearRuntimeFolder ?? false,
         // Storybook will have it's own default format string
-        formatImageName: options.formatImageName ?? isStorybook() ? STORYBOOK_FORMAT_STRING : DEFAULT_FORMAT_STRING,
+        formatImageName: options.formatImageName ?? (isStorybook() ? STORYBOOK_FORMAT_STRING : DEFAULT_FORMAT_STRING),
         isHybridApp: options.isHybridApp ?? false,
         logLevel: options.logLevel ?? LogLevel.info,
         // Running in storybook mode with a min of 2 browsers can cause huge amount of images to be saved
         // by defaulting this to true the user will have a better overview
-        savePerInstance: options.savePerInstance ?? isStorybook() ? true : false,
+        savePerInstance: options.savePerInstance ?? (isStorybook() ? true : false),
         toolBarShadowPadding: options.toolBarShadowPadding ?? DEFAULT_SHADOW.TOOL_BAR,
 
         /**
