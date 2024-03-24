@@ -309,7 +309,7 @@ jobs:
           SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
           SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
           BUILD_PREFIX: true
-        run: pnpm test.saucelabs.emu.web --maxConcurrency=25
+        run: pnpm test.saucelabs.sims.web --maxConcurrency=25
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
