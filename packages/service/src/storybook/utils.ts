@@ -1,4 +1,4 @@
-import type { Logger } from '@wdio/logger'
+import logger from '@wdio/logger'
 import type { Options } from '@wdio/types'
 import fetch from 'node-fetch'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -19,6 +19,8 @@ import type {
     CapabilityMap,
 } from './Types.js'
 import { deviceDescriptors } from './deviceDescriptors.js'
+
+const log = logger('@wdio/visual-service:storybook-utils')
 
 /**
  * Check if we run for Storybook
@@ -58,7 +60,7 @@ export async function checkStorybookIsRunning(url: string) {
             throw new Error(`Unxpected status: ${res.status}`)
         }
     } catch (e) {
-        console.error(`It seems that the Storybook instance is not running at: ${url}. Are you sure it's running?`)
+        log.error(`It seems that the Storybook instance is not running at: ${url}. Are you sure it's running?`)
         process.exit(1)
     }
 }
@@ -111,8 +113,8 @@ export async function getStoriesJson(url: string): Promise<Stories> {
                 return (data as StoriesRes).stories || (data as IndexRes).entries
             }
         }
-    } catch (err) {
-        console.error(err)
+    } catch (ign) {
+        // Ignore the error
     }
 
     throw new Error(`Failed to fetch index data from the project. Ensure URLs are available with valid data: ${storiesJsonUrl}, ${indexJsonUrl}.`)
@@ -181,7 +183,7 @@ export function itFunction({ clip, clipSelector, folders: { baselineFolder }, fr
 /**
  * Write the test file
  */
-export function writeTestFile(directoryPath: string, fileID: string, log: Logger, testContent: string) {
+export function writeTestFile(directoryPath: string, fileID: string, testContent: string) {
     const filePath = join(directoryPath, `${fileID}.test.js`)
     try {
         writeFileSync(filePath, testContent)
@@ -269,7 +271,7 @@ ${waitForAllImagesLoaded}
  * Create the test files
  */
 export function createTestFiles(
-    { clip, clipSelector, directoryPath, folders, framework, log, numShards, skipStories, storiesJson, storybookUrl }: CreateTestFileOptions,
+    { clip, clipSelector, directoryPath, folders, framework, numShards, skipStories, storiesJson, storybookUrl }: CreateTestFileOptions,
     // For testing purposes only
     createTestCont = createTestContent,
     createFileD = createFileData,
@@ -286,7 +288,7 @@ export function createTestFiles(
     if (numShards === 1) {
         const testContent = createTestCont(createTestContentData)
         const fileData = createFileD('All stories', testContent)
-        writeTestF(directoryPath, `${fileNamePrefix}-1-1`, log, fileData)
+        writeTestF(directoryPath, `${fileNamePrefix}-1-1`, fileData)
     } else {
         const totalStories = storiesArray.length
         const storiesPerShard = Math.ceil(totalStories / numShards)
@@ -300,7 +302,7 @@ export function createTestFiles(
             const describeTitle = `Shard ${shard + 1} of ${numShards}`
             const fileData = createFileD(describeTitle, testContent)
 
-            writeTestF(directoryPath, fileId, log, fileData)
+            writeTestF(directoryPath, fileId, fileData)
         }
     }
 }
@@ -362,7 +364,7 @@ export function capabilitiesErrorMessage(
  * Create the storybook capabilities based on the specified browsers
  */
 export function createStorybookCapabilities(
-    capabilities: WebdriverIO.Capabilities[], log: Logger,
+    capabilities: WebdriverIO.Capabilities[],
     // For testing purposes only
     createChromeCapabilityWithEmulationFunc = createChromeCapabilityWithEmulation,
     capabilitiesErrorMessageFunc = capabilitiesErrorMessage,
@@ -458,7 +460,6 @@ export function createStorybookCapabilities(
  */
 export async function scanStorybook(
     config: Options.Testrunner,
-    log: Logger,
     options: ClassOptions,
     // For testing purposes only
     getArgvVal = getArgvValue,
@@ -491,7 +492,7 @@ export async function scanStorybook(
 /**
  * Parse the stories to skip
  */
-export function parseSkipStories(skipStories: string | string[], log: Logger): RegExp | string[] {
+export function parseSkipStories(skipStories: string | string[]): RegExp | string[] {
     if (Array.isArray(skipStories)) {
         return skipStories
     }

@@ -58,7 +58,7 @@ describe('Visual Launcher for Storybook', () => {
             expect(logInfoMock.mock.calls[0][0]).toMatchSnapshot()
             expect(logInfoMock.mock.calls[1][0]).toMatchSnapshot()
             expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
-            expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith([], log)
+            expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith([])
             expect(vi.mocked(storybookUtils.createTestFiles)).toHaveBeenCalled()
             expect(vi.mocked(storybookUtils.createStorybookCapabilities)).toHaveBeenCalled()
         })
@@ -77,7 +77,7 @@ describe('Visual Launcher for Storybook', () => {
             await Launcher.onPrepare(config, caps)
 
             expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
-            expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith(['foo-bar-foo'], log)
+            expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith(['foo-bar-foo'])
         })
 
         it('should process all options data', async () => {
@@ -90,7 +90,7 @@ describe('Visual Launcher for Storybook', () => {
             await Launcher.onPrepare(config, caps)
 
             expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
-            expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith('skipStories', log)
+            expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith('skipStories')
         })
 
         it('should throw an error for storybook and cucumber', async () => {
@@ -144,8 +144,6 @@ describe('Visual Launcher for Storybook', () => {
             } catch (e) {
                 error = e
             }
-
-            console.log(error)
 
             expect(error).toBeDefined()
             expect((error as Error).message).toMatchSnapshot()

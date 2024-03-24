@@ -8,6 +8,22 @@ exports[`Storybook utils > capabilitiesErrorMessage > should throw an error when
 
 exports[`Storybook utils > capabilitiesErrorMessage > should throw an error when unsupported devices are provided 1`] = `"No capabilities were added. Please ensure that the devices 'iPhone 14,Unknown Device' are supported."`;
 
+exports[`Storybook utils > checkStorybookIsRunning > should throw an error if storybook is not running 1`] = `
+[MockFunction spy] {
+  "calls": [
+    [
+      "It seems that the Storybook instance is not running at: https://not.running.it. Are you sure it's running?",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
 exports[`Storybook utils > createChromeCapabilityWithEmulation > should create a Chrome capability with mobile emulation for a given device and headless mode 1`] = `
 {
   "browserName": "chrome",
@@ -327,4 +343,22 @@ exports[`Storybook utils > itFunction > generates correct test code with mocha f
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
     });
     "
+`;
+
+exports[`Storybook utils > parseSkipStories > logs an error and returns an array if skipStories is an invalid regex string 1`] = `
+[MockFunction spy] {
+  "calls": [
+    [
+      "Invalid regular expression:",
+      [SyntaxError: Invalid regular expression: /[unclosed-regex/: Unterminated character class],
+      ". Not using a regular expression to skip stories.",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
 `;
