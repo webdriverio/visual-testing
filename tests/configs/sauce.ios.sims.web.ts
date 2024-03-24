@@ -8,35 +8,6 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
     // For all screen sizes see
     // https://github.com/wswebcreation/webdriver-image-comparison/blob/main/lib/helpers/constants.ts
-    const iOS14Devices = [
-        // 667
-        'iPhone 8 Simulator',
-        // 736
-        'iPhone 8 Plus Simulator',
-        // 812
-        'iPhone XS Simulator',
-        // 844
-        'iPhone 12 Simulator',
-        // 896
-        'iPhone 11 Simulator',
-        // 926
-        'iPhone 12 Pro Max Simulator',
-        // 1024
-        'iPad Air 2 Simulator',
-        // 1080
-        'iPad (5th generation) Simulator',
-        // 1112
-        'iPad Pro (10.5 inch) Simulator',
-        // 1133 => not available for iOS 14
-        // 1180
-        'iPad Air (4th generation) Simulator',
-        // 1194
-        'iPad Pro (11 inch) (3rd generation) Simulator',
-        // 1366
-        'iPad Pro (12.9 inch) (1st generation) Simulator',
-        // 1366
-        'iPad Pro (12.9 inch) (5th generation) Simulator',
-    ]
     const iOS15Devices = [
         // 667
         'iPhone 8 Simulator',
@@ -99,27 +70,6 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
     ]
 
     return [
-        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
-            .map((orientation) =>
-                iOS14Devices.map((device) =>
-                    createCaps({
-                        deviceName: device,
-                        platformVersion: '14.5',
-                        orientation: orientation,
-                        mobileSpecs,
-                        sauceOptions: {
-                            build: buildName,
-                            deviceOrientation: orientation,
-                        },
-                        wdioIcsCommands: [
-                            'checkScreen',
-                            // 'checkElement', // Disabled because it's flaky on Sauce Labs
-                            'checkFullPageScreen',
-                        ],
-                    })
-                )
-            )
-            .flat(1),
         ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS15Devices.map((device) =>
