@@ -78,6 +78,7 @@ export const ANDROID_OFFSETS = {
 // You can also check:
 // - mydevice.io
 // - https://useyourloaf.com/archives/
+// - https://blisk.io/devices
 // Corners come from:
 // - https://github.com/kylebshr/ScreenCorners
 //   One point is the equivalent of 1.333(3) pixels.

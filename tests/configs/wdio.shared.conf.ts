@@ -17,7 +17,7 @@ export const config: Options.Testrunner = {
     // ============
     // Capabilities
     // ============
-    maxInstances: 20,
+    maxInstances: 25,
     // For the rest see the specific configs
     capabilities: [],
 

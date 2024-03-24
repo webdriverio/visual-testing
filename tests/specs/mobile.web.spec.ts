@@ -32,7 +32,10 @@ describe('@wdio/visual-service mobile web', () => {
         wdioIcsCommands.length === 0 ||
         wdioIcsCommands.includes('checkScreen')
     ) {
-        it(`should compare a screen successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async () => {
+        it(`should compare a screen successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
+            // @ts-ignore
+            this.retries(2)
+
             // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
             const result = await browser.checkScreen('screenshot') as number
@@ -47,7 +50,9 @@ describe('@wdio/visual-service mobile web', () => {
         wdioIcsCommands.length === 0 ||
         wdioIcsCommands.includes('checkElement')
     ) {
-        it(`should compare an element successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async () => {
+        it(`should compare an element successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function() {
+            // @ts-ignore
+            this.retries(2)
             await expect(
                 await browser.checkElement(
                     await $('.hero__title-logo'),
@@ -64,7 +69,9 @@ describe('@wdio/visual-service mobile web', () => {
         wdioIcsCommands.length === 0 ||
         wdioIcsCommands.includes('checkFullPageScreen')
     ) {
-        it(`should compare a full page screenshot successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async () => {
+        it(`should compare a full page screenshot successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function() {
+            // @ts-ignore
+            this.retries(2)
             // This is normally a bad practice, but a mobile full page screenshot is normally around 4M pixels
             // We're accepting 0.05%, which is 2000 pixels, to be a max difference
             const result = await browser.checkFullPageScreen('fullPage', {

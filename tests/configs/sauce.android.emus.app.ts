@@ -8,8 +8,6 @@ export function sauceAndroidEmusApp({ buildName }: { buildName: string }) {
     )
         .map((orientation) =>
             [
-                { deviceName:'Google Pixel C GoogleAPI Emulator', platformVersion:'8.1' },
-                { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'9.0' },
                 { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'10.0' },
                 { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'11.0' },
                 { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'12.0' },

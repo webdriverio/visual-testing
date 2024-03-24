@@ -8,14 +8,71 @@ on:
   pull_request_target:
 
 jobs:
-  ci-web:
+  dependency-check:
+    name: 🔎 📦 Dependency Check
     runs-on: ubuntu-latest
-    # Src: https://hugo.alliau.me/posts/2021-05-04-migration-to-github-native-dependabot-solutions-for-auto-merge-and-action-secrets.html#share-your-secrets-with-dependabot
-    # If the PR is coming from a fork (pull_request_target), ensure it's opened by "dependabot[bot]".
-    # Otherwise, clone it normally.
-    if: |
-        (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
-        (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
+    outputs:
+      run_unit_tests: ${{ steps.set-vars.outputs.run_unit_tests }}
+      run_web_tests: ${{ steps.set-vars.outputs.run_web_tests }}
+    steps:
+      - name: 🧐 Determine Job to Run
+        id: set-vars
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          UNIT_TEST_REGEX='(@typescript-eslint|vitest|eslint|@types|@tsconfig|ts-node|jsdom|typescript)'
+          WEB_TEST_REGEX='(@wdio(?!\/appium-service)|copyfiles|rimraf|saucelabs|webdriverio)'
+          if [[ $PR_TITLE =~ $UNIT_TEST_REGEX ]]; then
+            echo "::set-output name=run_unit_tests::true"
+          fi
+          if [[ $PR_TITLE =~ $WEB_TEST_REGEX ]]; then
+            echo "::set-output name=run_web_tests::true"
+          fi
+
+  ci-dependency-unit-test:
+    name: 🧪 CI Dependency Update Run Unit Tests
+    needs: dependency-check
+    if: needs.dependency-check.outputs.run_unit_tests == 'true'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Checkout PR Repository
+        uses: actions/checkout@v3
+        with:
+            ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🧪 Run linting and unit tests
+        run: pnpm test
+
+  ci-dependency-web:
+    name: 🌐 CI Dependency Update Run Desktop Web Tests
+    needs: dependency-check
+    if: needs.dependency-check.outputs.run_web_tests == 'true'
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -54,19 +111,19 @@ jobs:
         working-directory: ./
         run: pnpm test
 
-      - name: 😶‍🌫️ 🕸️ Run Web e2e tests
+      - name: 🖥️ 🌐 Run Desktop Web e2e tests
         working-directory: ./
         env:
           SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
           SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
           BUILD_PREFIX: true
-        run: pnpm test.saucelabs.web --maxConcurrency=25
+        run: pnpm test.saucelabs.desktop
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: web-logs
+          name: dependency-update-desktop-web-logs
           path: |
             logs/*.log
             .tmp/
@@ -74,14 +131,204 @@ jobs:
             !.tmp/saveActual/
             !.tmp/testDiff/
 
-  ci-app:
+  ci-pr-desktop-web:
+    name: 🔄 💻 CI PR Run Desktop Web Tests
     runs-on: ubuntu-latest
-    # Src: https://hugo.alliau.me/posts/2021-05-04-migration-to-github-native-dependabot-solutions-for-auto-merge-and-action-secrets.html#share-your-secrets-with-dependabot
-    # If the PR is coming from a fork (pull_request_target), ensure it's opened by "dependabot[bot]".
-    # Otherwise, clone it normally.
     if: |
-        (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
-        (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
+      github.event_name == 'pull_request' &&
+      github.actor != 'dependabot[bot]'
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Checkout PR Repository
+        if: ${{ github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v3
+        with:
+            ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🧪 Run linting and unit tests
+        working-directory: ./
+        run: pnpm test
+
+      - name: 🖥️ 🌐 Run Desktop Web e2e tests
+        working-directory: ./
+        env:
+          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
+          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          BUILD_PREFIX: true
+        run: pnpm test.saucelabs.desktop --maxConcurrency=20
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ci-pr-desktop-web-logs
+          path: |
+            logs/*.log
+            .tmp/
+            !.tmp/checkActual/
+            !.tmp/saveActual/
+            !.tmp/testDiff/
+
+  ci-pr-android-web:
+    name: 🔄 🤖 🌐 CI PR Run Android Web Tests
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.actor != 'dependabot[bot]'
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Checkout PR Repository
+        if: ${{ github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v3
+        with:
+            ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🧪 Run linting and unit tests
+        working-directory: ./
+        run: pnpm test
+
+      - name: 🤖 🌐 Run Android Web e2e tests
+        working-directory: ./
+        env:
+          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
+          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          BUILD_PREFIX: true
+        run: pnpm test.saucelabs.emu.web --maxConcurrency=20
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ci-pr-android-web-logs
+          path: |
+            logs/*.log
+            .tmp/
+            !.tmp/checkActual/
+            !.tmp/saveActual/
+            !.tmp/testDiff/
+
+  ci-pr-ios-web:
+    name: 🔄 🍏 🌐 CI PR Run iOS Web Tests
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.actor != 'dependabot[bot]'
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Checkout PR Repository
+        if: ${{ github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v3
+        with:
+            ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🧪 Run linting and unit tests
+        working-directory: ./
+        run: pnpm test
+
+      - name: 🍏 🌐 Run iOS Web e2e tests
+        working-directory: ./
+        env:
+          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
+          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          BUILD_PREFIX: true
+        run: pnpm test.saucelabs.sims.web --maxConcurrency=25
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ci-pr-ios-web-logs
+          path: |
+            logs/*.log
+            .tmp/
+            !.tmp/checkActual/
+            !.tmp/saveActual/
+            !.tmp/testDiff/
+
+  ci-pr-app:
+    name: 🔄 📱 CI PR Run Mobile App Tests
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.actor != 'dependabot[bot]'
 
     strategy:
       matrix:
@@ -126,13 +373,13 @@ jobs:
           SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
           SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
           BUILD_PREFIX: true
-        run: pnpm test.saucelabs.app --maxConcurrency=5
+        run: pnpm test.saucelabs.app --maxConcurrency=15
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: app-logs
+          name: ci-pr-mobile-app-logs
           path: |
             logs/*.log
             .tmp/
