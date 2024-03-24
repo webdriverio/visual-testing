@@ -7,7 +7,7 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
         ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
     )
         .map((orientation) =>
-            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0', '14.0'].map(
+            ['10.0', '11.0', '12.0', '13.0', '14.0'].map(
                 (platformVersion) =>
                     createCaps({
                         deviceName: 'Android GoogleAPI Emulator',
@@ -26,7 +26,7 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
         ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
     )
         .map((orientation) =>
-            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0', '14.0'].map(
+            ['10.0', '11.0', '12.0', '13.0', '14.0'].map(
                 (platformVersion) =>
                     createCaps({
                         deviceName: 'Android GoogleAPI Emulator',
@@ -52,11 +52,9 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
         ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
     )
         .map((orientation) =>
-            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0'].map(
+            ['10.0', '11.0', '12.0', '13.0'].map(
                 (platformVersion) => {
                     const tabletTypesByVersion: Record<string, string> = {
-                        '8.1': 'S3',
-                        '9.0': 'S3',
                         '10.0': 'S3',
                         '11.0': 'S7 Plus',
                         '12.0': 'S7 Plus',
@@ -83,10 +81,8 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
     // There is no Android 10 for Tablets
     const nativeWebScreenshotTablets = (['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
         .map((orientation) =>
-            ['8.1', '9.0', '10.0', '11.0', '12.0', '13.0'].map((platformVersion) => {
+            ['10.0', '11.0', '12.0', '13.0'].map((platformVersion) => {
                 const tabletTypesByVersion: Record<string, string> = {
-                    '8.1': 'S3',
-                    '9.0': 'S3',
                     '10.0': 'S3',
                     '11.0': 'S7 Plus',
                     '12.0': 'S7 Plus',
