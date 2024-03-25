@@ -1,5 +1,5 @@
-import type { StatusAddressToolBarOffsets } from './statusAddressToolBarOffsets.interfaces'
-import type { AndroidOffsets } from '../helpers/constants.interfaces'
+import type { StatusAddressToolBarOffsets } from './statusAddressToolBarOffsets.interfaces.js'
+import type { AndroidOffsets } from '../helpers/constants.interfaces.js'
 
 /**
  * Get the current height of the Android status and address bar

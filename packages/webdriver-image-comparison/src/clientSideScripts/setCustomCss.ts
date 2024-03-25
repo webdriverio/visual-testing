@@ -1,4 +1,4 @@
-import type { CssOptions } from './customCss.interfaces'
+import type { CssOptions } from './customCss.interfaces.js'
 
 /**
  * Set some default css

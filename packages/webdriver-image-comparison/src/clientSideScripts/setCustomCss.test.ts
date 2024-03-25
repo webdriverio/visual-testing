@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect } from 'vitest'
-import type { CssOptions } from './customCss.interfaces'
+import type { CssOptions } from './customCss.interfaces.js'
 import setCustomCss from './setCustomCss.js'
 
 describe('setCustomCss', () => {

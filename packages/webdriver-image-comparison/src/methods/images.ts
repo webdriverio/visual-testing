@@ -1,5 +1,5 @@
-import { access, copySync, outputFile, readFileSync } from 'fs-extra'
-import { join } from 'node:path'
+import { access, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
 import { createCanvas, loadImage } from 'canvas'
 import type { ComparisonOptions, ComparisonIgnoreOption } from 'resemblejs'
 import compareImages from '../resemble/compareImages.js'
@@ -18,11 +18,11 @@ import type {
     ResizeDimensions,
     RotateBase64ImageOptions,
     RotatedImage,
-} from './images.interfaces'
-import type { FullPageScreenshotsData } from './screenshots.interfaces'
-import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces'
-import type { CompareData } from '../resemble/compare.interfaces'
-import { LogLevel } from '../helpers/options.interfaces'
+} from './images.interfaces.js'
+import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
+import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces.js'
+import type { CompareData } from '../resemble/compare.interfaces.js'
+import { LogLevel } from '../helpers/options.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
 
 /**
@@ -39,7 +39,8 @@ export async function checkBaselineImageExists(
             if (error) {
                 if (autoSaveBaseline) {
                     try {
-                        copySync(actualFilePath, baselineFilePath)
+                        const data = readFileSync(actualFilePath, { encoding: 'base64' })
+                        writeFileSync(baselineFilePath, data)
                         if (logLevel === LogLevel.info) {
                             console.log(
                                 '\x1b[33m%s\x1b[0m',
@@ -186,8 +187,8 @@ async function handleIOSBezelCorners({
         const { topImageName, bottomImageName } = getIosBezelImageNames(normalizedDeviceName)
 
         if (topImageName && bottomImageName) {
-            const topImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${topImageName}.png`)).toString('base64')
-            const bottomImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${bottomImageName}.png`)).toString('base64')
+            const topImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${topImageName}.png`), { encoding: 'base64' })
+            const bottomImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${bottomImageName}.png`), { encoding: 'base64' })
 
             // If the screen is rotated the images need to be rotated
             const topBase64Image = isLandscape
@@ -419,6 +420,7 @@ export async function executeImageCompare(
     }
 
     // 5. Execute the compare and retrieve the data
+    console.log('readFileSync(baselineFilePath) = ', readFileSync(baselineFilePath))
     const data: CompareData = await compareImages(readFileSync(baselineFilePath), readFileSync(actualFilePath), compareOptions)
     const rawMisMatchPercentage = data.rawMisMatchPercentage
     const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
@@ -516,7 +518,8 @@ export async function makeFullPageBase64Image(
  * Save the base64 image to a file
  */
 export async function saveBase64Image(base64Image: string, filePath: string): Promise<void> {
-    return outputFile(filePath, base64Image, 'base64')
+    mkdirSync(dirname(filePath), { recursive: true })
+    writeFileSync(filePath, base64Image)
 }
 
 /**

@@ -4,7 +4,7 @@ import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndro
 import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
 import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getScreenshotSize, waitFor } from '../helpers/utils.js'
-import type { Executor, TakeScreenShot } from './methods.interfaces'
+import type { Executor, TakeScreenShot } from './methods.interfaces.js'
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
@@ -12,11 +12,11 @@ import type {
     FullPageScreenshotsData,
     TakeWebElementScreenshot,
     TakeWebElementScreenshotData,
-} from './screenshots.interfaces'
-import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces'
+} from './screenshots.interfaces.js'
+import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
-import { LogLevel } from '../helpers/options.interfaces'
+import { LogLevel } from '../helpers/options.interfaces.js'
 import type { ElementRectanglesOptions } from './rectangles.interfaces.js'
 import { determineElementRectangles } from './rectangles.js'
 

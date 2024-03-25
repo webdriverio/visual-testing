@@ -1,5 +1,5 @@
-import type { EnrichedInstanceData, InstanceData } from '../methods/instanceData.interfaces'
-import type { LogLevel } from './options.interfaces'
+import type { EnrichedInstanceData, InstanceData } from '../methods/instanceData.interfaces.js'
+import type { LogLevel } from './options.interfaces.js'
 
 export interface BeforeScreenshotOptions {
     // The instance data

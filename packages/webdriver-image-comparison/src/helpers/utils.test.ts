@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest'
-import { pathExistsSync, removeSync } from 'fs-extra'
+import { existsSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import {
     calculateDprData,
@@ -16,14 +16,14 @@ import {
     getScreenshotSize,
     getToolBarShadowPadding,
 } from './utils.js'
-import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces'
+import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 
 describe('utils', () => {
     describe('getAndCreatePath', () => {
         const folder = join(process.cwd(), '/.tmp/utils')
 
-        afterEach(() => removeSync(folder))
+        afterEach(() => rmSync(folder, { recursive: true, force: true }))
 
         it('should create the folder and return the folder name for a device that needs to have its own folder', () => {
             const options: GetAndCreatePathOptions = {
@@ -34,9 +34,9 @@ describe('utils', () => {
             }
             const expectedFolderName = join(folder, options.deviceName)
 
-            expect(pathExistsSync(expectedFolderName)).toMatchSnapshot()
+            expect(existsSync(expectedFolderName)).toMatchSnapshot()
             expect(getAndCreatePath(folder, options)).toEqual(expectedFolderName)
-            expect(pathExistsSync(expectedFolderName)).toMatchSnapshot()
+            expect(existsSync(expectedFolderName)).toMatchSnapshot()
         })
 
         it('should create the folder and return the folder name for a browser that needs to have its own folder', () => {
@@ -48,9 +48,9 @@ describe('utils', () => {
             }
             const expectedFolderName = join(folder, `desktop_${options.browserName}`)
 
-            expect(pathExistsSync(expectedFolderName)).toMatchSnapshot()
+            expect(existsSync(expectedFolderName)).toMatchSnapshot()
             expect(getAndCreatePath(folder, options)).toEqual(expectedFolderName)
-            expect(pathExistsSync(expectedFolderName)).toMatchSnapshot()
+            expect(existsSync(expectedFolderName)).toMatchSnapshot()
         })
 
         it('should create the folder and return the folder name for a browser', () => {
@@ -61,9 +61,9 @@ describe('utils', () => {
                 savePerInstance: false,
             }
 
-            expect(pathExistsSync(folder)).toMatchSnapshot()
+            expect(existsSync(folder)).toMatchSnapshot()
             expect(getAndCreatePath(folder, options)).toEqual(folder)
-            expect(pathExistsSync(folder)).toMatchSnapshot()
+            expect(existsSync(folder)).toMatchSnapshot()
         })
     })
 

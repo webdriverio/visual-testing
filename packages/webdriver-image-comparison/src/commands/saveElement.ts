@@ -1,8 +1,8 @@
-import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces'
-import type { Methods } from '../methods/methods.interfaces'
-import type { InstanceData } from '../methods/instanceData.interfaces'
-import type { Folders } from '../base.interfaces'
-import type { SaveElementOptions, WicElement } from './element.interfaces'
+import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
+import type { Methods } from '../methods/methods.interfaces.js'
+import type { InstanceData } from '../methods/instanceData.interfaces.js'
+import type { Folders } from '../base.interfaces.js'
+import type { SaveElementOptions, WicElement } from './element.interfaces.js'
 import saveAppElement from './saveAppElement.js'
 import saveWebElement from './saveWebElement.js'
 

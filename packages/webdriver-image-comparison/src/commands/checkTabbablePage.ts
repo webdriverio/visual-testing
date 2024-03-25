@@ -1,11 +1,11 @@
-import type { Methods } from '../methods/methods.interfaces'
-import type { InstanceData } from '../methods/instanceData.interfaces'
-import type { Folders } from '../base.interfaces'
+import type { Methods } from '../methods/methods.interfaces.js'
+import type { InstanceData } from '../methods/instanceData.interfaces.js'
+import type { Folders } from '../base.interfaces.js'
 import drawTabbableOnCanvas from '../clientSideScripts/drawTabbableOnCanvas.js'
-import type { CheckTabbableOptions } from './tabbable.interfaces'
+import type { CheckTabbableOptions } from './tabbable.interfaces.js'
 import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 import checkFullPageScreen from './checkFullPageScreen.js'
-import type { ImageCompareResult } from '..'
+import type { ImageCompareResult } from 'src/index.js'
 
 /**
  * Compare an image with all tab executions

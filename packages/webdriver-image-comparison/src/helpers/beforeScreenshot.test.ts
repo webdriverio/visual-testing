@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import beforeScreenshot from './beforeScreenshot.js'
-import { LogLevel } from './options.interfaces'
+import { LogLevel } from './options.interfaces.js'
 
 describe('beforeScreenshot', () => {
     it('should be able to return the enriched instance data with default options', async () => {

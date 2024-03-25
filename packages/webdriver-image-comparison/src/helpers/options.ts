@@ -1,7 +1,7 @@
 import { DEFAULT_FORMAT_STRING, DEFAULT_SHADOW, DEFAULT_TABBABLE_OPTIONS, FULL_PAGE_SCROLL_TIMEOUT, STORYBOOK_FORMAT_STRING } from './constants.js'
-import type { ClassOptions, DefaultOptions } from './options.interfaces'
-import { LogLevel } from './options.interfaces'
-import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces'
+import type { ClassOptions, DefaultOptions } from './options.interfaces.js'
+import { LogLevel } from './options.interfaces.js'
+import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 import { isStorybook } from './utils.js'
 
 /**

@@ -1,5 +1,5 @@
-import type { IosOffsets } from './constants.interfaces'
-import type { ResizeDimensions } from '../methods/images.interfaces'
+import type { IosOffsets } from './constants.interfaces.js'
+import type { ResizeDimensions } from '../methods/images.interfaces.js'
 
 export const DEFAULT_FORMAT_STRING = '{tag}-{browserName}-{width}x{height}-dpr-{dpr}'
 export const STORYBOOK_FORMAT_STRING = '{tag}-{logName}-{width}x{height}-dpr-{dpr}'

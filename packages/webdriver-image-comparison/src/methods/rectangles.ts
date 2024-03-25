@@ -8,11 +8,11 @@ import type {
     ScreenRectanglesOptions,
     StatusAddressToolBarRectangles,
     StatusAddressToolBarRectanglesOptions,
-} from './rectangles.interfaces'
-import type { Executor, GetElementRect } from './methods.interfaces'
+} from './rectangles.interfaces.js'
+import type { Executor, GetElementRect } from './methods.interfaces.js'
 import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
 import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
-import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces'
+import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces.js'
 import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
 import type { InstanceData } from './instanceData.interfaces.js'
 

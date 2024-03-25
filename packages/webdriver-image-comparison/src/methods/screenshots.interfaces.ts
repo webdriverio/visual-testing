@@ -1,6 +1,6 @@
-import type { LogLevel } from '../helpers/options.interfaces'
-import type { Executor, TakeElementScreenshot, TakeScreenShot } from './methods.interfaces'
-import type { RectanglesOutput } from './rectangles.interfaces'
+import type { LogLevel } from '../helpers/options.interfaces.js'
+import type { Executor, TakeElementScreenshot, TakeScreenShot } from './methods.interfaces.js'
+import type { RectanglesOutput } from './rectangles.interfaces.js'
 
 export interface FullPageScreenshotsData {
     // The height of the full page

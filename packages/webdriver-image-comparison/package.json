@@ -7,6 +7,7 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "type": "module",
   "homepage": "https://webdriver.io/docs/visual-testing",
   "repository": {
     "type": "git",
@@ -23,7 +24,8 @@
   "dependencies": {
     "canvas": "^2.11.2",
     "fs-extra": "^11.2.0",
-    "resemblejs": "^5.0.0"
+    "resemblejs": "^5.0.0",
+    "@wdio/logger": "^8.28.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",

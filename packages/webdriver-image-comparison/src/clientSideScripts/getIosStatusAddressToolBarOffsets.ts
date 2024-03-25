@@ -1,5 +1,5 @@
-import type { StatusAddressToolBarOffsets } from './statusAddressToolBarOffsets.interfaces'
-import type { IosOffsets } from '../helpers/constants.interfaces'
+import type { StatusAddressToolBarOffsets } from './statusAddressToolBarOffsets.interfaces.js'
+import type { IosOffsets } from '../helpers/constants.interfaces.js'
 
 /**
  * Get the current height of the iOS status and address bar

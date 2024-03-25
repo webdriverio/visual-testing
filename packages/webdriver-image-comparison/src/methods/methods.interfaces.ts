@@ -1,4 +1,4 @@
-import type { RectanglesOutput } from './rectangles.interfaces'
+import type { RectanglesOutput } from './rectangles.interfaces.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type Executor = <T>(script: string | Function, ...varArgs: any[]) => Promise<T>;

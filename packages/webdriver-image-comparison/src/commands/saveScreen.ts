@@ -1,8 +1,8 @@
-import type { Methods } from '../methods/methods.interfaces'
-import type { Folders } from '../base.interfaces'
-import type { SaveScreenOptions } from './screen.interfaces'
-import type { InstanceData } from '../methods/instanceData.interfaces'
-import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces'
+import type { Methods } from '../methods/methods.interfaces.js'
+import type { Folders } from '../base.interfaces.js'
+import type { SaveScreenOptions } from './screen.interfaces.js'
+import type { InstanceData } from '../methods/instanceData.interfaces.js'
+import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import saveAppScreen from './saveAppScreen.js'
 import saveWebScreen from './saveWebScreen.js'
 

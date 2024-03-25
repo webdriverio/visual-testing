@@ -6,10 +6,10 @@ import { CUSTOM_CSS_ID } from './constants.js'
 import { checkIsMobile, formatFileName, getAndCreatePath } from './utils.js'
 import { saveBase64Image } from '../methods/images.js'
 
-import type { Executor } from '../methods/methods.interfaces'
-import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot.interfaces'
+import type { Executor } from '../methods/methods.interfaces.js'
+import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
-import { LogLevel } from './options.interfaces'
+import { LogLevel } from './options.interfaces.js'
 import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
 
 /**

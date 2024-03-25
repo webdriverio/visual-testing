@@ -1,5 +1,5 @@
-import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces'
-import type { RectanglesOutput } from './rectangles.interfaces'
+import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces.js'
+import type { RectanglesOutput } from './rectangles.interfaces.js'
 
 export interface InstanceData {
     // The name of the app

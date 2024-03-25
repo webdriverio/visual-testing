@@ -1,4 +1,4 @@
-import type { TabbableOptions } from '../commands/tabbable.interfaces'
+import type { TabbableOptions } from '../commands/tabbable.interfaces.js'
 
 export interface ClassOptions {
     /**

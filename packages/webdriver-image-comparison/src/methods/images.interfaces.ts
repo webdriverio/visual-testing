@@ -1,7 +1,7 @@
 import type { CanvasRenderingContext2D } from 'canvas'
-import type { RectanglesOutput } from './rectangles.interfaces'
-import type { LogLevel } from '../helpers/options.interfaces'
-import type { Folders } from '../base.interfaces'
+import type { RectanglesOutput } from './rectangles.interfaces.js'
+import type { LogLevel } from '../helpers/options.interfaces.js'
+import type { Folders } from '../base.interfaces.js'
 
 export interface ResizeDimensions {
     // The bottom margin

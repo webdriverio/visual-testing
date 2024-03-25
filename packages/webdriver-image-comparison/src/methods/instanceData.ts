@@ -10,9 +10,9 @@ import {
     getToolBarShadowPadding,
 } from '../helpers/utils.js'
 import getScreenDimensions from '../clientSideScripts/getScreenDimensions.js'
-import type { Executor } from './methods.interfaces'
-import type { EnrichedInstanceData, InstanceOptions } from './instanceData.interfaces'
-import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces'
+import type { Executor } from './methods.interfaces.js'
+import type { EnrichedInstanceData, InstanceOptions } from './instanceData.interfaces.js'
+import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces.js'
 
 /**
  * Enrich the instance data with more data

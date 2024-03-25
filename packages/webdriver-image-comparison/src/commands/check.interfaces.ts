@@ -1,5 +1,5 @@
 import type { ChainablePromiseElement } from 'webdriverio'
-import type { RectanglesOutput } from '../methods/rectangles.interfaces'
+import type { RectanglesOutput } from '../methods/rectangles.interfaces.js'
 
 export interface CheckMethodOptions {
     // Block out array with x, y, width and height values

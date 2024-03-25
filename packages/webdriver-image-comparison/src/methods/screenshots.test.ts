@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { getBase64FullPageScreenshotsData } from './screenshots.js'
-import type { FullPageScreenshotDataOptions } from './screenshots.interfaces'
+import type { FullPageScreenshotDataOptions } from './screenshots.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
-import { LogLevel } from '../helpers/options.interfaces'
+import { LogLevel } from '../helpers/options.interfaces.js'
 
 describe('screenshots', () => {
     describe('getBase64FullPageScreenshotsData', () => {
