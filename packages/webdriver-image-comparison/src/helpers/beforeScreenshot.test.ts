@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
 import beforeScreenshot from './beforeScreenshot.js'
-import { LogLevel } from './options.interfaces.js'
 
 describe('beforeScreenshot', () => {
     it('should be able to return the enriched instance data with default options', async () => {
@@ -33,7 +32,6 @@ describe('beforeScreenshot', () => {
             addressBarShadowPadding: 6,
             disableCSSAnimation: true,
             enableLayoutTesting: false,
-            logLevel: LogLevel.debug,
             noScrollBars: true,
             toolBarShadowPadding: 6,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
@@ -75,7 +73,6 @@ describe('beforeScreenshot', () => {
             disableCSSAnimation: true,
             enableLayoutTesting: false,
             noScrollBars: true,
-            logLevel: LogLevel.debug,
             toolBarShadowPadding: 6,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
             removeElements: [<HTMLElement>(<any>'<div></div>')],

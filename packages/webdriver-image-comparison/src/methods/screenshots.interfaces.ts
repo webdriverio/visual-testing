@@ -1,4 +1,3 @@
-import type { LogLevel } from '../helpers/options.interfaces.js'
 import type { Executor, TakeElementScreenshot, TakeScreenShot } from './methods.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 
@@ -50,8 +49,6 @@ export interface FullPageScreenshotDataOptions {
     isIOS: boolean;
     // If it's landscape or not
     isLandscape: boolean;
-    // Level to show logs
-    logLevel: LogLevel;
     // Height of the screen
     screenHeight: number;
     // Width of the screen
@@ -75,8 +72,6 @@ export interface FullPageScreenshotNativeMobileOptions {
     isLandscape?: boolean;
     // The innerheight
     innerHeight: number;
-    // Level to show logs
-    logLevel: LogLevel;
     // The size of the safe area for iOS
     safeArea: number;
     // The height of the status and the address bar
@@ -100,8 +95,6 @@ export interface FullPageScreenshotOptions {
     innerHeight: number;
     // Elements that need to be hidden after the first scroll for a fullpage scroll
     hideAfterFirstScroll: (HTMLElement | HTMLElement[])[];
-    // Level to show logs
-    logLevel: LogLevel;
 }
 
 export interface TakeWebElementScreenshot {

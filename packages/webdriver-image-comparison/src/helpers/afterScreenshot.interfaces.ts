@@ -1,5 +1,3 @@
-import type { LogLevel } from './options.interfaces.js'
-
 export interface ScreenshotOutput {
     // The device pixel ratio of the instance
     devicePixelRatio: number;
@@ -32,8 +30,6 @@ export interface AfterScreenshotOptions {
     isLandscape: boolean;
     // isNativeContext
     isNativeContext: boolean;
-    // Level to show logs
-    logLevel: LogLevel;
     // The platform name of the instance
     platformName: string;
     // Elements that need to be removed (display: none) before saving a screenshot

@@ -1,6 +1,5 @@
 import { DEFAULT_FORMAT_STRING, DEFAULT_SHADOW, DEFAULT_TABBABLE_OPTIONS, FULL_PAGE_SCROLL_TIMEOUT, STORYBOOK_FORMAT_STRING } from './constants.js'
 import type { ClassOptions, DefaultOptions } from './options.interfaces.js'
-import { LogLevel } from './options.interfaces.js'
 import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 import { isStorybook } from './utils.js'
 
@@ -22,7 +21,6 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         // Storybook will have it's own default format string
         formatImageName: options.formatImageName ?? (isStorybook() ? STORYBOOK_FORMAT_STRING : DEFAULT_FORMAT_STRING),
         isHybridApp: options.isHybridApp ?? false,
-        logLevel: options.logLevel ?? LogLevel.info,
         // Running in storybook mode with a min of 2 browsers can cause huge amount of images to be saved
         // by defaulting this to true the user will have a better overview
         savePerInstance: options.savePerInstance ?? (isStorybook() ? true : false),

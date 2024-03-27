@@ -1,6 +1,5 @@
 import type { CanvasRenderingContext2D } from 'canvas'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
-import type { LogLevel } from '../helpers/options.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
 
 export interface ResizeDimensions {
@@ -34,8 +33,6 @@ export interface ImageCompareOptions {
     isAndroid?: boolean;
     // If it's in Landscape mode
     isLandscape: boolean;
-    // Level to show logs
-    logLevel: LogLevel;
     // The name of the platform
     platformName: string;
     // If this is a native web screenshot
@@ -150,7 +147,6 @@ export interface CroppedBase64Image {
     isWebDriverElementScreenshot?: boolean;
     isIOS: boolean;
     isLandscape: boolean;
-    logLevel: LogLevel;
     rectangles: RectanglesOutput;
     resizeDimensions?: ResizeDimensions;
 }
@@ -177,7 +173,6 @@ export interface CropAndConvertToDataURL {
 
 export interface AdjustedAxis {
     length: number,
-    logLevel: LogLevel,
     maxDimension: number,
     paddingEnd: number,
     paddingStart: number,
@@ -187,7 +182,6 @@ export interface AdjustedAxis {
 
 export interface DimensionsWarning {
     dimension: number,
-    logLevel: LogLevel
     maxDimension: number,
     position: number,
     type: string,

@@ -1,5 +1,4 @@
 import type { BeforeScreenshotOptions } from '../helpers/beforeScreenshot.interfaces.js'
-import { LogLevel } from '../helpers/options.interfaces.js'
 
 export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
     instanceData: {
@@ -28,7 +27,6 @@ export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
     addressBarShadowPadding: 6,
     disableCSSAnimation: true,
     enableLayoutTesting: false,
-    logLevel: LogLevel.debug,
     noScrollBars: true,
     toolBarShadowPadding: 6,
     hideElements: [<HTMLElement>(<any>'<div></div>')],

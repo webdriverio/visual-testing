@@ -69,7 +69,6 @@ export default async function checkFullPageScreen(
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: checkFullPageOptions.wic.isHybridApp,
         isLandscape,
-        logLevel: checkFullPageOptions.wic.logLevel,
         platformName: instanceData.platformName,
     }
 

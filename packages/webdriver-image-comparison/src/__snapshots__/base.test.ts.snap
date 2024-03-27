@@ -27,7 +27,6 @@ exports[`BaseClass > initializes default options correctly 1`] = `
   "fullPageScrollTimeout": 1500,
   "hideScrollBars": true,
   "isHybridApp": false,
-  "logLevel": "info",
   "savePerInstance": false,
   "tabbableOptions": {
     "circle": {

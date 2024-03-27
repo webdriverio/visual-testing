@@ -22,7 +22,6 @@ export default async function saveAppScreen(
     const {
         addIOSBezelCorners,
         formatImageName,
-        logLevel,
         savePerInstance,
     } = saveScreenOptions.wic
     const {
@@ -51,7 +50,6 @@ export default async function saveAppScreen(
             isIOS,
             // @TODO: is this one needed for native apps?
             isLandscape: false,
-            logLevel,
             rectangles :{
                 // For iOS the screen size is always in css pixels, the screenshot is in device pixels
                 height: isIOS ? deviceScreenSize.height * devicePixelRatio : deviceScreenSize.height,
@@ -90,7 +88,6 @@ export default async function saveAppScreen(
         },
         isNativeContext,
         isLandscape:false,
-        logLevel,
         platformName,
     }
 

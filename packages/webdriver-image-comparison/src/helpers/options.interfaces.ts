@@ -16,8 +16,6 @@ export interface ClassOptions {
     formatImageName?: string;
     // Is it an hybrid app or not
     isHybridApp?: boolean;
-    // Level to show logs
-    logLevel?: LogLevel;
     // Save the images per instance in a separate folder.
     savePerInstance?: boolean;
     // The padding that needs to be added to the toolbar bar on iOS and Android to do a proper cutout of the the viewport.
@@ -113,7 +111,6 @@ export interface DefaultOptions {
     fullPageScrollTimeout: number;
     hideScrollBars: boolean;
     isHybridApp: boolean;
-    logLevel: LogLevel;
     savePerInstance: boolean;
     tabbableOptions: TabbableOptions;
     toolBarShadowPadding: number;
@@ -133,11 +130,4 @@ interface CompareOptions {
     returnAllCompareData: boolean;
     saveAboveTolerance: number;
     scaleImagesToSameSize: boolean;
-}
-
-export enum LogLevel {
-    debug = 'debug',
-    info = 'info',
-    warn = 'warn',
-    silent = 'silent',
 }

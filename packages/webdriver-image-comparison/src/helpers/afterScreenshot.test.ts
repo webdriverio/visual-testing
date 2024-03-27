@@ -2,7 +2,6 @@ import { join } from 'node:path'
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import afterScreenshot from './afterScreenshot.js'
 import { rmSync } from 'node:fs'
-import { LogLevel } from './options.interfaces.js'
 
 vi.mock('../methods/images.js', () => ({
     saveBase64Image: vi.fn()
@@ -46,7 +45,6 @@ describe('afterScreenshot', () => {
             hideScrollBars: true,
             isLandscape: false,
             isNativeContext: false,
-            logLevel: LogLevel.debug,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
             platformName: '',
             removeElements: [<HTMLElement>(<any>'<div></div>')],

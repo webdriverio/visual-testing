@@ -31,7 +31,6 @@ export default async function saveFullPageScreen(
         addressBarShadowPadding,
         formatImageName,
         isHybridApp,
-        logLevel,
         savePerInstance,
         toolBarShadowPadding,
     } = saveFullPageOptions.wic
@@ -63,7 +62,6 @@ export default async function saveFullPageScreen(
         disableCSSAnimation,
         enableLayoutTesting,
         hideElements,
-        logLevel,
         noScrollBars: hideScrollBars,
         removeElements,
         toolBarShadowPadding,
@@ -86,7 +84,6 @@ export default async function saveFullPageScreen(
         isHybridApp,
         isIOS: enrichedInstanceData.isIOS,
         isLandscape,
-        logLevel: logLevel,
         screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
         screenWidth: enrichedInstanceData.dimensions.window.screenWidth || NaN,
         toolBarShadowPadding: enrichedInstanceData.toolBarShadowPadding,
@@ -137,7 +134,6 @@ export default async function saveFullPageScreen(
         hideScrollBars,
         isLandscape,
         isNativeContext: false,
-        logLevel,
         platformName: instanceData.platformName,
         removeElements,
     }

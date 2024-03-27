@@ -1,3 +1,4 @@
+import logger from '@wdio/logger'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import setCustomCss from '../clientSideScripts/setCustomCss.js'
 import { CUSTOM_CSS_ID } from './constants.js'
@@ -6,9 +7,10 @@ import getEnrichedInstanceData from '../methods/instanceData.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeScreenshot.interfaces.js'
 import type { Executor } from '../methods/methods.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
-import { LogLevel } from './options.interfaces.js'
 import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
 import waitForFonts from '../clientSideScripts/waitForFonts.js'
+
+const log = logger('@wdio/visual-service:beforeScreenshot')
 
 /**
  * Methods that need to be executed before a screenshot will be taken
@@ -24,7 +26,6 @@ export default async function beforeScreenshot(
         disableCSSAnimation,
         enableLayoutTesting,
         hideElements,
-        logLevel,
         noScrollBars,
         removeElements,
         toolBarShadowPadding,
@@ -44,9 +45,7 @@ export default async function beforeScreenshot(
         try {
             await executor(waitForFonts)
         } catch (e) {
-            if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-                console.log('Waiting for fonts to load threw an error:', e)
-            }
+            log.debug('Waiting for fonts to load threw an error:', e)
         }
     }
 
@@ -60,10 +59,9 @@ export default async function beforeScreenshot(
         try {
             await executor(hideRemoveElements, { hide: hideElements, remove: removeElements }, true)
         } catch (e) {
-            if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-                console.log(
-                    '\x1b[33m%s\x1b[0m',
-                    `
+            log.warn(
+                '\x1b[33m%s\x1b[0m',
+                `
 #####################################################################################
  WARNING:
  (One of) the elements that needed to be hidden or removed could not be found on the
@@ -72,8 +70,7 @@ export default async function beforeScreenshot(
  We made sure the test didn't break.
 #####################################################################################
 `,
-                )
-            }
+            )
         }
     }
 

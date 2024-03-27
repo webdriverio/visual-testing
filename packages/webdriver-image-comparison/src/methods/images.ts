@@ -2,6 +2,7 @@ import { access, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { createCanvas, loadImage } from 'canvas'
 import type { ComparisonOptions, ComparisonIgnoreOption } from 'resemblejs'
+import logger from '@wdio/logger'
 import compareImages from '../resemble/compareImages.js'
 import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
@@ -22,8 +23,9 @@ import type {
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
 import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces.js'
 import type { CompareData } from '../resemble/compare.interfaces.js'
-import { LogLevel } from '../helpers/options.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
+
+const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
 
 /**
  * Check if the image exists and create a new baseline image if needed
@@ -32,7 +34,6 @@ export async function checkBaselineImageExists(
     actualFilePath: string,
     baselineFilePath: string,
     autoSaveBaseline: boolean,
-    logLevel: LogLevel,
 ): Promise<void> {
     return new Promise((resolve, reject) => {
         access(baselineFilePath, (error) => {
@@ -41,18 +42,16 @@ export async function checkBaselineImageExists(
                     try {
                         const data = readFileSync(actualFilePath, { encoding: 'base64' })
                         writeFileSync(baselineFilePath, data)
-                        if (logLevel === LogLevel.info) {
-                            console.log(
-                                '\x1b[33m%s\x1b[0m',
-                                `
+                        log.info(
+                            '\x1b[33m%s\x1b[0m',
+                            `
 #####################################################################################
  INFO:
  Autosaved the image to
  ${baselineFilePath}
 #####################################################################################
 `,
-                            )
-                        }
+                        )
                     } catch (error) {
                         /* istanbul ignore next */
                         reject(
@@ -98,23 +97,20 @@ async function getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandsca
  */
 function logDimensionWarning({
     dimension,
-    logLevel,
     maxDimension,
     position,
     type,
 }: DimensionsWarning): void {
-    if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-        console.log(
-            '\x1b[33m%s\x1b[0m',
-            `
+    log.warn(
+        '\x1b[33m%s\x1b[0m',
+        `
 #####################################################################################
  THE RESIZE DIMENSION ${type}=${dimension} MADE THE CROPPING GO OUT OF THE SCREEN SIZE
  RESULTING IN A ${type} CROP POSITION=${position}.
  THIS HAS BEEN DEFAULTED TO '${['TOP', 'LEFT'].includes(type) ? 0 : maxDimension}'
 #####################################################################################
 `,
-        )
-    }
+    )
 }
 
 /**
@@ -122,7 +118,6 @@ function logDimensionWarning({
  */
 function getAdjustedAxis({
     length,
-    logLevel,
     maxDimension,
     paddingEnd,
     paddingStart,
@@ -135,7 +130,6 @@ function getAdjustedAxis({
     if (adjustedStart < 0) {
         logDimensionWarning({
             dimension: paddingStart,
-            logLevel,
             maxDimension,
             position: adjustedStart,
             type: warningType === 'WIDTH' ? 'LEFT' : 'TOP',
@@ -145,7 +139,6 @@ function getAdjustedAxis({
     if (adjustedEnd > maxDimension) {
         logDimensionWarning({
             dimension: paddingEnd,
-            logLevel,
             maxDimension,
             position: adjustedEnd,
             type: warningType === 'WIDTH' ? 'RIGHT' : 'BOTTOM',
@@ -226,7 +219,7 @@ async function handleIOSBezelCorners({
     }
 
     if (isIosBezelError) {
-        console.log(
+        log.warn(
             '\x1b[33m%s\x1b[0m',
             `
 #####################################################################################
@@ -279,7 +272,6 @@ export async function makeCroppedBase64Image({
     isWebDriverElementScreenshot = false,
     isIOS,
     isLandscape,
-    logLevel,
     rectangles,
     resizeDimensions = DEFAULT_RESIZE_DIMENSIONS,
 }: CroppedBase64Image): Promise<string> {
@@ -292,7 +284,6 @@ export async function makeCroppedBase64Image({
     const { height, width, x, y } = rectangles
     const [sourceXStart, sourceXEnd] = getAdjustedAxis({
         length: width,
-        logLevel,
         maxDimension: screenshotWidth,
         paddingEnd: right,
         paddingStart: left,
@@ -301,14 +292,12 @@ export async function makeCroppedBase64Image({
     })
     const [sourceYStart, sourceYEnd] = getAdjustedAxis({
         length: height,
-        logLevel,
         maxDimension: screenshotHeight,
         paddingEnd: bottom,
         paddingStart: top,
         start: y,
         warningType: 'HEIGHT',
     })
-
     // Create the canvas and draw the image on it
     return cropAndConvertToDataURL({
         addIOSBezelCorners,
@@ -343,7 +332,6 @@ export async function executeImageCompare(
         isAndroid,
         isHybridApp,
         isLandscape,
-        logLevel,
         platformName,
     } = options
     const { actualFolder, autoSaveBaseline, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
@@ -359,7 +347,7 @@ export async function executeImageCompare(
     const baselineFilePath = join(baselineFolderPath, fileName)
 
     // 3. Check if there is a baseline image, and determine if it needs to be auto saved or not
-    await checkBaselineImageExists(actualFilePath, baselineFilePath, autoSaveBaseline, logLevel)
+    await checkBaselineImageExists(actualFilePath, baselineFilePath, autoSaveBaseline)
 
     // 4. Prepare the compare
     // 4a.Determine the ignore options
@@ -420,15 +408,14 @@ export async function executeImageCompare(
     }
 
     // 5. Execute the compare and retrieve the data
-    console.log('readFileSync(baselineFilePath) = ', readFileSync(baselineFilePath))
     const data: CompareData = await compareImages(readFileSync(baselineFilePath), readFileSync(actualFilePath), compareOptions)
     const rawMisMatchPercentage = data.rawMisMatchPercentage
     const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage
         : Number(data.rawMisMatchPercentage.toFixed(3))
 
-    // 6. Save the diff when there is a diff or when debug mode is on
-    if (rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || logLevel === LogLevel.debug) {
+    // 6. Save the diff when there is a diff
+    if (rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || process.env.STORE_DIFF === 'true') {
         const isDifference = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance
         const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
         const debugMessage = 'INFO:\n Debug mode is enabled. Saved the debug file to:'
@@ -437,17 +424,14 @@ export async function executeImageCompare(
 
         await saveBase64Image(await addBlockOuts(Buffer.from(data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
 
-        if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-            console.log(
-                '\x1b[33m%s\x1b[0m',
-                `
+        log.warn(
+            '\x1b[33m%s\x1b[0m',
+            `
 #####################################################################################
  ${isDifference ? isDifferenceMessage : debugMessage}
  ${diffFilePath}
-#####################################################################################
-`,
-            )
-        }
+#####################################################################################`,
+        )
     }
 
     // 7. Return the comparison data
@@ -519,7 +503,7 @@ export async function makeFullPageBase64Image(
  */
 export async function saveBase64Image(base64Image: string, filePath: string): Promise<void> {
     mkdirSync(dirname(filePath), { recursive: true })
-    writeFileSync(filePath, base64Image)
+    writeFileSync(filePath, Buffer.from(base64Image, 'base64'))
 }
 
 /**
@@ -612,7 +596,7 @@ async function takeResizedBase64Screenshot({
 ): Promise<string> {
     const awaitedElement = await element
     if (!isWdioElement(awaitedElement)){
-        console.log('awaitedElement = ', JSON.stringify(awaitedElement))
+        log.info('awaitedElement = ', JSON.stringify(awaitedElement))
     }
 
     // Get the element position
@@ -631,9 +615,6 @@ async function takeResizedBase64Screenshot({
         devicePixelRatio,
         isIOS,
         isLandscape: false,
-        // @TODO:we need to fix this debug statement
-        // @ts-ignore
-        logLevel: 'debug',
         rectangles: calculateDprData({
             height: elementRegion.height,
             width: elementRegion.width,
