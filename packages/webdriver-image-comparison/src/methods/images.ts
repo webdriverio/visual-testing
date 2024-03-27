@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { access, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { createCanvas, loadImage } from 'canvas'
@@ -180,6 +181,8 @@ async function handleIOSBezelCorners({
         const { topImageName, bottomImageName } = getIosBezelImageNames(normalizedDeviceName)
 
         if (topImageName && bottomImageName) {
+            const __filename = fileURLToPath(import.meta.url)
+            const __dirname = dirname(__filename)
             const topImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${topImageName}.png`), { encoding: 'base64' })
             const bottomImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${bottomImageName}.png`), { encoding: 'base64' })
 

@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN, PLATFORMS } from './constants.js'
-import { existsSync, mkdirSync } from 'node:fs'
+import { mkdirSync } from 'node:fs'
 import type {
     FormatFileDefaults,
     FormatFileNameOptions,
@@ -24,9 +24,7 @@ export function getAndCreatePath(folder: string, options: GetAndCreatePathOption
     const subFolder = savePerInstance ? instanceName : ''
     const folderName = join(folder, subFolder)
 
-    if (!existsSync(folderName)) {
-        mkdirSync(folderName, { recursive: true })
-    }
+    mkdirSync(folderName, { recursive: true })
 
     return folderName
 }
