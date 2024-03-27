@@ -415,7 +415,6 @@ export async function executeImageCompare(
         : Number(data.rawMisMatchPercentage.toFixed(3))
 
     // 6. Save the diff when there is a diff
-    console.log("('--store-all-diffs') = ", process.argv.includes('--store-all-diffs'))
     if (rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || process.argv.includes('--store-all-diffs')) {
         const isDifference = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance
         const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
