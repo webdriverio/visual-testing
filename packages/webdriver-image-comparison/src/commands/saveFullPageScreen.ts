@@ -2,13 +2,13 @@ import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { getBase64FullPageScreenshotsData } from '../methods/screenshots.js'
 import { makeFullPageBase64Image } from '../methods/images.js'
-import type { ScreenshotOutput, AfterScreenshotOptions } from '../helpers/afterScreenshot.interfaces'
-import type { Methods } from '../methods/methods.interfaces'
-import type { InstanceData } from '../methods/instanceData.interfaces'
-import type { Folders } from '../base.interfaces'
-import type { SaveFullPageOptions } from './fullPage.interfaces'
-import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces'
-import type { FullPageScreenshotDataOptions, FullPageScreenshotsData } from '../methods/screenshots.interfaces'
+import type { ScreenshotOutput, AfterScreenshotOptions } from '../helpers/afterScreenshot.interfaces.js'
+import type { Methods } from '../methods/methods.interfaces.js'
+import type { InstanceData } from '../methods/instanceData.interfaces.js'
+import type { Folders } from '../base.interfaces.js'
+import type { SaveFullPageOptions } from './fullPage.interfaces.js'
+import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
+import type { FullPageScreenshotDataOptions, FullPageScreenshotsData } from '../methods/screenshots.interfaces.js'
 
 /**
  * Saves an image of the full page
@@ -31,7 +31,6 @@ export default async function saveFullPageScreen(
         addressBarShadowPadding,
         formatImageName,
         isHybridApp,
-        logLevel,
         savePerInstance,
         toolBarShadowPadding,
     } = saveFullPageOptions.wic
@@ -63,7 +62,6 @@ export default async function saveFullPageScreen(
         disableCSSAnimation,
         enableLayoutTesting,
         hideElements,
-        logLevel,
         noScrollBars: hideScrollBars,
         removeElements,
         toolBarShadowPadding,
@@ -86,7 +84,6 @@ export default async function saveFullPageScreen(
         isHybridApp,
         isIOS: enrichedInstanceData.isIOS,
         isLandscape,
-        logLevel: logLevel,
         screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
         screenWidth: enrichedInstanceData.dimensions.window.screenWidth || NaN,
         toolBarShadowPadding: enrichedInstanceData.toolBarShadowPadding,
@@ -137,7 +134,6 @@ export default async function saveFullPageScreen(
         hideScrollBars,
         isLandscape,
         isNativeContext: false,
-        logLevel,
         platformName: instanceData.platformName,
         removeElements,
     }

@@ -58,7 +58,6 @@ export default async function checkAppElement(
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: checkElementOptions.wic.isHybridApp,
         isLandscape,
-        logLevel: checkElementOptions.wic.logLevel,
         platformName: instanceData.platformName,
     }
 

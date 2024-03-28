@@ -35,7 +35,7 @@ export default class VisualLauncher extends BaseClass  {
         } else if (isStorybook) {
             log.info('Running `@wdio/visual-service` in Storybook mode.')
 
-            const { storiesJson, storybookUrl, tempDir } = await scanStorybook(config, log, this.#options)
+            const { storiesJson, storybookUrl, tempDir } = await scanStorybook(config, this.#options)
             // Set an environment variable so it can be used in the onComplete hook
             process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER = tempDir
 
@@ -72,7 +72,7 @@ export default class VisualLauncher extends BaseClass  {
             const skipStoriesOption = this.#options?.storybook?.skipStories
             const skipStoriesArgv = getArgvValue('--skipStories', value => value)
             const skipStories = skipStoriesOption ?? skipStoriesArgv ?? []
-            const parsedSkipStories = parseSkipStories(skipStories, log)
+            const parsedSkipStories = parseSkipStories(skipStories)
 
             // Create the test files
             createTestFiles({
@@ -81,7 +81,6 @@ export default class VisualLauncher extends BaseClass  {
                 directoryPath: tempDir,
                 folders: this.folders,
                 framework,
-                log,
                 numShards,
                 skipStories: parsedSkipStories,
                 storiesJson,
@@ -89,7 +88,7 @@ export default class VisualLauncher extends BaseClass  {
             })
 
             // Create the capabilities
-            createStorybookCapabilities(capabilities as WebdriverIO.Capabilities[], log)
+            createStorybookCapabilities(capabilities as WebdriverIO.Capabilities[])
         }
     }
 

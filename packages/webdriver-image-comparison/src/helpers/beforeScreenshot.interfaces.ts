@@ -1,5 +1,4 @@
-import type { EnrichedInstanceData, InstanceData } from '../methods/instanceData.interfaces'
-import type { LogLevel } from './options.interfaces'
+import type { EnrichedInstanceData, InstanceData } from '../methods/instanceData.interfaces.js'
 
 export interface BeforeScreenshotOptions {
     // The instance data
@@ -10,8 +9,6 @@ export interface BeforeScreenshotOptions {
     disableCSSAnimation: boolean;
     // Make all text on a page transparent to only focus on the layout
     enableLayoutTesting: boolean;
-    // Level to show logs
-    logLevel: LogLevel;
     // Hide all scrollbars
     noScrollBars: boolean;
     // The padding that needs to be added to the tool bar on iOS and Android

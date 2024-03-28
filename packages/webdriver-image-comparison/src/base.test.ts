@@ -1,9 +1,10 @@
 import { describe, it, expect, vi } from 'vitest'
-import { removeSync } from 'fs-extra'
+import { rmSync } from 'node:fs'
 import BaseClass from './base.js'
 
-vi.mock('fs-extra', () => ({
-    removeSync: vi.fn(),
+vi.mock('node:fs', () => ({
+    ...vi.importActual('node:fs'),  // This includes the actual implementations of other 'fs' methods
+    rmSync: vi.fn(),  // Mock implementation for rmSync
 }))
 
 describe('BaseClass', () => {
@@ -50,6 +51,6 @@ describe('BaseClass', () => {
         }
         new BaseClass(options)
 
-        expect(removeSync).toHaveBeenCalledTimes(2)
+        expect(rmSync).toHaveBeenCalledTimes(2)
     })
 })

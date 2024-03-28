@@ -1,4 +1,3 @@
-import type { Logger } from '@wdio/logger'
 import type { RemoteCapability } from 'node_modules/@wdio/types/build/Capabilities.js'
 import type { Folders } from 'webdriver-image-comparison'
 
@@ -38,7 +37,6 @@ export type CreateTestFileOptions = {
     folders: Folders,
     framework: string,
     numShards:number,
-    log: Logger,
     skipStories: string[] | RegExp,
     storiesJson: Stories,
     storybookUrl: string;

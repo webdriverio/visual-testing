@@ -1,8 +1,8 @@
-import type { ImageCompareResult } from '../methods/images.interfaces'
-import type { Methods } from '../methods/methods.interfaces'
-import type { InstanceData } from '../methods/instanceData.interfaces'
-import type { Folders } from '../base.interfaces'
-import type { CheckElementOptions, WicElement } from './element.interfaces'
+import type { ImageCompareResult } from '../methods/images.interfaces.js'
+import type { Methods } from '../methods/methods.interfaces.js'
+import type { InstanceData } from '../methods/instanceData.interfaces.js'
+import type { Folders } from '../base.interfaces.js'
+import type { CheckElementOptions, WicElement } from './element.interfaces.js'
 import checkAppElement from './checkAppElement.js'
 import checkWebElement from './checkWebElement.js'
 

@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import * as resemble from 'resemblejs'
 import type { ComparisonOptions } from 'resemblejs'
-import type { CompareData } from './compare.interfaces'
+import type { CompareData } from './compare.interfaces.js'
 
 export default async function compareImages(image1: Buffer, image2: Buffer, options: ComparisonOptions): Promise<CompareData> {
     /**
@@ -16,7 +16,7 @@ export default async function compareImages(image1: Buffer, image2: Buffer, opti
             }
             : { imageToCompare1: image1, imageToCompare2: image2 }
 
-        resemble.compare(imageToCompare1, imageToCompare2, options, (err: any, data: any) => {
+        resemble.default.compare(imageToCompare1, imageToCompare2, options, (err: any, data: any) => {
             if (err) {
                 reject(err)
             } else {

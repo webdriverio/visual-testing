@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN, PLATFORMS } from './constants.js'
-import { ensureDirSync } from 'fs-extra'
+import { mkdirSync } from 'node:fs'
 import type {
     FormatFileDefaults,
     FormatFileNameOptions,
@@ -8,7 +8,7 @@ import type {
     GetAndCreatePathOptions,
     GetToolBarShadowPaddingOptions,
     ScreenshotSize,
-} from './utils.interfaces'
+} from './utils.interfaces.js'
 
 /**
  * Get and create a folder
@@ -24,7 +24,7 @@ export function getAndCreatePath(folder: string, options: GetAndCreatePathOption
     const subFolder = savePerInstance ? instanceName : ''
     const folderName = join(folder, subFolder)
 
-    ensureDirSync(folderName)
+    mkdirSync(folderName, { recursive: true })
 
     return folderName
 }

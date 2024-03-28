@@ -1,9 +1,12 @@
 import { join, normalize } from 'node:path'
-import { removeSync } from 'fs-extra'
+import { rmSync } from 'node:fs'
+import logger from '@wdio/logger'
 import { defaultOptions } from './helpers/options.js'
 import { FOLDERS } from './helpers/constants.js'
-import type { Folders } from './base.interfaces'
-import type { ClassOptions, DefaultOptions } from './helpers/options.interfaces'
+import type { Folders } from './base.interfaces.js'
+import type { ClassOptions, DefaultOptions } from './helpers/options.interfaces.js'
+
+const log = logger('@wdio/visual-service:webdriver-image-comparison')
 
 export default class BaseClass {
     defaultOptions: DefaultOptions
@@ -27,11 +30,9 @@ export default class BaseClass {
         }
 
         if (options.clearRuntimeFolder) {
-            console.log('\n\n\n##############################')
-            console.log('!!CLEARING!!')
-            console.log('##############################\n\n\n')
-            removeSync(this.folders.actualFolder)
-            removeSync(this.folders.diffFolder)
+            log.info('\x1b[33m\n##############################\n!!CLEARING!!\n##############################\x1b[0m')
+            rmSync(this.folders.actualFolder, { recursive: true, force: true })
+            rmSync(this.folders.diffFolder, { recursive: true, force: true })
         }
     }
 }

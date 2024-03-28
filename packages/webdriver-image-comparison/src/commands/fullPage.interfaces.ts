@@ -1,7 +1,7 @@
-import type { Folders } from '../base.interfaces'
-import type { DefaultOptions } from '../helpers/options.interfaces'
-import type { ResizeDimensions } from '../methods/images.interfaces'
-import type { CheckMethodOptions } from './check.interfaces'
+import type { Folders } from '../base.interfaces.js'
+import type { DefaultOptions } from '../helpers/options.interfaces.js'
+import type { ResizeDimensions } from '../methods/images.interfaces.js'
+import type { CheckMethodOptions } from './check.interfaces.js'
 
 export interface SaveFullPageOptions {
     wic: DefaultOptions;

@@ -1,5 +1,5 @@
-import type { ElementCoordinate } from './drawTabbableOnCanvas.interfaces'
-import type { CircleOptions, LineOptions, TabbableOptions } from '../commands/tabbable.interfaces'
+import type { ElementCoordinate } from './drawTabbableOnCanvas.interfaces.js'
+import type { CircleOptions, LineOptions, TabbableOptions } from '../commands/tabbable.interfaces.js'
 
 /**
  * This method is based on this blog post

@@ -23,7 +23,7 @@ export default async function saveWebScreen(
     isNativeContext: boolean,
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
-    const { addressBarShadowPadding, addIOSBezelCorners, formatImageName, logLevel, savePerInstance, toolBarShadowPadding } =
+    const { addressBarShadowPadding, addIOSBezelCorners, formatImageName, savePerInstance, toolBarShadowPadding } =
         saveScreenOptions.wic
 
     // 1b. Set the method options to the right values
@@ -49,7 +49,6 @@ export default async function saveWebScreen(
         disableCSSAnimation,
         enableLayoutTesting,
         hideElements,
-        logLevel,
         noScrollBars: hideScrollBars,
         removeElements,
         toolBarShadowPadding,
@@ -96,7 +95,6 @@ export default async function saveWebScreen(
         devicePixelRatio: devicePixelRatio || NaN,
         isIOS,
         isLandscape,
-        logLevel,
         rectangles,
     })
 
@@ -134,7 +132,6 @@ export default async function saveWebScreen(
         hideScrollBars,
         isLandscape,
         isNativeContext,
-        logLevel,
         platformName: instanceData.platformName,
         removeElements,
     }

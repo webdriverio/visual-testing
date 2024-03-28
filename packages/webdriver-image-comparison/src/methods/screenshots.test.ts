@@ -1,8 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { getBase64FullPageScreenshotsData } from './screenshots.js'
-import type { FullPageScreenshotDataOptions } from './screenshots.interfaces'
+import type { FullPageScreenshotDataOptions } from './screenshots.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
-import { LogLevel } from '../helpers/options.interfaces'
 
 describe('screenshots', () => {
     describe('getBase64FullPageScreenshotsData', () => {
@@ -20,7 +19,6 @@ describe('screenshots', () => {
                 isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
-                logLevel: LogLevel.debug,
                 toolBarShadowPadding: 6,
                 hideAfterFirstScroll: [],
                 screenHeight: 0,
@@ -66,7 +64,6 @@ describe('screenshots', () => {
                 isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
-                logLevel: LogLevel.debug,
                 toolBarShadowPadding: 6,
                 hideAfterFirstScroll: [<HTMLElement>(<unknown>'<div/>')],
                 screenHeight: 0,
@@ -125,7 +122,6 @@ describe('screenshots', () => {
                 isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
-                logLevel: LogLevel.debug,
                 toolBarShadowPadding: 6,
                 hideAfterFirstScroll: [],
                 screenHeight: 0,
@@ -171,7 +167,6 @@ describe('screenshots', () => {
                 isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
-                logLevel: LogLevel.debug,
                 toolBarShadowPadding: 6,
                 hideAfterFirstScroll: [<HTMLElement>(<unknown>'<div/>')],
                 screenHeight: 0,
@@ -221,7 +216,6 @@ describe('screenshots', () => {
                 isHybridApp: false,
                 isIOS: true,
                 isLandscape: false,
-                logLevel: LogLevel.debug,
                 toolBarShadowPadding: 6,
                 hideAfterFirstScroll: [],
                 screenHeight: 0,
@@ -276,7 +270,6 @@ describe('screenshots', () => {
                 isHybridApp: false,
                 isIOS: true,
                 isLandscape: false,
-                logLevel: LogLevel.debug,
                 toolBarShadowPadding: 6,
                 hideAfterFirstScroll: [],
                 screenHeight: 0,
@@ -331,7 +324,6 @@ describe('screenshots', () => {
                 isHybridApp: false,
                 isIOS: true,
                 isLandscape: false,
-                logLevel: LogLevel.debug,
                 toolBarShadowPadding: 6,
                 hideAfterFirstScroll: [<HTMLElement>(<unknown>'<div/>')],
                 screenHeight: 0,
@@ -391,7 +383,6 @@ describe('screenshots', () => {
                 isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
-                logLevel: LogLevel.debug,
                 toolBarShadowPadding: 6,
                 hideAfterFirstScroll: [],
                 screenHeight: 0,
@@ -444,7 +435,6 @@ describe('screenshots', () => {
                 isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
-                logLevel: LogLevel.debug,
                 toolBarShadowPadding: 6,
                 hideAfterFirstScroll: [<HTMLElement>(<unknown>'<div/>')],
                 screenHeight: 0,

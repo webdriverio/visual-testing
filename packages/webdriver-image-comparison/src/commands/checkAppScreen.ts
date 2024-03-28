@@ -75,7 +75,6 @@ export default async function checkAppScreen(
         isHybridApp: false,
         isAndroid,
         isLandscape,
-        logLevel: checkScreenOptions.wic.logLevel,
         platformName: instanceData.platformName,
     }
 

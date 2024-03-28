@@ -1,9 +1,7 @@
 import { join } from 'node:path'
-
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import afterScreenshot from './afterScreenshot.js'
-import { remove } from 'fs-extra'
-import { LogLevel } from './options.interfaces'
+import { rmSync } from 'node:fs'
 
 vi.mock('../methods/images.js', () => ({
     saveBase64Image: vi.fn()
@@ -12,7 +10,7 @@ vi.mock('../methods/images.js', () => ({
 describe('afterScreenshot', () => {
     const folder = join(process.cwd(), '/.tmp/afterScreenshot')
 
-    afterEach(() => remove(folder))
+    afterEach(() => rmSync(folder, { recursive: true, force: true }))
 
     it('should be able to return the ScreenshotOutput with default options', async () => {
         const MOCKED_EXECUTOR = vi.fn().mockReturnValue('')
@@ -47,7 +45,6 @@ describe('afterScreenshot', () => {
             hideScrollBars: true,
             isLandscape: false,
             isNativeContext: false,
-            logLevel: LogLevel.debug,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
             platformName: '',
             removeElements: [<HTMLElement>(<any>'<div></div>')],

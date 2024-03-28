@@ -1,4 +1,4 @@
-import type { ScreenDimensions } from './screenDimensions.interfaces'
+import type { ScreenDimensions } from './screenDimensions.interfaces.js'
 
 /**
  * Get all the screen dimensions

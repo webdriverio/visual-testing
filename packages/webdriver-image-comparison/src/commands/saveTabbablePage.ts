@@ -1,10 +1,10 @@
-import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces'
-import type { Methods } from '../methods/methods.interfaces'
-import type { InstanceData } from '../methods/instanceData.interfaces'
-import type { Folders } from '../base.interfaces'
+import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
+import type { Methods } from '../methods/methods.interfaces.js'
+import type { InstanceData } from '../methods/instanceData.interfaces.js'
+import type { Folders } from '../base.interfaces.js'
 import drawTabbableOnCanvas from '../clientSideScripts/drawTabbableOnCanvas.js'
 import saveFullPageScreen from './saveFullPageScreen.js'
-import type { SaveTabbableOptions } from './tabbable.interfaces'
+import type { SaveTabbableOptions } from './tabbable.interfaces.js'
 import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 
 /**

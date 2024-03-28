@@ -23,7 +23,6 @@ export default async function saveAppElement(
     // 1. Set some variables
     const {
         formatImageName,
-        logLevel,
         savePerInstance,
     } = saveElementOptions.wic
     const { executor, getElementRect, screenShot } = methods
@@ -81,7 +80,6 @@ export default async function saveAppElement(
         },
         isNativeContext,
         isLandscape:false,
-        logLevel,
         platformName,
     }
 

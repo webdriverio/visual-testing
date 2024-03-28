@@ -27,7 +27,6 @@ exports[`options > defaultOptions > should return the default options when no op
   "fullPageScrollTimeout": 1500,
   "hideScrollBars": true,
   "isHybridApp": false,
-  "logLevel": "info",
   "savePerInstance": false,
   "tabbableOptions": {
     "circle": {
@@ -77,7 +76,6 @@ exports[`options > defaultOptions > should return the provided options when opti
   "fullPageScrollTimeout": 12345,
   "hideScrollBars": true,
   "isHybridApp": false,
-  "logLevel": "info",
   "savePerInstance": true,
   "tabbableOptions": {
     "circle": {

@@ -56,7 +56,6 @@ export default async function checkWebScreen(
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: checkScreenOptions.wic.isHybridApp,
         isLandscape,
-        logLevel: checkScreenOptions.wic.logLevel,
         platformName: instanceData.platformName,
     }
 

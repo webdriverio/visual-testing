@@ -1,10 +1,11 @@
+import logger from '@wdio/logger'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
 import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
 import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
 import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getScreenshotSize, waitFor } from '../helpers/utils.js'
-import type { Executor, TakeScreenShot } from './methods.interfaces'
+import type { Executor, TakeScreenShot } from './methods.interfaces.js'
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
@@ -12,13 +13,14 @@ import type {
     FullPageScreenshotsData,
     TakeWebElementScreenshot,
     TakeWebElementScreenshotData,
-} from './screenshots.interfaces'
-import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces'
+} from './screenshots.interfaces.js'
+import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
-import { LogLevel } from '../helpers/options.interfaces'
 import type { ElementRectanglesOptions } from './rectangles.interfaces.js'
 import { determineElementRectangles } from './rectangles.js'
+
+const log = logger('@wdio/visual-service:webdriver-image-comparison-screenshots')
 
 /**
  * Take a full page screenshots for desktop / iOS / Android
@@ -40,7 +42,6 @@ export async function getBase64FullPageScreenshotsData(
         isHybridApp,
         isIOS,
         isLandscape,
-        logLevel,
         screenHeight,
         screenWidth,
         toolBarShadowPadding,
@@ -50,7 +51,6 @@ export async function getBase64FullPageScreenshotsData(
         fullPageScrollTimeout,
         hideAfterFirstScroll,
         innerHeight,
-        logLevel,
     }
     const nativeMobileOptions = {
         ...desktopOptions,
@@ -84,7 +84,7 @@ export async function getBase64FullPageScreenshotsData(
 
         return getFullPageScreenshotsDataNativeMobile(takeScreenshot, executor, androidNativeMobileOptions)
     } else if (isAndroid && isAndroidChromeDriverScreenshot) {
-        const chromeDriverOptions = { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight, logLevel }
+        const chromeDriverOptions = { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight }
 
         // Create a fullpage screenshot for Android when the ChromeDriver provides the screenshots
         return getFullPageScreenshotsDataAndroidChromeDriver(takeScreenshot, executor, chromeDriverOptions)
@@ -137,7 +137,6 @@ export async function getFullPageScreenshotsDataNativeMobile(
         iosHomeBarY,
         safeArea,
         isLandscape,
-        logLevel,
         statusAddressBarHeight,
         screenHeight,
         sideBarWidth,
@@ -175,7 +174,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
             try {
                 await executor(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
             } catch (e) {
-                logHiddenRemovedError(e, logLevel)
+                logHiddenRemovedError(e)
             }
         }
 
@@ -227,7 +226,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
         try {
             await executor(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
         } catch (e) {
-            logHiddenRemovedError(e, logLevel)
+            logHiddenRemovedError(e)
         }
     }
 
@@ -256,7 +255,7 @@ export async function getFullPageScreenshotsDataAndroidChromeDriver(
     options: FullPageScreenshotOptions,
 ): Promise<FullPageScreenshotsData> {
     const viewportScreenshots = []
-    const { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight, logLevel } = options
+    const { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight } = options
 
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
@@ -279,7 +278,7 @@ export async function getFullPageScreenshotsDataAndroidChromeDriver(
             try {
                 await executor(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
             } catch (e) {
-                logHiddenRemovedError(e, logLevel)
+                logHiddenRemovedError(e)
             }
         }
 
@@ -327,7 +326,7 @@ export async function getFullPageScreenshotsDataAndroidChromeDriver(
         try {
             await executor(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
         } catch (e) {
-            logHiddenRemovedError(e, logLevel)
+            logHiddenRemovedError(e)
         }
     }
 
@@ -356,7 +355,7 @@ export async function getFullPageScreenshotsDataDesktop(
     options: FullPageScreenshotOptions,
 ): Promise<FullPageScreenshotsData> {
     const viewportScreenshots = []
-    const { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight, logLevel } = options
+    const { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight } = options
     let actualInnerHeight = innerHeight
 
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
@@ -377,7 +376,7 @@ export async function getFullPageScreenshotsDataDesktop(
             try {
                 await executor(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
             } catch (e) {
-                logHiddenRemovedError(e, logLevel)
+                logHiddenRemovedError(e)
             }
         }
 
@@ -435,7 +434,7 @@ export async function getFullPageScreenshotsDataDesktop(
         try {
             await executor(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
         } catch (e) {
-            logHiddenRemovedError(e, logLevel)
+            logHiddenRemovedError(e)
         }
     }
 
@@ -467,11 +466,10 @@ export async function takeBase64Screenshot(takeScreenshot: TakeScreenShot): Prom
  *
  * @TODO: remove the any
  */
-function logHiddenRemovedError(error: any, logLevel: LogLevel) {
-    if (logLevel === LogLevel.debug || logLevel === LogLevel.warn) {
-        console.log(
-            '\x1b[33m%s\x1b[0m',
-            `
+function logHiddenRemovedError(error: any) {
+    log.warn(
+        '\x1b[33m%s\x1b[0m',
+        `
 #####################################################################################
  WARNING:
  (One of) the elements that needed to be hidden or removed could not be found on the
@@ -480,8 +478,7 @@ function logHiddenRemovedError(error: any, logLevel: LogLevel) {
  We made sure the test didn't break.
 #####################################################################################
 `,
-        )
-    }
+    )
 }
 
 /**

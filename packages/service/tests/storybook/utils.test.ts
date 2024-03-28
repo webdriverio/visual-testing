@@ -2,7 +2,6 @@ import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import fetch from 'node-fetch'
-import type { Logger } from '@wdio/logger'
 import logger from '@wdio/logger'
 import type { Mock } from 'vitest'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
@@ -117,7 +116,9 @@ describe('Storybook utils', () => {
             vi.mocked(fetch).mockResolvedValue({ status: 404 })
 
             const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as unknown as () => never)
+            const logErrorMock = vi.spyOn(log, 'error')
             await checkStorybookIsRunning('https://not.running.it')
+            expect(logErrorMock).toMatchSnapshot()
             expect(exitSpy).toHaveBeenCalledWith(1)
         })
 
@@ -126,7 +127,9 @@ describe('Storybook utils', () => {
             vi.mocked(fetch).mockResolvedValue({ status: 200 })
 
             const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as unknown as () => never)
+            const logErrorMock = vi.spyOn(log, 'error')
             await checkStorybookIsRunning('https://not.running.it')
+            expect(logErrorMock).not.toHaveBeenCalled()
             expect(exitSpy).not.toHaveBeenCalled()
         })
     })
@@ -352,7 +355,7 @@ describe('Storybook utils', () => {
             const fileID = 'testFile'
             const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as unknown as () => never)
 
-            writeTestFile(directoryPath, fileID, log, testContent)
+            writeTestFile(directoryPath, fileID, testContent)
 
             expect(writeFileSync).toHaveBeenCalledWith(`${directoryPath}/${fileID}.test.js`, testContent)
             expect(logInfoMock.mock.calls[0][0]).toContain(`Test file created at: ${directoryPath}/${fileID}.test.js`)
@@ -367,7 +370,7 @@ describe('Storybook utils', () => {
             const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as unknown as () => never)
             vi.mocked(writeFileSync).mockImplementation(() => {throw new Error('test error') as never})
 
-            writeTestFile(directoryPath, fileID, log, testContent)
+            writeTestFile(directoryPath, fileID, testContent)
 
             expect(writeFileSync).toHaveBeenCalledWith(`${directoryPath}/${fileID}.test.js`, testContent)
             expect(logErrorMock.mock.calls[0][0]).toContain(`It seems that the writing the file to '${directoryPath}/${fileID}.test.js' didn't succeed due to the following error: Error: test error`)
@@ -593,12 +596,10 @@ describe('Storybook utils', () => {
 
     describe('createStorybookCapabilities', () => {
         let originalArgv: NodeJS.Process['argv']
-        let logMock: Logger
         let capabilities: WebdriverIO.Capabilities[]
 
         beforeEach(() => {
             originalArgv = [...process.argv]
-            logMock = { error: vi.fn(), info: vi.fn() } as unknown as Logger
             capabilities = []
         })
 
@@ -607,7 +608,7 @@ describe('Storybook utils', () => {
         })
 
         it('defaults to chrome if no browsers are specified', () => {
-            createStorybookCapabilities(capabilities, logMock)
+            createStorybookCapabilities(capabilities)
 
             expect(capabilities).toHaveLength(1)
             expect((capabilities)[0].browserName).toBe('chrome')
@@ -615,10 +616,9 @@ describe('Storybook utils', () => {
 
         it('should modify capabilities based on provided browsers', () => {
             process.argv.push('--browsers', 'chrome,firefox,edge')
-            createStorybookCapabilities(capabilities, logMock)
+            createStorybookCapabilities(capabilities)
 
             expect(capabilities).toHaveLength(3)
-            console.log('capabilities = ', capabilities)
             expect((capabilities)[0].browserName).toBe('firefox')
             expect(((capabilities)[0])['moz:firefoxOptions']?.args).toContain('-headless')
             expect(((capabilities)[1]).browserName).toBe('MicrosoftEdge')
@@ -629,7 +629,7 @@ describe('Storybook utils', () => {
 
         it('should not have headless if provided', () => {
             process.argv.push('--browsers', 'chrome,firefox,edge', '--headless=false')
-            createStorybookCapabilities(capabilities, logMock)
+            createStorybookCapabilities(capabilities)
 
             expect(capabilities).toHaveLength(3)
             expect((capabilities)[0].browserName).toBe('firefox')
@@ -641,22 +641,25 @@ describe('Storybook utils', () => {
         })
 
         it('logs an error if capabilities are not an array', () => {
+            const logErrorMock = vi.spyOn(log, 'error')
             const invalidCapabilities = {}
             const createChromeCapabilityWithEmulationMock = vi.fn()
             const mockErrorMessageFunc = vi.fn()
             // @ts-ignore, ignoring because we need to provide invalid capabilities
-            createStorybookCapabilities(invalidCapabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
+            createStorybookCapabilities(invalidCapabilities, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
 
-            expect(logMock.error).toMatchSnapshot()
+            expect(logErrorMock).toMatchSnapshot()
         })
 
         it('adds Chrome capabilities with mobile emulation for specified devices', () => {
             process.argv.push('--devices', 'iPhone 14 Pro Max,Pixel 7')
             const createChromeCapabilityWithEmulationMock = vi.fn()
             const mockErrorMessageFunc = vi.fn()
-            createStorybookCapabilities(capabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
 
-            expect(logMock.info).toHaveBeenCalledTimes(1)
+            const logInfoMock = vi.spyOn(log, 'info')
+            createStorybookCapabilities(capabilities, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
+
+            expect(logInfoMock).toHaveBeenCalledTimes(1)
             expect(createChromeCapabilityWithEmulationMock).toHaveBeenCalledTimes(2)
         })
 
@@ -664,7 +667,7 @@ describe('Storybook utils', () => {
             process.argv.push('--devices', 'Unsupported Device')
             const createChromeCapabilityWithEmulationMock = vi.fn()
             const mockErrorMessageFunc = vi.fn()
-            createStorybookCapabilities(capabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
+            createStorybookCapabilities(capabilities, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
 
             expect(mockErrorMessageFunc).toHaveBeenCalledOnce()
         })
@@ -673,7 +676,7 @@ describe('Storybook utils', () => {
             process.argv.push('--browsers', 'unsupportedBrowser')
             const createChromeCapabilityWithEmulationMock = vi.fn()
             const mockErrorMessageFunc = vi.fn()
-            createStorybookCapabilities(capabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
+            createStorybookCapabilities(capabilities, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
 
             expect(mockErrorMessageFunc).toHaveBeenCalled()
         })
@@ -682,7 +685,7 @@ describe('Storybook utils', () => {
             process.argv.push('--browsers', 'unsupportedBrowser', '--devices', 'Unsupported Device')
             const createChromeCapabilityWithEmulationMock = vi.fn()
             const mockErrorMessageFunc = vi.fn()
-            createStorybookCapabilities(capabilities, logMock, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
+            createStorybookCapabilities(capabilities, createChromeCapabilityWithEmulationMock, mockErrorMessageFunc)
 
             expect(mockErrorMessageFunc).toHaveBeenCalled()
         })
@@ -690,7 +693,6 @@ describe('Storybook utils', () => {
 
     describe('scanStorybook', () => {
         let originalEnv: NodeJS.ProcessEnv
-        const mockLog = { info: vi.fn() } as unknown as Logger
         const config = {} as Options.Testrunner
         let mockGetArgvVal: Mock
         let mockCheckStorybookIsRun: Mock
@@ -733,7 +735,10 @@ describe('Storybook utils', () => {
         it('uses STORYBOOK_URL from process.env when available', async () => {
             const mockStorybookUrl = 'http://storybook-from-env.com'
             setupMocks(mockStorybookUrl)
-            const result = await scanStorybook(config, mockLog, {}, mockGetArgvVal, mockCheckStorybookIsRun, mockSanitizeURLFunc, mockGetStoriesJsonFunc)
+            const result = await scanStorybook(
+                config, {},
+                mockGetArgvVal, mockCheckStorybookIsRun, mockSanitizeURLFunc, mockGetStoriesJsonFunc,
+            )
 
             assertResults(mockStorybookUrl, result)
         })
@@ -742,7 +747,7 @@ describe('Storybook utils', () => {
             setupMocks(undefined)
             const mockStorybookUrl = 'http://storybook-from-options.com'
             const result = await scanStorybook(
-                config, mockLog, { storybook: { url: mockStorybookUrl } },
+                config, { storybook: { url: mockStorybookUrl } },
                 mockGetArgvVal, mockCheckStorybookIsRun, mockSanitizeURLFunc, mockGetStoriesJsonFunc,
             )
 
@@ -753,7 +758,7 @@ describe('Storybook utils', () => {
             const mockStorybookUrl = 'http://127.0.0.1:6006'
             setupMocks(undefined)
             const result = await scanStorybook(
-                config, mockLog, {},
+                config, {},
                 mockGetArgvVal, mockCheckStorybookIsRun, mockSanitizeURLFunc, mockGetStoriesJsonFunc,
             )
 
@@ -762,21 +767,16 @@ describe('Storybook utils', () => {
     })
 
     describe('parseSkipStories', () => {
-        let logMock: Logger
-        beforeEach(() => {
-            logMock = { error: vi.fn() } as unknown as Logger
-        })
-
         it('returns the input array if skipStories is an array', () => {
             const skipStories = ['story1', 'story2']
-            const result = parseSkipStories(skipStories, logMock)
+            const result = parseSkipStories(skipStories)
 
             expect(result).toEqual(skipStories)
         })
 
         it('returns a RegExp if skipStories is a valid regex string', () => {
             const skipStories = '/story[0-9]+/i'
-            const result = parseSkipStories(skipStories, logMock)
+            const result = parseSkipStories(skipStories)
 
             expect(result).toBeInstanceOf(RegExp)
             expect(result).toEqual(new RegExp('story[0-9]+', 'i'))
@@ -784,15 +784,16 @@ describe('Storybook utils', () => {
 
         it('logs an error and returns an array if skipStories is an invalid regex string', () => {
             const skipStories = '/[unclosed-regex/'
-            const result = parseSkipStories(skipStories, logMock)
+            const logErrorMock = vi.spyOn(log, 'error')
+            const result = parseSkipStories(skipStories)
 
-            expect(logMock.error).toHaveBeenCalled()
+            expect(logErrorMock).toMatchSnapshot()
             expect(result).toEqual([skipStories])
         })
 
         it('splits and trims a comma-separated string', () => {
             const skipStories = 'story1, story2,story3'
-            const result = parseSkipStories(skipStories, logMock)
+            const result = parseSkipStories(skipStories)
 
             expect(result).toEqual(['story1', 'story2', 'story3'])
         })

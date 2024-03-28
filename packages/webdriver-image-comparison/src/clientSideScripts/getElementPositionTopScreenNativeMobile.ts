@@ -1,4 +1,4 @@
-import type { ElementPosition } from './elementPosition.interfaces'
+import type { ElementPosition } from './elementPosition.interfaces.js'
 
 /**
  * Get the element position to the top of the screen of the device, not the top of the webview

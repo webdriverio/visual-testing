@@ -1,4 +1,4 @@
-import type { RectanglesOutput } from '../methods/rectangles.interfaces'
+import type { RectanglesOutput } from '../methods/rectangles.interfaces.js'
 
 export interface StatusAddressToolBarOffsets {
     safeArea: number;

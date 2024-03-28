@@ -1,4 +1,4 @@
-import type { Executor } from './methods.interfaces'
+import type { Executor } from './methods.interfaces.js'
 
 export interface RectanglesOptions {
     // The device pixel ration of the screen / device

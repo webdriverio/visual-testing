@@ -28,7 +28,7 @@ export default async function saveWebElement(
     isNativeContext: boolean,
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
-    const { addressBarShadowPadding, autoElementScroll, formatImageName, logLevel, savePerInstance, toolBarShadowPadding } =
+    const { addressBarShadowPadding, autoElementScroll, formatImageName, savePerInstance, toolBarShadowPadding } =
         saveElementOptions.wic
     const { executor, screenShot, takeElementScreenshot } = methods
     // 1b. Set the method options to the right values
@@ -55,7 +55,6 @@ export default async function saveWebElement(
         disableCSSAnimation,
         enableLayoutTesting,
         hideElements,
-        logLevel,
         noScrollBars: hideScrollBars,
         removeElements,
         toolBarShadowPadding,
@@ -128,7 +127,6 @@ export default async function saveWebElement(
         isWebDriverElementScreenshot,
         isIOS,
         isLandscape,
-        logLevel,
         rectangles,
         resizeDimensions,
     })
@@ -167,7 +165,6 @@ export default async function saveWebElement(
         hideScrollBars,
         isLandscape,
         isNativeContext: false,
-        logLevel,
         platformName: instanceData.platformName,
         removeElements,
     }
