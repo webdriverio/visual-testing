@@ -1,5 +1,11 @@
 # webdriver-image-comparison
 
+## 5.1.0
+
+### Minor Changes
+
+- c9fab82: change console.log to wdio logger
+
 ## 5.0.1
 
 ### Patch Changes

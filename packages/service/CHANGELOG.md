@@ -1,5 +1,16 @@
 # @wdio/visual-service
 
+## 4.1.0
+
+### Minor Changes
+
+- c9fab82: change console.log to wdio logger
+
+### Patch Changes
+
+- Updated dependencies [c9fab82]
+  - webdriver-image-comparison@5.1.0
+
 ## 4.0.2
 
 ### Patch Changes
