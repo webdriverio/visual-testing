@@ -118,7 +118,7 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       webdriver-image-comparison:
-        specifier: ^5.0.1
+        specifier: ^5.1.0
         version: link:../webdriver-image-comparison
 
   packages/webdriver-image-comparison:
