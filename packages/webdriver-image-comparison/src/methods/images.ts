@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url'
-import { access, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { promises as fsPromises, constants } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { createCanvas, loadImage } from 'canvas'
 import type { ComparisonOptions, ComparisonIgnoreOption } from 'resemblejs'
@@ -36,49 +37,42 @@ export async function checkBaselineImageExists(
     baselineFilePath: string,
     autoSaveBaseline: boolean,
 ): Promise<void> {
-    return new Promise((resolve, reject) => {
-        access(baselineFilePath, (error) => {
-            if (error) {
-                if (autoSaveBaseline) {
-                    try {
-                        const data = readFileSync(actualFilePath, { encoding: 'base64' })
-                        writeFileSync(baselineFilePath, data)
-                        log.info(
-                            '\x1b[33m%s\x1b[0m',
-                            `
+    try {
+        await fsPromises.access(baselineFilePath, constants.R_OK | constants.W_OK)
+    } catch {
+        if (autoSaveBaseline) {
+            try {
+                const data = readFileSync(actualFilePath)
+                writeFileSync(baselineFilePath, data)
+                log.info(
+                    '\x1b[33m%s\x1b[0m',
+                    `
 #####################################################################################
  INFO:
  Autosaved the image to
  ${baselineFilePath}
-#####################################################################################
-`,
-                        )
-                    } catch (error) {
-                        /* istanbul ignore next */
-                        reject(
-                            `
+#####################################################################################`,
+                )
+            } catch (error) {
+                throw new Error(
+                    `
 #####################################################################################
  Image could not be copied. The following error was thrown:
  ${error}
-#####################################################################################
-`,
-                        )
-                    }
-                } else {
-                    reject(
-                        `
+#####################################################################################`,
+                )
+            }
+        } else {
+            throw new Error(
+                `
 #####################################################################################
  Baseline image not found, save the actual image manually to the baseline.
  The image can be found here:
  ${actualFilePath}
-#####################################################################################
-`,
-                    )
-                }
-            }
-            resolve()
-        })
-    })
+#####################################################################################`,
+            )
+        }
+    }
 }
 
 /**
