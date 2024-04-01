@@ -19,8 +19,8 @@ importers:
         specifier: ^20.1.4
         version: 20.1.4
       '@types/eslint':
-        specifier: ^8.56.6
-        version: 8.56.6
+        specifier: ^8.56.7
+        version: 8.56.7
       '@types/jsdom':
         specifier: ~21.1.6
         version: 21.1.6
@@ -1197,8 +1197,8 @@ packages:
       '@types/responselike': 1.0.3
     dev: true
 
-  /@types/eslint@8.56.6:
-    resolution: {integrity: sha512-ymwc+qb1XkjT/gfoQwxIeHZ6ixH23A+tCT2ADSA/DPVKzAjwYkTXBMCQ/f6fe4wEa85Lhp26VPeUxI7wMhAi7A==}
+  /@types/eslint@8.56.7:
+    resolution: {integrity: sha512-SjDvI/x3zsZnOkYZ3lCt9lOZWZLB2jIlNKz+LBgCtDurK0JZcwucxYHn1w2BJkD34dgX9Tjnak0txtq4WTggEA==}
     dependencies:
       '@types/estree': 1.0.5
       '@types/json-schema': 7.0.15
