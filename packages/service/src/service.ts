@@ -15,6 +15,7 @@ import {
     checkTabbablePage,
     FOLDERS,
 } from 'webdriver-image-comparison'
+import ocrGetText from './ocr/commands/ocrGetText.js'
 import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -22,6 +23,9 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
+import type { GetTextOptions } from './ocr/types.js'
+import { isTesseractAvailable } from './ocr/utils/tesseract.js'
+import { SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
 
 const log = logger('@wdio/visual-service')
 
@@ -33,6 +37,7 @@ const pageCommands = {
     checkScreen,
     checkFullPageScreen,
     checkTabbablePage,
+    ocrGetText,
 }
 
 export default class WdioImageComparisonService extends BaseClass {
@@ -194,29 +199,47 @@ export default class WdioImageComparisonService extends BaseClass {
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
-            currentBrowser.addCommand(
-                commandName,
-                function (this: typeof currentBrowser, tag, pageOptions = {}) {
-                    return command(
-                        {
-                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
+            if (commandName === 'ocrGetText') {
+                currentBrowser.addCommand(
+                    commandName,
+                    function (options: GetTextOptions = {}) {
+                        const { element } = options
+                        // @ts-ignore
+                        return command({
+                            element,
+                            isTesseractAvailable: isTesseractAvailable(),
+                            // language: this._options.ocrLanguage || SUPPORTED_LANGUAGES.ENGLISH,
+                            language: SUPPORTED_LANGUAGES.ENGLISH,
+                            ocrImagesPath: './.tmp',
+                        })
+                    }
+                )
+            } else {
+                currentBrowser.addCommand(
+                    commandName,
+                    function (this: typeof currentBrowser, tag, pageOptions = {}) {
+                        return command(
+                        // @ts-ignore
+                            {
+                                executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                    return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
+                                },
+                                getElementRect: this.getElementRect.bind(currentBrowser),
+                                screenShot:
+                                    this.takeScreenshot.bind(currentBrowser),
                             },
-                            getElementRect: this.getElementRect.bind(currentBrowser),
-                            screenShot:
-                                this.takeScreenshot.bind(currentBrowser),
-                        },
-                        instanceData,
-                        getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
-                        tag,
-                        {
-                            wic: self.defaultOptions,
-                            method: pageOptions,
-                        },
-                        self._isNativeContext as boolean,
-                    )
-                }
-            )
+                            instanceData,
+                            getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                            tag,
+                            {
+                                wic: self.defaultOptions,
+                                method: pageOptions,
+                            },
+                            self._isNativeContext as boolean,
+                        )
+                    }
+                )
+            }
         }
     }
 }

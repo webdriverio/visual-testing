@@ -27,7 +27,10 @@ export const config: Options.Testrunner = {
                 // Capabilities.d.ts(87, 5): The expected type comes from this index signature.
                 // ```
                 // @ts-ignore
-                args: ['disable-infobars', '--headless'],
+                args: [
+                    'disable-infobars',
+                    '--headless',
+                ],
             },
             'wdio-ics:options': {
                 logName: 'local-chrome-latest',

@@ -28,7 +28,10 @@
   "dependencies": {
     "@wdio/logger": "^8.28.0",
     "@wdio/types": "^8.32.4",
+    "jimp": "^0.22.12",
+    "tesseract.js": "^5.0.5",
     "node-fetch": "^3.3.2",
+    "xml2js": "^0.6.2",
     "webdriver-image-comparison": "^5.1.0"
   }
 }

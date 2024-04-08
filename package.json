@@ -44,6 +44,7 @@
     "@tsconfig/node20": "^20.1.4",
     "@types/eslint": "^8.56.6",
     "@types/jsdom": "~21.1.6",
+    "@types/xml2js": "~0.4.14",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "@typescript-eslint/utils": "^7.4.0",
