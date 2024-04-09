@@ -1,7 +1,8 @@
 import { execSync } from 'node:child_process'
 import { createWorker, PSM } from 'tesseract.js'
+import { recognize } from 'node-tesseract-ocr'
 import { parseString } from 'xml2js'
-import type { GetOcrData, GetOcrDataOptions, Line, LineData, Rectangles, UnprocessedBlock, Words } from '../types.js'
+import type { GetOcrData, GetOcrDataOptions, Line, LineData, Rectangles, UnprocessedBlock, UnprocessedSystemBlock, Words } from '../types.js'
 
 export function isTesseractAvailable(tesseractName: string = ''): boolean {
     const binary = tesseractName || 'tesseract'
@@ -48,9 +49,12 @@ export function parseWordDataFromText(
     }
 }
 
+/**
+ * Handle the OCR with Tesseract with pure JS
+ */
 export async function getNodeOcrData(options: GetOcrDataOptions): Promise<GetOcrData|Error> {
     try {
-        const { filePath, language, rectangle } = options
+        const { filePath, language } = options
         const jsonSingleWords: Words[] = []
         const jsonWordStrings: Line[] = []
         let composedBlocks: UnprocessedBlock[] = []
@@ -63,7 +67,7 @@ export async function getNodeOcrData(options: GetOcrDataOptions): Promise<GetOcr
             tessjs_create_unlv: '0',
             tessjs_create_osd: '0',
         })
-        const { data: { text, hocr } } = await worker.recognize(filePath, { rectangle })
+        const { data: { text, hocr } } = await worker.recognize(filePath)
         await worker.terminate()
 
         if (!hocr) {
@@ -138,5 +142,88 @@ export async function getNodeOcrData(options: GetOcrDataOptions): Promise<GetOcr
         }
     } catch (error) {
         throw Error(`An error happened when parsing the getNodeOcrData, see: ${error}`)
+    }
+}
+
+/**
+ * Handle the OCR with Tesseract with the system installed version
+ */
+export async function getSystemOcrData(options: GetOcrDataOptions): Promise<GetOcrData|Error> {
+    try {
+        const { filePath, language } = options
+        const jsonSingleWords: Words[] = []
+        const jsonWordStrings: Line[] = []
+        let composedBlocks: UnprocessedSystemBlock[] = []
+        let text: string = ''
+        const result = await recognize(filePath, {
+            lang: language,
+            oem: 1,
+            // https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc
+            psm: 3,
+            presets: ['txt', 'alto'],
+        })
+
+        parseString(result, (error: Error, data) => {
+            if (error) {
+                throw Error(`An error happened when parsing the getSystemOcrData, see: ${error}`)
+            }
+
+            text = data.alto.Layout[0]._ || text
+            composedBlocks = data.alto.Layout[0].Page[0].PrintSpace[0].ComposedBlock
+        })
+
+        if (!composedBlocks || composedBlocks.length === 0){
+            throw Error('No text was found for the OCR, please verify the stored image.')
+        }
+
+        composedBlocks.forEach(composedBlock => {
+            composedBlock.TextBlock?.forEach(textBlock => {
+                textBlock.TextLine?.forEach(textLine => {
+                    let lineText = ''
+                    let lineBbox: Rectangles | null = null
+
+                    if (textLine.$) {
+                        lineBbox = {
+                            left: Number(textLine.$.HPOS),
+                            top: Number(textLine.$.VPOS),
+                            right: Number(textLine.$.HPOS) + Number(textLine.$.WIDTH),
+                            bottom: Number(textLine.$.VPOS) + Number(textLine.$.HEIGHT),
+                        }
+                    }
+
+                    textLine.String?.forEach(string => {
+                        const { CONTENT, HPOS, VPOS, WIDTH, HEIGHT, WC } = string.$
+                        if (!CONTENT || !HPOS || !VPOS || !WIDTH || !HEIGHT || !WC) {return}
+
+                        const word = {
+                            text: CONTENT,
+                            bbox: {
+                                left: Number(HPOS),
+                                top: Number(VPOS),
+                                right: Number(HPOS) + Number(WIDTH),
+                                bottom: Number(VPOS) + Number(HEIGHT),
+                            },
+                            wc: Number(WC),
+                        }
+
+                        jsonSingleWords.push(word)
+                        lineText += `${CONTENT} `
+                    })
+
+                    lineText = lineText.trim()
+                    if (lineText !== '' && lineBbox) {
+                        jsonWordStrings.push({ text: lineText, bbox: lineBbox })
+                    }
+                })
+            })
+        })
+
+        return {
+            lines: jsonWordStrings,
+            words: jsonSingleWords,
+            text: text,
+        }
+    } catch (error) {
+        throw Error(`An error happened when parsing the getSystemOcrData, see: ${error}`)
     }
 }

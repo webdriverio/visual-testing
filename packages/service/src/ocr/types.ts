@@ -72,8 +72,6 @@ export interface OcrGetData extends GetOcrData {
     dpr: number;
   }
 
-export type foo = { bbox: Rectangles; wc: number }
-
 export type UnprocessedWord = {
     _: string;
     $: {
@@ -88,7 +86,6 @@ export type UnprocessedLine ={
 export type GetOcrDataOptions = {
     filePath: string;
     language: string;
-    rectangle: { top: number, left: number, width: number, height: number };
 }
 
 export type UnprocessedParagraph = {
@@ -101,4 +98,40 @@ export type UnprocessedBlock = {
 export type LineData = {
     text: string;
     bbox: Rectangles;
+}
+
+export type UnprocessedSystemStringElement = {
+    $: {
+        CONTENT: string;
+        HPOS: string;
+        VPOS: string;
+        WIDTH: string;
+        HEIGHT: string;
+        WC: string;
+    };
+}
+
+export type UnprocessedSystemTextLineElement = {
+    $: {
+        HPOS: string;
+        VPOS: string;
+        WIDTH: string;
+        HEIGHT: string;
+    };
+    String: UnprocessedSystemStringElement[];
+}
+
+export type UnprocessedSystemTextBlockElement = {
+    TextLine: UnprocessedSystemTextLineElement[];
+}
+
+export type UnprocessedSystemBlock = {
+    TextBlock?: UnprocessedSystemTextBlockElement[];
+}
+
+export type RectReturn = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 }

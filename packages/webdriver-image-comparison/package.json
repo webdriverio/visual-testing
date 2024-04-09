@@ -28,9 +28,10 @@
     "@wdio/logger": "^8.28.0"
   },
   "devDependencies": {
+    "@types/copyfiles": "~2.4.4",
     "@types/fs-extra": "^11.0.4",
     "@types/resemblejs": "^4.1.3",
     "copyfiles": "^2.4.1",
-    "webdriverio": "^8.33.1"
+    "webdriverio": "^8.35.1"
   }
 }

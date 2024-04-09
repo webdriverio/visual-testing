@@ -5,8 +5,9 @@ import { join } from 'node:path'
 import Jimp from 'jimp'
 import { getScreenshotSize } from 'webdriver-image-comparison/dist/helpers/utils.js'
 import { addBlockOuts, saveBase64Image } from 'webdriver-image-comparison/dist/methods/images.js'
-import { getNodeOcrData } from './tesseract.js'
-import type { GetOcrData, OcrGetData, OcrGetDataOptions } from '../types.js'
+import { getNodeOcrData, getSystemOcrData } from './tesseract.js'
+import type { GetOcrData, Line, OcrGetData, OcrGetDataOptions, Words } from '../types.js'
+import { adjustElementBbox } from './index.js'
 
 const log = logger('@wdio/visual-service:ocrGetData')
 
@@ -21,7 +22,7 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
     try {
         const screenSize = await driver.getWindowSize()
         const screenshot = await driver.takeScreenshot()
-        const { height, width } = getScreenshotSize(screenshot)
+        const { width } = getScreenshotSize(screenshot)
         const dpr = width / screenSize.width
 
         // Make it grey which will be better for OCR
@@ -35,11 +36,17 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
         const filePath = join(ocrImagesPath, fileName)
         writeFileSync(filePath, greyscaleImage, { encoding: 'base64' })
 
-        // Get the element rect if an element is provided, otherwise use the full image to be scanned
-        let rectangle = { top: 0, left: 0, width, height }
+        let elementRect
+        let croppedFilePath
         if (element) {
-            const elementRect = await browser.getElementRect((await element).elementId)
-            rectangle = { top: elementRect.y, left: elementRect.x, width: elementRect.width, height: elementRect.height }
+            elementRect = await browser.getElementRect((await element).elementId)
+            const clonedImageImage = image.clone()
+            clonedImageImage.crop(elementRect.x, elementRect.y, elementRect.width, elementRect.height)
+            const croppedImage = await clonedImageImage.getBufferAsync(Jimp.MIME_PNG)
+            const parts = fileName.split('.')
+            const croppedFileName = `${parts[0]}-cropped.${parts[1]}`
+            croppedFilePath = join(ocrImagesPath, croppedFileName)
+            writeFileSync(croppedFilePath, croppedImage, { encoding: 'base64' })
         }
 
         // OCR the image
@@ -48,9 +55,20 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
 
         if (isTesseractAvailable) {
             log.info('Using system installed version of Tesseract')
+            ocrData = await getSystemOcrData({ filePath: croppedFilePath || filePath, language })
         } else {
             log.info('Using NodeJS version of Tesseract')
-            ocrData = await getNodeOcrData({ filePath, language: language, rectangle })
+            ocrData = await getNodeOcrData({ filePath: croppedFilePath || filePath, language })
+        }
+
+        if (element && elementRect) {
+            ocrData.lines.forEach((line:Line) => {
+                line.bbox = adjustElementBbox(line.bbox, elementRect)
+            })
+
+            ocrData.words.forEach((word:Words) => {
+                word.bbox = adjustElementBbox(word.bbox, elementRect)
+            })
         }
 
         const diff = process.hrtime(start)
@@ -81,5 +99,4 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
     } catch (e) {
         throw new Error(String(e))
     }
-
 }
