@@ -16,6 +16,7 @@ import {
     FOLDERS,
 } from 'webdriver-image-comparison'
 import ocrGetText from './ocr/commands/ocrGetText.js'
+import ocrGetElementPositionByText from './ocr/commands/ocrGetElementPositionByText.js'
 import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -23,7 +24,7 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
-import type { GetTextOptions } from './ocr/types.js'
+import type { GetTextOptions, OcrGetElementPositionByTextOptions } from './ocr/types.js'
 import { isTesseractAvailable } from './ocr/utils/tesseract.js'
 import { SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
 
@@ -38,6 +39,7 @@ const pageCommands = {
     checkFullPageScreen,
     checkTabbablePage,
     ocrGetText,
+    ocrGetElementPositionByText,
 }
 
 export default class WdioImageComparisonService extends BaseClass {
@@ -199,11 +201,12 @@ export default class WdioImageComparisonService extends BaseClass {
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
-            if (commandName === 'ocrGetText') {
+            if (commandName.startsWith('ocr')) {
                 currentBrowser.addCommand(
                     commandName,
-                    function (options: GetTextOptions = {}) {
-                        const { element } = options
+                    function (options: GetTextOptions | OcrGetElementPositionByTextOptions = {}) {
+                        // @ts-ignore
+                        const { element, text = '' } = options
                         // @ts-ignore
                         return command({
                             element,
@@ -211,6 +214,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             // language: this._options.ocrLanguage || SUPPORTED_LANGUAGES.ENGLISH,
                             language: SUPPORTED_LANGUAGES.ENGLISH,
                             ocrImagesPath: './.tmp',
+                            text,
                         })
                     }
                 )

@@ -25,9 +25,9 @@ export function determineClickPoint(options: DetermineClickPointOptions): ClickP
  */
 export function adjustElementBbox(bbox: Rectangles, elementRect: RectReturn): Rectangles {
     return {
-        left: bbox.left + elementRect.x,
-        top: bbox.top + elementRect.y,
-        right: bbox.right + elementRect.x,
-        bottom: bbox.bottom + elementRect.y,
+        left: Math.round(bbox.left + elementRect.x),
+        top: Math.round(bbox.top + elementRect.y),
+        right: Math.round(bbox.right + elementRect.x),
+        bottom: Math.round(bbox.bottom + elementRect.y),
     }
 }

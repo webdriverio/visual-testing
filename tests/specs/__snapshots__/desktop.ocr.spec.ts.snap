@@ -1,0 +1,28 @@
+// Snapshot v1
+
+exports[`@wdio/visual-service:ocr desktop > should Get the position of a text on the screen based on OCR 'chrome-undefined' 1`] = `
+{
+  "dprPosition": {
+    "bottom": 114,
+    "left": 1192,
+    "right": 1329,
+    "top": 97,
+  },
+  "matchedString": "Q Search LJKJ",
+  "originalPosition": {
+    "bottom": 114,
+    "left": 1192,
+    "right": 1329,
+    "top": 97,
+  },
+  "score": 89.54,
+  "searchValue": "Search",
+}
+`;
+
+exports[`@wdio/visual-service:ocr desktop > should get text of an image based on OCR 'chrome-undefined' 1`] = `
+"
+Next-gen browser and mobile automation
+test framework for Node.js
+	"
+`;
