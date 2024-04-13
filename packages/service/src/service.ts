@@ -18,6 +18,7 @@ import {
 import ocrGetText from './ocr/commands/ocrGetText.js'
 import ocrGetElementPositionByText from './ocr/commands/ocrGetElementPositionByText.js'
 import ocrClickOnText from './ocr/commands/ocrClickOnText.js'
+import ocrSetValue from './ocr/commands/ocrSetValue.js'
 import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -25,7 +26,7 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
-import type { GetTextOptions, OcrGetElementPositionByTextOptions } from './ocr/types.js'
+import type { GetTextOptions, OcrGetElementPositionByTextOptions, SetValueOptions } from './ocr/types.js'
 import { isTesseractAvailable } from './ocr/utils/tesseract.js'
 import { SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
 
@@ -42,6 +43,7 @@ const pageCommands = {
     ocrClickOnText,
     ocrGetText,
     ocrGetElementPositionByText,
+    ocrSetValue,
 }
 
 export default class WdioImageComparisonService extends BaseClass {
@@ -203,7 +205,24 @@ export default class WdioImageComparisonService extends BaseClass {
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
-            if (commandName.startsWith('ocr')) {
+            if (commandName.startsWith('ocrSetValue')) {
+                currentBrowser.addCommand(
+                    commandName,
+                    function (options: SetValueOptions) {
+                        const { element, text, value } = options
+                        // @ts-ignore
+                        return command({
+                            element,
+                            isTesseractAvailable: isTesseractAvailable(),
+                            // language: this._options.ocrLanguage || SUPPORTED_LANGUAGES.ENGLISH,
+                            language: SUPPORTED_LANGUAGES.ENGLISH,
+                            ocrImagesPath: './.tmp',
+                            text,
+                            value,
+                        })
+                    }
+                )
+            } else if (commandName.startsWith('ocr')) {
                 currentBrowser.addCommand(
                     commandName,
                     function (options: GetTextOptions | OcrGetElementPositionByTextOptions = {}) {

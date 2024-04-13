@@ -54,4 +54,26 @@ describe('@wdio/visual-service:ocr desktop', () => {
 
         expect(ocrText).toContain('docs')
     })
+
+    it(`should set a value on an element based on text on the screen based on OCR '${browserName}'`, async function() {
+        await driver.ocrClickOnText({
+            element: $('.DocSearch'),
+            text: 'Search',
+        })
+
+        await driver.ocrSetValue({
+            element: $('.DocSearch-Form'),
+            text: 'docs',
+            value: 'specfileretries',
+        })
+
+        await driver.pause(1000)
+
+        const ocrText = await driver.ocrGetText({ element: $('.DocSearch-Dropdown') })
+        console.log(ocrText)
+        expect(ocrText).toContain('specFileRetries')
+        expect(ocrText).toContain('Configuration')
+        expect(ocrText).toContain('specFileRetriesDelay')
+        expect(ocrText).toContain('specFileRetriesDeferred')
+    })
 })

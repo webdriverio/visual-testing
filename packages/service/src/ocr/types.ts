@@ -25,11 +25,6 @@ export interface WaitForTextDisplayedOptions {
     timeoutMsg?: string;
   }
 
-export interface SetValueOptions {
-    element?: WebdriverIO.Element|ChainablePromiseElement;
-    clickDuration?: Number;
-  }
-
 export interface ClickOnTextOptions {
     clickDuration?: Number;
     element?: WebdriverIO.Element | ChainablePromiseElement;
@@ -102,13 +97,33 @@ export interface OcrGetData extends GetOcrData {
     dpr: number;
 }
 
-export type OcrClickOnTextOptions ={
+export type OcrClickOnTextOptions = {
+    element?: WebdriverIO.Element | ChainablePromiseElement;
     isTesseractAvailable: boolean;
     language: string;
     ocrImagesPath: string;
     reuseOcr: boolean;
     screenSize: ScreenSize;
     text: string;
+    clickDuration?: Number;
+}
+
+export type SetValueOptions = {
+    element?: WebdriverIO.Element | ChainablePromiseElement;
+    text: string;
+    value: string;
+    clickDuration?: Number;
+}
+
+export type OcrSetValueOptions = {
+    element?: WebdriverIO.Element | ChainablePromiseElement;
+    isTesseractAvailable: boolean;
+    language: string;
+    reuseOcr: boolean;
+    ocrImagesPath: string;
+    screenSize: ScreenSize;
+    text: string;
+    value: string;
     clickDuration?: Number;
 }
 

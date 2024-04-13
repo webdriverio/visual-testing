@@ -11,7 +11,7 @@ import type {
     WdioCheckElementMethodOptions,
     WdioCheckScreenMethodOptions
 } from './types.js'
-import type { ClickOnTextOptions, GetElementPositionByTextOptions, GetTextOptions, OcrGetElementPositionByText } from './ocr/types.js'
+import type { ClickOnTextOptions, GetElementPositionByTextOptions, GetTextOptions, OcrGetElementPositionByText, SetValueOptions } from './ocr/types.js'
 
 declare global {
     namespace WebdriverIO {
@@ -93,14 +93,21 @@ declare global {
              * Get the text of an image base on OCR
              */
             ocrGetElementPositionByText(
-                options?: GetElementPositionByTextOptions
+                options: GetElementPositionByTextOptions
             ): Promise<OcrGetElementPositionByText>;
 
             /**
              * Click on an element based on text
              */
             ocrClickOnText(
-                options?: ClickOnTextOptions
+                options: ClickOnTextOptions
+            ): Promise<void>;
+
+            /**
+             * Set value on an element based on text
+             */
+            ocrSetValue(
+                options: SetValueOptions
             ): Promise<void>;
         }
         interface Element {}
