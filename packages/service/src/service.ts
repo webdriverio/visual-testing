@@ -19,6 +19,7 @@ import ocrGetText from './ocr/commands/ocrGetText.js'
 import ocrGetElementPositionByText from './ocr/commands/ocrGetElementPositionByText.js'
 import ocrClickOnText from './ocr/commands/ocrClickOnText.js'
 import ocrSetValue from './ocr/commands/ocrSetValue.js'
+import ocrWaitForTextDisplayed from './ocr/commands/ocrWaitForTextDisplayed.js'
 import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -26,7 +27,7 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
-import type { GetTextOptions, OcrGetElementPositionByTextOptions, SetValueOptions } from './ocr/types.js'
+import type { GetTextOptions, OcrGetElementPositionByTextOptions, SetValueOptions, WaitForTextDisplayedOptions } from './ocr/types.js'
 import { isTesseractAvailable } from './ocr/utils/tesseract.js'
 import { SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
 
@@ -44,6 +45,7 @@ const pageCommands = {
     ocrGetText,
     ocrGetElementPositionByText,
     ocrSetValue,
+    ocrWaitForTextDisplayed,
 }
 
 export default class WdioImageComparisonService extends BaseClass {
@@ -219,6 +221,24 @@ export default class WdioImageComparisonService extends BaseClass {
                             ocrImagesPath: './.tmp',
                             text,
                             value,
+                        })
+                    }
+                )
+            } else if (commandName.startsWith('ocrWaitForTextDisplayed')) {
+                currentBrowser.addCommand(
+                    commandName,
+                    function (options: WaitForTextDisplayedOptions) {
+                        const { element, text, timeout, timeoutMsg  } = options
+                        // @ts-ignore
+                        return command({
+                            element,
+                            isTesseractAvailable: isTesseractAvailable(),
+                            // language: this._options.ocrLanguage || SUPPORTED_LANGUAGES.ENGLISH,
+                            language: SUPPORTED_LANGUAGES.ENGLISH,
+                            ocrImagesPath: './.tmp',
+                            text,
+                            timeout,
+                            timeoutMsg,
                         })
                     }
                 )

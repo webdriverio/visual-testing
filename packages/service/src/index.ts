@@ -11,7 +11,7 @@ import type {
     WdioCheckElementMethodOptions,
     WdioCheckScreenMethodOptions
 } from './types.js'
-import type { ClickOnTextOptions, GetElementPositionByTextOptions, GetTextOptions, OcrGetElementPositionByText, SetValueOptions } from './ocr/types.js'
+import type { ClickOnTextOptions, GetElementPositionByTextOptions, GetTextOptions, OcrGetElementPositionByText, SetValueOptions, WaitForTextDisplayedOptions } from './ocr/types.js'
 
 declare global {
     namespace WebdriverIO {
@@ -108,6 +108,13 @@ declare global {
              */
             ocrSetValue(
                 options: SetValueOptions
+            ): Promise<void>;
+
+            /**
+             * Wait for the text to be displayed based on OCR
+             */
+            ocrWaitForTextDisplayed(
+                options: WaitForTextDisplayedOptions
             ): Promise<void>;
         }
         interface Element {}

@@ -17,13 +17,7 @@ export interface DetermineClickPointOptions {
 export interface OcrServiceConfig {
     ocrImagesPath?: string;
     ocrLanguage?: string;
-  }
-
-export interface WaitForTextDisplayedOptions {
-    element?: WebdriverIO.Element|ChainablePromiseElement;
-    timeout?: number;
-    timeoutMsg?: string;
-  }
+}
 
 export interface ClickOnTextOptions {
     clickDuration?: Number;
@@ -125,6 +119,23 @@ export type OcrSetValueOptions = {
     text: string;
     value: string;
     clickDuration?: Number;
+}
+
+export type WaitForTextDisplayedOptions = {
+    element?: WebdriverIO.Element | ChainablePromiseElement;
+    text: string;
+    timeout?: number;
+    timeoutMsg?: string;
+}
+
+export type OcrWaitForTextDisplayedOptions = {
+    element?: WebdriverIO.Element | ChainablePromiseElement;
+    isTesseractAvailable: boolean;
+    ocrImagesPath: string;
+    language: string;
+    text: string;
+    timeout?: number;
+    timeoutMsg?: string;
 }
 
 export type UnprocessedWord = {
