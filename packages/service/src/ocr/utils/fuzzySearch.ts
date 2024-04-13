@@ -2,7 +2,6 @@ import Fuse from 'fuse.js'
 import type { FuzzyFindOptions } from '../types.js'
 
 export function fuzzyFind(options: FuzzyFindOptions) {
-    console.log('fuzzyFind options', options)
     const { textArray, pattern, searchOptions } = options
 
     const fuzzyOptions = {

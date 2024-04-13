@@ -8,7 +8,6 @@ const log = logger('@wdio/visual-service:ocrGetElementPositionByText')
 export default async function ocrGetElementPositionByText(
     data: OcrGetElementPositionByTextOptions
 ): Promise<OcrGetElementPositionByText> {
-    console.log('data', data)
     const {
         element,
         isTesseractAvailable,

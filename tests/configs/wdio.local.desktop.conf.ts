@@ -2,6 +2,11 @@ import type { Options } from '@wdio/types'
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 
+const chromeArgs = [
+    'disable-infobars',
+    process.argv.includes('--disableHeadless') ? '' : '--headless'
+].filter(arg => arg !== '')
+
 export const config: Options.Testrunner = {
     ...sharedConfig,
     // ============
@@ -19,18 +24,7 @@ export const config: Options.Testrunner = {
             // @ts-ignore
             browserName: 'chrome',
             'goog:chromeOptions': {
-                // @TODO: Getting this error, not during runtime, but in VSCode
-                // Need to figure out why this is happening
-                // ```
-                // Type '{ args: string[]; }' is not assignable to type 'WebdriverIO'.
-                //  Object literal may only specify known properties, and 'args' does not exist in type 'WebdriverIO'.ts(2322)
-                // Capabilities.d.ts(87, 5): The expected type comes from this index signature.
-                // ```
-                // @ts-ignore
-                args: [
-                    'disable-infobars',
-                    '--headless',
-                ],
+                args: chromeArgs,
             },
             'wdio-ics:options': {
                 logName: 'local-chrome-latest',

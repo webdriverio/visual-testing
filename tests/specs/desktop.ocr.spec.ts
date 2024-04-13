@@ -32,12 +32,26 @@ describe('@wdio/visual-service:ocr desktop', () => {
         expect(ocrText).toMatchSnapshot()
     })
 
-    it(`should Get the position of a text on the screen based on OCR '${browserName}'`, async function() {
+    it(`should get the position of a text on the screen based on OCR '${browserName}'`, async function() {
         const elementPosition = await driver.ocrGetElementPositionByText({
             element: $('.DocSearch'),
             text: 'Search',
         })
 
         expect(elementPosition).toMatchSnapshot()
+    })
+
+    it(`should click on an element based on text on the screen based on OCR '${browserName}'`, async function() {
+        await driver.ocrClickOnText({
+            element: $('.DocSearch'),
+            text: 'Search',
+        })
+
+        // This is to validate that the click actually worked and opened the search form
+        const ocrText = await driver.ocrGetText({
+            element: $('.DocSearch-Form')
+        })
+
+        expect(ocrText).toContain('docs')
     })
 })

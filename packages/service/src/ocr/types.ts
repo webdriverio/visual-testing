@@ -31,9 +31,10 @@ export interface SetValueOptions {
   }
 
 export interface ClickOnTextOptions {
-    element?: WebdriverIO.Element|ChainablePromiseElement;
     clickDuration?: Number;
-  }
+    element?: WebdriverIO.Element | ChainablePromiseElement;
+    text: string;
+}
 
 export interface GetTextOptions {
     element?: WebdriverIO.Element|ChainablePromiseElement;
@@ -99,7 +100,17 @@ export type OcrGetTextPositions ={
 
 export interface OcrGetData extends GetOcrData {
     dpr: number;
-  }
+}
+
+export type OcrClickOnTextOptions ={
+    isTesseractAvailable: boolean;
+    language: string;
+    ocrImagesPath: string;
+    reuseOcr: boolean;
+    screenSize: ScreenSize;
+    text: string;
+    clickDuration?: Number;
+}
 
 export type UnprocessedWord = {
     _: string;

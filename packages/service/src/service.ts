@@ -17,6 +17,7 @@ import {
 } from 'webdriver-image-comparison'
 import ocrGetText from './ocr/commands/ocrGetText.js'
 import ocrGetElementPositionByText from './ocr/commands/ocrGetElementPositionByText.js'
+import ocrClickOnText from './ocr/commands/ocrClickOnText.js'
 import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -38,6 +39,7 @@ const pageCommands = {
     checkScreen,
     checkFullPageScreen,
     checkTabbablePage,
+    ocrClickOnText,
     ocrGetText,
     ocrGetElementPositionByText,
 }
