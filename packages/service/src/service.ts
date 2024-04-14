@@ -273,7 +273,6 @@ export default class WdioImageComparisonService extends BaseClass {
             return ocrWaitForTextDisplayed({
                 element,
                 isTesseractAvailable,
-                // @TODO: This needs to be implemented
                 fuzzyFindOptions,
                 language: language || self._ocrLanguage,
                 ocrImagesPath: self._ocrDir,

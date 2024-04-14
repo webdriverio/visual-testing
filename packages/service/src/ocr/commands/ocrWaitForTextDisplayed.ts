@@ -1,5 +1,5 @@
+import { ocrGetElementPositionByText } from '../index.js'
 import type { OcrWaitForTextDisplayedOptions } from '../types.js'
-import ocrGetText from './ocrGetText.js'
 
 export default async function ocrWaitForTextDisplayed(
     options: OcrWaitForTextDisplayedOptions
@@ -8,17 +8,18 @@ export default async function ocrWaitForTextDisplayed(
 
     return driver.waitUntil(
         async () => {
-            const { element, isTesseractAvailable, language, ocrImagesPath, text } = options
+            const { element, fuzzyFindOptions, isTesseractAvailable, language, ocrImagesPath, text } = options
 
-            // @TODO: This should also be based on on the fuzzyFindOptions
             return (
-                await ocrGetText({
+                await ocrGetElementPositionByText({
                     element,
+                    fuzzyFindOptions,
                     isTesseractAvailable,
                     language,
                     ocrImagesPath,
+                    text,
                 })
-            ).includes(text)
+            )
         },
         {
             timeout: timeout || 180000,
