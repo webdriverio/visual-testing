@@ -28,27 +28,27 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
-import type {
-    ClickOnTextOptions,
-    GetElementPositionByTextOptions,
-    GetTextOptions,
-    SetValueOptions,
-    WaitForTextDisplayedOptions,
-} from './ocr/types.js'
 import { isSystemTesseractAvailable } from './ocr/utils/tesseract.js'
 import { SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
 import type { VisualServiceOptions } from './types.js'
 import { createOcrDir } from './ocr/utils/index.js'
 
 const log = logger('@wdio/visual-service')
-const elementCommands = { saveElement, checkElement }
-const pageCommands = {
+const visualElementCommands = { saveElement, checkElement }
+const visualPageCommands = {
     saveScreen,
     saveFullPageScreen,
     saveTabbablePage,
     checkScreen,
     checkFullPageScreen,
     checkTabbablePage,
+}
+const ocrCommands = {
+    ocrGetText,
+    ocrGetElementPositionByText,
+    ocrWaitForTextDisplayed,
+    ocrClickOnText,
+    ocrSetValue,
 }
 
 export default class WdioImageComparisonService extends BaseClass {
@@ -152,25 +152,26 @@ export default class WdioImageComparisonService extends BaseClass {
         }
 
         /**
-         * Add all the commands to the global browser object that will execute
-         * on each browser in the Multi Remote
+         * Add all visual and OCR commands to the global browser object that will execute
+         * on each browser in the Multi Remote. This involves mapping through both the visualElementCommands,
+         * visualPageCommands, and ocrCommands.
          */
-        for (const command of [
-            ...Object.keys(elementCommands),
-            ...Object.keys(pageCommands),
-        ]) {
-            browser.addCommand(command, function (...args: unknown[]) {
+        const allCommands = {
+            ...visualElementCommands,
+            ...visualPageCommands,
+            ...ocrCommands
+        }
+        for (const command of Object.keys(allCommands)) {
+            browser.addCommand(command, async function (...args: unknown[]) {
                 const returnData: Record<string, any> = {}
                 for (const browserName of browserNames) {
                     const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-                    const browserInstance = multiremoteBrowser.getInstance(browserName)
-                    /**
-                     * casting command to `checkScreen` to simplify type handling here
-                     */
-                    returnData[browserName] = browserInstance[command as 'checkScreen'].call(
-                        browserInstance,
-                        ...args
-                    )
+                    const browserInstance = multiremoteBrowser.getInstance(browserName) as WebdriverIO.Browser & Record<string, any>
+                    if (typeof browserInstance[command] === 'function') {
+                        returnData[browserName] = await browserInstance[command].apply(browserInstance, args)
+                    } else {
+                        throw new Error(`Command ${command} is not a function on the browser instance ${browserName}`)
+                    }
                 }
                 return returnData
             })
@@ -179,9 +180,10 @@ export default class WdioImageComparisonService extends BaseClass {
 
     async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
         const instanceData = await getInstanceData(currentBrowser)
+        const isTesseractAvailable = isSystemTesseractAvailable()
         const self = this
 
-        for (const [commandName, command] of Object.entries(elementCommands)) {
+        for (const [commandName, command] of Object.entries(visualElementCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
             currentBrowser.addCommand(
                 commandName,
@@ -214,7 +216,7 @@ export default class WdioImageComparisonService extends BaseClass {
             )
         }
 
-        for (const [commandName, command] of Object.entries(pageCommands)) {
+        for (const [commandName, command] of Object.entries(visualPageCommands)) {
             log.info(`Adding browser command "${commandName}" to browser object`)
             currentBrowser.addCommand(
                 commandName,
@@ -241,71 +243,19 @@ export default class WdioImageComparisonService extends BaseClass {
             )
         }
 
-        const isTesseractAvailable = isSystemTesseractAvailable()
-
-        log.info('Adding browser command "ocrGetText" to browser object')
-        currentBrowser.addCommand('ocrGetText', function (options: GetTextOptions) {
-            const { element, language } = options
-            return ocrGetText({
-                element,
-                isTesseractAvailable,
-                language: language || self._ocrLanguage,
-                ocrImagesPath: self._ocrDir,
-            })
-        })
-
-        log.info('Adding browser command "ocrGetElementPositionByText" to browser object')
-        currentBrowser.addCommand('ocrGetElementPositionByText', function (options: GetElementPositionByTextOptions) {
-            const { element, fuzzyFindOptions, language, text } = options
-            return ocrGetElementPositionByText({
-                element,
-                isTesseractAvailable,
-                fuzzyFindOptions,
-                language: language || self._ocrLanguage,
-                ocrImagesPath: self._ocrDir,
-                text,
-            })
-        })
-
-        log.info('Adding browser command "ocrWaitForTextDisplayed" to browser object')
-        currentBrowser.addCommand('ocrWaitForTextDisplayed', function (options: WaitForTextDisplayedOptions) {
-            const { element, fuzzyFindOptions, language, text } = options
-            return ocrWaitForTextDisplayed({
-                element,
-                isTesseractAvailable,
-                fuzzyFindOptions,
-                language: language || self._ocrLanguage,
-                ocrImagesPath: self._ocrDir,
-                text,
-            })
-        })
-
-        log.info('Adding browser command "ocrClickOnText" to browser object')
-        currentBrowser.addCommand('ocrClickOnText', function (options: ClickOnTextOptions) {
-            const { element, fuzzyFindOptions, language, text } = options
-            return ocrClickOnText({
-                element,
-                isTesseractAvailable,
-                fuzzyFindOptions,
-                language: language || self._ocrLanguage,
-                ocrImagesPath: self._ocrDir,
-                text,
-            })
-        })
-
-        log.info('Adding browser command "ocrSetValue" to browser object')
-        currentBrowser.addCommand('ocrSetValue', function (options: SetValueOptions) {
-            const { element, fuzzyFindOptions, language, submitValue, text, value } = options
-            return ocrSetValue({
-                element,
-                isTesseractAvailable,
-                fuzzyFindOptions,
-                language: language || self._ocrLanguage,
-                ocrImagesPath: self._ocrDir,
-                submitValue,
-                text,
-                value,
-            })
-        })
+        for (const [commandName, command] of Object.entries(ocrCommands)) {
+            log.info(`Adding browser command "${commandName}" to browser object`)
+            currentBrowser.addCommand(
+                commandName,
+                function (this: typeof currentBrowser, options) {
+                    return command({
+                        ...options,
+                        isTesseractAvailable,
+                        language: options.language || self._ocrLanguage,
+                        ocrImagesPath: self._ocrDir,
+                    })
+                }
+            )
+        }
     }
 }
