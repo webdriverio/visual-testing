@@ -55,3 +55,11 @@ export const SUPPORTED_LANGUAGES = {
     VIETNAMESE: 'vie'
 }
 export const CONTRAST = 0.25
+export const DEFAULT_FUZZY_OPTIONS = {
+    distance: 100,
+    isCaseSensitive: false,
+    findAllMatches: false,
+    location: 0,
+    minMatchCharLength: 2,
+    threshold: 0.6,
+}

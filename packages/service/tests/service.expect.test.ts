@@ -14,6 +14,9 @@ vi.mock('webdriver-image-comparison', () => ({
     saveTabbablePage: vi.fn(),
     checkTabbablePage: vi.fn(),
 }))
+vi.mock('../src/ocr/utils', () => ({
+    createOcrDir: vi.fn(() => '/mocked/path')
+}))
 
 const log = logger('test')
 

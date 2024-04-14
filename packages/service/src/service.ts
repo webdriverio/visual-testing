@@ -261,10 +261,9 @@ export default class WdioImageComparisonService extends BaseClass {
             currentBrowser.addCommand(
                 commandName,
                 function (this: typeof currentBrowser, options) {
-                    const contrast = options.contrast || self._ocrContrast
                     return command({
                         ...options,
-                        contrast,
+                        contrast: options.contrast || self._ocrContrast,
                         isTesseractAvailable,
                         language: options.language || self._ocrLanguage,
                         ocrImagesPath: self._ocrDir,

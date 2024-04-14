@@ -1,17 +1,13 @@
 import Fuse from 'fuse.js'
 import type { FuzzyElement, FuzzyFindOptions } from '../types.js'
+import { DEFAULT_FUZZY_OPTIONS } from './constants.js'
 
 export function fuzzyFind(options: FuzzyFindOptions): FuzzyElement[] | [] {
     const { textArray, pattern, searchOptions } = options
 
     const fuzzyOptions = {
         // Defaults that can be overwritten
-        distance: 100,
-        isCaseSensitive: false,
-        findAllMatches: false,
-        location: 0,
-        minMatchCharLength: 2,
-        threshold: 0.6,
+        ...DEFAULT_FUZZY_OPTIONS,
         // Provided options
         ...searchOptions,
         // Defaults that should not be overwritten
