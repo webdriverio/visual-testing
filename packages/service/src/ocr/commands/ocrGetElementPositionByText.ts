@@ -9,6 +9,7 @@ export default async function ocrGetElementPositionByText(
     data: OcrGetElementPositionByTextOptions
 ): Promise<OcrGetElementPositionByText> {
     const {
+        contrast,
         element,
         fuzzyFindOptions,
         isTesseractAvailable,
@@ -17,6 +18,7 @@ export default async function ocrGetElementPositionByText(
         text,
     } = data
     const textPositions = await ocrGetTextPositions({
+        contrast,
         element,
         isTesseractAvailable,
         language,

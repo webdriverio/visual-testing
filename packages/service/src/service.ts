@@ -29,7 +29,7 @@ import {
     toMatchTabbablePageSnapshot
 } from './matcher.js'
 import { isSystemTesseractAvailable } from './ocr/utils/tesseract.js'
-import { SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
+import { CONTRAST, SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
 import type { VisualServiceOptions } from './types.js'
 import { createOcrDir } from './ocr/utils/index.js'
 
@@ -57,17 +57,17 @@ export default class WdioImageComparisonService extends BaseClass {
     #currentFilePath?: string
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _isNativeContext: boolean | undefined
-    private _options: VisualServiceOptions
     private _ocrDir: string
     private _ocrLanguage: string
+    private _ocrContrast: number
 
     constructor(options: VisualServiceOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
         super(options)
         this.#config = config
         this._isNativeContext = undefined
-        this._options = options
         this._ocrDir = createOcrDir(options, this.folders)
         this._ocrLanguage = options.ocr?.language || SUPPORTED_LANGUAGES.ENGLISH
+        this._ocrContrast = options.ocr?.contrast || CONTRAST
     }
 
     /**
@@ -143,6 +143,7 @@ export default class WdioImageComparisonService extends BaseClass {
     async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
         const browser = this._browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
+        const self = this
         log.info(`Adding commands to Multi Browser: ${browserNames.join(', ')}`)
 
         for (const browserName of browserNames) {
@@ -164,15 +165,27 @@ export default class WdioImageComparisonService extends BaseClass {
         for (const command of Object.keys(allCommands)) {
             browser.addCommand(command, async function (...args: unknown[]) {
                 const returnData: Record<string, any> = {}
+
+                // Prepare to handle OCR command specifics.
+                if (command.startsWith('ocr')) {
+                    if (typeof args[0] === 'object' && args[0] !== null) {
+                        const options = args[0] as Record<string, any>
+                        options.contrast = options.contrast || self._ocrContrast
+                        args[0] = options
+                    }
+                }
+
                 for (const browserName of browserNames) {
                     const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
                     const browserInstance = multiremoteBrowser.getInstance(browserName) as WebdriverIO.Browser & Record<string, any>
+
                     if (typeof browserInstance[command] === 'function') {
                         returnData[browserName] = await browserInstance[command].apply(browserInstance, args)
                     } else {
                         throw new Error(`Command ${command} is not a function on the browser instance ${browserName}`)
                     }
                 }
+
                 return returnData
             })
         }
@@ -248,8 +261,10 @@ export default class WdioImageComparisonService extends BaseClass {
             currentBrowser.addCommand(
                 commandName,
                 function (this: typeof currentBrowser, options) {
+                    const contrast = options.contrast || self._ocrContrast
                     return command({
                         ...options,
+                        contrast,
                         isTesseractAvailable,
                         language: options.language || self._ocrLanguage,
                         ocrImagesPath: self._ocrDir,

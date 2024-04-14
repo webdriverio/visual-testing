@@ -3,7 +3,20 @@
  */
 export interface OcrOptions {
     ocr?: {
+        /**
+         * Adjusts the contrast of the image, value between -1 and 1
+         * Default: 0.25
+         */
+        contrast?: number;
+        /**
+         * The path to store the images for OCR
+         */
         imagesPath?: string;
+        /**
+         * The language to use for OCR, can be found here:
+         * ocr/utils/constants.ts > SUPPORTED_LANGUAGES
+         * Default: eng
+         */
         language?: string;
     }
 }
@@ -12,6 +25,7 @@ export interface OcrOptions {
  * Browser command options
  */
 type DefaultCommandOptions = {
+    contrast?: number;
     element?: WebdriverIO.Element | ChainablePromiseElement;
     language?: string;
 }
@@ -41,6 +55,7 @@ export type SetValueOptions = ClickOnTextOptions & {
  * Method options
  */
 type DefaultMethodOptions = DefaultCommandOptions & {
+    contrast: number;
     isTesseractAvailable: boolean;
     language: string;
     ocrImagesPath: string;

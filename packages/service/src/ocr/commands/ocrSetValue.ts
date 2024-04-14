@@ -4,6 +4,7 @@ import ocrClickOnText from './ocrClickOnText.js'
 
 export default async function ocrSetValue(options: OcrSetValueOptions): Promise<void> {
     const {
+        contrast,
         clickDuration,
         element,
         fuzzyFindOptions,
@@ -17,6 +18,7 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
 
     // 1. First click on the element to make sure it is intractable
     await ocrClickOnText({
+        contrast,
         clickDuration,
         element,
         fuzzyFindOptions,

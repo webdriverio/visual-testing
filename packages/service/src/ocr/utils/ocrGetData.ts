@@ -13,6 +13,7 @@ const log = logger('@wdio/visual-service:ocrGetData')
 
 export default async function ocrGetData(options: OcrGetDataOptions): Promise<OcrGetData> {
     const {
+        contrast,
         element,
         isTesseractAvailable,
         language,
@@ -28,8 +29,7 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
         // Make it grey which will be better for OCR
         const image = await Jimp.read(Buffer.from(screenshot, 'base64'))
         image.greyscale()
-        // TODO: Make this configurable? Think of different options?
-        image.contrast(0.25)
+        image.contrast(contrast)
         const greyscaleImage = (await image.getBufferAsync(Jimp.MIME_PNG)).toString('base64')
 
         const fileName = `${browser.isAndroid ? 'android' : browser.isIOS ? 'ios': 'desktop'}-${new Date().getTime()}.png`

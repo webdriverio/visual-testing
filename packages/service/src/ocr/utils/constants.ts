@@ -54,3 +54,4 @@ export const SUPPORTED_LANGUAGES = {
     UKRAINIAN: 'ukr',
     VIETNAMESE: 'vie'
 }
+export const CONTRAST = 0.25

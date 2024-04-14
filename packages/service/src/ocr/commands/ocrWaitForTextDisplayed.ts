@@ -7,20 +7,7 @@ export default async function ocrWaitForTextDisplayed(
     const { timeout, timeoutMsg } = options
 
     return driver.waitUntil(
-        async () => {
-            const { element, fuzzyFindOptions, isTesseractAvailable, language, ocrImagesPath, text } = options
-
-            return (
-                await ocrGetElementPositionByText({
-                    element,
-                    fuzzyFindOptions,
-                    isTesseractAvailable,
-                    language,
-                    ocrImagesPath,
-                    text,
-                })
-            )
-        },
+        async () =>  ocrGetElementPositionByText(options),
         {
             timeout: timeout || 180000,
             timeoutMsg: timeoutMsg || `Could not find the text "${options.text}" within the requested time.`,
