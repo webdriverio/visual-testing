@@ -11,7 +11,15 @@ import type {
     WdioCheckElementMethodOptions,
     WdioCheckScreenMethodOptions
 } from './types.js'
-import type { ClickOnTextOptions, GetElementPositionByTextOptions, GetTextOptions, OcrGetElementPositionByText, SetValueOptions, WaitForTextDisplayedOptions } from './ocr/types.js'
+import type {
+    ClickOnTextOptions,
+    GetElementPositionByTextOptions,
+    GetTextOptions,
+    OcrGetElementPositionByText,
+    SetValueOptions,
+    WaitForTextDisplayedOptions,
+} from './ocr/types.js'
+import { SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
 
 declare global {
     namespace WebdriverIO {
@@ -195,3 +203,4 @@ declare global {
 
 export default WdioImageComparisonService
 export const launcher = VisualLauncher
+export const SUPPORTED_OCR_LANGUAGES = SUPPORTED_LANGUAGES

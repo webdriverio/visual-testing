@@ -2,9 +2,9 @@ import { execSync } from 'node:child_process'
 import { createWorker, PSM } from 'tesseract.js'
 import { recognize } from 'node-tesseract-ocr'
 import { parseString } from 'xml2js'
-import type { GetOcrData, GetOcrDataOptions, Line, LineData, Rectangles, UnprocessedBlock, UnprocessedSystemBlock, Words } from '../types.js'
+import type { GetOcrData, Line, ParseWordData, Rectangles, TessaractDataOptions, UnprocessedNodejsBlock, UnprocessedSystemBlock, Words } from '../types.js'
 
-export function isTesseractAvailable(tesseractName: string = ''): boolean {
+export function isSystemTesseractAvailable(tesseractName: string = ''): boolean {
     const binary = tesseractName || 'tesseract'
     const command = [binary, '--version'].join(' ')
 
@@ -17,9 +17,7 @@ export function isTesseractAvailable(tesseractName: string = ''): boolean {
     return true
 }
 
-export function parseWordDataFromText(
-    attributes: string[]
-): { bbox: Rectangles; wc: number } {
+export function parseWordDataFromText(attributes: string[]): ParseWordData {
     let bbox = {
         left: 0,
         top: 0,
@@ -52,12 +50,12 @@ export function parseWordDataFromText(
 /**
  * Handle the OCR with Tesseract with pure JS
  */
-export async function getNodeOcrData(options: GetOcrDataOptions): Promise<GetOcrData|Error> {
+export async function getNodeOcrData(options: TessaractDataOptions): Promise<GetOcrData> {
     try {
         const { filePath, language } = options
         const jsonSingleWords: Words[] = []
         const jsonWordStrings: Line[] = []
-        let composedBlocks: UnprocessedBlock[] = []
+        let composedBlocks: UnprocessedNodejsBlock[] = []
 
         const worker = await createWorker(language)
         await worker.setParameters({
@@ -101,7 +99,7 @@ export async function getNodeOcrData(options: GetOcrDataOptions): Promise<GetOcr
                         return
                     }
 
-                    const lineData:LineData = {
+                    const lineData: Line = {
                         text: '',
                         bbox: { bottom: 0, left: 0, right: 0, top: 0 },
                     }
@@ -148,7 +146,7 @@ export async function getNodeOcrData(options: GetOcrDataOptions): Promise<GetOcr
 /**
  * Handle the OCR with Tesseract with the system installed version
  */
-export async function getSystemOcrData(options: GetOcrDataOptions): Promise<GetOcrData|Error> {
+export async function getSystemOcrData(options: TessaractDataOptions): Promise<GetOcrData> {
     try {
         const { filePath, language } = options
         const jsonSingleWords: Words[] = []

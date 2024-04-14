@@ -2,7 +2,6 @@ import logger from '@wdio/logger'
 import { expect } from '@wdio/globals'
 import { dirname, normalize, resolve } from 'node:path'
 import type { Capabilities, Frameworks } from '@wdio/types'
-import type { ClassOptions } from 'webdriver-image-comparison'
 import {
     BaseClass,
     checkElement,
@@ -15,11 +14,13 @@ import {
     checkTabbablePage,
     FOLDERS,
 } from 'webdriver-image-comparison'
-import ocrGetText from './ocr/commands/ocrGetText.js'
-import ocrGetElementPositionByText from './ocr/commands/ocrGetElementPositionByText.js'
-import ocrClickOnText from './ocr/commands/ocrClickOnText.js'
-import ocrSetValue from './ocr/commands/ocrSetValue.js'
-import ocrWaitForTextDisplayed from './ocr/commands/ocrWaitForTextDisplayed.js'
+import {
+    ocrGetText,
+    ocrGetElementPositionByText,
+    ocrClickOnText,
+    ocrSetValue,
+    ocrWaitForTextDisplayed,
+} from './ocr/index.js'
 import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -27,12 +28,19 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
-import type { GetTextOptions, OcrGetElementPositionByTextOptions, SetValueOptions, WaitForTextDisplayedOptions } from './ocr/types.js'
-import { isTesseractAvailable } from './ocr/utils/tesseract.js'
+import type {
+    ClickOnTextOptions,
+    GetElementPositionByTextOptions,
+    GetTextOptions,
+    SetValueOptions,
+    WaitForTextDisplayedOptions,
+} from './ocr/types.js'
+import { isSystemTesseractAvailable } from './ocr/utils/tesseract.js'
 import { SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
+import type { VisualServiceOptions } from './types.js'
+import { createOcrDir } from './ocr/utils/index.js'
 
 const log = logger('@wdio/visual-service')
-
 const elementCommands = { saveElement, checkElement }
 const pageCommands = {
     saveScreen,
@@ -41,11 +49,6 @@ const pageCommands = {
     checkScreen,
     checkFullPageScreen,
     checkTabbablePage,
-    ocrClickOnText,
-    ocrGetText,
-    ocrGetElementPositionByText,
-    ocrSetValue,
-    ocrWaitForTextDisplayed,
 }
 
 export default class WdioImageComparisonService extends BaseClass {
@@ -54,11 +57,17 @@ export default class WdioImageComparisonService extends BaseClass {
     #currentFilePath?: string
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _isNativeContext: boolean | undefined
+    private _options: VisualServiceOptions
+    private _ocrDir: string
+    private _ocrLanguage: string
 
-    constructor(options: ClassOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
+    constructor(options: VisualServiceOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
         super(options)
         this.#config = config
         this._isNativeContext = undefined
+        this._options = options
+        this._ocrDir = createOcrDir(options, this.folders)
+        this._ocrLanguage = options.ocr?.language || SUPPORTED_LANGUAGES.ENGLISH
     }
 
     /**
@@ -206,85 +215,98 @@ export default class WdioImageComparisonService extends BaseClass {
         }
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
-            log.info(`Adding element command "${commandName}" to browser object`)
-            if (commandName.startsWith('ocrSetValue')) {
-                currentBrowser.addCommand(
-                    commandName,
-                    function (options: SetValueOptions) {
-                        const { element, text, value } = options
-                        // @ts-ignore
-                        return command({
-                            element,
-                            isTesseractAvailable: isTesseractAvailable(),
-                            // language: this._options.ocrLanguage || SUPPORTED_LANGUAGES.ENGLISH,
-                            language: SUPPORTED_LANGUAGES.ENGLISH,
-                            ocrImagesPath: './.tmp',
-                            text,
-                            value,
-                        })
-                    }
-                )
-            } else if (commandName.startsWith('ocrWaitForTextDisplayed')) {
-                currentBrowser.addCommand(
-                    commandName,
-                    function (options: WaitForTextDisplayedOptions) {
-                        const { element, text, timeout, timeoutMsg  } = options
-                        // @ts-ignore
-                        return command({
-                            element,
-                            isTesseractAvailable: isTesseractAvailable(),
-                            // language: this._options.ocrLanguage || SUPPORTED_LANGUAGES.ENGLISH,
-                            language: SUPPORTED_LANGUAGES.ENGLISH,
-                            ocrImagesPath: './.tmp',
-                            text,
-                            timeout,
-                            timeoutMsg,
-                        })
-                    }
-                )
-            } else if (commandName.startsWith('ocr')) {
-                currentBrowser.addCommand(
-                    commandName,
-                    function (options: GetTextOptions | OcrGetElementPositionByTextOptions = {}) {
-                        // @ts-ignore
-                        const { element, text = '' } = options
-                        // @ts-ignore
-                        return command({
-                            element,
-                            isTesseractAvailable: isTesseractAvailable(),
-                            // language: this._options.ocrLanguage || SUPPORTED_LANGUAGES.ENGLISH,
-                            language: SUPPORTED_LANGUAGES.ENGLISH,
-                            ocrImagesPath: './.tmp',
-                            text,
-                        })
-                    }
-                )
-            } else {
-                currentBrowser.addCommand(
-                    commandName,
-                    function (this: typeof currentBrowser, tag, pageOptions = {}) {
-                        return command(
-                        // @ts-ignore
-                            {
-                                executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                    return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
-                                },
-                                getElementRect: this.getElementRect.bind(currentBrowser),
-                                screenShot:
+            log.info(`Adding browser command "${commandName}" to browser object`)
+            currentBrowser.addCommand(
+                commandName,
+                function (this: typeof currentBrowser, tag, pageOptions = {}) {
+                    return command(
+                        {
+                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
+                            },
+                            getElementRect: this.getElementRect.bind(currentBrowser),
+                            screenShot:
                                     this.takeScreenshot.bind(currentBrowser),
-                            },
-                            instanceData,
-                            getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
-                            tag,
-                            {
-                                wic: self.defaultOptions,
-                                method: pageOptions,
-                            },
+                        },
+                        instanceData,
+                        getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                        tag,
+                        {
+                            wic: self.defaultOptions,
+                            method: pageOptions,
+                        },
                             self._isNativeContext as boolean,
-                        )
-                    }
-                )
-            }
+                    )
+                }
+            )
         }
+
+        const isTesseractAvailable = isSystemTesseractAvailable()
+
+        log.info('Adding browser command "ocrGetText" to browser object')
+        currentBrowser.addCommand('ocrGetText', function (options: GetTextOptions) {
+            const { element, language } = options
+            return ocrGetText({
+                element,
+                isTesseractAvailable,
+                language: language || self._ocrLanguage,
+                ocrImagesPath: self._ocrDir,
+            })
+        })
+
+        log.info('Adding browser command "ocrGetElementPositionByText" to browser object')
+        currentBrowser.addCommand('ocrGetElementPositionByText', function (options: GetElementPositionByTextOptions) {
+            const { element, fuzzyFindOptions, language, text } = options
+            return ocrGetElementPositionByText({
+                element,
+                isTesseractAvailable,
+                fuzzyFindOptions,
+                language: language || self._ocrLanguage,
+                ocrImagesPath: self._ocrDir,
+                text,
+            })
+        })
+
+        log.info('Adding browser command "ocrWaitForTextDisplayed" to browser object')
+        currentBrowser.addCommand('ocrWaitForTextDisplayed', function (options: WaitForTextDisplayedOptions) {
+            const { element, fuzzyFindOptions, language, text } = options
+            return ocrWaitForTextDisplayed({
+                element,
+                isTesseractAvailable,
+                // @TODO: This needs to be implemented
+                fuzzyFindOptions,
+                language: language || self._ocrLanguage,
+                ocrImagesPath: self._ocrDir,
+                text,
+            })
+        })
+
+        log.info('Adding browser command "ocrClickOnText" to browser object')
+        currentBrowser.addCommand('ocrClickOnText', function (options: ClickOnTextOptions) {
+            const { element, fuzzyFindOptions, language, text } = options
+            return ocrClickOnText({
+                element,
+                isTesseractAvailable,
+                fuzzyFindOptions,
+                language: language || self._ocrLanguage,
+                ocrImagesPath: self._ocrDir,
+                text,
+            })
+        })
+
+        log.info('Adding browser command "ocrSetValue" to browser object')
+        currentBrowser.addCommand('ocrSetValue', function (options: SetValueOptions) {
+            const { element, fuzzyFindOptions, language, submitValue, text, value } = options
+            return ocrSetValue({
+                element,
+                isTesseractAvailable,
+                fuzzyFindOptions,
+                language: language || self._ocrLanguage,
+                ocrImagesPath: self._ocrDir,
+                submitValue,
+                text,
+                value,
+            })
+        })
     }
 }

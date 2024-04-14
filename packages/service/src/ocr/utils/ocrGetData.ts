@@ -50,7 +50,7 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
         }
 
         // OCR the image
-        let ocrData: any
+        let ocrData: GetOcrData
         const start = process.hrtime()
 
         if (isTesseractAvailable) {
@@ -75,27 +75,19 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
         const processTime = ((diff[0] * 1000000 + diff[1] / 1000) / 1000000).toFixed(3)
 
         log.info(`It took '${processTime}s' to process the image.`)
-        log.info(
-            `The following text was found through OCR:\n\n${ocrData.text.replace(
-                /[\r\n]{2,}/g,
-                '\n'
-            )}`
-        )
+        log.info(`The following text was found through OCR:\n\n${ocrData.text.replace(/[\r\n]{2,}/g, '\n')}`)
 
         // Get all words and highlight them
-        const highlights = (ocrData as GetOcrData).words.map((word) => word.bbox)
+        const highlights = ocrData.words.map((word) => word.bbox)
         const highlightedImage = await addBlockOuts(greyscaleImage, highlights)
         await saveBase64Image(highlightedImage, filePath)
 
         log.info(`OCR Image with found text can be found here:\n\n${filePath}`)
 
-        const parsedOcrData = {
+        return {
             ...ocrData,
             ...{ dpr },
         }
-
-        return parsedOcrData
-
     } catch (e) {
         throw new Error(String(e))
     }

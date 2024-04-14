@@ -10,6 +10,7 @@ export default async function ocrWaitForTextDisplayed(
         async () => {
             const { element, isTesseractAvailable, language, ocrImagesPath, text } = options
 
+            // @TODO: This should also be based on on the fuzzyFindOptions
             return (
                 await ocrGetText({
                     element,

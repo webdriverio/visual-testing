@@ -1,4 +1,7 @@
-import type { ClickPoint, DetermineClickPointOptions, Rectangles, RectReturn } from '../types.js'
+import { dirname, join } from 'node:path'
+import { mkdirSync } from 'node:fs'
+import type { Folders } from 'webdriver-image-comparison'
+import type { ClickPoint, DetermineClickPointOptions, OcrOptions, Rectangles, RectReturn } from '../types.js'
 
 export function getDprPositions(values: Rectangles, dpr: number): Rectangles {
     Object.keys({ ...values }).map((value: string) => {
@@ -30,4 +33,11 @@ export function adjustElementBbox(bbox: Rectangles, elementRect: RectReturn): Re
         right: Math.round(bbox.right + elementRect.x),
         bottom: Math.round(bbox.bottom + elementRect.y),
     }
+}
+
+export function createOcrDir(options: OcrOptions, folders: Folders): string {
+    const ocrDir = options.ocr?.imagesPath || join(dirname(folders.actualFolder), 'ocr')
+    mkdirSync(ocrDir, { recursive: true })
+
+    return ocrDir
 }

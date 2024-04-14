@@ -10,11 +10,10 @@ export default async function ocrGetElementPositionByText(
 ): Promise<OcrGetElementPositionByText> {
     const {
         element,
+        fuzzyFindOptions,
         isTesseractAvailable,
         language,
         ocrImagesPath,
-        reuseOcr,
-        screenSize,
         text,
     } = data
     const textPositions = await ocrGetTextPositions({
@@ -22,13 +21,13 @@ export default async function ocrGetElementPositionByText(
         isTesseractAvailable,
         language,
         ocrImagesPath,
-        reuseOcr,
-        screenSize,
     })
     const matches = fuzzyFind({
-        textArray: textPositions,
         pattern: text,
+        searchOptions: fuzzyFindOptions,
+        textArray: textPositions,
     })
+
     let matchedTextElements
     let score
 
@@ -36,19 +35,17 @@ export default async function ocrGetElementPositionByText(
         log.warn(`No matches were found based on the word "${text}"`)
 
         throw new Error(
-            `InvalidSelectorMatch. Strategy 'ocr' has failed to find word '${text}' in the image`
+            `Invalid Text Selector Match. Visual OCR has failed to find the word '${text}' in the image`
         )
     } else if (matches.length > 1) {
-        // @ts-ignore
-        matches.sort((a, b) => (a.score > b.score ? 1 : -1))
-        matchedTextElements = matches[0] as FuzzyElement
+        matches.sort((a, b) => ((a as FuzzyElement).score > (b as FuzzyElement).score ? 1 : -1))
+        matchedTextElements = matches[0]
         score = Number(((1-matchedTextElements.score)*100).toFixed(2))
         const messageOne = `Multiple matches were found based on the word "${text}".`
-        // @ts-ignore
         const messageTwo = `The match "${matchedTextElements.item.text}" with score "${score}%" will be used.`
         log.info(`${messageOne} ${messageTwo}`)
     } else {
-        matchedTextElements = matches[0] as FuzzyElement
+        matchedTextElements = matches[0]
         score = Number(((1-matchedTextElements.score)*100).toFixed(2))
         log.info(
             `We searched for the word "${text}" and found one match "${matchedTextElements.item.text}" with score "${score}%"`
@@ -56,10 +53,10 @@ export default async function ocrGetElementPositionByText(
     }
 
     return {
-        searchValue: text,
+        dprPosition: matchedTextElements.item.dprPosition,
         matchedString: matchedTextElements.item.text,
         originalPosition: matchedTextElements.item.originalPosition,
-        dprPosition: matchedTextElements.item.dprPosition,
         score,
+        searchValue: text,
     }
 }

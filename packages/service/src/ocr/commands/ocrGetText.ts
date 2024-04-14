@@ -1,7 +1,7 @@
 import ocrGetData from '../utils/ocrGetData.js'
-import type { OcrGetDataOptions } from '../types.js'
+import type { OcrGetTextOptions } from '../types.js'
 
-export default async function ocrGetText(options: OcrGetDataOptions): Promise<string> {
+export default async function ocrGetText(options: OcrGetTextOptions): Promise<string> {
     const { text } = await ocrGetData(options)
 
     return text.replace(/\n\s*\n/g, '\n')

@@ -1,85 +1,113 @@
-export interface Rectangles {
+/**
+ * Class options for OCR
+ */
+export interface OcrOptions {
+    ocr?: {
+        imagesPath?: string;
+        language?: string;
+    }
+}
+
+/**
+ * Browser command options
+ */
+type DefaultCommandOptions = {
+    element?: WebdriverIO.Element | ChainablePromiseElement;
+    language?: string;
+}
+
+export type GetTextOptions = DefaultCommandOptions & {}
+
+export type GetElementPositionByTextOptions = DefaultCommandOptions & {
+    fuzzyFindOptions?: FuzzySearchOptions;
+    text: string;
+}
+
+export type WaitForTextDisplayedOptions = GetElementPositionByTextOptions & {
+    timeout?: number;
+    timeoutMsg?: string;
+}
+
+export type ClickOnTextOptions = GetElementPositionByTextOptions & {
+    clickDuration?: Number;
+}
+
+export type SetValueOptions = ClickOnTextOptions & {
+    submitValue?: boolean;
+    value: string;
+}
+
+/**
+ * Method options
+ */
+type DefaultMethodOptions = DefaultCommandOptions & {
+    isTesseractAvailable: boolean;
+    language: string;
+    ocrImagesPath: string;
+}
+
+export type OcrGetTextOptions = DefaultMethodOptions & {}
+
+export type OcrGetDataOptions = DefaultMethodOptions & {}
+
+export type OcrGetElementPositionByTextOptions = DefaultMethodOptions & {
+    fuzzyFindOptions?: FuzzySearchOptions;
+    text: string;
+}
+
+export type OcrWaitForTextDisplayedOptions = OcrGetElementPositionByTextOptions & {
+    timeout?: number;
+    timeoutMsg?: string;
+}
+
+export type OcrClickOnTextOptions = OcrGetElementPositionByTextOptions & {
+    clickDuration?: Number;
+}
+
+export type OcrSetValueOptions = OcrClickOnTextOptions & {
+    submitValue?: boolean;
+    value: string;
+}
+
+/**
+ * Internal Methods
+ */
+export type GetOcrData = {
+    text: string;
+    lines: Line[];
+    words: Words[];
+}
+
+/**
+ * Internal types
+ */
+export type Line = {
+    text: string;
+    bbox: Rectangles;
+}
+
+export type Rectangles = {
     left: number;
     right: number;
     top: number;
     bottom: number;
-  }
-
-export interface ClickPoint {
-    x: number;
-    y: number;
-  }
-
-export interface DetermineClickPointOptions {
-    rectangles: Rectangles;
-  }
-
-export interface OcrServiceConfig {
-    ocrImagesPath?: string;
-    ocrLanguage?: string;
 }
 
-export interface ClickOnTextOptions {
-    clickDuration?: Number;
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    text: string;
-}
-
-export interface GetTextOptions {
-    element?: WebdriverIO.Element|ChainablePromiseElement;
-  }
-
-export interface ElementPositionByText {
-    element?: WebdriverIO.Element|ChainablePromiseElement;
-  }
-
-export interface Line {
-    text: string;
-    bbox: Rectangles;
-  }
-
-export interface Words {
-    text: string;
-    bbox: Rectangles;
+export type Words = Line & {
     wc: number;
-  }
+}
 
-export interface GetOcrData {
-    text: string;
-    lines: Line[];
-    words: Words[];
-  }
-
-export interface OcrGetDataOptions {
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    isTesseractAvailable: boolean;
+export type TessaractDataOptions = {
+    filePath: string;
     language: string;
-    ocrImagesPath: string;
 }
 
-export type GetElementPositionByTextOptions ={
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    text: string;
+export type ParseWordData = {
+    bbox: Rectangles;
+    wc: number
 }
 
-export type OcrGetElementPositionByTextOptions ={
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    isTesseractAvailable: boolean;
-    language: string;
-    ocrImagesPath: string;
-    reuseOcr: boolean;
-    screenSize: ScreenSize;
-    text: string;
-}
-
-export type OcrGetTextPositionsOptions = {
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    isTesseractAvailable: boolean;
-    language: string;
-    ocrImagesPath: string;
-    reuseOcr: boolean;
-    screenSize: ScreenSize;
-}
+export type OcrGetTextPositionsOptions = DefaultMethodOptions & {}
 
 export type OcrGetTextPositions ={
   dprPosition: Rectangles;
@@ -87,122 +115,9 @@ export type OcrGetTextPositions ={
   text: string;
 }
 
-export interface OcrGetData extends GetOcrData {
-    dpr: number;
-}
-
-export type OcrClickOnTextOptions = {
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    isTesseractAvailable: boolean;
-    language: string;
-    ocrImagesPath: string;
-    reuseOcr: boolean;
-    screenSize: ScreenSize;
-    text: string;
-    clickDuration?: Number;
-}
-
-export type SetValueOptions = {
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    text: string;
-    value: string;
-    clickDuration?: Number;
-}
-
-export type OcrSetValueOptions = {
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    isTesseractAvailable: boolean;
-    language: string;
-    reuseOcr: boolean;
-    ocrImagesPath: string;
-    screenSize: ScreenSize;
-    text: string;
-    value: string;
-    clickDuration?: Number;
-}
-
-export type WaitForTextDisplayedOptions = {
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    text: string;
-    timeout?: number;
-    timeoutMsg?: string;
-}
-
-export type OcrWaitForTextDisplayedOptions = {
-    element?: WebdriverIO.Element | ChainablePromiseElement;
-    isTesseractAvailable: boolean;
-    ocrImagesPath: string;
-    language: string;
-    text: string;
-    timeout?: number;
-    timeoutMsg?: string;
-}
-
-export type UnprocessedWord = {
-    _: string;
-    $: {
-        title: string;
-    };
-}
-
-export type UnprocessedLine ={
-    span?: UnprocessedWord[];
-}
-
-export type GetOcrDataOptions = {
-    filePath: string;
-    language: string;
-}
-
-export type UnprocessedParagraph = {
-    span?: UnprocessedLine[];
-}
-export type UnprocessedBlock = {
-     p?: UnprocessedParagraph[];
-}
-
-export type LineData = {
-    text: string;
-    bbox: Rectangles;
-}
-
-export type UnprocessedSystemStringElement = {
-    $: {
-        CONTENT: string;
-        HPOS: string;
-        VPOS: string;
-        WIDTH: string;
-        HEIGHT: string;
-        WC: string;
-    };
-}
-
-export type UnprocessedSystemTextLineElement = {
-    $: {
-        HPOS: string;
-        VPOS: string;
-        WIDTH: string;
-        HEIGHT: string;
-    };
-    String: UnprocessedSystemStringElement[];
-}
-
-export type UnprocessedSystemTextBlockElement = {
-    TextLine: UnprocessedSystemTextLineElement[];
-}
-
-export type UnprocessedSystemBlock = {
-    TextBlock?: UnprocessedSystemTextBlockElement[];
-}
-
-export type RectReturn = {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}
-
 export type FuzzyFindOptions = {
+    pattern: string;
+    searchOptions?: FuzzySearchOptions;
     textArray: {
       /**
        * the matched string
@@ -219,40 +134,45 @@ export type FuzzyFindOptions = {
        */
       dprPosition: Rectangles;
     }[];
-    pattern: string;
-    searchOptions?: {
-      isCaseSensitive?: boolean;
-      /**
-       * Only the matches whose length exceeds this value will be returned.
-       * (For instance, if you want to ignore single character matches in the result, set it to 2)
-       */
-      minMatchCharLength?: number;
-      /**
-       * When true, the matching function will continue to the end of a search pattern even if a perfect match has
-       * already been located in the string.
-       */
-      findAllMatches?: boolean;
-      /**
-       * Determines approximately where in the text is the pattern expected to be found
-       */
-      location?: number;
-      /**
-       * At what point does the match algorithm give up. A threshold of 0.0 requires a perfect match (of both letters
-       * and location), a threshold of 1.0 would match anything.
-       */
-      threshold?: number;
-      /**
-       * Determines how close the match must be to the fuzzy location (specified by location). An exact letter match
-       * which is distance characters away from the fuzzy location would score as a complete mismatch. A distance of
-       * 0 requires the match be at the exact location specified. A distance of 1000 would require a perfect match to
-       * be within 800 characters of the location to be found using a threshold of 0.8.
-       */
-      distance?: number;
-    };
 }
-export type ScreenSize = {
-    width: number;
-    height: number;
+
+export type FuzzySearchOptions = {
+    /**
+     * Determines how close the match must be to the fuzzy location (specified by location). An exact letter match
+     * which is distance characters away from the fuzzy location would score as a complete mismatch. A distance of
+     * 0 requires the match be at the exact location specified. A distance of 1000 would require a perfect match to
+     * be within 800 characters of the location to be found using a threshold of 0.8.
+     * Default: 100
+     */
+    distance?: number;
+    /**
+     * Whether the search should be case sensitive
+     * Default: false
+     */
+    isCaseSensitive?: boolean;
+    /**
+     * Only the matches whose length exceeds this value will be returned.
+     * (For instance, if you want to ignore single character matches in the result, set it to 2)
+     * Default: 2
+     */
+    minMatchCharLength?: number;
+    /**
+     * When true, the matching function will continue to the end of a search pattern even if a perfect match has
+     * already been located in the string.
+     * Default: false
+     */
+    findAllMatches?: boolean;
+    /**
+     * Determines approximately where in the text is the pattern expected to be found
+     * Default: 0
+     */
+    location?: number;
+    /**
+     * At what point does the match algorithm give up. A threshold of 0.0 requires a perfect match (of both letters
+     * and location), a threshold of 1.0 would match anything.
+     * Default: 0.6
+     */
+    threshold?: number;
 }
 
 export type FuzzyElement = {
@@ -283,7 +203,84 @@ export type FuzzyElement = {
      * Matched score of the fuzzy logic check
      */
     score: number;
-  }
+}
+
+export type DetermineClickPointOptions = {
+    rectangles: Rectangles;
+}
+
+export type ClickPoint = {
+    x: number;
+    y: number;
+}
+
+export type RectReturn = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+/**
+ * xml2js System Tessaract Types
+ */
+export type UnprocessedSystemBlock = {
+    TextBlock?: UnprocessedSystemTextBlockElement[];
+}
+
+export type UnprocessedSystemTextBlockElement = {
+    TextLine: UnprocessedSystemTextLineElement[];
+}
+
+export type UnprocessedSystemTextLineElement = {
+    $: {
+        HPOS: string;
+        VPOS: string;
+        WIDTH: string;
+        HEIGHT: string;
+    };
+    String: UnprocessedSystemStringElement[];
+}
+
+export type UnprocessedSystemStringElement = {
+    $: {
+        CONTENT: string;
+        HPOS: string;
+        VPOS: string;
+        WIDTH: string;
+        HEIGHT: string;
+        WC: string;
+    };
+}
+
+/**
+ * xml2js Nodejs Tessaract Types
+ */
+export type UnprocessedNodejsBlock = {
+     p?: UnprocessedNodejsParagraph[];
+}
+
+export type UnprocessedNodejsParagraph = {
+    span?: UnprocessedNodejsLine[];
+}
+
+export type UnprocessedNodejsLine ={
+    span?: UnprocessedNodejsWord[];
+}
+
+export type UnprocessedNodejsWord = {
+    _: string;
+    $: {
+        title: string;
+    };
+}
+
+/**
+ * Browser command return types
+ */
+export interface OcrGetData extends GetOcrData {
+    dpr: number;
+}
 
 export type OcrGetElementPositionByText = {
     /**
@@ -308,4 +305,4 @@ export type OcrGetElementPositionByText = {
      * Matched score of the fuzzy logic check
      */
     score: number;
-  }
+}

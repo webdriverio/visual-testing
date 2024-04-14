@@ -1,4 +1,6 @@
-export default async function ocrKeys(value: string): Promise<void> {
+import { Key } from 'webdriverio'
+
+export default async function ocrKeys(value: string, submitValue: boolean): Promise<void> {
     const actionChain = browser.action('key');
 
     [...value].forEach((char: string) => {
@@ -7,5 +9,16 @@ export default async function ocrKeys(value: string): Promise<void> {
     [...value].forEach((char: string) => {
         actionChain.up(char)
     })
+
+    if (submitValue) {
+        /**
+         * XCTest API only allows to send keypresses (e.g. keydown+keyup).
+         */
+        if (!driver.isIOS){
+            actionChain.pause(50)
+        }
+        actionChain.down(Key.Enter)
+        actionChain.up(Key.Enter)
+    }
     await actionChain.perform()
 }

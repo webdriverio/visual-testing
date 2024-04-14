@@ -4,43 +4,57 @@ import ocrClickOnText from './ocrClickOnText.js'
 
 export default async function ocrSetValue(options: OcrSetValueOptions): Promise<void> {
     const {
+        clickDuration,
         element,
+        fuzzyFindOptions,
         isTesseractAvailable,
         language,
-        reuseOcr,
         ocrImagesPath,
-        screenSize,
+        submitValue = false,
         text,
         value,
-        clickDuration
     } = options
 
+    // 1. First click on the element to make sure it is intractable
     await ocrClickOnText({
+        clickDuration,
         element,
+        fuzzyFindOptions,
         isTesseractAvailable,
         language,
         ocrImagesPath,
-        reuseOcr,
-        screenSize,
         text,
-        clickDuration
     })
+
+    // 2. If Mobile then a keyboard might be shown
     if (driver.isMobile) {
-        await driver.waitUntil(
-            async () => driver.isKeyboardShown(),
-            {
-                timeout: 15000,
-                timeoutMsg: 'Keyboard was not hidden',
-            })
+        try {
+            // Wait for 3 seconds for the keyboard to be shown
+            await driver.waitUntil(
+                async () => driver.isKeyboardShown(),
+                {
+                    timeout: 3 * 1000,
+                    timeoutMsg: 'Keyboard was not hidden',
+                })
+        } catch (ign) {
+            // Keyboard is not shown
+        }
     }
-    await ocrKeys(value)
+    // 3. Send the value to the element
+    await ocrKeys(value, submitValue)
+
+    // 4. If Mobile then hide the keyboard
     if (driver.isMobile) {
-        await driver.hideKeyboard()
-        await driver.waitUntil(
-            async () => !(await driver.isKeyboardShown()),
-            {
-                timeout: 15000,
-                timeoutMsg: 'Keyboard is still shown',
-            })
+        try {
+            await driver.hideKeyboard()
+            await driver.waitUntil(
+                async () => !(await driver.isKeyboardShown()),
+                {
+                    timeout: 3 * 1000,
+                    timeoutMsg: 'Keyboard is still shown',
+                })
+        } catch (ign) {
+            // Keyboard is not present or not hidden
+        }
     }
 }

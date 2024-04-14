@@ -7,7 +7,9 @@ import type {
     SaveElementMethodOptions,
     CheckFullPageMethodOptions,
     SaveFullPageMethodOptions,
+    ClassOptions,
 } from 'webdriver-image-comparison'
+import type { OcrOptions } from './ocr/types.js'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;
@@ -22,6 +24,7 @@ export interface WdioIcsCommonOptions {
     hideElements?: WebdriverIO.Element[];
     removeElements?: WebdriverIO.Element[];
 }
+
 export interface WdioIcsScrollOptions extends WdioIcsCommonOptions {
     hideAfterFirstScroll?: WebdriverIO.Element[];
 }
@@ -44,3 +47,5 @@ export interface WdioCheckElementMethodOptions
 export interface WdioCheckScreenMethodOptions
     extends Omit<CheckScreenMethodOptions, keyof WdioIcsCommonOptions>,
         WdioIcsCommonOptions {}
+
+export interface VisualServiceOptions extends ClassOptions, OcrOptions {}
