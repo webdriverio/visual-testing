@@ -70,7 +70,7 @@ describe('@wdio/visual-service:ocr desktop', () => {
         expect(ocrText).toContain('specfileretries')
     })
 
-    it.only('should wait on text on the screen based on OCR', async function() {
+    it('should wait on text on the screen based on OCR', async function() {
         await driver.ocrClickOnText({
             element: $('.DocSearch'),
             text: 'Search',
