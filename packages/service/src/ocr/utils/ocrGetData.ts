@@ -85,8 +85,9 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
         log.info(`OCR Image with found text can be found here:\n\n${filePath}`)
 
         return {
+            dpr,
+            filePath,
             ...ocrData,
-            ...{ dpr },
         }
     } catch (e) {
         throw new Error(String(e))

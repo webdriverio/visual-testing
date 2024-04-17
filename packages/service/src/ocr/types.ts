@@ -44,6 +44,7 @@ export type WaitForTextDisplayedOptions = GetElementPositionByTextOptions & {
 
 export type ClickOnTextOptions = GetElementPositionByTextOptions & {
     clickDuration?: Number;
+    relativePosition?: RelativePosition;
 }
 
 export type SetValueOptions = ClickOnTextOptions & {
@@ -67,6 +68,7 @@ export type OcrGetDataOptions = DefaultMethodOptions & {}
 
 export type OcrGetElementPositionByTextOptions = DefaultMethodOptions & {
     fuzzyFindOptions?: FuzzySearchOptions;
+    relativePosition?: RelativePosition;
     text: string;
 }
 
@@ -124,10 +126,11 @@ export type ParseWordData = {
 
 export type OcrGetTextPositionsOptions = DefaultMethodOptions & {}
 
-export type OcrGetTextPositions ={
-  dprPosition: Rectangles;
-  originalPosition: Rectangles;
-  text: string;
+export type OcrGetTextPositions = {
+    dprPosition: Rectangles;
+    filePath: string;
+    originalPosition: Rectangles;
+    text: string;
 }
 
 export type FuzzyFindOptions = {
@@ -195,20 +198,24 @@ export type FuzzyElement = {
      * The found item
      */
     item: {
-      /**
-       * the matched string
-       */
-      text: string;
-      /**
-       * The original position
-       */
-      originalPosition: Rectangles;
-      /**
-       * The position after DPR check
-       * screenshots for iOS are with DPR
-       * position on the screen for iOS is smaller
-       */
-      dprPosition: Rectangles;
+        /**
+         * The position after DPR check
+         * screenshots for iOS are with DPR
+         * position on the screen for iOS is smaller
+         */
+        dprPosition: Rectangles;
+        /**
+         * The path of the OCR screenshot
+         */
+        filePath: string;
+        /**
+         * The original position
+         */
+        originalPosition: Rectangles;
+        /**
+         * the matched string
+         */
+        text: string;
     };
     /**
      * Index of the fuzzy logic check
@@ -235,6 +242,13 @@ export type RectReturn = {
     width: number;
     height: number;
 }
+
+export type RelativePosition =  {
+    above?: number;
+    below?: number;
+    left?: number;
+    right?: number;
+};
 
 /**
  * xml2js System Tessaract Types
@@ -268,6 +282,12 @@ export type UnprocessedSystemStringElement = {
     };
 }
 
+export type TargetOptions = {
+    filePath: string;
+    targetX: number;
+    targetY: number;
+}
+
 /**
  * xml2js Nodejs Tessaract Types
  */
@@ -295,13 +315,20 @@ export type UnprocessedNodejsWord = {
  */
 export interface OcrGetData extends GetOcrData {
     dpr: number;
+    filePath: string;
 }
 
 export type OcrGetElementPositionByText = {
     /**
-     * the original search value
+     * The position after DPR check
+     * screenshots for iOS are with DPR
+     * position on the screen for iOS is smaller
      */
-    searchValue: string;
+    dprPosition: Rectangles,
+    /**
+     * The path of the OCR screenshot
+     */
+    filePath: string;
     /**
      * the matched string
      */
@@ -311,11 +338,9 @@ export type OcrGetElementPositionByText = {
      */
     originalPosition: Rectangles,
     /**
-     * The position after DPR check
-     * screenshots for iOS are with DPR
-     * position on the screen for iOS is smaller
+     * the original search value
      */
-    dprPosition: Rectangles,
+    searchValue: string;
     /**
      * Matched score of the fuzzy logic check
      */

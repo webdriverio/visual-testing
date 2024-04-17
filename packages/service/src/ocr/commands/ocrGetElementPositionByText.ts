@@ -56,6 +56,7 @@ export default async function ocrGetElementPositionByText(
 
     return {
         dprPosition: matchedTextElements.item.dprPosition,
+        filePath: matchedTextElements.item.filePath,
         matchedString: matchedTextElements.item.text,
         originalPosition: matchedTextElements.item.originalPosition,
         score,
