@@ -40,6 +40,18 @@ describe('@wdio/visual-service:ocr desktop', () => {
         expect(ocrText).toContain('docs')
     })
 
+    it('should click on an element based on text on the screen based on OCR with relative position data', async function () {
+        await driver.ocrClickOnText({
+            element: $('.buttons_pzbO > a:nth-child(2)'),
+            text: 'WebdriverIO?',
+            relativePosition: {
+                left: 150,
+            }
+        })
+
+        await expect(browser).toHaveUrl('https://webdriver.io/docs/gettingstarted')
+    })
+
     it('should set a value on an element based on text on the screen based on OCR', async function() {
         await driver.ocrClickOnText({
             element: $('.DocSearch'),
