@@ -1,12 +1,10 @@
 import logger from '@wdio/logger'
-import { readFileSync } from 'node:fs'
 import { browser } from '@wdio/globals'
 import { getScreenshotSize } from 'webdriver-image-comparison/dist/helpers/utils.js'
-import { addBlockOuts, saveBase64Image } from 'webdriver-image-comparison/dist/methods/images.js'
 import { getNodeOcrData, getSystemOcrData } from './tesseract.js'
 import type { GetOcrData, Line, OcrGetData, OcrGetDataOptions, Words } from '../types.js'
 import { adjustElementBbox } from './index.js'
-import { processImage } from './imageProcessing.js'
+import { drawHighlightedWords, processImage } from './imageProcessing.js'
 
 const log = logger('@wdio/visual-service:ocrGetData')
 
@@ -70,8 +68,7 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
 
         // Get all words and highlight them
         const highlights = ocrData.words.map((word) => word.bbox)
-        const highlightedImage = await addBlockOuts(readFileSync(filePath, { encoding: 'base64' }), highlights)
-        await saveBase64Image(highlightedImage, filePath)
+        await drawHighlightedWords({ filePath, highlights })
 
         log.info(`OCR Image with found text can be found here:\n\n${filePath}`)
 

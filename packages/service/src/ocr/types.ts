@@ -263,6 +263,11 @@ export type ProcessImage = {
     filePath: string;
 }
 
+export type DrawHighlightedWords = {
+    filePath: string;
+    highlights: Rectangles[];
+}
+
 /**
  * xml2js System Tessaract Types
  */
