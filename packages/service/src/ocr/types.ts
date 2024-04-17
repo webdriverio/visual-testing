@@ -248,7 +248,20 @@ export type RelativePosition =  {
     below?: number;
     left?: number;
     right?: number;
-};
+}
+
+export type ProcessImageOptions = {
+    contrast: number;
+    elementRectangles?: RectReturn;
+    isAndroid: boolean;
+    isIOS: boolean;
+    ocrImagesPath: string;
+    screenshot: string;
+}
+
+export type ProcessImage = {
+    filePath: string;
+}
 
 /**
  * xml2js System Tessaract Types

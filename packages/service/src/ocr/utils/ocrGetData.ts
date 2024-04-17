@@ -1,13 +1,12 @@
 import logger from '@wdio/logger'
+import { readFileSync } from 'node:fs'
 import { browser } from '@wdio/globals'
-import { writeFileSync } from 'node:fs'
-import { join } from 'node:path'
-import Jimp from 'jimp'
 import { getScreenshotSize } from 'webdriver-image-comparison/dist/helpers/utils.js'
 import { addBlockOuts, saveBase64Image } from 'webdriver-image-comparison/dist/methods/images.js'
 import { getNodeOcrData, getSystemOcrData } from './tesseract.js'
 import type { GetOcrData, Line, OcrGetData, OcrGetDataOptions, Words } from '../types.js'
 import { adjustElementBbox } from './index.js'
+import { processImage } from './imageProcessing.js'
 
 const log = logger('@wdio/visual-service:ocrGetData')
 
@@ -25,28 +24,20 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
         const screenshot = await driver.takeScreenshot()
         const { width } = getScreenshotSize(screenshot)
         const dpr = width / screenSize.width
-
-        // Make it grey which will be better for OCR
-        const image = await Jimp.read(Buffer.from(screenshot, 'base64'))
-        image.greyscale()
-        image.contrast(contrast)
-        const greyscaleImage = (await image.getBufferAsync(Jimp.MIME_PNG)).toString('base64')
-
-        const fileName = `${browser.isAndroid ? 'android' : browser.isIOS ? 'ios': 'desktop'}-${new Date().getTime()}.png`
-        const filePath = join(ocrImagesPath, fileName)
-        writeFileSync(filePath, greyscaleImage, { encoding: 'base64' })
-
-        let elementRect
+        const { filePath } = await processImage({ contrast, isAndroid: browser.isAndroid, isIOS: browser.isIOS, ocrImagesPath, screenshot })
+        let elementRectangles
         let croppedFilePath
+
         if (element) {
-            elementRect = await browser.getElementRect((await element).elementId)
-            const clonedImageImage = image.clone()
-            clonedImageImage.crop(elementRect.x, elementRect.y, elementRect.width, elementRect.height)
-            const croppedImage = await clonedImageImage.getBufferAsync(Jimp.MIME_PNG)
-            const parts = fileName.split('.')
-            const croppedFileName = `${parts[0]}-cropped.${parts[1]}`
-            croppedFilePath = join(ocrImagesPath, croppedFileName)
-            writeFileSync(croppedFilePath, croppedImage, { encoding: 'base64' })
+            elementRectangles = await browser.getElementRect((await element).elementId)
+            croppedFilePath = (await processImage({
+                contrast,
+                elementRectangles,
+                isAndroid: browser.isAndroid,
+                isIOS: browser.isIOS,
+                ocrImagesPath,
+                screenshot,
+            })).filePath
         }
 
         // OCR the image
@@ -61,13 +52,13 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
             ocrData = await getNodeOcrData({ filePath: croppedFilePath || filePath, language })
         }
 
-        if (element && elementRect) {
+        if (element && elementRectangles) {
             ocrData.lines.forEach((line:Line) => {
-                line.bbox = adjustElementBbox(line.bbox, elementRect)
+                line.bbox = adjustElementBbox(line.bbox, elementRectangles)
             })
 
             ocrData.words.forEach((word:Words) => {
-                word.bbox = adjustElementBbox(word.bbox, elementRect)
+                word.bbox = adjustElementBbox(word.bbox, elementRectangles)
             })
         }
 
@@ -79,7 +70,7 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
 
         // Get all words and highlight them
         const highlights = ocrData.words.map((word) => word.bbox)
-        const highlightedImage = await addBlockOuts(greyscaleImage, highlights)
+        const highlightedImage = await addBlockOuts(readFileSync(filePath, { encoding: 'base64' }), highlights)
         await saveBase64Image(highlightedImage, filePath)
 
         log.info(`OCR Image with found text can be found here:\n\n${filePath}`)
