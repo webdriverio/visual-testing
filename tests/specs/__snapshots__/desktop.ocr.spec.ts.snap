@@ -7,22 +7,23 @@ test framework for Node.js
 	"
 `;
 
-exports[`@wdio/visual-service:ocr desktop > should get the position of a text on the screen based on OCR 1`] = `
+exports[`@wdio/visual-service:ocr desktop > should get the position of matching text on the screen based on OCR 1`] = `
 {
   "dprPosition": {
-    "bottom": 114,
-    "left": 1192,
-    "right": 1329,
+    "bottom": 110,
+    "left": 1213,
+    "right": 1274,
     "top": 97,
   },
-  "matchedString": "Q Search LJKJ",
+  "filePath": "/Users/wimselles/Git/wdio/visual-testing/.tmp/ocr/desktop-1713423200306.png",
+  "matchedString": "Search",
   "originalPosition": {
-    "bottom": 114,
-    "left": 1192,
-    "right": 1329,
+    "bottom": 110,
+    "left": 1213,
+    "right": 1274,
     "top": 97,
   },
-  "score": 89.54,
+  "score": 100,
   "searchValue": "Search",
 }
 `;

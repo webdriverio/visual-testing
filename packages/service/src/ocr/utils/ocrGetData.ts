@@ -2,8 +2,8 @@ import logger from '@wdio/logger'
 import { browser } from '@wdio/globals'
 import { getScreenshotSize } from 'webdriver-image-comparison/dist/helpers/utils.js'
 import { getNodeOcrData, getSystemOcrData } from './tesseract.js'
-import type { GetOcrData, Line, OcrGetData, OcrGetDataOptions, Words } from '../types.js'
-import { adjustElementBbox } from './index.js'
+import type { GetOcrData, Line, OcrGetData, OcrGetDataOptions, RectReturn, Words } from '../types.js'
+import { adjustElementBbox, isRectanglesObject } from './index.js'
 import { drawHighlightedWords, processImage } from './imageProcessing.js'
 
 const log = logger('@wdio/visual-service:ocrGetData')
@@ -11,7 +11,7 @@ const log = logger('@wdio/visual-service:ocrGetData')
 export default async function ocrGetData(options: OcrGetDataOptions): Promise<OcrGetData> {
     const {
         contrast,
-        element,
+        haystack,
         isTesseractAvailable,
         language,
         ocrImagesPath,
@@ -26,8 +26,8 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
         let elementRectangles
         let croppedFilePath
 
-        if (element) {
-            elementRectangles = await browser.getElementRect((await element).elementId)
+        if (haystack) {
+            elementRectangles = isRectanglesObject(haystack) ? haystack as RectReturn : await browser.getElementRect((await haystack).elementId)
             croppedFilePath = (await processImage({
                 contrast,
                 elementRectangles,
@@ -50,7 +50,7 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
             ocrData = await getNodeOcrData({ filePath: croppedFilePath || filePath, language })
         }
 
-        if (element && elementRectangles) {
+        if (haystack && elementRectangles) {
             ocrData.lines.forEach((line:Line) => {
                 line.bbox = adjustElementBbox(line.bbox, elementRectangles)
             })

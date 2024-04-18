@@ -41,3 +41,11 @@ export function createOcrDir(options: OcrOptions, folders: Folders): string {
 
     return ocrDir
 }
+
+export function isRectanglesObject(obj: WebdriverIO.Element | ChainablePromiseElement | RectReturn): obj is RectReturn {
+    const properties = ['x', 'y', 'width', 'height']
+
+    return obj !== null &&
+           typeof obj === 'object' &&
+           properties.every(prop => typeof (obj as any)[prop] === 'number' && !isNaN((obj as any)[prop]) && (obj as any)[prop] >= 0)
+}

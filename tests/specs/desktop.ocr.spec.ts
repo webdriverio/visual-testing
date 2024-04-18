@@ -11,38 +11,38 @@ describe('@wdio/visual-service:ocr desktop', () => {
 
     it('should get text of an image based on OCR', async function() {
         const ocrText = await driver.ocrGetText({
-            element: $('.hero__subtitle'),
+            haystack: $('.hero__subtitle'),
         })
 
         expect(ocrText).toMatchSnapshot()
     })
 
-    it('should get the position of a text on the screen based on OCR', async function() {
+    it('should get the position of matching text on the screen based on OCR', async function() {
         const elementPosition = await driver.ocrGetElementPositionByText({
-            element: $('.DocSearch'),
+            haystack: $('.DocSearch'),
             text: 'Search',
         })
 
         expect(elementPosition).toMatchSnapshot()
     })
 
-    it('should click on an element based on text on the screen based on OCR', async function() {
+    it('should click on an input field based on text inside of an haystack that is an element', async function() {
         await driver.ocrClickOnText({
-            element: $('.DocSearch'),
+            haystack: $('.DocSearch'),
             text: 'Search',
         })
 
         // This is to validate that the click actually worked and opened the search form
         const ocrText = await driver.ocrGetText({
-            element: $('.DocSearch-Form')
+            haystack: $('.DocSearch-Form')
         })
 
         expect(ocrText).toContain('docs')
     })
 
-    it('should click on an element based on text on the screen based on OCR with relative position data', async function () {
+    it('should click click on a button based on text inside of a haystack of an element with relative position data', async function () {
         await driver.ocrClickOnText({
-            element: $('.buttons_pzbO > a:nth-child(2)'),
+            haystack: $('.buttons_pzbO > a:nth-child(2)'),
             text: 'WebdriverIO?',
             relativePosition: {
                 left: 150,
@@ -52,38 +52,48 @@ describe('@wdio/visual-service:ocr desktop', () => {
         await expect(browser).toHaveUrl('https://webdriver.io/docs/gettingstarted')
     })
 
-    it('should set a value on an element based on text on the screen based on OCR', async function() {
+    it('should click on a button based on text inside of a haystack of coordinates', async function () {
         await driver.ocrClickOnText({
-            element: $('.DocSearch'),
+            contrast: 1,
+            haystack: { height: 44, width: 1108, x: 129, y: 590 },
+            text: 'WebdriverIO?',
+        })
+
+        await expect(browser).toHaveUrl('https://webdriver.io/docs/why-webdriverio')
+    })
+
+    it('should set a value in an input field based on finding text inside of a haystack that is an element', async function() {
+        await driver.ocrClickOnText({
+            haystack: $('.DocSearch'),
             text: 'Search',
         })
 
         await driver.ocrSetValue({
-            element: $('.DocSearch-Form'),
+            haystack: $('.DocSearch-Form'),
             text: 'docs',
             value: 'specfileretries',
         })
 
         await driver.pause(1000)
 
-        const ocrText = await driver.ocrGetText({ element: $('.DocSearch-Form') })
+        const ocrText = await driver.ocrGetText({ haystack: $('.DocSearch-Form') })
         expect(ocrText).toContain('specfileretries')
     })
 
-    it('should wait on text on the screen based on OCR', async function() {
+    it('should wait on text inside of a haystack that is an element', async function() {
         await driver.ocrClickOnText({
-            element: $('.DocSearch'),
+            haystack: $('.DocSearch'),
             text: 'Search',
         })
 
         await driver.ocrSetValue({
-            element: $('.DocSearch-Form'),
+            haystack: $('.DocSearch-Form'),
             text: 'docs',
             value: 'specfileretries',
         })
 
         await driver.ocrWaitForTextDisplayed({
-            element: $('.DocSearch-Dropdown'),
+            haystack: $('.DocSearch-Dropdown'),
             text: 'specFileRetries',
         })
     })

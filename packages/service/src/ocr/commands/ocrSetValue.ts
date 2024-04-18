@@ -6,7 +6,7 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
     const {
         contrast,
         clickDuration,
-        element,
+        haystack,
         fuzzyFindOptions,
         isTesseractAvailable,
         language,
@@ -16,11 +16,11 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
         value,
     } = options
 
-    // 1. First click on the element to make sure it is intractable
+    // 1. First click on the position of the text to make sure it is intractable
     await ocrClickOnText({
         contrast,
         clickDuration,
-        element,
+        haystack,
         fuzzyFindOptions,
         isTesseractAvailable,
         language,
@@ -42,7 +42,7 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
             // Keyboard is not shown
         }
     }
-    // 3. Send the value to the element
+    // 3. Send the value to the active element
     await ocrKeys(value, submitValue)
 
     // 4. If Mobile then hide the keyboard

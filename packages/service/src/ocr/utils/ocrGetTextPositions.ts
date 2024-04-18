@@ -13,6 +13,6 @@ export default async function ocrGetTextPositions(options: OcrGetTextPositionsOp
                 originalPosition: bbox,
                 text: text.replace(/(^\s+|\s+$)/g, ''),
             }))
-            .filter((element) => element.text)
+            .filter((word) => word.text)
     )
 }

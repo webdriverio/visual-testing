@@ -26,7 +26,7 @@ export interface OcrOptions {
  */
 type DefaultCommandOptions = {
     contrast?: number;
-    element?: WebdriverIO.Element | ChainablePromiseElement;
+    haystack?: WebdriverIO.Element | ChainablePromiseElement | RectReturn;
     language?: string;
 }
 
