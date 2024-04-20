@@ -86,4 +86,79 @@ describe('ocrClickOnText', () => {
         // @ts-ignore, see above
         expect(global.browser.perform).toHaveBeenCalled()
     })
+
+    it('should wait longer when a click duration is provided', async () => {
+        const options = {
+            contrast: 0.5,
+            clickDuration: 10000,
+            isTesseractAvailable: false,
+            language: 'ENG',
+            ocrImagesPath: 'path/to/image.png',
+            text: 'example',
+        }
+        global.browser.isMobile = true
+        await ocrClickOnText(options)
+
+        expect(global.browser.action).toHaveBeenCalledWith('pointer', {
+            parameters: { pointerType: 'touch' }
+        })
+        expect(global.browser.pause).toHaveBeenCalledWith(10000)
+    })
+
+    it('should click on the correct position when no properties in the relativePosition option is provided', async () => {
+        const options = {
+            contrast: 0.5,
+            isTesseractAvailable: false,
+            language: 'ENG',
+            ocrImagesPath: 'path/to/image.png',
+            relativePosition: {},
+            text: 'example',
+        }
+        global.browser.isMobile = true
+        await ocrClickOnText(options)
+
+        expect(global.browser.action).toHaveBeenCalledWith('pointer', {
+            parameters: { pointerType: 'touch' }
+        })
+        // @ts-ignore, see above
+        expect(global.browser.move).toHaveBeenCalledWith({ duration: 0, x: 100, y: 150 })
+    })
+
+    it('should click on the correct position when above and left from the relativePosition option are provided', async () => {
+        const options = {
+            contrast: 0.5,
+            isTesseractAvailable: false,
+            language: 'ENG',
+            ocrImagesPath: 'path/to/image.png',
+            relativePosition: { above: 125, left: 66 },
+            text: 'example',
+        }
+        global.browser.isMobile = true
+        await ocrClickOnText(options)
+
+        expect(global.browser.action).toHaveBeenCalledWith('pointer', {
+            parameters: { pointerType: 'touch' }
+        })
+        // @ts-ignore, see above
+        expect(global.browser.move).toHaveBeenCalledWith({ duration: 0, x: 34, y: 25 })
+    })
+
+    it('should click on the correct position when above and left from the relativePosition option are provided', async () => {
+        const options = {
+            contrast: 0.5,
+            isTesseractAvailable: false,
+            language: 'ENG',
+            ocrImagesPath: 'path/to/image.png',
+            relativePosition: { below: 125, right: 66 },
+            text: 'example',
+        }
+        global.browser.isMobile = true
+        await ocrClickOnText(options)
+
+        expect(global.browser.action).toHaveBeenCalledWith('pointer', {
+            parameters: { pointerType: 'touch' }
+        })
+        // @ts-ignore, see above
+        expect(global.browser.move).toHaveBeenCalledWith({ duration: 0, x: 166, y: 275 })
+    })
 })
