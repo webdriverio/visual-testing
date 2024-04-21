@@ -12,7 +12,6 @@ vi.mock('../../src/ocr/utils/ocrKeys.js', () => ({
 
 global.driver = {
     isMobile: false,
-    // waitUntil: vi.fn().mockResolvedValue(true),
     waitUntil: vi.fn(async (condition, { timeoutMsg }) => {
         const result = await condition()
         if (!result) {
