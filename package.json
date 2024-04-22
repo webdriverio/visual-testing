@@ -47,7 +47,7 @@
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@typescript-eslint/parser": "^7.4.0",
     "@typescript-eslint/utils": "^7.4.0",
-    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/coverage-v8": "^1.5.0",
     "@wdio/appium-service": "^8.35.1",
     "@wdio/cli": "^8.35.1",
     "@wdio/globals": "^8.36.1",
@@ -69,7 +69,7 @@
     "saucelabs": "^7.5.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3",
-    "vitest": "^1.4.0",
+    "vitest": "^1.5.0",
     "webdriverio": "^8.35.1"
   }
 }
