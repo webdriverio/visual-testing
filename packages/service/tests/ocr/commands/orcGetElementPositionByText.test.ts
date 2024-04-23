@@ -1,14 +1,14 @@
 import { join } from 'node:path'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import ocrGetElementPositionByText from '../../src/ocr/commands/ocrGetElementPositionByText.js'
-import ocrGetTextPositions from '../../src/ocr/utils/ocrGetTextPositions.js'
-import { fuzzyFind } from '../../src/ocr/utils/fuzzySearch.js'
+import ocrGetElementPositionByText from '../../../src/ocr/commands/ocrGetElementPositionByText.js'
+import ocrGetTextPositions from '../../../src/ocr/utils/ocrGetTextPositions.js'
+import { fuzzyFind } from '../../../src/ocr/utils/fuzzySearch.js'
 import logger from '@wdio/logger'
 
-vi.mock('../../src/ocr/utils/ocrGetTextPositions.js', () => ({
+vi.mock('../../../src/ocr/utils/ocrGetTextPositions.js', () => ({
     default: vi.fn()
 }))
-vi.mock('../../src/ocr/utils/fuzzySearch.js', () => ({
+vi.mock('../../../src/ocr/utils/fuzzySearch.js', () => ({
     fuzzyFind: vi.fn()
 }))
 

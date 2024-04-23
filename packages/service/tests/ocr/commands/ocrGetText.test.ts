@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
-import ocrGetText from '../../src/ocr/commands/ocrGetText.js'
-import ocrGetData from '../../src/ocr/utils/ocrGetData.js'
+import ocrGetText from '../../../src/ocr/commands/ocrGetText.js'
+import ocrGetData from '../../../src/ocr/utils/ocrGetData.js'
 
-vi.mock('../../src/ocr/utils/ocrGetData.js', () => ({
+vi.mock('../../../src/ocr/utils/ocrGetData.js', () => ({
     default: vi.fn(() => Promise.resolve({
         text: `
 

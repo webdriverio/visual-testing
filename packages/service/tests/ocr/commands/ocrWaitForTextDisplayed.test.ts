@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import ocrWaitForTextDisplayed from '../../src/ocr/commands/ocrWaitForTextDisplayed.js'
-import ocrGetElementPositionByText from '../../src/ocr/commands/ocrGetElementPositionByText.js'
+import ocrWaitForTextDisplayed from '../../../src/ocr/commands/ocrWaitForTextDisplayed.js'
+import ocrGetElementPositionByText from '../../../src/ocr/commands/ocrGetElementPositionByText.js'
 
-vi.mock('../../src/ocr/commands/ocrGetElementPositionByText.js', () => ({
+vi.mock('../../../src/ocr/commands/ocrGetElementPositionByText.js', () => ({
     default: vi.fn()
 }))
 global.driver = {

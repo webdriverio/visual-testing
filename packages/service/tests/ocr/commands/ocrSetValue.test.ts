@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import ocrSetValue from '../../src/ocr/commands/ocrSetValue.js'
-import ocrClickOnText from '../../src/ocr/commands/ocrClickOnText.js'
-import ocrKeys from '../../src/ocr/utils/ocrKeys.js'
+import ocrSetValue from '../../../src/ocr/commands/ocrSetValue.js'
+import ocrClickOnText from '../../../src/ocr/commands/ocrClickOnText.js'
+import ocrKeys from '../../../src/ocr/utils/ocrKeys.js'
 
-vi.mock('../../src/ocr/commands/ocrClickOnText.js', () => ({
+vi.mock('../../../src/ocr/commands/ocrClickOnText.js', () => ({
     default: vi.fn(() => Promise.resolve())
 }))
-vi.mock('../../src/ocr/utils/ocrKeys.js', () => ({
+vi.mock('../../../src/ocr/utils/ocrKeys.js', () => ({
     default: vi.fn(() => Promise.resolve())
 }))
 

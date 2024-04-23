@@ -1,20 +1,20 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import ocrClickOnText from '../../src/ocr/commands/ocrClickOnText.js'
-import ocrGetElementPositionByText from '../../src/ocr/commands/ocrGetElementPositionByText.js'
-import { determineClickPoint } from '../../src/ocr/utils/index.js'
-import { drawTarget } from '../../src/ocr/utils/imageProcessing.js'
+import ocrClickOnText from '../../../src/ocr/commands/ocrClickOnText.js'
+import ocrGetElementPositionByText from '../../../src/ocr/commands/ocrGetElementPositionByText.js'
+import { determineClickPoint } from '../../../src/ocr/utils/index.js'
+import { drawTarget } from '../../../src/ocr/utils/imageProcessing.js'
 
-vi.mock('../../src/ocr/commands/ocrGetElementPositionByText.js', () => ({
+vi.mock('../../../src/ocr/commands/ocrGetElementPositionByText.js', () => ({
     default: vi.fn(() => Promise.resolve({
         dprPosition: { x: 100, y: 150 },
         filePath: 'path/to/image.png'
     }))
 }))
-vi.mock('../../src/ocr/utils/index.js', () => ({
+vi.mock('../../../src/ocr/utils/index.js', () => ({
     determineClickPoint: vi.fn(() => ({ x: 100, y: 150 }))
 }))
-vi.mock('../../src/ocr/utils/imageProcessing.js', () => ({
+vi.mock('../../../src/ocr/utils/imageProcessing.js', () => ({
     drawTarget: vi.fn()
 }))
 
