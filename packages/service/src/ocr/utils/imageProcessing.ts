@@ -66,7 +66,6 @@ export async function drawHighlightedWords({ filePath, highlights }: DrawHighlig
                     // Get the current pixel color
                     const currentColor = image.getPixelColor(x, y)
                     const rgba = Jimp.intToRGBA(currentColor)
-
                     // Calculate new color values using simple alpha blending
                     const newR = (highlightColor.r * highlightColor.a) + (rgba.r * (1 - highlightColor.a))
                     const newG = (highlightColor.g * highlightColor.a) + (rgba.g * (1 - highlightColor.a))
