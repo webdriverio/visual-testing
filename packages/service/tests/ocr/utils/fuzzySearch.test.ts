@@ -5,11 +5,15 @@ import { DEFAULT_FUZZY_OPTIONS } from '../../../src/ocr/utils/constants.js'
 
 vi.mock('fuse.js', () => {
     return {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         default: vi.fn().mockImplementation((items, { score = 0.5 }) => ({
             search: vi.fn().mockImplementation(pattern =>
                 items.filter(item => item.text.includes(pattern)).map(item => ({ item, score, }))
-            )
+            ),
+            setCollection: vi.fn(),
+            add: vi.fn(),
+            remove: vi.fn(),
+            removeAt: vi.fn(),
+            getIndex: vi.fn()
         }))
     }
 })
