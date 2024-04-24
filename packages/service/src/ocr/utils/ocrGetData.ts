@@ -18,8 +18,8 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
     } = options
 
     try {
-        const screenSize = await driver.getWindowSize()
-        const screenshot = await driver.takeScreenshot()
+        const screenSize = await browser.getWindowSize()
+        const screenshot = await browser.takeScreenshot()
         const { width } = getScreenshotSize(screenshot)
         const dpr = width / screenSize.width
         const { filePath } = await processImage({ contrast, isAndroid: browser.isAndroid, isIOS: browser.isIOS, ocrImagesPath, screenshot })
@@ -27,7 +27,7 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
         let croppedFilePath
 
         if (haystack) {
-            elementRectangles = isRectanglesObject(haystack) ? haystack as RectReturn : await browser.getElementRect((await haystack).elementId)
+            elementRectangles = isRectanglesObject(haystack) ? haystack as RectReturn : await browser.getElementRect((await haystack as WebdriverIO.Element).elementId)
             croppedFilePath = (await processImage({
                 contrast,
                 elementRectangles,

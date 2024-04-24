@@ -42,7 +42,7 @@ export function createOcrDir(options: OcrOptions, folders: Folders): string {
     return ocrDir
 }
 
-export function isRectanglesObject(obj: WebdriverIO.Element | ChainablePromiseElement | RectReturn): obj is RectReturn {
+export function isRectanglesObject(obj: WebdriverIO.Element | ChainablePromiseElement | RectReturn): boolean {
     const properties = ['x', 'y', 'width', 'height']
 
     return obj !== null &&

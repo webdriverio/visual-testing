@@ -1,6 +1,7 @@
 import { mkdirSync } from 'node:fs'
 import { describe, it, expect, vi } from 'vitest'
 import { adjustElementBbox, createOcrDir, determineClickPoint, getDprPositions, isRectanglesObject } from '../../../src/ocr/utils/index.js'
+import type { RectReturn } from '../../../src/ocr/types.js'
 
 vi.mock('node:fs', () => ({
     mkdirSync: vi.fn(),
@@ -78,7 +79,7 @@ describe('isRectanglesObject', () => {
     })
 
     it('should return false for an invalid rectangle object', () => {
-        const rect = { x: '0', y: 10, width: 100, height: 100 }
+        const rect = { x: '0', y: 10, width: 100, height: 100 } as unknown as RectReturn
 
         const result = isRectanglesObject(rect)
         expect(result).toBe(false)
