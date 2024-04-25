@@ -1,5 +1,11 @@
 # @wdio/visual-service
 
+## 4.1.1
+
+### Patch Changes
+
+- 4dcfeea: add missing dependency and update deps
+
 ## 4.1.0
 
 ### Minor Changes
