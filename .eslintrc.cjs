@@ -70,6 +70,7 @@ const config = {
             },
         },
     ],
+    ignorePatterns: ['lib/resemble/', '*.d.ts', 'packages/**/dist']
 }
 
 module.exports = config
