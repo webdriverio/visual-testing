@@ -17,8 +17,7 @@ export default async function checkWebScreen(
     folders: Folders,
     tag: string,
     checkScreenOptions: CheckScreenOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isNativeContext: boolean,
+    _isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
     // 1.  Take the actual screenshot and retrieve the needed data
     const saveScreenOptions: SaveScreenOptions = {

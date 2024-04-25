@@ -2,7 +2,7 @@
   "name": "@wdio/visual-service",
   "author": "Wim Selles - wswebcreation",
   "description": "Image comparison / visual regression testing for WebdriverIO",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "license": "MIT",
   "homepage": "https://webdriver.io/docs/visual-testing",
   "repository": {
@@ -26,8 +26,9 @@
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
+    "@wdio/globals": "^8.36.1",
     "@wdio/logger": "^8.28.0",
-    "@wdio/types": "^8.32.4",
+    "@wdio/types": "^8.36.1",
     "fuse.js": "^7.0.0",
     "jimp": "^0.22.12",
     "node-tesseract-ocr": "^2.2.1",

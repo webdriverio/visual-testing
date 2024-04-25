@@ -24,8 +24,7 @@ export default async function saveWebElement(
     element: HTMLElement | WicElement,
     tag: string,
     saveElementOptions: SaveElementOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isNativeContext: boolean,
+    _isNativeContext: boolean,
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
     const { addressBarShadowPadding, autoElementScroll, formatImageName, savePerInstance, toolBarShadowPadding } =

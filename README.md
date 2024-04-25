@@ -210,6 +210,8 @@ To create a PR for this project and start contributing follow this step-by-step 
 
     ```sh
     $ cd visual-testing
+    $ corepack enable
+    $ corepack use pnpm@8.x
     $ pnpm install
     ```
 
