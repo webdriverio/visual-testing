@@ -18,7 +18,6 @@ export default async function checkWebElement(
     element: HTMLElement,
     tag: string,
     checkElementOptions: CheckElementOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
     // 1. Take the actual element screenshot and retrieve the needed data
