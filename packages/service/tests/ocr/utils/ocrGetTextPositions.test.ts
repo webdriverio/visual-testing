@@ -41,11 +41,6 @@ describe('ocrGetTextPositions', () => {
     });
 
     it('processes words and adjusts their positions based on DPR', async () => {
-        const words = [
-            { text: ' Hello ', bbox: '{"left":100,"top":100,"right":200,"bottom":200}' },
-            { text: ' world! ', bbox: '{"left":200,"top":200,"right":300,"bottom":300}' },
-            { text: '', bbox: '{"left":300,"top":300,"right":400,"bottom":400}' } // This should be filtered out
-        ];
         vi.mocked(ocrGetData).mockResolvedValue({
             dpr: 2,
             filePath: 'sample/path/to/image.png',
