@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import ocrGetTextPositions from '../../../src/ocr/utils/ocrGetTextPositions.js';
-import ocrGetData from '../../../src/ocr/utils/ocrGetData.js';
-import { getDprPositions } from '../../../src/ocr/utils/index.js';
+import ocrGetTextPositions from '../../../src/ocr/utils/ocrGetTextPositions.js'
+import ocrGetData from '../../../src/ocr/utils/ocrGetData.js'
+import { getDprPositions } from '../../../src/ocr/utils/index.js'
 
 vi.mock('../../../src/ocr/utils/ocrGetData.js', () => ({
     default: vi.fn()
-}));
+}))
 vi.mock('../../../src/ocr/utils/index.js', () => ({
     getDprPositions: vi.fn().mockImplementation((bbox, dpr) => ({
         left: bbox.left / dpr,
@@ -13,7 +13,7 @@ vi.mock('../../../src/ocr/utils/index.js', () => ({
         right: bbox.right / dpr,
         bottom: bbox.bottom / dpr
     }))
-}));
+}))
 const options = {
     contrast: 0.25,
     isTesseractAvailable: false,
@@ -23,8 +23,8 @@ const options = {
 
 describe('ocrGetTextPositions', () => {
     beforeEach(() => {
-        vi.clearAllMocks();
-    });
+        vi.clearAllMocks()
+    })
 
     it('returns empty array when no words are present', async () => {
         vi.mocked(ocrGetData).mockResolvedValue({
@@ -34,11 +34,11 @@ describe('ocrGetTextPositions', () => {
             lines: [],
             words: []
         })
-        const result = await ocrGetTextPositions(options);
+        const result = await ocrGetTextPositions(options)
 
-        expect(result).toEqual([]);
-        expect(ocrGetData).toHaveBeenCalled();
-    });
+        expect(result).toEqual([])
+        expect(ocrGetData).toHaveBeenCalled()
+    })
 
     it('processes words and adjusts their positions based on DPR', async () => {
         vi.mocked(ocrGetData).mockResolvedValue({
@@ -53,10 +53,10 @@ describe('ocrGetTextPositions', () => {
             ]
         })
 
-        const result = await ocrGetTextPositions(options);
+        const result = await ocrGetTextPositions(options)
 
-        expect(getDprPositions).toHaveBeenCalledTimes(3);
-        expect(result.length).toBe(3);
+        expect(getDprPositions).toHaveBeenCalledTimes(3)
+        expect(result.length).toBe(3)
         expect(result).toMatchSnapshot()
-    });
+    })
 })
