@@ -51,13 +51,14 @@ export function parseWordDataFromText(attributes: string[]): ParseWordData {
  * Handle the OCR with Tesseract with pure JS
  */
 export async function getNodeOcrData(options: TessaractDataOptions): Promise<GetOcrData> {
+    let worker
     try {
         const { filePath, language } = options
         const jsonSingleWords: Words[] = []
         const jsonWordStrings: Line[] = []
         let composedBlocks: UnprocessedNodejsBlock[] = []
 
-        const worker = await createWorker(language)
+        worker = await createWorker(language)
         await worker.setParameters({
             tessedit_pageseg_mode: PSM.AUTO,
             tessjs_create_tsv: '0',
@@ -121,9 +122,7 @@ export async function getNodeOcrData(options: TessaractDataOptions): Promise<Get
                         })
 
                         lineData.text = `${lineData.text} ${text}`.trim()
-                        if (!lineData.bbox) {
-                            lineData.bbox = bbox
-                        }
+                        lineData.bbox = bbox
                     })
 
                     if (lineData.text !== '') {
@@ -139,6 +138,9 @@ export async function getNodeOcrData(options: TessaractDataOptions): Promise<Get
             text,
         }
     } catch (error) {
+        if (worker) {
+            await worker.terminate()
+        }
         throw Error(`An error happened when parsing the getNodeOcrData, see: ${error}`)
     }
 }
