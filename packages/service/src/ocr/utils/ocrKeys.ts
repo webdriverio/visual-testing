@@ -14,7 +14,7 @@ export default async function ocrKeys(value: string, submitValue: boolean): Prom
         /**
          * XCTest API only allows to send keypresses (e.g. keydown+keyup).
          */
-        if (!driver.isIOS){
+        if (!browser.isIOS){
             actionChain.pause(50)
         }
         actionChain.down(Key.Enter)
