@@ -11,10 +11,10 @@ const folders = {
     diff: 'baz'
 }
 const browser = {
-    checkScreen: vi.fn().mockResolvedValue({ misMatchPercentage :123, folders }),
-    checkFullPageScreen: vi.fn().mockResolvedValue({ misMatchPercentage :123, folders }),
-    checkElement: vi.fn().mockResolvedValue({ misMatchPercentage :123, folders }),
-    checkTabbablePage: vi.fn().mockResolvedValue({ misMatchPercentage :123, folders })
+    checkScreen: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders }),
+    checkFullPageScreen: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders }),
+    checkElement: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders }),
+    checkTabbablePage: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders })
 } as any as WebdriverIO.Browser
 
 describe('custom visual matcher', () => {

@@ -43,14 +43,14 @@ function compareResult (result: ImageCompareResult, expected: number | ExpectWeb
      */
     if (typeof expected === 'number') {
         return {
-            pass: result.misMatchPercentage === expected,
+            pass: result.misMatchPercentage <= expected,
             message: () => (
-                `Expected image to have a mismatch percentage of ${expected}%, but was ${result.misMatchPercentage}%\n` +
-                'Please compare the images manually and update the baseline if the new screenshot is correct.\n' +
+                `Expected image mismatch percentage to be at most ${expected}%, but was ${result.misMatchPercentage}%.\n` +
+                'If this is acceptable, you may need to adjust the threshold or update the baseline image if the changes are intentional.\n' +
                 `\nBaseline: ${result.folders.baseline}\n` +
                 `Actual Screenshot: ${result.folders.actual}\n` +
                 `Difference: ${result.folders.diff}\n` +
-                '\nSee https://webdriver.io/docs/api/visual-regression.html for more information.'
+                '\nFor guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html'
             )
         }
     }
