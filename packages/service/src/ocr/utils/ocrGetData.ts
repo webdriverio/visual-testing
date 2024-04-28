@@ -11,6 +11,7 @@ const log = logger('@wdio/visual-service:ocrGetData')
 export default async function ocrGetData(options: OcrGetDataOptions): Promise<OcrGetData> {
     const {
         contrast,
+        cliFile,
         haystack,
         isTesseractAvailable,
         language,
@@ -18,11 +19,17 @@ export default async function ocrGetData(options: OcrGetDataOptions): Promise<Oc
     } = options
 
     try {
-        const screenSize = await browser.getWindowSize()
-        const screenshot = await browser.takeScreenshot()
-        const { width } = getScreenshotSize(screenshot)
-        const dpr = width / screenSize.width
-        const { filePath } = await processImage({ contrast, isAndroid: browser.isAndroid, isIOS: browser.isIOS, ocrImagesPath, screenshot })
+        let dpr = 1
+        let screenshot
+        if (!cliFile) {
+            const screenSize = await browser.getWindowSize()
+            screenshot = await browser.takeScreenshot()
+            const { width } = getScreenshotSize(screenshot)
+            dpr = width / screenSize.width
+        } else {
+            screenshot = cliFile
+        }
+        const { filePath } = await processImage({ contrast, isAndroid: browser.isAndroid = false, isIOS: browser.isIOS = false, ocrImagesPath, screenshot })
         let elementRectangles
         let croppedFilePath
 

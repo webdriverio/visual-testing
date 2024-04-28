@@ -64,7 +64,9 @@ type DefaultMethodOptions = DefaultCommandOptions & {
 
 export type OcrGetTextOptions = DefaultMethodOptions & {}
 
-export type OcrGetDataOptions = DefaultMethodOptions & {}
+export type OcrGetDataOptions = DefaultMethodOptions & {
+    cliFile?: string;
+}
 
 export type OcrGetElementPositionByTextOptions = DefaultMethodOptions & {
     fuzzyFindOptions?: FuzzySearchOptions;

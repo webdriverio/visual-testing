@@ -9,6 +9,9 @@
     "type": "git",
     "url": "https://github.com/webdriverio/visual-testing.git"
   },
+  "bin": {
+    "visual-service": "./dist/cli.js"
+  },
   "keywords": [
     "webdriverio",
     "visual",
@@ -30,6 +33,7 @@
     "@wdio/logger": "^8.28.0",
     "@wdio/types": "^8.36.1",
     "fuse.js": "^7.0.0",
+    "inquirer": "^9.2.20",
     "jimp": "^0.22.12",
     "node-tesseract-ocr": "^2.2.1",
     "tesseract.js": "^5.0.5",
@@ -38,6 +42,7 @@
     "webdriver-image-comparison": "^5.1.0"
   },
   "devDependencies": {
+    "@types/inquirer": "^9.0.7",
     "@types/xml2js": "~0.4.14"
   }
 }
