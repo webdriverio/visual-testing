@@ -60,12 +60,7 @@ async function chooseFolder(currentPath: string): Promise<string> {
         }])
         const newPath = join(srcPath, answers.path)
 
-        if (answers.path === '..') {
-            // Clears the previous line
-            process.stdout.write('\u001b[1A\u001b[2K')
-            return prompt(newPath)
-        }
-        if (answers.path.endsWith('/')) {
+        if (answers.path === '..' || answers.path.endsWith('/')) {
             // Clears the previous line
             process.stdout.write('\u001b[1A\u001b[2K')
             return prompt(newPath)
