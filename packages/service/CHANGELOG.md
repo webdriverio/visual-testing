@@ -1,5 +1,11 @@
 # @wdio/visual-service
 
+## 4.1.2
+
+### Patch Changes
+
+- 7713c13: Fix beforeTest incl types
+
 ## 4.1.1
 
 ### Patch Changes
