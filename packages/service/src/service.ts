@@ -87,8 +87,9 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     beforeTest(test: Frameworks.Test) {
-        this.#currentFile = test.file || test.filename
-        this.#currentFilePath = resolve(dirname(test.file || test.filename), FOLDERS.DEFAULT.BASE)
+        this.#currentFile = (test.file || (test as Frameworks.Test & { filename?: string }).filename) as string;
+
+        this.#currentFilePath = resolve(dirname(this.#currentFile), FOLDERS.DEFAULT.BASE)
     }
 
     afterCommand (commandName:string, _args:string[], result:number|string, error:any) {
