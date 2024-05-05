@@ -1,5 +1,6 @@
 ---
 "@wdio/ocr-service": major
+"@wdio/visual-service": patch
 ---
 
 # 🚀 New Feature
@@ -25,10 +26,6 @@ The following commands will be added
 A CLI command will also be provided to pre-check text received from the image. For a demo check this video
 
 https://github.com/webdriverio/visual-testing/assets/11979740/6e4677ba-1463-4d6e-98b0-9a3bf70b702f
-
----
-
-## "@wdio/visual-service": patch
 
 # 🐛 Bug Fixes
 
