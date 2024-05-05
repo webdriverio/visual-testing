@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import ocrGetText from '../../src/commands/ocrGetText.js'
-import ocrGetData from '../../src/utils/ocrGetData.js'
+import getData from '../../src/utils/getData.js'
 
-vi.mock('../../src/utils/ocrGetData.js', () => ({
+vi.mock('../../src/utils/getData.js', () => ({
     default: vi.fn(() => Promise.resolve({
         text: `
 
@@ -23,6 +23,6 @@ describe('ocrGetText', () => {
             text: 'example',
         }
         expect(await ocrGetText(options)).toMatchSnapshot()
-        expect(ocrGetData).toHaveBeenCalledWith(options)
+        expect(getData).toHaveBeenCalledWith(options)
     })
 })

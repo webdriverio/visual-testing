@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ocrGetData > processes OCR data correctly using NodeJS Tesseract 1`] = `
+exports[`getData > processes OCR data correctly using NodeJS Tesseract 1`] = `
 [
   [
     "Using NodeJS version of Tesseract",
@@ -21,7 +21,7 @@ Sample OCR text",
 ]
 `;
 
-exports[`ocrGetData > processes OCR data correctly using NodeJS Tesseract 2`] = `
+exports[`getData > processes OCR data correctly using NodeJS Tesseract 2`] = `
 {
   "dpr": 1,
   "filePath": "/fake/path/image.png",
@@ -31,7 +31,7 @@ exports[`ocrGetData > processes OCR data correctly using NodeJS Tesseract 2`] = 
 }
 `;
 
-exports[`ocrGetData > processes OCR data correctly using a haystack 1`] = `
+exports[`getData > processes OCR data correctly using a haystack 1`] = `
 [
   [
     "Using system installed version of Tesseract",
@@ -52,7 +52,7 @@ Sample OCR text",
 ]
 `;
 
-exports[`ocrGetData > processes OCR data correctly using a haystack 2`] = `
+exports[`getData > processes OCR data correctly using a haystack 2`] = `
 {
   "dpr": 1,
   "filePath": "/fake/path/image.png",
@@ -80,7 +80,7 @@ exports[`ocrGetData > processes OCR data correctly using a haystack 2`] = `
 }
 `;
 
-exports[`ocrGetData > processes OCR data correctly using system Tesseract when available 1`] = `
+exports[`getData > processes OCR data correctly using system Tesseract when available 1`] = `
 [
   [
     "Using system installed version of Tesseract",
@@ -101,7 +101,7 @@ Sample OCR text",
 ]
 `;
 
-exports[`ocrGetData > processes OCR data correctly using system Tesseract when available 2`] = `
+exports[`getData > processes OCR data correctly using system Tesseract when available 2`] = `
 {
   "dpr": 1,
   "filePath": "/fake/path/image.png",
@@ -149,7 +149,7 @@ exports[`ocrGetData > processes OCR data correctly using system Tesseract when a
 }
 `;
 
-exports[`ocrGetData > should handle haystack that requires fetching RectReturn from browser.getElementRect 1`] = `
+exports[`getData > should handle haystack that requires fetching RectReturn from browser.getElementRect 1`] = `
 [
   [
     "Using system installed version of Tesseract",

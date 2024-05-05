@@ -1,5 +1,5 @@
 import type { OcrSetValueOptions } from '../types.js'
-import ocrKeys from '../utils/ocrKeys.js'
+import sendKeys from '../utils/sendKeys.js'
 import ocrClickOnText from './ocrClickOnText.js'
 
 export default async function ocrSetValue(options: OcrSetValueOptions): Promise<void> {
@@ -34,16 +34,13 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
             // Wait for 3 seconds for the keyboard to be shown
             await driver.waitUntil(
                 async () => driver.isKeyboardShown(),
-                {
-                    timeout: 3 * 1000,
-                    timeoutMsg: 'Keyboard was not hidden',
-                })
+                { timeout: 3 * 1000 })
         } catch (ign) {
             // Keyboard is not shown
         }
     }
     // 3. Send the value to the active element
-    await ocrKeys(value, submitValue)
+    await sendKeys(value, submitValue)
 
     // 4. If Mobile then hide the keyboard
     if (driver.isMobile) {
@@ -51,10 +48,7 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
             await driver.hideKeyboard()
             await driver.waitUntil(
                 async () => !(await driver.isKeyboardShown()),
-                {
-                    timeout: 3 * 1000,
-                    timeoutMsg: 'Keyboard is still shown',
-                })
+                { timeout: 3 * 1000 })
         } catch (ign) {
             // Keyboard is not present or not hidden
         }

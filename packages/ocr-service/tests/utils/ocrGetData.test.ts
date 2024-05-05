@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import logger from '@wdio/logger'
 import { browser as wdioBrowser } from '@wdio/globals'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import ocrGetData from '../../src/utils/ocrGetData.js'
+import getData from '../../src/utils/getData.js'
 import * as Tesseract from '../../src/utils/tesseract.js'
 import * as ImageProcessing from '../../src/utils/imageProcessing.js'
 import { adjustElementBbox, getScreenshotSize, isRectanglesObject } from '../../src/utils/index.js'
@@ -48,7 +48,7 @@ vi.mock('@wdio/globals', () => ({
     }
 }))
 
-describe('ocrGetData', () => {
+describe('getData', () => {
     beforeEach(() => {
         vi.clearAllMocks()
     })
@@ -63,7 +63,7 @@ describe('ocrGetData', () => {
         }
         vi.mocked(getScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
-        const result = await ocrGetData(options)
+        const result = await getData(options)
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
@@ -89,7 +89,7 @@ describe('ocrGetData', () => {
         }
         vi.mocked(getScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
-        const result = await ocrGetData(options)
+        const result = await getData(options)
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
@@ -116,7 +116,7 @@ describe('ocrGetData', () => {
         }
         vi.mocked(getScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
-        const result = await ocrGetData(options)
+        const result = await getData(options)
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
@@ -144,7 +144,7 @@ describe('ocrGetData', () => {
         // @ts-ignore
         isRectanglesObject.mockReturnValue(false)
         browser.getElementRect = vi.fn().mockResolvedValue({ x: 10, y: 20, width: 300, height: 400 })
-        const result = await ocrGetData(options)
+        const result = await getData(options)
 
         expect(isRectanglesObject).toHaveBeenCalledWith(options.haystack)
         expect(browser.getElementRect).toHaveBeenCalledWith('element123')
@@ -162,6 +162,6 @@ describe('ocrGetData', () => {
         }
         browser.takeScreenshot = vi.fn().mockRejectedValue(new Error('Failed to take screenshot'))
 
-        await expect(ocrGetData(options)).rejects.toThrow('Failed to take screenshot')
+        await expect(getData(options)).rejects.toThrow('Failed to take screenshot')
     })
 })

@@ -1,11 +1,11 @@
 import { join } from 'node:path'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import ocrGetElementPositionByText from '../../src/commands/ocrGetElementPositionByText.js'
-import ocrGetTextPositions from '../../src/utils/ocrGetTextPositions.js'
+import getTextPositions from '../../src/utils/getTextPositions.js'
 import { fuzzyFind } from '../../src/utils/fuzzySearch.js'
 import logger from '@wdio/logger'
 
-vi.mock('../../src/utils/ocrGetTextPositions.js', () => ({
+vi.mock('../../src/utils/getTextPositions.js', () => ({
     default: vi.fn()
 }))
 vi.mock('../../src/utils/fuzzySearch.js', () => ({
@@ -29,7 +29,7 @@ describe('ocrGetElementPositionByText', () => {
             text: 'example',
         }
         const logWarnMock = vi.spyOn(log, 'warn')
-        vi.mocked(ocrGetTextPositions).mockResolvedValue([])
+        vi.mocked(getTextPositions).mockResolvedValue([])
         vi.mocked(fuzzyFind).mockReturnValue([])
 
         await expect(ocrGetElementPositionByText(data))
@@ -52,7 +52,7 @@ describe('ocrGetElementPositionByText', () => {
             originalPosition: { left: 529, top: 606, right: 643, bottom: 619 },
             text: 'WebdriverIO?'
         }]
-        vi.mocked(ocrGetTextPositions).mockResolvedValue(mockTextPositions)
+        vi.mocked(getTextPositions).mockResolvedValue(mockTextPositions)
         vi.mocked(fuzzyFind).mockReturnValue([
             { item: { ...mockTextPositions[0], text: 'Webdriver' }, score: 0.6, refIndex: 52 },
             { item: { ...mockTextPositions[0], text: 'Webdriverlo?' }, score: 0.08333333333333333, refIndex: 5 },
@@ -79,7 +79,7 @@ describe('ocrGetElementPositionByText', () => {
             originalPosition: { left: 529, top: 606, right: 643, bottom: 619 },
             text: 'unique'
         }]
-        vi.mocked(ocrGetTextPositions).mockResolvedValue(mockTextPositions)
+        vi.mocked(getTextPositions).mockResolvedValue(mockTextPositions)
         vi.mocked(fuzzyFind).mockReturnValue([
             { item: mockTextPositions[0], score: 0, refIndex: 1  },
         ])

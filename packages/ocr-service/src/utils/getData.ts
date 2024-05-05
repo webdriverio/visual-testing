@@ -1,13 +1,13 @@
 import logger from '@wdio/logger'
 import { browser } from '@wdio/globals'
 import { getNodeOcrData, getSystemOcrData } from './tesseract.js'
-import type { GetOcrData, Line, OcrGetData, OcrGetDataOptions, RectReturn, Words } from '../types.js'
+import type { GetOcrData, Line, GetData, GetDataOptions, RectReturn, Words } from '../types.js'
 import { adjustElementBbox, getScreenshotSize, isRectanglesObject } from './index.js'
 import { drawHighlightedWords, processImage } from './imageProcessing.js'
 
-const log = logger('@wdio/ocr-service:ocrGetData')
+const log = logger('@wdio/ocr-service:getData')
 
-export default async function ocrGetData(options: OcrGetDataOptions): Promise<OcrGetData> {
+export default async function getData(options: GetDataOptions): Promise<GetData> {
     const {
         contrast,
         cliFile,

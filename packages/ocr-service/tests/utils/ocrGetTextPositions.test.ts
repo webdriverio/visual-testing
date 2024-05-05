@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import ocrGetTextPositions from '../../src/utils/ocrGetTextPositions.js'
-import ocrGetData from '../../src/utils/ocrGetData.js'
+import getTextPositions from '../../src/utils/getTextPositions.js'
+import getData from '../../src/utils/getData.js'
 import { getDprPositions } from '../../src/utils/index.js'
 
-vi.mock('../../src/utils/ocrGetData.js', () => ({
+vi.mock('../../src/utils/getData.js', () => ({
     default: vi.fn()
 }))
 vi.mock('../../src/utils/index.js', () => ({
@@ -21,27 +21,27 @@ const options = {
     ocrImagesPath: 'sample/path/to/',
 }
 
-describe('ocrGetTextPositions', () => {
+describe('getTextPositions', () => {
     beforeEach(() => {
         vi.clearAllMocks()
     })
 
     it('returns empty array when no words are present', async () => {
-        vi.mocked(ocrGetData).mockResolvedValue({
+        vi.mocked(getData).mockResolvedValue({
             dpr: 2,
             filePath: 'sample/path/to/image.png',
             text: 'example ',
             lines: [],
             words: []
         })
-        const result = await ocrGetTextPositions(options)
+        const result = await getTextPositions(options)
 
         expect(result).toEqual([])
-        expect(ocrGetData).toHaveBeenCalled()
+        expect(getData).toHaveBeenCalled()
     })
 
     it('processes words and adjusts their positions based on DPR', async () => {
-        vi.mocked(ocrGetData).mockResolvedValue({
+        vi.mocked(getData).mockResolvedValue({
             dpr: 2,
             filePath: 'sample/path/to/image.png',
             text: 'example ',
@@ -53,7 +53,7 @@ describe('ocrGetTextPositions', () => {
             ]
         })
 
-        const result = await ocrGetTextPositions(options)
+        const result = await getTextPositions(options)
 
         expect(getDprPositions).toHaveBeenCalledTimes(3)
         expect(result.length).toBe(3)

@@ -2,7 +2,7 @@ import inquirer from 'inquirer'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import type { RectReturn } from './types.js'
-import ocrGetData from './utils/ocrGetData.js'
+import getData from './utils/getData.js'
 import { createOcrDir } from './utils/index.js'
 
 export const CONFIG_HELPER_INTRO = `
@@ -175,12 +175,6 @@ async function main() {
                 },
                 filter: (input) => input ? parseFloat(input) : defaultOptions.contrast
             },
-            // {
-            //     type: 'input',
-            //     name: 'language',
-            //     message: 'Enter OCR language code (e.g., "eng", "deu"):',
-            //     default: defaultOptions.language
-            // }
         ])
 
         options = {
@@ -190,7 +184,7 @@ async function main() {
         }
     }
     console.log('\nProcessing image...\n')
-    await ocrGetData(options)
+    await getData(options)
     console.log('\nDone!')
 }
 

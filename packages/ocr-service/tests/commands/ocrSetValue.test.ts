@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import ocrSetValue from '../../src/commands/ocrSetValue.js'
 import ocrClickOnText from '../../src/commands/ocrClickOnText.js'
-import ocrKeys from '../../src/utils/ocrKeys.js'
+import sendKeys from '../../src/utils/sendKeys.js'
 
 vi.mock('../../src/commands/ocrClickOnText.js', () => ({
     default: vi.fn(() => Promise.resolve())
 }))
-vi.mock('../../src/utils/ocrKeys.js', () => ({
+vi.mock('../../src/utils/sendKeys.js', () => ({
     default: vi.fn(() => Promise.resolve())
 }))
 
@@ -43,7 +43,7 @@ describe('ocrSetValue', () => {
         global.driver.isMobile = false
     })
 
-    it('calls ocrClickOnText and ocrKeys with the right parameters', async () => {
+    it('calls ocrClickOnText and sendKeys with the right parameters', async () => {
         await ocrSetValue(options)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { submitValue, value, ...ocrClickOnTextOptions } = options
@@ -52,7 +52,7 @@ describe('ocrSetValue', () => {
         expect(global.driver.waitUntil).not.toBeCalled()
         expect(global.driver.hideKeyboard).not.toBeCalled()
         expect(global.driver.isKeyboardShown).not.toBeCalled()
-        expect(vi.mocked(ocrKeys)).toHaveBeenCalledWith('test input', true)
+        expect(vi.mocked(sendKeys)).toHaveBeenCalledWith('test input', true)
     })
 
     it('should handle mobile-specific logic', async () => {

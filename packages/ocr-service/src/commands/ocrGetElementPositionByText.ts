@@ -1,6 +1,6 @@
 import logger from '@wdio/logger'
 import type { FuzzyElement, OcrGetElementPositionByText, OcrGetElementPositionByTextOptions } from '../types.js'
-import ocrGetTextPositions from '../utils/ocrGetTextPositions.js'
+import getTextPositions from '../utils/getTextPositions.js'
 import { fuzzyFind } from '../utils/fuzzySearch.js'
 
 const log = logger('@wdio/ocr-service:ocrGetElementPositionByText')
@@ -17,7 +17,7 @@ export default async function ocrGetElementPositionByText(
         ocrImagesPath,
         text,
     } = data
-    const textPositions = await ocrGetTextPositions({
+    const textPositions = await getTextPositions({
         contrast,
         haystack,
         isTesseractAvailable,

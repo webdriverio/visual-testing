@@ -1,6 +1,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import ocrKeys from '../../src/utils/ocrKeys.js'
+import sendKeys from '../../src/utils/sendKeys.js'
 import { Key } from 'webdriverio'
 
 // This mock doesn't really replicate the action API, but when I mock it like it should ths mocks are not registered
@@ -14,13 +14,13 @@ global.browser = {
     perform: vi.fn().mockResolvedValue(null)
 } as any as WebdriverIO.Browser
 
-describe('ocrKeys', () => {
+describe('sendKeys', () => {
     beforeEach(() => {
         vi.clearAllMocks()
     })
 
     it('should send text with the correct action calls for a non iOS device ', async() => {
-        await ocrKeys('test input', false)
+        await sendKeys('test input', false)
 
         expect(global.browser.action).toHaveBeenCalledWith('key')
         // @ts-ignore, see above
@@ -34,7 +34,7 @@ describe('ocrKeys', () => {
     })
 
     it('should send and submit text with the correct action calls for a non iOS device ', async () => {
-        await ocrKeys('test input', true)
+        await sendKeys('test input', true)
 
         expect(global.browser.action).toHaveBeenCalledWith('key')
         // @ts-ignore, see above
@@ -53,7 +53,7 @@ describe('ocrKeys', () => {
 
     it('should send and submit text with the correct action calls for an iOS device ', async () => {
         global.browser.isIOS = true
-        await ocrKeys('test input', true)
+        await sendKeys('test input', true)
 
         expect(global.browser.action).toHaveBeenCalledWith('key')
         // @ts-ignore, see above

@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ocrGetTextPositions > processes words and adjusts their positions based on DPR 1`] = `
+exports[`getTextPositions > processes words and adjusts their positions based on DPR 1`] = `
 [
   {
     "dprPosition": {

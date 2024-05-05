@@ -62,7 +62,7 @@ type DefaultMethodOptions = DefaultCommandOptions & {
 
 export type OcrGetTextOptions = DefaultMethodOptions & {}
 
-export type OcrGetDataOptions = DefaultMethodOptions & {
+export type GetDataOptions = DefaultMethodOptions & {
     cliFile?: string;
 }
 
@@ -124,9 +124,9 @@ export type ParseWordData = {
     wc: number
 }
 
-export type OcrGetTextPositionsOptions = DefaultMethodOptions & {}
+export type GetTextPositionsOptions = DefaultMethodOptions & {}
 
-export type OcrGetTextPositions = {
+export type GetTextPositions = {
     dprPosition: Rectangles;
     filePath: string;
     originalPosition: Rectangles;
@@ -336,7 +336,7 @@ export type UnprocessedNodejsWord = {
 /**
  * Browser command return types
  */
-export interface OcrGetData extends GetOcrData {
+export interface GetData extends GetOcrData {
     dpr: number;
     filePath: string;
 }
