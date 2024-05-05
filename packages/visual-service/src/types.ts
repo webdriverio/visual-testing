@@ -9,7 +9,6 @@ import type {
     SaveFullPageMethodOptions,
     ClassOptions,
 } from 'webdriver-image-comparison'
-import type { OcrOptions } from './ocr/types.js'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;
@@ -48,4 +47,4 @@ export interface WdioCheckScreenMethodOptions
     extends Omit<CheckScreenMethodOptions, keyof WdioIcsCommonOptions>,
         WdioIcsCommonOptions {}
 
-export interface VisualServiceOptions extends ClassOptions, OcrOptions {}
+export interface VisualServiceOptions extends ClassOptions {}

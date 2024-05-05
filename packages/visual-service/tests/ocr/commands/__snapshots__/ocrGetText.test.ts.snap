@@ -1,8 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`ocrGetText > should return text 1`] = `
-"
-        Next-gen browser and mobile automation
-        test framework for Node.js
-         "
-`;

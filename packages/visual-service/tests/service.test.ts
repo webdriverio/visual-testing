@@ -22,9 +22,6 @@ vi.mock('@wdio/globals', async () => ({
         extend: vi.fn()
     }
 }))
-vi.mock('../src/ocr/utils', () => ({
-    createOcrDir: vi.fn(() => '/mocked/path')
-}))
 
 describe('@wdio/visual-service', () => {
     beforeEach(() => {
@@ -49,10 +46,7 @@ describe('@wdio/visual-service', () => {
         let service
         let browser
         let browserInstance
-        const commands = [
-            'saveElement', 'checkElement', 'saveScreen', 'saveFullPageScreen', 'saveTabbablePage', 'checkScreen', 'checkFullPageScreen', 'checkTabbablePage',
-            'ocrGetText', 'ocrGetElementPositionByText', 'ocrWaitForTextDisplayed', 'ocrClickOnText', 'ocrSetValue',
-        ]
+        const commands = ['saveElement', 'checkElement', 'saveScreen', 'saveFullPageScreen', 'saveTabbablePage', 'checkScreen', 'checkFullPageScreen', 'checkTabbablePage']
 
         beforeEach(() => {
             service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
@@ -150,4 +144,3 @@ describe('@wdio/visual-service', () => {
         })
     })
 })
-

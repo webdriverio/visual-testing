@@ -2,6 +2,7 @@ import logger from '@wdio/logger'
 import { expect } from '@wdio/globals'
 import { dirname, normalize, resolve } from 'node:path'
 import type { Capabilities, Frameworks } from '@wdio/types'
+import type { ClassOptions } from 'webdriver-image-comparison'
 import {
     BaseClass,
     checkElement,
@@ -14,13 +15,6 @@ import {
     checkTabbablePage,
     FOLDERS,
 } from 'webdriver-image-comparison'
-import {
-    ocrGetText,
-    ocrGetElementPositionByText,
-    ocrClickOnText,
-    ocrSetValue,
-    ocrWaitForTextDisplayed,
-} from './ocr/index.js'
 import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -28,27 +22,16 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
-import { isSystemTesseractAvailable } from './ocr/utils/tesseract.js'
-import { CONTRAST, SUPPORTED_LANGUAGES } from './ocr/utils/constants.js'
-import type { VisualServiceOptions } from './types.js'
-import { createOcrDir } from './ocr/utils/index.js'
 
 const log = logger('@wdio/visual-service')
-const visualElementCommands = { saveElement, checkElement }
-const visualPageCommands = {
+const elementCommands = { saveElement, checkElement }
+const pageCommands = {
     saveScreen,
     saveFullPageScreen,
     saveTabbablePage,
     checkScreen,
     checkFullPageScreen,
     checkTabbablePage,
-}
-const ocrCommands = {
-    ocrGetText,
-    ocrGetElementPositionByText,
-    ocrWaitForTextDisplayed,
-    ocrClickOnText,
-    ocrSetValue,
 }
 
 export default class WdioImageComparisonService extends BaseClass {
@@ -57,17 +40,11 @@ export default class WdioImageComparisonService extends BaseClass {
     #currentFilePath?: string
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _isNativeContext: boolean | undefined
-    private _ocrDir: string
-    private _ocrLanguage: string
-    private _ocrContrast: number
 
-    constructor(options: VisualServiceOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
+    constructor(options: ClassOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
         super(options)
         this.#config = config
         this._isNativeContext = undefined
-        this._ocrDir = createOcrDir(options, this.folders)
-        this._ocrLanguage = options.ocr?.language || SUPPORTED_LANGUAGES.ENGLISH
-        this._ocrContrast = options.ocr?.contrast || CONTRAST
     }
 
     /**
@@ -144,7 +121,6 @@ export default class WdioImageComparisonService extends BaseClass {
     async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
         const browser = this._browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
-        const self = this
         log.info(`Adding commands to Multi Browser: ${browserNames.join(', ')}`)
 
         for (const browserName of browserNames) {
@@ -154,39 +130,26 @@ export default class WdioImageComparisonService extends BaseClass {
         }
 
         /**
-         * Add all visual and OCR commands to the global browser object that will execute
-         * on each browser in the Multi Remote. This involves mapping through both the visualElementCommands,
-         * visualPageCommands, and ocrCommands.
+         * Add all the commands to the global browser object that will execute
+         * on each browser in the Multi Remote
          */
-        const allCommands = {
-            ...visualElementCommands,
-            ...visualPageCommands,
-            ...ocrCommands
-        }
-        for (const command of Object.keys(allCommands)) {
-            browser.addCommand(command, async function (...args: unknown[]) {
+        for (const command of [
+            ...Object.keys(elementCommands),
+            ...Object.keys(pageCommands),
+        ]) {
+            browser.addCommand(command, function (...args: unknown[]) {
                 const returnData: Record<string, any> = {}
-
-                // Prepare to handle OCR command specifics.
-                if (command.startsWith('ocr')) {
-                    if (typeof args[0] === 'object' && args[0] !== null) {
-                        const options = args[0] as Record<string, any>
-                        options.contrast = options.contrast || self._ocrContrast
-                        args[0] = options
-                    }
-                }
-
                 for (const browserName of browserNames) {
                     const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-                    const browserInstance = multiremoteBrowser.getInstance(browserName) as WebdriverIO.Browser & Record<string, any>
-
-                    if (typeof browserInstance[command] === 'function') {
-                        returnData[browserName] = await browserInstance[command].apply(browserInstance, args)
-                    } else {
-                        throw new Error(`Command ${command} is not a function on the browser instance ${browserName}`)
-                    }
+                    const browserInstance = multiremoteBrowser.getInstance(browserName)
+                    /**
+                     * casting command to `checkScreen` to simplify type handling here
+                     */
+                    returnData[browserName] = browserInstance[command as 'checkScreen'].call(
+                        browserInstance,
+                        ...args
+                    )
                 }
-
                 return returnData
             })
         }
@@ -194,10 +157,9 @@ export default class WdioImageComparisonService extends BaseClass {
 
     async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
         const instanceData = await getInstanceData(currentBrowser)
-        const isTesseractAvailable = isSystemTesseractAvailable()
         const self = this
 
-        for (const [commandName, command] of Object.entries(visualElementCommands)) {
+        for (const [commandName, command] of Object.entries(elementCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
             currentBrowser.addCommand(
                 commandName,
@@ -230,8 +192,8 @@ export default class WdioImageComparisonService extends BaseClass {
             )
         }
 
-        for (const [commandName, command] of Object.entries(visualPageCommands)) {
-            log.info(`Adding browser command "${commandName}" to browser object`)
+        for (const [commandName, command] of Object.entries(pageCommands)) {
+            log.info(`Adding element command "${commandName}" to browser object`)
             currentBrowser.addCommand(
                 commandName,
                 function (this: typeof currentBrowser, tag, pageOptions = {}) {
@@ -242,7 +204,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             },
                             getElementRect: this.getElementRect.bind(currentBrowser),
                             screenShot:
-                                    this.takeScreenshot.bind(currentBrowser),
+                                this.takeScreenshot.bind(currentBrowser),
                         },
                         instanceData,
                         getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
@@ -251,24 +213,8 @@ export default class WdioImageComparisonService extends BaseClass {
                             wic: self.defaultOptions,
                             method: pageOptions,
                         },
-                            self._isNativeContext as boolean,
+                        self._isNativeContext as boolean,
                     )
-                }
-            )
-        }
-
-        for (const [commandName, command] of Object.entries(ocrCommands)) {
-            log.info(`Adding browser command "${commandName}" to browser object`)
-            currentBrowser.addCommand(
-                commandName,
-                function (this: typeof currentBrowser, options) {
-                    return command({
-                        ...options,
-                        contrast: options.contrast || self._ocrContrast,
-                        isTesseractAvailable,
-                        language: options.language || self._ocrLanguage,
-                        ocrImagesPath: self._ocrDir,
-                    })
                 }
             )
         }
