@@ -25,6 +25,7 @@
     "test.local.desktop.multi": "wdio tests/configs/wdio.local.desktop.multi.conf.ts",
     "test.local.desktop.storybook": "wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --numShards=10 --url=https://govuk-react.github.io/govuk-react/ --skipStories=\"/.*(loading-box|spinner).*/\"",
     "test.local.desktop.storybook.localhost": "wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --numShards=10",
+    "test.ocr.local.desktop": "wdio tests/configs/wdio.ocr.local.desktop.conf.ts",
     "test.unit.coverage": "vitest --coverage",
     "test.saucelabs.app": "wdio ./tests/configs/wdio.saucelabs.app.conf.ts",
     "test.saucelabs.emu.app": "SAUCE_ENV=emu wdio ./tests/configs/wdio.saucelabs.app.conf.ts",
@@ -37,13 +38,16 @@
     "watch": "pnpm run -r --parallel watch"
   },
   "dependencies": {
-    "@wdio/visual-service": "workspace:^"
+    "@wdio/visual-service": "workspace:^",
+    "@wdio/ocr-service": "workspace:^"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
     "@tsconfig/node20": "^20.1.4",
     "@types/eslint": "^8.56.10",
     "@types/jsdom": "~21.1.6",
+    "@types/inquirer": "^9.0.7",
+    "@types/xml2js": "~0.4.14",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
     "@typescript-eslint/utils": "^7.7.1",

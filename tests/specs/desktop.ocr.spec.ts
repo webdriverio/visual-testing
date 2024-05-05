@@ -6,9 +6,6 @@ describe('@wdio/visual-service:ocr desktop', () => {
         await $('.hero__title').waitForDisplayed()
     })
 
-    // Chrome remembers the last position when the url is loaded again, this will reset it.
-    afterEach(async () => await browser.execute('window.scrollTo(0, 0);', []))
-
     it('should get text of an image based on OCR', async function() {
         const ocrText = await driver.ocrGetText({
             haystack: $('.hero__subtitle'),
@@ -17,13 +14,19 @@ describe('@wdio/visual-service:ocr desktop', () => {
         expect(ocrText).toMatchSnapshot()
     })
 
-    it('should get the position of matching text on the screen based on OCR', async function() {
+    it('should get the position of matching text on the screen based on OCR', async function () {
+        const string = 'Search'
         const elementPosition = await driver.ocrGetElementPositionByText({
             haystack: $('.DocSearch'),
-            text: 'Search',
+            text: string,
         })
-
-        expect(elementPosition).toMatchSnapshot()
+        const matchesFilePath = /ocr\/desktop-\d+\.png/.test(elementPosition.filePath)
+        expect(elementPosition.dprPosition).toMatchSnapshot()
+        expect(matchesFilePath)
+        expect(elementPosition.matchedString).toEqual(string)
+        expect(elementPosition.originalPosition).toMatchSnapshot()
+        expect(elementPosition.score).toEqual(100)
+        expect(elementPosition.searchValue).toEqual(string)
     })
 
     it('should click on an input field based on text inside of an haystack that is an element', async function() {
@@ -54,7 +57,6 @@ describe('@wdio/visual-service:ocr desktop', () => {
 
     it('should click on a button based on text inside of a haystack of coordinates', async function () {
         await driver.ocrClickOnText({
-            contrast: 1,
             haystack: { height: 44, width: 1108, x: 129, y: 590 },
             text: 'WebdriverIO?',
         })

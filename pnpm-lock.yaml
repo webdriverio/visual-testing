@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@wdio/ocr-service':
+        specifier: workspace:^
+        version: link:packages/ocr-service
       '@wdio/visual-service':
         specifier: workspace:^
         version: link:packages/visual-service
@@ -21,9 +24,15 @@ importers:
       '@types/eslint':
         specifier: ^8.56.10
         version: 8.56.10
+      '@types/inquirer':
+        specifier: ^9.0.7
+        version: 9.0.7
       '@types/jsdom':
         specifier: ~21.1.6
         version: 21.1.6
+      '@types/xml2js':
+        specifier: ~0.4.14
+        version: 0.4.14
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.7.1
         version: 7.7.1(@typescript-eslint/parser@7.7.1)(eslint@8.57.0)(typescript@5.4.5)
@@ -105,6 +114,36 @@ importers:
       webdriverio:
         specifier: ^8.36.1
         version: 8.36.1(typescript@5.4.5)
+
+  packages/ocr-service:
+    dependencies:
+      '@wdio/globals':
+        specifier: ^8.36.1
+        version: 8.36.1(typescript@5.4.5)
+      '@wdio/logger':
+        specifier: ^8.28.0
+        version: 8.28.0
+      '@wdio/types':
+        specifier: ^8.36.1
+        version: 8.36.1
+      fuse.js:
+        specifier: ^7.0.0
+        version: 7.0.0
+      inquirer:
+        specifier: ^9.2.20
+        version: 9.2.20
+      jimp:
+        specifier: ^0.22.12
+        version: 0.22.12
+      node-tesseract-ocr:
+        specifier: ^2.2.1
+        version: 2.2.1
+      tesseract.js:
+        specifier: ^5.0.5
+        version: 5.0.5
+      xml2js:
+        specifier: ^0.6.2
+        version: 0.6.2
 
   packages/visual-service:
     dependencies:
