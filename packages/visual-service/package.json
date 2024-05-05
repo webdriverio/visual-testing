@@ -9,9 +9,6 @@
     "type": "git",
     "url": "https://github.com/webdriverio/visual-testing.git"
   },
-  "bin": {
-    "visual-service": "./dist/cli.js"
-  },
   "keywords": [
     "webdriverio",
     "visual",
