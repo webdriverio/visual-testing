@@ -31,8 +31,8 @@ importers:
         specifier: ^7.7.1
         version: 7.7.1(eslint@9.2.0)(typescript@5.4.5)
       '@typescript-eslint/utils':
-        specifier: ^7.7.1
-        version: 7.7.1(eslint@9.2.0)(typescript@5.4.5)
+        specifier: ^7.8.0
+        version: 7.8.0(eslint@9.2.0)(typescript@5.4.5)
       '@vitest/coverage-v8':
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0)
@@ -1486,25 +1486,6 @@ packages:
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@typescript-eslint/utils@7.7.1(eslint@9.2.0)(typescript@5.4.5):
-    resolution: {integrity: sha512-QUvBxPEaBXf41ZBbaidKICgVL8Hin0p6prQDu6bbetWo39BKbWJxRsErOzMNT1rXvTll+J7ChrbmMCXM9rsvOQ==}
-    engines: {node: ^18.18.0 || >=20.0.0}
-    peerDependencies:
-      eslint: ^8.56.0
-    dependencies:
-      '@eslint-community/eslint-utils': 4.4.0(eslint@9.2.0)
-      '@types/json-schema': 7.0.15
-      '@types/semver': 7.5.8
-      '@typescript-eslint/scope-manager': 7.7.1
-      '@typescript-eslint/types': 7.7.1
-      '@typescript-eslint/typescript-estree': 7.7.1(typescript@5.4.5)
-      eslint: 9.2.0
-      semver: 7.6.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
     dev: true
 
   /@typescript-eslint/utils@7.8.0(eslint@9.2.0)(typescript@5.4.5):
