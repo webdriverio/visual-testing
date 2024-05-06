@@ -57,7 +57,7 @@
     "@wdio/shared-store-service": "^8.36.1",
     "@wdio/spec-reporter": "^8.36.1",
     "@wdio/types": "^8.36.1",
-    "eslint": "^9.1.1",
+    "eslint": "^9.2.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-unicorn": "^52.0.0",
     "eslint-plugin-wdio": "^8.24.12",
