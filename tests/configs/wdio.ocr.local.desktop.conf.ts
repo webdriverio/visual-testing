@@ -20,6 +20,19 @@ export const config: Options.Testrunner = {
             },
         },
     ],
+    // Uncomment this to test with multiremote
+    // capabilities: {
+    //     myChromeBrowser: {
+    //         capabilities: {
+    //             browserName: 'chrome'
+    //         }
+    //     },
+    //     myFirefoxBrowser: {
+    //         capabilities: {
+    //             browserName: 'firefox'
+    //         }
+    //     }
+    // },
     // =====
     // Specs
     // =====
