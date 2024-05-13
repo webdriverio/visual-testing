@@ -65,7 +65,7 @@
     "jsdom": "^24.0.0",
     "npm-run-all2": "^6.1.2",
     "release-it": "^17.2.1",
-    "rimraf": "^5.0.5",
+    "rimraf": "^5.0.7",
     "saucelabs": "^7.5.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
