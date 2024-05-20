@@ -37,8 +37,8 @@ export default async function getData(options: GetDataOptions): Promise<GetData>
             croppedFilePath = (await processImage({
                 contrast,
                 elementRectangles,
-                isAndroid: browser.isAndroid,
-                isIOS: browser.isIOS,
+                isAndroid: cliFile ? false : browser.isAndroid,
+                isIOS: cliFile ? false : browser.isIOS,
                 ocrImagesPath,
                 screenshot,
             })).filePath

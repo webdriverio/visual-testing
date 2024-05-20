@@ -4,6 +4,8 @@ import { join, resolve } from 'node:path'
 import type { RectReturn } from './types.js'
 import getData from './utils/getData.js'
 import { createOcrDir } from './utils/index.js'
+import { isSystemTesseractAvailable } from './utils/tesseract.js'
+import { SUPPORTED_LANGUAGES } from './utils/constants.js'
 
 export const CONFIG_HELPER_INTRO = `
 =============================
@@ -82,8 +84,8 @@ async function main() {
     const ocrDir = createOcrDir('.tmp/')
     const defaultOptions = {
         contrast: 0.25,
-        isTesseractAvailable: false,
-        language: 'eng',
+        isTesseractAvailable: isSystemTesseractAvailable(),
+        language: SUPPORTED_LANGUAGES.ENGLISH,
         ocrImagesPath: ocrDir,
     }
     let filePath: string
@@ -180,7 +182,6 @@ async function main() {
         options = {
             ...options,
             contrast: advancedOptions.contrast,
-            language: advancedOptions.language
         }
     }
     console.log('\nProcessing image...\n')
