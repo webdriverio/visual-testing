@@ -15,10 +15,13 @@ export const config: Options.Testrunner = {
         {
             browserName: 'chrome',
             browserVersion: 'latest',
-            platformName: 'Windows 11',
+            platformName: 'Windows 10',
             'sauce:options': {
                 build: buildName,
                 screenResolution: '1600x1200',
+            },
+            'goog:chromeOptions': {
+                args: ['--force-dark-mode'],
             },
         },
 
