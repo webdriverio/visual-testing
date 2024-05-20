@@ -8,7 +8,9 @@ import ocrGetText from '../src/commands/ocrGetText.js'
 
 vi.mock('../src/utils/index.js', () => ({
     createOcrDir: vi.fn(),
-    isSystemTesseractAvailable: vi.fn(),
+}))
+vi.mock('../src/utils/tesseract.js', () => ({
+    isSystemTesseractAvailable: vi.fn().mockReturnValue(false),
 }))
 const mockedGetText = 'Detected text'
 vi.mock('../src/commands/ocrGetText.js', () => ({
@@ -171,7 +173,7 @@ describe('WdioOcrService', () => {
             expect(result).toBe(mockedGetText)
             expect(ocrGetText).toHaveBeenCalledWith({
                 contrast: CONTRAST,
-                isTesseractAvailable: true,
+                isTesseractAvailable: false,
                 language: SUPPORTED_LANGUAGES.ENGLISH,
                 imagePath,
                 ocrImagesPath: '.tmp/ocr'
