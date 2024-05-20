@@ -87,11 +87,9 @@ exports[`getNodeOcrData > be able to handle no/empty p.span.line.span words or a
 
 exports[`getSystemOcrData > successfully processes OCR data 1`] = `
 "
-		
 Next-gen browser and mobile automation
 
-test framework for Node.js
-	"
+test framework for Node.js"
 `;
 
 exports[`parseWordDataFromText > returns parsed word data 1`] = `

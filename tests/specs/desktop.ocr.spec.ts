@@ -6,7 +6,9 @@ describe('@wdio/visual-service:ocr desktop', () => {
         await $('.hero__title').waitForDisplayed()
     })
 
-    it('should get text of an image based on OCR', async function() {
+    const environment = process.env.SAUCE ? 'Sauce Labs' : 'local'
+
+    it(`should get text of an image based on OCR on ${environment}`, async function() {
         const ocrText = await driver.ocrGetText({
             haystack: $('.hero__subtitle'),
         })
@@ -14,7 +16,7 @@ describe('@wdio/visual-service:ocr desktop', () => {
         expect(ocrText).toMatchSnapshot()
     })
 
-    it('should get the position of matching text on the screen based on OCR', async function () {
+    it(`should get the position of matching text on the screen based on OCR on ${environment}`, async function () {
         const string = 'Search'
         const elementPosition = await driver.ocrGetElementPositionByText({
             haystack: $('.DocSearch'),
@@ -29,7 +31,8 @@ describe('@wdio/visual-service:ocr desktop', () => {
         expect(elementPosition.searchValue).toEqual(string)
     })
 
-    it('should click on an input field based on text inside of an haystack that is an element', async function() {
+    //
+    it(`should click on an input field based on text inside of an haystack that is an element on ${environment}`, async function() {
         await driver.ocrClickOnText({
             haystack: $('.DocSearch'),
             text: 'Search',
@@ -43,7 +46,8 @@ describe('@wdio/visual-service:ocr desktop', () => {
         expect(ocrText).toContain('docs')
     })
 
-    it('should click click on a button based on text inside of a haystack of an element with relative position data', async function () {
+    //
+    it(`should click click on a button based on text inside of a haystack of an element with relative position data on ${environment}`, async function () {
         await driver.ocrClickOnText({
             haystack: $('.buttons_pzbO > a:nth-child(2)'),
             text: 'WebdriverIO?',
@@ -55,7 +59,7 @@ describe('@wdio/visual-service:ocr desktop', () => {
         await expect(browser).toHaveUrl('https://webdriver.io/docs/gettingstarted')
     })
 
-    it('should click on a button based on text inside of a haystack of coordinates', async function () {
+    it(`should click on a button based on text inside of a haystack of coordinates on ${environment}`, async function () {
         await driver.ocrClickOnText({
             haystack: { height: 44, width: 1108, x: 129, y: 590 },
             text: 'WebdriverIO?',
@@ -64,7 +68,8 @@ describe('@wdio/visual-service:ocr desktop', () => {
         await expect(browser).toHaveUrl('https://webdriver.io/docs/why-webdriverio')
     })
 
-    it('should set a value in an input field based on finding text inside of a haystack that is an element', async function() {
+    //
+    it(`should set a value in an input field based on finding text inside of a haystack that is an element on ${environment}`, async function() {
         await driver.ocrClickOnText({
             haystack: $('.DocSearch'),
             text: 'Search',
@@ -82,7 +87,8 @@ describe('@wdio/visual-service:ocr desktop', () => {
         expect(ocrText).toContain('specfileretries')
     })
 
-    it('should wait on text inside of a haystack that is an element', async function() {
+    //
+    it(`should wait on text inside of a haystack that is an element on ${environment}`, async function() {
         await driver.ocrClickOnText({
             haystack: $('.DocSearch'),
             text: 'Search',
