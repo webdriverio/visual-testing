@@ -45,7 +45,7 @@ jobs:
       - name: ⬇️ Checkout PR Repository
         uses: actions/checkout@v3
         with:
-            ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
@@ -87,7 +87,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v3
         with:
-            ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
@@ -151,7 +151,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v3
         with:
-            ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
@@ -215,7 +215,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v3
         with:
-            ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
@@ -279,7 +279,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v3
         with:
-            ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
@@ -343,7 +343,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v3
         with:
-            ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
@@ -386,3 +386,64 @@ jobs:
             !.tmp/checkActual/
             !.tmp/saveActual/
             !.tmp/testDiff/
+
+  ci-pr-ocr:
+    name: 🔄 📱 CI PR Run OCR Tests
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.actor != 'dependabot[bot]'
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: actions/checkout@v3
+
+      - name: ⬇️ Checkout PR Repository
+        if: ${{ github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🧪 Run linting and unit tests
+        working-directory: ./
+        run: pnpm test
+
+      - name: 😶‍🌫️ 🔎 Run OCR e2e tests
+        working-directory: ./
+        env:
+          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
+          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          BUILD_PREFIX: true
+        run: pnpm test.ocr.saucelabs.desktop --maxConcurrency=1
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ci-pr-ocr-logs
+          path: |
+            logs/*.log
+            .tmp/
