@@ -373,7 +373,7 @@ describe('getSystemOcrData', () => {
     })
 
     it('successfully processes OCR data', async () => {
-        const mockResult = '<alto><Layout><Page><PrintSpace><ComposedBlock><TextBlock><TextLine HPOS="100" VPOS="200" WIDTH="300" HEIGHT="400"><String CONTENT="Hello" HPOS="100" VPOS="200" WIDTH="50" HEIGHT="20" WC="0.95"/></TextLine></TextBlock></ComposedBlock></PrintSpace></Page></Layout></alto>'
+        const mockResult = '<alto><Layout><Page><PrintSpace><ComposedBlock><TextBlock><TextLine HPOS="100" VPOS="200" WIDTH="300" HEIGHT="400"><String CONTENT="\nNext-gen browser and mobile automation\n\ntest framework for Node.js" HPOS="100" VPOS="200" WIDTH="50" HEIGHT="20" WC="0.95"/></TextLine></TextBlock></ComposedBlock></PrintSpace></Page></Layout></alto>'
 
         vi.mocked(recognize).mockResolvedValue(mockResult)
         vi.mocked(parseString).mockImplementation((_input, callback) => {
@@ -394,7 +394,7 @@ describe('getSystemOcrData', () => {
             lang: mockLanguage,
             oem: 1,
             psm: 3,
-            presets: ['txt', 'alto']
+            presets: ['alto']
         })
         expect(result.text).toMatchSnapshot()
         expect(result.lines.length).toEqual(2)

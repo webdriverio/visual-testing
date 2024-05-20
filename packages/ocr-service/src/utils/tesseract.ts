@@ -47,6 +47,18 @@ export function parseWordDataFromText(attributes: string[]): ParseWordData {
     }
 }
 
+export function extractTextFromAlto(altoContent: string): string {
+    const regex = /<String[^>]*CONTENT="([^"]+)"[^>]*>/g
+    let match
+    const textArray: string[] = []
+
+    while ((match = regex.exec(altoContent)) !== null) {
+        textArray.push(match[1])
+    }
+
+    return textArray.join(' ')
+}
+
 /**
  * Handle the OCR with Tesseract with pure JS
  */
@@ -154,13 +166,12 @@ export async function getSystemOcrData(options: TessaractDataOptions): Promise<G
         const jsonSingleWords: Words[] = []
         const jsonWordStrings: Line[] = []
         let composedBlocks: UnprocessedSystemBlock[] = []
-        let text: string = ''
         const result = await recognize(filePath, {
             lang: language,
             oem: 1,
             // https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc
             psm: 3,
-            presets: ['txt', 'alto'],
+            presets: ['alto'],
         })
 
         parseString(result, (error: Error, data) => {
@@ -168,9 +179,10 @@ export async function getSystemOcrData(options: TessaractDataOptions): Promise<G
                 throw Error(`An error happened when parsing the getSystemOcrData, see: ${error}`)
             }
 
-            text = data.alto.Layout[0]._ || text
             composedBlocks = data.alto.Layout[0].Page[0].PrintSpace[0].ComposedBlock
         })
+
+        const text = extractTextFromAlto(result)
 
         if (!composedBlocks || composedBlocks.length === 0){
             throw Error('No text was found for the OCR, please verify the stored image.')
