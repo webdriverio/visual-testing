@@ -79,6 +79,7 @@ export async function getNodeOcrData(options: TessaractDataOptions): Promise<Get
             tessjs_create_osd: '0',
         })
         const { data: { text, hocr } } = await worker.recognize(filePath)
+        const formatedText = text.replace(/[\r\n]{2,}/g, ' ').replace(/\s{2,}/g, ' ').trim()
         await worker.terminate()
 
         if (!hocr) {
@@ -147,7 +148,7 @@ export async function getNodeOcrData(options: TessaractDataOptions): Promise<Get
         return {
             lines: jsonWordStrings,
             words: jsonSingleWords,
-            text,
+            text: formatedText,
         }
     } catch (error) {
         if (worker) {

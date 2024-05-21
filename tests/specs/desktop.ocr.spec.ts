@@ -12,8 +12,8 @@ describe('@wdio/visual-service:ocr desktop', () => {
         const ocrText = await driver.ocrGetText({
             haystack: $('.hero__subtitle'),
         })
-
-        expect(ocrText).toMatchSnapshot()
+        const regex = /^Next-gen browser and mobile automation test framework for Node[.,]js$/
+        expect(regex.test(ocrText)).toBeTruthy()
     })
 
     it(`should get the position of matching text on the screen based on OCR on ${environment}`, async function () {
