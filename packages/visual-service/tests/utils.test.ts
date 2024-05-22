@@ -410,7 +410,7 @@ describe('utils', () => {
             expect(await determineNativeContext(driver)).toBeTruthy()
         })
 
-        it('should return true for when the app is provided and and autoWebview is false', async() => {
+        it('should return true for when the app is provided and autoWebview is false', async() => {
             (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
             (driver.requestedCapabilities as AppiumCapabilities)['appium:app'] = 'app';
             (driver.requestedCapabilities as AppiumCapabilities)['appium:autoWebview'] = false
@@ -418,9 +418,32 @@ describe('utils', () => {
             expect(await determineNativeContext(driver)).toBeTruthy()
         })
 
-        it('should return false for when the app is provided and and autoWebview is true', async() => {
+        it('should return false for when the app is provided and autoWebview is true', async() => {
             (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
             (driver.requestedCapabilities as AppiumCapabilities)['appium:app'] = 'app';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:autoWebview'] = true
+
+            expect(await determineNativeContext(driver)).toBeFalsy()
+        })
+
+        it('should return true for when appium:appPackage is provided and autoWebview is true', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:appPackage'] = 'string';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:autoWebview'] = true
+
+            expect(await determineNativeContext(driver)).toBeFalsy()
+        })
+
+        it('should return true for when appium:appPackage is provided', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:appPackage'] = 'string'
+
+            expect(await determineNativeContext(driver)).toBeTruthy()
+        })
+
+        it('should return true for when appium:bundleId is provided and autoWebview is true', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:bundleId'] = 'string';
             (driver.requestedCapabilities as AppiumCapabilities)['appium:autoWebview'] = true
 
             expect(await determineNativeContext(driver)).toBeFalsy()

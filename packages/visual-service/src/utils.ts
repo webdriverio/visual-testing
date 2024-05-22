@@ -256,8 +256,13 @@ export function determineNativeContext(
 ): boolean {
     if (driver.isMobile) {
         return !!(driver.requestedCapabilities as WebdriverIO.Capabilities)?.browserName === false
-            && (driver.requestedCapabilities as AppiumCapabilities)?.['appium:app'] !== undefined
+            && (
+                (driver.requestedCapabilities as AppiumCapabilities)?.['appium:app'] !== undefined
+                || (driver.requestedCapabilities as { 'appium:bundleId'?: string })?.['appium:bundleId'] !== undefined
+                || (driver.requestedCapabilities as { 'appium:appPackage'?: string })?.['appium:appPackage'] !== undefined
+            )
             && (driver.requestedCapabilities as AppiumCapabilities)?.['appium:autoWebview'] !== true
+
     }
 
     return false
