@@ -1,5 +1,11 @@
 # @wdio/ocr-service
 
+## 1.0.1
+
+### Patch Changes
+
+- 083ad82: Fixed OCR cli
+
 ## 1.0.0
 
 ### Major Changes
