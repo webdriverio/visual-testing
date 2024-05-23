@@ -1,5 +1,14 @@
 # @wdio/visual-service
 
+## 4.1.3
+
+### Patch Changes
+
+  # 🐛 Bug Fixes
+
+  - Fixes https://github.com/webdriverio/visual-testing/issues/286
+  - Fixes https://github.com/webdriverio/visual-testing/issues/333
+
 ## 4.1.2
 
 ### Patch Changes
