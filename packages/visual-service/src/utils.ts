@@ -1,0 +1,270 @@
+import type { Capabilities } from '@wdio/types'
+import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
+import { IOS_OFFSETS } from 'webdriver-image-comparison'
+import type {
+    Folders,
+    InstanceData,
+    CheckScreenMethodOptions,
+    SaveScreenMethodOptions,
+    CheckFullPageMethodOptions,
+    SaveFullPageMethodOptions,
+    CheckElementMethodOptions,
+    SaveElementMethodOptions,
+} from 'webdriver-image-comparison'
+import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
+
+interface WdioIcsOptions {
+    logName?: string;
+    name?: string;
+}
+
+/**
+ * Get the folders data
+ *
+ * If folder options are passed in use those values
+ * Otherwise, use the values set during instantiation
+ */
+type getFolderMethodOptions =
+    | CheckElementMethodOptions
+    | CheckFullPageMethodOptions
+    | CheckScreenMethodOptions
+    | SaveElementMethodOptions
+    | SaveFullPageMethodOptions
+    | SaveScreenMethodOptions;
+
+export function getFolders(
+    methodOptions: getFolderMethodOptions,
+    folders: Folders,
+    currentTestPath: string
+): Folders {
+    return {
+        actualFolder: methodOptions.actualFolder ?? folders.actualFolder,
+        baselineFolder: methodOptions.baselineFolder ?? currentTestPath,
+        diffFolder: methodOptions.diffFolder ?? folders.diffFolder,
+    }
+}
+
+/**
+ * Get the size of a screenshot in pixels without the device pixel ratio
+ */
+export function getScreenshotSize(screenshot: string, devicePixelRation = 1): {
+    height: number;
+    width: number;
+} {
+    return {
+        height: Buffer.from(screenshot, 'base64').readUInt32BE(20) / devicePixelRation,
+        width: Buffer.from(screenshot, 'base64').readUInt32BE(16) / devicePixelRation,
+    }
+}
+
+/**
+ * Get the device pixel ratio
+ */
+export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {height:number, width: number}): number {
+    const screenshotSize = getScreenshotSize(screenshot)
+    const devicePixelRatio = Math.round(screenshotSize.width / deviceScreenSize.width) === Math.round(screenshotSize.height / deviceScreenSize.height)
+        ? Math.round(screenshotSize.width / deviceScreenSize.width)
+        : Math.round(screenshotSize.height / deviceScreenSize.width)
+
+    return Math.round(devicePixelRatio)
+}
+
+/**
+ * Get the mobile instance data
+ */
+async function getMobileInstanceData({
+    currentBrowser,
+    isAndroid,
+    isMobile
+}: {
+    currentBrowser: WebdriverIO.Browser;
+    isAndroid:boolean;
+    isMobile: boolean
+}): Promise<{
+    devicePixelRatio: number;
+    devicePlatformRect: {
+        statusBar: { height: number; x: number; width: number; y: number };
+        homeBar: { height: number; x: number; width: number; y: number };
+    };
+    deviceScreenSize: { height: number; width: number };
+}>{
+    const deviceScreenSize = {
+        height: 0,
+        width: 0,
+    }
+    const devicePlatformRect = {
+        statusBar: { height: 0, x: 0, width: 0, y: 0 },
+        homeBar: { height: 0, x: 0, width: 0, y: 0 },
+    }
+    let devicePixelRatio = 1
+
+    if (isMobile){
+        const currentDriverCapabilities = currentBrowser.capabilities
+        const { height, width } = await currentBrowser.getWindowSize()
+        deviceScreenSize.height = height
+        deviceScreenSize.width = width
+
+        // @TODO: This is al based on PORTRAIT mode
+        if (isAndroid && currentDriverCapabilities) {
+            // We use a few `@ts-ignore` here because `pixelRatio` and `statBarHeight`
+            // are returned by the driver, and not recognized by the types because they are not requested
+            // @ts-ignore
+            if (currentDriverCapabilities?.pixelRatio !== undefined){
+                // @ts-ignore
+                devicePixelRatio = currentDriverCapabilities?.pixelRatio
+            }
+            // @ts-ignore
+            if (currentDriverCapabilities?.statBarHeight !== undefined){
+                // @ts-ignore
+                devicePlatformRect.statusBar.height = currentDriverCapabilities?.statBarHeight
+                devicePlatformRect.statusBar.width = width
+            }
+        } else {
+            // This is to already determine the device pixel ratio if it's not set in the capabilities
+            const base64Image = await currentBrowser.takeScreenshot()
+            devicePixelRatio = getDevicePixelRatio(base64Image, deviceScreenSize)
+            const isIphone = width < 1024 && height < 1024
+            const deviceType = isIphone ? 'IPHONE' : 'IPAD'
+            const defaultPortraitHeight = isIphone ? 667 : 1024
+            const portraitHeight = width > height ? width : height
+            const offsetPortraitHeight =
+            Object.keys(IOS_OFFSETS[deviceType]).indexOf(portraitHeight.toString()) > -1 ? portraitHeight : defaultPortraitHeight
+            const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight].PORTRAIT
+            // NOTE: The values for iOS are based on CSS pixels, so we need to multiply them with the devicePixelRatio,
+            // This will NOT be done here but in a central place
+            devicePlatformRect.statusBar = {
+                y: 0,
+                x: 0,
+                width,
+                height: currentOffsets.STATUS_BAR,
+            }
+            devicePlatformRect.homeBar = currentOffsets.HOME_BAR
+        }
+    }
+
+    return {
+        devicePixelRatio,
+        devicePlatformRect,
+        deviceScreenSize,
+    }
+}
+
+/**
+ * Get the device name
+ */
+function getDeviceName(currentBrowser: WebdriverIO.Browser): string {
+    const { capabilities: {
+        // We use a few `@ts-ignore` here because this is returned by the driver
+        // and not recognized by the types because they are not requested
+        // @ts-ignore
+        deviceName: returnedDeviceName = NOT_KNOWN,
+    }, requestedCapabilities } = currentBrowser
+    let deviceName = NOT_KNOWN
+
+    // First check if it's a BrowserStack session, they don't:
+    // - return the "requested" deviceName in the session capabilities
+    // - don't use the `appium:deviceName` capability
+    const isBrowserStack = 'bstack:options' in requestedCapabilities
+    const bsOptions = (requestedCapabilities as WebdriverIO.Capabilities)['bstack:options']
+    const capName = 'deviceName'
+    if (isBrowserStack && bsOptions && capName in bsOptions){
+        deviceName = bsOptions[capName as keyof typeof bsOptions] as string
+    }
+    const { 'appium:deviceName': requestedDeviceName } = requestedCapabilities as AppiumCapabilities
+
+    return (deviceName !== NOT_KNOWN ? deviceName : requestedDeviceName || returnedDeviceName || NOT_KNOWN).toLowerCase()
+}
+
+/**
+ * Get the instance data
+ */
+export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Promise<InstanceData> {
+    const NOT_KNOWN = 'not-known'
+    const { capabilities: currentCapabilities, requestedCapabilities } = currentBrowser
+    const {
+        browserName: rawBrowserName = NOT_KNOWN,
+        browserVersion: rawBrowserVersion = NOT_KNOWN,
+        platformName: rawPlatformName = NOT_KNOWN,
+    } = currentCapabilities as WebdriverIO.Capabilities
+
+    // Generic data
+    const browserName = rawBrowserName === '' ? NOT_KNOWN : rawBrowserName.toLowerCase()
+    const browserVersion = rawBrowserVersion === '' ? NOT_KNOWN : rawBrowserVersion.toLowerCase()
+    let devicePixelRatio = 1
+    const platformName = rawPlatformName === '' ? NOT_KNOWN : rawPlatformName.toLowerCase()
+    const logName =
+        'wdio-ics:options' in requestedCapabilities
+            ? (requestedCapabilities['wdio-ics:options'] as WdioIcsOptions)?.logName ?? ''
+            : ''
+    const name =
+        'wdio-ics:options' in requestedCapabilities
+            ? (requestedCapabilities['wdio-ics:options'] as WdioIcsOptions)?.name ?? ''
+            : ''
+
+    // Mobile data
+    const { isAndroid, isIOS, isMobile } = currentBrowser
+    const {
+        // We use a few `@ts-ignore` here because this is returned by the driver
+        // and not recognized by the types because they are not requested
+        // @ts-ignore
+        app: rawApp = NOT_KNOWN,
+        // @ts-ignore
+        platformVersion: rawPlatformVersion = NOT_KNOWN,
+    } = currentCapabilities as WebdriverIO.Capabilities
+    const appName = rawApp !== NOT_KNOWN
+        ? rawApp.replace(/\\/g, '/').split('/').pop().replace(/[^a-zA-Z0-9]/g, '_')
+        : NOT_KNOWN
+    const deviceName = getDeviceName(currentBrowser)
+    const nativeWebScreenshot = !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
+    const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? NOT_KNOWN : rawPlatformVersion.toLowerCase()
+
+    const { devicePixelRatio: mobileDevicePixelRatio, devicePlatformRect, deviceScreenSize, } = await getMobileInstanceData({ currentBrowser, isAndroid, isMobile })
+    devicePixelRatio = isMobile ? mobileDevicePixelRatio : devicePixelRatio
+
+    return {
+        appName,
+        browserName,
+        browserVersion,
+        deviceName,
+        devicePixelRatio,
+        devicePlatformRect,
+        deviceScreenSize,
+        isAndroid,
+        isIOS,
+        isMobile,
+        logName,
+        name,
+        nativeWebScreenshot,
+        platformName,
+        platformVersion,
+    }
+}
+
+/**
+ * Traverse up the scope chain until browser element was reached
+ */
+export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browser): WebdriverIO.Browser {
+    const elemObject = elem as WebdriverIO.Element
+    return (elemObject as WebdriverIO.Element).parent ? getBrowserObject(elemObject.parent) : elem as WebdriverIO.Browser
+}
+
+/**
+ * We can't say it's native context if the autoWebview is provided and set to true, for all other cases we can say it's native
+ */
+export function determineNativeContext(
+    driver: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+): boolean {
+    if (driver.isMobile) {
+        return !!(driver.requestedCapabilities as WebdriverIO.Capabilities)?.browserName === false
+            && (
+                (driver.requestedCapabilities as AppiumCapabilities)?.['appium:app'] !== undefined
+                || (driver.requestedCapabilities as { 'appium:bundleId'?: string })?.['appium:bundleId'] !== undefined
+                || (driver.requestedCapabilities as { 'appium:appPackage'?: string })?.['appium:appPackage'] !== undefined
+            )
+            && (driver.requestedCapabilities as AppiumCapabilities)?.['appium:autoWebview'] !== true
+
+    }
+
+    return false
+}
+

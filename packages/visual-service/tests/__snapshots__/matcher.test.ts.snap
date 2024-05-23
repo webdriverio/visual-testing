@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`custom visual matcher > defaults to 0 if no expected result is given 1`] = `
+"Expected image mismatch percentage to be at most 0%, but was 113%.
+If this is acceptable, you may need to adjust the threshold or update the baseline image if the changes are intentional.
+
+Baseline: foo
+Actual Screenshot: bar
+Difference: baz
+
+For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html"
+`;
+
+exports[`custom visual matcher > should allow asymmetric matchers 1`] = `
+"Expected image to match with given asymmetric matcher but did not pass!
+"
+`;

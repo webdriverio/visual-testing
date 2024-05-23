@@ -1,8 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`Storybook utils with mocked internals > createTestContent with Dependency Injection > calls itFunction with correct arguments for each story and accumulates results 1`] = `
-"Test for example-button--primary
-Test for example-button--secondary
-Test for example-button--large
-"
-`;

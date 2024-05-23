@@ -1,0 +1,37 @@
+// Snapshot v1
+
+exports[`@wdio/visual-service:ocr desktop > should get the position of matching text on the screen based on OCR on Sauce Labs 1`] = `
+{
+  "bottom": 111.3037037037037,
+  "left": 1193.9851851851852,
+  "right": 1255.7081481481482,
+  "top": 98.14962962962963,
+}
+`;
+
+exports[`@wdio/visual-service:ocr desktop > should get the position of matching text on the screen based on OCR on Sauce Labs 2`] = `
+{
+  "bottom": 110,
+  "left": 1180,
+  "right": 1241,
+  "top": 97,
+}
+`;
+
+exports[`@wdio/visual-service:ocr desktop > should get the position of matching text on the screen based on OCR on local 1`] = `
+{
+  "bottom": 110,
+  "left": 1213,
+  "right": 1274,
+  "top": 97,
+}
+`;
+
+exports[`@wdio/visual-service:ocr desktop > should get the position of matching text on the screen based on OCR on local 2`] = `
+{
+  "bottom": 110,
+  "left": 1213,
+  "right": 1274,
+  "top": 97,
+}
+`;

@@ -1,0 +1,41 @@
+{
+  "name": "@wdio/ocr-service",
+  "author": "Wim Selles - wswebcreation",
+  "description": "A WebdriverIO service that is using Tesseract OCR for Desktop/Mobile Web and Mobile Native App tests.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "homepage": "https://webdriver.io/docs/visual-testing",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webdriverio/visual-testing.git"
+  },
+  "bin": {
+    "ocr-service": "./dist/cli.js"
+  },
+  "keywords": [
+    "webdriverio",
+    "tesseract",
+    "ocr",
+    "image"
+  ],
+  "exports": "./dist/index.js",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "run-s clean build:*",
+    "build:tsc": "tsc --project ./tsconfig.json",
+    "clean": "rimraf coverage build .tmp",
+    "watch": "pnpm run build:tsc -w"
+  },
+  "dependencies": {
+    "@wdio/globals": "^8.36.1",
+    "@wdio/logger": "^8.28.0",
+    "@wdio/types": "^8.36.1",
+    "fuse.js": "^7.0.0",
+    "inquirer": "^9.2.22",
+    "jimp": "^0.22.12",
+    "node-tesseract-ocr": "^2.2.1",
+    "tesseract.js": "^5.1.0",
+    "xml2js": "^0.6.2"
+  }
+}

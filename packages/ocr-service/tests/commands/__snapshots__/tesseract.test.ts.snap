@@ -1,0 +1,105 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`getNodeOcrData > be able to handle no lineData.bbox 1`] = `
+{
+  "lines": [
+    {
+      "bbox": {
+        "bottom": 105,
+        "left": 378,
+        "right": 479,
+        "top": 77,
+      },
+      "text": "Node.js",
+    },
+  ],
+  "text": "Extracted text",
+  "words": [
+    {
+      "bbox": {
+        "bottom": 105,
+        "left": 378,
+        "right": 479,
+        "top": 77,
+      },
+      "text": "Node.js",
+      "wc": 0.89,
+    },
+  ],
+}
+`;
+
+exports[`getNodeOcrData > be able to handle no/empty block.p or array 1`] = `
+{
+  "lines": [],
+  "text": "Extracted text",
+  "words": [],
+}
+`;
+
+exports[`getNodeOcrData > be able to handle no/empty block.p or array 2`] = `
+{
+  "lines": [],
+  "text": "Extracted text",
+  "words": [],
+}
+`;
+
+exports[`getNodeOcrData > be able to handle no/empty p.span or array 1`] = `
+{
+  "lines": [],
+  "text": "Extracted text",
+  "words": [],
+}
+`;
+
+exports[`getNodeOcrData > be able to handle no/empty p.span or array 2`] = `
+{
+  "lines": [],
+  "text": "Extracted text",
+  "words": [],
+}
+`;
+
+exports[`getNodeOcrData > be able to handle no/empty p.span.line.span or array 1`] = `
+{
+  "lines": [],
+  "text": "Extracted text",
+  "words": [],
+}
+`;
+
+exports[`getNodeOcrData > be able to handle no/empty p.span.line.span or array 2`] = `
+{
+  "lines": [],
+  "text": "Extracted text",
+  "words": [],
+}
+`;
+
+exports[`getNodeOcrData > be able to handle no/empty p.span.line.span words or array 1`] = `
+{
+  "lines": [],
+  "text": "Extracted text",
+  "words": [],
+}
+`;
+
+exports[`getSystemOcrData > successfully processes OCR data 1`] = `
+"
+Next-gen browser and mobile automation
+
+test framework for Node.js"
+`;
+
+exports[`parseWordDataFromText > returns parsed word data 1`] = `
+{
+  "bbox": {
+    "bottom": 100,
+    "left": 333,
+    "right": 368,
+    "top": 77,
+  },
+  "wc": 0.93,
+}
+`;
