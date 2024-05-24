@@ -67,8 +67,7 @@ export default class WdioOcrService {
 
         /**
          * Add all OCR commands to the global browser object that will execute
-         * on each browser in the Multi Remote. This involves mapping through both the visualElementCommands,
-         * visualPageCommands, and ocrCommands.
+         * on each browser in the Multi Remote.
          */
         for (const command of Object.keys(ocrCommands)) {
             browser.addCommand(command, async function (...args: unknown[]) {
@@ -76,7 +75,7 @@ export default class WdioOcrService {
 
                 if (typeof args[0] === 'object' && args[0] !== null) {
                     const options = args[0] as Record<string, any>
-                    options.contrast = options.contrast || self._ocrContrast
+                    options.contrast = options?.contrast || self._ocrContrast
                     args[0] = options
                 }
 
@@ -107,9 +106,9 @@ export default class WdioOcrService {
                 function (this: typeof currentBrowser, options) {
                     return command({
                         ...options,
-                        contrast: options.contrast || self._ocrContrast,
+                        contrast: options?.contrast || self._ocrContrast,
                         isTesseractAvailable,
-                        language: options.language || self._ocrLanguage,
+                        language: options?.language || self._ocrLanguage,
                         ocrImagesPath: self._ocrDir,
                     })
                 }
