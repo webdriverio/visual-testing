@@ -70,8 +70,8 @@ importers:
         specifier: ^8.36.1
         version: 8.36.1
       '@wdio/types':
-        specifier: ^8.36.1
-        version: 8.36.1
+        specifier: ^8.37.0
+        version: 8.37.0
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -124,8 +124,8 @@ importers:
         specifier: ^8.28.0
         version: 8.28.0
       '@wdio/types':
-        specifier: ^8.36.1
-        version: 8.36.1
+        specifier: ^8.37.0
+        version: 8.37.0
       fuse.js:
         specifier: ^7.0.0
         version: 7.0.0
@@ -154,8 +154,8 @@ importers:
         specifier: ^8.28.0
         version: 8.28.0
       '@wdio/types':
-        specifier: ^8.36.1
-        version: 8.36.1
+        specifier: ^8.37.0
+        version: 8.37.0
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
@@ -1702,6 +1702,7 @@ packages:
     resolution: {integrity: sha512-P99thMkD/1YkCvAtOd6/zGedKNA0p2fj4ZpjCzcNiSCBWgm3cNRTBfa/qjFnsKkkojxu4vVLtWpesnZ9+ap+gA==}
     dependencies:
       undici-types: 5.26.5
+    dev: true
 
   /@types/node@20.12.7:
     resolution: {integrity: sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==}
@@ -2301,7 +2302,7 @@ packages:
     resolution: {integrity: sha512-kKtyJbypasKo/VQuJ6dTQQwFtHE9qoygjoCZjrQCLGraRSjOEiqZHPR0497wbeCvcgHIYyImbmcylqZNGUE0CQ==}
     engines: {node: ^16.13 || >=18}
     dependencies:
-      '@types/node': 20.11.29
+      '@types/node': 20.12.7
 
   /@wdio/types@8.37.0:
     resolution: {integrity: sha512-36kmSlZcVhsMlbhaSCQUfL51iG81FlbzW4Dfkz4903cDkxmh64bgxydZbRB5aPLnJzzR7tI3chIME8zSVZFR8w==}
