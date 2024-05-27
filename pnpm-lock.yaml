@@ -121,8 +121,8 @@ importers:
         specifier: ^8.38.0
         version: 8.38.0(typescript@5.4.5)
       '@wdio/logger':
-        specifier: ^8.28.0
-        version: 8.28.0
+        specifier: ^8.38.0
+        version: 8.38.0
       '@wdio/types':
         specifier: ^8.37.0
         version: 8.37.0
@@ -151,8 +151,8 @@ importers:
         specifier: ^8.38.0
         version: 8.38.0(typescript@5.4.5)
       '@wdio/logger':
-        specifier: ^8.28.0
-        version: 8.28.0
+        specifier: ^8.38.0
+        version: 8.38.0
       '@wdio/types':
         specifier: ^8.37.0
         version: 8.37.0
@@ -166,8 +166,8 @@ importers:
   packages/webdriver-image-comparison:
     dependencies:
       '@wdio/logger':
-        specifier: ^8.28.0
-        version: 8.28.0
+        specifier: ^8.38.0
+        version: 8.38.0
       canvas:
         specifier: ^2.11.2
         version: 2.11.2
@@ -2174,6 +2174,7 @@ packages:
       loglevel: 1.8.1
       loglevel-plugin-prefix: 0.8.4
       strip-ansi: 7.1.0
+    dev: true
 
   /@wdio/logger@8.38.0:
     resolution: {integrity: sha512-kcHL86RmNbcQP+Gq/vQUGlArfU6IIcbbnNp32rRIraitomZow+iEoc519rdQmSVusDozMS5DZthkgDdxK+vz6Q==}

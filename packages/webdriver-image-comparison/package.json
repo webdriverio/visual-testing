@@ -25,7 +25,7 @@
     "canvas": "^2.11.2",
     "fs-extra": "^11.2.0",
     "resemblejs": "^5.0.0",
-    "@wdio/logger": "^8.28.0"
+    "@wdio/logger": "^8.38.0"
   },
   "devDependencies": {
     "@types/copyfiles": "~2.4.4",
