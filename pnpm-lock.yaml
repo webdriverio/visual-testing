@@ -112,8 +112,8 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.12.7)(jsdom@24.0.0)
       webdriverio:
-        specifier: ^8.36.1
-        version: 8.36.1(typescript@5.4.5)
+        specifier: ^8.38.0
+        version: 8.38.0(typescript@5.4.5)
 
   packages/ocr-service:
     dependencies:
@@ -191,8 +191,8 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       webdriverio:
-        specifier: ^8.36.1
-        version: 8.36.1(typescript@5.4.5)
+        specifier: ^8.38.0
+        version: 8.38.0(typescript@5.4.5)
 
 packages:
 
@@ -2260,7 +2260,7 @@ packages:
       '@wdio/types': 8.36.1
       decamelize: 6.0.0
       deepmerge-ts: 5.1.0
-      edgedriver: 5.3.9
+      edgedriver: 5.5.0
       geckodriver: 4.3.2
       get-port: 7.0.0
       import-meta-resolve: 4.0.0
@@ -3585,18 +3585,6 @@ packages:
       '@types/which': 2.0.2
       which: 2.0.2
 
-  /edgedriver@5.3.9:
-    resolution: {integrity: sha512-G0wNgFMFRDnFfKaXG2R6HiyVHqhKwdQ3EgoxW3wPlns2wKqem7F+HgkWBcevN7Vz0nN4AXtskID7/6jsYDXcKw==}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      '@wdio/logger': 8.38.0
-      decamelize: 6.0.0
-      edge-paths: 3.0.5
-      node-fetch: 3.3.2
-      unzipper: 0.10.14
-      which: 4.0.0
-
   /edgedriver@5.5.0:
     resolution: {integrity: sha512-qQIjDQ62cbDcoZ8AcN6PxQekOwGDZcTkdZj5qr6Ew1i4mMi3R0d1Y6DKlyUnkBs5GXUYua5wKB0XHMLj6FAChQ==}
     hasBin: true
@@ -4583,6 +4571,7 @@ packages:
 
   /glob@7.2.0:
     resolution: {integrity: sha512-lmLf6gtyrPq8tTjSmrO94wBeQbFR3HbLHbuyD69wuyQkImp2hWqMGB47OX65FBkPffO641IP9jWa1z4ivqG26Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
@@ -7402,6 +7391,7 @@ packages:
 
   /rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
