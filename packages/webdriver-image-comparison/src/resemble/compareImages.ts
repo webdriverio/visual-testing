@@ -1,5 +1,6 @@
 /* istanbul ignore file */
-import * as resemble from 'resemblejs'
+// import * as resemble from 'resemblejs'
+import * as resemble from 'resemble-jimp'
 import type { ComparisonOptions } from 'resemblejs'
 import type { CompareData } from './compare.interfaces.js'
 

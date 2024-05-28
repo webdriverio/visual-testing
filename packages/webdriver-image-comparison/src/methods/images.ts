@@ -419,7 +419,7 @@ export async function executeImageCompare(
         const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
         diffFilePath = join(diffFolderPath, fileName)
 
-        await saveBase64Image(await addBlockOuts(Buffer.from(data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
+        await saveBase64Image(await addBlockOuts(Buffer.from(await data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
 
         log.warn(
             '\x1b[33m%s\x1b[0m',
