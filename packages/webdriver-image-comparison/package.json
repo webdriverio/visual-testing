@@ -24,6 +24,7 @@
   "dependencies": {
     "canvas": "^2.11.2",
     "fs-extra": "^11.2.0",
+    "jimp": "^0.22.12",
     "resemblejs": "^5.0.0",
     "@wdio/logger": "^8.38.0"
   },
