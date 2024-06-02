@@ -155,8 +155,6 @@ export interface CroppedBase64Image {
 export interface RotateBase64ImageOptions {
     base64Image: string;
     degrees: number;
-    newHeight: number;
-    newWidth: number;
 }
 
 export interface CropAndConvertToDataURL {

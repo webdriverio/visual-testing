@@ -82,9 +82,7 @@ async function getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandsca
     const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
     const isRotated = !isWebDriverElementScreenshot && isLandscape && screenshotHeight > screenshotWidth
 
-    return isRotated
-        ? await rotateBase64Image({ base64Image, degrees: -90, newHeight: screenshotWidth, newWidth: screenshotHeight })
-        : base64Image
+    return isRotated ? await rotateBase64Image({ base64Image, degrees: 90 }) : base64Image
 }
 
 /**
@@ -173,22 +171,8 @@ async function handleIOSBezelCorners({
             const topImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${topImageName}.png`), { encoding: 'base64' })
             const bottomImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${bottomImageName}.png`), { encoding: 'base64' })
 
-            const topBase64Image = isLandscape
-                ? await rotateBase64Image({
-                    base64Image: topImage,
-                    degrees: -90,
-                    newHeight: getScreenshotSize(topImage).width,
-                    newWidth: getScreenshotSize(topImage).height,
-                })
-                : topImage
-            const bottomBase64Image = isLandscape
-                ? await rotateBase64Image({
-                    base64Image: bottomImage,
-                    degrees: -90,
-                    newHeight: getScreenshotSize(topImage).width,
-                    newWidth: getScreenshotSize(topImage).height,
-                })
-                : bottomImage
+            const topBase64Image = isLandscape ? await rotateBase64Image({ base64Image: topImage, degrees: 90 }) : topImage
+            const bottomBase64Image = isLandscape ? await rotateBase64Image({ base64Image: bottomImage, degrees: 90 }) : bottomImage
 
             image.composite(await Jimp.read(Buffer.from(topBase64Image, 'base64')), 0, 0)
             image.composite(await Jimp.read(Buffer.from(bottomBase64Image, 'base64')),
@@ -449,14 +433,7 @@ export async function makeFullPageBase64Image(
         const currentScreenshot = screenshotsData.data[i].screenshot
         const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(currentScreenshot, devicePixelRatio)
         const isRotated = isLandscape && screenshotHeight > screenshotWidth
-        const newBase64Image = isRotated
-            ? await rotateBase64Image({
-                base64Image: currentScreenshot,
-                degrees: -90,
-                newHeight: screenshotWidth,
-                newWidth: screenshotHeight,
-            })
-            : currentScreenshot
+        const newBase64Image = isRotated ? await rotateBase64Image({ base64Image: currentScreenshot, degrees: 90 }) : currentScreenshot
         const { canvasYPosition, imageHeight, imageWidth, imageXPosition, imageYPosition } = screenshotsData.data[i]
         const image = await Jimp.read(Buffer.from(newBase64Image, 'base64'))
 
@@ -503,12 +480,11 @@ export async function addBlockOuts(screenshot: string, ignoredBoxes: IgnoreBoxes
  * Rotate a base64 image
  * Tnx to https://gist.github.com/Zyndoras/6897abdf53adbedf02564808aaab94db
  */
-async function rotateBase64Image({ base64Image, degrees, newHeight, newWidth }: RotateBase64ImageOptions): Promise<string> {
+async function rotateBase64Image({ base64Image, degrees }: RotateBase64ImageOptions): Promise<string> {
     const image = await Jimp.read(Buffer.from(base64Image, 'base64'))
-
-    const rotatedImage = image.rotate(degrees).resize(newWidth, newHeight)
-
+    const rotatedImage = image.rotate(degrees)
     const base64RotatedImage = await rotatedImage.getBase64Async(Jimp.MIME_PNG)
+
     return base64RotatedImage.replace(/^data:image\/png;base64,/, '')
 }
 
