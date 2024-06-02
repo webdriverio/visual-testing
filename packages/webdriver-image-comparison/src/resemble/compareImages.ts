@@ -1,5 +1,5 @@
 // @ts-ignore: Ignoring type checking for this module import
-import * as resembleJimp from './resemble.jimp.js'
+import * as resembleJimp from './resemble.jimp.cjs'
 import type { CompareData, ComparisonOptions } from './compare.interfaces.js'
 
 export default async function compareImages(image1: Buffer, image2: Buffer, options: ComparisonOptions): Promise<CompareData> {

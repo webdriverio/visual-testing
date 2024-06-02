@@ -6,5 +6,5 @@
     "outDir": "./dist",
     "baseUrl": "."
   },
-  "include": ["./src/**/*.ts", "./src/resemble/resemble.jimp.d.ts"]
+  "include": ["./src/**/*.ts"]
 }
