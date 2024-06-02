@@ -15,7 +15,7 @@ export default async function compareImages(image1: Buffer, image2: Buffer, opti
             }
             : { imageToCompare1: image1, imageToCompare2: image2 }
 
-        resembleJimp.compare(imageToCompare1, imageToCompare2, options, (err: any, data: any) => {
+        resembleJimp.default.compare(imageToCompare1, imageToCompare2, options, (err: any, data: any) => {
             if (err) {
                 reject(err)
             } else {
