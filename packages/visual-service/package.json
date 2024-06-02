@@ -22,7 +22,7 @@
   "scripts": {
     "build": "run-s clean build:*",
     "build:tsc": "tsc --project ./tsconfig.json",
-    "clean": "rimraf coverage build .tmp",
+    "clean": "rimraf coverage dist .tmp",
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
@@ -31,5 +31,6 @@
     "@wdio/types": "^8.37.0",
     "node-fetch": "^3.3.2",
     "webdriver-image-comparison": "^5.1.0"
-  }
+  },
+  "devDependencies": {}
 }

@@ -1,11 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "rootDir": "./src",
     "outDir": "./dist",
     "baseUrl": "."
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["./src/**/*.ts", "./src/resemble/resemble.jimp.d.ts"]
 }

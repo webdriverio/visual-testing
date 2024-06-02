@@ -1,8 +1,6 @@
-/* istanbul ignore file */
-// import * as resemble from 'resemblejs'
-import * as resemble from 'resemble-jimp'
-import type { ComparisonOptions } from 'resemblejs'
-import type { CompareData } from './compare.interfaces.js'
+// @ts-ignore: Ignoring type checking for this module import
+import * as resembleJimp from './resemble.jimp.js'
+import type { CompareData, ComparisonOptions } from './compare.interfaces.js'
 
 export default async function compareImages(image1: Buffer, image2: Buffer, options: ComparisonOptions): Promise<CompareData> {
     /**
@@ -17,7 +15,7 @@ export default async function compareImages(image1: Buffer, image2: Buffer, opti
             }
             : { imageToCompare1: image1, imageToCompare2: image2 }
 
-        resemble.default.compare(imageToCompare1, imageToCompare2, options, (err: any, data: any) => {
+        resembleJimp.compare(imageToCompare1, imageToCompare2, options, (err: any, data: any) => {
             if (err) {
                 reject(err)
             } else {

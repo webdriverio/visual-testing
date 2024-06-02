@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "pnpm run -r build",
-    "clean": "rimraf coverage build .tmp",
+    "clean": "rimraf coverage dist .tmp",
     "release": "run-s build && changeset publish",
     "test": "run-s test:*",
     "test:lint": "eslint --cache packages tests",

@@ -2,9 +2,8 @@ import { fileURLToPath } from 'node:url'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { promises as fsPromises, constants } from 'node:fs'
 import { dirname, join } from 'node:path'
-// import { createCanvas, loadImage } from 'canvas'
+// @ts-ignore
 import Jimp from 'jimp'
-import type { ComparisonOptions, ComparisonIgnoreOption } from 'resemblejs'
 import logger from '@wdio/logger'
 import compareImages from '../resemble/compareImages.js'
 import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils.js'
@@ -25,7 +24,7 @@ import type {
 } from './images.interfaces.js'
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
 import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces.js'
-import type { CompareData } from '../resemble/compare.interfaces.js'
+import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
@@ -484,7 +483,7 @@ export async function saveBase64Image(base64Image: string, filePath: string): Pr
  * Create a canvas with the ignore boxes if they are present
  */
 export async function addBlockOuts(screenshot: string, ignoredBoxes: IgnoreBoxes[]): Promise<string> {
-    const { height, width } = getScreenshotSize(screenshot)
+    // const { height, width } = getScreenshotSize(screenshot)
     const image = await Jimp.read(Buffer.from(screenshot, 'base64'))
 
     // Loop over all ignored areas and add them to the current canvas
