@@ -82,8 +82,8 @@ importers:
         specifier: ^53.0.0
         version: 53.0.0(eslint@8.57.0)
       eslint-plugin-wdio:
-        specifier: ^8.24.12
-        version: 8.24.12
+        specifier: ^8.37.0
+        version: 8.37.0
       husky:
         specifier: ^9.0.11
         version: 9.0.11
@@ -3872,8 +3872,8 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-wdio@8.24.12:
-    resolution: {integrity: sha512-OmzGteXFOQnJDdkTNnTfksaVa18WlFCyeLjZXHvDpkbomLWAg9wc296Pr0wnTCagqNj8qfEHpy+N2XVew5VCMA==}
+  /eslint-plugin-wdio@8.37.0:
+    resolution: {integrity: sha512-X217zXxSqj1IPWu3bxN7D/xEUmNk7Jg5lBf2JwYH3mCogaqL2tnHZnwt0EQ5D9oEejfEl2+4zqHSzhXq1X7F2A==}
     engines: {node: ^16.13 || >=18}
     dev: true
 
