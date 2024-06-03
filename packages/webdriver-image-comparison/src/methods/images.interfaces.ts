@@ -1,4 +1,3 @@
-// import type { CanvasRenderingContext2D } from 'canvas'
 import type Jimp from 'jimp'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
@@ -194,7 +193,6 @@ export interface RotatedImage {
 
 export interface HandleIOSBezelCorners {
     addIOSBezelCorners: boolean,
-    // ctx: CanvasRenderingContext2D,
     deviceName: string,
     devicePixelRatio: number,
     height: number,

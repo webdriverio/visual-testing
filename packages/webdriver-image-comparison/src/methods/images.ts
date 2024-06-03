@@ -460,7 +460,6 @@ export async function saveBase64Image(base64Image: string, filePath: string): Pr
  * Create a canvas with the ignore boxes if they are present
  */
 export async function addBlockOuts(screenshot: string, ignoredBoxes: IgnoreBoxes[]): Promise<string> {
-    // const { height, width } = getScreenshotSize(screenshot)
     const image = await Jimp.read(Buffer.from(screenshot, 'base64'))
 
     // Loop over all ignored areas and add them to the current canvas
