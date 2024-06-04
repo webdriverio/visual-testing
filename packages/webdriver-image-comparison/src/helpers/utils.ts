@@ -313,8 +313,15 @@ export function isObject(item:unknown) {
 }
 
 /**
- * Validate if i's storybook
+ * Validate if it's storybook
  */
 export function isStorybook(){
     return process.argv.includes('--storybook')
+}
+
+/**
+ * Check if we want to update baseline images
+ */
+export function updateVisualBaseline(): boolean {
+    return process.argv.includes('--update-visual-baseline')
 }

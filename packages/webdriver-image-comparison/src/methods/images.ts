@@ -6,11 +6,12 @@ import { dirname, join } from 'node:path'
 import Jimp from 'jimp'
 import logger from '@wdio/logger'
 import compareImages from '../resemble/compareImages.js'
-import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils.js'
+import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize, updateVisualBaseline } from '../helpers/utils.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
 import { determineStatusAddressToolBarRectangles, isWdioElement } from './rectangles.js'
 import type {
     AdjustedAxis,
+    CheckBaselineImageExists,
     CropAndConvertToDataURL,
     CroppedBase64Image,
     DimensionsWarning,
@@ -33,15 +34,19 @@ const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
  * Check if the image exists and create a new baseline image if needed
  */
 export async function checkBaselineImageExists(
-    actualFilePath: string,
-    baselineFilePath: string,
-    autoSaveBaseline: boolean,
+    { actualFilePath, baselineFilePath, autoSaveBaseline = false, updateBaseline = false }: CheckBaselineImageExists
 ): Promise<void> {
     try {
+        if (updateBaseline) {
+            throw new Error()
+        }
+
         await fsPromises.access(baselineFilePath, constants.R_OK | constants.W_OK)
     } catch {
-        if (autoSaveBaseline) {
+        if (autoSaveBaseline || updateBaseline) {
             try {
+                const autoSaveMessage = 'Autosaved the'
+                const updateBaselineMessage = 'Updated the actual'
                 const data = readFileSync(actualFilePath)
                 writeFileSync(baselineFilePath, data)
                 log.info(
@@ -49,7 +54,7 @@ export async function checkBaselineImageExists(
                     `
 #####################################################################################
  INFO:
- Autosaved the image to
+ ${autoSaveBaseline ? autoSaveMessage : updateBaselineMessage} image to
  ${baselineFilePath}
 #####################################################################################`,
                 )
@@ -316,7 +321,7 @@ export async function executeImageCompare(
     const baselineFilePath = join(baselineFolderPath, fileName)
 
     // 3. Check if there is a baseline image, and determine if it needs to be auto saved or not
-    await checkBaselineImageExists(actualFilePath, baselineFilePath, autoSaveBaseline)
+    await checkBaselineImageExists({ actualFilePath, baselineFilePath, autoSaveBaseline })
 
     // 4. Prepare the compare
     // 4a.Determine the ignore options
@@ -378,8 +383,8 @@ export async function executeImageCompare(
 
     // 5. Execute the compare and retrieve the data
     const data: CompareData = await compareImages(readFileSync(baselineFilePath), readFileSync(actualFilePath), compareOptions)
-    const rawMisMatchPercentage = data.rawMisMatchPercentage
-    const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
+    let rawMisMatchPercentage = data.rawMisMatchPercentage
+    let reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage
         : Number(data.rawMisMatchPercentage.toFixed(3))
 
@@ -401,6 +406,12 @@ export async function executeImageCompare(
  ${diffFilePath}
 #####################################################################################`,
         )
+    }
+
+    if (updateVisualBaseline()) {
+        await checkBaselineImageExists({ actualFilePath, baselineFilePath, updateBaseline: true })
+        reportMisMatchPercentage = 0
+        rawMisMatchPercentage = 0
     }
 
     // 7. Return the comparison data

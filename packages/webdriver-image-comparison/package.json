@@ -17,11 +17,12 @@
     "url": "https://github.com/webdriverio/visual-testing/issues"
   },
   "scripts": {
-    "build": "run-s clean copy-js build:*",
+    "build": "run-s clean:build copy-js build:*",
     "build:tsc": "tsc --project ./tsconfig.json",
-    "clean": "rimraf coverage dist .tmp",
+    "clean:build": "rimraf coverage dist .tmp",
+    "clean:watch": "rimraf coverage .tmp",
     "copy-js": "copyfiles -u 1 src/resemble/resemble.jimp.cjs dist/",
-    "watch": "run-s clean copy-js watch:*",
+    "watch": "run-s clean:watch copy-js watch:*",
     "watch:tsc": "pnpm run build:tsc -w",
     "watch:js": "node -e \"require('fs').watchFile('src/resemble/resemble.jimp.cjs', () => { require('child_process').exec('npm run copy-js'); });\""
   },

@@ -185,6 +185,13 @@ export interface DimensionsWarning {
     type: string,
 }
 
+export interface CheckBaselineImageExists {
+    actualFilePath: string,
+    baselineFilePath: string,
+    autoSaveBaseline?: boolean,
+    updateBaseline?: boolean,
+}
+
 export interface RotatedImage {
     isWebDriverElementScreenshot: boolean,
     isLandscape: boolean,
