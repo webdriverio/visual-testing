@@ -58,8 +58,8 @@ importers:
         specifier: ^8.38.0
         version: 8.38.0(typescript@5.4.5)
       '@wdio/mocha-framework':
-        specifier: ^8.38.0
-        version: 8.38.0
+        specifier: ^8.38.2
+        version: 8.38.2
       '@wdio/sauce-service':
         specifier: ^8.38.0
         version: 8.38.0(typescript@5.4.5)
@@ -2055,7 +2055,6 @@ packages:
       import-meta-resolve: 4.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /@wdio/globals@8.38.0(typescript@5.4.5):
     resolution: {integrity: sha512-3Lo7R305gwJrloUolrgSRaMbIFKwnj/SPoYUt94dsTF1oM3TpyWpomcVokElNQiOFx9WYjMmBla2M+YcnoGmgw==}
@@ -2084,7 +2083,6 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
-    dev: true
 
   /@wdio/local-runner@8.38.0(typescript@5.4.5):
     resolution: {integrity: sha512-++eVI+EQapBMRxtLSbeooK02uELAhIXNLzgBlC03s23OTZUUOxzl4WxFuGqaG8gpNHer5Bjg+uAy0rIbSMnklA==}
@@ -2116,15 +2114,15 @@ packages:
       loglevel-plugin-prefix: 0.8.4
       strip-ansi: 7.1.0
 
-  /@wdio/mocha-framework@8.38.0:
-    resolution: {integrity: sha512-LWwKslKIxqhQNskdffcS6QbxN45PzJN21b5zByELbEYd9PIGNbuXXqueVE09RwEAzBHtL86ZhSpFclAB+ulsBw==}
+  /@wdio/mocha-framework@8.38.2:
+    resolution: {integrity: sha512-qJmRL5E6/ypjCUACH4hvCAAmTdU4YUrUlp9o/IKvTIAHMnZPE0/HgUFixCeu8Mop+rdzTPVBrbqxpRDdSnraYA==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/mocha': 10.0.6
       '@types/node': 20.12.7
       '@wdio/logger': 8.38.0
-      '@wdio/types': 8.37.0
-      '@wdio/utils': 8.38.0
+      '@wdio/types': 8.38.2
+      '@wdio/utils': 8.38.2
       mocha: 10.2.0
     transitivePeerDependencies:
       - supports-color
@@ -2275,7 +2273,6 @@ packages:
       wait-port: 1.1.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
@@ -4063,9 +4060,9 @@ packages:
       jest-matcher-utils: 29.7.0
       lodash.isequal: 4.5.0
     optionalDependencies:
-      '@wdio/globals': 8.38.0(typescript@5.4.5)
+      '@wdio/globals': 8.38.2(typescript@5.4.5)
       '@wdio/logger': 8.38.0
-      webdriverio: 8.38.0(typescript@5.4.5)
+      webdriverio: 8.38.2(typescript@5.4.5)
     transitivePeerDependencies:
       - bufferutil
       - devtools
@@ -8620,7 +8617,6 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
-    dev: true
 
   /webdriverio@8.38.0(typescript@5.4.5):
     resolution: {integrity: sha512-PxLtJPK8Aa+f/G/P8YGUwGH80uHowMA8cDHshhog6sKbp1BXEVB8x6PyC1AIswRlTWVijoes7cD0cUoVs6C87A==}
@@ -8703,7 +8699,6 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
-    dev: true
 
   /webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -8910,7 +8905,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-    dev: true
 
   /xdg-basedir@5.1.0:
     resolution: {integrity: sha512-GCPAHLvrIH13+c0SuacwvRYj2SxJXQ4kaVTT5xgL3kPrz56XxkF21IGhjSE1+W0aw7gpBWRGXLCPnPby6lSpmQ==}
