@@ -70,8 +70,8 @@ importers:
         specifier: ^8.38.0
         version: 8.38.0
       '@wdio/types':
-        specifier: ^8.37.0
-        version: 8.37.0
+        specifier: ^8.38.2
+        version: 8.38.2
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -124,8 +124,8 @@ importers:
         specifier: ^8.38.0
         version: 8.38.0
       '@wdio/types':
-        specifier: ^8.37.0
-        version: 8.37.0
+        specifier: ^8.38.2
+        version: 8.38.2
       fuse.js:
         specifier: ^7.0.0
         version: 7.0.0
@@ -154,8 +154,8 @@ importers:
         specifier: ^8.38.0
         version: 8.38.0
       '@wdio/types':
-        specifier: ^8.37.0
-        version: 8.37.0
+        specifier: ^8.38.2
+        version: 8.38.2
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
@@ -2196,6 +2196,12 @@ packages:
 
   /@wdio/types@8.37.0:
     resolution: {integrity: sha512-36kmSlZcVhsMlbhaSCQUfL51iG81FlbzW4Dfkz4903cDkxmh64bgxydZbRB5aPLnJzzR7tI3chIME8zSVZFR8w==}
+    engines: {node: ^16.13 || >=18}
+    dependencies:
+      '@types/node': 20.12.7
+
+  /@wdio/types@8.38.2:
+    resolution: {integrity: sha512-+wj1c1OSLdnN4WO5b44Ih4263dTl/eSwMGSI4/pCgIyXIuYQH38JQ+6WRa+c8vJEskUzboq2cSgEQumVZ39ozQ==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.12.7
