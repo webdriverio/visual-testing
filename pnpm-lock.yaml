@@ -52,8 +52,8 @@ importers:
         specifier: ^8.38.2
         version: 8.38.2(typescript@5.4.5)
       '@wdio/globals':
-        specifier: ^8.38.0
-        version: 8.38.0(typescript@5.4.5)
+        specifier: ^8.38.2
+        version: 8.38.2(typescript@5.4.5)
       '@wdio/local-runner':
         specifier: ^8.38.0
         version: 8.38.0(typescript@5.4.5)
@@ -118,8 +118,8 @@ importers:
   packages/ocr-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^8.38.0
-        version: 8.38.0(typescript@5.4.5)
+        specifier: ^8.38.2
+        version: 8.38.2(typescript@5.4.5)
       '@wdio/logger':
         specifier: ^8.38.0
         version: 8.38.0
@@ -148,8 +148,8 @@ importers:
   packages/visual-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^8.38.0
-        version: 8.38.0(typescript@5.4.5)
+        specifier: ^8.38.2
+        version: 8.38.2(typescript@5.4.5)
       '@wdio/logger':
         specifier: ^8.38.0
         version: 8.38.0
@@ -2084,6 +2084,7 @@ packages:
       import-meta-resolve: 4.0.0
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@wdio/config@8.38.2:
     resolution: {integrity: sha512-xlnapTr1vOA0h5HsHTIqj47729FbG3WjxmgHweDEQvcT4C1g9l+WKf+N3FM7DNNoIsAqxKi6rOHG02rJADQJtw==}
@@ -2112,6 +2113,7 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
+    dev: true
 
   /@wdio/globals@8.38.2(typescript@5.4.5):
     resolution: {integrity: sha512-iIrUF1EODfHLh3V/CSNCqbNNxUTe3ND+c86zDjzJcPFjawLX1plvAApsU/eDmtsFShcOS2KHbfSjiydFoqQG1Q==}
@@ -2270,6 +2272,7 @@ packages:
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.12.7
+    dev: true
 
   /@wdio/types@8.38.2:
     resolution: {integrity: sha512-+wj1c1OSLdnN4WO5b44Ih4263dTl/eSwMGSI4/pCgIyXIuYQH38JQ+6WRa+c8vJEskUzboq2cSgEQumVZ39ozQ==}
@@ -2296,6 +2299,7 @@ packages:
       wait-port: 1.1.0
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@wdio/utils@8.38.2:
     resolution: {integrity: sha512-y5AnBwsGcu/XuCBGCgKmlvKdwEIFyzLA+Cr+denySxY3jbWDONtPUcGaVdFALwsIa5jcIjcATqGmZcCPGnkd7g==}
@@ -3238,6 +3242,7 @@ packages:
   /crc32-stream@6.0.0:
     resolution: {integrity: sha512-piICUB6ei4IlTv1+653yq5+KoqfBYmj9bw6LqXoOneTMDXk5nM1qt12mFW1caG3LlJXEKW1Bp0WggEmIfQB34g==}
     engines: {node: '>= 14'}
+    requiresBuild: true
     dependencies:
       crc-32: 1.2.2
       readable-stream: 4.5.2
@@ -4055,6 +4060,7 @@ packages:
   /event-target-shim@5.0.1:
     resolution: {integrity: sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==}
     engines: {node: '>=6'}
+    requiresBuild: true
 
   /events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
@@ -8640,10 +8646,12 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /webdriver@8.38.2:
     resolution: {integrity: sha512-NGfjW0BDYwFgOIzeojOcWGn3tYloQdvHr+Y2xKKYVqa9Rs0x1mzlTjU1kWtC4DaV8DltskwaPa7o+s8hTNpuyA==}
     engines: {node: ^16.13 || >=18}
+    requiresBuild: true
     dependencies:
       '@types/node': 20.12.7
       '@types/ws': 8.5.10
@@ -8701,6 +8709,7 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
+    dev: true
 
   /webdriverio@8.38.2(typescript@5.4.5):
     resolution: {integrity: sha512-r09y5UfivyYh5JOzT2SpJJ1zDmQl/R4OTH12opUqkjvp21BibCQm/uu1mrxGy4lzSHljrvqSVrrcGI+6UA1O8w==}
