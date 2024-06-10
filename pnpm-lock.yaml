@@ -112,8 +112,8 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.12.7)(jsdom@24.1.0)
       webdriverio:
-        specifier: ^8.38.0
-        version: 8.38.0(typescript@5.4.5)
+        specifier: ^8.38.2
+        version: 8.38.2(typescript@5.4.5)
 
   packages/ocr-service:
     dependencies:
@@ -191,8 +191,8 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       webdriverio:
-        specifier: ^8.38.0
-        version: 8.38.0(typescript@5.4.5)
+        specifier: ^8.38.2
+        version: 8.38.2(typescript@5.4.5)
 
 packages:
 
