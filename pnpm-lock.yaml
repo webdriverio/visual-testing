@@ -64,8 +64,8 @@ importers:
         specifier: ^8.38.0
         version: 8.38.0(typescript@5.4.5)
       '@wdio/shared-store-service':
-        specifier: ^8.38.0
-        version: 8.38.0(typescript@5.4.5)
+        specifier: ^8.38.2
+        version: 8.38.2(typescript@5.4.5)
       '@wdio/spec-reporter':
         specifier: ^8.38.2
         version: 8.38.2
@@ -2098,7 +2098,6 @@ packages:
       import-meta-resolve: 4.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /@wdio/globals@8.38.0(typescript@5.4.5):
     resolution: {integrity: sha512-3Lo7R305gwJrloUolrgSRaMbIFKwnj/SPoYUt94dsTF1oM3TpyWpomcVokElNQiOFx9WYjMmBla2M+YcnoGmgw==}
@@ -2127,7 +2126,6 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
-    dev: true
 
   /@wdio/local-runner@8.38.0(typescript@5.4.5):
     resolution: {integrity: sha512-++eVI+EQapBMRxtLSbeooK02uELAhIXNLzgBlC03s23OTZUUOxzl4WxFuGqaG8gpNHer5Bjg+uAy0rIbSMnklA==}
@@ -2237,16 +2235,16 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@wdio/shared-store-service@8.38.0(typescript@5.4.5):
-    resolution: {integrity: sha512-n+PiMemNb2jSkWx2vH/1VWxUGfEKGRnC822XZ+uvvXSW9r0LQrRjt8O0PITs+yCswFppFJlwGxxxXAJrA6c8tQ==}
+  /@wdio/shared-store-service@8.38.2(typescript@5.4.5):
+    resolution: {integrity: sha512-gHGjkWqq3eCfhWAwldKmg6fka0A3ZPn4TZBg7IZiwaKRrt/GQIfpbaU6JZXd7H48h29EXpeQ1/TovkTvGWQ3Jg==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@polka/parse': 1.0.0-next.0
       '@wdio/logger': 8.38.0
-      '@wdio/types': 8.37.0
+      '@wdio/types': 8.38.2
       got: 12.6.1
       polka: 0.5.2
-      webdriverio: 8.38.0(typescript@5.4.5)
+      webdriverio: 8.38.2(typescript@5.4.5)
     transitivePeerDependencies:
       - bufferutil
       - devtools
@@ -2318,7 +2316,6 @@ packages:
       wait-port: 1.1.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
@@ -4106,9 +4103,9 @@ packages:
       jest-matcher-utils: 29.7.0
       lodash.isequal: 4.5.0
     optionalDependencies:
-      '@wdio/globals': 8.38.0(typescript@5.4.5)
+      '@wdio/globals': 8.38.2(typescript@5.4.5)
       '@wdio/logger': 8.38.0
-      webdriverio: 8.38.0(typescript@5.4.5)
+      webdriverio: 8.38.2(typescript@5.4.5)
     transitivePeerDependencies:
       - bufferutil
       - devtools
@@ -8638,7 +8635,7 @@ packages:
       deepmerge-ts: 5.1.0
       got: 12.6.1
       ky: 0.33.3
-      ws: 8.16.0
+      ws: 8.17.0
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -8663,7 +8660,6 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
-    dev: true
 
   /webdriverio@8.38.0(typescript@5.4.5):
     resolution: {integrity: sha512-PxLtJPK8Aa+f/G/P8YGUwGH80uHowMA8cDHshhog6sKbp1BXEVB8x6PyC1AIswRlTWVijoes7cD0cUoVs6C87A==}
@@ -8746,7 +8742,6 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
-    dev: true
 
   /webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -8930,18 +8925,6 @@ packages:
       utf-8-validate:
         optional: true
 
-  /ws@8.16.0:
-    resolution: {integrity: sha512-HS0c//TP7Ina87TfiPUz1rQzMhHrl/SG2guqRcTOIUYD2q8uhUdNHZYJUaQ8aTGPzCh+c6oawMKW35nFl1dxyQ==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
   /ws@8.17.0:
     resolution: {integrity: sha512-uJq6108EgZMAl20KagGkzCKfMEjxmKvZHG7Tlq0Z6nOky7YF7aq4mOx6xK8TJ/i1LeK4Qus7INktacctDgY8Ow==}
     engines: {node: '>=10.0.0'}
@@ -8953,7 +8936,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-    dev: true
 
   /xdg-basedir@5.1.0:
     resolution: {integrity: sha512-GCPAHLvrIH13+c0SuacwvRYj2SxJXQ4kaVTT5xgL3kPrz56XxkF21IGhjSE1+W0aw7gpBWRGXLCPnPby6lSpmQ==}
