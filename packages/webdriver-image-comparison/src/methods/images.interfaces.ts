@@ -1,4 +1,4 @@
-import type { CanvasRenderingContext2D } from 'canvas'
+import type Jimp from 'jimp'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
 
@@ -154,8 +154,6 @@ export interface CroppedBase64Image {
 export interface RotateBase64ImageOptions {
     base64Image: string;
     degrees: number;
-    newHeight: number;
-    newWidth: number;
 }
 
 export interface CropAndConvertToDataURL {
@@ -187,6 +185,13 @@ export interface DimensionsWarning {
     type: string,
 }
 
+export interface CheckBaselineImageExists {
+    actualFilePath: string,
+    baselineFilePath: string,
+    autoSaveBaseline?: boolean,
+    updateBaseline?: boolean,
+}
+
 export interface RotatedImage {
     isWebDriverElementScreenshot: boolean,
     isLandscape: boolean,
@@ -195,10 +200,10 @@ export interface RotatedImage {
 
 export interface HandleIOSBezelCorners {
     addIOSBezelCorners: boolean,
-    ctx: CanvasRenderingContext2D,
     deviceName: string,
     devicePixelRatio: number,
     height: number,
+    image: Jimp,
     isLandscape: boolean,
     width: number,
 }

@@ -24,7 +24,7 @@
   "scripts": {
     "build": "run-s clean build:*",
     "build:tsc": "tsc --project ./tsconfig.json",
-    "clean": "rimraf coverage build .tmp",
+    "clean": "rimraf coverage dist .tmp",
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
@@ -37,5 +37,9 @@
     "node-tesseract-ocr": "^2.2.1",
     "tesseract.js": "^5.1.0",
     "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@types/inquirer": "~9.0.7",
+    "@types/xml2js": "~0.4.14"
   }
 }

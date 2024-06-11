@@ -2,15 +2,16 @@ import { fileURLToPath } from 'node:url'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { promises as fsPromises, constants } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { createCanvas, loadImage } from 'canvas'
-import type { ComparisonOptions, ComparisonIgnoreOption } from 'resemblejs'
+// @ts-ignore
+import Jimp from 'jimp'
 import logger from '@wdio/logger'
 import compareImages from '../resemble/compareImages.js'
-import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize } from '../helpers/utils.js'
+import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize, updateVisualBaseline } from '../helpers/utils.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
 import { determineStatusAddressToolBarRectangles, isWdioElement } from './rectangles.js'
 import type {
     AdjustedAxis,
+    CheckBaselineImageExists,
     CropAndConvertToDataURL,
     CroppedBase64Image,
     DimensionsWarning,
@@ -24,7 +25,7 @@ import type {
 } from './images.interfaces.js'
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
 import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces.js'
-import type { CompareData } from '../resemble/compare.interfaces.js'
+import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
@@ -33,15 +34,19 @@ const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
  * Check if the image exists and create a new baseline image if needed
  */
 export async function checkBaselineImageExists(
-    actualFilePath: string,
-    baselineFilePath: string,
-    autoSaveBaseline: boolean,
+    { actualFilePath, baselineFilePath, autoSaveBaseline = false, updateBaseline = false }: CheckBaselineImageExists
 ): Promise<void> {
     try {
+        if (updateBaseline) {
+            throw new Error()
+        }
+
         await fsPromises.access(baselineFilePath, constants.R_OK | constants.W_OK)
     } catch {
-        if (autoSaveBaseline) {
+        if (autoSaveBaseline || updateBaseline) {
             try {
+                const autoSaveMessage = 'Autosaved the'
+                const updateBaselineMessage = 'Updated the actual'
                 const data = readFileSync(actualFilePath)
                 writeFileSync(baselineFilePath, data)
                 log.info(
@@ -49,7 +54,7 @@ export async function checkBaselineImageExists(
                     `
 #####################################################################################
  INFO:
- Autosaved the image to
+ ${autoSaveBaseline ? autoSaveMessage : updateBaselineMessage} image to
  ${baselineFilePath}
 #####################################################################################`,
                 )
@@ -82,9 +87,7 @@ async function getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandsca
     const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
     const isRotated = !isWebDriverElementScreenshot && isLandscape && screenshotHeight > screenshotWidth
 
-    return isRotated
-        ? await rotateBase64Image({ base64Image, degrees: -90, newHeight: screenshotWidth, newWidth: screenshotHeight })
-        : base64Image
+    return isRotated ? await rotateBase64Image({ base64Image, degrees: 90 }) : base64Image
 }
 
 /**
@@ -149,29 +152,22 @@ function getAdjustedAxis({
  */
 async function handleIOSBezelCorners({
     addIOSBezelCorners,
-    ctx,
+    image,
     deviceName,
     devicePixelRatio,
     height,
     isLandscape,
     width,
-}: HandleIOSBezelCorners){
-    // Add the bezel corners to the iOS image if we need to
-    const normalizedDeviceName = deviceName
-        .toLowerCase()
-    // (keep alphanumeric|remove simulator|remove inch|remove 1st/2nd/3rd/4th generation)
+}: HandleIOSBezelCorners) {
+    const normalizedDeviceName = deviceName.toLowerCase()
         .replace(/([^A-Za-z0-9]|simulator|inch|(\d(st|nd|rd|th)) generation)/gi, '')
-    const isSupported =
-        // For iPhone
-        (normalizedDeviceName.includes('iphone') && supportedIosBezelDevices.includes(normalizedDeviceName)) ||
-        // For iPad
+    const isSupported = (normalizedDeviceName.includes('iphone') && supportedIosBezelDevices.includes(normalizedDeviceName)) ||
         (normalizedDeviceName.includes('ipad') &&
         supportedIosBezelDevices.includes(normalizedDeviceName) &&
         (width / devicePixelRatio >= 1133 || height / devicePixelRatio >= 1133))
     let isIosBezelError = false
 
     if (addIOSBezelCorners && isSupported) {
-        // Determine the bezel images
         const { topImageName, bottomImageName } = getIosBezelImageNames(normalizedDeviceName)
 
         if (topImageName && bottomImageName) {
@@ -180,31 +176,13 @@ async function handleIOSBezelCorners({
             const topImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${topImageName}.png`), { encoding: 'base64' })
             const bottomImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${bottomImageName}.png`), { encoding: 'base64' })
 
-            // If the screen is rotated the images need to be rotated
-            const topBase64Image = isLandscape
-                ? await rotateBase64Image({
-                    base64Image: topImage,
-                    degrees: -90,
-                    newHeight: getScreenshotSize(topImage).width,
-                    newWidth: getScreenshotSize(topImage).height,
-                })
-                : topImage
-            const bottomBase64Image = isLandscape
-                ? await rotateBase64Image({
-                    base64Image: bottomImage,
-                    degrees: -90,
-                    newHeight: getScreenshotSize(topImage).width,
-                    newWidth: getScreenshotSize(topImage).height,
-                })
-                : bottomImage
-            // Draw top image, always place it at x=0 and y=0
-            ctx.drawImage(await loadImage(`data:image/png;base64,${topBase64Image}`), 0, 0)
-            // Draw bottom image, depending if the screen is rotated it needs to be placed
-            // y = heightScreen - heightBottom or x = widthScreen - heightBottom
-            ctx.drawImage(
-                await loadImage(`data:image/png;base64,${bottomBase64Image}`),
+            const topBase64Image = isLandscape ? await rotateBase64Image({ base64Image: topImage, degrees: 90 }) : topImage
+            const bottomBase64Image = isLandscape ? await rotateBase64Image({ base64Image: bottomImage, degrees: 90 }) : bottomImage
+
+            image.composite(await Jimp.read(Buffer.from(topBase64Image, 'base64')), 0, 0)
+            image.composite(await Jimp.read(Buffer.from(bottomBase64Image, 'base64')),
                 isLandscape ? width - getScreenshotSize(bottomImage).height : 0,
-                isLandscape ? 0 : height - getScreenshotSize(bottomImage).height,
+                isLandscape ? 0 : height - getScreenshotSize(bottomImage).height
             )
         } else {
             isIosBezelError = true
@@ -246,16 +224,15 @@ async function cropAndConvertToDataURL({
     sourceY,
     width,
 }: CropAndConvertToDataURL): Promise<string> {
-    const canvas = createCanvas(width, height)
-    const ctx = canvas.getContext('2d')
-    const image = await loadImage(`data:image/png;base64,${base64Image}`)
-    ctx.drawImage(image, sourceX, sourceY, width, height, 0, 0, width, height)
+    const image = await Jimp.read(Buffer.from(base64Image, 'base64'))
+    const croppedImage = image.crop(sourceX, sourceY, width, height)
 
-    if (isIOS){
-        await handleIOSBezelCorners({ addIOSBezelCorners, ctx, deviceName, devicePixelRatio, height, isLandscape, width })
+    if (isIOS) {
+        await handleIOSBezelCorners({ addIOSBezelCorners, image: croppedImage, deviceName, devicePixelRatio, height, isLandscape, width })
     }
 
-    return canvas.toDataURL().replace(/^data:image\/png;base64,/, '')
+    const base64CroppedImage = await croppedImage.getBase64Async(Jimp.MIME_PNG)
+    return base64CroppedImage.replace(/^data:image\/png;base64,/, '')
 }
 
 /**
@@ -344,7 +321,7 @@ export async function executeImageCompare(
     const baselineFilePath = join(baselineFolderPath, fileName)
 
     // 3. Check if there is a baseline image, and determine if it needs to be auto saved or not
-    await checkBaselineImageExists(actualFilePath, baselineFilePath, autoSaveBaseline)
+    await checkBaselineImageExists({ actualFilePath, baselineFilePath, autoSaveBaseline })
 
     // 4. Prepare the compare
     // 4a.Determine the ignore options
@@ -406,8 +383,8 @@ export async function executeImageCompare(
 
     // 5. Execute the compare and retrieve the data
     const data: CompareData = await compareImages(readFileSync(baselineFilePath), readFileSync(actualFilePath), compareOptions)
-    const rawMisMatchPercentage = data.rawMisMatchPercentage
-    const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
+    let rawMisMatchPercentage = data.rawMisMatchPercentage
+    let reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage
         : Number(data.rawMisMatchPercentage.toFixed(3))
 
@@ -419,7 +396,7 @@ export async function executeImageCompare(
         const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
         diffFilePath = join(diffFolderPath, fileName)
 
-        await saveBase64Image(await addBlockOuts(Buffer.from(data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
+        await saveBase64Image(await addBlockOuts(Buffer.from(await data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
 
         log.warn(
             '\x1b[33m%s\x1b[0m',
@@ -429,6 +406,12 @@ export async function executeImageCompare(
  ${diffFilePath}
 #####################################################################################`,
         )
+    }
+
+    if (updateVisualBaseline()) {
+        await checkBaselineImageExists({ actualFilePath, baselineFilePath, updateBaseline: true })
+        reportMisMatchPercentage = 0
+        rawMisMatchPercentage = 0
     }
 
     // 7. Return the comparison data
@@ -454,45 +437,26 @@ export async function makeFullPageBase64Image(
 ): Promise<string> {
     const amountOfScreenshots = screenshotsData.data.length
     const { fullPageHeight: canvasHeight, fullPageWidth: canvasWidth } = screenshotsData
-    const canvas = createCanvas(canvasWidth, canvasHeight)
-    const ctx = canvas.getContext('2d')
+    const canvas = await new Jimp(canvasWidth, canvasHeight)
 
     // Load all the images
     for (let i = 0; i < amountOfScreenshots; i++) {
         const currentScreenshot = screenshotsData.data[i].screenshot
-        // Determine if the image is rotated
         const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(currentScreenshot, devicePixelRatio)
         const isRotated = isLandscape && screenshotHeight > screenshotWidth
-        // If so we need to rotate is -90 degrees
-        const newBase64Image = isRotated
-            ? await rotateBase64Image({
-                base64Image: currentScreenshot,
-                degrees: -90,
-                newHeight: screenshotWidth,
-                newWidth: screenshotHeight,
-            })
-            : currentScreenshot
+        const newBase64Image = isRotated ? await rotateBase64Image({ base64Image: currentScreenshot, degrees: 90 }) : currentScreenshot
         const { canvasYPosition, imageHeight, imageWidth, imageXPosition, imageYPosition } = screenshotsData.data[i]
-        const image = await loadImage(`data:image/png;base64,${newBase64Image}`)
+        const image = await Jimp.read(Buffer.from(newBase64Image, 'base64'))
 
-        ctx.drawImage(
-            image,
-            // Start at x/y pixels from the left and the top of the image (crop)
-            imageXPosition,
-            imageYPosition,
-            // 'Get' a (w * h) area from the source image (crop)
-            imageWidth,
-            imageHeight,
-            // Place the result at 0, 0 in the canvas,
+        canvas.composite(
+            image.crop(imageXPosition, imageYPosition, imageWidth, imageHeight),
             0,
-            canvasYPosition,
-            // With as width / height: 100 * 100 (scale)
-            imageWidth,
-            imageHeight,
+            canvasYPosition
         )
     }
 
-    return canvas.toDataURL().replace(/^data:image\/png;base64,/, '')
+    const base64FullPageImage = await canvas.getBase64Async(Jimp.MIME_PNG)
+    return base64FullPageImage.replace(/^data:image\/png;base64,/, '')
 }
 
 /**
@@ -507,65 +471,31 @@ export async function saveBase64Image(base64Image: string, filePath: string): Pr
  * Create a canvas with the ignore boxes if they are present
  */
 export async function addBlockOuts(screenshot: string, ignoredBoxes: IgnoreBoxes[]): Promise<string> {
-    // Create canvas and load image
-    const { height, width } = getScreenshotSize(screenshot)
-    const canvas = createCanvas(width, height)
-    const image = await loadImage(`data:image/png;base64,${screenshot}`)
-    const canvasContext = canvas.getContext('2d')
-
-    // Draw the image on canvas
-    canvasContext.drawImage(
-        image,
-        // Start at x/y pixels from the left and the top of the image (crop)
-        0,
-        0,
-        // 'Get' a (w * h) area from the source image (crop)
-        width,
-        height,
-        // Place the result at 0, 0 in the canvas,
-        0,
-        0,
-        // With as width / height: 100 * 100 (scale)
-        width,
-        height,
-    )
+    const image = await Jimp.read(Buffer.from(screenshot, 'base64'))
 
     // Loop over all ignored areas and add them to the current canvas
-    ignoredBoxes.forEach((ignoredBox) => {
+    for (const ignoredBox of ignoredBoxes) {
         const { right: ignoredBoxWidth, bottom: ignoredBoxHeight, left: x, top: y } = ignoredBox
-        const ignoreCanvas = createCanvas(ignoredBoxWidth - x, ignoredBoxHeight - y)
-        const ignoreContext = ignoreCanvas.getContext('2d')
+        const ignoreCanvas = new Jimp(ignoredBoxWidth - x, ignoredBoxHeight - y, '#39aa56')
+        ignoreCanvas.opacity(0.5)
 
-        // Add a background color to the ignored box
-        ignoreContext.globalAlpha = 0.5
-        ignoreContext.fillStyle = '#39aa56'
-        ignoreContext.fillRect(0, 0, ignoredBoxWidth - x, ignoredBoxHeight - y)
+        image.composite(ignoreCanvas, x, y)
+    }
 
-        // add to canvasContext
-        canvasContext.drawImage(ignoreCanvas, x, y)
-    })
-
-    // Return the screenshot
-    return canvas.toDataURL().replace(/^data:image\/png;base64,/, '')
+    const base64ImageWithBlockOuts = await image.getBase64Async(Jimp.MIME_PNG)
+    return base64ImageWithBlockOuts.replace(/^data:image\/png;base64,/, '')
 }
 
 /**
  * Rotate a base64 image
  * Tnx to https://gist.github.com/Zyndoras/6897abdf53adbedf02564808aaab94db
  */
-async function rotateBase64Image({ base64Image, degrees, newHeight, newWidth }: RotateBase64ImageOptions): Promise<string> {
-    const canvas = createCanvas(newWidth, newHeight)
-    const ctx = canvas.getContext('2d')
-    const image = await loadImage(`data:image/png;base64,${base64Image}`)
+async function rotateBase64Image({ base64Image, degrees }: RotateBase64ImageOptions): Promise<string> {
+    const image = await Jimp.read(Buffer.from(base64Image, 'base64'))
+    const rotatedImage = image.rotate(degrees)
+    const base64RotatedImage = await rotatedImage.getBase64Async(Jimp.MIME_PNG)
 
-    canvas.width = degrees % 180 === 0 ? image.width : image.height
-    canvas.height = degrees % 180 === 0 ? image.height : image.width
-
-    ctx.translate(canvas.width / 2, canvas.height / 2)
-    ctx.rotate((degrees * Math.PI) / 180)
-    ctx.drawImage(image, image.width / -2, image.height / -2)
-
-    return canvas.toDataURL().replace(/^data:image\/png;base64,/, '')
+    return base64RotatedImage.replace(/^data:image\/png;base64,/, '')
 }
 
 /**
