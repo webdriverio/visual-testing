@@ -1,4 +1,4 @@
-import type { WicElement } from 'webdriver-image-comparison/dist/commands/element.interfaces.js'
+import type { WicElement } from 'webdriver-image-comparison'
 import WdioImageComparisonService from './service.js'
 import VisualLauncher from './storybook/launcher.js'
 import type {

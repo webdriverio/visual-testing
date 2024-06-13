@@ -17,6 +17,7 @@ export type {
     SaveScreenMethodOptions,
 } from './commands/screen.interfaces.js'
 export type {
+    WicElement,
     CheckElementMethodOptions,
     SaveElementMethodOptions,
 } from './commands/element.interfaces.js'
