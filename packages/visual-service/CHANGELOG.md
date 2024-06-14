@@ -1,5 +1,13 @@
 # @wdio/visual-service
 
+## 5.0.1
+
+### Patch Changes
+
+- 169b7c5: fix(webdriver-image-comparison): export WicElement
+- Updated dependencies [169b7c5]
+  - webdriver-image-comparison@6.0.1
+
 ## 5.0.0
 
 ### Major Changes
