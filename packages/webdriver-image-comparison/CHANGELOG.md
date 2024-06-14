@@ -1,5 +1,11 @@
 # webdriver-image-comparison
 
+## 6.0.1
+
+### Patch Changes
+
+- 169b7c5: fix(webdriver-image-comparison): export WicElement
+
 ## 6.0.0
 
 ### Major Changes
