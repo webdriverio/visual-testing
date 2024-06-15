@@ -213,51 +213,61 @@ export function createTestContent(
 export async function waitForStorybookComponentToBeLoaded(
     options: WaitForStorybookComponentToBeLoaded
 ) {
-    const { clipSelector, id, storybookUrl, timeout = 11000 } = options
-    await browser.url(`${storybookUrl}iframe.html?id=${id}`)
-    await $(clipSelector).waitForDisplayed()
-    await browser.executeAsync(async (timeout, done) => {
-        let timedOut = false
+    const isStorybook = isStorybookMode()
+    if (isStorybook) {
+        const {
+            clipSelector = process.env.VISUAL_STORYBOOK_CLIP_SELECTOR,
+            id,
+            storybookUrl = process.env.VISUAL_STORYBOOK_URL,
+            timeout = 11000,
+        } = options
+        await browser.url(`${storybookUrl}iframe.html?id=${id}`)
+        await $(clipSelector as string).waitForDisplayed()
+        await browser.executeAsync(async (timeout, done) => {
+            let timedOut = false
 
-        const timeoutPromise = new Promise((resolve, reject) => {
-            setTimeout(() => {
-                timedOut = true
-                reject('Timeout: Not all images loaded within 11 seconds')
-            }, timeout)
-        })
+            const timeoutPromise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    timedOut = true
+                    reject('Timeout: Not all images loaded within 11 seconds')
+                }, timeout)
+            })
 
-        const isImageLoaded = (img: HTMLImageElement) => img.complete && img.naturalWidth > 0
+            const isImageLoaded = (img: HTMLImageElement) => img.complete && img.naturalWidth > 0
 
-        // Check for <img> elements
-        const imgElements = Array.from(document.querySelectorAll('img'))
-        const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise<void>(resolve => {
-            img.onload = () => { if (!timedOut) {resolve()} }
-            img.onerror = () => { if (!timedOut) {resolve()} }
-        }))
+            // Check for <img> elements
+            const imgElements = Array.from(document.querySelectorAll('img'))
+            const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise<void>(resolve => {
+                img.onload = () => { if (!timedOut) { resolve() } }
+                img.onerror = () => { if (!timedOut) { resolve() } }
+            }))
 
-        // Check for CSS background images
-        const allElements = Array.from(document.querySelectorAll('*'))
-        const bgImagePromises = allElements.map(el => {
-            const bgImage = window.getComputedStyle(el).backgroundImage
-            if (bgImage && bgImage !== 'none' && bgImage.startsWith('url')) {
-                const imageUrl = bgImage.slice(5, -2) // Extract URL from the 'url("")'
-                const image = new Image()
-                image.src = imageUrl
-                return isImageLoaded(image) ? Promise.resolve() : new Promise<void>(resolve => {
-                    image.onload = () => { if (!timedOut) {resolve()} }
-                    image.onerror = () => { if (!timedOut) {resolve()} }
-                })
+            // Check for CSS background images
+            const allElements = Array.from(document.querySelectorAll('*'))
+            const bgImagePromises = allElements.map(el => {
+                const bgImage = window.getComputedStyle(el).backgroundImage
+                if (bgImage && bgImage !== 'none' && bgImage.startsWith('url')) {
+                    const imageUrl = bgImage.slice(5, -2) // Extract URL from the 'url("")'
+                    const image = new Image()
+                    image.src = imageUrl
+                    return isImageLoaded(image) ? Promise.resolve() : new Promise<void>(resolve => {
+                        image.onload = () => { if (!timedOut) { resolve() } }
+                        image.onerror = () => { if (!timedOut) { resolve() } }
+                    })
+                }
+                return Promise.resolve()
+            })
+
+            try {
+                await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise])
+                done()
+            } catch (error) {
+                done(error)
             }
-            return Promise.resolve()
-        })
-
-        try {
-            await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise])
-            done()
-        } catch (error) {
-            done(error)
-        }
-    }, timeout)
+        }, timeout)
+    } else {
+        throw new Error('The method `waitForStorybookComponentToBeLoaded` can only be used in Storybook mode.')
+    }
 }
 
 /**
