@@ -17,6 +17,7 @@ import type {
     StorybookData,
     EmulatedDeviceType,
     CapabilityMap,
+    WaitForStorybookComponentToBeLoaded,
 } from './Types.js'
 import { deviceDescriptors } from './deviceDescriptors.js'
 
@@ -169,9 +170,11 @@ export function itFunction({ clip, clipSelector, folders: { baselineFolder }, fr
 
     const it = `
     ${itText}(\`should take a${screenshotType} screenshot of ${id}\`, async () => {
-        await browser.url(\`${storybookUrl}iframe.html?id=${id}\`);
-        await $('${clipSelector}').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '${clipSelector}',
+            id: '${id}',
+            storybookUrl: '${storybookUrl}',
+        });
         ${clip
         ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(methodOptions)})`
         : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(methodOptions)})`}
@@ -207,53 +210,55 @@ export function createTestContent(
     return stories.reduce((acc, storyData) => acc + itFunc({ ...itFunctionOptions, storyData }), '')
 }
 
-const waitForAllImagesLoaded = `
-async function waitForAllImagesLoaded() {
-    await browser.executeAsync(async (done) => {
-        const timeout = 11000; // 11 seconds
-        let timedOut = false;
+export async function waitForStorybookComponentToBeLoaded(
+    options: WaitForStorybookComponentToBeLoaded
+) {
+    const { clipSelector, id, storybookUrl, timeout = 11000 } = options
+    await browser.url(`${storybookUrl}iframe.html?id=${id}`)
+    await $(clipSelector).waitForDisplayed()
+    await browser.executeAsync(async (timeout, done) => {
+        let timedOut = false
 
         const timeoutPromise = new Promise((resolve, reject) => {
             setTimeout(() => {
-                timedOut = true;
-                reject('Timeout: Not all images loaded within 11 seconds');
-            }, timeout);
-        });
+                timedOut = true
+                reject('Timeout: Not all images loaded within 11 seconds')
+            }, timeout)
+        })
 
-        const isImageLoaded = (img) => img.complete && img.naturalWidth > 0;
+        const isImageLoaded = (img: HTMLImageElement) => img.complete && img.naturalWidth > 0
 
         // Check for <img> elements
-        const imgElements = Array.from(document.querySelectorAll('img'));
-        const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise(resolve => {
-            img.onload = () => !timedOut && resolve();
-            img.onerror = () => !timedOut && resolve();
-        }));
+        const imgElements = Array.from(document.querySelectorAll('img'))
+        const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise<void>(resolve => {
+            img.onload = () => { if (!timedOut) {resolve()} }
+            img.onerror = () => { if (!timedOut) {resolve()} }
+        }))
 
         // Check for CSS background images
-        const allElements = Array.from(document.querySelectorAll('*'));
+        const allElements = Array.from(document.querySelectorAll('*'))
         const bgImagePromises = allElements.map(el => {
-            const bgImage = window.getComputedStyle(el).backgroundImage;
+            const bgImage = window.getComputedStyle(el).backgroundImage
             if (bgImage && bgImage !== 'none' && bgImage.startsWith('url')) {
-                const imageUrl = bgImage.slice(5, -2); // Extract URL from the 'url("")'
-                const image = new Image();
-                image.src = imageUrl;
-                return isImageLoaded(image) ? Promise.resolve() : new Promise(resolve => {
-                    image.onload = () => !timedOut && resolve();
-                    image.onerror = () => !timedOut && resolve();
-                });
+                const imageUrl = bgImage.slice(5, -2) // Extract URL from the 'url("")'
+                const image = new Image()
+                image.src = imageUrl
+                return isImageLoaded(image) ? Promise.resolve() : new Promise<void>(resolve => {
+                    image.onload = () => { if (!timedOut) {resolve()} }
+                    image.onerror = () => { if (!timedOut) {resolve()} }
+                })
             }
-            return Promise.resolve();
-        });
+            return Promise.resolve()
+        })
 
         try {
-            await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise]);
-            done();
+            await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise])
+            done()
         } catch (error) {
-            done(error);
+            done(error)
         }
-    });
+    }, timeout)
 }
-`
 
 /**
  * Create the file data
@@ -263,7 +268,6 @@ export function createFileData(describeTitle: string, testContent: string): stri
 describe(\`${describeTitle}\`, () => {
     ${testContent}
 });
-${waitForAllImagesLoaded}
 `
 }
 
@@ -477,7 +481,7 @@ export async function scanStorybook(
     const tempDir = resolve(tmpdir(), `wdio-storybook-tests-${Date.now()}`)
     mkdirSync(tempDir)
     log.info(`Using temporary folder for storybook specs: ${tempDir}`)
-    config.specs = [join(tempDir, '*.js')]
+    config.specs = [join(tempDir, '*.{js,mjs,ts}')]
 
     // Get the stories
     const storiesJson = await getStoriesJsonFunc(storybookUrl)
