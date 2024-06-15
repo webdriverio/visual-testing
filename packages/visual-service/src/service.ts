@@ -23,6 +23,8 @@ import {
     toMatchTabbablePageSnapshot
 } from './matcher.js'
 import { waitForStorybookComponentToBeLoaded } from './storybook/utils.js'
+import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
+import type { PageCommand, PageCommandOptions } from './types.js'
 
 const log = logger('@wdio/visual-service')
 const elementCommands = { saveElement, checkElement }
@@ -201,20 +203,24 @@ export default class WdioImageComparisonService extends BaseClass {
         for (const [commandName, command] of Object.entries(pageCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
             if (commandName === 'waitForStorybookComponentToBeLoaded') {
-                currentBrowser.addCommand(commandName, waitForStorybookComponentToBeLoaded)
+                currentBrowser.addCommand(
+                    commandName,
+                    (options: WaitForStorybookComponentToBeLoaded) => waitForStorybookComponentToBeLoaded(options)
+                )
             } else {
                 currentBrowser.addCommand(
                     commandName,
                     function (this: typeof currentBrowser, tag, pageOptions = {}) {
-                        return command(
-                            {
-                                executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                    return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
-                                },
-                                getElementRect: this.getElementRect.bind(currentBrowser),
-                                screenShot:
-                                    this.takeScreenshot.bind(currentBrowser),
+                        const options: PageCommandOptions = {
+                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
                             },
+                            getElementRect: this.getElementRect.bind(currentBrowser),
+                            screenShot: this.takeScreenshot.bind(currentBrowser),
+                        }
+
+                        return (command as PageCommand)(
+                            options,
                             instanceData,
                             getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
                             tag,
