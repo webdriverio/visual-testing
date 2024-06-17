@@ -282,6 +282,15 @@ describe(\`${describeTitle}\`, () => {
 }
 
 /**
+ * Filter the stories, by default only keep the stories, not the docs
+ */
+function filterStories(storiesJson: Stories): StorybookData[] {
+    return Object.values(storiesJson)
+        // storyData?.type === 'story' is V7+, storyData.parameters?.docsOnly is V6
+        .filter((storyData: StorybookData) => storyData.type === 'story' || (storyData.parameters && !storyData.parameters.docsOnly))
+}
+
+/**
  * Create the test files
  */
 export function createTestFiles(
@@ -291,26 +300,21 @@ export function createTestFiles(
     createFileD = createFileData,
     writeTestF = writeTestFile
 ) {
-    const storiesArray = Object.values(storiesJson)
-        // By default only keep the stories, not the docs
-        // storyData?.type === 'story' is V7+, storyData.parameters?.docsOnly is V6
-        .filter((storyData: StorybookData) => storyData.type === 'story' || (storyData.parameters && !storyData.parameters.docsOnly))
-
     const fileNamePrefix = 'visual-storybook'
-    const createTestContentData = { clip, clipSelector, folders, framework, skipStories, stories: storiesArray, storybookUrl }
+    const createTestContentData = { clip, clipSelector, folders, framework, skipStories, stories: storiesJson, storybookUrl }
 
     if (numShards === 1) {
         const testContent = createTestCont(createTestContentData)
         const fileData = createFileD('All stories', testContent)
         writeTestF(directoryPath, `${fileNamePrefix}-1-1`, fileData)
     } else {
-        const totalStories = storiesArray.length
+        const totalStories = storiesJson.length
         const storiesPerShard = Math.ceil(totalStories / numShards)
 
         for (let shard = 0; shard < numShards; shard++) {
             const startIndex = shard * storiesPerShard
             const endIndex = Math.min(startIndex + storiesPerShard, totalStories)
-            const shardStories = storiesArray.slice(startIndex, endIndex)
+            const shardStories = storiesJson.slice(startIndex, endIndex)
             const testContent = createTestCont({ ...createTestContentData, stories: shardStories })
             const fileId = `${fileNamePrefix}-${shard + 1}-${numShards}`
             const describeTitle = `Shard ${shard + 1} of ${numShards}`
@@ -491,13 +495,22 @@ export async function scanStorybook(
     const tempDir = resolve(tmpdir(), `wdio-storybook-tests-${Date.now()}`)
     mkdirSync(tempDir)
     log.info(`Using temporary folder for storybook specs: ${tempDir}`)
-    config.specs = [join(tempDir, '*.{js,mjs,ts}')]
 
     // Get the stories
     const storiesJson = await getStoriesJsonFunc(storybookUrl)
+    const filteredStories = filterStories(storiesJson)
+
+    // Check if the specs are provided via the CLI so they can be added to the specs
+    // when users provide stories with interactive components
+    const isCliSpecs = getArgvValue('--spec', value => value)
+    const cliSpecs: string[] = []
+    if (isCliSpecs) {
+        cliSpecs.push( ...(config.specs as string[]))
+    }
+    config.specs = [join(tempDir, '*.{js,mjs,ts}'), ...cliSpecs]
 
     return {
-        storiesJson,
+        storiesJson: filteredStories,
         storybookUrl,
         tempDir,
     }

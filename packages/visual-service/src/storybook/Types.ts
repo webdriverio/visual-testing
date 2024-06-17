@@ -38,7 +38,7 @@ export type CreateTestFileOptions = {
     framework: string,
     numShards:number,
     skipStories: string[] | RegExp,
-    storiesJson: Stories,
+    storiesJson: StorybookData[],
     storybookUrl: string;
 }
 
@@ -71,7 +71,7 @@ export type CreateItContent = {
 
 export type CategoryComponent = { category: string, component: string }
 
-export type ScanStorybookReturnData = { storiesJson: Stories; storybookUrl: string; tempDir: string}
+export type ScanStorybookReturnData = { storiesJson: StorybookData[]; storybookUrl: string; tempDir: string}
 
 export type EmulatedDeviceType = {
     name: string,
