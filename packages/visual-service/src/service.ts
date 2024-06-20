@@ -22,6 +22,9 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
+import { waitForStorybookComponentToBeLoaded } from './storybook/utils.js'
+import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
+import type { PageCommand, PageCommandOptions } from './types.js'
 
 const log = logger('@wdio/visual-service')
 const elementCommands = { saveElement, checkElement }
@@ -32,6 +35,7 @@ const pageCommands = {
     checkScreen,
     checkFullPageScreen,
     checkTabbablePage,
+    waitForStorybookComponentToBeLoaded,
 }
 
 export default class WdioImageComparisonService extends BaseClass {
@@ -137,21 +141,25 @@ export default class WdioImageComparisonService extends BaseClass {
             ...Object.keys(elementCommands),
             ...Object.keys(pageCommands),
         ]) {
-            browser.addCommand(command, function (...args: unknown[]) {
-                const returnData: Record<string, any> = {}
-                for (const browserName of browserNames) {
-                    const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-                    const browserInstance = multiremoteBrowser.getInstance(browserName)
-                    /**
-                     * casting command to `checkScreen` to simplify type handling here
-                     */
-                    returnData[browserName] = browserInstance[command as 'checkScreen'].call(
-                        browserInstance,
-                        ...args
-                    )
-                }
-                return returnData
-            })
+            if (command === 'waitForStorybookComponentToBeLoaded') {
+                browser.addCommand(command, waitForStorybookComponentToBeLoaded)
+            } else {
+                browser.addCommand(command, function (...args: unknown[]) {
+                    const returnData: Record<string, any> = {}
+                    for (const browserName of browserNames) {
+                        const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
+                        const browserInstance = multiremoteBrowser.getInstance(browserName)
+                        /**
+                         * casting command to `checkScreen` to simplify type handling here
+                         */
+                        returnData[browserName] = browserInstance[command as 'checkScreen'].call(
+                            browserInstance,
+                            ...args
+                        )
+                    }
+                    return returnData
+                })
+            }
         }
     }
 
@@ -194,29 +202,37 @@ export default class WdioImageComparisonService extends BaseClass {
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
-            currentBrowser.addCommand(
-                commandName,
-                function (this: typeof currentBrowser, tag, pageOptions = {}) {
-                    return command(
-                        {
+            if (commandName === 'waitForStorybookComponentToBeLoaded') {
+                currentBrowser.addCommand(
+                    commandName,
+                    (options: WaitForStorybookComponentToBeLoaded) => waitForStorybookComponentToBeLoaded(options)
+                )
+            } else {
+                currentBrowser.addCommand(
+                    commandName,
+                    function (this: typeof currentBrowser, tag, pageOptions = {}) {
+                        const options: PageCommandOptions = {
                             executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
                                 return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
                             },
                             getElementRect: this.getElementRect.bind(currentBrowser),
-                            screenShot:
-                                this.takeScreenshot.bind(currentBrowser),
-                        },
-                        instanceData,
-                        getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
-                        tag,
-                        {
-                            wic: self.defaultOptions,
-                            method: pageOptions,
-                        },
-                        self._isNativeContext as boolean,
-                    )
-                }
-            )
+                            screenShot: this.takeScreenshot.bind(currentBrowser),
+                        }
+
+                        return (command as PageCommand)(
+                            options,
+                            instanceData,
+                            getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                            tag,
+                            {
+                                wic: self.defaultOptions,
+                                method: pageOptions,
+                            },
+                            self._isNativeContext as boolean,
+                        )
+                    }
+                )
+            }
         }
     }
 }

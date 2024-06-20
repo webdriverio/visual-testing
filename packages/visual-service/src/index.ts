@@ -11,6 +11,7 @@ import type {
     WdioCheckElementMethodOptions,
     WdioCheckScreenMethodOptions
 } from './types.js'
+import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 
 declare global {
     namespace WebdriverIO {
@@ -80,6 +81,13 @@ declare global {
                 tag: string,
                 checkTabbableOptions?: WdioCheckFullPageMethodOptions
             ): Promise<Result>;
+
+            /**
+             * Waits for a component to be loaded
+             */
+            waitForStorybookComponentToBeLoaded(
+                options: WaitForStorybookComponentToBeLoaded
+            ): Promise<void>;
         }
         interface Element {}
         interface Capabilities {

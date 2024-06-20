@@ -38,6 +38,8 @@ export default class VisualLauncher extends BaseClass  {
             const { storiesJson, storybookUrl, tempDir } = await scanStorybook(config, this.#options)
             // Set an environment variable so it can be used in the onComplete hook
             process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER = tempDir
+            // Add the storybook URL to the environment variables
+            process.env.VISUAL_STORYBOOK_URL = storybookUrl
 
             // Check the capabilities
             // Multiremote capabilities are not supported
@@ -68,6 +70,8 @@ export default class VisualLauncher extends BaseClass  {
             const clipSelectorArgv = getArgvValue('--clipSelector', value => value)
             // V6 has '#root' as the root element, V7 has '#storybook-root'
             const clipSelector = (clipSelectorOption ?? clipSelectorArgv) ?? (version === 6 ? V6_CLIP_SELECTOR : CLIP_SELECTOR)
+            // Add the clip selector to the environment variables
+            process.env.VISUAL_STORYBOOK_CLIP_SELECTOR = clipSelector
             // --skipStories
             const skipStoriesOption = this.#options?.storybook?.skipStories
             const skipStoriesArgv = getArgvValue('--skipStories', value => value)
@@ -105,6 +109,8 @@ export default class VisualLauncher extends BaseClass  {
 
             // Remove the environment variables
             delete process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER
+            delete process.env.VISUAL_STORYBOOK_URL
+            delete process.env.VISUAL_STORYBOOK_CLIP_SELECTOR
         }
     }
 }

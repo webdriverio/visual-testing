@@ -17,6 +17,7 @@ import type {
     StorybookData,
     EmulatedDeviceType,
     CapabilityMap,
+    WaitForStorybookComponentToBeLoaded,
 } from './Types.js'
 import { deviceDescriptors } from './deviceDescriptors.js'
 
@@ -169,9 +170,11 @@ export function itFunction({ clip, clipSelector, folders: { baselineFolder }, fr
 
     const it = `
     ${itText}(\`should take a${screenshotType} screenshot of ${id}\`, async () => {
-        await browser.url(\`${storybookUrl}iframe.html?id=${id}\`);
-        await $('${clipSelector}').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '${clipSelector}',
+            id: '${id}',
+            storybookUrl: '${storybookUrl}',
+        });
         ${clip
         ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(methodOptions)})`
         : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(methodOptions)})`}
@@ -207,53 +210,70 @@ export function createTestContent(
     return stories.reduce((acc, storyData) => acc + itFunc({ ...itFunctionOptions, storyData }), '')
 }
 
-const waitForAllImagesLoaded = `
-async function waitForAllImagesLoaded() {
-    await browser.executeAsync(async (done) => {
-        const timeout = 11000; // 11 seconds
-        let timedOut = false;
+/**
+ * The custom command
+ */
+export async function waitForStorybookComponentToBeLoaded(
+    options: WaitForStorybookComponentToBeLoaded,
+    // For testing purposes only
+    isStorybookModeFunc = isStorybookMode
+) {
+    const isStorybook = isStorybookModeFunc()
+    if (isStorybook) {
+        const {
+            clipSelector = process.env.VISUAL_STORYBOOK_CLIP_SELECTOR,
+            id,
+            url = process.env.VISUAL_STORYBOOK_URL,
+            timeout = 11000,
+        } = options
+        await browser.url(`${url}iframe.html?id=${id}`)
+        await $(clipSelector as string).waitForDisplayed()
+        await browser.executeAsync(async (timeout, done) => {
+            let timedOut = false
 
-        const timeoutPromise = new Promise((resolve, reject) => {
-            setTimeout(() => {
-                timedOut = true;
-                reject('Timeout: Not all images loaded within 11 seconds');
-            }, timeout);
-        });
+            const timeoutPromise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    timedOut = true
+                    reject('Timeout: Not all images loaded within 11 seconds')
+                }, timeout)
+            })
 
-        const isImageLoaded = (img) => img.complete && img.naturalWidth > 0;
+            const isImageLoaded = (img: HTMLImageElement) => img.complete && img.naturalWidth > 0
 
-        // Check for <img> elements
-        const imgElements = Array.from(document.querySelectorAll('img'));
-        const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise(resolve => {
-            img.onload = () => !timedOut && resolve();
-            img.onerror = () => !timedOut && resolve();
-        }));
+            // Check for <img> elements
+            const imgElements = Array.from(document.querySelectorAll('img'))
+            const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise<void>(resolve => {
+                img.onload = () => { if (!timedOut) { resolve() } }
+                img.onerror = () => { if (!timedOut) { resolve() } }
+            }))
 
-        // Check for CSS background images
-        const allElements = Array.from(document.querySelectorAll('*'));
-        const bgImagePromises = allElements.map(el => {
-            const bgImage = window.getComputedStyle(el).backgroundImage;
-            if (bgImage && bgImage !== 'none' && bgImage.startsWith('url')) {
-                const imageUrl = bgImage.slice(5, -2); // Extract URL from the 'url("")'
-                const image = new Image();
-                image.src = imageUrl;
-                return isImageLoaded(image) ? Promise.resolve() : new Promise(resolve => {
-                    image.onload = () => !timedOut && resolve();
-                    image.onerror = () => !timedOut && resolve();
-                });
+            // Check for CSS background images
+            const allElements = Array.from(document.querySelectorAll('*'))
+            const bgImagePromises = allElements.map(el => {
+                const bgImage = window.getComputedStyle(el).backgroundImage
+                if (bgImage && bgImage !== 'none' && bgImage.startsWith('url')) {
+                    const imageUrl = bgImage.slice(5, -2) // Extract URL from the 'url("")'
+                    const image = new Image()
+                    image.src = imageUrl
+                    return isImageLoaded(image) ? Promise.resolve() : new Promise<void>(resolve => {
+                        image.onload = () => { if (!timedOut) { resolve() } }
+                        image.onerror = () => { if (!timedOut) { resolve() } }
+                    })
+                }
+                return Promise.resolve()
+            })
+
+            try {
+                await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise])
+                done()
+            } catch (error) {
+                done(error)
             }
-            return Promise.resolve();
-        });
-
-        try {
-            await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise]);
-            done();
-        } catch (error) {
-            done(error);
-        }
-    });
+        }, timeout)
+    } else {
+        throw new Error('The method `waitForStorybookComponentToBeLoaded` can only be used in Storybook mode.')
+    }
 }
-`
 
 /**
  * Create the file data
@@ -263,8 +283,16 @@ export function createFileData(describeTitle: string, testContent: string): stri
 describe(\`${describeTitle}\`, () => {
     ${testContent}
 });
-${waitForAllImagesLoaded}
 `
+}
+
+/**
+ * Filter the stories, by default only keep the stories, not the docs
+ */
+function filterStories(storiesJson: Stories): StorybookData[] {
+    return Object.values(storiesJson)
+        // storyData?.type === 'story' is V7+, storyData.parameters?.docsOnly is V6
+        .filter((storyData: StorybookData) => storyData.type === 'story' || (storyData.parameters && !storyData.parameters.docsOnly))
 }
 
 /**
@@ -277,26 +305,21 @@ export function createTestFiles(
     createFileD = createFileData,
     writeTestF = writeTestFile
 ) {
-    const storiesArray = Object.values(storiesJson)
-        // By default only keep the stories, not the docs
-        // storyData?.type === 'story' is V7+, storyData.parameters?.docsOnly is V6
-        .filter((storyData: StorybookData) => storyData.type === 'story' || (storyData.parameters && !storyData.parameters.docsOnly))
-
     const fileNamePrefix = 'visual-storybook'
-    const createTestContentData = { clip, clipSelector, folders, framework, skipStories, stories: storiesArray, storybookUrl }
+    const createTestContentData = { clip, clipSelector, folders, framework, skipStories, stories: storiesJson, storybookUrl }
 
     if (numShards === 1) {
         const testContent = createTestCont(createTestContentData)
         const fileData = createFileD('All stories', testContent)
         writeTestF(directoryPath, `${fileNamePrefix}-1-1`, fileData)
     } else {
-        const totalStories = storiesArray.length
+        const totalStories = storiesJson.length
         const storiesPerShard = Math.ceil(totalStories / numShards)
 
         for (let shard = 0; shard < numShards; shard++) {
             const startIndex = shard * storiesPerShard
             const endIndex = Math.min(startIndex + storiesPerShard, totalStories)
-            const shardStories = storiesArray.slice(startIndex, endIndex)
+            const shardStories = storiesJson.slice(startIndex, endIndex)
             const testContent = createTestCont({ ...createTestContentData, stories: shardStories })
             const fileId = `${fileNamePrefix}-${shard + 1}-${numShards}`
             const describeTitle = `Shard ${shard + 1} of ${numShards}`
@@ -477,13 +500,22 @@ export async function scanStorybook(
     const tempDir = resolve(tmpdir(), `wdio-storybook-tests-${Date.now()}`)
     mkdirSync(tempDir)
     log.info(`Using temporary folder for storybook specs: ${tempDir}`)
-    config.specs = [join(tempDir, '*.js')]
 
     // Get the stories
     const storiesJson = await getStoriesJsonFunc(storybookUrl)
+    const filteredStories = filterStories(storiesJson)
+
+    // Check if the specs are provided via the CLI so they can be added to the specs
+    // when users provide stories with interactive components
+    const isCliSpecs = getArgvVal('--spec', value => value)
+    const cliSpecs: string[] = []
+    if (isCliSpecs) {
+        cliSpecs.push( ...(config.specs as string[]))
+    }
+    config.specs = [join(tempDir, '*.{js,mjs,ts}'), ...cliSpecs]
 
     return {
-        storiesJson,
+        storiesJson: filteredStories,
         storybookUrl,
         tempDir,
     }
