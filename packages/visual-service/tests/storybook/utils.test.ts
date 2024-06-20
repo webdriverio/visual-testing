@@ -483,7 +483,7 @@ describe('Storybook utils', () => {
             const options = {
                 clipSelector: '.storybook-component',
                 id: 'example-component',
-                storybookUrl: 'http://localhost:6006/',
+                url: 'http://localhost:6006/',
                 timeout: 5000,
             }
 
@@ -511,7 +511,7 @@ describe('Storybook utils', () => {
             framework: 'mocha',
             log: logMock,
             skipStories: [],
-            storybookUrl: 'http://storybook.com/',
+            url: 'http://storybook.com/',
         }
 
         const runTest = (numShards: number, expectedCalls: number) => {

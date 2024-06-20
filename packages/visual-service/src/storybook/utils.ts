@@ -223,10 +223,10 @@ export async function waitForStorybookComponentToBeLoaded(
         const {
             clipSelector = process.env.VISUAL_STORYBOOK_CLIP_SELECTOR,
             id,
-            storybookUrl = process.env.VISUAL_STORYBOOK_URL,
+            url = process.env.VISUAL_STORYBOOK_URL,
             timeout = 11000,
         } = options
-        await browser.url(`${storybookUrl}iframe.html?id=${id}`)
+        await browser.url(`${url}iframe.html?id=${id}`)
         await $(clipSelector as string).waitForDisplayed()
         await browser.executeAsync(async (timeout, done) => {
             let timedOut = false

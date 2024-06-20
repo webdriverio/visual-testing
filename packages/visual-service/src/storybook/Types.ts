@@ -86,6 +86,6 @@ export type EmulatedDeviceType = {
 export type WaitForStorybookComponentToBeLoaded = {
     clipSelector?: string,
     id: string;
-    storybookUrl?: string;
     timeout?: number,
+    url?: string;
 }
