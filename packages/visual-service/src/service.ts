@@ -142,7 +142,7 @@ export default class WdioImageComparisonService extends BaseClass {
             ...Object.keys(pageCommands),
         ]) {
             if (command === 'waitForStorybookComponentToBeLoaded') {
-                browser.addCommand('waitForStorybookComponentToBeLoaded', waitForStorybookComponentToBeLoaded)
+                browser.addCommand(command, waitForStorybookComponentToBeLoaded)
             } else {
                 browser.addCommand(command, function (...args: unknown[]) {
                     const returnData: Record<string, any> = {}
