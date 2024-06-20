@@ -210,10 +210,15 @@ export function createTestContent(
     return stories.reduce((acc, storyData) => acc + itFunc({ ...itFunctionOptions, storyData }), '')
 }
 
+/**
+ * The custom command
+ */
 export async function waitForStorybookComponentToBeLoaded(
-    options: WaitForStorybookComponentToBeLoaded
+    options: WaitForStorybookComponentToBeLoaded,
+    // For testing purposes only
+    isStorybookModeFunc = isStorybookMode
 ) {
-    const isStorybook = isStorybookMode()
+    const isStorybook = isStorybookModeFunc()
     if (isStorybook) {
         const {
             clipSelector = process.env.VISUAL_STORYBOOK_CLIP_SELECTOR,
@@ -502,7 +507,7 @@ export async function scanStorybook(
 
     // Check if the specs are provided via the CLI so they can be added to the specs
     // when users provide stories with interactive components
-    const isCliSpecs = getArgvValue('--spec', value => value)
+    const isCliSpecs = getArgvVal('--spec', value => value)
     const cliSpecs: string[] = []
     if (isCliSpecs) {
         cliSpecs.push( ...(config.specs as string[]))

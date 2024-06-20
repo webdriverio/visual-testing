@@ -74,53 +74,6 @@ exports[`Storybook utils > createFileData > formats test content correctly for s
 describe(\`My Test Suite\`, () => {
     it("does something", () => {});
 });
-
-async function waitForAllImagesLoaded() {
-    await browser.executeAsync(async (done) => {
-        const timeout = 11000; // 11 seconds
-        let timedOut = false;
-
-        const timeoutPromise = new Promise((resolve, reject) => {
-            setTimeout(() => {
-                timedOut = true;
-                reject('Timeout: Not all images loaded within 11 seconds');
-            }, timeout);
-        });
-
-        const isImageLoaded = (img) => img.complete && img.naturalWidth > 0;
-
-        // Check for <img> elements
-        const imgElements = Array.from(document.querySelectorAll('img'));
-        const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise(resolve => {
-            img.onload = () => !timedOut && resolve();
-            img.onerror = () => !timedOut && resolve();
-        }));
-
-        // Check for CSS background images
-        const allElements = Array.from(document.querySelectorAll('*'));
-        const bgImagePromises = allElements.map(el => {
-            const bgImage = window.getComputedStyle(el).backgroundImage;
-            if (bgImage && bgImage !== 'none' && bgImage.startsWith('url')) {
-                const imageUrl = bgImage.slice(5, -2); // Extract URL from the 'url("")'
-                const image = new Image();
-                image.src = imageUrl;
-                return isImageLoaded(image) ? Promise.resolve() : new Promise(resolve => {
-                    image.onload = () => !timedOut && resolve();
-                    image.onerror = () => !timedOut && resolve();
-                });
-            }
-            return Promise.resolve();
-        });
-
-        try {
-            await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise]);
-            done();
-        } catch (error) {
-            done(error);
-        }
-    });
-}
-
 "
 `;
 
@@ -129,53 +82,6 @@ exports[`Storybook utils > createFileData > handles empty describe title and tes
 describe(\`\`, () => {
     
 });
-
-async function waitForAllImagesLoaded() {
-    await browser.executeAsync(async (done) => {
-        const timeout = 11000; // 11 seconds
-        let timedOut = false;
-
-        const timeoutPromise = new Promise((resolve, reject) => {
-            setTimeout(() => {
-                timedOut = true;
-                reject('Timeout: Not all images loaded within 11 seconds');
-            }, timeout);
-        });
-
-        const isImageLoaded = (img) => img.complete && img.naturalWidth > 0;
-
-        // Check for <img> elements
-        const imgElements = Array.from(document.querySelectorAll('img'));
-        const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise(resolve => {
-            img.onload = () => !timedOut && resolve();
-            img.onerror = () => !timedOut && resolve();
-        }));
-
-        // Check for CSS background images
-        const allElements = Array.from(document.querySelectorAll('*'));
-        const bgImagePromises = allElements.map(el => {
-            const bgImage = window.getComputedStyle(el).backgroundImage;
-            if (bgImage && bgImage !== 'none' && bgImage.startsWith('url')) {
-                const imageUrl = bgImage.slice(5, -2); // Extract URL from the 'url("")'
-                const image = new Image();
-                image.src = imageUrl;
-                return isImageLoaded(image) ? Promise.resolve() : new Promise(resolve => {
-                    image.onload = () => !timedOut && resolve();
-                    image.onerror = () => !timedOut && resolve();
-                });
-            }
-            return Promise.resolve();
-        });
-
-        try {
-            await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise]);
-            done();
-        } catch (error) {
-            done(error);
-        }
-    });
-}
-
 "
 `;
 
@@ -184,53 +90,6 @@ exports[`Storybook utils > createFileData > handles special characters in descri
 describe(\`Special\`Characters\`, () => {
     it("handles \`special\` characters", () => {});
 });
-
-async function waitForAllImagesLoaded() {
-    await browser.executeAsync(async (done) => {
-        const timeout = 11000; // 11 seconds
-        let timedOut = false;
-
-        const timeoutPromise = new Promise((resolve, reject) => {
-            setTimeout(() => {
-                timedOut = true;
-                reject('Timeout: Not all images loaded within 11 seconds');
-            }, timeout);
-        });
-
-        const isImageLoaded = (img) => img.complete && img.naturalWidth > 0;
-
-        // Check for <img> elements
-        const imgElements = Array.from(document.querySelectorAll('img'));
-        const imgPromises = imgElements.map(img => isImageLoaded(img) ? Promise.resolve() : new Promise(resolve => {
-            img.onload = () => !timedOut && resolve();
-            img.onerror = () => !timedOut && resolve();
-        }));
-
-        // Check for CSS background images
-        const allElements = Array.from(document.querySelectorAll('*'));
-        const bgImagePromises = allElements.map(el => {
-            const bgImage = window.getComputedStyle(el).backgroundImage;
-            if (bgImage && bgImage !== 'none' && bgImage.startsWith('url')) {
-                const imageUrl = bgImage.slice(5, -2); // Extract URL from the 'url("")'
-                const image = new Image();
-                image.src = imageUrl;
-                return isImageLoaded(image) ? Promise.resolve() : new Promise(resolve => {
-                    image.onload = () => !timedOut && resolve();
-                    image.onerror = () => !timedOut && resolve();
-                });
-            }
-            return Promise.resolve();
-        });
-
-        try {
-            await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise]);
-            done();
-        } catch (error) {
-            done(error);
-        }
-    });
-}
-
 "
 `;
 
@@ -260,9 +119,11 @@ Test for example-button--large
 exports[`Storybook utils > itFunction > generates correct mocha test code with non skipped regex 1`] = `
 "
     it(\`should take a viewport screenshot of category-component--story1\`, async () => {
-        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#id').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+        });
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
     });
     "
@@ -271,9 +132,11 @@ exports[`Storybook utils > itFunction > generates correct mocha test code with n
 exports[`Storybook utils > itFunction > generates correct mocha test code with skipped regex 1`] = `
 "
     it.skip(\`should take a viewport screenshot of category-component--story1\`, async () => {
-        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#id').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+        });
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
     });
     "
@@ -282,9 +145,11 @@ exports[`Storybook utils > itFunction > generates correct mocha test code with s
 exports[`Storybook utils > itFunction > generates correct test code with Jasmine framework and no skip array 1`] = `
 "
     it(\`should take a viewport screenshot of category-component--story1\`, async () => {
-        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#id').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+        });
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
     });
     "
@@ -293,9 +158,11 @@ exports[`Storybook utils > itFunction > generates correct test code with Jasmine
 exports[`Storybook utils > itFunction > generates correct test code with Jasmine framework and skip array 1`] = `
 "
     xit(\`should take a viewport screenshot of category-component--story1\`, async () => {
-        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#id').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+        });
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
     });
     "
@@ -304,9 +171,11 @@ exports[`Storybook utils > itFunction > generates correct test code with Jasmine
 exports[`Storybook utils > itFunction > generates correct test code with for a clipped test 1`] = `
 "
     it(\`should take an element screenshot of category-component--story1\`, async () => {
-        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#id').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+        });
         await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"baselineFolder":"baseline/category/component/"})
     });
     "
@@ -315,9 +184,11 @@ exports[`Storybook utils > itFunction > generates correct test code with for a c
 exports[`Storybook utils > itFunction > generates correct test code with for a clipped test 2`] = `
 "
     it(\`should take an element screenshot of category-component--story1\`, async () => {
-        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#id').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+        });
         await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"baselineFolder":"baseline/category/component/"})
     });
     "
@@ -326,9 +197,11 @@ exports[`Storybook utils > itFunction > generates correct test code with for a c
 exports[`Storybook utils > itFunction > generates correct test code with mocha framework and no skipped array 1`] = `
 "
     it(\`should take a viewport screenshot of category-component--story1\`, async () => {
-        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#id').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+        });
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
     });
     "
@@ -337,9 +210,11 @@ exports[`Storybook utils > itFunction > generates correct test code with mocha f
 exports[`Storybook utils > itFunction > generates correct test code with mocha framework and skip array 1`] = `
 "
     it.skip(\`should take a viewport screenshot of category-component--story1\`, async () => {
-        await browser.url(\`http://storybook.com/iframe.html?id=category-component--story1\`);
-        await $('#id').waitForDisplayed();
-        await waitForAllImagesLoaded();
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+        });
         await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
     });
     "
@@ -362,3 +237,5 @@ exports[`Storybook utils > parseSkipStories > logs an error and returns an array
   ],
 }
 `;
+
+exports[`Storybook utils > waitForStorybookComponentToBeLoaded > should throw an error if storybook mode is not enabled 1`] = `"The method \`waitForStorybookComponentToBeLoaded\` can only be used in Storybook mode."`;

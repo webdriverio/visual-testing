@@ -24,6 +24,7 @@ import {
     parseSkipStories,
     sanitizeURL,
     scanStorybook,
+    waitForStorybookComponentToBeLoaded,
     writeTestFile,
 } from '../../src/storybook/utils.js'
 import type { Options } from '@wdio/types'
@@ -444,6 +445,58 @@ describe('Storybook utils', () => {
         })
     })
 
+    describe('waitForStorybookComponentToBeLoaded', () => {
+        // global.browser = {
+        //     url: vi.fn(),
+        //     executeAsync: vi.fn(),
+        // } as any as WebdriverIO.Browser
+        const mockBrowser = {
+            url: vi.fn(),
+            executeAsync: vi.fn(),
+        };
+        (global as any).browser = mockBrowser
+        const mock$ = vi.fn();
+        (global as any).$ = mock$
+
+        beforeEach(() => {
+            vi.clearAllMocks()
+        })
+
+        it('should throw an error if storybook mode is not enabled', async () => {
+            const mockStorybookModeFunction = vi.fn().mockReturnValue(false)
+
+            try {
+                await waitForStorybookComponentToBeLoaded({ id: 'example' }, mockStorybookModeFunction)
+                throw new Error('Test failed - should have thrown an error')
+            } catch (error: any) {
+                expect(error.message).toMatchSnapshot()
+            }
+        })
+
+        it('should call all WDIO methods', async () => {
+            const mockStorybookModeFunction = vi.fn().mockReturnValue(true)
+            mock$.mockReturnValue({
+                waitForDisplayed: vi.fn().mockResolvedValueOnce(true),
+                executeAsync: vi.fn().mockResolvedValueOnce(true)
+            })
+            mockBrowser.url.mockResolvedValueOnce(true)
+            const options = {
+                clipSelector: '.storybook-component',
+                id: 'example-component',
+                storybookUrl: 'http://localhost:6006/',
+                timeout: 5000,
+            }
+
+            await waitForStorybookComponentToBeLoaded(options, mockStorybookModeFunction)
+
+            expect(mockBrowser.url).toHaveBeenCalledWith('http://localhost:6006/iframe.html?id=example-component')
+            expect(mock$.mock.calls[0][0]).toBe('.storybook-component')
+            expect(mock$.mock.results[0].value.waitForDisplayed).toHaveBeenCalled()
+            expect(mockBrowser.executeAsync).toHaveBeenCalled()
+
+        })
+    })
+
     describe('createTestFiles', () => {
         const mockCreateTestContent = vi.fn()
         const mockCreateFileData = vi.fn()
@@ -465,12 +518,7 @@ describe('Storybook utils', () => {
             const testOptions = {
                 ...baseTestOptions,
                 numShards,
-                storiesJson: {
-                    story1: { parameters: { docsOnly: true } },
-                    story2: { type: 'story' },
-                    story3: {},
-                    story4: {},
-                },
+                storiesJson: [{ parameters: { docsOnly: true } }, { type: 'story' }, {}, {},],
             }
 
             // @ts-ignore
@@ -693,14 +741,21 @@ describe('Storybook utils', () => {
 
     describe('scanStorybook', () => {
         let originalEnv: NodeJS.ProcessEnv
-        const config = {} as Options.Testrunner
+        const config = { specs: [] } as unknown as Options.Testrunner
         let mockGetArgvVal: Mock
         let mockCheckStorybookIsRun: Mock
         let mockSanitizeURLFunc: Mock
         let mockGetStoriesJsonFunc: Mock
 
-        const setupMocks = (storybookUrl?: string) => {
-            mockGetArgvVal = vi.fn().mockReturnValue(undefined)
+        const setupMocks = (storybookUrl?: string, spec?:boolean) => {
+            // mockGetArgvVal = vi.fn().mockReturnValue(spec? 'cli.spec.js' : undefined)
+            mockGetArgvVal = vi.fn().mockImplementation((arg) => {
+                if (arg === '--spec' && spec && config.specs) {
+                    config.specs.push('/tmp/cli.spec.js')
+                    return true
+                }
+                return undefined
+            })
             mockCheckStorybookIsRun = vi.fn().mockResolvedValue({})
             mockSanitizeURLFunc = vi.fn().mockImplementation(url => url)
             mockGetStoriesJsonFunc = vi.fn().mockResolvedValue({ stories: ['story1', 'story2'] })
@@ -717,7 +772,7 @@ describe('Storybook utils', () => {
             expect(mockGetStoriesJsonFunc).toHaveBeenCalledWith(mockStorybookUrl)
             expect(mkdirSync).toHaveBeenCalled()
             expect(result).toEqual({
-                storiesJson: { stories: ['story1', 'story2'] },
+                storiesJson: [],
                 storybookUrl: mockStorybookUrl,
                 tempDir: expect.any(String),
             })
@@ -726,6 +781,7 @@ describe('Storybook utils', () => {
         beforeEach(() => {
             originalEnv = process.env
             process.env = { ...process.env }
+            config.specs = []
         })
 
         afterEach(() => {
@@ -763,6 +819,24 @@ describe('Storybook utils', () => {
             )
 
             assertResults(mockStorybookUrl, result)
+        })
+
+        it ('adds cli specs when provided', async () => {
+            setupMocks(undefined, true)
+            await scanStorybook(
+                config, {},
+                mockGetArgvVal, mockCheckStorybookIsRun, mockSanitizeURLFunc, mockGetStoriesJsonFunc,
+            )
+
+            if (!config.specs) {
+                throw new Error('Specs not added')
+            }
+
+            const tempDirRegex = /\/tmp\/wdio-storybook-tests-\d+\/\*\.\{js,mjs,ts\}/
+            const matchingTempDir = config.specs.find((spec) => tempDirRegex.test(spec as string))
+            expect(matchingTempDir).toMatch(tempDirRegex)
+            expect(config.specs[1]).toContain('cli.spec.js')
+
         })
     })
 

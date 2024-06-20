@@ -46,7 +46,7 @@ describe('@wdio/visual-service', () => {
         let service
         let browser
         let browserInstance
-        const commands = ['saveElement', 'checkElement', 'saveScreen', 'saveFullPageScreen', 'saveTabbablePage', 'checkScreen', 'checkFullPageScreen', 'checkTabbablePage']
+        const commands = ['saveElement', 'checkElement', 'saveScreen', 'saveFullPageScreen', 'saveTabbablePage', 'checkScreen', 'checkFullPageScreen', 'checkTabbablePage', 'waitForStorybookComponentToBeLoaded']
 
         beforeEach(() => {
             service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
