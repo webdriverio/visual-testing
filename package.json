@@ -41,7 +41,8 @@
   },
   "dependencies": {
     "@wdio/visual-service": "workspace:^",
-    "@wdio/ocr-service": "workspace:^"
+    "@wdio/ocr-service": "workspace:^",
+    "@wdio/storybook-runner": "workspace:^"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
