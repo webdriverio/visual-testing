@@ -1,4 +1,4 @@
-import type { WicElement } from 'webdriver-image-comparison'
+import type { Folders, WicElement } from 'webdriver-image-comparison'
 import WdioImageComparisonService from './service.js'
 import VisualLauncher from './storybook/launcher.js'
 import type {
@@ -167,3 +167,4 @@ declare global {
 
 export default WdioImageComparisonService
 export const launcher = VisualLauncher
+export type { Folders }
