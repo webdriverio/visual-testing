@@ -61,8 +61,8 @@ importers:
         specifier: ^8.39.0
         version: 8.39.0
       '@wdio/sauce-service':
-        specifier: ^8.38.2
-        version: 8.38.2(typescript@5.4.5)
+        specifier: ^8.39.0
+        version: 8.39.0(typescript@5.4.5)
       '@wdio/shared-store-service':
         specifier: ^8.39.0
         version: 8.39.0(typescript@5.4.5)
@@ -2131,16 +2131,16 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@wdio/sauce-service@8.38.2(typescript@5.4.5):
-    resolution: {integrity: sha512-0b/K2/0S7gt63PaLmG6QLLw5Lwv44FpCOf1wsgDK08PlVn9UmZzUGpCtF4ctd/YeNU8OQHmRWvrZY3f1Weo9eA==}
+  /@wdio/sauce-service@8.39.0(typescript@5.4.5):
+    resolution: {integrity: sha512-geJpHNTAX/75rBpa70I+ZQn1uujXyMw1GM+KyKDTfiPIjri9x3SJBPXOVWJn6F+XTUI9X5rRWmV4IogtvUFJ5w==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@wdio/logger': 8.38.0
-      '@wdio/types': 8.38.2
-      '@wdio/utils': 8.38.2
+      '@wdio/types': 8.39.0
+      '@wdio/utils': 8.39.0
       ip: 2.0.1
       saucelabs: 7.5.0
-      webdriverio: 8.38.2(typescript@5.4.5)
+      webdriverio: 8.39.0(typescript@5.4.5)
     transitivePeerDependencies:
       - bufferutil
       - devtools
