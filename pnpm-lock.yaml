@@ -55,8 +55,8 @@ importers:
         specifier: ^8.38.2
         version: 8.38.2(typescript@5.4.5)
       '@wdio/local-runner':
-        specifier: ^8.38.2
-        version: 8.38.2(typescript@5.4.5)
+        specifier: ^8.39.0
+        version: 8.39.0(typescript@5.4.5)
       '@wdio/mocha-framework':
         specifier: ^8.39.0
         version: 8.39.0
@@ -2029,15 +2029,30 @@ packages:
       - typescript
       - utf-8-validate
 
-  /@wdio/local-runner@8.38.2(typescript@5.4.5):
-    resolution: {integrity: sha512-syW+R5VUHJ3GBkQGFcNYe6MYwWRgklc9W7A83xQDTvKWFNHCetLvc8AtKZ54vs8MItBejjU+Oh94ZNbNX1pBcg==}
+  /@wdio/globals@8.39.0(typescript@5.4.5):
+    resolution: {integrity: sha512-qZo6JjRCIOtdvba6fdSqj6b91TnWXD6rmamyud93FTqbcspnhBvr8lmgOs5wnslTKeeTTigCjpsT310b4/AyHA==}
+    engines: {node: ^16.13 || >=18}
+    optionalDependencies:
+      expect-webdriverio: 4.12.2(typescript@5.4.5)
+      webdriverio: 8.39.0(typescript@5.4.5)
+    transitivePeerDependencies:
+      - bufferutil
+      - devtools
+      - encoding
+      - supports-color
+      - typescript
+      - utf-8-validate
+    dev: true
+
+  /@wdio/local-runner@8.39.0(typescript@5.4.5):
+    resolution: {integrity: sha512-TSGJVVWqshH7IO13OKw7G/364q3FczZDEh4h6bYe+GAs91KpZrEhZanyALgjh5F3crWtlffX+GA2HUwpi8X0sA==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.12.7
       '@wdio/logger': 8.38.0
       '@wdio/repl': 8.24.12
-      '@wdio/runner': 8.38.2(typescript@5.4.5)
-      '@wdio/types': 8.38.2
+      '@wdio/runner': 8.39.0(typescript@5.4.5)
+      '@wdio/types': 8.39.0
       async-exit-hook: 2.0.1
       split2: 4.2.0
       stream-buffers: 3.0.2
@@ -2094,21 +2109,21 @@ packages:
       object-inspect: 1.13.1
     dev: true
 
-  /@wdio/runner@8.38.2(typescript@5.4.5):
-    resolution: {integrity: sha512-5lPnKSX2BBLI2AbYW+hoGPiEUAJXj8F8I6NC2LaBVzf1CLN+w2HWZ7lUiqS14XT0b5/hlSUX6+JYwUXlDbpuuw==}
+  /@wdio/runner@8.39.0(typescript@5.4.5):
+    resolution: {integrity: sha512-M1ixrrCtuwxHVzwsOKGMWBZCteafV0ztoS9+evMWGQtj0ZEsmhjAhWR3n2nZftt24vWOs+eNLGe2p+IO9Sm9bA==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.12.7
-      '@wdio/config': 8.38.2
-      '@wdio/globals': 8.38.2(typescript@5.4.5)
+      '@wdio/config': 8.39.0
+      '@wdio/globals': 8.39.0(typescript@5.4.5)
       '@wdio/logger': 8.38.0
-      '@wdio/types': 8.38.2
-      '@wdio/utils': 8.38.2
+      '@wdio/types': 8.39.0
+      '@wdio/utils': 8.39.0
       deepmerge-ts: 5.1.0
       expect-webdriverio: 4.12.2(typescript@5.4.5)
       gaze: 1.1.3
-      webdriver: 8.38.2
-      webdriverio: 8.38.2(typescript@5.4.5)
+      webdriver: 8.39.0
+      webdriverio: 8.39.0(typescript@5.4.5)
     transitivePeerDependencies:
       - bufferutil
       - devtools
