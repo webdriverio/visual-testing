@@ -61,8 +61,8 @@ importers:
         specifier: ^8.39.0
         version: 8.39.0
       '@wdio/sauce-service':
-        specifier: ^8.38.2
-        version: 8.38.2(typescript@5.4.5)
+        specifier: ^8.39.0
+        version: 8.39.0(typescript@5.4.5)
       '@wdio/shared-store-service':
         specifier: ^8.39.0
         version: 8.39.0(typescript@5.4.5)
@@ -2013,7 +2013,6 @@ packages:
       import-meta-resolve: 4.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /@wdio/globals@8.38.2(typescript@5.4.5):
     resolution: {integrity: sha512-iIrUF1EODfHLh3V/CSNCqbNNxUTe3ND+c86zDjzJcPFjawLX1plvAApsU/eDmtsFShcOS2KHbfSjiydFoqQG1Q==}
@@ -2042,7 +2041,6 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
-    dev: true
 
   /@wdio/local-runner@8.39.0(typescript@5.4.5):
     resolution: {integrity: sha512-TSGJVVWqshH7IO13OKw7G/364q3FczZDEh4h6bYe+GAs91KpZrEhZanyALgjh5F3crWtlffX+GA2HUwpi8X0sA==}
@@ -2133,16 +2131,16 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@wdio/sauce-service@8.38.2(typescript@5.4.5):
-    resolution: {integrity: sha512-0b/K2/0S7gt63PaLmG6QLLw5Lwv44FpCOf1wsgDK08PlVn9UmZzUGpCtF4ctd/YeNU8OQHmRWvrZY3f1Weo9eA==}
+  /@wdio/sauce-service@8.39.0(typescript@5.4.5):
+    resolution: {integrity: sha512-geJpHNTAX/75rBpa70I+ZQn1uujXyMw1GM+KyKDTfiPIjri9x3SJBPXOVWJn6F+XTUI9X5rRWmV4IogtvUFJ5w==}
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@wdio/logger': 8.38.0
-      '@wdio/types': 8.38.2
-      '@wdio/utils': 8.38.2
+      '@wdio/types': 8.39.0
+      '@wdio/utils': 8.39.0
       ip: 2.0.1
       saucelabs: 7.5.0
-      webdriverio: 8.38.2(typescript@5.4.5)
+      webdriverio: 8.39.0(typescript@5.4.5)
     transitivePeerDependencies:
       - bufferutil
       - devtools
@@ -2193,7 +2191,6 @@ packages:
     engines: {node: ^16.13 || >=18}
     dependencies:
       '@types/node': 20.12.7
-    dev: true
 
   /@wdio/utils@8.38.2:
     resolution: {integrity: sha512-y5AnBwsGcu/XuCBGCgKmlvKdwEIFyzLA+Cr+denySxY3jbWDONtPUcGaVdFALwsIa5jcIjcATqGmZcCPGnkd7g==}
@@ -2234,7 +2231,6 @@ packages:
       wait-port: 1.1.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -3951,9 +3947,9 @@ packages:
       jest-matcher-utils: 29.7.0
       lodash.isequal: 4.5.0
     optionalDependencies:
-      '@wdio/globals': 8.38.2(typescript@5.4.5)
+      '@wdio/globals': 8.39.0(typescript@5.4.5)
       '@wdio/logger': 8.38.0
-      webdriverio: 8.38.2(typescript@5.4.5)
+      webdriverio: 8.39.0(typescript@5.4.5)
     transitivePeerDependencies:
       - bufferutil
       - devtools
@@ -8336,7 +8332,6 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
-    dev: true
 
   /webdriverio@8.38.2(typescript@5.4.5):
     resolution: {integrity: sha512-r09y5UfivyYh5JOzT2SpJJ1zDmQl/R4OTH12opUqkjvp21BibCQm/uu1mrxGy4lzSHljrvqSVrrcGI+6UA1O8w==}
@@ -8419,7 +8414,6 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
-    dev: true
 
   /webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
