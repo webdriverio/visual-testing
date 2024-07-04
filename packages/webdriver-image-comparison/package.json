@@ -29,13 +29,13 @@
   "dependencies": {
     "fs-extra": "^11.2.0",
     "jimp": "^0.22.12",
-    "@wdio/logger": "^8.38.0"
+    "@wdio/logger": "^9.0.0-alpha.351"
   },
   "devDependencies": {
     "@types/copyfiles": "~2.4.4",
     "@types/fs-extra": "^11.0.4",
     "@types/jimp": "^0.2.28",
     "copyfiles": "^2.4.1",
-    "webdriverio": "^8.39.0"
+    "webdriverio": "^9.0.0-alpha.351"
   }
 }

@@ -28,11 +28,11 @@
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "@wdio/globals": "^8.39.0",
-    "@wdio/logger": "^8.38.0",
-    "@wdio/types": "^8.39.0",
+    "@wdio/globals": "^9.0.0-alpha.351",
+    "@wdio/logger": "^9.0.0-alpha.351",
+    "@wdio/types": "^9.0.0-alpha.351",
     "fuse.js": "^7.0.0",
-    "inquirer": "^9.2.23",
+    "inquirer": "^9.3.4",
     "jimp": "^0.22.12",
     "node-tesseract-ocr": "^2.2.1",
     "tesseract.js": "^5.1.0",
