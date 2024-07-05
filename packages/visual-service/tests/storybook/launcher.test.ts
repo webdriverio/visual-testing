@@ -28,8 +28,8 @@ vi.mock('../../src/storybook/utils.js', ()=>({
 describe('Visual Launcher for Storybook', () => {
     describe('onPrepare', () => {
         let options: ClassOptions,
-            caps: Capabilities.DesiredCapabilities[],
-            config: Options.Testrunner,
+            caps: Capabilities.RequestedStandaloneCapabilities[],
+            config: WebdriverIO.Config ,
             Launcher: Services.ServiceInstance
 
         beforeEach(() => {
@@ -38,7 +38,7 @@ describe('Visual Launcher for Storybook', () => {
             caps = [{}]
             config = {
                 framework: 'mocha'
-            } as Options.Testrunner
+            } as WebdriverIO.Config
             Launcher = new VisualLauncher(options)
 
             vi.clearAllMocks()

@@ -1,5 +1,4 @@
 import logger from '@wdio/logger'
-import type { Options } from '@wdio/types'
 import fetch from 'node-fetch'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -482,7 +481,7 @@ export function createStorybookCapabilities(
  * Scan the storybook instance
  */
 export async function scanStorybook(
-    config: Options.Testrunner,
+    config: WebdriverIO.Config ,
     options: ClassOptions,
     // For testing purposes only
     getArgvVal = getArgvValue,

@@ -239,7 +239,7 @@ async function getRegionsFromElements(
  * Translate ignores to regions
  */
 export async function determineIgnoreRegions(
-    ignores: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>)[],
+    ignores: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[],
     getElementRect: GetElementRect,
 ): Promise<RectanglesOutput[]>{
     const awaitedIgnores = await Promise.all(ignores)

@@ -1,7 +1,6 @@
-import type { Options } from '@wdio/types'
 import { config as localDesktopConfig } from './wdio.local.desktop.conf.ts'
 
-export const config: Options.Testrunner = {
+export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     ...localDesktopConfig,
     // =====
     // Specs

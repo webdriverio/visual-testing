@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "moduleResolution": "node",
-    "module": "commonjs",
+    "module": "ESNext",
     "target": "es2022",
     "lib": ["es2022", "dom"],
     "types": [
@@ -9,7 +9,7 @@
       "@wdio/mocha-framework",
       "@wdio/sauce-service",
       "@wdio/shared-store-service",
-      "@wdio/visual-testing-service",
+      "@wdio/visual-service",
       "@wdio/ocr-service"
     ],
     "skipLibCheck": true,

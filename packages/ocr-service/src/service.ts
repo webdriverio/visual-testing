@@ -49,11 +49,11 @@ export default class WdioOcrService {
             log.info('Adding commands to global browser')
             await this.#addCommandsToBrowser(this._browser)
         } else {
-            await this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
+            await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiremoteCapabilities)
         }
     }
 
-    async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
+    async #extendMultiremoteBrowser (capabilities: Capabilities.RequestedMultiremoteCapabilities) {
         const browser = this._browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
         const self = this

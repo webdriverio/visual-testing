@@ -1,4 +1,3 @@
-import type { Options } from '@wdio/types'
 import { config as sharedSauceConfig } from './wdio.saucelabs.shared.conf.ts'
 import { sauceIosSimWeb } from './sauce.ios.sims.web.ts'
 import { sauceAndroidEmusWeb } from './sauce.android.emus.web.js'
@@ -8,7 +7,7 @@ const buildIdentifier = process.env.CI
     ? `Web-${process.env.GITHUB_WORKFLOW} - ${process.env.GITHUB_JOB} - ${new Date().getTime()}`
     : `Local Web-build-${new Date().getTime()}`
 
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.Config = {
     ...sharedSauceConfig,
     // ============
     // Capabilities

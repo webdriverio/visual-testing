@@ -1,4 +1,3 @@
-import type { Options } from '@wdio/types'
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 
@@ -7,7 +6,7 @@ const chromeArgs = [
     process.argv.includes('--disableHeadless') ? '' : '--headless'
 ].filter(arg => arg !== '')
 
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.Config = {
     ...sharedConfig,
     // ============
     // Capabilities
