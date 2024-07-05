@@ -59,7 +59,7 @@ jobs:
           cache: pnpm
 
       - name: 🧩 Install Dependencies
-        run: pnpm test.local.init
+        run: pnpm pnpm.install.workaround
 
       - name: 🏗️ Build
         working-directory: ./
@@ -101,7 +101,7 @@ jobs:
           cache: pnpm
 
       - name: 🧩 Install Dependencies
-        run: pnpm test.local.init
+        run: pnpm pnpm.install.workaround
 
       - name: 🏗️ Build
         working-directory: ./
@@ -165,7 +165,7 @@ jobs:
           cache: pnpm
 
       - name: 🧩 Install Dependencies
-        run: pnpm test.local.init
+        run: pnpm pnpm.install.workaround
 
       - name: 🏗️ Build
         working-directory: ./
@@ -229,7 +229,7 @@ jobs:
           cache: pnpm
 
       - name: 🧩 Install Dependencies
-        run: pnpm test.local.init
+        run: pnpm pnpm.install.workaround
 
       - name: 🏗️ Build
         working-directory: ./
@@ -293,7 +293,7 @@ jobs:
           cache: pnpm
 
       - name: 🧩 Install Dependencies
-        run: pnpm test.local.init
+        run: pnpm pnpm.install.workaround
 
       - name: 🏗️ Build
         working-directory: ./
@@ -357,7 +357,7 @@ jobs:
           cache: pnpm
 
       - name: 🧩 Install Dependencies
-        run: pnpm test.local.init
+        run: pnpm pnpm.install.workaround
 
       - name: 🏗️ Build
         working-directory: ./
@@ -421,7 +421,7 @@ jobs:
           cache: pnpm
 
       - name: 🧩 Install Dependencies
-        run: pnpm test.local.init
+        run: pnpm pnpm.install.workaround
 
       - name: 🏗️ Build
         working-directory: ./
