@@ -1,4 +1,3 @@
-import type { Options } from '@wdio/types'
 import { join } from 'node:path'
 import { setValue, getValue } from '@wdio/shared-store-service'
 import { default as SauceLabs, type Job } from 'saucelabs'
@@ -7,7 +6,7 @@ import type { RetriesSpecs } from '../types/types.ts'
 
 const SPEC_FILE_RETRIES = 'specFileRetries'
 
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.Config  = {
     ...sharedConfig,
     // ===================
     // Test Configurations

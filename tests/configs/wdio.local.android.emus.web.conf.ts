@@ -1,8 +1,7 @@
-import type { Options } from '@wdio/types'
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.local.appium.shared.conf.ts'
 
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.Config  = {
     ...sharedConfig,
     // ==================
     // Specify Test Files

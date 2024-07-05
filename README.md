@@ -15,7 +15,7 @@ For documentation on visual testing with WebdriverIO, please refer to the [docs]
 This module now supports Storybook with a new Visual Runner. This runner automatically scans for a local/remote storybook instance and will create element screenshots of each component. This can be done by adding
 
 ```ts
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.Config = {
     // ...
     services: ["visual"],
     // ....
@@ -37,7 +37,7 @@ It will use Chrome in headless mode as the default browser.
 Service options can be provided like this
 
 ```ts
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.Config  = {
     // ...
     services: [
       [
