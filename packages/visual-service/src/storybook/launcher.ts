@@ -25,7 +25,7 @@ export default class VisualLauncher extends BaseClass  {
         this.#options = options
     }
 
-    async onPrepare (config: Options.Testrunner, capabilities: Capabilities.RemoteCapabilities) {
+    async onPrepare (config: Options.Testrunner, capabilities: Capabilities.TestrunnerCapabilities) {
         const isStorybook = isStorybookMode()
         const framework = config.framework as string
         const isCucumber = isCucumberFramework(framework)

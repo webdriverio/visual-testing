@@ -37,4 +37,4 @@ export interface CheckElementOptions {
     method: CheckElementMethodOptions;
 }
 
-export type WicElement = WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>
+export type WicElement = WebdriverIO.Element | ChainablePromiseElement
