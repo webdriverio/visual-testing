@@ -23,6 +23,7 @@
     "test.local.sims.app": "wdio tests/configs/wdio.local.ios.sims.app.conf.ts",
     "test.local.sims.web": "wdio tests/configs/wdio.local.ios.sims.web.conf.ts",
     "test.local.desktop.multi": "wdio tests/configs/wdio.local.desktop.multi.conf.ts",
+    "test.local.multi.web.app": "wdio tests/configs/wdio.local.multi.web.app.conf.ts",
     "test.local.desktop.storybook": "wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --numShards=10 --url=https://govuk-react.github.io/govuk-react/ --skipStories=\"/.*(loading-box|spinner).*/\"",
     "test.local.desktop.storybook.localhost": "wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --numShards=10",
     "test.local.desktop.storybook.localhost.custom": "npm run test.local.desktop.storybook.localhost -- --skipStories='/example-page.*/gm' --spec='tests/specs/storybook-interaction/*.ts'",
