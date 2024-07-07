@@ -20,6 +20,7 @@ type MultiResult = {
     [browserName: string]: ImageCompareResult | number;
 };
 export type Result = MultiResult | (ImageCompareResult | number);
+export type NativeContextType = boolean | Record<string, boolean>
 
 export interface WdioIcsCommonOptions {
     hideElements?: WebdriverIO.Element[];

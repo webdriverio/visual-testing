@@ -12,6 +12,7 @@ import type {
     SaveElementMethodOptions,
 } from 'webdriver-image-comparison'
 import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
+import { NativeContextType } from './types.js'
 
 interface WdioIcsOptions {
     logName?: string;
@@ -253,7 +254,20 @@ export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browse
  */
 export function determineNativeContext(
     driver: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
-): boolean {
+): NativeContextType {
+    // First check if it's multi remote
+    if (driver.isMultiremote) {
+        return Object.keys(driver).reduce((acc, instanceName) => {
+            const instance = (driver as any)[instanceName] as WebdriverIO.Browser;
+
+                if (instance.sessionId) {
+                    acc[instance.sessionId] = determineNativeContext(instance) as boolean
+                }
+                return acc
+            }, {} as Record<string, boolean>)
+    }
+
+    // If not check if it's a mobile
     if (driver.isMobile) {
         return !!(driver.requestedCapabilities as WebdriverIO.Capabilities)?.browserName === false
             && (
@@ -262,9 +276,25 @@ export function determineNativeContext(
                 || (driver.requestedCapabilities as { 'appium:appPackage'?: string })?.['appium:appPackage'] !== undefined
             )
             && (driver.requestedCapabilities as AppiumCapabilities)?.['appium:autoWebview'] !== true
-
     }
 
+    // If not, it's webcontext
     return false
+}
+
+/**
+ * Get the native context for the current browser
+ */
+export function getNativeContext(
+    currentBrowser: WebdriverIO.Browser,
+    nativeContext: NativeContextType
+): boolean {
+    if (currentBrowser.isMultiremote) {
+        return (nativeContext as any)[currentBrowser.sessionId]
+    } else if (typeof nativeContext === 'boolean') {
+        return nativeContext;
+    }
+
+    return false;
 }
 

@@ -15,7 +15,7 @@ import {
     checkTabbablePage,
     FOLDERS,
 } from 'webdriver-image-comparison'
-import { determineNativeContext, getFolders, getInstanceData } from './utils.js'
+import { determineNativeContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
 import {
     toMatchScreenSnapshot,
     toMatchFullPageSnapshot,
@@ -24,7 +24,7 @@ import {
 } from './matcher.js'
 import { waitForStorybookComponentToBeLoaded } from './storybook/utils.js'
 import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
-import type { PageCommand, PageCommandOptions } from './types.js'
+import type { NativeContextType, PageCommand, PageCommandOptions } from './types.js'
 
 const log = logger('@wdio/visual-service')
 const elementCommands = { saveElement, checkElement }
@@ -43,7 +43,7 @@ export default class WdioImageComparisonService extends BaseClass {
     #currentFile?: string
     #currentFilePath?: string
     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
-    private _isNativeContext: boolean | undefined
+    private _isNativeContext: NativeContextType | undefined
 
     constructor(options: ClassOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
         super(options)
@@ -149,6 +149,7 @@ export default class WdioImageComparisonService extends BaseClass {
                     for (const browserName of browserNames) {
                         const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
                         const browserInstance = multiremoteBrowser.getInstance(browserName)
+                        console.log('browserInstance = ', browserInstance)
                         /**
                          * casting command to `checkScreen` to simplify type handling here
                          */
@@ -166,6 +167,7 @@ export default class WdioImageComparisonService extends BaseClass {
     async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
         const instanceData = await getInstanceData(currentBrowser)
         const self = this
+        const isNativeContext = getNativeContext(currentBrowser, this._isNativeContext as NativeContextType)
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
             log.info(`Adding element command "${commandName}" to browser object`)
@@ -194,14 +196,14 @@ export default class WdioImageComparisonService extends BaseClass {
                             wic: self.defaultOptions,
                             method: elementOptions,
                         },
-                        self._isNativeContext as boolean,
+                        isNativeContext,
                     )
                 }
             )
         }
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
-            log.info(`Adding element command "${commandName}" to browser object`)
+            log.info(`Adding browser command "${commandName}" to browser object`)
             if (commandName === 'waitForStorybookComponentToBeLoaded') {
                 currentBrowser.addCommand(
                     commandName,
