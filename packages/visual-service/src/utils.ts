@@ -286,10 +286,11 @@ export function determineNativeContext(
  * Get the native context for the current browser
  */
 export function getNativeContext(
+    browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     currentBrowser: WebdriverIO.Browser,
     nativeContext: NativeContextType
 ): boolean {
-    if (currentBrowser.isMultiremote) {
+    if (browser.isMultiremote) {
         return (nativeContext as any)[currentBrowser.sessionId]
     } else if (typeof nativeContext === 'boolean') {
         return nativeContext;

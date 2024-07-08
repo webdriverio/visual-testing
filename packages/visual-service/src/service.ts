@@ -24,7 +24,7 @@ import {
 } from './matcher.js'
 import { waitForStorybookComponentToBeLoaded } from './storybook/utils.js'
 import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
-import type { NativeContextType, PageCommand, PageCommandOptions } from './types.js'
+import type { MultiremoteCommandResult, NativeContextType} from './types.js'
 
 const log = logger('@wdio/visual-service')
 const elementCommands = { saveElement, checkElement }
@@ -73,6 +73,10 @@ export default class WdioImageComparisonService extends BaseClass {
             await this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
         }
 
+        if (browser.isMultiremote) {
+            this.#setupMultiremoteContextListener()
+       }
+
         /**
          * add custom matcher for visual comparison when expect has been added.
          * this is not the case in standalone mode
@@ -91,14 +95,14 @@ export default class WdioImageComparisonService extends BaseClass {
 
     beforeTest(test: Frameworks.Test) {
         this.#currentFile = (test.file || (test as Frameworks.Test & { filename?: string }).filename) as string
-
         this.#currentFilePath = resolve(dirname(this.#currentFile), FOLDERS.DEFAULT.BASE)
     }
 
-    afterCommand (commandName:string, _args:string[], result:number|string, error:any) {
+    afterCommand(commandName: string, _args: string[], result: number | string, error: any) {
         // This is for the cases where in the E2E tests we switch to a WEBVIEW or back to NATIVE_APP context
         if (commandName === 'getContext' && error === undefined && typeof result === 'string') {
-            this._isNativeContext = result.includes('NATIVE')
+            // Multiremote logic is handled in the `before` method during an event listener
+            this._isNativeContext = this._browser?.isMultiremote ? this._isNativeContext : result.includes('NATIVE')
         }
     }
 
@@ -122,119 +126,234 @@ export default class WdioImageComparisonService extends BaseClass {
         return baselineFolder
     }
 
+    /**
+     * Add commands to the Multi Remote browser object
+     */
     async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
         const browser = this._browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
-        log.info(`Adding commands to Multi Browser: ${browserNames.join(', ')}`)
 
+        /**
+         * Add all the commands to each browser in the Multi Remote
+         */
         for (const browserName of browserNames) {
-            const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-            const browserInstance = multiremoteBrowser.getInstance(browserName)
+            log.info(`Adding commands to Multi Browser: ${browserName}`)
+            const browserInstance = browser.getInstance(browserName)
             await this.#addCommandsToBrowser(browserInstance)
         }
 
         /**
          * Add all the commands to the global browser object that will execute
          * on each browser in the Multi Remote
+         * Start with the page commands
          */
-        for (const command of [
-            ...Object.keys(elementCommands),
-            ...Object.keys(pageCommands),
-        ]) {
-            if (command === 'waitForStorybookComponentToBeLoaded') {
-                browser.addCommand(command, waitForStorybookComponentToBeLoaded)
-            } else {
-                browser.addCommand(command, function (...args: unknown[]) {
-                    const returnData: Record<string, any> = {}
-                    for (const browserName of browserNames) {
-                        const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-                        const browserInstance = multiremoteBrowser.getInstance(browserName)
-                        console.log('browserInstance = ', browserInstance)
-                        /**
-                         * casting command to `checkScreen` to simplify type handling here
-                         */
-                        returnData[browserName] = browserInstance[command as 'checkScreen'].call(
-                            browserInstance,
-                            ...args
-                        )
-                    }
-                    return returnData
-                })
-            }
+        for (const [commandName, command] of Object.entries(pageCommands)) {
+            this.#addMultiremoteCommand(browser, browserNames, commandName, command)
+        }
+
+        /**
+         * Add all the element commands to the global browser object that will execute
+         * on each browser in the Multi Remote
+         */
+        for (const [commandName, command] of Object.entries(elementCommands)) {
+            this.#addMultiremoteElementCommand(browser, browserNames, commandName, command)
         }
     }
 
+    /**
+     * Add commands to the "normal" browser object
+     */
     async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
         const instanceData = await getInstanceData(currentBrowser)
-        const self = this
-        const isNativeContext = getNativeContext(currentBrowser, this._isNativeContext as NativeContextType)
+        const isNativeContext = getNativeContext(
+            this._browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
+            currentBrowser,
+            this._isNativeContext as NativeContextType
+        )
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
-            log.info(`Adding element command "${commandName}" to browser object`)
-            currentBrowser.addCommand(
+            this.#addElementCommand(currentBrowser, commandName, command, instanceData, isNativeContext)
+        }
+
+        for (const [commandName, command] of Object.entries(pageCommands)) {
+            this.#addPageCommand(currentBrowser, commandName, command, instanceData, isNativeContext)
+        }
+    }
+
+    /**
+     * Add new element commands to the browser object
+     */
+    #addElementCommand(browser: WebdriverIO.Browser, commandName: string, command: any, instanceData: any, isNativeContext: boolean) {
+        log.info(`Adding element command "${commandName}" to browser object`)
+
+        const self = this
+        browser.addCommand(
+            commandName,
+            function (
+                this: typeof browser,
+                element,
+                tag,
+                elementOptions = {},
+            ) {
+                return command({
+                    executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                        return this.execute.bind(browser)(script, ...varArgs) as Promise<T>
+                    },
+                    getElementRect: this.getElementRect.bind(browser),
+                    screenShot: this.takeScreenshot.bind(browser),
+                    takeElementScreenshot: this.takeElementScreenshot.bind(browser),
+                }, instanceData, getFolders(elementOptions, self.folders, self.#getBaselineFolder()), element, tag, {
+                    wic: self.defaultOptions,
+                    method: elementOptions,
+                }, isNativeContext)
+        })
+    }
+
+    /**
+     * Add new page commands to the browser object
+     */
+    #addPageCommand(browser: WebdriverIO.Browser, commandName: string, command: any, instanceData: any, isNativeContext: boolean) {
+        log.info(`Adding browser command "${commandName}" to browser object`)
+
+        const self = this
+        if (commandName === 'waitForStorybookComponentToBeLoaded') {
+            browser.addCommand(commandName, (options: WaitForStorybookComponentToBeLoaded) => waitForStorybookComponentToBeLoaded(options))
+        } else {
+            browser.addCommand(
                 commandName,
                 function (
-                    this: typeof currentBrowser,
-                    element,
+                    this: typeof browser,
                     tag,
-                    elementOptions = {},
-                ) {
-                    return command(
+                    pageOptions = {}
+            ) {
+                return command(
+                    {
+                        executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                            return this.execute.bind(browser)(script, ...varArgs) as Promise<T>
+                        },
+                        getElementRect: this.getElementRect.bind(browser),
+                        screenShot: this.takeScreenshot.bind(browser),
+                    },
+                    instanceData,
+                    getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                    tag,
+                    {
+                        wic: self.defaultOptions,
+                        method: pageOptions,
+                    }, isNativeContext)
+                })
+        }
+    }
+
+    #addMultiremoteCommand(browser: WebdriverIO.MultiRemoteBrowser, browserNames: string[], commandName: string, command: any) {
+        log.info(`Adding browser command "${commandName}" to Multi browser object`)
+        const self = this
+
+        if (commandName === 'waitForStorybookComponentToBeLoaded') {
+            browser.addCommand(commandName, waitForStorybookComponentToBeLoaded)
+        } else {
+            browser.addCommand(
+                commandName,
+                async function (
+                    this: WebdriverIO.MultiRemoteBrowser,
+                    tag,
+                    pageOptions = {}
+            ) {
+                const returnData: Record<string, any> = {}
+                for (const browserName of browserNames) {
+                    const browserInstance = browser.getInstance(browserName)
+                    const isNativeContext = getNativeContext(
+                        self._browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
+                        browserInstance,
+                        self._isNativeContext as NativeContextType
+                    )
+                    const instanceData = await getInstanceData(browserInstance)
+
+                    returnData[browserName] = await command(
                         {
                             executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
+                                return browserInstance.execute.bind(browserInstance)(script, ...varArgs) as Promise<T>
                             },
-                            getElementRect: this.getElementRect.bind(currentBrowser),
-                            screenShot: this.takeScreenshot.bind(currentBrowser),
-                            takeElementScreenshot: this.takeElementScreenshot.bind(currentBrowser),
+                            getElementRect: browserInstance.getElementRect.bind(browserInstance),
+                            screenShot: browserInstance.takeScreenshot.bind(browserInstance),
                         },
                         instanceData,
-                        getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
-                        element,
+                        getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
                         tag,
                         {
                             wic: self.defaultOptions,
-                            method: elementOptions,
+                            method: pageOptions,
                         },
                         isNativeContext,
                     )
                 }
-            )
+                return returnData
+            })
         }
+    }
 
-        for (const [commandName, command] of Object.entries(pageCommands)) {
-            log.info(`Adding browser command "${commandName}" to browser object`)
-            if (commandName === 'waitForStorybookComponentToBeLoaded') {
-                currentBrowser.addCommand(
-                    commandName,
-                    (options: WaitForStorybookComponentToBeLoaded) => waitForStorybookComponentToBeLoaded(options)
-                )
-            } else {
-                currentBrowser.addCommand(
-                    commandName,
-                    function (this: typeof currentBrowser, tag, pageOptions = {}) {
-                        const options: PageCommandOptions = {
+    #addMultiremoteElementCommand(browser: WebdriverIO.MultiRemoteBrowser, browserNames: string[], commandName: string, command: any) {
+        log.info(`Adding element command "${commandName}" to Multi browser object`)
+        const self = this
+
+        browser.addCommand(
+            commandName,
+            async function (
+                this: WebdriverIO.MultiRemoteBrowser,
+                tag,
+                element,
+                pageOptions = {}
+            ) {
+                const returnData: Record<string, any> = {}
+                for (const browserName of browserNames) {
+                    const browserInstance = browser.getInstance(browserName)
+                    const isNativeContext = getNativeContext(
+                        self._browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
+                         browserInstance,
+                        self._isNativeContext as NativeContextType
+                    )
+                    const instanceData = await getInstanceData(browserInstance)
+
+                    returnData[browserName] = await command(
+                        {
                             executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                return this.execute.bind(currentBrowser)(script, ...varArgs) as Promise<T>
+                                return browserInstance.execute.bind(browserInstance)(script, ...varArgs) as Promise<T>
                             },
-                            getElementRect: this.getElementRect.bind(currentBrowser),
-                            screenShot: this.takeScreenshot.bind(currentBrowser),
-                        }
+                            getElementRect: browserInstance.getElementRect.bind(browserInstance),
+                            screenShot: browserInstance.takeScreenshot.bind(browserInstance),
+                            takeElementScreenshot: browserInstance.takeElementScreenshot.bind(browserInstance),
+                        },
+                        instanceData,
+                        getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                        tag,
+                        element,
+                        {
+                            wic: self.defaultOptions,
+                            method: pageOptions,
+                        },
+                        isNativeContext,
+                    )
+                }
+                return returnData
+        })
+    }
 
-                        return (command as PageCommand)(
-                            options,
-                            instanceData,
-                            getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
-                            tag,
-                            {
-                                wic: self.defaultOptions,
-                                method: pageOptions,
-                            },
-                            self._isNativeContext as boolean,
-                        )
+    #setupMultiremoteContextListener() {
+        const multiremoteBrowser = this._browser as WebdriverIO.MultiRemoteBrowser
+        const browserInstances = multiremoteBrowser.instances;
+
+        for (const instanceName of browserInstances) {
+            const instance = (multiremoteBrowser as any)[instanceName];
+            instance.on('result', (result:MultiremoteCommandResult) => {
+                if (result.command === 'getContext') {
+                    const value = result.result.value
+                    const sessionId = instance.sessionId
+                    if (typeof this._isNativeContext !== 'object' || this._isNativeContext === null) {
+                        this._isNativeContext = {};
                     }
-                )
-            }
+                    this._isNativeContext[sessionId] = value.includes('NATIVE');
+                }
+            })
         }
     }
 }

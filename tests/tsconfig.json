@@ -9,7 +9,7 @@
       "@wdio/mocha-framework",
       "@wdio/sauce-service",
       "@wdio/shared-store-service",
-      "@wdio/visual-testing-service",
+      "@wdio/visual-service",
       "@wdio/ocr-service"
     ],
     "skipLibCheck": true,
