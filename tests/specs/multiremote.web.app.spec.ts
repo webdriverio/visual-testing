@@ -3,9 +3,12 @@ describe('@wdio/visual-service check that multi remote is working', () => {
         // First create a screenshot of the web app
         await multiremotebrowser.chromeBrowserOne.url('')
         await multiremotebrowser.chromeBrowserOne.pause(500)
-        await multiremotebrowser.chromeBrowserOne.saveScreen('web-before-app')
+        await multiremotebrowser.chromeBrowserOne.checkScreen('web-before-app')
 
-        // Then create a screenshot of the Android app
-        await multiremotebrowser.androidApp.saveScreen('app-should-not-fail')
+        // Then create a screenshot of the native app
+        await multiremotebrowser.androidApp.checkScreen('app-after-web')
+
+        // Now create a screenshot of both of them at the same time
+        await browser.checkScreen('app-web')
     })
 })
