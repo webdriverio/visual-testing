@@ -12,7 +12,7 @@ import type {
     SaveElementMethodOptions,
 } from 'webdriver-image-comparison'
 import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
-import { NativeContextType } from './types.js'
+import type { NativeContextType } from './types.js'
 
 interface WdioIcsOptions {
     logName?: string;
@@ -258,13 +258,13 @@ export function determineNativeContext(
     // First check if it's multi remote
     if (driver.isMultiremote) {
         return Object.keys(driver).reduce((acc, instanceName) => {
-            const instance = (driver as any)[instanceName] as WebdriverIO.Browser;
+            const instance = (driver as any)[instanceName] as WebdriverIO.Browser
 
-                if (instance.sessionId) {
-                    acc[instance.sessionId] = determineNativeContext(instance) as boolean
-                }
-                return acc
-            }, {} as Record<string, boolean>)
+            if (instance.sessionId) {
+                acc[instance.sessionId] = determineNativeContext(instance) as boolean
+            }
+            return acc
+        }, {} as Record<string, boolean>)
     }
 
     // If not check if it's a mobile
@@ -293,9 +293,9 @@ export function getNativeContext(
     if (browser.isMultiremote) {
         return (nativeContext as any)[currentBrowser.sessionId]
     } else if (typeof nativeContext === 'boolean') {
-        return nativeContext;
+        return nativeContext
     }
 
-    return false;
+    return false
 }
 

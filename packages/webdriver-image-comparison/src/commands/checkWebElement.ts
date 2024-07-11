@@ -18,7 +18,6 @@ export default async function checkWebElement(
     element: HTMLElement,
     tag: string,
     checkElementOptions: CheckElementOptions,
-    isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
     // 1. Take the actual element screenshot and retrieve the needed data
     const saveElementOptions: SaveElementOptions = {
@@ -40,7 +39,6 @@ export default async function checkWebElement(
         element,
         tag,
         saveElementOptions,
-        isNativeContext,
     )
 
     // 2a. Determine the options

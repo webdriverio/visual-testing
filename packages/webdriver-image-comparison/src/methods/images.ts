@@ -374,7 +374,7 @@ export async function executeImageCompare(
                     isAndroid ? 1 : devicePixelRatio,
                 )
             },
-    )
+        )
 
     const compareOptions: ComparisonOptions = {
         ignore,

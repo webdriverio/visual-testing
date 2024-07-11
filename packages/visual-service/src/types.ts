@@ -9,8 +9,6 @@ import type {
     SaveFullPageMethodOptions,
     ClassOptions,
 } from 'webdriver-image-comparison'
-import type { RectanglesOutput } from 'webdriver-image-comparison/dist/methods/rectangles.interfaces.js'
-import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;

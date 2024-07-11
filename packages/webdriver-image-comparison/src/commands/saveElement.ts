@@ -20,5 +20,5 @@ export default async function saveElement(
 ): Promise<ScreenshotOutput> {
     return isNativeContext
         ? saveAppElement(methods, instanceData, folders, element, tag, saveElementOptions, isNativeContext)
-        : saveWebElement(methods, instanceData, folders, element, tag, saveElementOptions, isNativeContext)
+        : saveWebElement(methods, instanceData, folders, element, tag, saveElementOptions)
 }

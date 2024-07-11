@@ -150,7 +150,7 @@ async function main() {
             validate: (input: string) =>  isNaN(Number(input)) ? 'Please enter a valid number' : true,
         })
 
-        haystack = { x: Number(x), y: Number(y), width: Number(width), height: Number(height) };
+        haystack = { x: Number(x), y: Number(y), width: Number(width), height: Number(height) }
     }
 
     let options = {
