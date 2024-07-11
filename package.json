@@ -14,7 +14,7 @@
     "clean": "rimraf coverage dist .tmp '**/dist'",
     "release": "run-s build && changeset publish",
     "test": "run-s test:*",
-    "test:lint": "eslint --cache packages tests",
+    "test:lint": "rimraf .eslintcache && eslint packages tests",
     "test:unit": "vitest --coverage --run",
     "test.local.init": "rimraf localBaseline && wdio ./tests/configs/wdio.local.init.conf.ts",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.ts",
