@@ -59,5 +59,5 @@ export default async function checkWebScreen(
     }
 
     // 2b Now execute the compare and return the data
-    return executeImageCompare(methods.executor, executeCompareOptions, isNativeContext)
+    return executeImageCompare(methods.executor, executeCompareOptions, true, isNativeContext)
 }
