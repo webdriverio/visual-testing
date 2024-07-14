@@ -132,12 +132,19 @@ export interface ImageCompareResult {
     misMatchPercentage: number;
 }
 
-export interface IgnoreBoxes {
+export interface BoundingBox {
     bottom: number;
     right: number;
     left: number;
     top: number;
 }
+
+export interface Pixel {
+    x: number;
+    y: number;
+}
+
+export interface IgnoreBoxes extends BoundingBox { }
 
 export interface CroppedBase64Image {
     addIOSBezelCorners: boolean;

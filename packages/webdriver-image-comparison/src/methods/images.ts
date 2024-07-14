@@ -27,6 +27,7 @@ import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
 import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces.js'
 import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
+import { processDiffPixels } from './processDiffPixels.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
 
@@ -396,6 +397,15 @@ export async function executeImageCompare(
         const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
         diffFilePath = join(diffFolderPath, fileName)
 
+        // Process the diff pixels in a non-blocking worker thread
+        processDiffPixels(data.diffPixels, 5)
+            .then(boundingBoxes => {
+                console.log('Bounding boxes:', boundingBoxes);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+
+
         await saveBase64Image(await addBlockOuts(Buffer.from(await data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
 
         log.warn(
@@ -602,3 +612,4 @@ export async function takeBase64ElementScreenshot({
         resizeDimensions,
     })
 }
+
