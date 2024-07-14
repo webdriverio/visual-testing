@@ -620,7 +620,6 @@ const isNode = function () {
 
             if (!compareOnly) {
                 hiddenCanvas = createCanvas(width, height)
-
                 // context = hiddenCanvas.getContext("2d");
                 // imgd = context.createImageData(width, height);
                 pix = hiddenCanvas.bitmap.data
@@ -633,6 +632,7 @@ const isNode = function () {
                 bottom: 0,
                 right: 0,
             }
+
             const updateBounds = function (x, y) {
                 diffBounds.left = Math.min(x, diffBounds.left)
                 diffBounds.right = Math.max(x, diffBounds.right)
@@ -660,40 +660,39 @@ const isNode = function () {
             // Array to store the coordinates and colors of diff pixels
             const diffPixels = []
 
-            loop(width, height, function (horizontalPos, verticalPos) {
-                if (skipTheRest) {
-                    return
-                }
+            const totalPixels = width * height
+            const step = skip || 1
 
-                if (skip) {
-                    // only skip if the image isn't small
-                    if (verticalPos % skip === 0 || horizontalPos % skip === 0) {
-                        return
-                    }
-                }
+            for (let i = 0; i < totalPixels; i += step) {
+                const x = i % width
+                const y = Math.floor(i / width)
 
-                const offset = (verticalPos * width + horizontalPos) * 4
-                if (
-                    !getPixelInfo(pixel1, data1, offset, 1) ||
-                    !getPixelInfo(pixel2, data2, offset, 2)
-                ) {
-                    return
-                }
+                const offset = i * 4
+                pixel1.r = data1[offset]
+                pixel1.g = data1[offset + 1]
+                pixel1.b = data1[offset + 2]
+                pixel1.a = data1[offset + 3]
+
+                pixel2.r = data2[offset]
+                pixel2.g = data2[offset + 1]
+                pixel2.b = data2[offset + 2]
+                pixel2.a = data2[offset + 3]
 
                 const isWithinComparedArea = withinComparedArea(
-                    horizontalPos,
-                    verticalPos,
+                    x,
+                    y,
                     width,
                     height,
                     pixel2
                 )
 
                 if (ignoreColors) {
-                    addBrightnessInfo(pixel1)
-                    addBrightnessInfo(pixel2)
+                    const brightness1 = 0.3 * pixel1.r + 0.59 * pixel1.g + 0.11 * pixel1.b
+                    const brightness2 = 0.3 * pixel2.r + 0.59 * pixel2.g + 0.11 * pixel2.b
 
                     if (
-                        isPixelBrightnessSimilar(pixel1, pixel2) ||
+                        (Math.abs(brightness1 - brightness2) < tolerance.minBrightness &&
+                         Math.abs(pixel1.a - pixel2.a) < tolerance.alpha) ||
                         !isWithinComparedArea
                     ) {
                         if (!compareOnly) {
@@ -706,31 +705,38 @@ const isNode = function () {
 
                         // Record diff pixel information
                         diffPixels.push({
-                            x: horizontalPos,
-                            y: verticalPos,
-                            originalColor: { ...pixel1 },
-                            actualColor: { ...pixel2 }
+                            x: x,
+                            y: y,
+                            originalColor: { r: pixel1.r, g: pixel1.g, b: pixel1.b, a: pixel1.a },
+                            actualColor: { r: pixel2.r, g: pixel2.g, b: pixel2.b, a: pixel2.a }
                         })
 
                         mismatchCount++
-                        updateBounds(horizontalPos, verticalPos)
+                        updateBounds(x, y)
                     }
-                    return
+                    continue
                 }
 
-                if (isRGBSimilar(pixel1, pixel2) || !isWithinComparedArea) {
+                if (
+                    Math.abs(pixel1.r - pixel2.r) < tolerance.red &&
+                    Math.abs(pixel1.g - pixel2.g) < tolerance.green &&
+                    Math.abs(pixel1.b - pixel2.b) < tolerance.blue &&
+                    Math.abs(pixel1.a - pixel2.a) < tolerance.alpha
+                ) {
                     if (!compareOnly) {
                         copyPixel(pix, offset, pixel1)
                     }
                 } else if (
                     ignoreAntialiasing &&
-                    (addBrightnessInfo(pixel1), // jit pixel info augmentation looks a little weird, sorry.
-                        addBrightnessInfo(pixel2),
-                        isAntialiased(pixel1, data1, 1, verticalPos, horizontalPos, width) ||
-                        isAntialiased(pixel2, data2, 2, verticalPos, horizontalPos, width))
+                    (isAntialiased(pixel1, data1, 1, y, x, width) ||
+                     isAntialiased(pixel2, data2, 2, y, x, width))
                 ) {
+                    const brightness1 = 0.3 * pixel1.r + 0.59 * pixel1.g + 0.11 * pixel1.b
+                    const brightness2 = 0.3 * pixel2.r + 0.59 * pixel2.g + 0.11 * pixel2.b
+
                     if (
-                        isPixelBrightnessSimilar(pixel1, pixel2) ||
+                        (Math.abs(brightness1 - brightness2) < tolerance.minBrightness &&
+                         Math.abs(pixel1.a - pixel2.a) < tolerance.alpha) ||
                         !isWithinComparedArea
                     ) {
                         if (!compareOnly) {
@@ -743,14 +749,14 @@ const isNode = function () {
 
                         // Record diff pixel information
                         diffPixels.push({
-                            x: horizontalPos,
-                            y: verticalPos,
-                            originalColor: { ...pixel1 },
-                            actualColor: { ...pixel2 }
+                            x: x,
+                            y: y,
+                            originalColor: { r: pixel1.r, g: pixel1.g, b: pixel1.b, a: pixel1.a },
+                            actualColor: { r: pixel2.r, g: pixel2.g, b: pixel2.b, a: pixel2.a }
                         })
 
                         mismatchCount++
-                        updateBounds(horizontalPos, verticalPos)
+                        updateBounds(x, y)
                     }
                 } else {
                     if (!compareOnly) {
@@ -759,26 +765,26 @@ const isNode = function () {
 
                     // Record diff pixel information
                     diffPixels.push({
-                        x: horizontalPos,
-                        y: verticalPos,
-                        originalColor: { ...pixel1 },
-                        actualColor: { ...pixel2 }
+                        x: x,
+                        y: y,
+                        originalColor: { r: pixel1.r, g: pixel1.g, b: pixel1.b, a: pixel1.a },
+                        actualColor: { r: pixel2.r, g: pixel2.g, b: pixel2.b, a: pixel2.a }
                     })
 
                     mismatchCount++
-                    updateBounds(horizontalPos, verticalPos)
+                    updateBounds(x, y)
                 }
 
                 if (compareOnly) {
-                    const currentMisMatchPercent = (mismatchCount / (height * width)) * 100
+                    const currentMisMatchPercent = (mismatchCount / totalPixels) * 100
 
                     if (currentMisMatchPercent > returnEarlyThreshold) {
-                        skipTheRest = true
+                        break
                     }
                 }
-            })
+            }
 
-            data.rawMisMatchPercentage = (mismatchCount / (height * width)) * 100
+            data.rawMisMatchPercentage = (mismatchCount / totalPixels) * 100
             data.misMatchPercentage = data.rawMisMatchPercentage.toFixed(2)
             data.diffBounds = diffBounds
             data.analysisTime = Date.now() - time
