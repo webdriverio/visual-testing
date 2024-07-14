@@ -1,3 +1,48 @@
+/**
+ * NOTE: This code/logic is based on logical research and support from the following sources:
+ * - Copilot AI
+ * - ChatGPT
+ *
+ * This is still a draft and may not be accurate, more research is needed and will tell you if this is correct.
+ * It produces the following log based on `150585` diff pixels:
+ *
+ * [0-0] Processing diff pixels started
+ * [0-0] Bounding boxes: [
+ * [0-0]   { left: 912, top: 743, right: 1144, bottom: 762 },
+ * [0-0]   { left: 650, top: 749, right: 790, bottom: 760 },
+ * [0-0]   { left: 537, top: 749, right: 644, bottom: 760 },
+ * [0-0]   { left: 377, top: 749, right: 415, bottom: 760 },
+ * [0-0]   { left: 362, top: 749, right: 371, bottom: 759 },
+ * [0-0]   { left: 290, top: 750, right: 356, bottom: 762 },
+ * [0-0]   { left: 159, top: 746, right: 284, bottom: 760 },
+ * [0-0]   { left: 536, top: 711, right: 754, bottom: 730 },
+ * [0-0]   { left: 913, top: 711, right: 1186, bottom: 730 },
+ * [0-0]   { left: 368, top: 717, right: 413, bottom: 730 },
+ * [0-0]   { left: 159, top: 711, right: 362, bottom: 728 },
+ * [0-0]   { left: 912, top: 652, right: 1144, bottom: 703 },
+ * [0-0]   { left: 536, top: 652, right: 790, bottom: 701 },
+ * [0-0]   { left: 377, top: 690, right: 415, bottom: 701 },
+ * [0-0]   { left: 362, top: 690, right: 371, bottom: 700 },
+ * [0-0]   { left: 159, top: 652, right: 356, bottom: 703 },
+ * [0-0]   { left: 129, top: 529, right: 1236, bottom: 633 },
+ * [0-0]   { left: 475, top: 457, right: 1046, bottom: 513 },
+ * [0-0]   { left: 319, top: 470, right: 454, bottom: 513 },
+ * [0-0]   { left: 387, top: 399, right: 514, bottom: 428 },
+ * [0-0]   { left: 818, top: 398, right: 978, bottom: 422 },
+ * [0-0]   { left: 527, top: 398, right: 807, bottom: 428 },
+ * [0-0]   { left: 600, top: 143, right: 766, bottom: 338 },
+ * [0-0]   { left: 25, top: 27, right: 56, bottom: 58 }
+ * [0-0] ]
+ * [0-0] Processing 150585 diff pixels
+ * [0-0] Union operations started
+ * [0-0] Union time: 155ms
+ * [0-0] Grouping pixels into bounding boxes
+ * [0-0] Grouping time: 19ms
+ * [0-0] Total analysis time: 209ms
+ * [0-0] Post-processing bounding boxes
+ * [0-0] Post-processing time: 3ms
+ * [0-0] Number merged: 24
+ */
 import { BoundingBox, Pixel } from 'src/methods/images.interfaces.js';
 import { parentPort } from 'worker_threads';
 
@@ -46,6 +91,7 @@ class DisjointSet {
 
 function processDiffPixels(diffPixels: Pixel[], proximity = 5): BoundingBox[] {
     console.log('Processing diff pixels started');
+    console.log(`Processing ${diffPixels.length} diff pixels`);
     const totalStartTime = Date.now();
 
     const ds = new DisjointSet();
