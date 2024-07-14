@@ -646,8 +646,8 @@ const isNode = function () {
 
             if (
                 !!largeImageThreshold &&
-        ignoreAntialiasing &&
-        (width > largeImageThreshold || height > largeImageThreshold)
+                ignoreAntialiasing &&
+                (width > largeImageThreshold || height > largeImageThreshold)
             ) {
                 skip = 6
             }
@@ -656,6 +656,9 @@ const isNode = function () {
             const pixel2 = { r: 0, g: 0, b: 0, a: 0 }
 
             let skipTheRest = false
+
+            // Array to store the coordinates and colors of diff pixels
+            const diffPixels = []
 
             loop(width, height, function (horizontalPos, verticalPos) {
                 if (skipTheRest) {
@@ -672,7 +675,7 @@ const isNode = function () {
                 const offset = (verticalPos * width + horizontalPos) * 4
                 if (
                     !getPixelInfo(pixel1, data1, offset, 1) ||
-          !getPixelInfo(pixel2, data2, offset, 2)
+                    !getPixelInfo(pixel2, data2, offset, 2)
                 ) {
                     return
                 }
@@ -691,7 +694,7 @@ const isNode = function () {
 
                     if (
                         isPixelBrightnessSimilar(pixel1, pixel2) ||
-            !isWithinComparedArea
+                        !isWithinComparedArea
                     ) {
                         if (!compareOnly) {
                             copyGrayScalePixel(pix, offset, pixel2)
@@ -700,6 +703,14 @@ const isNode = function () {
                         if (!compareOnly) {
                             errorPixel(pix, offset, pixel1, pixel2)
                         }
+
+                        // Record diff pixel information
+                        diffPixels.push({
+                            x: horizontalPos,
+                            y: verticalPos,
+                            originalColor: { ...pixel1 },
+                            actualColor: { ...pixel2 }
+                        })
 
                         mismatchCount++
                         updateBounds(horizontalPos, verticalPos)
@@ -713,14 +724,14 @@ const isNode = function () {
                     }
                 } else if (
                     ignoreAntialiasing &&
-          (addBrightnessInfo(pixel1), // jit pixel info augmentation looks a little weird, sorry.
-          addBrightnessInfo(pixel2),
-          isAntialiased(pixel1, data1, 1, verticalPos, horizontalPos, width) ||
-            isAntialiased(pixel2, data2, 2, verticalPos, horizontalPos, width))
+                    (addBrightnessInfo(pixel1), // jit pixel info augmentation looks a little weird, sorry.
+                        addBrightnessInfo(pixel2),
+                        isAntialiased(pixel1, data1, 1, verticalPos, horizontalPos, width) ||
+                        isAntialiased(pixel2, data2, 2, verticalPos, horizontalPos, width))
                 ) {
                     if (
                         isPixelBrightnessSimilar(pixel1, pixel2) ||
-            !isWithinComparedArea
+                        !isWithinComparedArea
                     ) {
                         if (!compareOnly) {
                             copyGrayScalePixel(pix, offset, pixel2)
@@ -730,6 +741,14 @@ const isNode = function () {
                             errorPixel(pix, offset, pixel1, pixel2)
                         }
 
+                        // Record diff pixel information
+                        diffPixels.push({
+                            x: horizontalPos,
+                            y: verticalPos,
+                            originalColor: { ...pixel1 },
+                            actualColor: { ...pixel2 }
+                        })
+
                         mismatchCount++
                         updateBounds(horizontalPos, verticalPos)
                     }
@@ -737,6 +756,14 @@ const isNode = function () {
                     if (!compareOnly) {
                         errorPixel(pix, offset, pixel1, pixel2)
                     }
+
+                    // Record diff pixel information
+                    diffPixels.push({
+                        x: horizontalPos,
+                        y: verticalPos,
+                        originalColor: { ...pixel1 },
+                        actualColor: { ...pixel2 }
+                    })
 
                     mismatchCount++
                     updateBounds(horizontalPos, verticalPos)
@@ -756,6 +783,9 @@ const isNode = function () {
             data.diffBounds = diffBounds
             data.analysisTime = Date.now() - time
 
+            // Add diffPixels array to the data object
+            data.diffPixels = diffPixels
+
             data.getImageDataUrl = function (text) {
                 if (compareOnly) {
                     throw Error('No diff image available - ran in compareOnly mode')
@@ -766,8 +796,6 @@ const isNode = function () {
                 if (text) {
                     barHeight = addLabel(text, hiddenCanvas)
                 }
-
-                // context.putImageData(imgd, 0, barHeight);
 
                 return hiddenCanvas.getBase64Async(Jimp.MIME_PNG)
             }
