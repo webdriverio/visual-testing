@@ -397,12 +397,14 @@ export async function executeImageCompare(
         const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
         diffFilePath = join(diffFolderPath, fileName)
 
-        processAndWriteDiffPixels({
-            diffFolderPath,
-            data,
-            fileName,
-            proximity: 5,
-        })
+        if (imageCompareOptions.createJsonDiffFile) {
+            processAndWriteDiffPixels({
+                diffFolderPath,
+                data,
+                fileName,
+                proximity: imageCompareOptions.diffPixelBoundingBoxProximity,
+            })
+        }
 
         await saveBase64Image(await addBlockOuts(Buffer.from(await data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
 

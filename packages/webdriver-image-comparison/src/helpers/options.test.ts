@@ -22,6 +22,8 @@ describe('options', () => {
                 blockOutSideBar: true,
                 blockOutStatusBar: true,
                 blockOutToolBar: true,
+                createJsonDiffFile: true,
+                diffPixelBoundingBoxProximity: 123,
                 ignoreAlpha: true,
                 ignoreAntialiasing: true,
                 ignoreColors: true,

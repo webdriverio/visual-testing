@@ -92,7 +92,7 @@ class DisjointSet {
     }
 }
 
-function processDiffPixels(diffPixels: Pixel[], proximity = 5): BoundingBox[] {
+function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[] {
     log.info('Processing diff pixels started');
     log.info(`Processing ${diffPixels.length} diff pixels`);
     const totalStartTime = Date.now();
@@ -179,6 +179,7 @@ function processDiffPixels(diffPixels: Pixel[], proximity = 5): BoundingBox[] {
  * Function to merge nearby bounding boxes.
  */
 function mergeBoundingBoxes(boxes: BoundingBox[], proximity: number): BoundingBox[] {
+    log.info(`Merging bounding boxes started with a proximity of ${proximity} pixels`)
     const merged: BoundingBox[] = [];
 
     while (boxes.length) {

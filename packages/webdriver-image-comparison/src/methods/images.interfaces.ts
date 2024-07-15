@@ -46,6 +46,12 @@ export interface WicImageCompareOptions {
     blockOutStatusBar: boolean;
     // Block out the tool bar yes or no
     blockOutToolBar: boolean;
+    // Create a json file with the diff data, this can be used to create a custom report.
+    createJsonDiffFile: boolean;
+    // The proximity of the diff pixels to determine if a diff pixel is part of a group,
+    // the higher the number the more pixels will be grouped, the lower the number the less pixels will be grouped due to accuracy.
+    // Default is 5 pixels
+    diffPixelBoundingBoxProximity: number;
     // Compare images and discard alpha
     ignoreAlpha: boolean;
     // Compare images an discard anti aliasing
