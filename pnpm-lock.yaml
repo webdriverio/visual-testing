@@ -130,8 +130,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       inquirer:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^10.0.1
+        version: 10.0.1
       jimp:
         specifier: ^0.22.12
         version: 0.22.12
@@ -2549,8 +2549,8 @@ packages:
     resolution: {integrity: sha512-QQnnxNyfvmHFIsj7gkPcYymR8Jdw/o7mp5ZFihxn6h8Ci6fh3Dx4E1gPjpQEpIuPo9XVNY/ZUwh4BPMjGyL01g==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  inquirer@10.0.0:
-    resolution: {integrity: sha512-flE/e5bOgsRRd+UrfGe6SfA9gZnGvY69dVUb2TPJn/I1LlbvWTuk0hZXbf7l7KiJwFkDtD9tH37HczSK1+gvww==}
+  inquirer@10.0.1:
+    resolution: {integrity: sha512-XgthhRIn0Ci9JdGJpUo2EtpPfaczbooZbGTN+FTzSCyUb7YHJcPPnuSXfeG5903bJMy3OyEoVTQMnvO4Ly5tFg==}
     engines: {node: '>=18'}
 
   inquirer@9.2.12:
@@ -7666,7 +7666,7 @@ snapshots:
 
   ini@4.1.1: {}
 
-  inquirer@10.0.0:
+  inquirer@10.0.1:
     dependencies:
       '@inquirer/prompts': 5.1.2
       '@inquirer/type': 1.4.0
