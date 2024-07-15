@@ -43,8 +43,11 @@
  * [0-0] Post-processing time: 3ms
  * [0-0] Number merged: 24
  */
+
+import logger from '@wdio/logger'
 import { BoundingBox, Pixel } from 'src/methods/images.interfaces.js';
-import { parentPort } from 'worker_threads';
+
+const log = logger('@wdio/visual-service:webdriver-image-comparison:pixelDiffProcessing')
 
 class DisjointSet {
     private parent: Map<string, string>;
@@ -90,8 +93,8 @@ class DisjointSet {
 }
 
 function processDiffPixels(diffPixels: Pixel[], proximity = 5): BoundingBox[] {
-    console.log('Processing diff pixels started');
-    console.log(`Processing ${diffPixels.length} diff pixels`);
+    log.info('Processing diff pixels started');
+    log.info(`Processing ${diffPixels.length} diff pixels`);
     const totalStartTime = Date.now();
 
     const ds = new DisjointSet();
@@ -110,7 +113,7 @@ function processDiffPixels(diffPixels: Pixel[], proximity = 5): BoundingBox[] {
         pixelMap.set(key, pixel);
     }
 
-    console.log('Union operations started');
+    log.info('Union operations started');
     const unionStartTime = Date.now();
 
     // Union pixels within the proximity range
@@ -123,9 +126,9 @@ function processDiffPixels(diffPixels: Pixel[], proximity = 5): BoundingBox[] {
             }
         }
     }
-    console.log(`Union time: ${Date.now() - unionStartTime}ms`);
+    log.info(`Union time: ${Date.now() - unionStartTime}ms`);
 
-    console.log('Grouping pixels into bounding boxes');
+    log.info('Grouping pixels into bounding boxes');
     const groupingStartTime = Date.now();
 
     // Group pixels by their root
@@ -156,18 +159,18 @@ function processDiffPixels(diffPixels: Pixel[], proximity = 5): BoundingBox[] {
         boundingBoxes.push({ left, top, right, bottom });
     }
 
-    console.log(`Grouping time: ${Date.now() - groupingStartTime}ms`);
+    log.info(`Grouping time: ${Date.now() - groupingStartTime}ms`);
     const totalAnalysisTime = Date.now() - totalStartTime;
-    console.log(`Total analysis time: ${totalAnalysisTime}ms`);
+    log.info(`Total analysis time: ${totalAnalysisTime}ms`);
 
     // Post-process to merge nearby bounding boxes
-    console.log('Post-processing bounding boxes');
+    log.info('Post-processing bounding boxes');
     const postProcessStartTime = Date.now();
 
     const mergedBoxes = mergeBoundingBoxes(boundingBoxes, proximity);
 
-    console.log(`Post-processing time: ${Date.now() - postProcessStartTime}ms`);
-    console.log(`Number merged: ${mergedBoxes.length}`);
+    log.info(`Post-processing time: ${Date.now() - postProcessStartTime}ms`);
+    log.info(`Number merged: ${mergedBoxes.length}`);
 
     return mergedBoxes;
 }
@@ -211,7 +214,4 @@ function mergeBoundingBoxes(boxes: BoundingBox[], proximity: number): BoundingBo
     return merged;
 }
 
-parentPort?.on('message', ({ diffPixels, proximity }: { diffPixels: Pixel[], proximity: number }) => {
-    const boundingBoxes = processDiffPixels(diffPixels, proximity);
-    parentPort?.postMessage(boundingBoxes);
-});
+export { processDiffPixels };
