@@ -45,134 +45,134 @@
  */
 
 import logger from '@wdio/logger'
-import { BoundingBox, Pixel } from 'src/methods/images.interfaces.js';
+import type { BoundingBox, Pixel } from 'src/methods/images.interfaces.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison:pixelDiffProcessing')
 
 class DisjointSet {
-    private parent: Map<string, string>;
-    private rank: Map<string, number>;
+    private parent: Map<string, string>
+    private rank: Map<string, number>
 
     constructor() {
-        this.parent = new Map();
-        this.rank = new Map();
+        this.parent = new Map()
+        this.rank = new Map()
     }
 
     find(x: string): string {
         if (this.parent.get(x) !== x) {
-            this.parent.set(x, this.find(this.parent.get(x) as string)); // Path compression
+            this.parent.set(x, this.find(this.parent.get(x) as string)) // Path compression
         }
-        return this.parent.get(x) as string;
+        return this.parent.get(x) as string
     }
 
     union(x: string, y: string): void {
-        const rootX = this.find(x);
-        const rootY = this.find(y);
+        const rootX = this.find(x)
+        const rootY = this.find(y)
 
         if (rootX !== rootY) {
-            const rankX = this.rank.get(rootX) || 0;
-            const rankY = this.rank.get(rootY) || 0;
+            const rankX = this.rank.get(rootX) || 0
+            const rankY = this.rank.get(rootY) || 0
 
             if (rankX > rankY) {
-                this.parent.set(rootY, rootX);
+                this.parent.set(rootY, rootX)
             } else if (rankX < rankY) {
-                this.parent.set(rootX, rootY);
+                this.parent.set(rootX, rootY)
             } else {
-                this.parent.set(rootY, rootX);
-                this.rank.set(rootX, rankX + 1);
+                this.parent.set(rootY, rootX)
+                this.rank.set(rootX, rankX + 1)
             }
         }
     }
 
     add(x: string): void {
         if (!this.parent.has(x)) {
-            this.parent.set(x, x);
-            this.rank.set(x, 0);
+            this.parent.set(x, x)
+            this.rank.set(x, 0)
         }
     }
 }
 
 function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[] {
-    log.info('Processing diff pixels started');
-    log.info(`Processing ${diffPixels.length} diff pixels`);
-    const totalStartTime = Date.now();
+    log.info('Processing diff pixels started')
+    log.info(`Processing ${diffPixels.length} diff pixels`)
+    const totalStartTime = Date.now()
 
-    const ds = new DisjointSet();
-    const pixelMap = new Map<string, Pixel>();
+    const ds = new DisjointSet()
+    const pixelMap = new Map<string, Pixel>()
     const directions = [
         { dx: 1, dy: 0 },
         { dx: 0, dy: 1 },
         { dx: 1, dy: 1 },
         { dx: -1, dy: 1 },
-    ];
+    ]
 
     // Initialize disjoint set and pixel map
     for (const pixel of diffPixels) {
-        const key = `${pixel.x},${pixel.y}`;
-        ds.add(key);
-        pixelMap.set(key, pixel);
+        const key = `${pixel.x},${pixel.y}`
+        ds.add(key)
+        pixelMap.set(key, pixel)
     }
 
-    log.info('Union operations started');
-    const unionStartTime = Date.now();
+    log.info('Union operations started')
+    const unionStartTime = Date.now()
 
     // Union pixels within the proximity range
     for (const pixel of diffPixels) {
-        const key = `${pixel.x},${pixel.y}`;
+        const key = `${pixel.x},${pixel.y}`
         for (const { dx, dy } of directions) {
-            const neighborKey = `${pixel.x + dx},${pixel.y + dy}`;
+            const neighborKey = `${pixel.x + dx},${pixel.y + dy}`
             if (pixelMap.has(neighborKey)) {
-                ds.union(key, neighborKey);
+                ds.union(key, neighborKey)
             }
         }
     }
-    log.info(`Union time: ${Date.now() - unionStartTime}ms`);
+    log.info(`Union time: ${Date.now() - unionStartTime}ms`)
 
-    log.info('Grouping pixels into bounding boxes');
-    const groupingStartTime = Date.now();
+    log.info('Grouping pixels into bounding boxes')
+    const groupingStartTime = Date.now()
 
     // Group pixels by their root
-    const groups = new Map<string, Pixel[]>();
+    const groups = new Map<string, Pixel[]>()
     for (const key of pixelMap.keys()) {
-        const root = ds.find(key);
+        const root = ds.find(key)
         if (!groups.has(root)) {
-            groups.set(root, []);
+            groups.set(root, [])
         }
-        groups.get(root)?.push(pixelMap.get(key) as Pixel);
+        groups.get(root)?.push(pixelMap.get(key) as Pixel)
     }
 
     // Calculate bounding boxes
-    const boundingBoxes: BoundingBox[] = [];
+    const boundingBoxes: BoundingBox[] = []
     for (const pixels of groups.values()) {
-        let left = Infinity;
-        let top = Infinity;
-        let right = -Infinity;
-        let bottom = -Infinity;
+        let left = Infinity
+        let top = Infinity
+        let right = -Infinity
+        let bottom = -Infinity
 
         for (const pixel of pixels) {
-            if (pixel.x < left) left = pixel.x;
-            if (pixel.y < top) top = pixel.y;
-            if (pixel.x > right) right = pixel.x;
-            if (pixel.y > bottom) bottom = pixel.y;
+            if (pixel.x < left) {left = pixel.x}
+            if (pixel.y < top) {top = pixel.y}
+            if (pixel.x > right) {right = pixel.x}
+            if (pixel.y > bottom) {bottom = pixel.y}
         }
 
-        boundingBoxes.push({ left, top, right, bottom });
+        boundingBoxes.push({ left, top, right, bottom })
     }
 
-    log.info(`Grouping time: ${Date.now() - groupingStartTime}ms`);
-    const totalAnalysisTime = Date.now() - totalStartTime;
-    log.info(`Total analysis time: ${totalAnalysisTime}ms`);
+    log.info(`Grouping time: ${Date.now() - groupingStartTime}ms`)
+    const totalAnalysisTime = Date.now() - totalStartTime
+    log.info(`Total analysis time: ${totalAnalysisTime}ms`)
 
     // Post-process to merge nearby bounding boxes
-    log.info('Post-processing bounding boxes');
-    const postProcessStartTime = Date.now();
+    log.info('Post-processing bounding boxes')
+    const postProcessStartTime = Date.now()
 
-    const mergedBoxes = mergeBoundingBoxes(boundingBoxes, proximity);
+    const mergedBoxes = mergeBoundingBoxes(boundingBoxes, proximity)
 
-    log.info(`Post-processing time: ${Date.now() - postProcessStartTime}ms`);
-    log.info(`Number merged: ${mergedBoxes.length}`);
+    log.info(`Post-processing time: ${Date.now() - postProcessStartTime}ms`)
+    log.info(`Number merged: ${mergedBoxes.length}`)
 
-    return mergedBoxes;
+    return mergedBoxes
 }
 
 /**
@@ -180,14 +180,14 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[
  */
 function mergeBoundingBoxes(boxes: BoundingBox[], proximity: number): BoundingBox[] {
     log.info(`Merging bounding boxes started with a proximity of ${proximity} pixels`)
-    const merged: BoundingBox[] = [];
+    const merged: BoundingBox[] = []
 
     while (boxes.length) {
-        const box = boxes.pop()!;
-        let mergedWithAnotherBox = false;
+        const box = boxes.pop()!
+        let mergedWithAnotherBox = false
 
         for (let i = 0; i < boxes.length; i++) {
-            const otherBox = boxes[i];
+            const otherBox = boxes[i]
 
             if (
                 box.left <= otherBox.right + proximity &&
@@ -195,24 +195,24 @@ function mergeBoundingBoxes(boxes: BoundingBox[], proximity: number): BoundingBo
                 box.top <= otherBox.bottom + proximity &&
                 box.bottom >= otherBox.top - proximity
             ) {
-                boxes.splice(i, 1);
+                boxes.splice(i, 1)
                 boxes.push({
                     left: Math.min(box.left, otherBox.left),
                     top: Math.min(box.top, otherBox.top),
                     right: Math.max(box.right, otherBox.right),
                     bottom: Math.max(box.bottom, otherBox.bottom),
-                });
-                mergedWithAnotherBox = true;
-                break;
+                })
+                mergedWithAnotherBox = true
+                break
             }
         }
 
         if (!mergedWithAnotherBox) {
-            merged.push(box);
+            merged.push(box)
         }
     }
 
-    return merged;
+    return merged
 }
 
-export { processDiffPixels };
+export { processDiffPixels }
