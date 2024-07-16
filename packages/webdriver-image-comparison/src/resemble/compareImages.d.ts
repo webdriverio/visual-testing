@@ -1,4 +1,4 @@
-import { ComparisonOptions, ComparisonResult } from "./compare.interfaces.ts";
+import type { ComparisonOptions, ComparisonResult } from './compare.interfaces.ts'
 
 /**
  * The API under Node is the same as on the `resemble.compare` but promise based
@@ -9,4 +9,4 @@ declare function compareImages(
     options: ComparisonOptions,
 ): Promise<ComparisonResult>;
 
-export default compareImages;
+export default compareImages

@@ -126,31 +126,31 @@ async function main() {
             type: 'input',
             name: 'x',
             message: 'Enter the x coordinate:',
-            filter: (input:string) => Number(input),
+            validate: (input: string) =>  isNaN(Number(input)) ? 'Please enter a valid number' : true,
         })
 
         const { y } = await inquirer.prompt<{ y: number }>({
             type: 'input',
             name: 'y',
             message: 'Enter the y coordinate:',
-            filter: (input:string) => Number(input),
+            validate: (input: string) =>  isNaN(Number(input)) ? 'Please enter a valid number' : true,
         })
 
         const { width } = await inquirer.prompt<{ width: number }>({
             type: 'input',
             name: 'width',
             message: 'Enter the width:',
-            filter: (input:string) => Number(input),
+            validate: (input: string) =>  isNaN(Number(input)) ? 'Please enter a valid number' : true,
         })
 
         const { height } = await inquirer.prompt<{ height: number }>({
             type: 'input',
             name: 'height',
             message: 'Enter the height:',
-            filter: (input:string) => Number(input),
+            validate: (input: string) =>  isNaN(Number(input)) ? 'Please enter a valid number' : true,
         })
 
-        haystack = { x, y, width, height }
+        haystack = { x: Number(x), y: Number(y), width: Number(width), height: Number(height) }
     }
 
     let options = {
@@ -176,13 +176,12 @@ async function main() {
                     const value = parseFloat(input)
                     return (value >= 0.0 && value <= 1.0) || 'Please enter a contrast between 0.0 and 1.0'
                 },
-                filter: (input) => input ? parseFloat(input) : defaultOptions.contrast
             },
         ])
 
         options = {
             ...options,
-            contrast: advancedOptions.contrast,
+            contrast: parseFloat(advancedOptions.contrast),
         }
     }
     console.log('\nProcessing image...\n')
