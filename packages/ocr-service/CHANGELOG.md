@@ -1,5 +1,17 @@
 # @wdio/ocr-service
 
+## 1.0.3
+
+### Patch Changes
+
+ # 💅 Polish
+ 
+ Update deps
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 1.0.2
 
 ### Patch Changes

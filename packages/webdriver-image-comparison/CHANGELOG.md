@@ -1,5 +1,18 @@
 # webdriver-image-comparison
 
+## 6.0.2
+
+### Patch Changes
+
+  # 💅 Polish
+  
+  - Update deps
+
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 6.0.1
 
 ### Patch Changes
