@@ -17,7 +17,7 @@ export default async function checkWebScreen(
     folders: Folders,
     tag: string,
     checkScreenOptions: CheckScreenOptions,
-    _isNativeContext: boolean,
+    isNativeContext: boolean,
 ): Promise<ImageCompareResult | number> {
     // 1.  Take the actual screenshot and retrieve the needed data
     const saveScreenOptions: SaveScreenOptions = {
@@ -59,5 +59,5 @@ export default async function checkWebScreen(
     }
 
     // 2b Now execute the compare and return the data
-    return executeImageCompare(methods.executor, executeCompareOptions, true)
+    return executeImageCompare(methods.executor, executeCompareOptions, true, isNativeContext)
 }

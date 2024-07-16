@@ -20,5 +20,5 @@ export default async function checkElement(
 ): Promise<ImageCompareResult | number> {
     return isNativeContext
         ? checkAppElement(methods, instanceData, folders, element as WicElement, tag, checkElementOptions, isNativeContext)
-        : checkWebElement(methods, instanceData, folders, element as HTMLElement, tag, checkElementOptions, isNativeContext)
+        : checkWebElement(methods, instanceData, folders, element as HTMLElement, tag, checkElementOptions)
 }
