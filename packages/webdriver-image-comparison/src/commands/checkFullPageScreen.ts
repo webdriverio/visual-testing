@@ -2,22 +2,22 @@ import { executeImageCompare } from '../methods/images.js'
 import { checkIsMobile } from '../helpers/utils.js'
 import saveFullPageScreen from './saveFullPageScreen.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
-import type { Methods } from '../methods/methods.interfaces.js'
-import type { InstanceData } from '../methods/instanceData.interfaces.js'
-import type { Folders } from '../base.interfaces.js'
-import type { CheckFullPageOptions, SaveFullPageOptions } from './fullPage.interfaces.js'
+import type { SaveFullPageOptions } from './fullPage.interfaces.js'
 import { methodCompareOptions } from '../helpers/options.js'
+import type { InternalCheckFullPageMethodOptions } from './check.interfaces.js'
 
 /**
  * Compare a fullpage screenshot
  */
 export default async function checkFullPageScreen(
-    methods: Methods,
-    instanceData: InstanceData,
-    folders: Folders,
-    tag: string,
-    checkFullPageOptions: CheckFullPageOptions,
-    isNativeContext: boolean,
+    {
+        methods,
+        instanceData,
+        folders,
+        tag,
+        checkFullPageOptions,
+        isNativeContext = false,
+    }: InternalCheckFullPageMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1a. Check if the method is supported in native context
     if (isNativeContext) {
@@ -38,14 +38,14 @@ export default async function checkFullPageScreen(
             waitForFontsLoaded: checkFullPageOptions.method.waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, isLandscape } = await saveFullPageScreen(
+    const { devicePixelRatio, fileName, isLandscape } = await saveFullPageScreen({
         methods,
         instanceData,
         folders,
         tag,
         saveFullPageOptions,
         isNativeContext,
-    )
+    })
 
     // 2a. Determine the options
     const compareOptions = methodCompareOptions(checkFullPageOptions.method)

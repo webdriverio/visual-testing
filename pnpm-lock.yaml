@@ -11,9 +11,15 @@ importers:
       '@wdio/ocr-service':
         specifier: workspace:^
         version: link:packages/ocr-service
+      '@wdio/visual-html-reporter':
+        specifier: workspace:^
+        version: link:packages/visual-html-reporter
       '@wdio/visual-service':
         specifier: workspace:^
         version: link:packages/visual-service
+      webdriver-image-comparison:
+        specifier: workspace:^
+        version: link:packages/webdriver-image-comparison
     devDependencies:
       '@changesets/cli':
         specifier: ^2.27.7
@@ -151,6 +157,21 @@ importers:
       '@types/xml2js':
         specifier: ~0.4.14
         version: 0.4.14
+
+  packages/visual-html-reporter:
+    dependencies:
+      '@wdio/globals':
+        specifier: ^8.39.0
+        version: 8.39.1(typescript@5.5.3)
+      '@wdio/logger':
+        specifier: ^8.38.0
+        version: 8.38.0
+      '@wdio/reporter':
+        specifier: ^8.39.0
+        version: 8.39.0
+      '@wdio/types':
+        specifier: ^8.39.0
+        version: 8.39.0
 
   packages/visual-service:
     dependencies:
@@ -2215,7 +2236,6 @@ packages:
       '@wdio/types': 8.39.0
       diff: 5.2.0
       object-inspect: 1.13.2
-    dev: true
 
   /@wdio/runner@8.39.1(typescript@5.5.3):
     resolution: {integrity: sha512-hCGI+TSAyb14UtdDjswI5AAdW1CZMi6di+rDZ6ml43hQyHc6sw+74CXI8dwoJ29dcTzbg7QCJZZXV1qMn0kh2w==}
@@ -3385,7 +3405,6 @@ packages:
   /diff@5.2.0:
     resolution: {integrity: sha512-uIFDxqpRZGZ6ThOk84hEfqWoHx2devRFvpTZcTHur85vImfaxUbTW9Ryh4CpCuDnToOP1CEtXKIgytHBPVff5A==}
     engines: {node: '>=0.3.1'}
-    dev: true
 
   /dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
@@ -6023,7 +6042,6 @@ packages:
   /object-inspect@1.13.2:
     resolution: {integrity: sha512-IRZSRuzJiynemAXPYtPe5BoI/RESNYR7TYm50MC5Mqbd3Jmw5y790sErYw3V6SryFJD64b74qQQs9wn5Bg/k3g==}
     engines: {node: '>= 0.4'}
-    dev: true
 
   /object-keys@1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}

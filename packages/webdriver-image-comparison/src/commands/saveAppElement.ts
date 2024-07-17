@@ -1,24 +1,25 @@
-import type { Folders } from '../base.interfaces.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import { takeBase64ElementScreenshot } from '../methods/images.js'
-import type { InstanceData } from '../methods/instanceData.interfaces.js'
-import type { GetElementRect, Methods } from '../methods/methods.interfaces.js'
-import type { SaveElementOptions, WicElement } from './element.interfaces.js'
+import type { GetElementRect } from '../methods/methods.interfaces.js'
+import type { WicElement } from './element.interfaces.js'
+import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 
 /**
  * Saves an element image for a native app
  */
 export default async function saveAppElement(
-    methods: Methods,
-    instanceData: InstanceData,
-    folders: Folders,
-    element: WicElement,
-    tag: string,
-    saveElementOptions: SaveElementOptions,
-    isNativeContext: boolean,
+    {
+        methods,
+        instanceData,
+        folders,
+        element,
+        tag,
+        saveElementOptions,
+        isNativeContext = false,
+    }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1. Set some variables
     const {
@@ -42,7 +43,7 @@ export default async function saveAppElement(
 
     // 2. Take the screenshot
     const base64Image: string = await takeBase64ElementScreenshot({
-        element,
+        element: element as WicElement,
         devicePixelRatio,
         isIOS,
         methods: {
