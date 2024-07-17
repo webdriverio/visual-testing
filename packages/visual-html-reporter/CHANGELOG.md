@@ -1,0 +1,1 @@
+# @wdio/visual-html-reporter

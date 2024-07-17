@@ -1,0 +1,34 @@
+{
+  "name": "@wdio/visual-html-reporter",
+  "author": "Wim Selles - wswebcreation",
+  "description": "A WebdriverIO HTML Reporter to create HTML reports for visual testing",
+  "version": "0.1.0",
+  "license": "MIT",
+  "homepage": "https://webdriver.io/docs/visual-testing",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webdriverio/visual-testing.git"
+  },
+  "keywords": [
+    "webdriverio",
+    "visual",
+    "reporter",
+    "html"
+  ],
+  "exports": "./dist/index.js",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "run-s clean build:*",
+    "build:tsc": "tsc --project ./tsconfig.json",
+    "clean": "rimraf coverage dist .tmp",
+    "watch": "pnpm run build:tsc -w"
+  },
+  "dependencies": {
+    "@wdio/globals": "^8.39.0",
+    "@wdio/logger": "^8.38.0",
+    "@wdio/reporter": "^8.39.0",
+    "@wdio/types": "^8.39.0"
+  },
+  "devDependencies": {}
+}
