@@ -401,6 +401,8 @@ export async function executeImageCompare(
         const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
         diffFilePath = join(diffFolderPath, fileName)
 
+        console.log('testContext = ', testContext)
+
         if (imageCompareOptions.createJsonDiffFile) {
             processAndWriteDiffPixels({
                 diffFolderPath,
