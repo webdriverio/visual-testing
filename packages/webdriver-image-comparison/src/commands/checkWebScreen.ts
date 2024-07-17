@@ -17,6 +17,7 @@ export default async function checkWebScreen(
         tag,
         checkScreenOptions,
         isNativeContext = false,
+        testContext,
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1.  Take the actual screenshot and retrieve the needed data
@@ -66,5 +67,11 @@ export default async function checkWebScreen(
     }
 
     // 2b Now execute the compare and return the data
-    return executeImageCompare(methods.executor, executeCompareOptions, true, isNativeContext)
+    return executeImageCompare({
+        executor: methods.executor,
+        isViewPortScreenshot: true,
+        isNativeContext,
+        options: executeCompareOptions,
+        testContext,
+    })
 }

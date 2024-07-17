@@ -1,6 +1,8 @@
 import type Jimp from 'jimp'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
+import type { TestContext } from 'src/commands/check.interfaces.js'
+import type { Executor } from './methods.interfaces.js'
 
 export interface ResizeDimensions {
     // The bottom margin
@@ -11,6 +13,14 @@ export interface ResizeDimensions {
     right?: number;
     // The top margin
     top?: number;
+}
+
+export interface ExecuteImageCompare {
+    executor: Executor;
+    options: ImageCompareOptions;
+    testContext: TestContext;
+    isViewPortScreenshot: boolean;
+    isNativeContext: boolean;
 }
 
 export interface ImageCompareOptions {
@@ -220,3 +230,4 @@ export interface HandleIOSBezelCorners {
     isLandscape: boolean,
     width: number,
 }
+

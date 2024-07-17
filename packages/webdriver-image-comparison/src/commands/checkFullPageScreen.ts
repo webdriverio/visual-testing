@@ -17,6 +17,7 @@ export default async function checkFullPageScreen(
         tag,
         checkFullPageOptions,
         isNativeContext = false,
+        testContext,
     }: InternalCheckFullPageMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1a. Check if the method is supported in native context
@@ -73,5 +74,11 @@ export default async function checkFullPageScreen(
     }
 
     // 2b Now execute the compare and return the data
-    return executeImageCompare(methods.executor, executeCompareOptions)
+    return executeImageCompare({
+        executor: methods.executor,
+        isViewPortScreenshot: false,
+        isNativeContext,
+        options: executeCompareOptions,
+        testContext,
+    })
 }

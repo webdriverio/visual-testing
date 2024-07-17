@@ -17,6 +17,8 @@ export default async function checkWebElement(
         element,
         tag,
         checkElementOptions,
+        testContext,
+        isNativeContext = false,
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1. Take the actual element screenshot and retrieve the needed data
@@ -67,5 +69,11 @@ export default async function checkWebElement(
     }
 
     // 2b Now execute the compare and return the data
-    return executeImageCompare(methods.executor, executeCompareOptions)
+    return executeImageCompare({
+        executor: methods.executor,
+        isViewPortScreenshot: true,
+        isNativeContext,
+        options: executeCompareOptions,
+        testContext,
+    })
 }

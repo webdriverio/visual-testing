@@ -16,7 +16,8 @@ export default async function checkAppElement(
         element,
         tag,
         checkElementOptions,
-        isNativeContext = true
+        isNativeContext = true,
+        testContext,
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1. Set some vars
@@ -62,5 +63,11 @@ export default async function checkAppElement(
     }
 
     // 3b Now execute the compare and return the data
-    return executeImageCompare(executor, executeCompareOptions)
+    return executeImageCompare({
+        executor,
+        options: executeCompareOptions,
+        testContext,
+        isViewPortScreenshot: false,
+        isNativeContext,
+    })
 }

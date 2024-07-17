@@ -14,9 +14,10 @@ export default async function checkScreen(
         tag,
         checkScreenOptions,
         isNativeContext,
+        testContext,
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
     return isNativeContext
-        ? checkAppScreen({ methods, instanceData, folders, tag, checkScreenOptions, isNativeContext })
-        : checkWebScreen({ methods, instanceData, folders, tag, checkScreenOptions, isNativeContext })
+        ? checkAppScreen({ methods, instanceData, folders, tag, checkScreenOptions, isNativeContext, testContext })
+        : checkWebScreen({ methods, instanceData, folders, tag, checkScreenOptions, isNativeContext, testContext })
 }

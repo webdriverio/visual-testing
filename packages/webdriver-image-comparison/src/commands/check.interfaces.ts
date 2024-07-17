@@ -37,7 +37,14 @@ export interface CheckMethodOptions {
     scaleImagesToSameSize?: boolean;
 }
 
-export interface InternalCheckMethodOptions extends InternalSaveMethodOptions {}
+export type TestContext = {
+    parent: string;
+    title: string;
+}
+
+export interface InternalCheckMethodOptions extends InternalSaveMethodOptions {
+    testContext: TestContext;
+}
 
 export interface InternalCheckElementMethodOptions extends InternalCheckMethodOptions {
     element: WicElement | HTMLElement;

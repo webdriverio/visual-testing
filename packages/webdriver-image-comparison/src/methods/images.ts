@@ -15,16 +15,16 @@ import type {
     CropAndConvertToDataURL,
     CroppedBase64Image,
     DimensionsWarning,
+    ExecuteImageCompare,
     HandleIOSBezelCorners,
     IgnoreBoxes,
-    ImageCompareOptions,
     ImageCompareResult,
     ResizeDimensions,
     RotateBase64ImageOptions,
     RotatedImage,
 } from './images.interfaces.js'
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
-import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces.js'
+import type { GetElementRect, TakeScreenShot } from './methods.interfaces.js'
 import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
 import { processAndWriteDiffPixels } from './processAndWriteDiffPixels.js'
@@ -293,10 +293,13 @@ export async function makeCroppedBase64Image({
  * Execute the image compare
  */
 export async function executeImageCompare(
-    executor: Executor,
-    options: ImageCompareOptions,
-    isViewPortScreenshot = false,
-    isNativeContext = false,
+    {
+        executor,
+        isViewPortScreenshot,
+        isNativeContext,
+        options,
+        testContext,
+    }: ExecuteImageCompare
 ): Promise<ImageCompareResult | number> {
     // 1. Set some variables
     const {

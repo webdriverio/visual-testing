@@ -15,6 +15,7 @@ export default async function checkTabbablePage(
         tag,
         checkTabbableOptions,
         isNativeContext = false,
+        testContext,
     }: InternalCheckTabbablePageMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1a. Check if the method is supported in native context
@@ -34,6 +35,7 @@ export default async function checkTabbablePage(
         checkFullPageOptions:
         checkTabbableOptions,
         isNativeContext,
+        testContext,
     })
 
     // 3. Remove the canvas

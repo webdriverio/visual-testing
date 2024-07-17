@@ -17,6 +17,7 @@ export default async function checkAppScreen(
         tag,
         checkScreenOptions,
         isNativeContext = true,
+        testContext,
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1. Set some vars
@@ -86,5 +87,11 @@ export default async function checkAppScreen(
     }
 
     // 4b Now execute the compare and return the data
-    return executeImageCompare(executor, executeCompareOptions, true, isNativeContext)
+    return executeImageCompare({
+        executor,
+        isViewPortScreenshot: true,
+        isNativeContext,
+        options: executeCompareOptions,
+        testContext,
+    })
 }
