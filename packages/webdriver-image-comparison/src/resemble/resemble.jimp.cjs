@@ -54,8 +54,8 @@ const isNode = function () {
     const globalPolyfill = getGlobalThis()
     return (
         typeof globalPolyfill.process !== 'undefined' &&
-    globalPolyfill.process.versions &&
-    globalPolyfill.process.versions.node
+        globalPolyfill.process.versions &&
+        globalPolyfill.process.versions.node
     )
 };
 
@@ -84,9 +84,9 @@ const isNode = function () {
     // }
 
     function createCanvas(width, height) {
-    // if (isNode()) {
-    //   return Canvas.createCanvas(width, height);
-    // }
+        // if (isNode()) {
+        //   return Canvas.createCanvas(width, height);
+        // }
 
         // var cnvs = document.createElement("canvas");
         // cnvs.width = width;
@@ -120,12 +120,9 @@ const isNode = function () {
                 px[offset + 3] = errorPixelColor.alpha
             },
             movement: function (px, offset, d1, d2) {
-                px[offset] =
-          (d2.r * (errorPixelColor.red / 255) + errorPixelColor.red) / 2
-                px[offset + 1] =
-          (d2.g * (errorPixelColor.green / 255) + errorPixelColor.green) / 2
-                px[offset + 2] =
-          (d2.b * (errorPixelColor.blue / 255) + errorPixelColor.blue) / 2
+                px[offset] = (d2.r * (errorPixelColor.red / 255) + errorPixelColor.red) / 2
+                px[offset + 1] = (d2.g * (errorPixelColor.green / 255) + errorPixelColor.green) / 2
+                px[offset + 2] = (d2.b * (errorPixelColor.blue / 255) + errorPixelColor.blue) / 2
                 px[offset + 3] = d2.a
             },
             flatDifferenceIntensity: function (px, offset, d1, d2) {
@@ -138,14 +135,14 @@ const isNode = function () {
                 const ratio = (colorsDistance(d1, d2) / 255) * 0.8
 
                 px[offset] =
-          (1 - ratio) * (d2.r * (errorPixelColor.red / 255)) +
-          ratio * errorPixelColor.red
+                    (1 - ratio) * (d2.r * (errorPixelColor.red / 255)) +
+                    ratio * errorPixelColor.red
                 px[offset + 1] =
-          (1 - ratio) * (d2.g * (errorPixelColor.green / 255)) +
-          ratio * errorPixelColor.green
+                    (1 - ratio) * (d2.g * (errorPixelColor.green / 255)) +
+                    ratio * errorPixelColor.green
                 px[offset + 2] =
-          (1 - ratio) * (d2.b * (errorPixelColor.blue / 255)) +
-          ratio * errorPixelColor.blue
+                    (1 - ratio) * (d2.b * (errorPixelColor.blue / 255)) +
+                    ratio * errorPixelColor.blue
                 px[offset + 3] = d2.a
             },
             diffOnly: function (px, offset, d1, d2) {
@@ -185,19 +182,16 @@ const isNode = function () {
 
         function colorsDistance(c1, c2) {
             return (
-                (Math.abs(c1.r - c2.r) +
-          Math.abs(c1.g - c2.g) +
-          Math.abs(c1.b - c2.b)) /
-        3
+                (Math.abs(c1.r - c2.r) + Math.abs(c1.g - c2.g) + Math.abs(c1.b - c2.b)) / 3
             )
         }
 
         function withinBoundingBox(x, y, width, height, box) {
             return (
-                x > (box.left || 0) &&
-        x < (box.right || width) &&
-        y > (box.top || 0) &&
-        y < (box.bottom || height)
+                x >= (box.left || 0) &&
+                x <= (box.right || width) &&
+                y >= (box.top || 0) &&
+                y <= (box.bottom || height)
             )
         }
 
@@ -620,6 +614,7 @@ const isNode = function () {
 
             if (!compareOnly) {
                 hiddenCanvas = createCanvas(width, height)
+
                 // context = hiddenCanvas.getContext("2d");
                 // imgd = context.createImageData(width, height);
                 pix = hiddenCanvas.bitmap.data
@@ -632,12 +627,15 @@ const isNode = function () {
                 bottom: 0,
                 right: 0,
             }
-
+            const diffPixels = []
             const updateBounds = function (x, y) {
+                // Update the big box
                 diffBounds.left = Math.min(x, diffBounds.left)
                 diffBounds.right = Math.max(x, diffBounds.right)
                 diffBounds.top = Math.min(y, diffBounds.top)
                 diffBounds.bottom = Math.max(y, diffBounds.bottom)
+                // Update the diffPixels array
+                diffPixels.push({ x, y })
             }
 
             const time = Date.now()
@@ -657,44 +655,39 @@ const isNode = function () {
 
             let skipTheRest = false
 
-            // Array to store the coordinates and colors of diff pixels
-            const diffPixels = []
+            loop(width, height, function (horizontalPos, verticalPos) {
+                if (skipTheRest) {
+                    return
+                }
 
-            const totalPixels = width * height
-            const step = skip || 1
+                if (skip) {
+                    // only skip if the image isn't small
+                    if (verticalPos % skip === 0 || horizontalPos % skip === 0) {
+                        return
+                    }
+                }
 
-            for (let i = 0; i < totalPixels; i += step) {
-                const x = i % width
-                const y = Math.floor(i / width)
-
-                const offset = i * 4
-                pixel1.r = data1[offset]
-                pixel1.g = data1[offset + 1]
-                pixel1.b = data1[offset + 2]
-                pixel1.a = data1[offset + 3]
-
-                pixel2.r = data2[offset]
-                pixel2.g = data2[offset + 1]
-                pixel2.b = data2[offset + 2]
-                pixel2.a = data2[offset + 3]
+                const offset = (verticalPos * width + horizontalPos) * 4
+                if (
+                    !getPixelInfo(pixel1, data1, offset, 1) ||
+                    !getPixelInfo(pixel2, data2, offset, 2)
+                ) {
+                    return
+                }
 
                 const isWithinComparedArea = withinComparedArea(
-                    x,
-                    y,
+                    horizontalPos,
+                    verticalPos,
                     width,
                     height,
                     pixel2
                 )
 
                 if (ignoreColors) {
-                    const brightness1 = 0.3 * pixel1.r + 0.59 * pixel1.g + 0.11 * pixel1.b
-                    const brightness2 = 0.3 * pixel2.r + 0.59 * pixel2.g + 0.11 * pixel2.b
+                    addBrightnessInfo(pixel1)
+                    addBrightnessInfo(pixel2)
 
-                    if (
-                        (Math.abs(brightness1 - brightness2) < tolerance.minBrightness &&
-                         Math.abs(pixel1.a - pixel2.a) < tolerance.alpha) ||
-                        !isWithinComparedArea
-                    ) {
+                    if ( isPixelBrightnessSimilar(pixel1, pixel2) || !isWithinComparedArea ) {
                         if (!compareOnly) {
                             copyGrayScalePixel(pix, offset, pixel2)
                         }
@@ -703,42 +696,26 @@ const isNode = function () {
                             errorPixel(pix, offset, pixel1, pixel2)
                         }
 
-                        // Record diff pixel information
-                        diffPixels.push({
-                            x: x,
-                            y: y,
-                            originalColor: { r: pixel1.r, g: pixel1.g, b: pixel1.b, a: pixel1.a },
-                            actualColor: { r: pixel2.r, g: pixel2.g, b: pixel2.b, a: pixel2.a }
-                        })
-
                         mismatchCount++
-                        updateBounds(x, y)
+                        updateBounds(horizontalPos, verticalPos)
                     }
-                    continue
+                    return
                 }
 
-                if (
-                    Math.abs(pixel1.r - pixel2.r) < tolerance.red &&
-                    Math.abs(pixel1.g - pixel2.g) < tolerance.green &&
-                    Math.abs(pixel1.b - pixel2.b) < tolerance.blue &&
-                    Math.abs(pixel1.a - pixel2.a) < tolerance.alpha
-                ) {
+                if (isRGBSimilar(pixel1, pixel2) || !isWithinComparedArea) {
                     if (!compareOnly) {
                         copyPixel(pix, offset, pixel1)
                     }
                 } else if (
                     ignoreAntialiasing &&
-                    (isAntialiased(pixel1, data1, 1, y, x, width) ||
-                     isAntialiased(pixel2, data2, 2, y, x, width))
+                    (
+                        addBrightnessInfo(pixel1), // jit pixel info augmentation looks a little weird, sorry.
+                        addBrightnessInfo(pixel2),
+                        isAntialiased(pixel1, data1, 1, verticalPos, horizontalPos, width) ||
+                        isAntialiased(pixel2, data2, 2, verticalPos, horizontalPos, width)
+                    )
                 ) {
-                    const brightness1 = 0.3 * pixel1.r + 0.59 * pixel1.g + 0.11 * pixel1.b
-                    const brightness2 = 0.3 * pixel2.r + 0.59 * pixel2.g + 0.11 * pixel2.b
-
-                    if (
-                        (Math.abs(brightness1 - brightness2) < tolerance.minBrightness &&
-                         Math.abs(pixel1.a - pixel2.a) < tolerance.alpha) ||
-                        !isWithinComparedArea
-                    ) {
+                    if ( isPixelBrightnessSimilar(pixel1, pixel2) || !isWithinComparedArea ) {
                         if (!compareOnly) {
                             copyGrayScalePixel(pix, offset, pixel2)
                         }
@@ -747,48 +724,31 @@ const isNode = function () {
                             errorPixel(pix, offset, pixel1, pixel2)
                         }
 
-                        // Record diff pixel information
-                        diffPixels.push({
-                            x: x,
-                            y: y,
-                            originalColor: { r: pixel1.r, g: pixel1.g, b: pixel1.b, a: pixel1.a },
-                            actualColor: { r: pixel2.r, g: pixel2.g, b: pixel2.b, a: pixel2.a }
-                        })
-
                         mismatchCount++
-                        updateBounds(x, y)
+                        updateBounds(horizontalPos, verticalPos)
                     }
                 } else {
                     if (!compareOnly) {
                         errorPixel(pix, offset, pixel1, pixel2)
                     }
 
-                    // Record diff pixel information
-                    diffPixels.push({
-                        x: x,
-                        y: y,
-                        originalColor: { r: pixel1.r, g: pixel1.g, b: pixel1.b, a: pixel1.a },
-                        actualColor: { r: pixel2.r, g: pixel2.g, b: pixel2.b, a: pixel2.a }
-                    })
-
                     mismatchCount++
-                    updateBounds(x, y)
+                    updateBounds(horizontalPos, verticalPos)
                 }
 
                 if (compareOnly) {
-                    const currentMisMatchPercent = (mismatchCount / totalPixels) * 100
+                    const currentMisMatchPercent = (mismatchCount / (height * width)) * 100
 
                     if (currentMisMatchPercent > returnEarlyThreshold) {
-                        break
+                        skipTheRest = true
                     }
                 }
-            }
+            })
 
-            data.rawMisMatchPercentage = (mismatchCount / totalPixels) * 100
+            data.rawMisMatchPercentage = (mismatchCount / (height * width)) * 100
             data.misMatchPercentage = data.rawMisMatchPercentage.toFixed(2)
             data.diffBounds = diffBounds
             data.analysisTime = Date.now() - time
-
             // Add diffPixels array to the data object
             data.diffPixels = diffPixels
 
@@ -802,6 +762,8 @@ const isNode = function () {
                 if (text) {
                     barHeight = addLabel(text, hiddenCanvas)
                 }
+
+                // context.putImageData(imgd, 0, barHeight);
 
                 return hiddenCanvas.getBase64Async(Jimp.MIME_PNG)
             }
@@ -881,10 +843,9 @@ const isNode = function () {
             if (options.errorColor) {
                 for (key in options.errorColor) {
                     if (options.errorColor.hasOwnProperty(key)) {
-                        errorPixelColor[key] =
-              options.errorColor[key] === void 0
-                  ? errorPixelColor[key]
-                  : options.errorColor[key]
+                        errorPixelColor[key] = options.errorColor[key] === void 0
+                            ? errorPixelColor[key]
+                            : options.errorColor[key]
                     }
                 }
             }
@@ -946,17 +907,15 @@ const isNode = function () {
                         triggerDataUpdate()
                         return
                     }
-                    width =
-            images[0].bitmap.width > images[1].bitmap.width
-                ? images[0].bitmap.width
-                : images[1].bitmap.width
-                    height =
-            images[0].bitmap.height > images[1].bitmap.height
-                ? images[0].bitmap.height
-                : images[1].bitmap.height
+                    width = images[0].bitmap.width > images[1].bitmap.width
+                        ? images[0].bitmap.width
+                        : images[1].bitmap.width
+                    height = images[0].bitmap.height > images[1].bitmap.height
+                        ? images[0].bitmap.height
+                        : images[1].bitmap.height
 
                     data.isSameDimensions = images[0].bitmap.width === images[1].bitmap.width &&
-            images[0].bitmap.height === images[1].bitmap.height ? true : false
+                        images[0].bitmap.height === images[1].bitmap.height ? true : false
 
                     data.dimensionDifference = {
                         width: images[0].bitmap.width - images[1].bitmap.width,
