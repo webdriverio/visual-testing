@@ -92,6 +92,43 @@ class DisjointSet {
     }
 }
 
+function mergeBoundingBoxes(boxes: BoundingBox[], proximity: number): BoundingBox[] {
+    log.info(`Merging bounding boxes started with a proximity of ${proximity} pixels`)
+    const merged: BoundingBox[] = []
+
+    while (boxes.length) {
+        const box = boxes.pop()!
+        let mergedWithAnotherBox = false
+
+        for (let i = 0; i < boxes.length; i++) {
+            const otherBox = boxes[i]
+
+            if (
+                box.left <= otherBox.right + proximity &&
+                box.right >= otherBox.left - proximity &&
+                box.top <= otherBox.bottom + proximity &&
+                box.bottom >= otherBox.top - proximity
+            ) {
+                boxes.splice(i, 1)
+                boxes.push({
+                    left: Math.min(box.left, otherBox.left),
+                    top: Math.min(box.top, otherBox.top),
+                    right: Math.max(box.right, otherBox.right),
+                    bottom: Math.max(box.bottom, otherBox.bottom),
+                })
+                mergedWithAnotherBox = true
+                break
+            }
+        }
+
+        if (!mergedWithAnotherBox) {
+            merged.push(box)
+        }
+    }
+
+    return merged
+}
+
 function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[] {
     log.info('Processing diff pixels started')
     log.info(`Processing ${diffPixels.length} diff pixels`)
@@ -173,46 +210,6 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[
     log.info(`Number merged: ${mergedBoxes.length}`)
 
     return mergedBoxes
-}
-
-/**
- * Function to merge nearby bounding boxes.
- */
-function mergeBoundingBoxes(boxes: BoundingBox[], proximity: number): BoundingBox[] {
-    log.info(`Merging bounding boxes started with a proximity of ${proximity} pixels`)
-    const merged: BoundingBox[] = []
-
-    while (boxes.length) {
-        const box = boxes.pop()!
-        let mergedWithAnotherBox = false
-
-        for (let i = 0; i < boxes.length; i++) {
-            const otherBox = boxes[i]
-
-            if (
-                box.left <= otherBox.right + proximity &&
-                box.right >= otherBox.left - proximity &&
-                box.top <= otherBox.bottom + proximity &&
-                box.bottom >= otherBox.top - proximity
-            ) {
-                boxes.splice(i, 1)
-                boxes.push({
-                    left: Math.min(box.left, otherBox.left),
-                    top: Math.min(box.top, otherBox.top),
-                    right: Math.max(box.right, otherBox.right),
-                    bottom: Math.max(box.bottom, otherBox.bottom),
-                })
-                mergedWithAnotherBox = true
-                break
-            }
-        }
-
-        if (!mergedWithAnotherBox) {
-            merged.push(box)
-        }
-    }
-
-    return merged
 }
 
 export { processDiffPixels }

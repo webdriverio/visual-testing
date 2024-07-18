@@ -11,6 +11,7 @@ import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/
 import { determineStatusAddressToolBarRectangles, isWdioElement } from './rectangles.js'
 import type {
     AdjustedAxis,
+    BoundingBox,
     CheckBaselineImageExists,
     CropAndConvertToDataURL,
     CroppedBase64Image,
@@ -27,7 +28,8 @@ import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
 import type { GetElementRect, TakeScreenShot } from './methods.interfaces.js'
 import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
-import { processAndWriteDiffPixels } from './processAndWriteDiffPixels.js'
+import { processDiffPixels } from './processDiffPixels.js'
+import { createCompareReport } from './createCompareReport.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
 
@@ -314,7 +316,6 @@ export async function executeImageCompare(
     } = options
     const { actualFolder, autoSaveBaseline, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
         options.folderOptions
-    let diffFilePath
     const imageCompareOptions = { ...options.compareOptions.wic, ...options.compareOptions.method }
 
     // 2. Create all needed folders
@@ -323,6 +324,8 @@ export async function executeImageCompare(
     const baselineFolderPath = getAndCreatePath(baselineFolder, createFolderOptions)
     const actualFilePath = join(actualFolderPath, fileName)
     const baselineFilePath = join(baselineFolderPath, fileName)
+    const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
+    const diffFilePath = join(diffFolderPath, fileName)
 
     // 3. Check if there is a baseline image, and determine if it needs to be auto saved or not
     await checkBaselineImageExists({ actualFilePath, baselineFilePath, autoSaveBaseline })
@@ -392,24 +395,16 @@ export async function executeImageCompare(
     let reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage
         : Number(data.rawMisMatchPercentage.toFixed(3))
+    const diffBoundingBoxes:BoundingBox[] = []
 
     // 6. Save the diff when there is a diff
     if (rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || process.argv.includes('--store-all-diffs')) {
         const isDifference = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance
         const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
         const debugMessage = 'INFO:\n Debug mode is enabled. Saved the debug file to:'
-        const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
-        diffFilePath = join(diffFolderPath, fileName)
-
-        console.log('testContext = ', testContext)
 
         if (imageCompareOptions.createJsonDiffFile) {
-            processAndWriteDiffPixels({
-                diffFolderPath,
-                data,
-                fileName,
-                proximity: imageCompareOptions.diffPixelBoundingBoxProximity,
-            })
+            diffBoundingBoxes.push(...processDiffPixels(data.diffPixels, imageCompareOptions.diffPixelBoundingBoxProximity))
         }
 
         await saveBase64Image(await addBlockOuts(Buffer.from(await data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
@@ -422,6 +417,24 @@ export async function executeImageCompare(
  ${diffFilePath}
 #####################################################################################`,
         )
+    }
+
+    if (imageCompareOptions.createJsonDiffFile) {
+        createCompareReport({
+            boundingBoxes: {
+                diffBoundingBoxes,
+                ignoredBoxes,
+
+            },
+            data,
+            fileName,
+            folders: {
+                actualFolderPath,
+                baselineFolderPath,
+                diffFolderPath: diffFolderPath,
+            },
+            testContext,
+        })
     }
 
     if (updateVisualBaseline()) {
