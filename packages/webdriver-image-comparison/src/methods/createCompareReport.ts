@@ -9,7 +9,7 @@ export function createCompareReport({
     data,
     fileName,
     folders,
-    testContext:{ parent, title },
+    testContext:{ commandName, parent, tag, title },
 }: {
         boundingBoxes: {
             diffBoundingBoxes: BoundingBox[];
@@ -26,10 +26,12 @@ export function createCompareReport({
 }) {
     const { misMatchPercentage, rawMisMatchPercentage } = data
     const jsonFileName = fileName.split('.').slice(0, -1).join('.')
-    const jsonFilePath = pathResolve(folders.actualFolderPath, `${jsonFileName}.json`)
+    const jsonFilePath = pathResolve(folders.actualFolderPath, `${jsonFileName}-report.json`)
     const jsonData = {
         [parent]: {
             test: title,
+            tag,
+            commandName,
             boundingBoxes,
             fileData: {
                 actualFilePath: pathResolve(folders.actualFolderPath, fileName),

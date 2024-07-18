@@ -52,7 +52,9 @@ export default class WdioImageComparisonService extends BaseClass {
         this.#config = config
         this._isNativeContext = undefined
         this.#testContext = {
+            commandName: 'unknown',
             parent: 'Could not be determined',
+            tag: 'unknown',
             title: 'Could not be determined',
         }
     }
@@ -228,7 +230,11 @@ export default class WdioImageComparisonService extends BaseClass {
                             method: elementOptions,
                         },
                         isNativeContext,
-                        testContext: self.#testContext,
+                        testContext: {
+                            ...self.#testContext,
+                            commandName,
+                            tag,
+                        },
                     }
                 )
             })
@@ -270,7 +276,11 @@ export default class WdioImageComparisonService extends BaseClass {
                                 method: pageOptions,
                             },
                             isNativeContext,
-                            testContext: self.#testContext,
+                            testContext: {
+                                ...self.#testContext,
+                                commandName,
+                                tag,
+                            },
                         }
                     )
                 })
@@ -320,7 +330,11 @@ export default class WdioImageComparisonService extends BaseClass {
                                 method: pageOptions,
                             },
                             isNativeContext,
-                            testContext: self.#testContext,
+                            testContext: {
+                                ...self.#testContext,
+                                commandName,
+                                tag,
+                            },
                         }
                     )
                 }
@@ -371,7 +385,11 @@ export default class WdioImageComparisonService extends BaseClass {
                                     method: pageOptions,
                                 },
                                 isNativeContext,
-                                testContext: self.#testContext,
+                                testContext: {
+                                    ...self.#testContext,
+                                    commandName,
+                                    tag,
+                                },
                             })
                     }
                     return returnData
@@ -398,9 +416,10 @@ export default class WdioImageComparisonService extends BaseClass {
         }
     }
 
-    #getTestContext(test: Frameworks.Test | Frameworks.World): { parent: string; title: string } {
+    #getTestContext(test: Frameworks.Test | Frameworks.World): TestContext {
         if (this.#config?.framework === 'mocha' && test) {
             return {
+                ...this.#testContext,
                 title: (test as Frameworks.Test).title,
                 parent: (test as Frameworks.Test).parent
             }
@@ -428,6 +447,7 @@ export default class WdioImageComparisonService extends BaseClass {
             const { description: title, fullName } = test as Frameworks.Test
 
             return {
+                ...this.#testContext,
                 title: title as string,
                 parent : fullName?.replace(` ${title}`, '') as string
             }
@@ -435,6 +455,7 @@ export default class WdioImageComparisonService extends BaseClass {
 
         if (this.#config?.framework === 'cucumber' && test) {
             return {
+                ...this.#testContext,
                 title: (test as Frameworks.World)?.pickle?.name as string,
                 // @ts-ignore
                 parent: (test as Frameworks.World)?.gherkinDocument?.feature?.name as string,

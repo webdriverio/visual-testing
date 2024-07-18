@@ -38,7 +38,9 @@ export interface CheckMethodOptions {
 }
 
 export type TestContext = {
+    commandName: string;
     parent: string;
+    tag: string;
     title: string;
 }
 
