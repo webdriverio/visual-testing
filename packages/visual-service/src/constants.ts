@@ -4,8 +4,8 @@ export const NUM_SHARDS = 1
 export const PAGE_OPTIONS_MAP: { [key: string]: string } = {
     'saveScreen': 'saveScreenOptions',
     'saveFullPageScreen': 'saveFullPageOptions',
-    'saveTabbablePage': 'saveTabbablePageOptions',
+    'saveTabbablePage': 'saveTabbableOptions',
     'checkScreen': 'checkScreenOptions',
     'checkFullPageScreen': 'checkFullPageOptions',
-    'checkTabbablePage': 'checkTabbablePageOptions'
+    'checkTabbablePage': 'checkTabbableOptions'
 }
