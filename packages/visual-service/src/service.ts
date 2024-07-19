@@ -13,9 +13,10 @@ import {
     saveTabbablePage,
     checkTabbablePage,
     FOLDERS,
+    DEFAULT_TEST_CONTEXT,
 } from 'webdriver-image-comparison'
 import type { TestContext } from 'webdriver-image-comparison'
-import { determineNativeContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
+import { determineNativeContext, enrichTestContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
 import {
     toMatchScreenSnapshot,
     toMatchFullPageSnapshot,
@@ -51,12 +52,7 @@ export default class WdioImageComparisonService extends BaseClass {
         super(options)
         this.#config = config
         this._isNativeContext = undefined
-        this.#testContext = {
-            commandName: 'unknown',
-            parent: 'Could not be determined',
-            tag: 'unknown',
-            title: 'Could not be determined',
-        }
+        this.#testContext = DEFAULT_TEST_CONTEXT
     }
 
     /**
@@ -230,11 +226,12 @@ export default class WdioImageComparisonService extends BaseClass {
                             method: elementOptions,
                         },
                         isNativeContext,
-                        testContext: {
-                            ...self.#testContext,
+                        testContext: enrichTestContext({
                             commandName,
+                            currentTestContext: self.#testContext,
+                            instanceData,
                             tag,
-                        },
+                        })
                     }
                 )
             })
@@ -276,11 +273,12 @@ export default class WdioImageComparisonService extends BaseClass {
                                 method: pageOptions,
                             },
                             isNativeContext,
-                            testContext: {
-                                ...self.#testContext,
+                            testContext: enrichTestContext({
                                 commandName,
+                                currentTestContext: self.#testContext,
+                                instanceData,
                                 tag,
-                            },
+                            })
                         }
                     )
                 })
@@ -330,11 +328,12 @@ export default class WdioImageComparisonService extends BaseClass {
                                 method: pageOptions,
                             },
                             isNativeContext,
-                            testContext: {
-                                ...self.#testContext,
+                            testContext: enrichTestContext({
                                 commandName,
+                                currentTestContext: self.#testContext,
+                                instanceData,
                                 tag,
-                            },
+                            })
                         }
                     )
                 }
@@ -385,11 +384,12 @@ export default class WdioImageComparisonService extends BaseClass {
                                     method: pageOptions,
                                 },
                                 isNativeContext,
-                                testContext: {
-                                    ...self.#testContext,
+                                testContext: enrichTestContext({
                                     commandName,
+                                    currentTestContext: self.#testContext,
+                                    instanceData,
                                     tag,
-                                },
+                                })
                             })
                     }
                     return returnData

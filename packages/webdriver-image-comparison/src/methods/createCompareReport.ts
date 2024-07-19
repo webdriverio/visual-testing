@@ -1,15 +1,28 @@
 import { resolve as pathResolve } from 'node:path'
 import { writeFileSync } from 'node:fs'
 import type { BoundingBox, IgnoreBoxes } from './images.interfaces.js'
-import type { CompareData } from 'src/resemble/compare.interfaces.js'
-import type { TestContext } from 'src/commands/check.interfaces.js'
+import type { CompareData } from '../resemble/compare.interfaces.js'
+import type { TestContext } from '../commands/check.interfaces.js'
 
 export function createCompareReport({
     boundingBoxes,
     data,
     fileName,
     folders,
-    testContext:{ commandName, parent, tag, title },
+    testContext: {
+        commandName,
+        instanceData: {
+            app,
+            browser,
+            deviceName,
+            isIOS,
+            isMobile,
+            platform,
+        },
+        parent,
+        tag,
+        title
+    },
 }: {
         boundingBoxes: {
             diffBoundingBoxes: BoundingBox[];
@@ -27,10 +40,22 @@ export function createCompareReport({
     const { misMatchPercentage, rawMisMatchPercentage } = data
     const jsonFileName = fileName.split('.').slice(0, -1).join('.')
     const jsonFilePath = pathResolve(folders.actualFolderPath, `${jsonFileName}-report.json`)
+    const browserContext = {
+        browser,
+        platform,
+    }
+    const mobileContext = {
+        ...(app !== 'not-known'
+            ? { app }
+            : { browser: { name: browser.name, version: isIOS ? platform.version: browser.version } }),
+        deviceName,
+        platform,
+    }
     const jsonData = {
         [parent]: {
             test: title,
             tag,
+            instanceData: isMobile ? mobileContext : browserContext,
             commandName,
             boundingBoxes,
             fileData: {

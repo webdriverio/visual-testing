@@ -42,6 +42,21 @@ export type TestContext = {
     parent: string;
     tag: string;
     title: string;
+    instanceData: {
+        browser: {
+            name: string;
+            version: string;
+        },
+        deviceName: string;
+        platform: {
+            name: string;
+            version: string;
+        },
+        app: string;
+        isMobile: boolean;
+        isAndroid: boolean;
+        isIOS: boolean;
+    }
 }
 
 export interface InternalCheckMethodOptions extends InternalSaveMethodOptions {
