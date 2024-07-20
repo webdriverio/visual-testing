@@ -214,7 +214,7 @@ export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Prom
         platformVersion: rawPlatformVersion = NOT_KNOWN,
     } = currentCapabilities as WebdriverIO.Capabilities
     const appName = rawApp !== NOT_KNOWN
-        ? rawApp.replace(/\\/g, '/').split('/').pop().replace(/[^a-zA-Z0-9]/g, '_')
+        ? rawApp.replace(/\\/g, '/').split('/').pop().replace(/[^a-zA-Z0-9.]/g, '_')
         : NOT_KNOWN
     const deviceName = getDeviceName(currentBrowser)
     const nativeWebScreenshot = !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
