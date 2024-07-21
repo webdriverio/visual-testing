@@ -16,6 +16,7 @@
     "test": "run-s test:*",
     "test:lint": "rimraf .eslintcache && eslint packages tests",
     "test:unit": "vitest --coverage --run",
+    "test:unit:watch": "vitest --coverage --watch",
     "test.local.init": "rimraf localBaseline && wdio ./tests/configs/wdio.local.init.conf.ts",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.ts",
     "test.local.emus.app": "wdio tests/configs/wdio.local.android.emus.app.conf.ts",
