@@ -22,7 +22,7 @@ describe('options', () => {
                 blockOutSideBar: true,
                 blockOutStatusBar: true,
                 blockOutToolBar: true,
-                createJsonDiffFile: true,
+                createJsonReportFiles: true,
                 diffPixelBoundingBoxProximity: 123,
                 ignoreAlpha: true,
                 ignoreAntialiasing: true,

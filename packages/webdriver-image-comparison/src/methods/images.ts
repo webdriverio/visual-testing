@@ -403,7 +403,7 @@ export async function executeImageCompare(
         const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
         const debugMessage = 'INFO:\n Debug mode is enabled. Saved the debug file to:'
 
-        if (imageCompareOptions.createJsonDiffFile) {
+        if (imageCompareOptions.createJsonReportFiles) {
             diffBoundingBoxes.push(...processDiffPixels(data.diffPixels, imageCompareOptions.diffPixelBoundingBoxProximity))
         }
 
@@ -419,7 +419,7 @@ export async function executeImageCompare(
         )
     }
 
-    if (imageCompareOptions.createJsonDiffFile) {
+    if (imageCompareOptions.createJsonReportFiles) {
         createCompareReport({
             boundingBoxes: {
                 diffBoundingBoxes,

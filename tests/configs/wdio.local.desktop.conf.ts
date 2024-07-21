@@ -58,7 +58,7 @@ export const config: Options.Testrunner = {
                 savePerInstance: true,
                 blockOutStatusBar: true,
                 blockOutToolBar: true,
-                createJsonDiffFile: true,
+                createJsonReportFiles: true,
                 clearRuntimeFolder: true,
                 enableLayoutTesting: true,
             },

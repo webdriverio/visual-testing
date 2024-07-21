@@ -46,7 +46,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
             blockOutSideBar: options.blockOutSideBar ?? true,
             blockOutStatusBar: options.blockOutStatusBar ?? true,
             blockOutToolBar: options.blockOutToolBar ?? true,
-            createJsonDiffFile: options.createJsonDiffFile ?? false,
+            createJsonReportFiles: options.createJsonReportFiles ?? false,
             diffPixelBoundingBoxProximity: options.diffPixelBoundingBoxProximity ?? 5,
             ignoreAlpha: options.ignoreAlpha ?? false,
             ignoreAntialiasing: options.ignoreAntialiasing ?? false,

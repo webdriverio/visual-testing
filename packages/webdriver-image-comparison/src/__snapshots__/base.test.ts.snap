@@ -11,7 +11,7 @@ exports[`BaseClass > initializes default options correctly 1`] = `
     "blockOutSideBar": true,
     "blockOutStatusBar": true,
     "blockOutToolBar": true,
-    "createJsonDiffFile": false,
+    "createJsonReportFiles": false,
     "diffPixelBoundingBoxProximity": 5,
     "ignoreAlpha": false,
     "ignoreAntialiasing": false,

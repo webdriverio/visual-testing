@@ -55,10 +55,10 @@ export interface ClassOptions {
     blockOutStatusBar?: boolean;
     // Automatically block out the tool bar. This is mobile only.
     blockOutToolBar?: boolean;
-    // Create a json file with the diff data, this can be used to create a custom report.
-    createJsonDiffFile?: boolean;
-    // The proximity of the diff pixels to determine if a diff pixel is part of a group,
-    // the higher the number the more pixels will be grouped, the lower the number the less pixels will be grouped due to accuracy.
+    // Create JSON report files with all comparison data, this can be used to create a custom (HTML) report.
+    createJsonReportFiles?: boolean;
+    // The proximity of the diff pixels to determine if a diff pixel is part of a group that is used for the JSON report files.
+    // The higher the number the more pixels will be grouped, the lower the number the less pixels will be grouped due to accuracy.
     // Default is 5 pixels
     diffPixelBoundingBoxProximity?: number;
     // Compare images and discard alpha.
@@ -127,7 +127,7 @@ interface CompareOptions {
     blockOutSideBar: boolean;
     blockOutStatusBar: boolean;
     blockOutToolBar: boolean;
-    createJsonDiffFile: boolean;
+    createJsonReportFiles: boolean;
     diffPixelBoundingBoxProximity: number;
     ignoreAlpha: boolean;
     ignoreAntialiasing: boolean;
