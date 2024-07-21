@@ -4,6 +4,32 @@ import type { BoundingBox, IgnoreBoxes } from './images.interfaces.js'
 import type { CompareData } from '../resemble/compare.interfaces.js'
 import type { TestContext } from '../commands/check.interfaces.js'
 
+export type ResultReport = {
+    [key: string]: {
+        test: string;
+        tag: string;
+        instanceData: {
+            app?: string;
+            browser?: { name: string; version: string };
+            deviceName?: string;
+            platform: { name: string; version: string };
+        };
+        commandName: string;
+        boundingBoxes: {
+            diffBoundingBoxes: BoundingBox[];
+            ignoredBoxes: IgnoreBoxes[];
+        };
+        fileData: {
+            actualFilePath: string;
+            baselineFilePath: string;
+            diffFilePath: string;
+            fileName: string;
+        };
+        misMatchPercentage: string;
+        rawMisMatchPercentage: number;
+    };
+}
+
 export function createCompareReport({
     boundingBoxes,
     data,
@@ -51,7 +77,7 @@ export function createCompareReport({
         deviceName,
         platform,
     }
-    const jsonData = {
+    const jsonData: ResultReport = {
         [parent]: {
             test: title,
             tag,
@@ -64,7 +90,7 @@ export function createCompareReport({
                 diffFilePath: pathResolve(folders.diffFolderPath, fileName),
                 fileName,
             },
-            misMatchPercentage,
+            misMatchPercentage: misMatchPercentage.toString(),
             rawMisMatchPercentage,
         }
     }

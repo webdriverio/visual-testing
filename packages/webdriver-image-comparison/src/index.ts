@@ -28,6 +28,7 @@ export type {
 export type { TestContext } from './commands/check.interfaces.js'
 export type { Folders } from './base.interfaces.js'
 export type { InstanceData } from './methods/instanceData.interfaces.js'
+export type { ResultReport } from './methods/createCompareReport.js'
 
 export {
     BaseClass,
