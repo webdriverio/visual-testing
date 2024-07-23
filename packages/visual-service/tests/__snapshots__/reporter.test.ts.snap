@@ -1,0 +1,189 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`VisualReportGenerator class > should group and sort test data correctly 1`] = `
+{
+  "@wdio/visual-service mobile web": {
+    "tests": {
+      "test1": [
+        {
+          "commandName": "cmd1",
+          "instanceData": {
+            "browser": {
+              "name": "browser1",
+            },
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test1",
+        },
+        {
+          "commandName": "cmd1",
+          "instanceData": {
+            "browser": {
+              "name": "browser1",
+            },
+            "platform": {
+              "name": "platform2",
+              "version": "v1",
+            },
+          },
+          "test": "test1",
+        },
+        {
+          "commandName": "cmd2",
+          "instanceData": {
+            "browser": {},
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test1",
+        },
+        {
+          "commandName": "cmd2",
+          "instanceData": {
+            "browser": null,
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test1",
+        },
+        {
+          "commandName": "cmd2",
+          "instanceData": {
+            "browser": undefined,
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test1",
+        },
+        {
+          "commandName": "cmd2",
+          "instanceData": {
+            "browser": {
+              "name": "browser2",
+            },
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test1",
+        },
+        {
+          "commandName": "cmd3",
+          "instanceData": {
+            "browser": {
+              "name": "browser1",
+            },
+            "deviceName": "device1",
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test1",
+        },
+        {
+          "commandName": "cmd3",
+          "instanceData": {
+            "browser": {
+              "name": "browser1",
+            },
+            "deviceName": "device2",
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test1",
+        },
+      ],
+      "test2": [
+        {
+          "commandName": "cmd1",
+          "instanceData": {
+            "browser": {
+              "name": "browser1",
+            },
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test2",
+        },
+        {
+          "commandName": "cmd1",
+          "instanceData": {
+            "browser": {
+              "name": "browser1",
+            },
+            "platform": {
+              "name": "platform3",
+              "version": "v1",
+            },
+          },
+          "test": "test2",
+        },
+        {
+          "commandName": "cmd2",
+          "instanceData": {
+            "browser": {
+              "name": "",
+            },
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test2",
+        },
+        {
+          "commandName": "cmd2",
+          "instanceData": {
+            "browser": {
+              "name": "browser2",
+            },
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test2",
+        },
+        {
+          "commandName": "cmd3",
+          "instanceData": {
+            "platform": {
+              "name": "platform1",
+              "version": "v1",
+            },
+          },
+          "test": "test2",
+        },
+        {
+          "commandName": "cmd3",
+          "instanceData": {
+            "browser": {
+              "name": "browser3",
+            },
+            "platform": {
+              "name": "platform2",
+              "version": "v1",
+            },
+          },
+          "test": "test2",
+        },
+      ],
+    },
+  },
+}
+`;

@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import path from 'node:path'
+import { join } from 'node:path'
 import logger from '@wdio/logger'
 import type { ResultReport } from 'webdriver-image-comparison'
 
@@ -19,7 +19,7 @@ class VisualReportGenerator {
             log.info('Read all json files')
             const groupedAndSortedData = this.groupAndSortTestData(testData)
             log.info('Grouped and sorted data')
-            this.writeJsonToFile('/Users/wimselles/Git/wdio/visual-testing/apps/.tmp/output.json', groupedAndSortedData)
+            this.writeJsonToFile(join(this.directoryPath, 'output.json'), groupedAndSortedData)
             log.info('Report generated')
         } catch (e) {
             log.error('Error generating visual report:', e)
@@ -37,7 +37,7 @@ class VisualReportGenerator {
         const items = fs.readdirSync(dir)
 
         items.forEach(item => {
-            const fullPath = path.join(dir, item)
+            const fullPath = join(dir, item)
             const stat = fs.statSync(fullPath)
 
             if (stat.isDirectory()) {
@@ -76,17 +76,26 @@ class VisualReportGenerator {
             for (const testName in groupedData[mainTestName].tests) {
                 groupedData[mainTestName].tests[testName].sort((a: ResultReport[keyof ResultReport], b: ResultReport[keyof ResultReport]) => {
                     // Sort by commandName
-                    if (a.commandName !== b.commandName) {return a.commandName.localeCompare(b.commandName)}
+                    if (a.commandName !== b.commandName) {
+                        return a.commandName.localeCompare(b.commandName)
+                    }
                     // Sort by instanceData (browser first, then device, then platform)
                     const aBrowserName = a.instanceData.browser?.name || ''
                     const bBrowserName = b.instanceData.browser?.name || ''
-                    if (aBrowserName !== bBrowserName) {return aBrowserName.localeCompare(bBrowserName)}
+                    if (aBrowserName !== bBrowserName) {
+                        return aBrowserName.localeCompare(bBrowserName)
+                    }
 
                     const aDeviceName = a.instanceData.deviceName || ''
                     const bDeviceName = b.instanceData.deviceName || ''
-                    if (aDeviceName !== bDeviceName) {return aDeviceName.localeCompare(bDeviceName)}
+                    if (aDeviceName !== bDeviceName) {
+                        return aDeviceName.localeCompare(bDeviceName)
+                    }
 
-                    if (a.instanceData.platform.name !== b.instanceData.platform.name) {return a.instanceData.platform.name.localeCompare(b.instanceData.platform.name)}
+                    if (a.instanceData.platform.name !== b.instanceData.platform.name) {
+                        return a.instanceData.platform.name.localeCompare(b.instanceData.platform.name)
+                    }
+
                     return 0
                 })
             }
