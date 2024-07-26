@@ -398,7 +398,8 @@ export async function executeImageCompare(
     const diffBoundingBoxes:BoundingBox[] = []
 
     // 6. Save the diff when there is a diff
-    if (rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || process.argv.includes('--store-all-diffs')) {
+    const storeDiffs = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || process.argv.includes('--store-diffs')
+    if (storeDiffs) {
         const isDifference = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance
         const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
         const debugMessage = 'INFO:\n Debug mode is enabled. Saved the debug file to:'
@@ -424,7 +425,6 @@ export async function executeImageCompare(
             boundingBoxes: {
                 diffBoundingBoxes,
                 ignoredBoxes,
-
             },
             data,
             fileName,
@@ -432,6 +432,11 @@ export async function executeImageCompare(
                 actualFolderPath,
                 baselineFolderPath,
                 diffFolderPath: diffFolderPath,
+            },
+            size: {
+                actual: getScreenshotSize(readFileSync(actualFilePath).toString('base64'), devicePixelRatio),
+                baseline: getScreenshotSize(readFileSync(baselineFilePath).toString('base64'), devicePixelRatio),
+                ...(storeDiffs ? { diff: getScreenshotSize(readFileSync(diffFilePath).toString('base64'), devicePixelRatio) } : {}),
             },
             testContext,
         })

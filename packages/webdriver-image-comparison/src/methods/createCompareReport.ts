@@ -24,6 +24,11 @@ export type ResultReport = {
             baselineFilePath: string;
             diffFilePath: string;
             fileName: string;
+            size: {
+                actual: { width: number; height: number };
+                baseline: { width: number; height: number };
+                diff?: { width: number; height: number };
+            };
         };
         misMatchPercentage: string;
         rawMisMatchPercentage: number;
@@ -35,6 +40,7 @@ export function createCompareReport({
     data,
     fileName,
     folders,
+    size,
     testContext: {
         commandName,
         instanceData: {
@@ -61,6 +67,11 @@ export function createCompareReport({
             diffFolderPath: string;
         }
         fileName: string;
+        size: {
+            actual: { width: number; height: number };
+            baseline: { width: number; height: number };
+            diff?: { width: number; height: number };
+        };
         testContext: TestContext
 }) {
     const { misMatchPercentage, rawMisMatchPercentage } = data
@@ -89,6 +100,7 @@ export function createCompareReport({
                 baselineFilePath: pathResolve(folders.baselineFolderPath, fileName),
                 diffFilePath: pathResolve(folders.diffFolderPath, fileName),
                 fileName,
+                size,
             },
             misMatchPercentage: misMatchPercentage.toString(),
             rawMisMatchPercentage,
