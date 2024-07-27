@@ -16,6 +16,7 @@ import {
     DEFAULT_TEST_CONTEXT,
 } from 'webdriver-image-comparison'
 import type { TestContext } from 'webdriver-image-comparison'
+import { SevereServiceError } from 'webdriverio'
 import { determineNativeContext, enrichTestContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -417,52 +418,53 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     #getTestContext(test: Frameworks.Test | Frameworks.World): TestContext {
-        if (this.#config?.framework === 'mocha' && test) {
+        const framework = this.#config?.framework
+        if (framework === 'mocha' && test) {
             return {
                 ...this.#testContext,
+                framework: 'mocha',
+                parent: (test as Frameworks.Test).parent,
                 title: (test as Frameworks.Test).title,
-                parent: (test as Frameworks.Test).parent
             }
-        }
-        /**
-         * When using Jasmine as the framework the title/parent are not set as with mocha.
-         *
-         * `fullName` contains all describe(), and it() separated by a space.
-         * `description` contains the current it() statement.
-         *
-         * e.g.:
-         * With the following configuration
-         *
-         * describe('x', () => {
-         *   describe('y', () => {
-         *     it('z', () => {});
-         *   })
-         * })
-         *
-         * fullName will be "x y z"
-         * description will be "z"
-         *
-         */
-        if (this.#config?.framework === 'jasmine' && test) {
+        } else if (framework === 'jasmine' && test) {
+            /**
+             * When using Jasmine as the framework the title/parent are not set as with mocha.
+             *
+             * `fullName` contains all describe(), and it() separated by a space.
+             * `description` contains the current it() statement.
+             *
+             * e.g.:
+             * With the following configuration
+             *
+             * describe('x', () => {
+             *   describe('y', () => {
+             *     it('z', () => {});
+             *   })
+             * })
+             *
+             * fullName will be "x y z"
+             * description will be "z"
+             *
+             */
             const { description: title, fullName } = test as Frameworks.Test
 
             return {
                 ...this.#testContext,
+                framework: 'jasmine',
+                parent : fullName?.replace(` ${title}`, '') as string,
                 title: title as string,
-                parent : fullName?.replace(` ${title}`, '') as string
             }
-        }
-
-        if (this.#config?.framework === 'cucumber' && test) {
+        } else if (framework === 'cucumber' && test) {
             return {
                 ...this.#testContext,
-                title: (test as Frameworks.World)?.pickle?.name as string,
+                framework: 'cucumber',
                 // @ts-ignore
                 parent: (test as Frameworks.World)?.gherkinDocument?.feature?.name as string,
+                title: (test as Frameworks.World)?.pickle?.name as string,
             }
 
         }
 
-        return this.#testContext
+        throw new SevereServiceError(`Framework ${framework} is not supported by the Visual Service and should be either "mocha", "jasmine" or "cucumber".`)
     }
 }

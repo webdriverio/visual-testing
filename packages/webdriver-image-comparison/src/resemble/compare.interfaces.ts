@@ -14,11 +14,9 @@ export interface CompareData {
     // The analysis time in milliseconds
     analysisTime: number;
     // The diff pixels location(s) and color(s)
-    diffPixels:{
+    diffPixels: {
             x: number;
             y: number;
-            originalColor: {r: number;g: number;b: number;a: number;}
-            actualColor: {r: number;g: number;b: number;a: number;}
         }[];
 
 }

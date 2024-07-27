@@ -307,6 +307,7 @@ export function enrichTestContext(
     {
         commandName,
         currentTestContext: {
+            framework,
             parent,
             title,
         },
@@ -347,9 +348,10 @@ export function enrichTestContext(
                 version: platformVersion,
             },
         },
-        parent: parent,
+        framework,
+        parent,
         tag,
-        title: title,
+        title,
     }
 }
 

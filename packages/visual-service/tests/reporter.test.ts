@@ -4,38 +4,14 @@ import path from 'node:path'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
 import VisualReportGenerator from '../src/reporter.js'
+import { jsonFileContent } from './reporter.tests.mockdata.js'
 
 vi.mock('fs')
-// vi.mock('path')
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
 describe('VisualReportGenerator class', () => {
     const mockDirectoryPath = '/mock-directory'
-    const jsonFileContent = [
-        // To cover platform.name differences
-        { '@wdio/visual-service mobile web': { test: 'test1', commandName: 'cmd1', instanceData: { platform: { name: 'platform2', version: 'v1' }, browser: { name: 'browser1' } } } },
-        { '@wdio/visual-service mobile web': { test: 'test1', commandName: 'cmd1', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: { name: 'browser1' } } } },
-
-        // To cover browser name differences, including missing and undefined names
-        { '@wdio/visual-service mobile web': { test: 'test1', commandName: 'cmd2', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: { name: 'browser2' } } } },
-        { '@wdio/visual-service mobile web': { test: 'test1', commandName: 'cmd2', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: {} } } }, // Browser with no name
-        { '@wdio/visual-service mobile web': { test: 'test1', commandName: 'cmd2', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: null } } }, // Browser is null
-        { '@wdio/visual-service mobile web': { test: 'test1', commandName: 'cmd2', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: undefined } } }, // Browser is undefined
-
-        // To cover device name differences and return 0 scenarios
-        { '@wdio/visual-service mobile web': { test: 'test1', commandName: 'cmd3', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: { name: 'browser1' }, deviceName: 'device2' } } },
-        { '@wdio/visual-service mobile web': { test: 'test1', commandName: 'cmd3', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: { name: 'browser1' }, deviceName: 'device1' } } },
-
-        // Additional cases for thorough coverage
-        { '@wdio/visual-service mobile web': { test: 'test2', commandName: 'cmd1', instanceData: { platform: { name: 'platform3', version: 'v1' }, browser: { name: 'browser1' } } } }, // Different test name, different platform name
-        { '@wdio/visual-service mobile web': { test: 'test2', commandName: 'cmd1', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: { name: 'browser1' } } } }, // Different test name, same platform name
-        { '@wdio/visual-service mobile web': { test: 'test2', commandName: 'cmd2', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: { name: 'browser2' } } } }, // Same test name, same platform, different browser name
-        { '@wdio/visual-service mobile web': { test: 'test2', commandName: 'cmd2', instanceData: { platform: { name: 'platform1', version: 'v1' }, browser: { name: '' } } } }, // Same test name, same platform, empty browser name
-        { '@wdio/visual-service mobile web': { test: 'test2', commandName: 'cmd3', instanceData: { platform: { name: 'platform2', version: 'v1' }, browser: { name: 'browser3' } } } }, // Different test name, different platform, different browser
-        { '@wdio/visual-service mobile web': { test: 'test2', commandName: 'cmd3', instanceData: { platform: { name: 'platform1', version: 'v1' } } } } // No browser or deviceName
-    ]
-
     let visualReporter: VisualReportGenerator
 
     beforeEach(() => {

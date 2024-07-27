@@ -385,6 +385,7 @@ export const DEFAULT_TEST_CONTEXT: TestContext = {
             version: 'Could not be determined',
         },
     },
+    framework: 'mocha',
     parent: 'Could not be determined',
     tag: 'Could not be determined',
     title: 'Could not be determined',

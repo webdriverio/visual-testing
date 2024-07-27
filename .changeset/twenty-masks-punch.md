@@ -15,63 +15,62 @@ The output will look like this:
 
 ```json
 {
-    "check methods": {
-        "test": "should fail comparing with a baseline",
-        "tag": "examplePageFail",
-        "instanceData": {
-            "browser": {
-                "name": "chrome-headless-shell",
-                "version": "126.0.6478.183"
+    "parent": "check methods",
+    "test": "should fail comparing with a baseline",
+    "tag": "examplePageFail",
+    "instanceData": {
+        "browser": {
+            "name": "chrome-headless-shell",
+            "version": "126.0.6478.183"
+        },
+        "platform": {
+            "name": "mac",
+            "version": "not-known"
+        }
+    },
+    "commandName": "checkScreen",
+    "boundingBoxes": {
+        "diffBoundingBoxes": [
+            {
+                "left": 1088,
+                "top": 717,
+                "right": 1186,
+                "bottom": 730
+            }
+            //....
+        ],
+        "ignoredBoxes": [
+            {
+                "left": 159,
+                "top": 652,
+                "right": 356,
+                "bottom": 703
+            }
+            //...
+        ]
+    },
+    "fileData": {
+        "actualFilePath": "/Users/wswebcreation/Git/wdio/visual-testing/.tmp/actual/desktop_chrome-headless-shellexamplePageFail-local-chrome-latest-1366x768.png",
+        "baselineFilePath": "/Users/wswebcreation/Git/wdio/visual-testing/localBaseline/desktop_chrome-headless-shellexamplePageFail-local-chrome-latest-1366x768.png",
+        "diffFilePath": "/Users/wswebcreation/Git/wdio/visual-testing/.tmp/diff/desktop_chrome-headless-shell/examplePageFail-local-chrome-latest-1366x768png",
+        "fileName": "examplePageFail-local-chrome-latest-1366x768.png",
+        "size": {
+            "actual": {
+                "height": 768,
+                "width": 1366
             },
-            "platform": {
-                "name": "mac",
-                "version": "not-known"
+            "baseline": {
+                "height": 768,
+                "width": 1366
+            },
+            "diff": {
+                "height": 768,
+                "width": 1366
             }
-        },
-        "commandName": "checkScreen",
-        "boundingBoxes": {
-            "diffBoundingBoxes": [
-                {
-                    "left": 1088,
-                    "top": 717,
-                    "right": 1186,
-                    "bottom": 730
-                }
-                //....
-            ],
-            "ignoredBoxes": [
-                {
-                    "left": 159,
-                    "top": 652,
-                    "right": 356,
-                    "bottom": 703
-                }
-                //...
-            ]
-        },
-        "fileData": {
-            "actualFilePath": "/Users/wswebcreation/Git/wdio/visual-testing/.tmp/actual/desktop_chrome-headless-shell/examplePageFail-local-chrome-latest-1366x768.png",
-            "baselineFilePath": "/Users/wswebcreation/Git/wdio/visual-testing/localBaseline/desktop_chrome-headless-shell/examplePageFail-local-chrome-latest-1366x768.png",
-            "diffFilePath": "/Users/wswebcreation/Git/wdio/visual-testing/.tmp/diff/desktop_chrome-headless-shell/examplePageFail-local-chrome-latest-1366x768.png",
-            "fileName": "examplePageFail-local-chrome-latest-1366x768.png",
-            "size": {
-                "actual": {
-                    "height": 768,
-                    "width": 1366
-                },
-                "baseline": {
-                    "height": 768,
-                    "width": 1366
-                },
-                "diff": {
-                    "height": 768,
-                    "width": 1366
-                }
-            }
-        },
-        "misMatchPercentage": "12.90",
-        "rawMisMatchPercentage": 12.900729014153246
-    }
+        }
+    },
+    "misMatchPercentage": "12.90",
+    "rawMisMatchPercentage": 12.900729014153246
 }
 ```
 
@@ -84,6 +83,49 @@ and then sorted by:
 
 -   `commandName`, which are the compare method names used to compare the images
 -   `instanceData`, browser first, then device, then platform
+
+it will look like this
+
+```json
+[
+    {
+        "description": "check methods",
+        "data": [
+            {
+                "test": "should fail comparing with a baseline",
+                "data": [
+                    {
+                        "tag": "examplePageFail",
+                        "instanceData": {},
+                        "commandName": "checkScreen",
+                        "framework": "mocha",
+                        "boundingBoxes": {
+                            "diffBoundingBoxes": [],
+                            "ignoredBoxes": []
+                        },
+                        "fileData": {},
+                        "misMatchPercentage": "14.34",
+                        "rawMisMatchPercentage": 14.335403703025868
+                    },
+                    {
+                        "tag": "exampleElementFail",
+                        "instanceData": {},
+                        "commandName": "checkElement",
+                        "framework": "mocha",
+                        "boundingBoxes": {
+                            "diffBoundingBoxes": [],
+                            "ignoredBoxes": []
+                        },
+                        "fileData": {},
+                        "misMatchPercentage": "1.34",
+                        "rawMisMatchPercentage": 1.335403703025868
+                    }
+                ]
+            }
+        ]
+    }
+]
+```
 
 The report data will give you the opportunity to build your own visual report without doing all the magic and data collection yourself.
 
@@ -102,3 +144,7 @@ The report data will give you the opportunity to build your own visual report wi
 ### Committers: 1
 
 -   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
+```
+
+```

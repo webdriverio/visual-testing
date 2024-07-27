@@ -5,6 +5,16 @@ import type { ResultReport } from 'webdriver-image-comparison'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison-reporter')
 
+interface TestDataGroup {
+    test: string;
+    data: ResultReport[];
+}
+
+interface DescriptionGroup {
+    description: string;
+    data: TestDataGroup[];
+}
+
 class VisualReportGenerator {
     directoryPath: string
 
@@ -55,26 +65,30 @@ class VisualReportGenerator {
     }
 
     private groupAndSortTestData(testData: ResultReport[]): any {
-        const groupedData: any = {}
+        const groupedData: DescriptionGroup[] = []
 
-        // Grouping by main test name
+        // Grouping by description and test
         testData.forEach(report => {
-            for (const mainTestName in report) {
-                const data = report[mainTestName]
-                if (!groupedData[mainTestName]) {
-                    groupedData[mainTestName] = { tests: {} }
-                }
-                if (!groupedData[mainTestName].tests[data.test]) {
-                    groupedData[mainTestName].tests[data.test] = []
-                }
-                groupedData[mainTestName].tests[data.test].push(data)
+            const mainTestName = report.description
+            let mainGroup = groupedData.find(group => group.description === mainTestName)
+            if (!mainGroup) {
+                mainGroup = { description: mainTestName, data: [] }
+                groupedData.push(mainGroup)
             }
+
+            let testGroup = mainGroup.data.find(test => test.test === report.test)
+            if (!testGroup) {
+                testGroup = { test: report.test, data: [] }
+                mainGroup.data.push(testGroup)
+            }
+
+            testGroup.data.push(report)
         })
 
         // Sorting within each group
-        for (const mainTestName in groupedData) {
-            for (const testName in groupedData[mainTestName].tests) {
-                groupedData[mainTestName].tests[testName].sort((a: ResultReport[keyof ResultReport], b: ResultReport[keyof ResultReport]) => {
+        groupedData.forEach(mainGroup => {
+            mainGroup.data.forEach(testGroup => {
+                testGroup.data.sort((a: ResultReport, b: ResultReport) => {
                     // Sort by commandName
                     if (a.commandName !== b.commandName) {
                         return a.commandName.localeCompare(b.commandName)
@@ -98,8 +112,8 @@ class VisualReportGenerator {
 
                     return 0
                 })
-            }
-        }
+            })
+        })
 
         return groupedData
     }

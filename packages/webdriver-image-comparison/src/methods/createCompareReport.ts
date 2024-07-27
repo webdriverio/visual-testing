@@ -5,34 +5,34 @@ import type { CompareData } from '../resemble/compare.interfaces.js'
 import type { TestContext } from '../commands/check.interfaces.js'
 
 export type ResultReport = {
-    [key: string]: {
-        test: string;
-        tag: string;
-        instanceData: {
-            app?: string;
-            browser?: { name: string; version: string };
-            deviceName?: string;
-            platform: { name: string; version: string };
-        };
-        commandName: string;
-        boundingBoxes: {
-            diffBoundingBoxes: BoundingBox[];
-            ignoredBoxes: IgnoreBoxes[];
-        };
-        fileData: {
-            actualFilePath: string;
-            baselineFilePath: string;
-            diffFilePath: string;
-            fileName: string;
-            size: {
-                actual: { width: number; height: number };
-                baseline: { width: number; height: number };
-                diff?: { width: number; height: number };
-            };
-        };
-        misMatchPercentage: string;
-        rawMisMatchPercentage: number;
+    description: string;
+    test: string;
+    tag: string;
+    instanceData: {
+        app?: string;
+        browser?: { name: string; version: string };
+        deviceName?: string;
+        platform: { name: string; version: string };
     };
+    commandName: string;
+    framework: string;
+    boundingBoxes: {
+        diffBoundingBoxes: BoundingBox[];
+        ignoredBoxes: IgnoreBoxes[];
+    };
+    fileData: {
+        actualFilePath: string;
+        baselineFilePath: string;
+        diffFilePath: string;
+        fileName: string;
+        size: {
+            actual: { width: number; height: number };
+            baseline: { width: number; height: number };
+            diff?: { width: number; height: number };
+        };
+    };
+    misMatchPercentage: string;
+    rawMisMatchPercentage: number;
 }
 
 export function createCompareReport({
@@ -51,6 +51,7 @@ export function createCompareReport({
             isMobile,
             platform,
         },
+        framework,
         parent,
         tag,
         title
@@ -89,22 +90,22 @@ export function createCompareReport({
         platform,
     }
     const jsonData: ResultReport = {
-        [parent]: {
-            test: title,
-            tag,
-            instanceData: isMobile ? mobileContext : browserContext,
-            commandName,
-            boundingBoxes,
-            fileData: {
-                actualFilePath: pathResolve(folders.actualFolderPath, fileName),
-                baselineFilePath: pathResolve(folders.baselineFolderPath, fileName),
-                diffFilePath: pathResolve(folders.diffFolderPath, fileName),
-                fileName,
-                size,
-            },
-            misMatchPercentage: misMatchPercentage.toString(),
-            rawMisMatchPercentage,
-        }
+        description: parent,
+        test: title,
+        tag,
+        instanceData: isMobile ? mobileContext : browserContext,
+        commandName,
+        framework,
+        boundingBoxes,
+        fileData: {
+            actualFilePath: pathResolve(folders.actualFolderPath, fileName),
+            baselineFilePath: pathResolve(folders.baselineFolderPath, fileName),
+            diffFilePath: pathResolve(folders.diffFolderPath, fileName),
+            fileName,
+            size,
+        },
+        misMatchPercentage: misMatchPercentage.toString(),
+        rawMisMatchPercentage,
     }
 
     writeFileSync(jsonFilePath, JSON.stringify(jsonData), 'utf8')

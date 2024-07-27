@@ -1,189 +1,612 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`VisualReportGenerator class > should group and sort test data correctly 1`] = `
-{
-  "@wdio/visual-service mobile web": {
-    "tests": {
-      "test1": [
-        {
-          "commandName": "cmd1",
-          "instanceData": {
-            "browser": {
-              "name": "browser1",
+[
+  {
+    "data": [
+      {
+        "data": [
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+            "commandName": "cmd1",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "browser1",
+                "version": "",
+              },
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test1",
           },
-          "test": "test1",
-        },
-        {
-          "commandName": "cmd1",
-          "instanceData": {
-            "browser": {
-              "name": "browser1",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "platform": {
-              "name": "platform2",
-              "version": "v1",
+            "commandName": "cmd1",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "browser1",
+                "version": "",
+              },
+              "platform": {
+                "name": "platform2",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test1",
           },
-          "test": "test1",
-        },
-        {
-          "commandName": "cmd2",
-          "instanceData": {
-            "browser": {},
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
+            "commandName": "cmd2",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
+            },
+            "framework": "",
+            "instanceData": {
+              "browser": {},
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test1",
           },
-          "test": "test1",
-        },
-        {
-          "commandName": "cmd2",
-          "instanceData": {
-            "browser": null,
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
+            "commandName": "cmd2",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
+            },
+            "framework": "",
+            "instanceData": {
+              "browser": null,
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test1",
           },
-          "test": "test1",
-        },
-        {
-          "commandName": "cmd2",
-          "instanceData": {
-            "browser": undefined,
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
+            "commandName": "cmd2",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
+            },
+            "framework": "",
+            "instanceData": {
+              "browser": undefined,
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test1",
           },
-          "test": "test1",
-        },
-        {
-          "commandName": "cmd2",
-          "instanceData": {
-            "browser": {
-              "name": "browser2",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+            "commandName": "cmd2",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "browser2",
+                "version": "",
+              },
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test1",
           },
-          "test": "test1",
-        },
-        {
-          "commandName": "cmd3",
-          "instanceData": {
-            "browser": {
-              "name": "browser1",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "deviceName": "device1",
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+            "commandName": "cmd3",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "browser1",
+                "version": "",
+              },
+              "deviceName": "device1",
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test1",
           },
-          "test": "test1",
-        },
-        {
-          "commandName": "cmd3",
-          "instanceData": {
-            "browser": {
-              "name": "browser1",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "deviceName": "device2",
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+            "commandName": "cmd3",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "browser1",
+                "version": "",
+              },
+              "deviceName": "device2",
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test1",
           },
-          "test": "test1",
-        },
-      ],
-      "test2": [
-        {
-          "commandName": "cmd1",
-          "instanceData": {
-            "browser": {
-              "name": "browser1",
+        ],
+        "test": "test1",
+      },
+      {
+        "data": [
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+            "commandName": "cmd1",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "browser1",
+                "version": "",
+              },
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test2",
           },
-          "test": "test2",
-        },
-        {
-          "commandName": "cmd1",
-          "instanceData": {
-            "browser": {
-              "name": "browser1",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "platform": {
-              "name": "platform3",
-              "version": "v1",
+            "commandName": "cmd1",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "browser1",
+                "version": "",
+              },
+              "platform": {
+                "name": "platform3",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test2",
           },
-          "test": "test2",
-        },
-        {
-          "commandName": "cmd2",
-          "instanceData": {
-            "browser": {
-              "name": "",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+            "commandName": "cmd2",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "",
+                "version": "",
+              },
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test2",
           },
-          "test": "test2",
-        },
-        {
-          "commandName": "cmd2",
-          "instanceData": {
-            "browser": {
-              "name": "browser2",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+            "commandName": "cmd2",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "browser2",
+                "version": "",
+              },
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test2",
           },
-          "test": "test2",
-        },
-        {
-          "commandName": "cmd3",
-          "instanceData": {
-            "platform": {
-              "name": "platform1",
-              "version": "v1",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
+            "commandName": "cmd3",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
+            },
+            "framework": "",
+            "instanceData": {
+              "platform": {
+                "name": "platform1",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test2",
           },
-          "test": "test2",
-        },
-        {
-          "commandName": "cmd3",
-          "instanceData": {
-            "browser": {
-              "name": "browser3",
+          {
+            "boundingBoxes": {
+              "diffBoundingBoxes": [],
+              "ignoredBoxes": [],
             },
-            "platform": {
-              "name": "platform2",
-              "version": "v1",
+            "commandName": "cmd3",
+            "description": "@wdio/visual-service mobile web",
+            "fileData": {
+              "actualFilePath": "",
+              "baselineFilePath": "",
+              "diffFilePath": "",
+              "fileName": "",
+              "size": {
+                "actual": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "baseline": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "diff": {
+                  "height": 0,
+                  "width": 0,
+                },
+              },
             },
+            "framework": "",
+            "instanceData": {
+              "browser": {
+                "name": "browser3",
+                "version": "",
+              },
+              "platform": {
+                "name": "platform2",
+                "version": "v1",
+              },
+            },
+            "misMatchPercentage": "0",
+            "rawMisMatchPercentage": 0,
+            "tag": "",
+            "test": "test2",
           },
-          "test": "test2",
-        },
-      ],
-    },
+        ],
+        "test": "test2",
+      },
+    ],
+    "description": "@wdio/visual-service mobile web",
   },
-}
+]
 `;
