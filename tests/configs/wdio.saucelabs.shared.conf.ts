@@ -46,6 +46,7 @@ export const config: Options.Testrunner = {
                 blockOutStatusBar: true,
                 blockOutToolBar: true,
                 blockOutSideBar: true,
+                createJsonReportFiles: true,
                 rawMisMatchPercentage: process.env.RAW_MISMATCH || false,
                 enableLayoutTesting: true,
             },

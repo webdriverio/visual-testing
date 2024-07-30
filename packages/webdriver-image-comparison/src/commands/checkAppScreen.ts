@@ -1,23 +1,24 @@
-import type { Folders } from '../base.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
 import type {  ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
-import type { InstanceData } from '../methods/instanceData.interfaces.js'
-import type { GetElementRect, Methods } from '../methods/methods.interfaces.js'
+import type { GetElementRect } from '../methods/methods.interfaces.js'
 import { determineDeviceBlockOuts, determineIgnoreRegions } from '../methods/rectangles.js'
+import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 import saveAppScreen from './saveAppScreen.js'
-import type { CheckScreenOptions } from './screen.interfaces.js'
 
 /**
  * Compare an image of the viewport of the screen
  */
 export default async function checkAppScreen(
-    methods: Methods,
-    instanceData: InstanceData,
-    folders: Folders,
-    tag: string,
-    checkScreenOptions: CheckScreenOptions,
-    isNativeContext: boolean,
+    {
+        methods,
+        instanceData,
+        folders,
+        tag,
+        checkScreenOptions,
+        isNativeContext = true,
+        testContext,
+    }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1. Set some vars
     const saveAppScreenOptions = {
@@ -39,7 +40,14 @@ export default async function checkAppScreen(
         devicePixelRatio,
         fileName,
         isLandscape,
-    } = await saveAppScreen(methods, instanceData, folders, tag, saveAppScreenOptions, isNativeContext)
+    } = await saveAppScreen({
+        methods,
+        instanceData,
+        folders,
+        tag,
+        saveScreenOptions: saveAppScreenOptions,
+        isNativeContext,
+    })
 
     // 3. Determine the ignore regions
     const { ignore } = checkScreenOptions.method
@@ -79,5 +87,11 @@ export default async function checkAppScreen(
     }
 
     // 4b Now execute the compare and return the data
-    return executeImageCompare(executor, executeCompareOptions, true, isNativeContext)
+    return executeImageCompare({
+        executor,
+        isViewPortScreenshot: true,
+        isNativeContext,
+        options: executeCompareOptions,
+        testContext,
+    })
 }

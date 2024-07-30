@@ -54,7 +54,7 @@ exports[`utils > getInstanceData > should return instance data for a mobile app 
 
 exports[`utils > getInstanceData > should return instance data for an Android mobile app 1`] = `
 {
-  "appName": "android_apk",
+  "appName": "android.apk",
   "browserName": "not-known",
   "browserVersion": "not-known",
   "deviceName": "android emulator",
@@ -90,7 +90,7 @@ exports[`utils > getInstanceData > should return instance data for an Android mo
 
 exports[`utils > getInstanceData > should return instance data for an iOS iPad mobile app 1`] = `
 {
-  "appName": "ios_zip",
+  "appName": "ios.zip",
   "browserName": "not-known",
   "browserVersion": "not-known",
   "deviceName": "ipad",
@@ -126,7 +126,7 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
 
 exports[`utils > getInstanceData > should return instance data for an iOS iPad mobile app for a non matching screensize 1`] = `
 {
-  "appName": "ios_zip",
+  "appName": "ios.zip",
   "browserName": "not-known",
   "browserVersion": "not-known",
   "deviceName": "ipad",
@@ -162,7 +162,7 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
 
 exports[`utils > getInstanceData > should return instance data for an iOS iPad mobile app in landscape mode 1`] = `
 {
-  "appName": "ios_zip",
+  "appName": "ios.zip",
   "browserName": "not-known",
   "browserVersion": "not-known",
   "deviceName": "ipad",
@@ -198,7 +198,7 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
 
 exports[`utils > getInstanceData > should return instance data for an iOS iPhone mobile app 1`] = `
 {
-  "appName": "ios_zip",
+  "appName": "ios.zip",
   "browserName": "not-known",
   "browserVersion": "not-known",
   "deviceName": "iphone 15 pro",

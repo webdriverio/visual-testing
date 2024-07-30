@@ -3,23 +3,22 @@ import afterScreenshot from '../helpers/afterScreenshot.js'
 import { getBase64FullPageScreenshotsData } from '../methods/screenshots.js'
 import { makeFullPageBase64Image } from '../methods/images.js'
 import type { ScreenshotOutput, AfterScreenshotOptions } from '../helpers/afterScreenshot.interfaces.js'
-import type { Methods } from '../methods/methods.interfaces.js'
-import type { InstanceData } from '../methods/instanceData.interfaces.js'
-import type { Folders } from '../base.interfaces.js'
-import type { SaveFullPageOptions } from './fullPage.interfaces.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
 import type { FullPageScreenshotDataOptions, FullPageScreenshotsData } from '../methods/screenshots.interfaces.js'
+import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
 
 /**
  * Saves an image of the full page
  */
 export default async function saveFullPageScreen(
-    methods: Methods,
-    instanceData: InstanceData,
-    folders: Folders,
-    tag: string,
-    saveFullPageOptions: SaveFullPageOptions,
-    isNativeContext: boolean,
+    {
+        methods,
+        instanceData,
+        folders,
+        tag,
+        saveFullPageOptions,
+        isNativeContext,
+    }: InternalSaveFullPageMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1a. Check if the method is supported in native context
     if (isNativeContext) {

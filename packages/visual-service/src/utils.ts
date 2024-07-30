@@ -10,6 +10,7 @@ import type {
     SaveFullPageMethodOptions,
     CheckElementMethodOptions,
     SaveElementMethodOptions,
+    TestContext,
 } from 'webdriver-image-comparison'
 import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
 import type { NativeContextType } from './types.js'
@@ -213,7 +214,7 @@ export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Prom
         platformVersion: rawPlatformVersion = NOT_KNOWN,
     } = currentCapabilities as WebdriverIO.Capabilities
     const appName = rawApp !== NOT_KNOWN
-        ? rawApp.replace(/\\/g, '/').split('/').pop().replace(/[^a-zA-Z0-9]/g, '_')
+        ? rawApp.replace(/\\/g, '/').split('/').pop().replace(/[^a-zA-Z0-9.]/g, '_')
         : NOT_KNOWN
     const deviceName = getDeviceName(currentBrowser)
     const nativeWebScreenshot = !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
@@ -297,5 +298,60 @@ export function getNativeContext(
     }
 
     return false
+}
+
+/**
+ * Make sure we have all the data for the test context
+ */
+export function enrichTestContext(
+    {
+        commandName,
+        currentTestContext: {
+            framework,
+            parent,
+            title,
+        },
+        instanceData: {
+            appName,
+            browserName,
+            browserVersion,
+            deviceName,
+            isAndroid,
+            isIOS,
+            isMobile,
+            platformName,
+            platformVersion,
+        },
+        tag,
+    }:
+    {
+        commandName: string;
+        currentTestContext: TestContext;
+        instanceData: InstanceData;
+        tag: string;
+    }
+): TestContext {
+    return {
+        commandName,
+        instanceData: {
+            app: appName,
+            browser: {
+                name: browserName,
+                version: browserVersion,
+            },
+            deviceName,
+            isMobile,
+            isAndroid,
+            isIOS,
+            platform: {
+                name: platformName,
+                version: platformVersion,
+            },
+        },
+        framework,
+        parent,
+        tag,
+        title,
+    }
 }
 

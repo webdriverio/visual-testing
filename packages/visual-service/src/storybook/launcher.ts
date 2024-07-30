@@ -14,6 +14,7 @@ import {
     scanStorybook,
 } from './utils.js'
 import { CLIP_SELECTOR, NUM_SHARDS, V6_CLIP_SELECTOR } from '../constants.js'
+import generateVisualReport from '../reporter.js'
 
 const log = logger('@wdio/visual-service')
 
@@ -111,6 +112,12 @@ export default class VisualLauncher extends BaseClass  {
             delete process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER
             delete process.env.VISUAL_STORYBOOK_URL
             delete process.env.VISUAL_STORYBOOK_CLIP_SELECTOR
+        }
+
+        if (this.#options.createJsonReportFiles){
+            new generateVisualReport(
+                { directoryPath: this.folders.actualFolder }
+            ).generate()
         }
     }
 }

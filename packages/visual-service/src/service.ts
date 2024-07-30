@@ -2,7 +2,6 @@ import logger from '@wdio/logger'
 import { expect } from '@wdio/globals'
 import { dirname, normalize, resolve } from 'node:path'
 import type { Capabilities, Frameworks } from '@wdio/types'
-import type { ClassOptions } from 'webdriver-image-comparison'
 import {
     BaseClass,
     checkElement,
@@ -14,8 +13,11 @@ import {
     saveTabbablePage,
     checkTabbablePage,
     FOLDERS,
+    DEFAULT_TEST_CONTEXT,
 } from 'webdriver-image-comparison'
-import { determineNativeContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
+import type { TestContext } from 'webdriver-image-comparison'
+import { SevereServiceError } from 'webdriverio'
+import { determineNativeContext, enrichTestContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
 import {
     toMatchScreenSnapshot,
     toMatchFullPageSnapshot,
@@ -24,7 +26,8 @@ import {
 } from './matcher.js'
 import { waitForStorybookComponentToBeLoaded } from './storybook/utils.js'
 import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
-import type { MultiremoteCommandResult, NativeContextType } from './types.js'
+import type { MultiremoteCommandResult, NativeContextType, VisualServiceOptions } from './types.js'
+import { PAGE_OPTIONS_MAP } from './constants.js'
 
 const log = logger('@wdio/visual-service')
 const elementCommands = { saveElement, checkElement }
@@ -42,13 +45,15 @@ export default class WdioImageComparisonService extends BaseClass {
     #config: WebdriverIO.Config
     #currentFile?: string
     #currentFilePath?: string
-    private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+    #testContext: TestContext
+    #browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _isNativeContext: NativeContextType | undefined
 
-    constructor(options: ClassOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
+    constructor(options: VisualServiceOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
         super(options)
         this.#config = config
         this._isNativeContext = undefined
+        this.#testContext = DEFAULT_TEST_CONTEXT
     }
 
     /**
@@ -63,12 +68,12 @@ export default class WdioImageComparisonService extends BaseClass {
         _specs: string[],
         browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     ) {
-        this._browser = browser
-        this._isNativeContext = determineNativeContext(this._browser)
+        this.#browser = browser
+        this._isNativeContext = determineNativeContext(this.#browser)
 
-        if (!this._browser.isMultiremote) {
+        if (!this.#browser.isMultiremote) {
             log.info('Adding commands to global browser')
-            await this.#addCommandsToBrowser(this._browser)
+            await this.#addCommandsToBrowser(this.#browser)
         } else {
             await this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
         }
@@ -93,16 +98,22 @@ export default class WdioImageComparisonService extends BaseClass {
         }
     }
 
-    beforeTest(test: Frameworks.Test) {
+    async beforeTest(test: Frameworks.Test) {
         this.#currentFile = (test.file || (test as Frameworks.Test & { filename?: string }).filename) as string
         this.#currentFilePath = resolve(dirname(this.#currentFile), FOLDERS.DEFAULT.BASE)
+        this.#testContext = this.#getTestContext(test)
+    }
+
+    // For Cucumber only
+    beforeScenario(world: Frameworks.World) {
+        this.#testContext = this.#getTestContext(world)
     }
 
     afterCommand(commandName: string, _args: string[], result: number | string, error: any) {
         // This is for the cases where in the E2E tests we switch to a WEBVIEW or back to NATIVE_APP context
         if (commandName === 'getContext' && error === undefined && typeof result === 'string') {
             // Multiremote logic is handled in the `before` method during an event listener
-            this._isNativeContext = this._browser?.isMultiremote ? this._isNativeContext : result.includes('NATIVE')
+            this._isNativeContext = this.#browser?.isMultiremote ? this._isNativeContext : result.includes('NATIVE')
         }
     }
 
@@ -130,7 +141,7 @@ export default class WdioImageComparisonService extends BaseClass {
      * Add commands to the Multi Remote browser object
      */
     async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
-        const browser = this._browser as WebdriverIO.MultiRemoteBrowser
+        const browser = this.#browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
 
         /**
@@ -166,7 +177,7 @@ export default class WdioImageComparisonService extends BaseClass {
     async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
         const instanceData = await getInstanceData(currentBrowser)
         const isNativeContext = getNativeContext(
-            this._browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
+            this.#browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
             currentBrowser,
             this._isNativeContext as NativeContextType
         )
@@ -195,17 +206,35 @@ export default class WdioImageComparisonService extends BaseClass {
                 tag,
                 elementOptions = {},
             ) {
-                return command({
-                    executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                        return this.execute.bind(browser)(script, ...varArgs) as Promise<T>
-                    },
-                    getElementRect: this.getElementRect.bind(browser),
-                    screenShot: this.takeScreenshot.bind(browser),
-                    takeElementScreenshot: this.takeElementScreenshot.bind(browser),
-                }, instanceData, getFolders(elementOptions, self.folders, self.#getBaselineFolder()), element, tag, {
-                    wic: self.defaultOptions,
-                    method: elementOptions,
-                }, isNativeContext)
+                const elementOptionsKey = commandName === 'saveElement' ? 'saveElementOptions' : 'checkElementOptions'
+
+                return command(
+                    {
+                        methods:{
+                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                return this.execute.bind(browser)(script, ...varArgs) as Promise<T>
+                            },
+                            getElementRect: this.getElementRect.bind(browser),
+                            screenShot: this.takeScreenshot.bind(browser),
+                            takeElementScreenshot: this.takeElementScreenshot.bind(browser),
+                        },
+                        instanceData,
+                        folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
+                        element,
+                        tag,
+                        [elementOptionsKey]: {
+                            wic: self.defaultOptions,
+                            method: elementOptions,
+                        },
+                        isNativeContext,
+                        testContext: enrichTestContext({
+                            commandName,
+                            currentTestContext: self.#testContext,
+                            instanceData,
+                            tag,
+                        })
+                    }
+                )
             })
     }
 
@@ -216,6 +245,8 @@ export default class WdioImageComparisonService extends BaseClass {
         log.info(`Adding browser command "${commandName}" to browser object`)
 
         const self = this
+        const pageOptionsKey = PAGE_OPTIONS_MAP[commandName]
+
         if (commandName === 'waitForStorybookComponentToBeLoaded') {
             browser.addCommand(commandName, (options: WaitForStorybookComponentToBeLoaded) => waitForStorybookComponentToBeLoaded(options))
         } else {
@@ -228,66 +259,29 @@ export default class WdioImageComparisonService extends BaseClass {
                 ) {
                     return command(
                         {
-                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                return this.execute.bind(browser)(script, ...varArgs) as Promise<T>
-                            },
-                            getElementRect: this.getElementRect.bind(browser),
-                            screenShot: this.takeScreenshot.bind(browser),
-                        },
-                        instanceData,
-                        getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
-                        tag,
-                        {
-                            wic: self.defaultOptions,
-                            method: pageOptions,
-                        }, isNativeContext)
-                })
-        }
-    }
-
-    #addMultiremoteCommand(browser: WebdriverIO.MultiRemoteBrowser, browserNames: string[], commandName: string, command: any) {
-        log.info(`Adding browser command "${commandName}" to Multi browser object`)
-        const self = this
-
-        if (commandName === 'waitForStorybookComponentToBeLoaded') {
-            browser.addCommand(commandName, waitForStorybookComponentToBeLoaded)
-        } else {
-            browser.addCommand(
-                commandName,
-                async function (
-                    this: WebdriverIO.MultiRemoteBrowser,
-                    tag,
-                    pageOptions = {}
-                ) {
-                    const returnData: Record<string, any> = {}
-                    for (const browserName of browserNames) {
-                        const browserInstance = browser.getInstance(browserName)
-                        const isNativeContext = getNativeContext(
-                        self._browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
-                        browserInstance,
-                        self._isNativeContext as NativeContextType
-                        )
-                        const instanceData = await getInstanceData(browserInstance)
-
-                        returnData[browserName] = await command(
-                            {
+                            methods: {
                                 executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                    return browserInstance.execute.bind(browserInstance)(script, ...varArgs) as Promise<T>
+                                    return this.execute.bind(browser)(script, ...varArgs) as Promise<T>
                                 },
-                                getElementRect: browserInstance.getElementRect.bind(browserInstance),
-                                screenShot: browserInstance.takeScreenshot.bind(browserInstance),
+                                getElementRect: this.getElementRect.bind(browser),
+                                screenShot: this.takeScreenshot.bind(browser),
                             },
                             instanceData,
-                            getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                            folders: getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
                             tag,
-                            {
+                            [pageOptionsKey]:{
                                 wic: self.defaultOptions,
                                 method: pageOptions,
                             },
                             isNativeContext,
-                        )
-                    }
-                    return returnData
+                            testContext: enrichTestContext({
+                                commandName,
+                                currentTestContext: self.#testContext,
+                                instanceData,
+                                tag,
+                            })
+                        }
+                    )
                 })
         }
     }
@@ -305,10 +299,12 @@ export default class WdioImageComparisonService extends BaseClass {
                 pageOptions = {}
             ) {
                 const returnData: Record<string, any> = {}
+                const elementOptionsKey = commandName === 'saveElement' ? 'saveElementOptions' : 'checkElementOptions'
+
                 for (const browserName of browserNames) {
                     const browserInstance = browser.getInstance(browserName)
                     const isNativeContext = getNativeContext(
-                        self._browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
+                        self.#browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
                         browserInstance,
                         self._isNativeContext as NativeContextType
                     )
@@ -316,30 +312,94 @@ export default class WdioImageComparisonService extends BaseClass {
 
                     returnData[browserName] = await command(
                         {
-                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                return browserInstance.execute.bind(browserInstance)(script, ...varArgs) as Promise<T>
+                            methods:{
+                                executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                    return browserInstance.execute.bind(browserInstance)(script, ...varArgs) as Promise<T>
+                                },
+                                getElementRect: browserInstance.getElementRect.bind(browserInstance),
+                                screenShot: browserInstance.takeScreenshot.bind(browserInstance),
+                                takeElementScreenshot: browserInstance.takeElementScreenshot.bind(browserInstance),
                             },
-                            getElementRect: browserInstance.getElementRect.bind(browserInstance),
-                            screenShot: browserInstance.takeScreenshot.bind(browserInstance),
-                            takeElementScreenshot: browserInstance.takeElementScreenshot.bind(browserInstance),
-                        },
-                        instanceData,
-                        getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
-                        tag,
-                        element,
-                        {
-                            wic: self.defaultOptions,
-                            method: pageOptions,
-                        },
-                        isNativeContext,
+                            instanceData,
+                            folders:getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                            tag,
+                            element,
+                            [elementOptionsKey]:{
+                                wic: self.defaultOptions,
+                                method: pageOptions,
+                            },
+                            isNativeContext,
+                            testContext: enrichTestContext({
+                                commandName,
+                                currentTestContext: self.#testContext,
+                                instanceData,
+                                tag,
+                            })
+                        }
                     )
                 }
                 return returnData
             })
     }
 
+    #addMultiremoteCommand(browser: WebdriverIO.MultiRemoteBrowser, browserNames: string[], commandName: string, command: any) {
+        log.info(`Adding browser command "${commandName}" to Multi browser object`)
+        const self = this
+
+        if (commandName === 'waitForStorybookComponentToBeLoaded') {
+            browser.addCommand(commandName, waitForStorybookComponentToBeLoaded)
+        } else {
+            browser.addCommand(
+                commandName,
+                async function (
+                    this: WebdriverIO.MultiRemoteBrowser,
+                    tag,
+                    pageOptions = {}
+                ) {
+                    const returnData: Record<string, any> = {}
+                    const pageOptionsKey = PAGE_OPTIONS_MAP[commandName]
+
+                    for (const browserName of browserNames) {
+                        const browserInstance = browser.getInstance(browserName)
+                        const isNativeContext = getNativeContext(
+                        self.#browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
+                        browserInstance,
+                        self._isNativeContext as NativeContextType
+                        )
+                        const instanceData = await getInstanceData(browserInstance)
+
+                        returnData[browserName] = await command(
+                            {
+                                methods: {
+                                    executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
+                                        return browserInstance.execute.bind(browserInstance)(script, ...varArgs) as Promise<T>
+                                    },
+                                    getElementRect: browserInstance.getElementRect.bind(browserInstance),
+                                    screenShot: browserInstance.takeScreenshot.bind(browserInstance),
+                                },
+                                instanceData,
+                                folders:getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                                tag,
+                                [pageOptionsKey]:{
+                                    wic: self.defaultOptions,
+                                    method: pageOptions,
+                                },
+                                isNativeContext,
+                                testContext: enrichTestContext({
+                                    commandName,
+                                    currentTestContext: self.#testContext,
+                                    instanceData,
+                                    tag,
+                                })
+                            })
+                    }
+                    return returnData
+                })
+        }
+    }
+
     #setupMultiremoteContextListener() {
-        const multiremoteBrowser = this._browser as WebdriverIO.MultiRemoteBrowser
+        const multiremoteBrowser = this.#browser as WebdriverIO.MultiRemoteBrowser
         const browserInstances = multiremoteBrowser.instances
 
         for (const instanceName of browserInstances) {
@@ -355,5 +415,56 @@ export default class WdioImageComparisonService extends BaseClass {
                 }
             })
         }
+    }
+
+    #getTestContext(test: Frameworks.Test | Frameworks.World): TestContext {
+        const framework = this.#config?.framework
+        if (framework === 'mocha' && test) {
+            return {
+                ...this.#testContext,
+                framework: 'mocha',
+                parent: (test as Frameworks.Test).parent,
+                title: (test as Frameworks.Test).title,
+            }
+        } else if (framework === 'jasmine' && test) {
+            /**
+             * When using Jasmine as the framework the title/parent are not set as with mocha.
+             *
+             * `fullName` contains all describe(), and it() separated by a space.
+             * `description` contains the current it() statement.
+             *
+             * e.g.:
+             * With the following configuration
+             *
+             * describe('x', () => {
+             *   describe('y', () => {
+             *     it('z', () => {});
+             *   })
+             * })
+             *
+             * fullName will be "x y z"
+             * description will be "z"
+             *
+             */
+            const { description: title, fullName } = test as Frameworks.Test
+
+            return {
+                ...this.#testContext,
+                framework: 'jasmine',
+                parent : fullName?.replace(` ${title}`, '') as string,
+                title: title as string,
+            }
+        } else if (framework === 'cucumber' && test) {
+            return {
+                ...this.#testContext,
+                framework: 'cucumber',
+                // @ts-ignore
+                parent: (test as Frameworks.World)?.gherkinDocument?.feature?.name as string,
+                title: (test as Frameworks.World)?.pickle?.name as string,
+            }
+
+        }
+
+        throw new SevereServiceError(`Framework ${framework} is not supported by the Visual Service and should be either "mocha", "jasmine" or "cucumber".`)
     }
 }

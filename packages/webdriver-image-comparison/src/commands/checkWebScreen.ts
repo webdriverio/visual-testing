@@ -2,22 +2,23 @@ import saveWebScreen from './saveWebScreen.js'
 import { executeImageCompare } from '../methods/images.js'
 import { checkIsMobile } from '../helpers/utils.js'
 import type { ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
-import type { Methods } from '../methods/methods.interfaces.js'
-import type { InstanceData } from '../methods/instanceData.interfaces.js'
-import type { Folders } from '../base.interfaces.js'
-import type { CheckScreenOptions, SaveScreenOptions } from './screen.interfaces.js'
+import type { SaveScreenOptions } from './screen.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
+import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 
 /**
  * Compare an image of the viewport of the screen
  */
 export default async function checkWebScreen(
-    methods: Methods,
-    instanceData: InstanceData,
-    folders: Folders,
-    tag: string,
-    checkScreenOptions: CheckScreenOptions,
-    isNativeContext: boolean,
+    {
+        methods,
+        instanceData,
+        folders,
+        tag,
+        checkScreenOptions,
+        isNativeContext = false,
+        testContext,
+    }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1.  Take the actual screenshot and retrieve the needed data
     const saveScreenOptions: SaveScreenOptions = {
@@ -31,7 +32,14 @@ export default async function checkWebScreen(
             waitForFontsLoaded: checkScreenOptions.method.waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, isLandscape } = await saveWebScreen(methods, instanceData, folders, tag, saveScreenOptions, false)
+    const { devicePixelRatio, fileName, isLandscape } = await saveWebScreen({
+        methods,
+        instanceData,
+        folders,
+        tag,
+        saveScreenOptions,
+        isNativeContext,
+    })
 
     // 2a. Determine the compare options
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)
@@ -59,5 +67,11 @@ export default async function checkWebScreen(
     }
 
     // 2b Now execute the compare and return the data
-    return executeImageCompare(methods.executor, executeCompareOptions, true, isNativeContext)
+    return executeImageCompare({
+        executor: methods.executor,
+        isViewPortScreenshot: true,
+        isNativeContext,
+        options: executeCompareOptions,
+        testContext,
+    })
 }

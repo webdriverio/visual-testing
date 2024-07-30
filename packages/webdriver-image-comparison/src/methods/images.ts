@@ -11,22 +11,25 @@ import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/
 import { determineStatusAddressToolBarRectangles, isWdioElement } from './rectangles.js'
 import type {
     AdjustedAxis,
+    BoundingBox,
     CheckBaselineImageExists,
     CropAndConvertToDataURL,
     CroppedBase64Image,
     DimensionsWarning,
+    ExecuteImageCompare,
     HandleIOSBezelCorners,
     IgnoreBoxes,
-    ImageCompareOptions,
     ImageCompareResult,
     ResizeDimensions,
     RotateBase64ImageOptions,
     RotatedImage,
 } from './images.interfaces.js'
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
-import type { Executor, GetElementRect, TakeScreenShot } from './methods.interfaces.js'
+import type { GetElementRect, TakeScreenShot } from './methods.interfaces.js'
 import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
+import { processDiffPixels } from './processDiffPixels.js'
+import { createCompareReport } from './createCompareReport.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
 
@@ -292,10 +295,13 @@ export async function makeCroppedBase64Image({
  * Execute the image compare
  */
 export async function executeImageCompare(
-    executor: Executor,
-    options: ImageCompareOptions,
-    isViewPortScreenshot = false,
-    isNativeContext = false,
+    {
+        executor,
+        isViewPortScreenshot,
+        isNativeContext,
+        options,
+        testContext,
+    }: ExecuteImageCompare
 ): Promise<ImageCompareResult | number> {
     // 1. Set some variables
     const {
@@ -310,7 +316,6 @@ export async function executeImageCompare(
     } = options
     const { actualFolder, autoSaveBaseline, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
         options.folderOptions
-    let diffFilePath
     const imageCompareOptions = { ...options.compareOptions.wic, ...options.compareOptions.method }
 
     // 2. Create all needed folders
@@ -319,6 +324,8 @@ export async function executeImageCompare(
     const baselineFolderPath = getAndCreatePath(baselineFolder, createFolderOptions)
     const actualFilePath = join(actualFolderPath, fileName)
     const baselineFilePath = join(baselineFolderPath, fileName)
+    const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
+    const diffFilePath = join(diffFolderPath, fileName)
 
     // 3. Check if there is a baseline image, and determine if it needs to be auto saved or not
     await checkBaselineImageExists({ actualFilePath, baselineFilePath, autoSaveBaseline })
@@ -388,14 +395,18 @@ export async function executeImageCompare(
     let reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage
         : Number(data.rawMisMatchPercentage.toFixed(3))
+    const diffBoundingBoxes:BoundingBox[] = []
 
     // 6. Save the diff when there is a diff
-    if (rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || process.argv.includes('--store-all-diffs')) {
+    const storeDiffs = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || process.argv.includes('--store-diffs')
+    if (storeDiffs) {
         const isDifference = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance
         const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
         const debugMessage = 'INFO:\n Debug mode is enabled. Saved the debug file to:'
-        const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
-        diffFilePath = join(diffFolderPath, fileName)
+
+        if (imageCompareOptions.createJsonReportFiles) {
+            diffBoundingBoxes.push(...processDiffPixels(data.diffPixels, imageCompareOptions.diffPixelBoundingBoxProximity))
+        }
 
         await saveBase64Image(await addBlockOuts(Buffer.from(await data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
 
@@ -407,6 +418,28 @@ export async function executeImageCompare(
  ${diffFilePath}
 #####################################################################################`,
         )
+    }
+
+    if (imageCompareOptions.createJsonReportFiles) {
+        createCompareReport({
+            boundingBoxes: {
+                diffBoundingBoxes,
+                ignoredBoxes,
+            },
+            data,
+            fileName,
+            folders: {
+                actualFolderPath,
+                baselineFolderPath,
+                diffFolderPath: diffFolderPath,
+            },
+            size: {
+                actual: getScreenshotSize(readFileSync(actualFilePath).toString('base64'), devicePixelRatio),
+                baseline: getScreenshotSize(readFileSync(baselineFilePath).toString('base64'), devicePixelRatio),
+                ...(storeDiffs ? { diff: getScreenshotSize(readFileSync(diffFilePath).toString('base64'), devicePixelRatio) } : {}),
+            },
+            testContext,
+        })
     }
 
     if (updateVisualBaseline()) {
@@ -603,3 +636,4 @@ export async function takeBase64ElementScreenshot({
         resizeDimensions,
     })
 }
+

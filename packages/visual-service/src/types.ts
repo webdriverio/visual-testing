@@ -58,4 +58,4 @@ export interface WdioCheckScreenMethodOptions
     extends Omit<CheckScreenMethodOptions, keyof WdioIcsCommonOptions>,
         WdioIcsCommonOptions {}
 
-export interface VisualServiceOptions extends ClassOptions { }
+export interface VisualServiceOptions extends ClassOptions {}
