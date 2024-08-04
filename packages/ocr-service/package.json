@@ -2,7 +2,7 @@
   "name": "@wdio/ocr-service",
   "author": "Wim Selles - wswebcreation",
   "description": "A WebdriverIO service that is using Tesseract OCR for Desktop/Mobile Web and Mobile Native App tests.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "MIT",
   "homepage": "https://webdriver.io/docs/visual-testing",
   "repository": {

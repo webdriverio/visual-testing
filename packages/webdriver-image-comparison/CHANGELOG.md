@@ -1,5 +1,24 @@
 # webdriver-image-comparison
 
+## 6.1.1
+
+### Patch Changes
+
+- 85a1d82: # 🐛 Bug Fixes
+
+  Fix issues:
+
+  - [438](https://github.com/webdriverio/visual-testing/issues/438): resizeDimensions not working
+  - [448](https://github.com/webdriverio/visual-testing/issues/448): hideElements and removeElements` don't work for native apps
+
+  # 💅 Polish
+
+  - update dependencies
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 6.1.0
 
 ### Minor Changes
