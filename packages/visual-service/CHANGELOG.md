@@ -1,5 +1,11 @@
 # @wdio/visual-service
 
+## 5.2.1
+
+### Patch Changes
+
+- cae36ad: Update deps
+
 ## 5.2.0
 
 ### Minor Changes
