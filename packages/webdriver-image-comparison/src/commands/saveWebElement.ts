@@ -92,6 +92,8 @@ export default async function saveWebElement(
         isAndroid,
         isIOS,
         isLandscape,
+        // When the element needs to be resized, we need to take a screenshot of the whole page
+        fallback: !!saveElementOptions.method.resizeDimensions || false,
         screenShot,
         takeElementScreenshot,
     })
