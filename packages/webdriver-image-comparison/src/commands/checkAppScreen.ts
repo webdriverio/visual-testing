@@ -1,3 +1,4 @@
+import type { RectanglesOutput } from 'src/methods/rectangles.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
 import type {  ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
@@ -5,6 +6,7 @@ import type { GetElementRect } from '../methods/methods.interfaces.js'
 import { determineDeviceBlockOuts, determineIgnoreRegions } from '../methods/rectangles.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 import saveAppScreen from './saveAppScreen.js'
+import type { ChainablePromiseElement } from 'webdriverio'
 
 /**
  * Compare an image of the viewport of the screen
@@ -31,6 +33,13 @@ export default async function checkAppScreen(
     const screenCompareOptions = {
         ...checkScreenOptions.wic.compareOptions,
         ...checkScreenOptions.method,
+        // Use the hide and remove elements from the checkScreenOptions and add them to the ignore array
+        ignore: [
+            ...checkScreenOptions.method.ignore || [],
+            ...checkScreenOptions.method.hideElements as unknown as (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>)[] || [],
+            ...checkScreenOptions.method.removeElements as unknown as (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>)[] || [],
+        ]
+
     }
     const { executor, getElementRect } = methods
     const { isAndroid, isMobile } = instanceData
@@ -50,8 +59,7 @@ export default async function checkAppScreen(
     })
 
     // 3. Determine the ignore regions
-    const { ignore } = checkScreenOptions.method
-    const ignoreRegions = await determineIgnoreRegions(ignore || [], getElementRect as GetElementRect)
+    const ignoreRegions = await determineIgnoreRegions(screenCompareOptions.ignore || [], getElementRect as GetElementRect)
     const deviceIgnoreRegions = await determineDeviceBlockOuts({
         isAndroid,
         screenCompareOptions,
