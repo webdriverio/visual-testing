@@ -30,7 +30,7 @@
     "@wdio/logger": "^8.38.0",
     "@wdio/types": "^8.39.0",
     "node-fetch": "^3.3.2",
-    "webdriver-image-comparison": "^6.1.0"
+    "webdriver-image-comparison": "^6.1.1"
   },
   "devDependencies": {}
 }
