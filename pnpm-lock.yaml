@@ -64,8 +64,8 @@ importers:
         specifier: ^8.39.1
         version: 8.39.1(typescript@5.5.4)
       '@wdio/shared-store-service':
-        specifier: ^8.39.1
-        version: 8.39.1(typescript@5.5.4)
+        specifier: ^8.40.2
+        version: 8.40.2
       '@wdio/spec-reporter':
         specifier: ^8.39.0
         version: 8.39.0
@@ -1257,8 +1257,8 @@ packages:
     resolution: {integrity: sha512-tt0oNqh2FxnR4JaMTwc7LRRLO03ERZxbZjeNf5IzK8PsjQ/JFUefeRBWmqoa93FVi3YGO8gUPCVElaS7OEqkRg==}
     engines: {node: ^16.13 || >=18}
 
-  '@wdio/shared-store-service@8.39.1':
-    resolution: {integrity: sha512-o6Hcd2BzMy8bjrNccb4Fw8hAqbd6wJ9fh24hdsp7KbRBymOMuYJajpCHzU5bFDFGr3rPL/wL0Ji671pY8gcS1g==}
+  '@wdio/shared-store-service@8.40.2':
+    resolution: {integrity: sha512-JPKIK8OX8f2AmV74/8PnliCCeXYeBNjw0n0yXVAfQs7q4fFsFSCtAIq3SCo8PjwPXGSK6Ac0vx9Wvt9sCiiQhw==}
     engines: {node: ^16.13 || >=18}
 
   '@wdio/spec-reporter@8.39.0':
@@ -6238,20 +6238,19 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@wdio/shared-store-service@8.39.1(typescript@5.5.4)':
+  '@wdio/shared-store-service@8.40.2':
     dependencies:
       '@polka/parse': 1.0.0-next.0
       '@wdio/logger': 8.38.0
       '@wdio/types': 8.39.0
       got: 12.6.1
       polka: 0.5.2
-      webdriverio: 8.39.1(typescript@5.5.4)
+      webdriverio: 8.40.2
     transitivePeerDependencies:
       - bufferutil
       - devtools
       - encoding
       - supports-color
-      - typescript
       - utf-8-validate
 
   '@wdio/spec-reporter@8.39.0':
