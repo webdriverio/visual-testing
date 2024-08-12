@@ -112,8 +112,8 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@22.1.0)(jsdom@24.1.1)
       webdriverio:
-        specifier: ^8.39.1
-        version: 8.39.1(typescript@5.5.4)
+        specifier: ^8.40.2
+        version: 8.40.2
 
   packages/ocr-service:
     dependencies:
@@ -195,8 +195,8 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       webdriverio:
-        specifier: ^8.39.1
-        version: 8.39.1(typescript@5.5.4)
+        specifier: ^8.40.2
+        version: 8.40.2
 
 packages:
 
@@ -7377,7 +7377,7 @@ snapshots:
     optionalDependencies:
       '@wdio/globals': 8.39.1(typescript@5.5.4)
       '@wdio/logger': 8.38.0
-      webdriverio: 8.39.1(typescript@5.5.4)
+      webdriverio: 8.40.2
     transitivePeerDependencies:
       - bufferutil
       - devtools
