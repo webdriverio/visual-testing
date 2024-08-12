@@ -183,5 +183,7 @@ function createCaps({
             appiumVersion: '2.0.0',
         },
         specs: [mobileSpecs],
+        // @ts-ignore
+        'wdio:enforceWebDriverClassic': true
     }
 }
