@@ -16,7 +16,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     logLevel: 'silent',
     baseUrl: 'http://guinea-pig.webdriver.io/image-compare.html',
     waitforTimeout: 15000,
-    connectionRetryTimeout: 90000,
+    connectionRetryTimeout: 180 * 1000,
     connectionRetryCount: 0,
     framework: 'mocha',
     // Options to be passed to Mocha.
