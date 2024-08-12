@@ -26,7 +26,7 @@
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "@wdio/globals": "^8.39.1",
+    "@wdio/globals": "^8.40.2",
     "@wdio/logger": "^8.38.0",
     "@wdio/types": "^8.39.0",
     "node-fetch": "^3.3.2",
