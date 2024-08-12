@@ -3,24 +3,23 @@ import { makeCroppedBase64Image } from '../methods/images.js'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { determineScreenRectangles } from '../methods/rectangles.js'
-import type { Methods } from '../methods/methods.interfaces.js'
-import type { Folders } from '../base.interfaces.js'
-import type { SaveScreenOptions } from './screen.interfaces.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
-import type { InstanceData } from '../methods/instanceData.interfaces.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import type { RectanglesOutput, ScreenRectanglesOptions } from '../methods/rectangles.interfaces.js'
+import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
 
 /**
  * Saves an image of the viewport of the screen
  */
 export default async function saveWebScreen(
-    methods: Methods,
-    instanceData: InstanceData,
-    folders: Folders,
-    tag: string,
-    saveScreenOptions: SaveScreenOptions,
-    isNativeContext: boolean,
+    {
+        methods,
+        instanceData,
+        folders,
+        tag,
+        saveScreenOptions,
+        isNativeContext = false,
+    }: InternalSaveScreenMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
     const { addressBarShadowPadding, addIOSBezelCorners, formatImageName, savePerInstance, toolBarShadowPadding } =

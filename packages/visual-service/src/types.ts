@@ -9,8 +9,6 @@ import type {
     SaveFullPageMethodOptions,
     ClassOptions,
 } from 'webdriver-image-comparison'
-import type { RectanglesOutput } from 'webdriver-image-comparison/dist/methods/rectangles.interfaces.js'
-import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;
@@ -20,6 +18,17 @@ type MultiResult = {
     [browserName: string]: ImageCompareResult | number;
 };
 export type Result = MultiResult | (ImageCompareResult | number);
+export type NativeContextType = boolean | Record<string, boolean>
+export type MultiremoteCommandResult = {
+        command: string,
+        method: string,
+        endpoint: string,
+        body: Record<string, any>,
+        result: { value: string },
+        sessionId: string | undefined,
+        cid: string,
+        type: string,
+}
 
 export interface WdioIcsCommonOptions {
     hideElements?: WebdriverIO.Element[];
@@ -50,14 +59,3 @@ export interface WdioCheckScreenMethodOptions
         WdioIcsCommonOptions {}
 
 export interface VisualServiceOptions extends ClassOptions {}
-
-export type PageCommandOptions = {
-    executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]) => Promise<T>;
-    getElementRect: (elementId: string) => Promise<RectanglesOutput>;
-    screenShot: () => Promise<string>;
-};
-
-export type PageCommand = (options: PageCommandOptions, ...args: any[]) => Promise<any>;
-export interface PageCommands {
-    [commandName: string]: PageCommand | ((options: WaitForStorybookComponentToBeLoaded) => Promise<void>);
-}

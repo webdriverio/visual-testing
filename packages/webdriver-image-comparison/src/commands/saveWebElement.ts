@@ -3,28 +3,26 @@ import { makeCroppedBase64Image } from '../methods/images.js'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
-import type { Methods } from '../methods/methods.interfaces.js'
-import type { InstanceData } from '../methods/instanceData.interfaces.js'
-import type { Folders } from '../base.interfaces.js'
-import type { SaveElementOptions, WicElement } from './element.interfaces.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
 import { getScreenshotSize } from '../helpers/utils.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
+import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 
 /**
  * Saves an image of an element
  */
 export default async function saveWebElement(
-    methods: Methods,
-    instanceData: InstanceData,
-    folders: Folders,
-    element: HTMLElement | WicElement,
-    tag: string,
-    saveElementOptions: SaveElementOptions,
-    _isNativeContext: boolean,
+    {
+        methods,
+        instanceData,
+        folders,
+        element,
+        tag,
+        saveElementOptions,
+    }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
     const { addressBarShadowPadding, autoElementScroll, formatImageName, savePerInstance, toolBarShadowPadding } =
@@ -94,9 +92,10 @@ export default async function saveWebElement(
         isAndroid,
         isIOS,
         isLandscape,
+        // When the element needs to be resized, we need to take a screenshot of the whole page
+        fallback: !!saveElementOptions.method.resizeDimensions || false,
         screenShot,
         takeElementScreenshot,
-
     })
 
     // When the screenshot has been taken and the element position has been determined,

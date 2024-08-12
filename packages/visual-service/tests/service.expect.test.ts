@@ -13,6 +13,7 @@ vi.mock('webdriver-image-comparison', () => ({
     saveScreen: vi.fn(),
     saveTabbablePage: vi.fn(),
     checkTabbablePage: vi.fn(),
+    DEFAULT_TEST_CONTEXT: {},
 }))
 
 const log = logger('test')

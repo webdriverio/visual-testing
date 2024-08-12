@@ -1,5 +1,6 @@
 import type { IosOffsets } from './constants.interfaces.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
+import type { TestContext } from 'src/commands/check.interfaces.js'
 
 export const DEFAULT_FORMAT_STRING = '{tag}-{browserName}-{width}x{height}-dpr-{dpr}'
 export const STORYBOOK_FORMAT_STRING = '{tag}-{logName}-{width}x{height}-dpr-{dpr}'
@@ -366,3 +367,26 @@ export const supportedIosBezelDevices = [
     'ipadpro11', // 1194
     'ipadpro129', // 1366
 ]
+
+export const DEFAULT_TEST_CONTEXT: TestContext = {
+    commandName: 'Could not be determined',
+    instanceData: {
+        app: 'Could not be determined',
+        browser: {
+            name: 'Could not be determined',
+            version: 'Could not be determined',
+        },
+        deviceName: 'Could not be determined',
+        isMobile: false,
+        isAndroid: false,
+        isIOS: false,
+        platform: {
+            name: 'Could not be determined',
+            version: 'Could not be determined',
+        },
+    },
+    framework: 'mocha',
+    parent: 'Could not be determined',
+    tag: 'Could not be determined',
+    title: 'Could not be determined',
+}

@@ -1,22 +1,21 @@
-import type { Folders } from '../base.interfaces.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { makeCroppedBase64Image } from '../methods/images.js'
-import type { InstanceData } from '../methods/instanceData.interfaces.js'
-import type { Methods } from '../methods/methods.interfaces.js'
 import { takeBase64Screenshot } from '../methods/screenshots.js'
-import type { SaveScreenOptions } from './screen.interfaces.js'
+import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
 
 /**
  * Saves an image of the device screen for a native app
  */
 export default async function saveAppScreen(
-    methods: Methods,
-    instanceData: InstanceData,
-    folders: Folders,
-    tag: string,
-    saveScreenOptions: SaveScreenOptions,
-    isNativeContext: boolean,
+    {
+        methods,
+        instanceData,
+        folders,
+        tag,
+        saveScreenOptions,
+        isNativeContext = true,
+    }: InternalSaveScreenMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1. Set some variables
     const {

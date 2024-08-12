@@ -9,7 +9,7 @@ import checkFullPageScreen from './commands/checkFullPageScreen.js'
 import checkTabbablePage from './commands/checkTabbablePage.js'
 import { ClassOptions } from './helpers/options.interfaces.js'
 import { ImageCompareResult } from './methods/images.interfaces.js'
-import { IOS_OFFSETS, FOLDERS } from './helpers/constants.js'
+import { IOS_OFFSETS, FOLDERS, DEFAULT_TEST_CONTEXT } from './helpers/constants.js'
 
 export type { ScreenshotOutput } from './helpers/afterScreenshot.interfaces.js'
 export type {
@@ -25,14 +25,16 @@ export type {
     CheckFullPageMethodOptions,
     SaveFullPageMethodOptions,
 } from './commands/fullPage.interfaces.js'
-
+export type { TestContext } from './commands/check.interfaces.js'
 export type { Folders } from './base.interfaces.js'
 export type { InstanceData } from './methods/instanceData.interfaces.js'
+export type { ResultReport } from './methods/createCompareReport.js'
 
 export {
     BaseClass,
     ClassOptions,
     ImageCompareResult,
+    DEFAULT_TEST_CONTEXT,
     IOS_OFFSETS,
     FOLDERS,
     saveScreen,

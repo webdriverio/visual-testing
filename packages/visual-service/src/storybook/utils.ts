@@ -481,7 +481,7 @@ export function createStorybookCapabilities(
  * Scan the storybook instance
  */
 export async function scanStorybook(
-    config: WebdriverIO.Config ,
+    config: WebdriverIO.Config,
     options: ClassOptions,
     // For testing purposes only
     getArgvVal = getArgvValue,

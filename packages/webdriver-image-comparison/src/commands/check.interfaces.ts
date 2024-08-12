@@ -1,5 +1,10 @@
 import type { ChainablePromiseElement } from 'webdriverio'
+import type { InternalSaveMethodOptions } from './save.interfaces.js'
 import type { RectanglesOutput } from '../methods/rectangles.interfaces.js'
+import type { CheckElementOptions, WicElement } from './element.interfaces.js'
+import type { CheckFullPageOptions } from './fullPage.interfaces.js'
+import type { CheckScreenOptions } from './screen.interfaces.js'
+import type { CheckTabbableOptions } from './tabbable.interfaces.js'
 
 export interface CheckMethodOptions {
     // Block out array with x, y, width and height values
@@ -30,4 +35,48 @@ export interface CheckMethodOptions {
     saveAboveTolerance?: number;
     //Scale images to same size before comparison
     scaleImagesToSameSize?: boolean;
+}
+
+export type TestContext = {
+    commandName: string;
+    framework: string;
+    parent: string;
+    tag: string;
+    title: string;
+    instanceData: {
+        browser: {
+            name: string;
+            version: string;
+        },
+        deviceName: string;
+        platform: {
+            name: string;
+            version: string;
+        },
+        app: string;
+        isMobile: boolean;
+        isAndroid: boolean;
+        isIOS: boolean;
+    }
+}
+
+export interface InternalCheckMethodOptions extends InternalSaveMethodOptions {
+    testContext: TestContext;
+}
+
+export interface InternalCheckElementMethodOptions extends InternalCheckMethodOptions {
+    element: WicElement | HTMLElement;
+    checkElementOptions: CheckElementOptions;
+}
+
+export interface InternalCheckFullPageMethodOptions extends InternalCheckMethodOptions {
+    checkFullPageOptions: CheckFullPageOptions,
+}
+
+export interface InternalCheckTabbablePageMethodOptions extends InternalCheckMethodOptions {
+    checkTabbableOptions: CheckTabbableOptions,
+}
+
+export interface InternalCheckScreenMethodOptions extends InternalCheckMethodOptions {
+    checkScreenOptions: CheckScreenOptions;
 }

@@ -16,6 +16,7 @@ vi.mock('webdriver-image-comparison', () => ({
     saveScreen: vi.fn(),
     saveTabbablePage: vi.fn(),
     checkTabbablePage: vi.fn(),
+    DEFAULT_TEST_CONTEXT: {},
 }))
 vi.mock('@wdio/globals', async () => ({
     expect: {
@@ -46,24 +47,43 @@ describe('@wdio/visual-service', () => {
         let service
         let browser
         let browserInstance
+        let chromeInstance
+        let firefoxInstance
         const commands = ['saveElement', 'checkElement', 'saveScreen', 'saveFullPageScreen', 'saveTabbablePage', 'checkScreen', 'checkFullPageScreen', 'checkTabbablePage', 'waitForStorybookComponentToBeLoaded']
 
         beforeEach(() => {
             service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
+            chromeInstance = {
+                addCommand: vi.fn(),
+                capabilities: {},
+                requestedCapabilities: {},
+                on: vi.fn()
+            }
+            firefoxInstance = {
+                addCommand: vi.fn(),
+                capabilities: {},
+                requestedCapabilities: {},
+                on: vi.fn()
+            }
             browser = {
                 isMultiremote: false,
                 addCommand: vi.fn((name, fn) => {
                     browser[name] = fn
                 }),
                 capabilities: {},
-                requestedCapabilities: {}
+                requestedCapabilities: {},
+                instances: ['chrome', 'firefox'],
+                getInstance: vi.fn().mockReturnValue(browserInstance),
+                chrome: chromeInstance,
+                firefox: firefoxInstance,
             } as any as WebdriverIO.Browser
             browserInstance = {
                 addCommand: vi.fn((name, fn) => {
                     browserInstance[name] = fn
                 }),
                 capabilities: {},
-                requestedCapabilities: {}
+                requestedCapabilities: {},
+                on: vi.fn()
             }
         })
 

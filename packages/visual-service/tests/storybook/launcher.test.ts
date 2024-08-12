@@ -1,7 +1,7 @@
 import { rmdirSync } from 'node:fs'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
-import type { Capabilities, Options, Services } from '@wdio/types'
+import type { Capabilities, Services } from '@wdio/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import VisualLauncher from '../../src/storybook/launcher.js'
 import type { ClassOptions } from 'webdriver-image-comparison'
@@ -29,7 +29,7 @@ describe('Visual Launcher for Storybook', () => {
     describe('onPrepare', () => {
         let options: ClassOptions,
             caps: Capabilities.RequestedStandaloneCapabilities[],
-            config: WebdriverIO.Config ,
+            config: WebdriverIO.Config,
             Launcher: Services.ServiceInstance
 
         beforeEach(() => {

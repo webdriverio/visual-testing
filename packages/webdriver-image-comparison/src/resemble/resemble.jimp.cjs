@@ -54,8 +54,8 @@ const isNode = function () {
     const globalPolyfill = getGlobalThis()
     return (
         typeof globalPolyfill.process !== 'undefined' &&
-    globalPolyfill.process.versions &&
-    globalPolyfill.process.versions.node
+        globalPolyfill.process.versions &&
+        globalPolyfill.process.versions.node
     )
 };
 
@@ -84,9 +84,9 @@ const isNode = function () {
     // }
 
     function createCanvas(width, height) {
-    // if (isNode()) {
-    //   return Canvas.createCanvas(width, height);
-    // }
+        // if (isNode()) {
+        //   return Canvas.createCanvas(width, height);
+        // }
 
         // var cnvs = document.createElement("canvas");
         // cnvs.width = width;
@@ -120,12 +120,9 @@ const isNode = function () {
                 px[offset + 3] = errorPixelColor.alpha
             },
             movement: function (px, offset, d1, d2) {
-                px[offset] =
-          (d2.r * (errorPixelColor.red / 255) + errorPixelColor.red) / 2
-                px[offset + 1] =
-          (d2.g * (errorPixelColor.green / 255) + errorPixelColor.green) / 2
-                px[offset + 2] =
-          (d2.b * (errorPixelColor.blue / 255) + errorPixelColor.blue) / 2
+                px[offset] = (d2.r * (errorPixelColor.red / 255) + errorPixelColor.red) / 2
+                px[offset + 1] = (d2.g * (errorPixelColor.green / 255) + errorPixelColor.green) / 2
+                px[offset + 2] = (d2.b * (errorPixelColor.blue / 255) + errorPixelColor.blue) / 2
                 px[offset + 3] = d2.a
             },
             flatDifferenceIntensity: function (px, offset, d1, d2) {
@@ -138,14 +135,14 @@ const isNode = function () {
                 const ratio = (colorsDistance(d1, d2) / 255) * 0.8
 
                 px[offset] =
-          (1 - ratio) * (d2.r * (errorPixelColor.red / 255)) +
-          ratio * errorPixelColor.red
+                    (1 - ratio) * (d2.r * (errorPixelColor.red / 255)) +
+                    ratio * errorPixelColor.red
                 px[offset + 1] =
-          (1 - ratio) * (d2.g * (errorPixelColor.green / 255)) +
-          ratio * errorPixelColor.green
+                    (1 - ratio) * (d2.g * (errorPixelColor.green / 255)) +
+                    ratio * errorPixelColor.green
                 px[offset + 2] =
-          (1 - ratio) * (d2.b * (errorPixelColor.blue / 255)) +
-          ratio * errorPixelColor.blue
+                    (1 - ratio) * (d2.b * (errorPixelColor.blue / 255)) +
+                    ratio * errorPixelColor.blue
                 px[offset + 3] = d2.a
             },
             diffOnly: function (px, offset, d1, d2) {
@@ -185,19 +182,16 @@ const isNode = function () {
 
         function colorsDistance(c1, c2) {
             return (
-                (Math.abs(c1.r - c2.r) +
-          Math.abs(c1.g - c2.g) +
-          Math.abs(c1.b - c2.b)) /
-        3
+                (Math.abs(c1.r - c2.r) + Math.abs(c1.g - c2.g) + Math.abs(c1.b - c2.b)) / 3
             )
         }
 
         function withinBoundingBox(x, y, width, height, box) {
             return (
-                x > (box.left || 0) &&
-        x < (box.right || width) &&
-        y > (box.top || 0) &&
-        y < (box.bottom || height)
+                x >= (box.left || 0) &&
+                x <= (box.right || width) &&
+                y >= (box.top || 0) &&
+                y <= (box.bottom || height)
             )
         }
 
@@ -633,11 +627,15 @@ const isNode = function () {
                 bottom: 0,
                 right: 0,
             }
+            const diffPixels = []
             const updateBounds = function (x, y) {
+                // Update the big box
                 diffBounds.left = Math.min(x, diffBounds.left)
                 diffBounds.right = Math.max(x, diffBounds.right)
                 diffBounds.top = Math.min(y, diffBounds.top)
                 diffBounds.bottom = Math.max(y, diffBounds.bottom)
+                // Update the diffPixels array
+                diffPixels.push({ x, y })
             }
 
             const time = Date.now()
@@ -646,8 +644,8 @@ const isNode = function () {
 
             if (
                 !!largeImageThreshold &&
-        ignoreAntialiasing &&
-        (width > largeImageThreshold || height > largeImageThreshold)
+                ignoreAntialiasing &&
+                (width > largeImageThreshold || height > largeImageThreshold)
             ) {
                 skip = 6
             }
@@ -672,7 +670,7 @@ const isNode = function () {
                 const offset = (verticalPos * width + horizontalPos) * 4
                 if (
                     !getPixelInfo(pixel1, data1, offset, 1) ||
-          !getPixelInfo(pixel2, data2, offset, 2)
+                    !getPixelInfo(pixel2, data2, offset, 2)
                 ) {
                     return
                 }
@@ -689,10 +687,7 @@ const isNode = function () {
                     addBrightnessInfo(pixel1)
                     addBrightnessInfo(pixel2)
 
-                    if (
-                        isPixelBrightnessSimilar(pixel1, pixel2) ||
-            !isWithinComparedArea
-                    ) {
+                    if ( isPixelBrightnessSimilar(pixel1, pixel2) || !isWithinComparedArea ) {
                         if (!compareOnly) {
                             copyGrayScalePixel(pix, offset, pixel2)
                         }
@@ -713,15 +708,14 @@ const isNode = function () {
                     }
                 } else if (
                     ignoreAntialiasing &&
-          (addBrightnessInfo(pixel1), // jit pixel info augmentation looks a little weird, sorry.
-          addBrightnessInfo(pixel2),
-          isAntialiased(pixel1, data1, 1, verticalPos, horizontalPos, width) ||
-            isAntialiased(pixel2, data2, 2, verticalPos, horizontalPos, width))
+                    (
+                        addBrightnessInfo(pixel1), // jit pixel info augmentation looks a little weird, sorry.
+                        addBrightnessInfo(pixel2),
+                        isAntialiased(pixel1, data1, 1, verticalPos, horizontalPos, width) ||
+                        isAntialiased(pixel2, data2, 2, verticalPos, horizontalPos, width)
+                    )
                 ) {
-                    if (
-                        isPixelBrightnessSimilar(pixel1, pixel2) ||
-            !isWithinComparedArea
-                    ) {
+                    if ( isPixelBrightnessSimilar(pixel1, pixel2) || !isWithinComparedArea ) {
                         if (!compareOnly) {
                             copyGrayScalePixel(pix, offset, pixel2)
                         }
@@ -755,6 +749,8 @@ const isNode = function () {
             data.misMatchPercentage = data.rawMisMatchPercentage.toFixed(2)
             data.diffBounds = diffBounds
             data.analysisTime = Date.now() - time
+            // Add diffPixels array to the data object
+            data.diffPixels = diffPixels
 
             data.getImageDataUrl = function (text) {
                 if (compareOnly) {
@@ -847,10 +843,9 @@ const isNode = function () {
             if (options.errorColor) {
                 for (key in options.errorColor) {
                     if (options.errorColor.hasOwnProperty(key)) {
-                        errorPixelColor[key] =
-              options.errorColor[key] === void 0
-                  ? errorPixelColor[key]
-                  : options.errorColor[key]
+                        errorPixelColor[key] = options.errorColor[key] === void 0
+                            ? errorPixelColor[key]
+                            : options.errorColor[key]
                     }
                 }
             }
@@ -912,17 +907,15 @@ const isNode = function () {
                         triggerDataUpdate()
                         return
                     }
-                    width =
-            images[0].bitmap.width > images[1].bitmap.width
-                ? images[0].bitmap.width
-                : images[1].bitmap.width
-                    height =
-            images[0].bitmap.height > images[1].bitmap.height
-                ? images[0].bitmap.height
-                : images[1].bitmap.height
+                    width = images[0].bitmap.width > images[1].bitmap.width
+                        ? images[0].bitmap.width
+                        : images[1].bitmap.width
+                    height = images[0].bitmap.height > images[1].bitmap.height
+                        ? images[0].bitmap.height
+                        : images[1].bitmap.height
 
                     data.isSameDimensions = images[0].bitmap.width === images[1].bitmap.width &&
-            images[0].bitmap.height === images[1].bitmap.height ? true : false
+                        images[0].bitmap.height === images[1].bitmap.height ? true : false
 
                     data.dimensionDifference = {
                         width: images[0].bitmap.width - images[1].bitmap.width,

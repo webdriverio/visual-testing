@@ -1,6 +1,8 @@
 import type Jimp from 'jimp'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
+import type { TestContext } from 'src/commands/check.interfaces.js'
+import type { Executor } from './methods.interfaces.js'
 
 export interface ResizeDimensions {
     // The bottom margin
@@ -11,6 +13,14 @@ export interface ResizeDimensions {
     right?: number;
     // The top margin
     top?: number;
+}
+
+export interface ExecuteImageCompare {
+    executor: Executor;
+    options: ImageCompareOptions;
+    testContext: TestContext;
+    isViewPortScreenshot: boolean;
+    isNativeContext: boolean;
 }
 
 export interface ImageCompareOptions {
@@ -46,6 +56,12 @@ export interface WicImageCompareOptions {
     blockOutStatusBar: boolean;
     // Block out the tool bar yes or no
     blockOutToolBar: boolean;
+    // Create a json file with the diff data, this can be used to create a custom report.
+    createJsonReportFiles: boolean;
+    // The proximity of the diff pixels to determine if a diff pixel is part of a group,
+    // the higher the number the more pixels will be grouped, the lower the number the less pixels will be grouped due to accuracy.
+    // Default is 5 pixels
+    diffPixelBoundingBoxProximity: number;
     // Compare images and discard alpha
     ignoreAlpha: boolean;
     // Compare images an discard anti aliasing
@@ -132,12 +148,19 @@ export interface ImageCompareResult {
     misMatchPercentage: number;
 }
 
-export interface IgnoreBoxes {
+export interface BoundingBox {
     bottom: number;
     right: number;
     left: number;
     top: number;
 }
+
+export interface Pixel {
+    x: number;
+    y: number;
+}
+
+export interface IgnoreBoxes extends BoundingBox { }
 
 export interface CroppedBase64Image {
     addIOSBezelCorners: boolean;
@@ -207,3 +230,4 @@ export interface HandleIOSBezelCorners {
     isLandscape: boolean,
     width: number,
 }
+

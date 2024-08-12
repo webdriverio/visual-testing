@@ -57,6 +57,7 @@ export const config: WebdriverIO.Config = {
                 savePerInstance: true,
                 blockOutStatusBar: true,
                 blockOutToolBar: true,
+                createJsonReportFiles: true,
                 clearRuntimeFolder: true,
                 enableLayoutTesting: true,
             },

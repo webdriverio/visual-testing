@@ -13,6 +13,12 @@ export interface CompareData {
     };
     // The analysis time in milliseconds
     analysisTime: number;
+    // The diff pixels location(s) and color(s)
+    diffPixels: {
+            x: number;
+            y: number;
+        }[];
+
 }
 
 /**

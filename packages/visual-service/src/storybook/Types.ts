@@ -1,4 +1,3 @@
-import type { TestrunnerCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
 import type { Folders } from 'webdriver-image-comparison'
 
 export interface StorybookData {
