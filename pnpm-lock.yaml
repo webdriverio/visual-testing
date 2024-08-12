@@ -58,8 +58,8 @@ importers:
         specifier: ^8.39.1
         version: 8.39.1(typescript@5.5.4)
       '@wdio/mocha-framework':
-        specifier: ^8.39.0
-        version: 8.39.0
+        specifier: ^8.40.2
+        version: 8.40.2
       '@wdio/sauce-service':
         specifier: ^8.39.1
         version: 8.39.1(typescript@5.5.4)
@@ -1234,8 +1234,8 @@ packages:
     resolution: {integrity: sha512-kcHL86RmNbcQP+Gq/vQUGlArfU6IIcbbnNp32rRIraitomZow+iEoc519rdQmSVusDozMS5DZthkgDdxK+vz6Q==}
     engines: {node: ^16.13 || >=18}
 
-  '@wdio/mocha-framework@8.39.0':
-    resolution: {integrity: sha512-OFau1dd5mUAqC70gkx0WeZ8rJG191Snb4qhOTS18FpszUoZgoHtgjFICC0cxqZBFtmT9j7+22hNrj6d4sQVPJw==}
+  '@wdio/mocha-framework@8.40.2':
+    resolution: {integrity: sha512-hqhyYzfIe40aAXrC6SQXKqRbrpnf4BSaLlJyxDbMVkge/5du/pCinciz25HmOdfHDhG/t9Ox9q1fNfD6+1IMew==}
     engines: {node: ^16.13 || >=18}
 
   '@wdio/protocols@8.38.0':
@@ -6176,13 +6176,13 @@ snapshots:
       loglevel-plugin-prefix: 0.8.4
       strip-ansi: 7.1.0
 
-  '@wdio/mocha-framework@8.39.0':
+  '@wdio/mocha-framework@8.40.2':
     dependencies:
       '@types/mocha': 10.0.7
       '@types/node': 20.14.13
       '@wdio/logger': 8.38.0
       '@wdio/types': 8.39.0
-      '@wdio/utils': 8.39.0
+      '@wdio/utils': 8.40.2
       mocha: 10.7.0
     transitivePeerDependencies:
       - supports-color
