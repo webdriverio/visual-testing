@@ -108,6 +108,9 @@ export function sauceDesktopBrowsers({
             'wdio-ics:options': {
                 logName: 'Firefox latest',
             },
+            // Adding this because there is an error
+            // Command browsingContext.navigate with id 9 (with the following parameter: {"context":"c3908ff5-45d5-4943-bd82-8d19a968dab6","url":"http://guinea-pig.webdriver.io/image-compare.html","wait":"complete"}) timed out
+            'wdio:enforceWebDriverClassic': true
         },
         {
             browserName: 'firefox',
@@ -118,6 +121,9 @@ export function sauceDesktopBrowsers({
             'wdio-ics:options': {
                 logName: 'Firefox latest-1',
             },
+            // Adding this because there is an error
+            // Command browsingContext.navigate with id 9 (with the following parameter: {"context":"c3908ff5-45d5-4943-bd82-8d19a968dab6","url":"http://guinea-pig.webdriver.io/image-compare.html","wait":"complete"}) timed out
+            'wdio:enforceWebDriverClassic': true
         },
         {
             browserName: 'firefox',
@@ -128,6 +134,9 @@ export function sauceDesktopBrowsers({
             'wdio-ics:options': {
                 logName: 'Firefox latest-2',
             },
+            // Adding this because there is an error
+            // Command browsingContext.navigate with id 9 (with the following parameter: {"context":"c3908ff5-45d5-4943-bd82-8d19a968dab6","url":"http://guinea-pig.webdriver.io/image-compare.html","wait":"complete"}) timed out
+            'wdio:enforceWebDriverClassic': true
         },
         {
             browserName: 'MicrosoftEdge',
@@ -141,6 +150,9 @@ export function sauceDesktopBrowsers({
             'ms:edgeOptions':{
                 args: ['--guest']
             },
+            // Adding this because there is an error
+            // Failed to open new tab - no browser is open
+            'wdio:enforceWebDriverClassic': true
         },
         {
             browserName: 'MicrosoftEdge',
@@ -154,6 +166,9 @@ export function sauceDesktopBrowsers({
             'ms:edgeOptions':{
                 args: ['--guest']
             },
+            // Adding this because there is an error
+            // Failed to open new tab - no browser is open
+            'wdio:enforceWebDriverClassic': true
         },
         {
             browserName: 'MicrosoftEdge',
@@ -167,6 +182,9 @@ export function sauceDesktopBrowsers({
             'ms:edgeOptions':{
                 args: ['--guest']
             },
+            // Adding this because there is an error
+            // Failed to open new tab - no browser is open
+            'wdio:enforceWebDriverClassic': true
         },
 
         /**
