@@ -46,31 +46,31 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0)
       '@wdio/appium-service':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       '@wdio/cli':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       '@wdio/globals':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426(@wdio/logger@9.0.0-alpha.426)
       '@wdio/local-runner':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       '@wdio/mocha-framework':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       '@wdio/sauce-service':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       '@wdio/shared-store-service':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       '@wdio/spec-reporter':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       '@wdio/types':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       eslint:
         specifier: ^8.57.0
@@ -82,7 +82,7 @@ importers:
         specifier: ^54.0.0
         version: 54.0.0(eslint@8.57.0)
       eslint-plugin-wdio:
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       husky:
         specifier: ^9.1.4
@@ -112,7 +112,7 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@22.2.0)(jsdom@24.1.1)
       webdriverio:
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
 
   packages/ocr-service:
@@ -121,13 +121,13 @@ importers:
         specifier: 5.3.7
         version: 5.3.7
       '@wdio/globals':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426(@wdio/logger@9.0.0-alpha.426)
       '@wdio/logger':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       '@wdio/types':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       fuse.js:
         specifier: ^7.0.0
@@ -158,13 +158,13 @@ importers:
   packages/visual-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426(@wdio/logger@9.0.0-alpha.426)
       '@wdio/logger':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       '@wdio/types':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       node-fetch:
         specifier: ^3.3.2
@@ -176,7 +176,7 @@ importers:
   packages/webdriver-image-comparison:
     dependencies:
       '@wdio/logger':
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
       fs-extra:
         specifier: ^11.2.0
@@ -198,7 +198,7 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       webdriverio:
-        specifier: ^9.0.0-alpha.351
+        specifier: ^9.0.0-alpha.426
         version: 9.0.0-alpha.426
 
 packages:
@@ -2072,7 +2072,7 @@ packages:
   /@types/ws@8.5.12:
     resolution: {integrity: sha512-3tPRkv1EtkDpzlgyKyI8pGsGZAGPEaXeu0DOj5DI25Ja91bdAYddYHbADRYVrZMRbfW+1l5YwXVDKohDJNQxkQ==}
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 22.2.0
 
   /@types/xml2js@0.4.14:
     resolution: {integrity: sha512-4YnrRemBShWRO2QjvUin8ESA41rH+9nQGLUGZV/1IDhi3SL9OhdpNC/MrulTWuptXKwhx/aDxE7toV0f/ypIXQ==}
@@ -4789,7 +4789,7 @@ packages:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.8
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
     dev: true
