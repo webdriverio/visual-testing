@@ -1,3 +1,4 @@
+import { driver } from '@wdio/globals'
 import type { OcrSetValueOptions } from '../types.js'
 import sendKeys from '../utils/sendKeys.js'
 import ocrClickOnText from './ocrClickOnText.js'

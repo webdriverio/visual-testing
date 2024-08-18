@@ -1,5 +1,6 @@
 import { join } from 'node:path'
 import { mkdirSync } from 'node:fs'
+import type { ChainablePromiseElement } from 'webdriverio'
 import type { ClickPoint, DetermineClickPointOptions, Rectangles, RectReturn, ScreenshotSize } from '../types.js'
 
 export function getScreenshotSize(screenshot: string): ScreenshotSize {

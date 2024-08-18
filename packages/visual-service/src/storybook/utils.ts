@@ -1,5 +1,6 @@
 import logger from '@wdio/logger'
 import fetch from 'node-fetch'
+import { $, browser } from '@wdio/globals'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'

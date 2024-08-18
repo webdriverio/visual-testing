@@ -1,3 +1,4 @@
+import { driver } from '@wdio/globals'
 import type { OcrWaitForTextDisplayedOptions } from '../types.js'
 import ocrGetElementPositionByText from './ocrGetElementPositionByText.js'
 

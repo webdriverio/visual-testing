@@ -368,7 +368,7 @@ To create a PR for this project and start contributing follow this step-by-step 
     $ cd visual-testing
     $ corepack enable
     $ corepack use pnpm@8.x
-    $ pnpm install
+    $ pnpm pnpm.install.workaround
     ```
 
 -   Run the watch mode that will automatically transpile the code

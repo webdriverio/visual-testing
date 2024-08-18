@@ -51,7 +51,7 @@ jobs:
           cache: pnpm
 
       - name: 🧩 Install Dependencies
-        run: pnpm install
+        run: pnpm pnpm.install.workaround
 
       - name: 🏗️ Build
         id: build-the-mono-repo
