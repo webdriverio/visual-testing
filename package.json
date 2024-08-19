@@ -63,7 +63,7 @@
     "@wdio/mocha-framework": "^8.40.2",
     "@wdio/sauce-service": "^8.40.2",
     "@wdio/shared-store-service": "^8.40.2",
-    "@wdio/spec-reporter": "^8.39.0",
+    "@wdio/spec-reporter": "^9.0.4",
     "@wdio/types": "^8.39.0",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
