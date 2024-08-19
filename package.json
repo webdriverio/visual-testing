@@ -74,7 +74,7 @@
     "npm-run-all2": "^6.2.2",
     "release-it": "^17.6.0",
     "rimraf": "^6.0.1",
-    "saucelabs": "^7.5.0",
+    "saucelabs": "^8.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "vitest": "^1.6.0",
