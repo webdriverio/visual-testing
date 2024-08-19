@@ -52,8 +52,8 @@ importers:
         specifier: ^8.40.2
         version: 8.40.2
       '@wdio/globals':
-        specifier: ^8.40.2
-        version: 8.40.2
+        specifier: ^9.0.4
+        version: 9.0.4(@wdio/logger@9.0.4)
       '@wdio/local-runner':
         specifier: ^8.40.2
         version: 8.40.2
@@ -121,8 +121,8 @@ importers:
         specifier: 5.3.8
         version: 5.3.8
       '@wdio/globals':
-        specifier: ^8.40.2
-        version: 8.40.2
+        specifier: ^9.0.4
+        version: 9.0.4(@wdio/logger@8.38.0)
       '@wdio/logger':
         specifier: ^8.38.0
         version: 8.38.0
@@ -155,8 +155,8 @@ importers:
   packages/visual-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^8.40.2
-        version: 8.40.2
+        specifier: ^9.0.4
+        version: 9.0.4(@wdio/logger@8.38.0)
       '@wdio/logger':
         specifier: ^8.38.0
         version: 8.38.0
@@ -1220,6 +1220,10 @@ packages:
     resolution: {integrity: sha512-eF47oRE79JY2Cgl0/OCpCLdEAh4eNgU11e4O8fvkPrwbPgW6gcS8xG23ZmNGc3EjhHUZUOzrm7uJ8ymcRPIuoA==}
     engines: {node: ^16.13 || >=18}
 
+  '@wdio/globals@9.0.4':
+    resolution: {integrity: sha512-3gKSaDXc7eSyNsQWlHbm/tbPhwW/3Sv7GZuCuH0YWI/8A0GD3zVvY9MOABClTHm06wGl0NojLwKhQpmcOzj6qw==}
+    engines: {node: '>=18'}
+
   '@wdio/local-runner@8.40.2':
     resolution: {integrity: sha512-Q6NDtI5IqYHciv+3t6mxwUefmdTdKmXf1aAg/KzJUTDl0RaISb9gKBOBW4pyMbY2ot5yF2mB7rXF93aN2Kmq6Q==}
     engines: {node: ^16.13 || >=18}
@@ -2205,6 +2209,14 @@ packages:
   expect-webdriverio@4.15.1:
     resolution: {integrity: sha512-xtBSidt7Whs1fsUC+utxVzfmkmaStXWW17b+BcMCiCltx0Yku6l7BTv1Y14DEKX8L6rttaDQobYyRtBKbi4ssg==}
     engines: {node: '>=16 || >=18 || >=20'}
+
+  expect-webdriverio@5.0.0-alpha.2:
+    resolution: {integrity: sha512-1T92DjZoY8oDpojGnSyf2WOEaS6uBrYTuzRJWqVE+wJAZATbeWgv8isl/3GM6MbQpDuN44F+fKLbgTZ18Bc4HA==}
+    engines: {node: '>=18 || >=20 || >=22'}
+    peerDependencies:
+      '@wdio/globals': ^9.0.0-alpha.350
+      '@wdio/logger': ^9.0.0-alpha.350
+      webdriverio: ^9.0.0-alpha.350
 
   expect@29.7.0:
     resolution: {integrity: sha512-2Zks0hf1VLFYI1kbh0I5jP3KHHyCHpkfyHBzsSXRFgl/Bg9mWYfMW8oD+PdMPlEwy5HNsR9JutYy6pMeOh61nw==}
@@ -6178,6 +6190,28 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@wdio/globals@9.0.4(@wdio/logger@8.38.0)':
+    optionalDependencies:
+      expect-webdriverio: 5.0.0-alpha.2(@wdio/globals@9.0.4(@wdio/logger@8.38.0))(@wdio/logger@8.38.0)(webdriverio@9.0.4)
+      webdriverio: 9.0.4
+    transitivePeerDependencies:
+      - '@wdio/logger'
+      - bufferutil
+      - puppeteer-core
+      - supports-color
+      - utf-8-validate
+
+  '@wdio/globals@9.0.4(@wdio/logger@9.0.4)':
+    optionalDependencies:
+      expect-webdriverio: 5.0.0-alpha.2(@wdio/globals@9.0.4(@wdio/logger@9.0.4))(@wdio/logger@9.0.4)(webdriverio@9.0.4)
+      webdriverio: 9.0.4
+    transitivePeerDependencies:
+      - '@wdio/logger'
+      - bufferutil
+      - puppeteer-core
+      - supports-color
+      - utf-8-validate
+
   '@wdio/local-runner@8.40.2':
     dependencies:
       '@types/node': 20.14.13
@@ -7488,6 +7522,28 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
+
+  expect-webdriverio@5.0.0-alpha.2(@wdio/globals@9.0.4(@wdio/logger@8.38.0))(@wdio/logger@8.38.0)(webdriverio@9.0.4):
+    dependencies:
+      '@vitest/snapshot': 1.6.0
+      '@wdio/globals': 9.0.4(@wdio/logger@8.38.0)
+      '@wdio/logger': 8.38.0
+      expect: 29.7.0
+      jest-matcher-utils: 29.7.0
+      lodash.isequal: 4.5.0
+      webdriverio: 9.0.4
+    optional: true
+
+  expect-webdriverio@5.0.0-alpha.2(@wdio/globals@9.0.4(@wdio/logger@9.0.4))(@wdio/logger@9.0.4)(webdriverio@9.0.4):
+    dependencies:
+      '@vitest/snapshot': 1.6.0
+      '@wdio/globals': 9.0.4(@wdio/logger@9.0.4)
+      '@wdio/logger': 9.0.4
+      expect: 29.7.0
+      jest-matcher-utils: 29.7.0
+      lodash.isequal: 4.5.0
+      webdriverio: 9.0.4
+    optional: true
 
   expect@29.7.0:
     dependencies:
