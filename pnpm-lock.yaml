@@ -61,8 +61,8 @@ importers:
         specifier: ^9.0.4
         version: 9.0.4
       '@wdio/sauce-service':
-        specifier: ^8.40.2
-        version: 8.40.2
+        specifier: ^9.0.4
+        version: 9.0.4
       '@wdio/shared-store-service':
         specifier: ^8.40.2
         version: 8.40.2
@@ -1262,9 +1262,9 @@ packages:
     resolution: {integrity: sha512-alK1n5fHiAG/Pf77O9gb8mjs/KIbLFEedrQsIk2ZMVvgTfmyriKb790Iy64RCYDfZpWQmCvcj9yDARc64IhSGw==}
     engines: {node: ^16.13 || >=18}
 
-  '@wdio/sauce-service@8.40.2':
-    resolution: {integrity: sha512-WtFwLqRuecuz1i44RSjZ5y+MBtt/zxOw2ycCQg9iRjQO2WtNnCPYzMRtFLeA+BPBvHWzz4yzV2yaB52gFanG0g==}
-    engines: {node: ^16.13 || >=18}
+  '@wdio/sauce-service@9.0.4':
+    resolution: {integrity: sha512-0yUoRQrTA4ZW1Sjy1ZMOshxsK0uz3LNwCDdtHjwHYUqc/IjhUfhYOrQPsYR6f8/0NJf0BANPz25WacIW4cUUkg==}
+    engines: {node: '>=18'}
 
   '@wdio/shared-store-service@8.40.2':
     resolution: {integrity: sha512-JPKIK8OX8f2AmV74/8PnliCCeXYeBNjw0n0yXVAfQs7q4fFsFSCtAIq3SCo8PjwPXGSK6Ac0vx9Wvt9sCiiQhw==}
@@ -6294,18 +6294,17 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/sauce-service@8.40.2':
+  '@wdio/sauce-service@9.0.4':
     dependencies:
-      '@wdio/logger': 8.38.0
-      '@wdio/types': 8.39.0
-      '@wdio/utils': 8.40.2
+      '@wdio/logger': 9.0.4
+      '@wdio/types': 9.0.4
+      '@wdio/utils': 9.0.4
       ip: 2.0.1
       saucelabs: 7.5.0
-      webdriverio: 8.40.2
+      webdriverio: 9.0.4
     transitivePeerDependencies:
       - bufferutil
-      - devtools
-      - encoding
+      - puppeteer-core
       - supports-color
       - utf-8-validate
 
