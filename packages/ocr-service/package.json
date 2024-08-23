@@ -28,9 +28,9 @@
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "@wdio/globals": "^9.0.1",
-    "@wdio/logger": "^9.0.0",
-    "@wdio/types": "^9.0.0",
+    "@wdio/globals": "^9.0.7",
+    "@wdio/logger": "^9.0.4",
+    "@wdio/types": "^9.0.4",
     "fuse.js": "^7.0.0",
     "@inquirer/prompts": "5.3.8",
     "jimp": "^0.22.12",
