@@ -27,7 +27,6 @@ describe('ocrWaitForTextDisplayed', () => {
             timeout: 10000,
             timeoutMsg: 'Custom timeout message',
         }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { timeout, timeoutMsg, ...ocrWaitForTextDisplayedOptions } = options
         const ocrGetElementPositionByTextMock = {
             dprPosition: { left: 1, right: 1, top: 1, bottom: 1 },

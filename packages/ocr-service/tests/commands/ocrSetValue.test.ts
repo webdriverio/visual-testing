@@ -45,7 +45,6 @@ describe('ocrSetValue', () => {
 
     it('calls ocrClickOnText and sendKeys with the right parameters', async () => {
         await ocrSetValue(options)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { submitValue, value, ...ocrClickOnTextOptions } = options
 
         expect(vi.mocked(ocrClickOnText)).toHaveBeenCalledWith(ocrClickOnTextOptions)
@@ -78,7 +77,7 @@ describe('ocrSetValue', () => {
         try {
             await ocrSetValue(options)
             expect(true).toBe(true)
-        } catch (error) {
+        } catch (_error) {
             throw new Error('The function should have handled the error internally and not throw an error')
         }
     })

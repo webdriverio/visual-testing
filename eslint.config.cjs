@@ -49,7 +49,18 @@ module.exports = [
 
             // TypeScript-specific rules
             'no-unused-vars': 'off',
-            '@typescript-eslint/no-unused-vars': 'error',
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    "args": "all",
+                    "argsIgnorePattern": "^_",
+                    "caughtErrors": "all",
+                    "caughtErrorsIgnorePattern": "^_",
+                    "destructuredArrayIgnorePattern": "^_",
+                    "varsIgnorePattern": "^_",
+                    "ignoreRestSiblings": true
+                }
+            ],
             '@typescript-eslint/consistent-type-imports': 'error',
             'no-undef': 'off',
             'no-redeclare': 'off'

@@ -60,7 +60,7 @@ export async function checkStorybookIsRunning(url: string) {
         if (res.status !== 200) {
             throw new Error(`Unxpected status: ${res.status}`)
         }
-    } catch (e) {
+    } catch (_e) {
         log.error(`It seems that the Storybook instance is not running at: ${url}. Are you sure it's running?`)
         process.exit(1)
     }
@@ -114,7 +114,7 @@ export async function getStoriesJson(url: string): Promise<Stories> {
                 return (data as StoriesRes).stories || (data as IndexRes).entries
             }
         }
-    } catch (ign) {
+    } catch (_ign) {
         // Ignore the error
     }
 
@@ -231,7 +231,7 @@ export async function waitForStorybookComponentToBeLoaded(
         await browser.executeAsync(async (timeout, done) => {
             let timedOut = false
 
-            const timeoutPromise = new Promise((resolve, reject) => {
+            const timeoutPromise = new Promise((_resolve, reject) => {
                 setTimeout(() => {
                     timedOut = true
                     reject('Timeout: Not all images loaded within 11 seconds')

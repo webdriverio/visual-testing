@@ -65,7 +65,7 @@ describe('VisualReportGenerator class', () => {
     })
 
     it('should call readDirectory when calling readJsonFilesRecursively', () => {
-        const readDirectorySpy = vi.spyOn(visualReporter as any, 'readDirectory').mockImplementation((dir, testData:any) => {
+        const readDirectorySpy = vi.spyOn(visualReporter as any, 'readDirectory').mockImplementation((_dir, testData:any) => {
             testData.push(jsonFileContent[0])
         })
         // We cast it to any to also test the private method
@@ -94,7 +94,7 @@ describe('VisualReportGenerator class', () => {
                 } as fs.Stats
             })
         const readJsonFileSpy = vi.spyOn(visualReporter as any, 'readJsonFile')
-            .mockImplementation((filePath, testData: any) => {
+            .mockImplementation((_filePath, testData: any) => {
                 testData.push({ '@wdio/visual-service mobile web': { test: 'test1', commandName: 'cmd', instanceData: { platform: { name: 'platform', version: 'v1' } } } })
             })
 

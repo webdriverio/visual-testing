@@ -93,7 +93,7 @@ export default class WdioImageComparisonService extends BaseClass {
                 toMatchElementSnapshot,
                 toMatchTabbablePageSnapshot,
             })
-        } catch (err) {
+        } catch (_err) {
             log.warn('Expect package not found. This means that the custom matchers `toMatchScreenSnapshot|toMatchFullPageSnapshot|toMatchElementSnapshot|toMatchTabbablePageSnapshot` are not added and can not be used. Please make sure to add it to your `package.json` if you want to use the Visual custom matchers.')
         }
     }
