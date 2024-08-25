@@ -1,3 +1,5 @@
+import type { ChainablePromiseElement } from 'webdriverio'
+
 /**
  * Class options for OCR
  */

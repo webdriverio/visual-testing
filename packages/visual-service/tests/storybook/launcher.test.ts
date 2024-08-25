@@ -1,7 +1,7 @@
 import { rmdirSync } from 'node:fs'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
-import type { Capabilities, Options, Services } from '@wdio/types'
+import type { Capabilities, Services } from '@wdio/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import VisualLauncher from '../../src/storybook/launcher.js'
 import type { ClassOptions } from 'webdriver-image-comparison'
@@ -28,8 +28,8 @@ vi.mock('../../src/storybook/utils.js', ()=>({
 describe('Visual Launcher for Storybook', () => {
     describe('onPrepare', () => {
         let options: ClassOptions,
-            caps: Capabilities.DesiredCapabilities[],
-            config: Options.Testrunner,
+            caps: Capabilities.RequestedStandaloneCapabilities[],
+            config: WebdriverIO.Config,
             Launcher: Services.ServiceInstance
 
         beforeEach(() => {
@@ -38,7 +38,7 @@ describe('Visual Launcher for Storybook', () => {
             caps = [{}]
             config = {
                 framework: 'mocha'
-            } as Options.Testrunner
+            } as WebdriverIO.Config
             Launcher = new VisualLauncher(options)
 
             vi.clearAllMocks()

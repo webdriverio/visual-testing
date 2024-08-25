@@ -1,7 +1,7 @@
 import { rmdirSync } from 'node:fs'
 import logger from '@wdio/logger'
 import { SevereServiceError } from 'webdriverio'
-import type { Capabilities, Options } from '@wdio/types'
+import type { Capabilities } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
 import { BaseClass } from 'webdriver-image-comparison'
 import {
@@ -26,7 +26,7 @@ export default class VisualLauncher extends BaseClass  {
         this.#options = options
     }
 
-    async onPrepare (config: Options.Testrunner, capabilities: Capabilities.RemoteCapabilities) {
+    async onPrepare (config: WebdriverIO.Config, capabilities: Capabilities.TestrunnerCapabilities) {
         const isStorybook = isStorybookMode()
         const framework = config.framework as string
         const isCucumber = isCucumberFramework(framework)

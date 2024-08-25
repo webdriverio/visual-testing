@@ -1,3 +1,4 @@
+import { driver } from '@wdio/globals'
 import type { OcrSetValueOptions } from '../types.js'
 import sendKeys from '../utils/sendKeys.js'
 import ocrClickOnText from './ocrClickOnText.js'
@@ -35,7 +36,7 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
             await driver.waitUntil(
                 async () => driver.isKeyboardShown(),
                 { timeout: 3 * 1000 })
-        } catch (ign) {
+        } catch (_ign) {
             // Keyboard is not shown
         }
     }
@@ -49,7 +50,7 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
             await driver.waitUntil(
                 async () => !(await driver.isKeyboardShown()),
                 { timeout: 3 * 1000 })
-        } catch (ign) {
+        } catch (_ign) {
             // Keyboard is not present or not hidden
         }
     }

@@ -538,7 +538,7 @@ export async function takeWebElementScreenshot({
             isWebDriverElementScreenshot: true,
             rectangles,
         }
-    } catch (e) {
+    } catch (_e) {
         return takeWebElementScreenshot({
             devicePixelRatio,
             element,

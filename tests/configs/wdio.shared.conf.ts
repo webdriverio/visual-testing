@@ -1,25 +1,14 @@
-import type { Options } from '@wdio/types'
-
-export const config: Options.Testrunner = {
+export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     //
     // ====================
     // Runner Configuration
     // ====================
     // WebdriverIO supports running e2e tests as well as unit and component tests.
     runner: 'local',
-    autoCompileOpts: {
-        autoCompile: true,
-        tsNodeOpts: {
-            project: './tsconfig.json',
-            transpileOnly: true,
-        },
-    },
     // ============
     // Capabilities
     // ============
     maxInstances: 25,
-    // For the rest see the specific configs
-    capabilities: [],
 
     // ===================
     // Test Configurations
@@ -27,7 +16,7 @@ export const config: Options.Testrunner = {
     logLevel: 'silent',
     baseUrl: 'http://guinea-pig.webdriver.io/image-compare.html',
     waitforTimeout: 15000,
-    connectionRetryTimeout: 90000,
+    connectionRetryTimeout: 180 * 1000,
     connectionRetryCount: 0,
     framework: 'mocha',
     // Options to be passed to Mocha.

@@ -36,8 +36,8 @@ export default async function checkAppScreen(
         // Use the hide and remove elements from the checkScreenOptions and add them to the ignore array
         ignore: [
             ...checkScreenOptions.method.ignore || [],
-            ...checkScreenOptions.method.hideElements as unknown as (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>)[] || [],
-            ...checkScreenOptions.method.removeElements as unknown as (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>)[] || [],
+            ...checkScreenOptions.method.hideElements as unknown as (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[] || [],
+            ...checkScreenOptions.method.removeElements as unknown as (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[] || [],
         ]
 
     }

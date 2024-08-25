@@ -1,4 +1,3 @@
-import type { RemoteCapability } from 'node_modules/@wdio/types/build/Capabilities.js'
 import type { Folders } from 'webdriver-image-comparison'
 
 export interface StorybookData {
@@ -43,10 +42,10 @@ export type CreateTestFileOptions = {
 }
 
 export interface CapabilityMap {
-    chrome: RemoteCapability;
-    firefox: RemoteCapability;
-    safari: RemoteCapability;
-    edge: RemoteCapability;
+    chrome: WebdriverIO.Capabilities;
+    firefox: WebdriverIO.Capabilities;
+    safari: WebdriverIO.Capabilities;
+    edge: WebdriverIO.Capabilities;
 }
 
 export type CreateTestContent = {

@@ -16,7 +16,7 @@ export interface CheckMethodOptions {
     // Block out the tool bar yes or no
     blockOutToolBar?: boolean;
     // Ignore elements and or areas
-    ignore?: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement<WebdriverIO.Element>)[];
+    ignore?: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[];
     // Compare images and discard alpha
     ignoreAlpha?: boolean;
     // Compare images an discard anti aliasing

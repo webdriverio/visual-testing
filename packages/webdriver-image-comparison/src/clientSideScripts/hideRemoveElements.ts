@@ -43,7 +43,7 @@ export default function hideRemoveElements(
 
                     elems.forEach((singleEl) => setPropertyToElement(singleEl, prop, hideRemove))
                 }
-            } catch (e) {
+            } catch (_e) {
                 // 99.99% sure that we have XPATH here
                 // @ts-ignore
                 return getElementsByXpath(el.selector).forEach((singleEl) => setPropertyToElement(singleEl, prop, hideRemove))

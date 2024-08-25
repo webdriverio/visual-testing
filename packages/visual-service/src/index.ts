@@ -162,6 +162,14 @@ declare global {
                 options?: WdioCheckFullPageMethodOptions
             ): R
         }
+        // This is a workaround, copied this from the expect-webdriverio package
+        // https://github.com/webdriverio/expect-webdriverio/blob/main/types/expect-webdriverio.d.ts#L444
+        interface PartialMatcher {
+            sample?: any
+            $$typeof: symbol
+            asymmetricMatch(...args: any[]): boolean
+            toString(): string
+        }
     }
 }
 

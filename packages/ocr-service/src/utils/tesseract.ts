@@ -10,7 +10,7 @@ export function isSystemTesseractAvailable(tesseractName: string = ''): boolean 
 
     try {
         execSync(command)
-    } catch (ign) {
+    } catch (_ign) {
         return false
     }
 

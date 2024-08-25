@@ -561,7 +561,7 @@ async function takeResizedBase64Screenshot({
     }
 
     // Get the element position
-    const elementRegion = await getElementRect(awaitedElement.elementId)
+    const elementRegion = await getElementRect(awaitedElement.elementId as string)
 
     // Create a screenshot
     const base64Image = await screenShot()
@@ -619,7 +619,7 @@ export async function takeBase64ElementScreenshot({
             if (!isWdioElement(awaitedElement)) {
                 console.error(' takeBase64ElementScreenshot element is not a valid element because of ', JSON.stringify(awaitedElement))
             }
-            return await awaitedElement.takeElementScreenshot(awaitedElement.elementId)
+            return await awaitedElement.takeElementScreenshot(awaitedElement.elementId as string)
         } catch (error) {
             console.error('Error taking an element screenshot with the default `element.takeElementScreenshot(elementId)` method:', error, ' We will retry with a resized screenshot')
         }

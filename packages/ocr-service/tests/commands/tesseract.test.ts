@@ -474,7 +474,7 @@ describe('getSystemOcrData', () => {
                     }]
                 }
             }
-            vi.mocked(parseString).mockImplementation((input, callback) => {
+            vi.mocked(parseString).mockImplementation((_input, callback) => {
                 // @ts-ignore
                 callback(null, mockData)
             })

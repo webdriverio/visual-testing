@@ -1,3 +1,4 @@
+import { browser } from '@wdio/globals'
 import ocrGetElementPositionByText from './ocrGetElementPositionByText.js'
 import { determineClickPoint } from '../utils/index.js'
 import type { OcrClickOnTextOptions } from '../types.js'

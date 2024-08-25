@@ -75,7 +75,7 @@ export default class WdioImageComparisonService extends BaseClass {
             log.info('Adding commands to global browser')
             await this.#addCommandsToBrowser(this.#browser)
         } else {
-            await this.#extendMultiremoteBrowser(capabilities as Capabilities.MultiRemoteCapabilities)
+            await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiremoteCapabilities)
         }
 
         if (browser.isMultiremote) {
@@ -93,7 +93,7 @@ export default class WdioImageComparisonService extends BaseClass {
                 toMatchElementSnapshot,
                 toMatchTabbablePageSnapshot,
             })
-        } catch (err) {
+        } catch (_err) {
             log.warn('Expect package not found. This means that the custom matchers `toMatchScreenSnapshot|toMatchFullPageSnapshot|toMatchElementSnapshot|toMatchTabbablePageSnapshot` are not added and can not be used. Please make sure to add it to your `package.json` if you want to use the Visual custom matchers.')
         }
     }
@@ -137,10 +137,7 @@ export default class WdioImageComparisonService extends BaseClass {
         return baselineFolder
     }
 
-    /**
-     * Add commands to the Multi Remote browser object
-     */
-    async #extendMultiremoteBrowser (capabilities: Capabilities.MultiRemoteCapabilities) {
+    async #extendMultiremoteBrowser (capabilities: Capabilities.RequestedMultiremoteCapabilities) {
         const browser = this.#browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
 
