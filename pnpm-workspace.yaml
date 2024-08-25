@@ -3,3 +3,4 @@ packages:
     - "packages/webdriver-image-comparison"
     - "packages/visual-service"
     - "packages/ocr-service"
+    - "packages/visual-reporter"

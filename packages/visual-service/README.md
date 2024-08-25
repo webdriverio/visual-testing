@@ -1,5 +1,4 @@
-WebdriverIO Visual Service
-==========================
+# WebdriverIO Visual Service
 
 > A WebdriverIO service for image comparison / visual regression testing.
 

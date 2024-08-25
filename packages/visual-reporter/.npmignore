@@ -1,0 +1,24 @@
+# Node modules and lock files
+node_modules/
+npm-debug.log
+yarn.lock
+package-lock.json
+
+# Test and coverage folders
+tests/
+coverage/
+
+# Build and temporary directories
+dist/
+tmp/
+temp/
+.next/
+out/
+
+# Configuration files and scripts
+.env
+.gitignore
+.gitattributes
+.github/
+.vscode/
+.DS_Store
