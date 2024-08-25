@@ -17,6 +17,10 @@ export default defineConfig({
                 '**/*.interfaces.ts',
                 '**/storybookTypes.ts',
                 '**/apps/**',
+                '**/dist/**',
+                '**/resemble/**',
+                'eslint.config.cjs',
+                'vitest.config.ts'
             ]
         },
         /**

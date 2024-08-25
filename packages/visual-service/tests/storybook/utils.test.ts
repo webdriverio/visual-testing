@@ -27,10 +27,19 @@ import {
     waitForStorybookComponentToBeLoaded,
     writeTestFile,
 } from '../../src/storybook/utils.js'
-import type { Options } from '@wdio/types'
 import type { CapabilityMap, EmulatedDeviceType, ScanStorybookReturnData } from '../../src/storybook/Types.js'
 
 const log = logger('test')
+vi.mock('@wdio/globals', () => ({
+    $: vi.fn(() => ({
+        waitForDisplayed: vi.fn().mockResolvedValue(true),
+    })),
+    browser: {
+        url: vi.fn().mockResolvedValue(true),
+        executeAsync: vi.fn().mockResolvedValue(true),
+        waitUntil: vi.fn(),
+    },
+}))
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('node-fetch')
 vi.mock('node:fs')
@@ -446,20 +455,18 @@ describe('Storybook utils', () => {
     })
 
     describe('waitForStorybookComponentToBeLoaded', () => {
-        // global.browser = {
-        //     url: vi.fn(),
-        //     executeAsync: vi.fn(),
-        // } as any as WebdriverIO.Browser
-        const mockBrowser = {
-            url: vi.fn(),
-            executeAsync: vi.fn(),
-        };
-        (global as any).browser = mockBrowser
-        const mock$ = vi.fn();
-        (global as any).$ = mock$
+        let mock$
+        let mockBrowser
 
-        beforeEach(() => {
+        beforeEach(async () => {
             vi.clearAllMocks()
+            const { $: mockGlobal$, browser: mockGlobalBrowser } = vi.mocked(await import('@wdio/globals'))
+
+            mock$ = mockGlobal$
+            mockBrowser = mockGlobalBrowser
+            mock$.mockImplementation(() => ({
+                waitForDisplayed: vi.fn().mockResolvedValue(true),
+            }))
         })
 
         it('should throw an error if storybook mode is not enabled', async () => {
@@ -475,11 +482,6 @@ describe('Storybook utils', () => {
 
         it('should call all WDIO methods', async () => {
             const mockStorybookModeFunction = vi.fn().mockReturnValue(true)
-            mock$.mockReturnValue({
-                waitForDisplayed: vi.fn().mockResolvedValueOnce(true),
-                executeAsync: vi.fn().mockResolvedValueOnce(true)
-            })
-            mockBrowser.url.mockResolvedValueOnce(true)
             const options = {
                 clipSelector: '.storybook-component',
                 id: 'example-component',
@@ -489,11 +491,11 @@ describe('Storybook utils', () => {
 
             await waitForStorybookComponentToBeLoaded(options, mockStorybookModeFunction)
 
+            // Assertions
             expect(mockBrowser.url).toHaveBeenCalledWith('http://localhost:6006/iframe.html?id=example-component')
-            expect(mock$.mock.calls[0][0]).toBe('.storybook-component')
+            expect(mock$).toHaveBeenCalledWith('.storybook-component')
             expect(mock$.mock.results[0].value.waitForDisplayed).toHaveBeenCalled()
             expect(mockBrowser.executeAsync).toHaveBeenCalled()
-
         })
     })
 
@@ -741,7 +743,7 @@ describe('Storybook utils', () => {
 
     describe('scanStorybook', () => {
         let originalEnv: NodeJS.ProcessEnv
-        const config = { specs: [] } as unknown as Options.Testrunner
+        const config = { specs: [] } as unknown as WebdriverIO.Config
         let mockGetArgvVal: Mock
         let mockCheckStorybookIsRun: Mock
         let mockSanitizeURLFunc: Mock

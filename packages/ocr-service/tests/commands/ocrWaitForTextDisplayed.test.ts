@@ -2,15 +2,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import ocrWaitForTextDisplayed from '../../src/commands/ocrWaitForTextDisplayed.js'
 import ocrGetElementPositionByText from '../../src/commands/ocrGetElementPositionByText.js'
 
+vi.mock('@wdio/globals', () => {
+    return {
+        driver: {
+            waitUntil: vi.fn(async (condition, { timeoutMsg }) => {
+                if (await condition()) {return}
+                throw new Error(timeoutMsg)
+            }),
+        },
+    }
+})
 vi.mock('../../src/commands/ocrGetElementPositionByText.js', () => ({
-    default: vi.fn()
+    default: vi.fn(),
 }))
-global.driver = {
-    waitUntil: vi.fn(async (condition, { timeoutMsg }) => {
-        if (await condition()) {return}
-        throw new Error(timeoutMsg)
-    }),
-} as any as WebdriverIO.Browser
 
 describe('ocrWaitForTextDisplayed', () => {
     beforeEach(() => {
@@ -34,13 +38,15 @@ describe('ocrWaitForTextDisplayed', () => {
             matchedString: options.text,
             originalPosition: { left: 1, right: 1, top: 1, bottom: 1 },
             searchValue: options.text,
-            score: 0
+            score: 0,
         }
 
         vi.mocked(ocrGetElementPositionByText).mockResolvedValue(ocrGetElementPositionByTextMock)
+
         await expect(ocrWaitForTextDisplayed(ocrWaitForTextDisplayedOptions)).resolves.not.toThrow()
 
-        expect(global.driver.waitUntil).toHaveBeenCalled()
-        expect(vi.mocked(ocrGetElementPositionByText)).toHaveBeenCalledWith(ocrWaitForTextDisplayedOptions)
+        const { driver } = await import('@wdio/globals')
+        expect(driver.waitUntil).toHaveBeenCalled()
+        expect(ocrGetElementPositionByText).toHaveBeenCalledWith(ocrWaitForTextDisplayedOptions)
     })
 })
