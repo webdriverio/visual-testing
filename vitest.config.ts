@@ -20,7 +20,8 @@ export default defineConfig({
                 '**/dist/**',
                 '**/resemble/**',
                 'eslint.config.cjs',
-                'vitest.config.ts'
+                'vitest.config.ts',
+                '.tmp/**',
             ]
         },
         /**
