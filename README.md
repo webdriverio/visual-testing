@@ -334,7 +334,9 @@ The URL where your Storybook instance is hosted.
 
 ## Contributing
 
-This package depends on `node-canvas`, make sure you have all [required dependencies](https://github.com/Automattic/node-canvas?tab=readme-ov-file#compiling) installed before starting development.
+Version 4 and lower of this package depend on `node-canvas`, make sure you have all [required dependencies](https://github.com/Automattic/node-canvas?tab=readme-ov-file#compiling) installed before starting development.
+
+Version 5 and higher use [Jimp](https://github.com/jimp-dev/jimp) with 0 system dependencies.
 
 ### Questions
 
