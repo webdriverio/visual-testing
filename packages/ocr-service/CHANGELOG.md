@@ -1,5 +1,11 @@
 # @wdio/ocr-service
 
+## 2.0.0
+
+### Major Changes
+
+- 9fdb2d2: feat: work with V9
+
 ## 1.0.5
 
 ### Patch Changes
