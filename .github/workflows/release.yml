@@ -1,6 +1,16 @@
 name: Release
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: "Release Type"
+        required: true
+        type: choice
+        default: "stable"
+        options:
+          - stable
+          - alpha
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -62,7 +72,6 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm release
+          publish: pnpm ${{ inputs.release_type == 'alpha' && 'release:alpha' || 'release' }}
           setupGitUser: false
           commit: "chore: release [skip ci]"
