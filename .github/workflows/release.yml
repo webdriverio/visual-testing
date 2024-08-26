@@ -6,8 +6,8 @@ on:
       release_type:
         description: "Release Type"
         required: true
-        type: choice
         default: "stable"
+        type: choice
         options:
           - stable
           - alpha
@@ -63,6 +63,9 @@ jobs:
       - name: 🧩 Install Dependencies
         run: pnpm pnpm.install.workaround
 
+      - name: Set RELEASE_TAG
+        run: echo "RELEASE_TAG=${{ github.event.inputs.release_type }}" >> $GITHUB_ENV
+
       - name: 🏗️ Build
         id: build-the-mono-repo
         run: |
@@ -72,6 +75,6 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm ${{ inputs.release_type == 'alpha' && 'release:alpha' || 'release' }}
-          setupGitUser: false
+          publish: pnpm release --tag ${{ env.RELEASE_TAG }}
+          setupGitUser: true
           commit: "chore: release [skip ci]"
