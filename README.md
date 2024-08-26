@@ -334,8 +334,6 @@ The URL where your Storybook instance is hosted.
 
 ## Contributing
 
-This package depends on `node-canvas`, make sure you have all [required dependencies](https://github.com/Automattic/node-canvas?tab=readme-ov-file#compiling) installed before starting development.
-
 ### Questions
 
 Please join our [Discord](https://discord.webdriver.io) Server if you have any questions or issues contributing to this project. Catch us contributors in the `🙏-contributing` channel.
