@@ -4,6 +4,7 @@
   "description": "Visual testing monorepo for WebdriverIO",
   "license": "MIT",
   "type": "module",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/webdriverio-community/visual-testing.git"
