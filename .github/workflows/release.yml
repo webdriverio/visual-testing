@@ -1,16 +1,6 @@
 name: Release
 
-on:
-  workflow_dispatch:
-    inputs:
-      release_type:
-        description: "Release Type"
-        required: true
-        default: "stable"
-        type: choice
-        options:
-          - stable
-          - alpha
+on: [workflow_dispatch]
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -33,7 +23,7 @@ jobs:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@v3
 
-      - name: 🌲 Setup Git
+      - name: 🔧 Setup Git
         run: |
           git config --global user.email "bot@webdriver.io"
           git config --global user.name "WebdriverIO Release Bot"
@@ -43,18 +33,13 @@ jobs:
         with:
           version: 8
 
-      - name: 🔧 NPM Setup
+      - name: 🔧 Setup NPM
         run: |
           npm set registry "https://registry.npmjs.org/"
           npm set //registry.npmjs.org/:_authToken $NPM_TOKEN
           npm whoami
 
-      - name: 🔄 Git Setup
-        run: |
-          git config --global user.email "bot@webdriver.io"
-          git config --global user.name "WebdriverIO Release Bot"
-
-      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+      - name: 🔧 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
@@ -63,44 +48,16 @@ jobs:
       - name: 🧩 Install Dependencies
         run: pnpm pnpm.install.workaround
 
-      - name: 🔍 Check Pre-Release Mode
-        id: check_pre_mode
-        run: |
-          if [ -f .changeset/pre.json ]; then
-            echo "PRE_MODE=active" >> $GITHUB_ENV
-          else
-            echo "PRE_MODE=inactive" >> $GITHUB_ENV
-          fi
-
-      - name: 🚀 Enter Pre-Release Mode (if necessary)
-        if: ${{ env.PRE_MODE == 'inactive' && github.event.inputs.release_type == 'alpha' }}
-        run: npx changeset pre enter alpha
-
       - name: 🏗️ Build
         id: build-the-mono-repo
         run: |
           pnpm build
 
-      - name: 📣 Alpha - Create Release Pull Request or Publish to npm
-        if: ${{ github.event.inputs.release_type == 'alpha' }}
-        id: changesets-alpha
+      - name: 📣 Create Release Pull Request or Publish to npm
+        id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm release --tag alpha
-          setupGitUser: true
-          commit: "chore: release [skip ci]"
-          createGithubReleases: true
-
-      - name: 📣 Stable - Create Release Pull Request or Publish to npm
-        if: ${{ github.event.inputs.release_type == 'stable' }}
-        id: changesets-stable
-        uses: changesets/action@v1
-        with:
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
           publish: pnpm release
-          setupGitUser: true
+          setupGitUser: false
           commit: "chore: release [skip ci]"
-          createGithubReleases: true
-
-      - name: 🛑 Exit Pre-Release Mode (if necessary)
-        if: ${{ github.event.inputs.release_type == 'alpha' }}
-        run: npx changeset pre exit
