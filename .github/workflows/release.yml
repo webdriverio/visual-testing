@@ -85,7 +85,13 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm changeset publish
+          # If it's an alpha release, use the --tag alpha to ensure the first version is published
+          publish: |
+            if [ "${{ github.event.inputs.release_type }}" == "alpha" ]; then
+              pnpm changeset publish --tag alpha
+            else
+              pnpm changeset publish
+            fi
           setupGitUser: true
           commit: "chore: release [skip ci]"
 
