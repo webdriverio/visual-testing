@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.0.3
+
+### Patch Changes
+
+- 3ad9b46: release!
+
 ## 0.0.2
 
 ### Patch Changes
