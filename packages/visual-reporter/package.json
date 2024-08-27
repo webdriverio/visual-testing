@@ -1,6 +1,7 @@
 {
   "name": "@wdio/visual-reporter",
   "version": "0.0.4",
+  "private": false,
   "type": "module",
   "bin": {
     "visual-reporter": "./dist/cli.js"
