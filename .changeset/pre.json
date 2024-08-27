@@ -7,5 +7,7 @@
     "@wdio/visual-service": "6.0.0",
     "webdriver-image-comparison": "7.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "fast-doors-taste"
+  ]
 }
