@@ -66,6 +66,10 @@ jobs:
       - name: Set RELEASE_TAG
         run: echo "RELEASE_TAG=${{ github.event.inputs.release_type }}" >> $GITHUB_ENV
 
+      - name: Enter Pre-Release Mode
+        if: ${{ github.event.inputs.release_type == 'alpha' }}
+        run: npx changeset pre enter alpha
+
       - name: 🏗️ Build
         id: build-the-mono-repo
         run: |
@@ -75,6 +79,10 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm release --tag ${{ env.RELEASE_TAG }}
+          publish: pnpm changeset publish
           setupGitUser: true
           commit: "chore: release [skip ci]"
+
+      - name: Exit Pre-Release Mode
+        if: ${{ github.event.inputs.release_type == 'alpha' }}
+        run: npx changeset pre exit
