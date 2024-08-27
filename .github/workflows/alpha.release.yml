@@ -9,8 +9,10 @@ on:
         default: 'packages/visual-reporter'
         type: choice
         options:
+          - packages/ocr-service
           - packages/visual-reporter
-          - packages/visual-testing
+          - packages/visual-service
+          - packages/webdriver-image-comparison
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
