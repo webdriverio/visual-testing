@@ -81,8 +81,19 @@ jobs:
         run: |
           pnpm build
 
-      - name: 📣 Publish to npm
-        run: pnpm changeset publish
+      - name: 📣 Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: |
+            if [ "${{ github.event.inputs.release_type }}" == "alpha" ]; then
+              pnpm release --tag alpha
+            else
+              pnpm release
+            fi
+          setupGitUser: true
+          commit: "chore: release [skip ci]"
+          createGithubReleases: true
 
       - name: 🛑 Exit Pre-Release Mode (if necessary)
         if: ${{ github.event.inputs.release_type == 'alpha' }}
