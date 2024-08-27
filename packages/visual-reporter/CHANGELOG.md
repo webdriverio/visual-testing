@@ -1,5 +1,12 @@
 # @wdio/visual-reporter
 
+## 0.0.2
+
+### Patch Changes
+
+- b870919: Release me
+- 405efa1: New initial release
+
 ## 0.1.2-alpha.2
 
 ### Patch Changes
