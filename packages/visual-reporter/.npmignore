@@ -9,7 +9,6 @@ tests/
 coverage/
 
 # Build and temporary directories
-dist/
 tmp/
 temp/
 .next/
@@ -22,3 +21,5 @@ out/
 .github/
 .vscode/
 .DS_Store
+
+*.mp4
