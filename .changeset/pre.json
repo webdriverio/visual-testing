@@ -1,0 +1,13 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@wdio/ocr-service": "2.0.0",
+    "@wdio/visual-reporter": "0.1.1",
+    "@wdio/visual-service": "6.0.0",
+    "webdriver-image-comparison": "7.0.0"
+  },
+  "changesets": [
+    "three-apricots-double"
+  ]
+}
