@@ -78,7 +78,7 @@ jobs:
 
       - name: 🚀 Publish First Alpha Release
         if: ${{ github.event.inputs.release_type == 'alpha' }}
-        run: pnpm changeset publish --tag alpha
+        run: pnpm changeset publish --tag alpha --no-verify-access
 
       - name: 🔄 Re-Enter Pre-Release Mode (if necessary)
         if: ${{ env.PRE_MODE == 'active' && github.event.inputs.release_type == 'alpha' }}
