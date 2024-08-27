@@ -70,6 +70,7 @@ jobs:
             echo "PRE_MODE=active" >> $GITHUB_ENV
           else
             echo "PRE_MODE=inactive" >> $GITHUB_ENV
+          fi
 
       - name: 🚀 Enter Pre-Release Mode (if necessary)
         if: ${{ env.PRE_MODE == 'inactive' && github.event.inputs.release_type == 'alpha' }}
