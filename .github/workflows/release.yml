@@ -81,16 +81,22 @@ jobs:
         run: |
           pnpm build
 
-      - name: 📣 Create Release Pull Request or Publish to npm
-        id: changesets
+      - name: 📣 Alpha - Create Release Pull Request or Publish to npm
+        if: ${{ github.event.inputs.release_type == 'alpha' }}
+        id: changesets-alpha
         uses: changesets/action@v1
         with:
-          publish: |
-            if [ "${{ github.event.inputs.release_type }}" == "alpha" ]; then
-              pnpm release --tag alpha
-            else
-              pnpm release
-            fi
+          publish: pnpm release --tag alpha
+          setupGitUser: true
+          commit: "chore: release [skip ci]"
+          createGithubReleases: true
+
+      - name: 📣 Stable - Create Release Pull Request or Publish to npm
+        if: ${{ github.event.inputs.release_type == 'stable' }}
+        id: changesets-stable
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
           setupGitUser: true
           commit: "chore: release [skip ci]"
           createGithubReleases: true
