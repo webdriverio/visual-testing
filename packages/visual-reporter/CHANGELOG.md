@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.0.4
+
+### Patch Changes
+
+- a875a59: New changeset
+
 ## 0.0.3
 
 ### Patch Changes
