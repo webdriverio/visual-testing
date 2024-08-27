@@ -1,0 +1,86 @@
+name: Alpha Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_dir:
+        description: 'Select the package directory to release'
+        required: true
+        default: 'packages/visual-reporter'
+        type: choice
+        options:
+          - packages/ocr-service
+          - packages/visual-reporter
+          - packages/visual-service
+          - packages/webdriver-image-comparison
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NPM_CONFIG_PROVENANCE: true
+
+jobs:
+  alpha-release:
+    name: Alpha Release
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🔧 Setup Git
+        run: |
+          git config --global user.email "bot@webdriver.io"
+          git config --global user.name "WebdriverIO Release Bot"
+
+      - name: 🔧 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: 🔧 Setup NPM
+        run: |
+          npm set registry "https://registry.npmjs.org/"
+          npm set //registry.npmjs.org/:_authToken $NPM_TOKEN
+          npm whoami
+
+      - name: 🔧 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm pnpm.install.workaround
+
+      - name: 🔄 Navigate to Package Directory
+        run: |
+          cd ${{ github.event.inputs.package_dir }}
+          pwd
+
+      - name: 🏗️ Build the Package
+        run: |
+          cd ${{ github.event.inputs.package_dir }}
+          pnpm build
+
+      - name: 🔢 Bump Version for Alpha Release
+        run: |
+          cd ${{ github.event.inputs.package_dir }}
+          npm version prerelease --preid=alpha
+
+      - name: 🚀 Publish to npm with Alpha Tag
+        run: |
+          cd ${{ github.event.inputs.package_dir }}
+          npm publish --tag alpha
+
+      - name: 📦 Push Changes and Tags to GitHub
+        run: |
+          cd ${{ github.event.inputs.package_dir }}
+          git push --follow-tags
