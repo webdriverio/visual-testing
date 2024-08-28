@@ -4,12 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       package_dir:
-        description: 'Select the package directory to release'
+        description: "Select the package directory to release"
         required: true
-        default: 'packages/visual-service'
+        default: "packages/visual-service"
         type: choice
         options:
           - packages/ocr-service
+          - packages/visual-reporter
           - packages/visual-service
           - packages/webdriver-image-comparison
 
@@ -77,7 +78,7 @@ jobs:
       - name: 🚀 Publish to npm with Alpha Tag
         run: |
           cd ${{ github.event.inputs.package_dir }}
-          npm publish --tag alpha
+          npm publish --tag alpha --access public
 
       - name: 📦 Push Changes and Tags to GitHub
         run: |
