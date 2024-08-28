@@ -6,11 +6,10 @@ on:
       package_dir:
         description: 'Select the package directory to release'
         required: true
-        default: 'packages/visual-reporter'
+        default: 'packages/visual-service'
         type: choice
         options:
           - packages/ocr-service
-          - packages/visual-reporter
           - packages/visual-service
           - packages/webdriver-image-comparison
 
