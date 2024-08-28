@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { DescriptionData, SnapshotInstanceData } from '../types'
-import { sortSnapshotData } from '../utils/sortSnapshotData.js'
+// This is done because NextJS can't handle ESLINT flat configs yet
+// eslint-disable-next-line import/extensions
+import { sortSnapshotData } from '../utils/sortSnapshotData'
 
 const GetSnapshotData = (outputJsonPath: string) => {
     const [descriptionData, setDescriptionData] = useState<DescriptionData[]>([])

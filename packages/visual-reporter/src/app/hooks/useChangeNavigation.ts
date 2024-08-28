@@ -1,7 +1,11 @@
 import { useState, useCallback, useEffect } from 'react'
 import type { BoundingBox } from '../types'
-import { useTransform } from './useTransform.js'
-import { getTransformedBoxes } from '../utils/boundingBoxUtils.js'
+// This is done because NextJS can't handle ESLINT flat configs yet
+// eslint-disable-next-line import/extensions
+import { useTransform } from './useTransform'
+// This is done because NextJS can't handle ESLINT flat configs yet
+// eslint-disable-next-line import/extensions
+import { getTransformedBoxes } from '../utils/boundingBoxUtils'
 
 export const useChangeNavigation = (
     diffBoundingBoxes: BoundingBox[],

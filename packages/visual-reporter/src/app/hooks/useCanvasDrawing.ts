@@ -1,7 +1,9 @@
 import { useEffect, useRef, useCallback } from 'react'
 import type { BoundingBox } from '../types'
 import styles from '../components/Canvas.module.css'
-import { getTransformedBoxes } from '../utils/boundingBoxUtils.js'
+// This is done because NextJS can't handle ESLINT flat configs yet
+// eslint-disable-next-line import/extensions
+import { getTransformedBoxes } from '../utils/boundingBoxUtils'
 
 export const useCanvasDrawing = (
     imageRef: React.RefObject<HTMLImageElement>,

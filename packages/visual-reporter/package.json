@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "run-s clean build:scripts",
-    "build:report": "npm run generate-thumbnails && npm next-build",
+    "build:report": "npm run generate-thumbnails && npm run next-build",
     "build:scripts": "tsc -p tsconfig.scripts.json",
     "clean": "rimraf coverage dist .next out",
     "dev": "npm run generate-thumbnails && run-p watch:scripts next-dev",
