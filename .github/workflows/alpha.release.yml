@@ -78,7 +78,7 @@ jobs:
       - name: 🚀 Publish to npm with Alpha Tag
         run: |
           cd ${{ github.event.inputs.package_dir }}
-          npm publish --tag alpha --access public
+          npm publish --tag alpha
 
       - name: 📦 Push Changes and Tags to GitHub
         run: |
