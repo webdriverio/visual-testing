@@ -34,6 +34,8 @@ jobs:
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: 🔧 Setup Git
         run: |
@@ -74,6 +76,13 @@ jobs:
         run: |
           cd ${{ github.event.inputs.package_dir }}
           npm version prerelease --preid=alpha
+
+      - name: 📦 Commit and Push Version Changes
+        working-directory: ${{ github.event.inputs.package_dir }}
+        run: |
+          git add package.json
+          git commit -m "chore: bump version for alpha release [skip ci]"
+          git push origin HEAD
 
       - name: 🚀 Publish to npm with Alpha Tag
         run: |
