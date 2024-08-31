@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import styles from "./page.module.css";
 import Description from "./components/Description";
 import GetSnapshotData from "./hooks/getSnapshotData";
-import SelectHeader from "./components/SelectHeader";
 import { SelectedOptions, SnapshotInstanceData } from "./types";
 import UseFilteredDescriptionData from "./hooks/filterSnapshotData";
 import Header from "./components/Header";
 import LoadingContainer from "./components/LoadingContainer";
+import styles from "./page.module.css";
 
 const Home: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({
@@ -19,12 +18,7 @@ const Home: React.FC = () => {
     status: "all",
   });
   const [loading, setLoading] = useState(true);
-  const outputJsonPath =
-    process.env.NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH ||
-    "public/.tmp/fail/actual/output.json";
-
-  const { descriptionData, error, instanceData } =
-    GetSnapshotData(outputJsonPath);
+  const { descriptionData, error, instanceData } = GetSnapshotData();
   const handleSelectedOptions = (
     selectedOptions: string[] | keyof SelectedOptions,
     type: keyof typeof selectedOptions | string
