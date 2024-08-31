@@ -41,5 +41,9 @@
     "react-select": "^5.8.0",
     "sharp": "^0.33.5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "typescript": "^5"
+  }
 }
