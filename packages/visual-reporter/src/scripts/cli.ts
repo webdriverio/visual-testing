@@ -96,6 +96,10 @@ async function main() {
             join(visualReporterProjectRoot, '.next'),
             join(reporterPath, '.next')
         )
+        copyDirectory(
+            join(visualReporterProjectRoot, 'public'),
+            join(reporterPath, 'public')
+        )
         copyReportSpinner.succeed(
             `Build output copied successfully to "${reporterPath}".`
         )
