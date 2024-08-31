@@ -11,7 +11,7 @@ coverage/
 # Build and temporary directories
 tmp/
 temp/
-.next/
+# .next/
 out/
 
 # Configuration files and scripts
