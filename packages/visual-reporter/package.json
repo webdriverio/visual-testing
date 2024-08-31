@@ -2,7 +2,7 @@
   "name": "@wdio/visual-reporter",
   "author": "Wim Selles - wswebcreation",
   "description": "Visual Testing HTML Report for the @wdio/visual-service module",
-  "version": "0.0.5-alpha.2",
+  "version": "0.0.5-alpha.5",
   "license": "MIT",
   "homepage": "https://webdriver.io/docs/visual-testing",
   "repository": {
@@ -14,8 +14,8 @@
     "visual-reporter": "./dist/cli.js"
   },
   "scripts": {
-    "build": "run-s clean build:scripts",
-    "build:report": "npm run generate-thumbnails && npm run next-build",
+    "build": "run-s clean build:*",
+    "build:report": "npm run next-build",
     "build:scripts": "tsc -p tsconfig.scripts.json",
     "clean": "rimraf coverage dist .next out",
     "dev": "npm run generate-thumbnails && run-p watch:scripts next-dev",
@@ -39,11 +39,11 @@
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "react-select": "^5.8.0",
-    "sharp": "^0.33.5",
-    "@types/node": "^20",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "typescript": "^5"
-  },
-  "devDependencies": {}
+  }
 }

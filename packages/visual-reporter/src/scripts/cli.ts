@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 import { confirm, input, select } from '@inquirer/prompts'
-import { existsSync, mkdirSync, readFileSync } from 'node:fs'
+import {
+    existsSync,
+    mkdirSync,
+    readFileSync
+} from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import ora from 'ora'
 import { copyDirectory } from './utils/fileHandling.js'
 import { chooseItems } from './utils/inquirerUtils.js'
-import {
-    cleanUpEnvironmentVariables,
-    findAvailablePort,
-    runNpmScript,
-} from './utils/cliUtils.js'
+import { cleanUpEnvironmentVariables, findAvailablePort } from './utils/cliUtils.js'
 import { CONFIG_HELPER_INTRO } from './utils/constants.js'
 import { validateOutputJson } from './utils/validateOutput.js'
 
@@ -19,14 +19,8 @@ async function main() {
     //
     // Set some initial variables
     let filePath: string = ''
-    let DEBUG_MODE = false
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = dirname(__filename)
-    const nextBinary = resolve(
-        __dirname,
-        '..',
-        'node_modules/next/dist/bin/next'
-    )
     const visualReporterProjectRoot = resolve(__dirname, '..')
     const currentPath = process.cwd()
 
@@ -86,27 +80,13 @@ async function main() {
 
     if (runInDebugMode) {
         process.env.VISUAL_REPORT_DEBUG_LEVEL = 'debug'
-        DEBUG_MODE = true
     }
 
     //
-    // Build and copy the report to the specified folder
-    const buildReportSpinner = ora('Building the report...\n').start()
+    // Copy the report to the specified folder
     const reporterPath = join(reportPath, 'report')
-    try {
-        await runNpmScript({
-            debug: DEBUG_MODE,
-            root: visualReporterProjectRoot,
-            script: `NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH=${filePath} npm run build:report`,
-        })
-        buildReportSpinner.succeed('Build report successfully.')
-    } catch (error) {
-        buildReportSpinner.fail('Failed to build the report.')
-        throw error
-    }
-
     const copyReportSpinner = ora(
-        `Copying build output to ${reporterPath}...\n`
+        `Copying report to ${reporterPath}...\n`
     ).start()
     try {
         if (!existsSync(reportPath)) {
@@ -115,6 +95,10 @@ async function main() {
         copyDirectory(
             join(visualReporterProjectRoot, '.next'),
             join(reporterPath, '.next')
+        )
+        copyDirectory(
+            join(visualReporterProjectRoot, 'public'),
+            join(reporterPath, 'public')
         )
         copyReportSpinner.succeed(
             `Build output copied successfully to "${reporterPath}".`
@@ -141,7 +125,7 @@ async function main() {
         const availablePort = await findAvailablePort(Number(serverPort))
 
         console.log('Starting the Next.js server...')
-        execSync(`${nextBinary} start -p ${availablePort}`, {
+        execSync(`NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH=${filePath} npx next start ${reporterPath} -p ${availablePort}`, {
             stdio: 'inherit',
             cwd: reporterPath,
         })
@@ -149,7 +133,7 @@ async function main() {
         console.log(
             '\nServer not started. You can start it manually later using the following command:'
         )
-        console.log(`${nextBinary} start -p ${serverPort}\n`)
+        console.log(`NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH=${filePath} npx next start ${reporterPath} -p ${serverPort}\n`)
         cleanUpEnvironmentVariables()
 
         process.exit(0)
