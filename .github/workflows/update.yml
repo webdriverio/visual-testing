@@ -1,6 +1,6 @@
-# this workflow merges requests from Dependabot if tests are passing
-# ref https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
-# and https://github.com/dependabot/fetch-metadata
+# This workflow merges requests from Dependabot if tests are passing
+# Ref: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
+# Ref: https://github.com/dependabot/fetch-metadata
 name: Auto-merge
 
 # `pull_request_target` means this uses code in the base branch, not the PR.
@@ -17,31 +17,69 @@ jobs:
     if: github.actor == 'dependabot[bot]'
 
     steps:
+      # Fetch PR metadata
       - name: Fetch PR metadata
         id: metadata
         uses: dependabot/fetch-metadata@v1.6.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Get PR title to extract the version change information
+      # The title of the Dependabot PR contains the old and new version numbers.
+      - name: Get PR Title
+        id: pr-title
+        run: echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+
+      # Extract old and new version numbers from the PR title
+      # We use regex to capture the old and new version numbers from the PR title format
+      # The format usually looks like "Bump package-name from x.y.z to a.b.c"
+      # If there is no version number in the PR title, the workflow will exit with an error so we manually need to verify the version numbers.
+      - name: Extract old and new versions
+        id: extract-versions
+        run: |
+          if [[ "${{ env.PR_TITLE }}" =~ from[[:space:]]([0-9]+\.[0-9]+\.[0-9]+)[[:space:]]to[[:space:]]([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            echo "OLD_VERSION=${BASH_REMATCH[1]}" >> $GITHUB_ENV
+            echo "NEW_VERSION=${BASH_REMATCH[2]}" >> $GITHUB_ENV
+          else
+            echo "Version numbers not found in PR title."
+            exit 1
+
+      # Check the type of version bump (major, minor, or patch)
+      # We compare the major version numbers between old and new versions.
+      # If the new major version is greater than the old one, it's a major bump.
+      - name: Check version bump type
+        id: check-bump-type
+        run: |
+          IFS='.' read -r -a old_version_parts <<< "${{ env.OLD_VERSION }}"
+          IFS='.' read -r -a new_version_parts <<< "${{ env.NEW_VERSION }}"
+
+          if [[ "${new_version_parts[0]}" -gt "${old_version_parts[0]}" ]]; then
+            echo "MAJOR_BUMP=true" >> $GITHUB_ENV
+          else
+            echo "MAJOR_BUMP=false" >> $GITHUB_ENV
+
+      # Wait for all CI checks on the PR to pass
+      # Don't merge updates to GitHub Actions versions automatically.
+      # We also prevent auto-merging if a major version bump is detected.
+      # (Some repos may wish to limit by version range (major/minor/patch), or scope (dep vs dev-dep), too.)
       - name: Wait for PR CI
-        # Don't merge updates to GitHub Actions versions automatically.
-        # (Some repos may wish to limit by version range (major/minor/patch), or scope (dep vs dev-dep), too.)
-        if: contains(steps.metadata.outputs.package-ecosystem, 'npm')
+        if: contains(steps.metadata.outputs.package-ecosystem, 'npm') && env.MAJOR_BUMP == 'false'
         uses: lewagon/wait-on-check-action@v1.3.3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 30 # seconds
           running-workflow-name: dependencies # wait for all checks except this one
-          allowed-conclusions: success,skipped # all other checks must pass, being skipped or cancelled is not sufficient
+          allowed-conclusions: success,skipped # all other checks must pass; being skipped or canceled is not sufficient
 
+      # Auto-merge Dependabot PRs
+      # Don't merge updates to GitHub Actions versions automatically.
+      # Ensure that only non-major version bumps (minor or patch) are merged automatically.
+      # The "auto" flag will only merge once all of the target branch's required checks
+      # are met. Configure those in the "branch protection" settings for each repo.
       - name: Auto-merge dependabot PRs
-        # Don't merge updates to GitHub Actions versions automatically.
-        # (Some repos may wish to limit by version range (major/minor/patch), or scope (dep vs dev-dep), too.)
-        if: contains(steps.metadata.outputs.package-ecosystem, 'npm')
+        if: contains(steps.metadata.outputs.package-ecosystem, 'npm') && env.MAJOR_BUMP == 'false'
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # The "auto" flag will only merge once all of the target branch's required checks
-        # are met. Configure those in the "branch protection" settings for each repo.
         run: gh pr merge --auto --squash "$PR_URL"
