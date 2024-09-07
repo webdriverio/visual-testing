@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.1.0
+
+### Minor Changes
+
+- 0fdf0dc: Initial release
+
 ## 0.0.4
 
 ### Patch Changes

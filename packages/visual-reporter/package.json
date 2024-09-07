@@ -2,7 +2,7 @@
   "name": "@wdio/visual-reporter",
   "author": "Wim Selles - wswebcreation",
   "description": "Visual Testing HTML Report for the @wdio/visual-service module",
-  "version": "0.0.5-alpha.5",
+  "version": "0.1.0",
   "license": "MIT",
   "homepage": "https://webdriver.io/docs/visual-testing",
   "repository": {
