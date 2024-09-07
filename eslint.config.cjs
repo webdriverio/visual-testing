@@ -4,7 +4,8 @@ module.exports = [
             '**/resemble.jimp.cjs',
             '**/lib/resemble/*',
             '*/*.d.ts',
-            '**/dist/*'
+            '**/dist/*',
+            '**/.next/*',
         ]
     },
     {

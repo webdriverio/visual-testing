@@ -130,6 +130,7 @@ jobs:
             !.tmp/checkActual/
             !.tmp/saveActual/
             !.tmp/testDiff/
+            !.next/
 
   ci-pr-desktop-web:
     name: 🔄 💻 CI PR Run Desktop Web Tests
@@ -194,6 +195,7 @@ jobs:
             !.tmp/checkActual/
             !.tmp/saveActual/
             !.tmp/testDiff/
+            !.next/
 
   ci-pr-android-web:
     name: 🔄 🤖 🌐 CI PR Run Android Web Tests
@@ -258,6 +260,7 @@ jobs:
             !.tmp/checkActual/
             !.tmp/saveActual/
             !.tmp/testDiff/
+            !.next/
 
   ci-pr-ios-web:
     name: 🔄 🍏 🌐 CI PR Run iOS Web Tests
@@ -322,6 +325,7 @@ jobs:
             !.tmp/checkActual/
             !.tmp/saveActual/
             !.tmp/testDiff/
+            !.next/
 
   ci-pr-app:
     name: 🔄 📱 CI PR Run Mobile App Tests
@@ -386,6 +390,7 @@ jobs:
             !.tmp/checkActual/
             !.tmp/saveActual/
             !.tmp/testDiff/
+            !.next/
 
   ci-pr-ocr:
     name: 🔄 📱 CI PR Run OCR Tests
@@ -447,3 +452,4 @@ jobs:
           path: |
             logs/*.log
             .tmp/
+            !.next/
