@@ -93,6 +93,7 @@ async function main() {
         execSync(`node ${join(visualReporterProjectRoot, 'src', 'app', 'scripts', 'generateThumbnails.mjs')} `, {
             stdio: 'inherit',
             cwd: reporterPath,
+            shell: '/bin/bash',
         })
         thumbnailSpinner.succeed('Successfully generated the thumbnails.')
     } catch (_error) {
