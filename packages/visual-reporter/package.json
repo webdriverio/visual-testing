@@ -17,7 +17,7 @@
     "build": "run-s clean build:*",
     "build:report": "npm run next-build",
     "build:scripts": "tsc -p tsconfig.scripts.json",
-    "clean": "rimraf coverage dist .next out",
+    "clean": "rimraf coverage dist .next out *.tsbuildinfo",
     "dev": "npm run generate-thumbnails && run-p watch:scripts next-dev",
     "export": "npm run generate-thumbnails && NEXT_EXPORT=true next build",
     "generate-thumbnails": "node ./src/app/scripts/generateThumbnails.mjs",
