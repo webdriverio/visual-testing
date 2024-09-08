@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url'
 import ora from 'ora'
 import { copyDirectory } from './utils/fileHandling.js'
 import { chooseItems } from './utils/inquirerUtils.js'
-import { cleanUpEnvironmentVariables, findAvailablePort } from './utils/cliUtils.js'
+import { cleanUpEnvironmentVariables, findAvailablePort, retry } from './utils/cliUtils.js'
 import { CONFIG_HELPER_INTRO } from './utils/constants.js'
 import { validateOutputJson } from './utils/validateOutput.js'
 
@@ -90,14 +90,20 @@ async function main() {
     // Generate the thumbnails
     const thumbnailSpinner = ora('Generating thumbnails...\n').start()
     try {
-        execSync(`node ${join(visualReporterProjectRoot, 'src', 'app', 'scripts', 'generateThumbnails.mjs')} `, {
-            stdio: 'inherit',
-            cwd: reporterPath,
-            shell: '/bin/bash',
-        })
+        // @TODO: added a rety to run the generateThumbnails script
+        // It's always failing on the first run, but works on the second run but I'm not sure why
+        // So brute forcing it for now =)
+        await retry({ fn: () => {
+            execSync(`node ${join(visualReporterProjectRoot, 'src', 'app', 'scripts', 'generateThumbnails.mjs')} `, {
+                stdio: 'inherit',
+                cwd: reporterPath,
+                shell: '/bin/bash'
+            })
+        }, debug: runInDebugMode, retries: 3 })
+
         thumbnailSpinner.succeed('Successfully generated the thumbnails.')
-    } catch (_error) {
-        thumbnailSpinner.fail('Failed to generate thumbnails.')
+    } catch (error) {
+        thumbnailSpinner.fail(`Failed to generate thumbnails. Error: ${error}`)
     }
 
     //

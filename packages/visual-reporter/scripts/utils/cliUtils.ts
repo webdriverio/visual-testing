@@ -52,3 +52,26 @@ export async function findAvailablePort(startingPort: number) {
 
     return port
 }
+
+export const retry = (
+    { fn, debug = false, delay = 500, retries = 3,  }:{ fn: () => void, debug?: boolean, delay?: number, retries?: number }
+): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        const attempt = (n: number) => {
+            try {
+                fn()
+                resolve()
+            } catch (error) {
+                if (n === 1) {
+                    reject(error)
+                } else {
+                    if (debug) {
+                        console.log(`Retrying... (${retries - n + 1})`)
+                    }
+                    setTimeout(() => attempt(n - 1), delay)
+                }
+            }
+        }
+        attempt(retries)
+    })
+}
