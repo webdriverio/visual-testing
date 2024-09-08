@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.1.6
+
+### Patch Changes
+
+- 209ed53: fix: adding a retry for thumnail creation
+
 ## 0.1.5
 
 ### Patch Changes
