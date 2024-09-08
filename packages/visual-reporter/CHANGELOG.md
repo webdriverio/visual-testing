@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.1.5
+
+### Patch Changes
+
+- 925bb0d: fix shell for thumbnail creation
+
 ## 0.1.4
 
 ### Patch Changes
