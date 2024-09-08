@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.1.7
+
+### Patch Changes
+
+- 728cffb: fix: fixing the fix
+
 ## 0.1.6
 
 ### Patch Changes
