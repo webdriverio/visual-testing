@@ -6,7 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "target": "ES6",
-    "rootDir": "./src/scripts",
+    "rootDir": "./src",
     "jsx": "preserve"
   },
   "include": ["src/scripts/**/*.ts"],
