@@ -58,6 +58,8 @@ async function main() {
         }
     }
 
+    process.env.NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH = filePath
+
     //
     // Choose the report output folder
     const reportFolderChoice = await select<{ method: 'explore' | 'type' }>({
@@ -82,9 +84,23 @@ async function main() {
         process.env.VISUAL_REPORT_DEBUG_LEVEL = 'debug'
     }
 
+    const reporterPath = join(reportPath, 'report')
+
+    //
+    // Generate the thumbnails
+    const thumbnailSpinner = ora('Generating thumbnails...\n').start()
+    try {
+        execSync(`node ${join(visualReporterProjectRoot, 'src', 'app', 'scripts', 'generateThumbnails.mjs')} `, {
+            stdio: 'inherit',
+            cwd: reporterPath,
+        })
+        thumbnailSpinner.succeed('Successfully generated the thumbnails.')
+    } catch (_error) {
+        thumbnailSpinner.fail('Failed to generate thumbnails.')
+    }
+
     //
     // Copy the report to the specified folder
-    const reporterPath = join(reportPath, 'report')
     const copyReportSpinner = ora(
         `Copying report to ${reporterPath}...\n`
     ).start()
