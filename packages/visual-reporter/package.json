@@ -11,7 +11,7 @@
   },
   "type": "module",
   "bin": {
-    "visual-reporter": "./dist/cli.js"
+    "wdio-visual-reporter": "./dist/cli.js"
   },
   "scripts": {
     "build": "run-s clean build:*",
