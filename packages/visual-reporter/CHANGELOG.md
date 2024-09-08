@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.1.1
+
+### Patch Changes
+
+- a99de7d: change reporter bin name
+
 ## 0.1.0
 
 ### Minor Changes
