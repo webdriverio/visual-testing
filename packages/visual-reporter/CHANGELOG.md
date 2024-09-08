@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.1.3
+
+### Patch Changes
+
+- 2d58782: fix cli
+
 ## 0.1.2
 
 ### Patch Changes
