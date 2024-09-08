@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.1.4
+
+### Patch Changes
+
+- 85dc4a5: fix generating thumbnails
+
 ## 0.1.3
 
 ### Patch Changes
