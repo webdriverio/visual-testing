@@ -13,6 +13,7 @@ tmp/
 temp/
 # .next/
 out/
+demo/
 
 # Configuration files and scripts
 .env

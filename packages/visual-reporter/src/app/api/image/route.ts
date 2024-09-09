@@ -1,6 +1,13 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import fs from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const isVercelDemo = process.env.NEXT_VERCEL_DEMO === 'true'
+const vercelPath = isVercelDemo ? join(__dirname, '..', '..', '..', '..') : ''
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
@@ -13,7 +20,7 @@ export async function GET(req: NextRequest) {
         )
     }
 
-    const decodedFilePath = decodeURIComponent(filePath)
+    const decodedFilePath = join(vercelPath, decodeURIComponent(filePath))
 
     if (!fs.existsSync(decodedFilePath)) {
         return NextResponse.json({ error: 'File not found' }, { status: 404 })

@@ -1,7 +1,10 @@
 import fs from "fs";
-import path from "path";
+import { basename, dirname, extname, join } from "path";
 import sharp from "sharp";
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const DEBUG_MODE = process.env.VISUAL_REPORT_DEBUG_LEVEL === "debug";
 
 async function resizeImage(inputPath, outputPath) {
@@ -33,11 +36,11 @@ async function resizeImage(inputPath, outputPath) {
 
 async function createThumbnailForFile(filePath) {
   try {
-    const ext = path.extname(filePath);
-    const baseName = path.basename(filePath, ext);
+    const ext = extname(filePath);
+    const baseName = basename(filePath, ext);
     const thumbnailName = "VHTMLR-THUMBNAIL";
-    const outputFilePath = path.join(
-      path.dirname(filePath),
+    const outputFilePath = join(
+      dirname(filePath),
       `${baseName}-${thumbnailName}${ext}`
     );
 
@@ -61,16 +64,18 @@ async function generateThumbnails() {
   try {
     const data = fs.readFileSync(outputJsonPath, "utf-8");
     const jsonData = JSON.parse(data);
+    const isVercelDemo = process.env.NEXT_VERCEL_DEMO === "true";
+    const vercelPath = isVercelDemo ? join(__dirname, '..', '..', '..') : "";
 
     for (const description of jsonData) {
       for (const testData of description.data) {
         for (const methodData of testData.data) {
           const { fileData } = methodData;
           if (fileData?.actualFilePath) {
-            await createThumbnailForFile(fileData.actualFilePath);
+            await createThumbnailForFile(join(vercelPath, fileData.actualFilePath));
           }
           if (fileData?.diffFilePath) {
-            await createThumbnailForFile(fileData.diffFilePath);
+            await createThumbnailForFile(join(vercelPath, fileData.diffFilePath));
           }
         }
       }

@@ -46,3 +46,8 @@ https://github.com/user-attachments/assets/9cdfec36-e1ff-4b48-a842-23f3f7d5768e
 
 > [!NOTE]
 > Created with a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+## TODO:
+
+-   [x] change all urls in the index.html, fixed, changed the `assetPrefix: './'` in the `next.config.mjs`
+-
