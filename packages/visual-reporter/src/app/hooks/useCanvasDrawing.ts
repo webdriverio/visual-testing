@@ -1,8 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react'
-import type {
-    BoundingBox,
-    CanvasDrawingProps,
-} from '../types'
+import type { BoundingBox, CanvasDrawingProps } from '../types'
 import styles from '../components/Canvas.module.css'
 // This is done because NextJS can't handle ESLINT flat configs yet
 // eslint-disable-next-line import/extensions
@@ -18,6 +15,9 @@ export const useCanvasDrawing = ({
 }: CanvasDrawingProps) => {
     const transformedDiffBoxesRef = useRef<BoundingBox[]>([])
     const transformedIgnoredBoxesRef = useRef<BoundingBox[]>([])
+    const hoveredBoxRef = useRef<BoundingBox | null>(null)
+    const hoveredTextRef = useRef<string | null>(null)
+    const hoveredBoxColorRef = useRef<string | null>(null)
 
     const drawBoxes = (
         boxes: BoundingBox[],
@@ -54,13 +54,36 @@ export const useCanvasDrawing = ({
         return transformedBoxes
     }
 
+    const drawHoverEffect = (
+        box: BoundingBox,
+        context: CanvasRenderingContext2D,
+        color: string,
+        hoverText: string
+    ) => {
+        const boxWidth = box.right - box.left
+        const boxHeight = box.bottom - box.top
+
+        context.save()
+        context.globalAlpha = 1
+        context.strokeStyle = color
+        context.lineWidth = 4
+        context.strokeRect(box.left, box.top, boxWidth, boxHeight)
+
+        if (hoverText) {
+            context.fillStyle = color
+            context.font = '12px Arial'
+            context.fillText(hoverText, box.left, box.top - 5)
+        }
+        context.restore()
+    }
+
     const handleResize = useCallback(() => {
-        if (!canvasRef.current || !imageRef.current) { return }
+        if (!canvasRef.current || !imageRef.current) {return}
 
         const canvas = canvasRef.current
         const image = imageRef.current
         const context = canvas.getContext('2d')
-        if (!context) { return }
+        if (!context) {return}
 
         const style = window.getComputedStyle(canvas)
         const width = parseInt(style.width)
@@ -117,6 +140,15 @@ export const useCanvasDrawing = ({
             scale
         )
 
+        if (hoveredBoxRef.current && hoveredTextRef.current && hoveredBoxColorRef.current) {
+            drawHoverEffect(
+                hoveredBoxRef.current,
+                context,
+                hoveredBoxColorRef.current,
+                hoveredTextRef.current
+            )
+        }
+
         if (highlightedBox) {
             const translatedBox = getTransformedBoxes(
                 [highlightedBox],
@@ -159,6 +191,69 @@ export const useCanvasDrawing = ({
             })
         }
     }, [canvasRef, imageRef, transform, diffBoxes, highlightedBox, ignoredBoxes])
+
+    const handleMouseMove = useCallback((event: MouseEvent) => {
+        const canvas = canvasRef.current
+        if (!canvas) {return}
+
+        const rect = canvas.getBoundingClientRect()
+        const mouseX = event.clientX - rect.left
+        const mouseY = event.clientY - rect.top
+
+        const hoveredIgnoredBox = transformedIgnoredBoxesRef.current.find(
+            (box) =>
+                mouseX >= box.left &&
+                mouseX <= box.right &&
+                mouseY >= box.top &&
+                mouseY <= box.bottom
+        )
+
+        const hoveredDiffBox = transformedDiffBoxesRef.current.find(
+            (box) =>
+                mouseX >= box.left &&
+                mouseX <= box.right &&
+                mouseY >= box.top &&
+                mouseY <= box.bottom
+        )
+
+        if (hoveredIgnoredBox) {
+            hoveredBoxRef.current = hoveredIgnoredBox
+            hoveredTextRef.current = 'Ignored area'
+            hoveredBoxColorRef.current = 'rgba(57, 170, 86, 1)'
+        } else if (hoveredDiffBox) {
+            hoveredBoxRef.current = hoveredDiffBox
+            hoveredTextRef.current = 'Diff area'
+            hoveredBoxColorRef.current = 'rgba(255, 0, 255, 1)'
+        } else {
+            hoveredBoxRef.current = null
+            hoveredTextRef.current = null
+            hoveredBoxColorRef.current = null
+        }
+
+        handleResize()
+    }, [handleResize])
+
+    const handleMouseLeave = useCallback(() => {
+        hoveredBoxRef.current = null
+        hoveredTextRef.current = null
+        hoveredBoxColorRef.current = null
+        handleResize()
+    }, [handleResize])
+
+    useEffect(() => {
+        const canvas = canvasRef.current
+        if (canvas) {
+            canvas.addEventListener('mousemove', handleMouseMove)
+            canvas.addEventListener('mouseleave', handleMouseLeave)
+        }
+
+        return () => {
+            if (canvas) {
+                canvas.removeEventListener('mousemove', handleMouseMove)
+                canvas.removeEventListener('mouseleave', handleMouseLeave)
+            }
+        }
+    }, [handleMouseMove, handleMouseLeave, canvasRef])
 
     useEffect(() => {
         if (imageRef.current && canvasRef.current) {
