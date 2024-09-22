@@ -10,9 +10,11 @@ export const useCanvasDrawing = (
     canvasRef: React.RefObject<HTMLCanvasElement>,
     transform: { x: number; y: number; scale: number },
     diffBoxes: BoundingBox[],
-    highlightedBox: BoundingBox | null
+    highlightedBox: BoundingBox | null,
+    ignoredBoxes: BoundingBox[],
 ) => {
-    const transformedBoxesRef = useRef<BoundingBox[]>([])
+    const transformedDiffBoxesRef = useRef<BoundingBox[]>([])
+    const transformedIgnoredBoxesRef = useRef<BoundingBox[]>([])
 
     const handleResize = useCallback(() => {
         if (!canvasRef.current || !imageRef.current) {return}
@@ -55,7 +57,7 @@ export const useCanvasDrawing = (
             drawHeight * scale
         )
 
-        const newTransformedBoxes = getTransformedBoxes(
+        const newTransformedDiffBoxes = getTransformedBoxes(
             diffBoxes,
             drawWidth,
             drawHeight,
@@ -65,10 +67,20 @@ export const useCanvasDrawing = (
             image.height,
             scale
         )
+        const newTransformedIgnoredBoxes = getTransformedBoxes(
+            ignoredBoxes,
+            drawWidth,
+            drawHeight,
+            drawX,
+            drawY,
+            image.width,
+            image.height,
+            scale
+        )
 
-        transformedBoxesRef.current = newTransformedBoxes
-
-        newTransformedBoxes.forEach((box) => {
+        transformedDiffBoxesRef.current = newTransformedDiffBoxes
+        transformedIgnoredBoxesRef.current = newTransformedIgnoredBoxes
+        newTransformedDiffBoxes.forEach((box) => {
             const boxWidth = box.right - box.left
             const boxHeight = box.bottom - box.top
 
@@ -118,7 +130,17 @@ export const useCanvasDrawing = (
             }
             context.restore()
         })
-    }, [canvasRef, imageRef, transform, diffBoxes, highlightedBox])
+        newTransformedIgnoredBoxes.forEach((box) => {
+            const boxWidth = box.right - box.left
+            const boxHeight = box.bottom - box.top
+
+            context.save()
+            context.globalAlpha = 0.5
+            context.fillStyle = 'rgba(57, 170, 86, 0.5)'
+            context.fillRect(box.left, box.top, boxWidth, boxHeight)
+            context.restore()
+        })
+    }, [canvasRef, imageRef, transform, diffBoxes, highlightedBox, ignoredBoxes])
 
     useEffect(() => {
         if (imageRef.current && canvasRef.current) {
@@ -132,5 +154,5 @@ export const useCanvasDrawing = (
         }
     }, [canvasRef, handleResize, imageRef])
 
-    return transformedBoxesRef
+    return transformedDiffBoxesRef
 }
