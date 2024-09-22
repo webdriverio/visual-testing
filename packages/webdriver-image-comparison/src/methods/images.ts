@@ -431,12 +431,12 @@ export async function executeImageCompare(
             folders: {
                 actualFolderPath,
                 baselineFolderPath,
-                diffFolderPath: diffFolderPath,
+                ...(storeDiffs && { diffFolderPath: diffFolderPath }),
             },
             size: {
                 actual: getScreenshotSize(readFileSync(actualFilePath).toString('base64'), devicePixelRatio),
                 baseline: getScreenshotSize(readFileSync(baselineFilePath).toString('base64'), devicePixelRatio),
-                ...(storeDiffs ? { diff: getScreenshotSize(readFileSync(diffFilePath).toString('base64'), devicePixelRatio) } : {}),
+                ...(storeDiffs && { diff: getScreenshotSize(readFileSync(diffFilePath).toString('base64'), devicePixelRatio) }),
             },
             testContext,
         })
