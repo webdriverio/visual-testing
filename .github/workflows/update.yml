@@ -34,10 +34,17 @@ jobs:
       # We use regex to capture the old and new version numbers from the PR title format
       # The format usually looks like "Bump package-name from x.y.z to a.b.c"
       # If there is no version number in the PR title, the workflow will exit with an error so we manually need to verify the version numbers.
+      - name: Output PR_TITLE
+        run: |
+          echo "PR_TITLE: $PR_TITLE"
+          echo "Script running with PR_TITLE='${PR_TITLE}'"
+          echo "Running the regex check now."
+
       - name: Extract old and new versions
         id: extract-versions
         run: |
-          if [[ "${{ env.PR_TITLE }}" =~ from[[:space:]]?([0-9]+\.[0-9]+\.[0-9]+)[[:space:]]?to[[:space:]]?([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+          PR_TITLE="${{ env.PR_TITLE }}"
+          if [[ "$PR_TITLE" =~ from[[:space:]]?([0-9]+\.[0-9]+\.[0-9]+)[[:space:]]?to[[:space:]]?([0-9]+\.[0-9]+\.[0-9]+) ]]; then
             echo "OLD_VERSION=${BASH_REMATCH[1]}" >> $GITHUB_ENV
             echo "NEW_VERSION=${BASH_REMATCH[2]}" >> $GITHUB_ENV
           else
