@@ -52,6 +52,13 @@ export function isMochaFramework(framework: string): boolean {
 }
 
 /**
+ * Check if the framework is Mocha
+ */
+export function isLocalRunner(runner: string): boolean {
+    return runner.toLowerCase() === 'local'
+}
+
+/**
  * Check if there is an instance of Storybook running
  */
 export async function checkStorybookIsRunning(url: string) {
