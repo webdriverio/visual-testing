@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import type { BoundingBox, CanvasDrawingProps } from '../types'
 import styles from '../components/Canvas.module.css'
 // This is done because NextJS can't handle ESLINT flat configs yet
@@ -18,6 +18,7 @@ export const useCanvasDrawing = ({
     const hoveredBoxRef = useRef<BoundingBox | null>(null)
     const hoveredTextRef = useRef<string | null>(null)
     const hoveredBoxColorRef = useRef<string | null>(null)
+    const [highlightedOnce, setHighlightedOnce] = useState(false)
 
     const drawBoxes = (
         boxes: BoundingBox[],
@@ -149,7 +150,7 @@ export const useCanvasDrawing = ({
             )
         }
 
-        if (highlightedBox) {
+        if (highlightedBox && !highlightedOnce) {
             const translatedBox = getTransformedBoxes(
                 [highlightedBox],
                 drawWidth,
@@ -186,11 +187,12 @@ export const useCanvasDrawing = ({
 
                     setTimeout(() => {
                         circle.remove()
+                        setHighlightedOnce(true)
                     }, 1000)
                 }
             })
         }
-    }, [canvasRef, imageRef, transform, diffBoxes, highlightedBox, ignoredBoxes])
+    }, [canvasRef, imageRef, transform, diffBoxes, highlightedBox, highlightedOnce, ignoredBoxes])
 
     const handleMouseMove = useCallback((event: MouseEvent) => {
         const canvas = canvasRef.current
@@ -254,13 +256,16 @@ export const useCanvasDrawing = ({
             }
         }
     }, [handleMouseMove, handleMouseLeave, canvasRef])
-
     useEffect(() => {
         if (imageRef.current && canvasRef.current) {
             imageRef.current.onload = handleResize
         }
     }, [handleResize, imageRef, canvasRef])
-
+    useEffect(() => {
+        if (highlightedBox) {
+            setHighlightedOnce(false)
+        }
+    }, [highlightedBox])
     useEffect(() => {
         if (imageRef.current && canvasRef.current) {
             handleResize()
