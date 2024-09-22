@@ -32,7 +32,7 @@ const Canvas: React.FC<CanvasProps> = ({
     setTransform
   );
 
-  useCanvasDrawing(imageRef, canvasRef, transform, diffBoxes, highlightedBox, ignoredBoxes);
+  useCanvasDrawing({imageRef, canvasRef, transform, diffBoxes, highlightedBox, ignoredBoxes});
 
   useEffect(() => {
     const canvas = canvasRef.current;

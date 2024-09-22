@@ -1,28 +1,66 @@
 import { useEffect, useRef, useCallback } from 'react'
-import type { BoundingBox } from '../types'
+import type {
+    BoundingBox,
+    CanvasDrawingProps,
+} from '../types'
 import styles from '../components/Canvas.module.css'
 // This is done because NextJS can't handle ESLINT flat configs yet
 // eslint-disable-next-line import/extensions
 import { getTransformedBoxes } from '../utils/boundingBoxUtils'
 
-export const useCanvasDrawing = (
-    imageRef: React.RefObject<HTMLImageElement>,
-    canvasRef: React.RefObject<HTMLCanvasElement>,
-    transform: { x: number; y: number; scale: number },
-    diffBoxes: BoundingBox[],
-    highlightedBox: BoundingBox | null,
-    ignoredBoxes: BoundingBox[],
-) => {
+export const useCanvasDrawing = ({
+    imageRef,
+    canvasRef,
+    transform,
+    diffBoxes,
+    highlightedBox,
+    ignoredBoxes,
+}: CanvasDrawingProps) => {
     const transformedDiffBoxesRef = useRef<BoundingBox[]>([])
     const transformedIgnoredBoxesRef = useRef<BoundingBox[]>([])
 
+    const drawBoxes = (
+        boxes: BoundingBox[],
+        context: CanvasRenderingContext2D,
+        color: string,
+        drawWidth: number,
+        drawHeight: number,
+        drawX: number,
+        drawY: number,
+        scale: number
+    ) => {
+        const transformedBoxes = getTransformedBoxes(
+            boxes,
+            drawWidth,
+            drawHeight,
+            drawX,
+            drawY,
+            imageRef.current!.width,
+            imageRef.current!.height,
+            scale
+        )
+
+        transformedBoxes.forEach((box) => {
+            const boxWidth = box.right - box.left
+            const boxHeight = box.bottom - box.top
+
+            context.save()
+            context.globalAlpha = 0.5
+            context.fillStyle = color
+            context.fillRect(box.left, box.top, boxWidth, boxHeight)
+            context.restore()
+        })
+
+        return transformedBoxes
+    }
+
     const handleResize = useCallback(() => {
-        if (!canvasRef.current || !imageRef.current) {return}
+        if (!canvasRef.current || !imageRef.current) { return }
 
         const canvas = canvasRef.current
         const image = imageRef.current
         const context = canvas.getContext('2d')
-        if (!context) {return}
+        if (!context) { return }
 
         const style = window.getComputedStyle(canvas)
         const width = parseInt(style.width)
@@ -57,55 +95,46 @@ export const useCanvasDrawing = (
             drawHeight * scale
         )
 
-        const newTransformedDiffBoxes = getTransformedBoxes(
+        transformedDiffBoxesRef.current = drawBoxes(
             diffBoxes,
+            context,
+            'rgba(255, 0, 255, 0.5)',
             drawWidth,
             drawHeight,
             drawX,
             drawY,
-            image.width,
-            image.height,
             scale
         )
-        const newTransformedIgnoredBoxes = getTransformedBoxes(
+
+        transformedIgnoredBoxesRef.current = drawBoxes(
             ignoredBoxes,
+            context,
+            'rgba(57, 170, 86, 0.5)',
             drawWidth,
             drawHeight,
             drawX,
             drawY,
-            image.width,
-            image.height,
             scale
         )
 
-        transformedDiffBoxesRef.current = newTransformedDiffBoxes
-        transformedIgnoredBoxesRef.current = newTransformedIgnoredBoxes
-        newTransformedDiffBoxes.forEach((box) => {
-            const boxWidth = box.right - box.left
-            const boxHeight = box.bottom - box.top
+        if (highlightedBox) {
+            const translatedBox = getTransformedBoxes(
+                [highlightedBox],
+                drawWidth,
+                drawHeight,
+                drawX,
+                drawY,
+                image.width,
+                image.height,
+                scale
+            )[0]
 
-            context.save()
-            context.globalAlpha = 0.5
-            context.fillStyle = 'rgba(255, 0, 255, 0.5)'
-            context.fillRect(box.left, box.top, boxWidth, boxHeight)
-
-            if (highlightedBox) {
-                const translatedBox = getTransformedBoxes(
-                    [highlightedBox],
-                    drawWidth,
-                    drawHeight,
-                    drawX,
-                    drawY,
-                    image.width,
-                    image.height,
-                    scale
-                )[0]
-
+            transformedDiffBoxesRef.current.forEach((box) => {
                 if (
                     Math.abs(box.left - translatedBox.left) < 1 &&
-          Math.abs(box.top - translatedBox.top) < 1 &&
-          Math.abs(box.right - translatedBox.right) < 1 &&
-          Math.abs(box.bottom - translatedBox.bottom) < 1
+                    Math.abs(box.top - translatedBox.top) < 1 &&
+                    Math.abs(box.right - translatedBox.right) < 1 &&
+                    Math.abs(box.bottom - translatedBox.bottom) < 1
                 ) {
                     const existingCircles = document.querySelectorAll(
                         `.${styles['highlight-circle']}`
@@ -127,19 +156,8 @@ export const useCanvasDrawing = (
                         circle.remove()
                     }, 1000)
                 }
-            }
-            context.restore()
-        })
-        newTransformedIgnoredBoxes.forEach((box) => {
-            const boxWidth = box.right - box.left
-            const boxHeight = box.bottom - box.top
-
-            context.save()
-            context.globalAlpha = 0.5
-            context.fillStyle = 'rgba(57, 170, 86, 0.5)'
-            context.fillRect(box.left, box.top, boxWidth, boxHeight)
-            context.restore()
-        })
+            })
+        }
     }, [canvasRef, imageRef, transform, diffBoxes, highlightedBox, ignoredBoxes])
 
     useEffect(() => {
