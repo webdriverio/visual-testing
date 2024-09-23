@@ -57,7 +57,7 @@
     "@types/react-dom": "^18",
     "@types/xml2js": "~0.4.14",
     "@typescript-eslint/eslint-plugin": "^8.3.0",
-    "@typescript-eslint/parser": "^8.3.0",
+    "@typescript-eslint/parser": "^8.7.0",
     "@typescript-eslint/utils": "^8.3.0",
     "@vitest/coverage-v8": "^2.0.5",
     "@wdio/appium-service": "^9.0.7",
