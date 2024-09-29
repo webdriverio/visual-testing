@@ -1,4 +1,3 @@
-import type Jimp from 'jimp'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
 import type { TestContext } from 'src/commands/check.interfaces.js'
@@ -226,7 +225,7 @@ export interface HandleIOSBezelCorners {
     deviceName: string,
     devicePixelRatio: number,
     height: number,
-    image: Jimp,
+    image: any, // There is no type for Jimp image
     isLandscape: boolean,
     width: number,
 }
