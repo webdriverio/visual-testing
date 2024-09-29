@@ -32,7 +32,7 @@
     "watch:scripts": "tsc -p tsconfig.scripts.json --watch"
   },
   "dependencies": {
-    "@inquirer/prompts": "^5.5.0",
+    "@inquirer/prompts": "^6.0.1",
     "next": "14.2.13",
     "ora": "^8.1.0",
     "react": "^18",
@@ -42,7 +42,7 @@
     "sharp": "^0.33.5"
   },
   "devDependencies": {
-    "eslint": "^8",
+    "eslint": "^9",
     "eslint-config-next": "14.2.13",
     "typescript": "^5"
   }

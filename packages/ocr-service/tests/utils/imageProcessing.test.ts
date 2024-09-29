@@ -12,7 +12,7 @@ vi.mock('jimp', () => {
         getPixelColor: vi.fn(() => 0xFFFFFFFF),
         greyscale: vi.fn().mockReturnThis(),
         setPixelColor: vi.fn(),
-        writeAsync: vi.fn().mockResolvedValue('foo'),
+        write: vi.fn().mockResolvedValue('foo'), // Jimp v1 method
     }
     const mockTargetJimpInstance = {
         ...mockJimpInstance,
@@ -31,11 +31,11 @@ vi.mock('jimp', () => {
     const rgbaToInt = vi.fn(() => 0x391aa56a)
 
     return {
-        default: {
-            intToRGBA,
+        Jimp: {
             read: mockRead,
-            rgbaToInt,
-        }
+        },
+        intToRGBA,
+        rgbaToInt
     }
 })
 
@@ -51,11 +51,11 @@ describe('processImage', () => {
         const options = {
             contrast: 0.5,
             isAndroid: false,
-            isIOS:false,
+            isIOS: false,
             ocrImagesPath: '/fake/path',
             screenshot: Buffer.from('fakeimage', 'base64').toString('base64')
         }
-        const Jimp = (await import('jimp')).default
+        const { Jimp } = await import('jimp')
         const mockJimpInstance = await Jimp.read(Buffer.from(options.screenshot, 'base64'))
         const result = await processImage(options)
 
@@ -63,7 +63,7 @@ describe('processImage', () => {
 
         expect(mockJimpInstance.greyscale).toHaveBeenCalled()
         expect(mockJimpInstance.contrast).toHaveBeenCalledWith(options.contrast)
-        expect(mockJimpInstance.writeAsync).toHaveBeenCalledWith(expect.stringContaining(options.ocrImagesPath))
+        expect(mockJimpInstance.write).toHaveBeenCalledWith(expect.stringContaining(options.ocrImagesPath))
         expect(result.filePath).toContain(`${options.ocrImagesPath}/desktop-`)
     })
 
@@ -93,7 +93,7 @@ describe('processImage', () => {
         expect(result.filePath).toContain(`${options.ocrImagesPath}/ios-`)
     })
 
-    it('ensures cropping stays withing image dimensions', async () => {
+    it('ensures cropping stays within image dimensions', async () => {
         const options = {
             contrast: 0.5,
             isAndroid: false,
@@ -103,12 +103,12 @@ describe('processImage', () => {
             elementRectangles: { x: 5, y: 10, width: 25, height: 20 }
         }
 
-        const Jimp = (await import('jimp')).default
+        const { Jimp } = await import('jimp')
         const mockJimpInstance = await Jimp.read(Buffer.from(options.screenshot, 'base64'))
         const result = await processImage(options)
 
-        expect(mockJimpInstance.crop).toHaveBeenCalledWith(5, 10, 25, 20)
-        expect(mockJimpInstance.writeAsync).toHaveBeenCalledWith(expect.stringContaining(options.ocrImagesPath))
+        expect(mockJimpInstance.crop).toHaveBeenCalledWith({ x: 5, y: 10, w: 25, h: 20 }) // Updated for V1 crop method
+        expect(mockJimpInstance.write).toHaveBeenCalledWith(expect.stringContaining(options.ocrImagesPath))
         expect(result.filePath).toContain(`${options.ocrImagesPath}/desktop-`)
     })
 
@@ -121,12 +121,13 @@ describe('processImage', () => {
             screenshot: Buffer.from('fakeimage', 'base64').toString('base64'),
             elementRectangles: { x: 5, y: 10, width: 200, height: 200 }
         }
-        const Jimp = (await import('jimp')).default
+
+        const { Jimp } = await import('jimp')
         const mockJimpInstance = await Jimp.read(Buffer.from(options.screenshot, 'base64'))
         const result = await processImage(options)
 
-        expect(mockJimpInstance.crop).toHaveBeenCalledWith(5, 10, 95, 90)
-        expect(mockJimpInstance.writeAsync).toHaveBeenCalledWith(expect.stringContaining(options.ocrImagesPath))
+        expect(mockJimpInstance.crop).toHaveBeenCalledWith({ x: 5, y: 10, w: 95, h: 90 }) // Updated for V1
+        expect(mockJimpInstance.write).toHaveBeenCalledWith(expect.stringContaining(options.ocrImagesPath))
         expect(result.filePath).toContain(`${options.ocrImagesPath}/desktop-`)
     })
 })
@@ -138,12 +139,12 @@ describe('drawTarget', () => {
 
     it('composites a target image onto a source image at the correct position and saves it', async () => {
         const targetOptions = {
-            filePath: '/path/to/source.png',
+            filePath: '/path/to/source.png' as `${string}.${string}`,
             targetX: 75,
             targetY: 75
         }
 
-        const Jimp = (await import('jimp')).default
+        const { Jimp } = await import('jimp')
         const mockJimpInstance = await Jimp.read(Buffer.from('fakeimage', 'base64'))
 
         await drawTarget(targetOptions)
@@ -154,13 +155,13 @@ describe('drawTarget', () => {
         const expectedXPosition = 50
         const expectedYPosition = 50
         expect(mockJimpInstance.composite).toHaveBeenCalledWith(expect.any(Object), expectedXPosition, expectedYPosition)
-        expect(mockJimpInstance.writeAsync).toHaveBeenCalledWith(targetOptions.filePath)
+        expect(mockJimpInstance.write).toHaveBeenCalledWith(targetOptions.filePath)
     })
 
     it('logs an error if the operation fails', async () => {
         const logErrorMock = vi.spyOn(log, 'error')
         const targetOptions = {
-            filePath: 'path/that/fails',
+            filePath: 'path/that/fails' as `${string}.${string}`,
             targetX: 75,
             targetY: 75
         }
@@ -176,24 +177,22 @@ describe('drawHighlightedWords', () => {
     })
 
     it('applies highlights to specified areas of the image and saves it', async () => {
-        const filePath = '/path/to/image.png'
+        const filePath = '/path/to/image' as `${string}.${string}`
         const highlights = [{ left: 10, right: 20, top: 10, bottom: 20 }]
+
+        const { Jimp } = await import('jimp')
+        const mockJimpInstance = await Jimp.read(Buffer.from('fakeimage', 'base64'))
 
         await drawHighlightedWords({ filePath, highlights })
 
-        const Jimp = (await import('jimp')).default
-        const mockJimpInstance = await Jimp.read(Buffer.from('fakeimage', 'base64'))
-
         expect(Jimp.read).toHaveBeenCalledWith(filePath)
         expect(mockJimpInstance.getPixelColor).toHaveBeenCalledTimes(100)
-        expect(Jimp.intToRGBA).toHaveBeenCalledTimes(100)
-        expect(Jimp.rgbaToInt).toHaveBeenCalledTimes(100)
         expect(mockJimpInstance.setPixelColor).toHaveBeenCalledTimes(100)
-        expect(mockJimpInstance.writeAsync).toHaveBeenCalledWith(filePath)
+        expect(mockJimpInstance.write).toHaveBeenCalledWith(filePath)
     })
 
     it('logs an error if the operation fails', async () => {
-        const filePath = 'path/that/fails'
+        const filePath = 'path/that/fails' as `${string}.${string}`
         const highlights = [{ left: 10, right: 20, top: 10, bottom: 20 }]
         const logErrorMock = vi.spyOn(log, 'error')
 

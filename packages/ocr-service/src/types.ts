@@ -117,7 +117,7 @@ export type Words = Line & {
 }
 
 export type TessaractDataOptions = {
-    filePath: string;
+    filePath: `${string}.${string}`;
     language: string;
 }
 
@@ -130,7 +130,7 @@ export type GetTextPositionsOptions = DefaultMethodOptions & {}
 
 export type GetTextPositions = {
     dprPosition: Rectangles;
-    filePath: string;
+    filePath: `${string}.${string}`;
     originalPosition: Rectangles;
     text: string;
 }
@@ -209,7 +209,7 @@ export type FuzzyElement = {
         /**
          * The path of the OCR screenshot
          */
-        filePath: string;
+        filePath: `${string}.${string}`;
         /**
          * The original position
          */
@@ -262,11 +262,11 @@ export type ProcessImageOptions = {
 }
 
 export type ProcessImage = {
-    filePath: string;
+    filePath: `${string}.${string}`;
 }
 
 export type DrawHighlightedWords = {
-    filePath: string;
+    filePath: `${string}.${string}`;
     highlights: Rectangles[];
 }
 
@@ -308,7 +308,7 @@ export type UnprocessedSystemStringElement = {
 }
 
 export type TargetOptions = {
-    filePath: string;
+    filePath: `${string}.${string}`;
     targetX: number;
     targetY: number;
 }
@@ -340,7 +340,7 @@ export type UnprocessedNodejsWord = {
  */
 export interface GetData extends GetOcrData {
     dpr: number;
-    filePath: string;
+    filePath: `${string}.${string}`;
 }
 
 export type OcrGetElementPositionByText = {
@@ -353,7 +353,7 @@ export type OcrGetElementPositionByText = {
     /**
      * The path of the OCR screenshot
      */
-    filePath: string;
+    filePath: `${string}.${string}`;
     /**
      * the matched string
      */
