@@ -7,6 +7,7 @@ import getData from './utils/getData.js'
 import { createOcrDir } from './utils/index.js'
 import { isSystemTesseractAvailable } from './utils/tesseract.js'
 import { SUPPORTED_LANGUAGES } from './utils/constants.js'
+import { remote } from 'webdriverio'
 
 export const CONFIG_HELPER_INTRO = `
 =============================
@@ -163,8 +164,11 @@ async function main() {
         }
     }
 
+    // For cli use, empty browser context to pass into getData
+    const browser = await remote({ capabilities: { browserName: 'stub' }, automationProtocol: './protocol-stub.js' })
+
     console.log('\nProcessing image...\n')
-    await getData(options)
+    await getData(browser, options)
     console.log('\nDone!')
 }
 

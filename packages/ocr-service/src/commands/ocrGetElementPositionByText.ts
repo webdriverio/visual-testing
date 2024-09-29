@@ -6,6 +6,7 @@ import { fuzzyFind } from '../utils/fuzzySearch.js'
 const log = logger('@wdio/ocr-service:ocrGetElementPositionByText')
 
 export default async function ocrGetElementPositionByText(
+    this: WebdriverIO.Browser,
     data: OcrGetElementPositionByTextOptions
 ): Promise<OcrGetElementPositionByText> {
     const {
@@ -17,7 +18,7 @@ export default async function ocrGetElementPositionByText(
         ocrImagesPath,
         text,
     } = data
-    const textPositions = await getTextPositions({
+    const textPositions = await getTextPositions(this, {
         contrast,
         haystack,
         isTesseractAvailable,
