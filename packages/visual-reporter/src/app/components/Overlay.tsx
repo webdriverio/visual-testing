@@ -12,7 +12,7 @@ interface OverlayProps {
 
 const Overlay: React.FC<OverlayProps> = ({ data, onClose }) => {
   const {
-    boundingBoxes: { diffBoundingBoxes = [] },
+    boundingBoxes: { diffBoundingBoxes = [], ignoredBoxes=[] },
     fileData: { actualFilePath, baselineFilePath },
   } = data;
   const baselineImagePath = `/api/image?filePath=${encodeURIComponent(
@@ -55,6 +55,7 @@ const Overlay: React.FC<OverlayProps> = ({ data, onClose }) => {
             highlightedBox={
               currentChange !== -1 ? diffBoundingBoxes[currentChange] : null
             }
+            ignoredBoxes={ignoredBoxes}
           />
         </div>
       </div>

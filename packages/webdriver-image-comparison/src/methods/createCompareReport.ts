@@ -23,7 +23,7 @@ export type ResultReport = {
     fileData: {
         actualFilePath: string;
         baselineFilePath: string;
-        diffFilePath: string;
+        diffFilePath?: string;
         fileName: string;
         size: {
             actual: { width: number; height: number };
@@ -65,7 +65,7 @@ export function createCompareReport({
         folders: {
             actualFolderPath: string;
             baselineFolderPath: string;
-            diffFolderPath: string;
+            diffFolderPath?: string;
         }
         fileName: string;
         size: {
@@ -100,7 +100,7 @@ export function createCompareReport({
         fileData: {
             actualFilePath: pathResolve(folders.actualFolderPath, fileName),
             baselineFilePath: pathResolve(folders.baselineFolderPath, fileName),
-            diffFilePath: pathResolve(folders.diffFolderPath, fileName),
+            ...(folders.diffFolderPath && { diffFilePath: pathResolve(folders.diffFolderPath, fileName) }),
             fileName,
             size,
         },

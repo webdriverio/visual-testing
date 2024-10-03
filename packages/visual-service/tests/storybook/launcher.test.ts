@@ -13,6 +13,7 @@ vi.mock('fs')
 
 vi.mock('../../src/storybook/utils.js', ()=>({
     isStorybookMode: vi.fn(() => true),
+    isLocalRunner: vi.fn(() => true),
     isCucumberFramework: vi.fn(() => false),
     scanStorybook: vi.fn(() => ({
         storiesJson: {},
@@ -33,10 +34,10 @@ describe('Visual Launcher for Storybook', () => {
             Launcher: Services.ServiceInstance
 
         beforeEach(() => {
-
             options = {}
             caps = [{}]
             config = {
+                runner: 'local',
                 framework: 'mocha'
             } as WebdriverIO.Config
             Launcher = new VisualLauncher(options)
