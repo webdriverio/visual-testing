@@ -20,7 +20,7 @@ export default async function ocrClickOnText(options: OcrClickOnTextOptions): Pr
     await drawTarget({ filePath: element.filePath, targetX: x, targetY: y })
 
     const actionType = browser.isMobile ? 'touch' : 'mouse'
-    const clickDuration = options.clickDuration ? options.clickDuration : 500
+    const clickDuration = options.clickDuration ?? 500
 
     await browser
         .action('pointer', {
