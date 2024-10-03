@@ -106,3 +106,18 @@ export interface SelectedOptions {
   platform: string[];
   status: StatusFilter;
 }
+
+export interface CanvasTransform {
+  x: number;
+  y: number;
+  scale: number;
+}
+
+export interface CanvasDrawingProps {
+    imageRef: React.RefObject<HTMLImageElement>
+    canvasRef: React.RefObject<HTMLCanvasElement>
+    transform: CanvasTransform
+    diffBoxes: BoundingBox[]
+    highlightedBox: BoundingBox | null
+    ignoredBoxes: BoundingBox[]
+}

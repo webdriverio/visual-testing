@@ -34,17 +34,43 @@ import { createCompareReport } from './createCompareReport.js'
 const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
 
 /**
+ * Check if an image exists and return a boolean
+ */
+export async function checkIfImageExists(filePath: string): Promise<boolean> {
+    try {
+        await fsPromises.access(filePath, constants.R_OK)
+        return true
+    } catch {
+        return false
+    }
+}
+
+/**
+ * Remove the diff image if it exists
+ */
+export async function removeDiffImageIfExists(diffFilePath: string): Promise<void> {
+    if (await checkIfImageExists(diffFilePath)) {
+        try {
+            await fsPromises.unlink(diffFilePath)
+            log.info(`Successfully removed the diff image before comparing at ${diffFilePath}`)
+        } catch (error) {
+            throw new Error(
+                `Could not remove the diff image. The following error was thrown: ${error}`,
+            )
+        }
+    }
+}
+
+/**
  * Check if the image exists and create a new baseline image if needed
  */
 export async function checkBaselineImageExists(
     { actualFilePath, baselineFilePath, autoSaveBaseline = false, updateBaseline = false }: CheckBaselineImageExists
 ): Promise<void> {
     try {
-        if (updateBaseline) {
+        if (updateBaseline || !(await checkIfImageExists(baselineFilePath))) {
             throw new Error()
         }
-
-        await fsPromises.access(baselineFilePath, constants.R_OK | constants.W_OK)
     } catch {
         if (autoSaveBaseline || updateBaseline) {
             try {
@@ -82,7 +108,6 @@ export async function checkBaselineImageExists(
         }
     }
 }
-
 /**
  * Get the rotated image if needed
  */
@@ -327,8 +352,11 @@ export async function executeImageCompare(
     const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
     const diffFilePath = join(diffFolderPath, fileName)
 
-    // 3. Check if there is a baseline image, and determine if it needs to be auto saved or not
+    // 3a. Check if there is a baseline image, and determine if it needs to be auto saved or not
     await checkBaselineImageExists({ actualFilePath, baselineFilePath, autoSaveBaseline })
+
+    // 3b. At this point we shouldn't have a diff image, so check if there is a diff image and remove it if it exists
+    await removeDiffImageIfExists(diffFilePath)
 
     // 4. Prepare the compare
     // 4a.Determine the ignore options
@@ -431,12 +459,12 @@ export async function executeImageCompare(
             folders: {
                 actualFolderPath,
                 baselineFolderPath,
-                diffFolderPath: diffFolderPath,
+                ...(storeDiffs && { diffFolderPath: diffFolderPath }),
             },
             size: {
                 actual: getScreenshotSize(readFileSync(actualFilePath).toString('base64'), devicePixelRatio),
                 baseline: getScreenshotSize(readFileSync(baselineFilePath).toString('base64'), devicePixelRatio),
-                ...(storeDiffs ? { diff: getScreenshotSize(readFileSync(diffFilePath).toString('base64'), devicePixelRatio) } : {}),
+                ...(storeDiffs && { diff: getScreenshotSize(readFileSync(diffFilePath).toString('base64'), devicePixelRatio) }),
             },
             testContext,
         })

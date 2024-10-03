@@ -9,6 +9,7 @@ import {
     createTestFiles,
     getArgvValue,
     isCucumberFramework,
+    isLocalRunner,
     isStorybookMode,
     parseSkipStories,
     scanStorybook,
@@ -29,9 +30,13 @@ export default class VisualLauncher extends BaseClass  {
     async onPrepare (config: WebdriverIO.Config, capabilities: Capabilities.TestrunnerCapabilities) {
         const isStorybook = isStorybookMode()
         const framework = config.framework as string
+        const runner = config.runner as string
         const isCucumber = isCucumberFramework(framework)
+        const isLocal = isLocalRunner(runner)
 
-        if (isCucumber && isStorybook) {
+        if (!isLocal) {
+            throw new SevereServiceError('\n\nRunning `@wdio/visual-service` is only supported in `local` mode.\n\n')
+        } else if (isCucumber && isStorybook) {
             throw new SevereServiceError('\n\nRunning Storybook in combination with the cucumber framework adapter is not supported.\nOnly Jasmine and Mocha are supported.\n\n')
         } else if (isStorybook) {
             log.info('Running `@wdio/visual-service` in Storybook mode.')

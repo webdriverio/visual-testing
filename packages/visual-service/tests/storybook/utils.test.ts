@@ -18,6 +18,7 @@ import {
     getStoriesJson,
     isCucumberFramework,
     isJasmineFramework,
+    isLocalRunner,
     isMochaFramework,
     isStorybookMode,
     itFunction,
@@ -117,6 +118,16 @@ describe('Storybook utils', () => {
 
         it('should return false if mocha is not provided in the framework', () => {
             expect(isMochaFramework('foobar')).toBe(false)
+        })
+    })
+
+    describe('isLocalRunner', () => {
+        it('should return true if local runner provided', () => {
+            expect(isLocalRunner('local')).toBe(true)
+        })
+
+        it('should return false if runner is not allowed', () => {
+            expect(isLocalRunner('browser')).toBe(false)
         })
     })
 

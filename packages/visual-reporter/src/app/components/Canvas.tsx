@@ -13,6 +13,7 @@ interface CanvasProps {
   >;
   diffBoxes?: BoundingBox[];
   highlightedBox?: BoundingBox | null;
+  ignoredBoxes?: BoundingBox[];
 }
 
 const Canvas: React.FC<CanvasProps> = ({
@@ -21,6 +22,7 @@ const Canvas: React.FC<CanvasProps> = ({
   setTransform,
   diffBoxes = [],
   highlightedBox = null,
+  ignoredBoxes = [],
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useImageLoader(imageSrc, () => {});
@@ -30,7 +32,7 @@ const Canvas: React.FC<CanvasProps> = ({
     setTransform
   );
 
-  useCanvasDrawing(imageRef, canvasRef, transform, diffBoxes, highlightedBox);
+  useCanvasDrawing({imageRef, canvasRef, transform, diffBoxes, highlightedBox, ignoredBoxes});
 
   useEffect(() => {
     const canvas = canvasRef.current;

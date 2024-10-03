@@ -43,6 +43,7 @@ jobs:
           else
             echo "Version numbers not found in PR title."
             exit 1
+          fi
 
       # Check the type of version bump (major, minor, or patch)
       # We compare the major version numbers between old and new versions.
@@ -57,6 +58,7 @@ jobs:
             echo "MAJOR_BUMP=true" >> $GITHUB_ENV
           else
             echo "MAJOR_BUMP=false" >> $GITHUB_ENV
+          fi
 
       # Wait for all CI checks on the PR to pass
       # Don't merge updates to GitHub Actions versions automatically.
