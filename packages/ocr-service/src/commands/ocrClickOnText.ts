@@ -18,7 +18,7 @@ export default async function ocrClickOnText(this: WebdriverIO.Browser, options:
     // Draw a target on the image so a user can see where the click will happen
     await drawTarget({ filePath: element.filePath, targetX: x, targetY: y })
 
-    const actionType = browser.isMobile ? 'touch' : 'mouse'
+    const actionType = this.isMobile ? 'touch' : 'mouse'
     const clickDuration = options.clickDuration ?? 500
 
     await this
