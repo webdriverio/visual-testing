@@ -1,5 +1,4 @@
 import logger from '@wdio/logger'
-import { browser } from '@wdio/globals'
 import { getNodeOcrData, getSystemOcrData } from './tesseract.js'
 import type { GetOcrData, Line, GetData, GetDataOptions, RectReturn, Words } from '../types.js'
 import { adjustElementBbox, getScreenshotSize, isRectanglesObject } from './index.js'
@@ -7,7 +6,7 @@ import { drawHighlightedWords, processImage } from './imageProcessing.js'
 
 const log = logger('@wdio/ocr-service:getData')
 
-export default async function getData(options: GetDataOptions): Promise<GetData> {
+export default async function getData(browser: WebdriverIO.Browser, options: GetDataOptions): Promise<GetData> {
     const {
         contrast,
         cliFile,
@@ -28,7 +27,7 @@ export default async function getData(options: GetDataOptions): Promise<GetData>
         } else {
             screenshot = cliFile
         }
-        const { filePath } = await processImage({ contrast, isAndroid: browser.isAndroid = false, isIOS: browser.isIOS = false, ocrImagesPath, screenshot })
+        const { filePath } = await processImage({ contrast, isAndroid: browser.isAndroid, isIOS: browser.isIOS, ocrImagesPath, screenshot })
         let elementRectangles
         let croppedFilePath
 

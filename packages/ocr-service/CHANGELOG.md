@@ -1,5 +1,27 @@
 # @wdio/ocr-service
 
+## 2.1.1
+
+### Patch Changes
+
+# d76044f 🐛 Fix ERR_BUFFER_OUT_OF_BOUNDS for multiremote
+
+Functions in utils such as `getData.ts` used the global `browser`, but this is not browser is not the browser making for example the `ocrClick` function call when the we are running in the multiremote context. This could lead to `ERR_BUFFER_OUT_OF_BOUNDS` error. This release fixes that error.
+
+  # Committers: 1
+
+  - Chanatan Charnkijtawarush ([@ccharnkij](https://github.com/ccharnkij))
+
+## 2.1.0
+
+### Minor Changes
+
+- f5f8041: fix click duration for 0ms
+
+### Committers: 1
+
+- Fabien CELLIER ([@lacell75](https://github.com/lacell75))
+
 ## 2.0.0
 
 ### Major Changes

@@ -334,6 +334,148 @@ The URL where your Storybook instance is hosted.
 
 ## Contributing
 
+### Updating the packages
+
+You can update the packages with a simple CLI tool. Make sure you've installed all dependencies, you can then run
+
+```sh
+pnpm update.packages
+```
+
+This will trigger a CLI that will ask you the following questions
+
+```logs
+==========================
+🤖 Package update Wizard 🧙
+==========================
+
+? Which version target would you like to update to? (Minor|Latest)
+? Do you want to update the package.json files? (Y/n)
+? Do you want to remove all "node_modules" and reinstall dependencies? (Y/n)
+? Would you like reinstall the dependencies? (Y/n)
+```
+
+This will result in the following logs
+
+<details>
+    <summary>Open to see an example of the logs</summary>
+```logs
+==========================
+🤖 Package update Wizard 🧙
+==========================
+
+? Which version target would you like to update to? Minor
+? Do you want to update the package.json files? yes
+Updating root 'package.json' for minor updates...
+Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing...
+Using pnpm
+Upgrading /Users/wswebcreation/Git/wdio/visual-testing/package.json
+[====================] 38/38 100%
+
+@typescript-eslint/eslint-plugin ^8.7.0 → ^8.8.0
+@typescript-eslint/parser ^8.7.0 → ^8.8.0
+@typescript-eslint/utils ^8.7.0 → ^8.8.0
+@vitest/coverage-v8 ^2.1.1 → ^2.1.2
+vitest ^2.1.1 → ^2.1.2
+
+Run pnpm install to install new versions.
+Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/ocr-service...
+Using pnpm
+Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/ocr-service/package.json
+[====================] 11/11 100%
+
+All dependencies match the minor package versions :)
+Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-reporter...
+Using pnpm
+Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-reporter/package.json
+[====================] 11/11 100%
+
+eslint-config-next 14.2.13 → 14.2.14
+next 14.2.13 → 14.2.14
+
+Run pnpm install to install new versions.
+Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-service...
+Using pnpm
+Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-service/package.json
+[====================] 5/5 100%
+
+All dependencies match the minor package versions :)
+Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/webdriver-image-comparison...
+Using pnpm
+Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/webdriver-image-comparison/package.json
+[====================] 8/8 100%
+
+All dependencies match the minor package versions :)
+? Do you want to remove all "node_modules" and reinstall dependencies? yes
+Removing root dependencies in /Users/wswebcreation/Git/wdio/visual-testing...
+Removing dependencies in ocr-service...
+Removing dependencies in visual-reporter...
+Removing dependencies in visual-service...
+Removing dependencies in webdriver-image-comparison...
+? Would you like reinstall the dependencies? yes
+Installing dependencies in /Users/wswebcreation/Git/wdio/visual-testing...
+
+> @wdio/visual-testing-monorepo@ pnpm.install.workaround /Users/wswebcreation/Git/wdio/visual-testing
+> pnpm install --shamefully-hoist
+
+Scope: all 5 workspace projects
+Lockfile is up to date, resolution step is skipped
+Packages: +1274
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 1274, reused 1265, downloaded 0, added 1274, done
+
+dependencies:
+
+-   @wdio/ocr-service 2.0.0 <- packages/ocr-service
+-   @wdio/visual-service 6.0.0 <- packages/visual-service
+
+devDependencies:
+
+-   @changesets/cli 2.27.8
+-   @inquirer/prompts 5.5.0
+-   @tsconfig/node20 20.1.4
+-   @types/eslint 9.6.1
+-   @types/jsdom 21.1.7
+-   @types/node 20.16.4
+-   @types/react 18.3.5
+-   @types/react-dom 18.3.0
+-   @types/xml2js 0.4.14
+-   @typescript-eslint/eslint-plugin 8.8.0
+-   @typescript-eslint/parser 8.8.0
+-   @typescript-eslint/utils 8.8.0
+-   @vitest/coverage-v8 2.1.2
+-   @wdio/appium-service 9.1.2
+-   @wdio/cli 9.1.2
+-   @wdio/globals 9.1.2
+-   @wdio/local-runner 9.1.2
+-   @wdio/mocha-framework 9.1.2
+-   @wdio/sauce-service 9.1.2
+-   @wdio/shared-store-service 9.1.2
+-   @wdio/spec-reporter 9.1.2
+-   @wdio/types 9.1.2
+-   eslint 9.11.1
+-   eslint-plugin-import 2.30.0
+-   eslint-plugin-unicorn 55.0.0
+-   eslint-plugin-wdio 9.0.8
+-   husky 9.1.6
+-   jsdom 25.0.1
+-   npm-run-all2 6.2.3
+-   release-it 17.6.0
+-   rimraf 6.0.1
+-   saucelabs 8.0.0
+-   ts-node 10.9.2
+-   typescript 5.6.2
+-   vitest 2.1.2
+-   webdriverio 9.1.2
+
+. prepare$ husky
+└─ Done in 204ms
+Done in 9.5s
+All packages updated!
+
+````
+
+</details>
 ### Questions
 
 Please join our [Discord](https://discord.webdriver.io) Server if you have any questions or issues contributing to this project. Catch us contributors in the `🙏-contributing` channel.
@@ -400,7 +542,7 @@ First, a local baseline needs to be created. This can be done with:
 ```sh
 // With the webdriver protocol
 $ npm run test.local.init
-```
+````
 
 This command will create a folder called `localBaseline` that will hold all the baseline images.
 

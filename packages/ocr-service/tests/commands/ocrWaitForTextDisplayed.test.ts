@@ -17,8 +17,13 @@ vi.mock('../../src/commands/ocrGetElementPositionByText.js', () => ({
 }))
 
 describe('ocrWaitForTextDisplayed', () => {
-    beforeEach(() => {
+    let mockDriver
+
+    beforeEach(async () => {
         vi.clearAllMocks()
+
+        const { driver } = vi.mocked(await import('@wdio/globals'))
+        mockDriver = driver
     })
 
     it('successfully finds text before timeout', async () => {
@@ -43,7 +48,7 @@ describe('ocrWaitForTextDisplayed', () => {
 
         vi.mocked(ocrGetElementPositionByText).mockResolvedValue(ocrGetElementPositionByTextMock)
 
-        await expect(ocrWaitForTextDisplayed(ocrWaitForTextDisplayedOptions)).resolves.not.toThrow()
+        await expect(ocrWaitForTextDisplayed.bind(mockDriver)(ocrWaitForTextDisplayedOptions)).resolves.not.toThrow()
 
         const { driver } = await import('@wdio/globals')
         expect(driver.waitUntil).toHaveBeenCalled()

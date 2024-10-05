@@ -1,7 +1,6 @@
-import { browser } from '@wdio/globals'
 import { Key } from 'webdriverio'
 
-export default async function sendKeys(value: string, submitValue: boolean): Promise<void> {
+export default async function sendKeys(browser: WebdriverIO.Browser, value: string, submitValue: boolean): Promise<void> {
     const actionChain = browser.action('key');
 
     [...value].forEach((char: string) => {

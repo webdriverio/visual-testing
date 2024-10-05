@@ -63,7 +63,7 @@ describe('getData', () => {
         }
         vi.mocked(getScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
-        const result = await getData(options)
+        const result = await getData(browser, options)
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
@@ -89,7 +89,7 @@ describe('getData', () => {
         }
         vi.mocked(getScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
-        const result = await getData(options)
+        const result = await getData(browser, options)
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
@@ -116,7 +116,7 @@ describe('getData', () => {
         }
         vi.mocked(getScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
-        const result = await getData(options)
+        const result = await getData(browser, options)
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
@@ -144,7 +144,7 @@ describe('getData', () => {
         // @ts-ignore
         isRectanglesObject.mockReturnValue(false)
         browser.getElementRect = vi.fn().mockResolvedValue({ x: 10, y: 20, width: 300, height: 400 })
-        const result = await getData(options)
+        const result = await getData(browser, options)
 
         expect(isRectanglesObject).toHaveBeenCalledWith(options.haystack)
         expect(browser.getElementRect).toHaveBeenCalledWith('element123')
@@ -162,6 +162,6 @@ describe('getData', () => {
         }
         browser.takeScreenshot = vi.fn().mockRejectedValue(new Error('Failed to take screenshot'))
 
-        await expect(getData(options)).rejects.toThrow('Failed to take screenshot')
+        await expect(getData(browser, options)).rejects.toThrow('Failed to take screenshot')
     })
 })

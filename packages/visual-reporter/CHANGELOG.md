@@ -1,5 +1,43 @@
 # @wdio/visual-reporter
 
+## 0.2.0
+
+### Minor Changes
+
+#### Fix [522](https://github.com/webdriverio/visual-testing/issues/522): visual-reporter logs an error when there is no diff file
+
+The output contained a `diffFolderPath` when no diff was present. This resulted in an error in the logs which is fixed with this PR
+
+#### Fix [524](https://github.com/webdriverio/visual-testing/issues/524): Highlights are shown after re-render
+
+When a diff is highlighted and the page was re-rendered it also showed the highlighted box again. This was very confusing and annoying
+
+#### 💅 New Feature: Add ignore boxes on the canvas
+
+If ignore boxes are used then the canvas will also show them
+
+<img width="1847" alt="image" src="https://github.com/user-attachments/assets/45d34d53-becc-4652-8f9b-a259240c2589">
+
+#### 💅 New Feature: Add hover effects on the diff and ignore boxes
+
+When you now hover over a diff or ignore area you will now see that the box will be highlighted and has a text above it
+
+**Diff area**
+
+<img width="436" alt="image" src="https://github.com/user-attachments/assets/34728d87-8981-47c8-8f91-5c3d19431b27">
+
+**Ignore area**
+
+<img width="495" alt="image" src="https://github.com/user-attachments/assets/c8df6edc-ab9e-46e6-a09e-7d89d53b4a37">
+
+#### 💅 Update dependencies
+
+We've update all dependencies.
+
+### Committers: 1
+
+-   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 0.1.7
 
 ### NEW PACKAGE
