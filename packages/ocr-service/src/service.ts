@@ -104,7 +104,7 @@ export default class WdioOcrService {
             currentBrowser.addCommand(
                 commandName,
                 function (this: typeof currentBrowser, options) {
-                    return command({
+                    return command.bind(this)({
                         ...options,
                         contrast: options?.contrast || self._ocrContrast,
                         isTesseractAvailable,

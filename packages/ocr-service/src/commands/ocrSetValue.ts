@@ -1,9 +1,8 @@
-import { driver } from '@wdio/globals'
 import type { OcrSetValueOptions } from '../types.js'
 import sendKeys from '../utils/sendKeys.js'
 import ocrClickOnText from './ocrClickOnText.js'
 
-export default async function ocrSetValue(options: OcrSetValueOptions): Promise<void> {
+export default async function ocrSetValue(this: WebdriverIO.Browser, options: OcrSetValueOptions): Promise<void> {
     const {
         contrast,
         clickDuration,
@@ -18,7 +17,7 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
     } = options
 
     // 1. First click on the position of the text to make sure it is intractable
-    await ocrClickOnText({
+    await ocrClickOnText.bind(this)({
         contrast,
         clickDuration,
         haystack,
@@ -30,25 +29,25 @@ export default async function ocrSetValue(options: OcrSetValueOptions): Promise<
     })
 
     // 2. If Mobile then a keyboard might be shown
-    if (driver.isMobile) {
+    if (this.isMobile) {
         try {
             // Wait for 3 seconds for the keyboard to be shown
-            await driver.waitUntil(
-                async () => driver.isKeyboardShown(),
+            await this.waitUntil(
+                async () => this.isKeyboardShown(),
                 { timeout: 3 * 1000 })
         } catch (_ign) {
             // Keyboard is not shown
         }
     }
     // 3. Send the value to the active element
-    await sendKeys(value, submitValue)
+    await sendKeys(this, value, submitValue)
 
     // 4. If Mobile then hide the keyboard
-    if (driver.isMobile) {
+    if (this.isMobile) {
         try {
-            await driver.hideKeyboard()
-            await driver.waitUntil(
-                async () => !(await driver.isKeyboardShown()),
+            await this.hideKeyboard()
+            await this.waitUntil(
+                async () => !(await this.isKeyboardShown()),
                 { timeout: 3 * 1000 })
         } catch (_ign) {
             // Keyboard is not present or not hidden

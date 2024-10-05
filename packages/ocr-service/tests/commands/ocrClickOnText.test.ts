@@ -50,7 +50,7 @@ describe('ocrClickOnText', () => {
             ocrImagesPath: 'path/to/image.png',
             text: 'example',
         }
-        await ocrClickOnText(options)
+        await ocrClickOnText.bind(mockBrowser)(options)
 
         expect(ocrGetElementPositionByText).toHaveBeenCalledWith(options)
         expect(determineClickPoint).toHaveBeenCalledWith({ rectangles: { x: 100, y: 150 } })
@@ -74,7 +74,7 @@ describe('ocrClickOnText', () => {
             text: 'example',
         }
         mockBrowser.isMobile = true
-        await ocrClickOnText(options)
+        await ocrClickOnText.bind(mockBrowser)(options)
 
         expect(mockBrowser.action).toHaveBeenCalledWith('pointer', {
             parameters: { pointerType: 'touch' },
@@ -96,7 +96,7 @@ describe('ocrClickOnText', () => {
             text: 'example',
         }
         mockBrowser.isMobile = true
-        await ocrClickOnText(options)
+        await ocrClickOnText.bind(mockBrowser)(options)
 
         expect(mockBrowser.action).toHaveBeenCalledWith('pointer', {
             parameters: { pointerType: 'touch' },
@@ -114,7 +114,7 @@ describe('ocrClickOnText', () => {
             text: 'example',
         }
         mockBrowser.isMobile = true
-        await ocrClickOnText(options)
+        await ocrClickOnText.bind(mockBrowser)(options)
 
         expect(mockBrowser.action).toHaveBeenCalledWith('pointer', {
             parameters: { pointerType: 'touch' },
@@ -132,7 +132,7 @@ describe('ocrClickOnText', () => {
             text: 'example',
         }
         mockBrowser.isMobile = true
-        await ocrClickOnText(options)
+        await ocrClickOnText.bind(mockBrowser)(options)
 
         expect(mockBrowser.action).toHaveBeenCalledWith('pointer', {
             parameters: { pointerType: 'touch' },
@@ -150,7 +150,7 @@ describe('ocrClickOnText', () => {
             text: 'example',
         }
         mockBrowser.isMobile = true
-        await ocrClickOnText(options)
+        await ocrClickOnText.bind(mockBrowser)(options)
 
         expect(mockBrowser.action).toHaveBeenCalledWith('pointer', {
             parameters: { pointerType: 'touch' },

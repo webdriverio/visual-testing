@@ -53,14 +53,14 @@ describe('ocrSetValue', () => {
     })
 
     it('calls ocrClickOnText and sendKeys with the right parameters', async () => {
-        await ocrSetValue(options)
+        await ocrSetValue.bind(mockDriver)(options)
         const { submitValue, value, ...ocrClickOnTextOptions } = options
 
         expect(vi.mocked(ocrClickOnText)).toHaveBeenCalledWith(ocrClickOnTextOptions)
         expect(mockDriver.waitUntil).not.toBeCalled()
         expect(mockDriver.hideKeyboard).not.toBeCalled()
         expect(mockDriver.isKeyboardShown).not.toBeCalled()
-        expect(vi.mocked(sendKeys)).toHaveBeenCalledWith('test input', true)
+        expect(vi.mocked(sendKeys)).toHaveBeenCalledWith(mockDriver, 'test input', true)
     })
 
     it('should handle mobile-specific logic', async () => {
@@ -69,7 +69,7 @@ describe('ocrSetValue', () => {
             .mockResolvedValueOnce(true)
             .mockResolvedValueOnce(false)
 
-        await ocrSetValue(options)
+        await ocrSetValue.bind(mockDriver)(options)
 
         expect(mockDriver.waitUntil).toHaveBeenCalledTimes(2)
         expect(mockDriver.hideKeyboard).toHaveBeenCalledTimes(1)
@@ -84,7 +84,7 @@ describe('ocrSetValue', () => {
         })
 
         try {
-            await ocrSetValue(options)
+            await ocrSetValue.bind(mockDriver)(options)
             expect(true).toBe(true)
         } catch (_error) {
             throw new Error('The function should have handled the error internally and not throw an error')

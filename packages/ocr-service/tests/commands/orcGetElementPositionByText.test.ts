@@ -16,8 +16,13 @@ const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
 describe('ocrGetElementPositionByText', () => {
-    beforeEach(() => {
+    let mockDriver
+
+    beforeEach(async () => {
         vi.clearAllMocks()
+
+        const { driver } = vi.mocked(await import('@wdio/globals'))
+        mockDriver = driver
     })
 
     it('throws an error if no matches are found', async () => {
@@ -32,7 +37,7 @@ describe('ocrGetElementPositionByText', () => {
         vi.mocked(getTextPositions).mockResolvedValue([])
         vi.mocked(fuzzyFind).mockReturnValue([])
 
-        await expect(ocrGetElementPositionByText(data))
+        await expect(ocrGetElementPositionByText.bind(mockDriver)(data))
             .rejects.toThrow(`Visual OCR has failed to find the word '${data.text}' in the image`)
         expect(logWarnMock.mock.calls[0][0]).toContain(`No matches were found based on the word "${data.text}"`)
     })
@@ -59,7 +64,7 @@ describe('ocrGetElementPositionByText', () => {
             { item: mockTextPositions[0], score: 0.2, refIndex: 1  },
         ])
 
-        const result = await ocrGetElementPositionByText(data)
+        const result = await ocrGetElementPositionByText.bind(mockDriver)(data)
         expect(result.matchedString).toEqual('Webdriverlo?')
         expect(logInfoMock.mock.calls[0][0]).toEqual(`Multiple matches were found based on the word "${mockTextPositions[0].text}". The match "Webdriverlo?" with score "91.67%" will be used.`)
     })
@@ -84,7 +89,7 @@ describe('ocrGetElementPositionByText', () => {
             { item: mockTextPositions[0], score: 0, refIndex: 1  },
         ])
 
-        const result = await ocrGetElementPositionByText(data)
+        const result = await ocrGetElementPositionByText.bind(mockDriver)(data)
         expect(result.matchedString).toEqual(data.text)
         expect(logInfoMock.mock.calls[0][0]).toEqual(`We searched for the word "${data.text}" and found one match "${data.text}" with score "100%"`)
     })

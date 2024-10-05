@@ -27,7 +27,7 @@ describe('sendKeys', () => {
     })
 
     it('should send text with the correct action calls for a non iOS device', async () => {
-        await sendKeys('test input', false)
+        await sendKeys(mockBrowser, 'test input', false)
 
         expect(mockBrowser.action).toHaveBeenCalledWith('key')
         expect(mockBrowser.down).toHaveBeenCalledTimes(10)
@@ -37,7 +37,7 @@ describe('sendKeys', () => {
     })
 
     it('should send and submit text with the correct action calls for a non iOS device', async () => {
-        await sendKeys('test input', true)
+        await sendKeys(mockBrowser, 'test input', true)
 
         expect(mockBrowser.action).toHaveBeenCalledWith('key')
         expect(mockBrowser.down).toHaveBeenCalledTimes(11)
@@ -50,7 +50,7 @@ describe('sendKeys', () => {
 
     it('should send and submit text with the correct action calls for an iOS device', async () => {
         mockBrowser.isIOS = true
-        await sendKeys('test input', true)
+        await sendKeys(mockBrowser, 'test input', true)
 
         expect(mockBrowser.action).toHaveBeenCalledWith('key')
         expect(mockBrowser.down).toHaveBeenCalledTimes(11)

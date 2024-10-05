@@ -1,11 +1,10 @@
-import { browser } from '@wdio/globals'
 import ocrGetElementPositionByText from './ocrGetElementPositionByText.js'
 import { determineClickPoint } from '../utils/index.js'
 import type { OcrClickOnTextOptions } from '../types.js'
 import { drawTarget } from '../utils/imageProcessing.js'
 
-export default async function ocrClickOnText(options: OcrClickOnTextOptions): Promise<void> {
-    const element = await ocrGetElementPositionByText(options)
+export default async function ocrClickOnText(this: WebdriverIO.Browser, options: OcrClickOnTextOptions): Promise<void> {
+    const element = await ocrGetElementPositionByText.bind(this)(options)
     let { x, y } = determineClickPoint({ rectangles: element.dprPosition })
     const { relativePosition } = options
 
@@ -22,7 +21,7 @@ export default async function ocrClickOnText(options: OcrClickOnTextOptions): Pr
     const actionType = browser.isMobile ? 'touch' : 'mouse'
     const clickDuration = options.clickDuration ?? 500
 
-    await browser
+    await this
         .action('pointer', {
             parameters: { pointerType: actionType }
         })
