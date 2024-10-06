@@ -1,6 +1,6 @@
 {
   "name": "webdriver-image-comparison",
-  "version": "7.1.0",
+  "version": "7.2.0",
   "author": "Wim Selles - wswebcreation",
   "description": "An image compare module that can be used for different NodeJS Test automation frameworks that support the webdriver protocol",
   "keywords": [],
