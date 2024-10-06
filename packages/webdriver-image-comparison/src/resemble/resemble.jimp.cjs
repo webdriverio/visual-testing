@@ -93,7 +93,7 @@ const isNode = function () {
         // cnvs.height = height;
         // return cnvs;
 
-        return new Jimp(width, height)
+        return new Jimp({ width, height })
     }
 
     const oldGlobalSettings = {}
@@ -1131,52 +1131,52 @@ const isNode = function () {
         api.setupCustomTolerance(customTolerance)
     }
 
-    resemble.compare = function (image1, image2, options, cb) {
-        let callback
-        let opt
+    resemble.compare = function (image1, image2, options) {
+        return new Promise((resolve, reject) => {
+            let opt
 
-        if (typeof options === 'function') {
-            callback = options
-            opt = {}
-        } else {
-            callback = cb
-            opt = options || {}
-        }
-
-        const res = resemble(image1)
-        let compare
-
-        if (opt.output) {
-            res.outputSettings(opt.output)
-        }
-
-        compare = res.compareTo(image2)
-
-        if (opt.returnEarlyThreshold) {
-            compare.setReturnEarlyThreshold(opt.returnEarlyThreshold)
-        }
-
-        if (opt.scaleToSameSize) {
-            compare.scaleToSameSize()
-        }
-
-        const toleranceSettings = opt.tolerance || {}
-        if (typeof opt.ignore === 'string') {
-            applyIgnore(compare, opt.ignore, toleranceSettings)
-        } else if (opt.ignore && opt.ignore.forEach) {
-            opt.ignore.forEach(function (v) {
-                applyIgnore(compare, v, toleranceSettings)
-            })
-        }
-
-        compare.onComplete(function (data) {
-            if (data.error) {
-                callback(data.error)
+            if (typeof options !== 'object') {
+                opt = {}
             } else {
-                callback(null, data)
+                opt = options
             }
+
+            const res = resemble(image1)
+            let compare
+
+            if (opt.output) {
+                res.outputSettings(opt.output)
+            }
+
+            compare = res.compareTo(image2)
+
+            if (opt.returnEarlyThreshold) {
+                compare.setReturnEarlyThreshold(opt.returnEarlyThreshold)
+            }
+
+            if (opt.scaleToSameSize) {
+                compare.scaleToSameSize()
+            }
+
+            const toleranceSettings = opt.tolerance || {}
+            if (typeof opt.ignore === 'string') {
+                applyIgnore(compare, opt.ignore, toleranceSettings)
+            } else if (opt.ignore && opt.ignore.forEach) {
+                opt.ignore.forEach(function (v) {
+                    applyIgnore(compare, v, toleranceSettings)
+                })
+            }
+
+            compare.onComplete(function (data) {
+                if (data.error) {
+                    reject(data.error)
+                } else {
+                    resolve(data)
+                }
+            })
         })
     }
+
 
     resemble.outputSettings = setGlobalOutputSettings
     return resemble
