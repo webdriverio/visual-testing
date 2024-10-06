@@ -9,7 +9,7 @@ Reason: The node-canvas library was producing a lot of issues due to system depe
         the original resemble.js file.
 */
 
-const { Jimp } = require('jimp')
+const { Jimp, JimpMime } = require('jimp')
 
 const naiveFallback = function () {
     // ISC (c) 2011-2019 https://github.com/medikoo/es5-ext/blob/master/global.js
@@ -765,7 +765,7 @@ const isNode = function () {
 
                 // context.putImageData(imgd, 0, barHeight);
 
-                return hiddenCanvas.getBase64(Jimp.MIME_PNG)
+                return hiddenCanvas.getBase64(JimpMime.png)
             }
 
             if (!compareOnly) {
@@ -777,7 +777,7 @@ const isNode = function () {
                         hiddenCanvas.composite(img2, imageWidth, 0)
                         hiddenCanvas.composite(hiddenCanvas, imageWidth * 2, 0)
                     }
-                    return hiddenCanvas.getBuffer(Jimp.MIME_PNG)
+                    return hiddenCanvas.getBuffer(JimpMime.png)
                 }
             }
         }
