@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.3.0
+
+### Minor Changes
+
+- 786248e: Upgrade Jimp to the latest major
+
 ## 0.2.0
 
 ### Minor Changes
@@ -36,7 +42,7 @@ We've update all dependencies.
 
 ### Committers: 1
 
--   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+- Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
 
 ## 0.1.7
 
