@@ -12,7 +12,7 @@ vi.mock('jimp', () => {
         getPixelColor: vi.fn(() => 0xFFFFFFFF),
         greyscale: vi.fn().mockReturnThis(),
         setPixelColor: vi.fn(),
-        write: vi.fn().mockResolvedValue('foo'), // Jimp v1 method
+        write: vi.fn().mockResolvedValue('foo'),
     }
     const mockTargetJimpInstance = {
         ...mockJimpInstance,
