@@ -1,5 +1,5 @@
 import logger from '@wdio/logger'
-import Jimp from 'jimp'
+import { intToRGBA, Jimp, rgbaToInt } from 'jimp'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { DrawHighlightedWords, ProcessImage, ProcessImageOptions, TargetOptions } from '../types.js'
@@ -15,7 +15,7 @@ export async function processImage({ contrast, elementRectangles, isAndroid, isI
     const timestamp = new Date().getTime()
     const platform = isAndroid ? 'android' : isIOS ? 'ios' : 'desktop'
     let fileName = `${platform}-${timestamp}.png`
-    let filePath = join(ocrImagesPath, fileName)
+    let filePath: `${string}.${string}` = join(ocrImagesPath, fileName) as `${string}.${string}`
     const screenshotSize = { width: image.bitmap.width, height: image.bitmap.height }
 
     if (elementRectangles) {
@@ -25,12 +25,13 @@ export async function processImage({ contrast, elementRectangles, isAndroid, isI
         const cropWidth = Math.min(elementRectangles.width, screenshotSize.width - cropX)
         const cropHeight = Math.min(elementRectangles.height, screenshotSize.height - cropY)
 
-        image.crop(cropX, cropY, cropWidth, cropHeight)
+        // image.crop(cropX, cropY, cropWidth, cropHeight)
+        image.crop({ w: cropWidth, h: cropHeight, x: cropX, y: cropY })
         fileName = `${platform}-${timestamp}-cropped.png`
-        filePath = join(ocrImagesPath, fileName)
+        filePath = join(ocrImagesPath, fileName) as `${string}.${string}`
     }
 
-    await image.writeAsync(filePath)
+    await image.write(filePath)
 
     return { filePath }
 }
@@ -45,7 +46,7 @@ export async function drawTarget({ filePath, targetX, targetY }: TargetOptions) 
         const xPosition = targetX - (targetImage.bitmap.width / 2)
         const yPosition = targetY - (targetImage.bitmap.height / 2)
         sourceImage.composite(targetImage, xPosition, yPosition)
-        await sourceImage.writeAsync(filePath)
+        await sourceImage.write(filePath)
     } catch (error) {
         log.error('Failed to draw target on image:', error)
     }
@@ -65,7 +66,7 @@ export async function drawHighlightedWords({ filePath, highlights }: DrawHighlig
                 for (let x = left; x < left + width; x++) {
                     // Get the current pixel color
                     const currentColor = image.getPixelColor(x, y)
-                    const rgba = Jimp.intToRGBA(currentColor)
+                    const rgba = intToRGBA(currentColor)
                     // Calculate new color values using simple alpha blending
                     const newR = (highlightColor.r * highlightColor.a) + (rgba.r * (1 - highlightColor.a))
                     const newG = (highlightColor.g * highlightColor.a) + (rgba.g * (1 - highlightColor.a))
@@ -73,12 +74,12 @@ export async function drawHighlightedWords({ filePath, highlights }: DrawHighlig
                     const newA = rgba.a // Use original alpha to maintain image integrity
 
                     // Set the new pixel color
-                    image.setPixelColor(Jimp.rgbaToInt(newR, newG, newB, newA), x, y)
+                    image.setPixelColor(rgbaToInt(newR, newG, newB, newA), x, y)
                 }
             }
         })
 
-        await image.writeAsync(filePath)
+        await image.write(filePath)
     } catch (error) {
         log.error('Failed to highlight words on image:', error)
     }

@@ -32,8 +32,8 @@
     "@wdio/logger": "^9.1.0",
     "@wdio/types": "^9.1.2",
     "fuse.js": "^7.0.0",
-    "@inquirer/prompts": "5.5.0",
-    "jimp": "^0.22.12",
+    "@inquirer/prompts": "6.0.1",
+    "jimp": "^1.6.0",
     "node-tesseract-ocr": "^2.2.1",
     "tesseract.js": "^5.1.1",
     "xml2js": "^0.6.2"
