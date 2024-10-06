@@ -107,7 +107,7 @@ describe('processImage', () => {
         const mockJimpInstance = await Jimp.read(Buffer.from(options.screenshot, 'base64'))
         const result = await processImage(options)
 
-        expect(mockJimpInstance.crop).toHaveBeenCalledWith({ x: 5, y: 10, w: 25, h: 20 }) // Updated for V1 crop method
+        expect(mockJimpInstance.crop).toHaveBeenCalledWith({ x: 5, y: 10, w: 25, h: 20 })
         expect(mockJimpInstance.write).toHaveBeenCalledWith(expect.stringContaining(options.ocrImagesPath))
         expect(result.filePath).toContain(`${options.ocrImagesPath}/desktop-`)
     })
