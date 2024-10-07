@@ -13,6 +13,7 @@ export default defineConfig({
             exclude: [
                 'packages/service/src/types.ts',
                 'packages/visual-reporter/',
+                'packages/visual-remix-reporter/',
                 '.eslintrc.cjs',
                 'tests/**',
                 '**/*.interfaces.ts',

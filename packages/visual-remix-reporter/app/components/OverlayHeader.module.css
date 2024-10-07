@@ -1,0 +1,122 @@
+.header {
+    background-color: var(--header-background);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+}
+
+.headerTextWrapper {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    min-height: 80px;
+    border-bottom: 1px solid rgba(var(--foreground-rgb), 0.5);
+}
+
+.headerContent {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    flex: row;
+    align-items: center;
+}
+
+.testContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 16px;
+}
+
+.description {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin-bottom: 0.25rem;
+}
+
+.test {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.controls {
+    padding: 16px;
+}
+
+.controls button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    outline: none;
+    margin: 0 8px;
+    font-size: 16px;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+    border-radius: var(--border-radius-small);
+}
+
+.controls button:focus {
+    outline: none;
+}
+
+.controls button:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 16px;
+    border-left: 1px solid rgba(var(--foreground-rgb), 0.5);
+    color: var(--black);
+}
+
+.instanceDataWrapper {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    border-bottom: 1px solid rgba(var(--foreground-rgb), 0.5);
+}
+
+.baselineContainer,
+.actualContainer {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: center;
+    padding: 16px;
+}
+
+.actualContainer {
+    border-left: 1px solid rgba(var(--foreground-rgb), 0.5);
+}
+
+.baselineContainer h3,
+.actualContainer h3 {
+    margin-right: 8px;
+}
+
+.divider {
+    margin: 0px 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .closeButton {
+        color: var(--white);
+    }
+}

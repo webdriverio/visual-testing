@@ -4,3 +4,4 @@ packages:
     - "packages/visual-service"
     - "packages/ocr-service"
     - "packages/visual-reporter"
+    - "packages/visual-remix-reporter"
