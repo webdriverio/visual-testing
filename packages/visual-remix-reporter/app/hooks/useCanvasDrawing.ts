@@ -170,12 +170,12 @@ export const useCanvasDrawing = ({
                     Math.abs(box.bottom - translatedBox.bottom) < 1
                 ) {
                     const existingCircles = document.querySelectorAll(
-                        `.${styles['highlight-circle']}`
+                        `.${styles.highlightCircle}`
                     )
                     existingCircles.forEach((circle) => circle.remove())
 
                     const circle = document.createElement('div')
-                    circle.className = styles['highlight-circle']
+                    circle.className = styles.highlightCircle
                     circle.style.left = `${
                         canvas.offsetLeft + (box.left + box.right) / 2
                     }px`

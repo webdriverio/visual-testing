@@ -22,7 +22,7 @@
     }
 }
 
-.highlight-circle {
+.highlightCircle {
     position: absolute;
     border-radius: var(--border-radius-50);
     background-color: rgba(var(--primary-color-rgb), 1);
