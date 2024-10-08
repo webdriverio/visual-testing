@@ -1,9 +1,9 @@
-import React, { useRef, useEffect } from "react";
-import styles from "./Canvas.module.css";
-import { BoundingBox } from "../types";
-import { useImageLoader } from "../hooks/useImageLoader";
-import { useTransform } from "../hooks/useTransform";
-import { useCanvasDrawing } from "../hooks/useCanvasDrawing";
+import React, { useRef, useEffect } from 'react'
+import styles from './Canvas.module.css'
+import type { BoundingBox } from '../types'
+import { useImageLoader } from '../hooks/useImageLoader'
+import { useTransform } from '../hooks/useTransform'
+import { useCanvasDrawing } from '../hooks/useCanvasDrawing'
 
 interface CanvasProps {
   imageSrc: string;
@@ -17,44 +17,44 @@ interface CanvasProps {
 }
 
 const Canvas: React.FC<CanvasProps> = ({
-  imageSrc,
-  transform,
-  setTransform,
-  diffBoxes = [],
-  highlightedBox = null,
-  ignoredBoxes = [],
-}) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageRef = useImageLoader(imageSrc, () => {});
-
-  const { handleMouseDown, handleWheel } = useTransform(
+    imageSrc,
     transform,
-    setTransform
-  );
+    setTransform,
+    diffBoxes = [],
+    highlightedBox = null,
+    ignoredBoxes = [],
+}) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const imageRef = useImageLoader(imageSrc, () => {})
 
-  useCanvasDrawing({imageRef, canvasRef, transform, diffBoxes, highlightedBox, ignoredBoxes});
+    const { handleMouseDown, handleWheel } = useTransform(
+        transform,
+        setTransform
+    )
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      canvas.addEventListener("wheel", handleWheel, { passive: false });
-    }
+    useCanvasDrawing({ imageRef, canvasRef, transform, diffBoxes, highlightedBox, ignoredBoxes })
 
-    return () => {
-      if (canvas) {
-        canvas.removeEventListener("wheel", handleWheel);
-      }
-    };
-  }, [handleWheel]);
+    useEffect(() => {
+        const canvas = canvasRef.current
+        if (canvas) {
+            canvas.addEventListener('wheel', handleWheel, { passive: false })
+        }
 
-  const classes = [
-    diffBoxes.length > 0 ? "diffContainer" : "",
-    styles.canvas,
-  ].join(" ");
+        return () => {
+            if (canvas) {
+                canvas.removeEventListener('wheel', handleWheel)
+            }
+        }
+    }, [handleWheel])
 
-  return (
-    <canvas ref={canvasRef} onMouseDown={handleMouseDown} className={classes} />
-  );
-};
+    const classes = [
+        diffBoxes.length > 0 ? 'diffContainer' : '',
+        styles.canvas,
+    ].join(' ')
 
-export default Canvas;
+    return (
+        <canvas ref={canvasRef} onMouseDown={handleMouseDown} className={classes} />
+    )
+}
+
+export default Canvas

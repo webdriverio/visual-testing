@@ -1,18 +1,18 @@
-import { FaEdge, FaSafari, FaFirefox, FaChrome } from "react-icons/fa6";
-import { FaQuestionCircle } from "react-icons/fa";
-import React from "react";
+import { FaEdge, FaSafari, FaFirefox, FaChrome } from 'react-icons/fa6'
+import { FaQuestionCircle } from 'react-icons/fa'
+import React from 'react'
 
-export type BrowserName = "chrome" | "firefox" | "microsoftedge" | "safari";
+export type BrowserName = 'chrome' | 'firefox' | 'microsoftedge' | 'safari';
 
 const browserIcons: Record<
   BrowserName,
-  React.ComponentType<React.ComponentProps<"svg">>
+  React.ComponentType<React.ComponentProps<'svg'>>
 > = {
-  chrome: FaChrome,
-  firefox: FaFirefox,
-  microsoftedge: FaEdge,
-  safari: FaSafari,
-};
+    chrome: FaChrome,
+    firefox: FaFirefox,
+    microsoftedge: FaEdge,
+    safari: FaSafari,
+}
 
 interface AllowedIconProps {
   color?: string;
@@ -22,29 +22,29 @@ interface AllowedIconProps {
 }
 
 const normalizeBrowserName = (name: string): BrowserName | undefined => {
-  const lowercasedName = name.toLowerCase();
+    const lowercasedName = name.toLowerCase()
 
-  if (lowercasedName.includes("edge")) return "microsoftedge";
-  if (lowercasedName.includes("safari")) return "safari";
-  if (lowercasedName.includes("firefox")) return "firefox";
-  if (lowercasedName.includes("chrome")) return "chrome";
+    if (lowercasedName.includes('edge')) {return 'microsoftedge'}
+    if (lowercasedName.includes('safari')) {return 'safari'}
+    if (lowercasedName.includes('firefox')) {return 'firefox'}
+    if (lowercasedName.includes('chrome')) {return 'chrome'}
 
-  return undefined;
-};
+    return undefined
+}
 
 interface BrowserIconProps
   extends AllowedIconProps,
-    React.ComponentProps<"svg"> {
+    React.ComponentProps<'svg'> {
   browserName: string;
 }
 
 const BrowserIcon: React.FC<BrowserIconProps> = ({ browserName, ...props }) => {
-  const normalizedBrowserName = normalizeBrowserName(browserName);
-  const IconComponent = normalizedBrowserName
-    ? browserIcons[normalizedBrowserName]
-    : FaQuestionCircle;
+    const normalizedBrowserName = normalizeBrowserName(browserName)
+    const IconComponent = normalizedBrowserName
+        ? browserIcons[normalizedBrowserName]
+        : FaQuestionCircle
 
-  return <IconComponent {...props} />;
-};
+    return <IconComponent {...props} />
+}
 
-export default BrowserIcon;
+export default BrowserIcon

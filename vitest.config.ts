@@ -30,7 +30,10 @@ export default defineConfig({
          * not to ESM ported packages
          */
         exclude: [
-            'dist', '.idea', '.git', '.cache',
+            'dist',
+            '.idea',
+            '.git',
+            '.cache',
             '**/node_modules/**',
         ]
     }
