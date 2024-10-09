@@ -13,6 +13,7 @@ tmp/
 temp/
 out/
 public/static/report/
+demo/
 
 # Configuration files and scripts
 .env

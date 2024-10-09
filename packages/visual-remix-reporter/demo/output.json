@@ -5296,9 +5296,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
               "fileName": "fullPage-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
               "size": {
                 "actual": {
@@ -10609,9 +10609,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/android_googleapi_emulator/fullPage-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
               "fileName": "fullPage-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
               "size": {
                 "actual": {
@@ -16420,9 +16420,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/ipad_pro_(12.9_inch)_(5th_generation)_simulator/fullPage-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/ipad_pro_(12.9_inch)_(5th_generation)_simulator/fullPage-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/ipad_pro_(12.9_inch)_(5th_generation)_simulator/fullPage-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/ipad_pro_(12.9_inch)_(5th_generation)_simulator/fullPage-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/ipad_pro_(12.9_inch)_(5th_generation)_simulator/fullPage-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/ipad_pro_(12.9_inch)_(5th_generation)_simulator/fullPage-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
               "fileName": "fullPage-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
               "size": {
                 "actual": {
@@ -28447,9 +28447,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/iphone_15_simulator/fullPage-Iphone15Portrait17-393x852.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/iphone_15_simulator/fullPage-Iphone15Portrait17-393x852.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/iphone_15_simulator/fullPage-Iphone15Portrait17-393x852.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/iphone_15_simulator/fullPage-Iphone15Portrait17-393x852.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/iphone_15_simulator/fullPage-Iphone15Portrait17-393x852.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/iphone_15_simulator/fullPage-Iphone15Portrait17-393x852.png",
               "fileName": "fullPage-Iphone15Portrait17-393x852.png",
               "size": {
                 "actual": {
@@ -28659,9 +28659,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
               "fileName": "screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
               "size": {
                 "actual": {
@@ -28866,9 +28866,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/android_googleapi_emulator/screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
               "fileName": "screenshot-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
               "size": {
                 "actual": {
@@ -30903,9 +30903,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
               "fileName": "screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
               "size": {
                 "actual": {
@@ -30966,8 +30966,8 @@
               ]
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitNativeWebScreenshot12.0-1002x1601.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitNativeWebScreenshot12.0-1002x1601.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitNativeWebScreenshot12.0-1002x1601.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/galaxy_tab_s7_plus_googleapi_emulator/screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitNativeWebScreenshot12.0-1002x1601.png",
               "fileName": "screenshot-EmulatorGalaxyTabS7PlusGoogleAPIPortraitNativeWebScreenshot12.0-1002x1601.png",
               "size": {
                 "actual": {
@@ -31024,8 +31024,8 @@
               ]
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/ipad_(10th_generation)_simulator/screenshot-Ipad10thGenerationPortrait17-820x1180.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/ipad_(10th_generation)_simulator/screenshot-Ipad10thGenerationPortrait17-820x1180.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/ipad_(10th_generation)_simulator/screenshot-Ipad10thGenerationPortrait17-820x1180.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/ipad_(10th_generation)_simulator/screenshot-Ipad10thGenerationPortrait17-820x1180.png",
               "fileName": "screenshot-Ipad10thGenerationPortrait17-820x1180.png",
               "size": {
                 "actual": {
@@ -31082,8 +31082,8 @@
               ]
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/ipad_mini_(5th_generation)_simulator/screenshot-IpadMini5thGenerationPortrait17-768x1024.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/ipad_mini_(5th_generation)_simulator/screenshot-IpadMini5thGenerationPortrait17-768x1024.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/ipad_mini_(5th_generation)_simulator/screenshot-IpadMini5thGenerationPortrait17-768x1024.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/ipad_mini_(5th_generation)_simulator/screenshot-IpadMini5thGenerationPortrait17-768x1024.png",
               "fileName": "screenshot-IpadMini5thGenerationPortrait17-768x1024.png",
               "size": {
                 "actual": {
@@ -31140,8 +31140,8 @@
               ]
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/ipad_pro_(12.9_inch)_(5th_generation)_simulator/screenshot-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/ipad_pro_(12.9_inch)_(5th_generation)_simulator/screenshot-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/ipad_pro_(12.9_inch)_(5th_generation)_simulator/screenshot-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/ipad_pro_(12.9_inch)_(5th_generation)_simulator/screenshot-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
               "fileName": "screenshot-IpadPro12.9Inch5thGenerationPortrait17-1024x1366.png",
               "size": {
                 "actual": {
@@ -31198,8 +31198,8 @@
               ]
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/iphone_14_pro_max_simulator/screenshot-Iphone14ProMaxPortrait16-430x932.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/iphone_14_pro_max_simulator/screenshot-Iphone14ProMaxPortrait16-430x932.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/iphone_14_pro_max_simulator/screenshot-Iphone14ProMaxPortrait16-430x932.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/iphone_14_pro_max_simulator/screenshot-Iphone14ProMaxPortrait16-430x932.png",
               "fileName": "screenshot-Iphone14ProMaxPortrait16-430x932.png",
               "size": {
                 "actual": {
@@ -31256,8 +31256,8 @@
               ]
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/iphone_15_pro_max_simulator/screenshot-Iphone15ProMaxPortrait17-430x932.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/iphone_15_pro_max_simulator/screenshot-Iphone15ProMaxPortrait17-430x932.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/iphone_15_pro_max_simulator/screenshot-Iphone15ProMaxPortrait17-430x932.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/iphone_15_pro_max_simulator/screenshot-Iphone15ProMaxPortrait17-430x932.png",
               "fileName": "screenshot-Iphone15ProMaxPortrait17-430x932.png",
               "size": {
                 "actual": {
@@ -31314,8 +31314,8 @@
               ]
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/iphone_15_simulator/screenshot-Iphone15Portrait17-393x852.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/iphone_15_simulator/screenshot-Iphone15Portrait17-393x852.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/iphone_15_simulator/screenshot-Iphone15Portrait17-393x852.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/iphone_15_simulator/screenshot-Iphone15Portrait17-393x852.png",
               "fileName": "screenshot-Iphone15Portrait17-393x852.png",
               "size": {
                 "actual": {
@@ -31358,8 +31358,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
               "fileName": "wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver13.0-384x640.png",
               "size": {
                 "actual": {
@@ -31397,8 +31397,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
               "fileName": "wdioLogo-EmulatorAndroidGoogleAPIPortraitChromeDriver14.0-384x640.png",
               "size": {
                 "actual": {
@@ -31455,8 +31455,8 @@
               ]
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/android_googleapi_emulator/wdioLogo-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
               "fileName": "wdioLogo-EmulatorAndroidGoogleAPIPortraitNativeWebScreenshot14.0-384x640.png",
               "size": {
                 "actual": {
@@ -31494,8 +31494,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/galaxy_tab_s7_plus_googleapi_emulator/wdioLogo-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/galaxy_tab_s7_plus_googleapi_emulator/wdioLogo-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/galaxy_tab_s7_plus_googleapi_emulator/wdioLogo-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/galaxy_tab_s7_plus_googleapi_emulator/wdioLogo-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
               "fileName": "wdioLogo-EmulatorGalaxyTabS7PlusGoogleAPIPortraitChromeDriver13.0-1002x1601.png",
               "size": {
                 "actual": {
@@ -31723,9 +31723,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_chrome/viewportScreenshot-chrome-latest-1-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_chrome/viewportScreenshot-chrome-latest-1-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_chrome/viewportScreenshot-chrome-latest-1-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_chrome/viewportScreenshot-chrome-latest-1-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_chrome/viewportScreenshot-chrome-latest-1-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_chrome/viewportScreenshot-chrome-latest-1-1366x768.png",
               "fileName": "viewportScreenshot-chrome-latest-1-1366x768.png",
               "size": {
                 "actual": {
@@ -31947,9 +31947,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_chrome/viewportScreenshot-chrome-latest-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_chrome/viewportScreenshot-chrome-latest-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_chrome/viewportScreenshot-chrome-latest-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_chrome/viewportScreenshot-chrome-latest-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_chrome/viewportScreenshot-chrome-latest-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_chrome/viewportScreenshot-chrome-latest-1366x768.png",
               "fileName": "viewportScreenshot-chrome-latest-1366x768.png",
               "size": {
                 "actual": {
@@ -32189,9 +32189,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_firefox/viewportScreenshot-Firefox_latest-1-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_firefox/viewportScreenshot-Firefox_latest-1-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_firefox/viewportScreenshot-Firefox_latest-1-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_firefox/viewportScreenshot-Firefox_latest-1-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_firefox/viewportScreenshot-Firefox_latest-1-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_firefox/viewportScreenshot-Firefox_latest-1-1366x768.png",
               "fileName": "viewportScreenshot-Firefox_latest-1-1366x768.png",
               "size": {
                 "actual": {
@@ -32431,9 +32431,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_firefox/viewportScreenshot-Firefox_latest-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_firefox/viewportScreenshot-Firefox_latest-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_firefox/viewportScreenshot-Firefox_latest-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_firefox/viewportScreenshot-Firefox_latest-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_firefox/viewportScreenshot-Firefox_latest-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_firefox/viewportScreenshot-Firefox_latest-1366x768.png",
               "fileName": "viewportScreenshot-Firefox_latest-1366x768.png",
               "size": {
                 "actual": {
@@ -32655,9 +32655,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1-1366x768.png",
               "fileName": "viewportScreenshot-Microsoft_Edge_latest-1-1366x768.png",
               "size": {
                 "actual": {
@@ -32879,9 +32879,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_microsoftedge/viewportScreenshot-Microsoft_Edge_latest-1366x768.png",
               "fileName": "viewportScreenshot-Microsoft_Edge_latest-1366x768.png",
               "size": {
                 "actual": {
@@ -32989,9 +32989,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_safari/viewportScreenshot-macOS12-16-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_safari/viewportScreenshot-macOS12-16-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_safari/viewportScreenshot-macOS12-16-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_safari/viewportScreenshot-macOS12-16-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_safari/viewportScreenshot-macOS12-16-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_safari/viewportScreenshot-macOS12-16-1366x768.png",
               "fileName": "viewportScreenshot-macOS12-16-1366x768.png",
               "size": {
                 "actual": {
@@ -33291,9 +33291,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_safari/viewportScreenshot-macOS13-17-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_safari/viewportScreenshot-macOS13-17-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_safari/viewportScreenshot-macOS13-17-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_safari/viewportScreenshot-macOS13-17-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_safari/viewportScreenshot-macOS13-17-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_safari/viewportScreenshot-macOS13-17-1366x768.png",
               "fileName": "viewportScreenshot-macOS13-17-1366x768.png",
               "size": {
                 "actual": {
@@ -33339,8 +33339,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_chrome/wdioLogo-chrome-latest-1-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_chrome/wdioLogo-chrome-latest-1-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_chrome/wdioLogo-chrome-latest-1-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_chrome/wdioLogo-chrome-latest-1-1366x768.png",
               "fileName": "wdioLogo-chrome-latest-1-1366x768.png",
               "size": {
                 "actual": {
@@ -33377,8 +33377,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_chrome/wdioLogo-chrome-latest-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_chrome/wdioLogo-chrome-latest-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_chrome/wdioLogo-chrome-latest-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_chrome/wdioLogo-chrome-latest-1366x768.png",
               "fileName": "wdioLogo-chrome-latest-1366x768.png",
               "size": {
                 "actual": {
@@ -33415,8 +33415,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_firefox/wdioLogo-Firefox_latest-1-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_firefox/wdioLogo-Firefox_latest-1-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_firefox/wdioLogo-Firefox_latest-1-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_firefox/wdioLogo-Firefox_latest-1-1366x768.png",
               "fileName": "wdioLogo-Firefox_latest-1-1366x768.png",
               "size": {
                 "actual": {
@@ -33453,8 +33453,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_firefox/wdioLogo-Firefox_latest-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_firefox/wdioLogo-Firefox_latest-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_firefox/wdioLogo-Firefox_latest-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_firefox/wdioLogo-Firefox_latest-1366x768.png",
               "fileName": "wdioLogo-Firefox_latest-1366x768.png",
               "size": {
                 "actual": {
@@ -33491,8 +33491,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_microsoftedge/wdioLogo-Microsoft_Edge_latest-1-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_microsoftedge/wdioLogo-Microsoft_Edge_latest-1-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_microsoftedge/wdioLogo-Microsoft_Edge_latest-1-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_microsoftedge/wdioLogo-Microsoft_Edge_latest-1-1366x768.png",
               "fileName": "wdioLogo-Microsoft_Edge_latest-1-1366x768.png",
               "size": {
                 "actual": {
@@ -33529,8 +33529,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_microsoftedge/wdioLogo-Microsoft_Edge_latest-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_microsoftedge/wdioLogo-Microsoft_Edge_latest-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_microsoftedge/wdioLogo-Microsoft_Edge_latest-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_microsoftedge/wdioLogo-Microsoft_Edge_latest-1366x768.png",
               "fileName": "wdioLogo-Microsoft_Edge_latest-1366x768.png",
               "size": {
                 "actual": {
@@ -33567,8 +33567,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_safari/wdioLogo-macOS12-16-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_safari/wdioLogo-macOS12-16-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_safari/wdioLogo-macOS12-16-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_safari/wdioLogo-macOS12-16-1366x768.png",
               "fileName": "wdioLogo-macOS12-16-1366x768.png",
               "size": {
                 "actual": {
@@ -33605,8 +33605,8 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_safari/wdioLogo-macOS13-17-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_safari/wdioLogo-macOS13-17-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_safari/wdioLogo-macOS13-17-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_safari/wdioLogo-macOS13-17-1366x768.png",
               "fileName": "wdioLogo-macOS13-17-1366x768.png",
               "size": {
                 "actual": {
@@ -35455,9 +35455,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_chrome/fullPage-chrome-latest-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_chrome/fullPage-chrome-latest-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_chrome/fullPage-chrome-latest-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_chrome/fullPage-chrome-latest-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_chrome/fullPage-chrome-latest-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_chrome/fullPage-chrome-latest-1366x768.png",
               "fileName": "fullPage-chrome-latest-1366x768.png",
               "size": {
                 "actual": {
@@ -38126,9 +38126,9 @@
               "ignoredBoxes": []
             },
             "fileData": {
-              "actualFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/actual/desktop_firefox/tabbable-Firefox_latest-1366x768.png",
-              "baselineFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/baseline/desktop_firefox/tabbable-Firefox_latest-1366x768.png",
-              "diffFilePath": "/Users/wimselles/Git/wdio/visual-testing/packages/visual-remix-reporter/public/static/report/diff/desktop_firefox/tabbable-Firefox_latest-1366x768.png",
+              "actualFilePath": "/{{vtr-demo-folder}}/actual/desktop_firefox/tabbable-Firefox_latest-1366x768.png",
+              "baselineFilePath": "/{{vtr-demo-folder}}/baseline/desktop_firefox/tabbable-Firefox_latest-1366x768.png",
+              "diffFilePath": "/{{vtr-demo-folder}}/diff/desktop_firefox/tabbable-Firefox_latest-1366x768.png",
               "fileName": "tabbable-Firefox_latest-1366x768.png",
               "size": {
                 "actual": {

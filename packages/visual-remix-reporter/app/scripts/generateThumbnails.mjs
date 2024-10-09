@@ -1,7 +1,11 @@
 import fs from 'node:fs'
-import path from 'node:path'
+import { basename, dirname, extname, join, normalize } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const demoFolderPath = join(__dirname, '..', '..', 'demo')
 const DEBUG_MODE = process.env.VISUAL_REPORT_DEBUG_LEVEL === 'debug'
 
 async function resizeImage(inputPath, outputPath) {
@@ -33,11 +37,12 @@ async function resizeImage(inputPath, outputPath) {
 
 async function createThumbnailForFile(filePath) {
     try {
-        const ext = path.extname(filePath)
-        const baseName = path.basename(filePath, ext)
+        const newFilePath = filePath.includes('{{vtr-demo-folder}}') ? normalize(filePath.replace('{{vtr-demo-folder}}', demoFolderPath)) : filePath
+        const ext = extname(newFilePath)
+        const baseName = basename(newFilePath, ext)
         const thumbnailName = 'VHTMLR-THUMBNAIL'
-        const outputFilePath = path.join(
-            path.dirname(filePath),
+        const outputFilePath = join(
+            dirname(newFilePath),
             `${baseName}-${thumbnailName}${ext}`
         )
 
@@ -45,18 +50,16 @@ async function createThumbnailForFile(filePath) {
             return
         }
 
-        await resizeImage(filePath, outputFilePath)
+        await resizeImage(newFilePath, outputFilePath)
     } catch (err) {
         if (DEBUG_MODE) {
-            console.error(`Error creating thumbnail for ${filePath}: ${err.message}`)
+            console.error(`Error creating thumbnail for ${newFilePath}: ${err.message}`)
         }
     }
 }
 
 async function generateThumbnails() {
-    const outputJsonPath =
-    process.env.NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH ||
-    'public/.tmp/fail/actual/output.json'
+    const outputJsonPath = process.env.VISUAL_REPORT_OUTPUT_JSON_PATH || join(demoFolderPath, 'output.json')
 
     try {
         const data = fs.readFileSync(outputJsonPath, 'utf-8')
