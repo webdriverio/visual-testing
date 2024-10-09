@@ -1,15 +1,12 @@
 
-import { useLoaderData } from '@remix-run/react'
 import { useState } from 'react'
 import Description from '~/components/Description'
 import Header from '~/components/Header'
 import LoadingContainer from '~/components/LoadingContainer'
 import UseFilteredDescriptionData from '~/hooks/filterSnapshotData'
-import styles from '../styles/index.module.css'
-import type { SelectedOptions, SnapshotDataLoader, SnapshotInstanceData } from '~/types'
-import { getSnapshotDataLoader } from '~/loaders/getSnapshotData'
-
-export const loader = getSnapshotDataLoader
+import styles from '~/styles/index.module.css'
+import type { SelectedOptions, SnapshotInstanceData } from '~/types'
+import GetSnapshotData from '~/hooks/getSnapshotData'
 
 const Index = () => {
     const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({
@@ -19,7 +16,7 @@ const Index = () => {
         platform: [],
         status: 'all',
     })
-    const { descriptionData, error, instanceData } = useLoaderData<SnapshotDataLoader>()
+    const { descriptionData, error, instanceData } = GetSnapshotData()
     const handleSelectedOptions = (
         selectedOptions: string[] | keyof SelectedOptions | string,
         type: keyof typeof selectedOptions | string

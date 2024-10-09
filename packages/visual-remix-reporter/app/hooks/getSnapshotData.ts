@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import type { DescriptionData, SnapshotInstanceData } from '../types'
-// This is done because NextJS can't handle ESLINT flat configs yet
-
-import { sortSnapshotData } from '../utils/sortSnapshotData'
+import type { DescriptionData, SnapshotInstanceData } from '~/types'
+import { sortSnapshotData } from '~/utils/sortSnapshotData'
 
 const GetSnapshotData = () => {
     const [descriptionData, setDescriptionData] = useState<DescriptionData[]>([])
@@ -13,11 +11,8 @@ const GetSnapshotData = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // @TODO: Fix this
-                // For some reason this data url needs to here, otherwise it will not work in combination with the route
-                // and it will not pick up the correct output.json file that is being passed in as a env variable
-                // This also only happens during build and serve time and is a temporary fix and needs to be done properly
-                const response = await fetch('/api/data?outputPath=string}')
+                const basePath = import.meta.env.BASE_URL || ''
+                const response = await fetch(`${basePath}static/report/output.json`)
                 if (!response.ok) {
                     throw new Error('Failed to fetch data')
                 }

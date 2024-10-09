@@ -6,6 +6,7 @@ import BrowserIcon from './BrowserIcon'
 import type { PlatformName } from './PlatformIcon'
 import PlatformIcon from './PlatformIcon'
 import Overlay from './Overlay'
+import { getRelativePath } from '~/utils/files'
 
 interface MethodItemProps {
   data: MethodData;
@@ -44,12 +45,10 @@ const MethodItem: React.FC<MethodItemProps> = ({ data }) => {
     browser?.version === 'not-known' ? notKnown : browser?.version
     const device = deviceName || notKnown
     const platformVersion = platform.version || notKnown
-
-    // Construct the API URL for serving the image
     const imagePath = (
         parseFloat(misMatchPercentage) > 0
-            ? `/api/image?filePath=${encodeURIComponent(diffFilePath)}`
-            : `/api/image?filePath=${encodeURIComponent(actualFilePath)}`
+            ? getRelativePath(diffFilePath)
+            : getRelativePath(actualFilePath)
     ).replace('.png', '-VHTMLR-THUMBNAIL.png')
 
     return (

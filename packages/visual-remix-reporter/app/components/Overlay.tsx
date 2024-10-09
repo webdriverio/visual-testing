@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from './Overlay.module.css'
 import type { MethodData } from '../types'
 import OverlayHeader from './OverlayHeader'
 import Canvas from './Canvas'
 import { useChangeNavigation } from '../hooks/useChangeNavigation'
+import { getRelativePath } from '~/utils/files'
 
 interface OverlayProps {
   data: MethodData;
@@ -15,13 +16,8 @@ const Overlay: React.FC<OverlayProps> = ({ data, onClose }) => {
         boundingBoxes: { diffBoundingBoxes = [], ignoredBoxes=[] },
         fileData: { actualFilePath, baselineFilePath },
     } = data
-    const baselineImagePath = `/api/image?filePath=${encodeURIComponent(
-        baselineFilePath
-    )}`
-    const actualImagePath = `/api/image?filePath=${encodeURIComponent(
-        actualFilePath
-    )}`
-
+    const baselineImagePath = getRelativePath(baselineFilePath)
+    const actualImagePath = getRelativePath(actualFilePath)
     const {
         transform,
         setTransform,
@@ -29,6 +25,14 @@ const Overlay: React.FC<OverlayProps> = ({ data, onClose }) => {
         handlePrevChange,
         handleNextChange,
     } = useChangeNavigation(diffBoundingBoxes, actualImagePath)
+    useEffect(() => {
+        const handlePopState = (_event: PopStateEvent) => onClose()
+
+        window.addEventListener('popstate', handlePopState)
+        window.history.pushState(null, '')
+
+        return () => window.removeEventListener('popstate', handlePopState)
+    }, [onClose])
 
     return (
         <div className={styles.overlay}>
