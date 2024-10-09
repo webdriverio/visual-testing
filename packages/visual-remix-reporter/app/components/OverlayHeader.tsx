@@ -1,5 +1,6 @@
 import React from 'react'
-import type { MethodData } from '../types'
+import { FiThumbsUp } from 'react-icons/fi'
+import type { MethodData } from '~/types'
 import type { BrowserName } from './BrowserIcon'
 import BrowserIcon from './BrowserIcon'
 import type { PlatformName } from './PlatformIcon'
@@ -51,7 +52,7 @@ const OverlayHeader: React.FC<OverlayHeaderProps> = ({
                         </div>
                     </div>
                     <div className={styles.controls}>
-                        {totalChanges > 0 && (
+                        {totalChanges > 0 ? (
                             <>
                                 <button onClick={onPrevChange}>&lt;</button>
                                 <span>
@@ -61,6 +62,8 @@ const OverlayHeader: React.FC<OverlayHeaderProps> = ({
                                 </span>
                                 <button onClick={onNextChange}>&gt;</button>
                             </>
+                        ) : (
+                            <span><FiThumbsUp /> No changes detected.</span>
                         )}
                     </div>
                 </div>

@@ -271,6 +271,12 @@ export const useCanvasDrawing = ({
             handleResize()
         }
     }, [canvasRef, handleResize, imageRef])
+    useEffect(() => {
+        window.addEventListener('resize', handleResize)
+
+        return () => window.removeEventListener('resize', handleResize)
+
+    }, [handleResize])
 
     return transformedDiffBoxesRef
 }

@@ -25,13 +25,23 @@ const Overlay: React.FC<OverlayProps> = ({ data, onClose }) => {
         handlePrevChange,
         handleNextChange,
     } = useChangeNavigation(diffBoundingBoxes, actualImagePath)
+
     useEffect(() => {
-        const handlePopState = (_event: PopStateEvent) => onClose()
+        const handlePopState = () => onClose()
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                onClose()
+            }
+        }
 
         window.addEventListener('popstate', handlePopState)
+        window.addEventListener('keydown', handleKeyDown)
         window.history.pushState(null, '')
 
-        return () => window.removeEventListener('popstate', handlePopState)
+        return () => {
+            window.removeEventListener('popstate', handlePopState)
+            window.removeEventListener('keydown', handleKeyDown)
+        }
     }, [onClose])
 
     return (
