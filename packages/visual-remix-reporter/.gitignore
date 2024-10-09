@@ -1,6 +1,33 @@
-node_modules
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
 
-/.cache
+# testing
+/coverage
+
+# production
 /build
-.env
+
+# public report data
 public/static/report
+
+# cache
+/.cache
+
+# misc
+.DS_Store
+*.pem
+dist
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo

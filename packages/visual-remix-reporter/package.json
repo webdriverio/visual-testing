@@ -1,14 +1,32 @@
 {
   "name": "visual-remix-reporter",
-  "private": true,
-  "sideEffects": false,
+  "author": "Wim Selles - wswebcreation",
+  "description": "Visual Testing HTML Report for the @wdio/visual-service module",
+  "version": "0.3.0",
+  "license": "MIT",
+  "homepage": "https://webdriver.io/docs/visual-testing",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webdriverio/visual-testing.git"
+  },
   "type": "module",
+  "bin": {
+    "wdio-visual-reporter": "./dist/cli.js"
+  },
   "scripts": {
-    "build": "remix vite:build",
-    "dev": "remix vite:dev",
-    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
+    "build": "run-s clean build:*",
+    "build:report": "remix vite:build",
+    "build:scripts": "tsc -p tsconfig.scripts.json",
+    "clean": "rimraf coverage build *.tsbuildinfo",
+    "dev": "npm run generate-thumbnails && run-p watch:scripts dev:remix",
+    "dev:remix": "remix vite:dev",
+    "generate-thumbnails": "node ./app/scripts/generateThumbnails.mjs",
+    "test:lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "watch": "run-s clean watch:*",
+    "watch:dev": "npm run dev",
+    "watch:scripts": "tsc -p tsconfig.scripts.json --watch"
   },
   "dependencies": {
     "@inquirer/prompts": "^6.0.1",
