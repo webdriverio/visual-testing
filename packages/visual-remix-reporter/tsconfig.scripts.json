@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./dist",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "target": "ES6",
+    "rootDir": "./scripts",
+    "jsx": "preserve"
+  },
+  "include": ["scripts/**/*"],
+  "exclude": ["node_modules"]
+}

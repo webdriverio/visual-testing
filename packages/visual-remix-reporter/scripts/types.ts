@@ -1,0 +1,86 @@
+// @todo: This is ugly, this needs to come from the webdriver-image-comparison package or
+// visual testing type package
+export interface BoundingBox {
+  bottom: number;
+  right: number;
+  left: number;
+  top: number;
+}
+
+export interface IgnoreBoxes extends BoundingBox {}
+
+export interface InstanceData {
+  app?: string;
+  browser?: { name: string; version: string };
+  deviceName?: string;
+  platform: { name: string; version: string };
+}
+
+export interface BoundingBoxes {
+  diffBoundingBoxes: BoundingBox[];
+  ignoredBoxes: IgnoreBoxes[];
+}
+
+export interface ImageSize {
+  width: number;
+  height: number;
+}
+
+export interface Sizes {
+  actual: ImageSize;
+  baseline: ImageSize;
+  diff?: ImageSize;
+}
+
+export interface FileData {
+  actualFilePath: string;
+  baselineFilePath: string;
+  diffFilePath: string;
+  fileName: string;
+  size: Sizes;
+}
+
+export interface MethodData {
+  description: string;
+  test: string;
+  tag: string;
+  instanceData: InstanceData;
+  commandName: string;
+  framework: string;
+  boundingBoxes: BoundingBoxes;
+  fileData: FileData;
+  misMatchPercentage: string;
+  rawMisMatchPercentage: number;
+}
+
+export interface TestData {
+  test: string;
+  data: MethodData[];
+}
+
+export interface DescriptionData {
+  description: string;
+  data: TestData[];
+}
+
+export interface SnapshotInstanceData {
+  app?: string[];
+  browser?: { name: string; version: string }[];
+  deviceName?: string[];
+  platform: { name: string; version: string }[];
+}
+
+export interface SnapshotData {
+  descriptionData: DescriptionData[];
+  instanceData: SnapshotInstanceData;
+}
+
+export type StatusFilter = 'all' | 'passed' | 'failed';
+
+export interface SelectedOptions {
+  app: string[];
+  browser: string[];
+  device: string[];
+  platform: string[];
+  status: StatusFilter;
+}
