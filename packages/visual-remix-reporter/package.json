@@ -20,7 +20,7 @@
     "clean": "rimraf coverage build *.tsbuildinfo",
     "dev": "npm run script:prepare.report && run-p watch:scripts dev:remix",
     "dev:remix": "remix vite:dev",
-    "script:prepare.report": "node ./app/scripts/prepareReport.mjs",
+    "script:prepare.report": "node ./app/scripts/prepareReportAssets.mjs",
     "test:lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
