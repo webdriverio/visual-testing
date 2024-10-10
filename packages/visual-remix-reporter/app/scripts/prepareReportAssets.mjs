@@ -184,23 +184,23 @@ async function generateReportAssets({ outputJsonPath, reportJsonPath }) {
                         // 3b. We will copy the baseline, actual and diff images to the report folder
                         //     and generate thumbnails for the actual and diff images
                         if (fileData?.baselineFilePath) {
-                            fileData.baselineFilePath = parseFilePath({ parentPath: reportPath, filePath: fileData.baselineFilePath })
                             const originalBaselineFilePath = parseFilePath({ parentPath: demoFolderPath, filePath: fileData.original_baselineFilePath })
                             const baselineReportFilePath = getDestinationFilePath({ filePath: originalBaselineFilePath, subFolder: 'baseline' })
+                            fileData.baselineFilePath = baselineReportFilePath
                             copyFileToReportFolder({ filePath: originalBaselineFilePath, destinationFolder: baselineReportFilePath })
                         }
                         if (fileData?.actualFilePath) {
-                            fileData.actualFilePath = parseFilePath({ parentPath: reportPath, filePath: fileData.actualFilePath })
                             const originalActualFilePath = parseFilePath({ parentPath: demoFolderPath, filePath: fileData.original_actualFilePath })
                             const actualReportFilePath = getDestinationFilePath({ filePath: originalActualFilePath, subFolder: 'actual' })
+                            fileData.actualFilePath = actualReportFilePath
                             copyFileToReportFolder({ filePath: originalActualFilePath, destinationFolder: actualReportFilePath })
 
                             await createThumbnailForFile(actualReportFilePath)
                         }
                         if (fileData?.diffFilePath) {
-                            fileData.diffFilePath = parseFilePath({ parentPath:reportPath, filePath:fileData.diffFilePath })
                             const originalDiffFilePath = parseFilePath({ parentPath: demoFolderPath, filePath: fileData.original_diffFilePath })
                             const diffReportFilePath = getDestinationFilePath({ filePath: originalDiffFilePath, subFolder: 'diff' })
+                            fileData.diffFilePath = diffReportFilePath
                             copyFileToReportFolder({ filePath: originalDiffFilePath, destinationFolder: diffReportFilePath })
 
                             await createThumbnailForFile(diffReportFilePath)
