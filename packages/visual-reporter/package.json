@@ -34,7 +34,6 @@
     "@remix-run/react": "^2.12.1",
     "@remix-run/serve": "^2.12.1",
     "isbot": "^4.1.0",
-    "next": "14.2.14",
     "ora": "^8.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -42,7 +41,8 @@
     "react-select": "^5.8.1",
     "rimraf": "^6.0.1",
     "npm-run-all2": "^6.2.3",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "vite": "^5.1.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.12.1",
@@ -60,7 +60,6 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.1.6",
-    "vite": "^5.1.0",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "engines": {
