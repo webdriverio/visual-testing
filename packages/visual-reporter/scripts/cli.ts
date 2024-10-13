@@ -56,8 +56,6 @@ async function main() {
 
     process.env.VISUAL_REPORT_OUTPUT_JSON_PATH = filePath
 
-    console.log('VISUAL_REPORT_OUTPUT_JSON_PATH = ', process.env.VISUAL_REPORT_OUTPUT_JSON_PATH)
-
     //
     // Check if the user wants to run in debug mode
     const runInDebugMode = await confirm({
