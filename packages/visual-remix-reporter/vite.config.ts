@@ -7,7 +7,7 @@ const baseName = process.env.GITHUB_PAGES === 'true' ? '/visual-testing/' : ''
 export default defineConfig({
     plugins: [
         remix({
-            basename: baseName,
+            ...(baseName && { basename: baseName }),
             future: {
                 v3_fetcherPersist: true,
                 v3_relativeSplatPath: true,
@@ -17,7 +17,7 @@ export default defineConfig({
         }),
         tsconfigPaths(),
     ],
-    base: baseName,
+    ...(baseName && { base: baseName }),
     css: {
         modules: {
             localsConvention: 'camelCaseOnly',
