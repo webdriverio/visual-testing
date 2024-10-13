@@ -45,4 +45,4 @@ https://github.com/user-attachments/assets/eeb22692-928c-4734-a49b-0e22655d2a1d
 https://github.com/user-attachments/assets/9cdfec36-e1ff-4b48-a842-23f3f7d5768e
 
 > [!NOTE]
-> Created with a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+> Created with a [Remix](https://remix.run/) project .

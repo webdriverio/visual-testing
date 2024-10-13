@@ -11,8 +11,9 @@ coverage/
 # Build and temporary directories
 tmp/
 temp/
-# .next/
 out/
+public/static/report/
+demo/
 
 # Configuration files and scripts
 .env

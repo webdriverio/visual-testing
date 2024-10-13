@@ -1,24 +1,5 @@
-import { copyFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs'
-import { join, resolve } from 'node:path'
-
-export function copyDirectory(src: string, dest: string) {
-    if (!existsSync(dest)) {
-        mkdirSync(dest, { recursive: true })
-    }
-
-    const entries = readdirSync(src, { withFileTypes: true })
-
-    for (const entry of entries) {
-        const srcPath = join(src, entry.name)
-        const destPath = join(dest, entry.name)
-
-        if (entry.isDirectory()) {
-            copyDirectory(srcPath, destPath)
-        } else {
-            copyFileSync(srcPath, destPath)
-        }
-    }
-}
+import { readdirSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 export function listItems({
     folderPath,

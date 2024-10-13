@@ -1,15 +1,10 @@
 #!/usr/bin/env node
 import { confirm, input, select } from '@inquirer/prompts'
-import {
-    existsSync,
-    mkdirSync,
-    readFileSync
-} from 'node:fs'
-import { dirname, join, resolve } from 'node:path'
+import { existsSync, readFileSync, rmSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import ora from 'ora'
-import { copyDirectory } from './utils/fileHandling.js'
 import { chooseItems } from './utils/inquirerUtils.js'
 import { cleanUpEnvironmentVariables, findAvailablePort } from './utils/cliUtils.js'
 import { CONFIG_HELPER_INTRO } from './utils/constants.js'
@@ -22,6 +17,7 @@ async function main() {
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = dirname(__filename)
     const visualReporterProjectRoot = resolve(__dirname, '..')
+    const buildFolder = resolve(visualReporterProjectRoot, 'build')
     const currentPath = process.cwd()
 
     console.log(CONFIG_HELPER_INTRO)
@@ -58,21 +54,9 @@ async function main() {
         }
     }
 
-    process.env.NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH = filePath
+    process.env.VISUAL_REPORT_OUTPUT_JSON_PATH = filePath
 
-    //
-    // Choose the report output folder
-    const reportFolderChoice = await select<{ method: 'explore' | 'type' }>({
-        message: 'Where do you want the Visual Report to be created?',
-        choices: [
-            { name: 'Use a "file explorer"', value: { method: 'explore' } },
-            { name: 'Type the file path manually', value: { method: 'type' } },
-        ],
-    })
-
-    const reportPath = await (reportFolderChoice.method === 'explore' ? chooseItems({ currentPath }) : input({
-        message: 'Please enter the file path:',
-    }))
+    console.log('VISUAL_REPORT_OUTPUT_JSON_PATH = ', process.env.VISUAL_REPORT_OUTPUT_JSON_PATH)
 
     //
     // Check if the user wants to run in debug mode
@@ -84,46 +68,38 @@ async function main() {
         process.env.VISUAL_REPORT_DEBUG_LEVEL = 'debug'
     }
 
-    const reporterPath = join(reportPath, 'report')
-
     //
     // Generate the thumbnails
-    const thumbnailSpinner = ora('Generating thumbnails...\n').start()
+    const thumbnailSpinner = ora('Prepare report assets...\n').start()
     try {
-        execSync('npm run generate-thumbnails', {
+        execSync('npm run script:prepare.report', {
             stdio: 'inherit',
             cwd: visualReporterProjectRoot,
         })
-        thumbnailSpinner.succeed('Successfully generated the thumbnails.')
+        thumbnailSpinner.succeed('Successfully generated the report assets.')
     } catch (_error) {
         if (runInDebugMode){
-            console.log('Failed to generate thumbnails = ', _error)
+            console.log('Failed generating the report assets = ', _error)
         }
         thumbnailSpinner.fail('Failed to generate thumbnails.')
     }
 
     //
     // Copy the report to the specified folder
-    const copyReportSpinner = ora(
-        `Copying report to ${reporterPath}...\n`
+    const buildReportSpinner = ora(
+        'Building the report'
     ).start()
     try {
-        if (!existsSync(reportPath)) {
-            mkdirSync(reportPath, { recursive: true })
-        }
-        copyDirectory(
-            join(visualReporterProjectRoot, '.next'),
-            join(reporterPath, '.next')
-        )
-        copyDirectory(
-            join(visualReporterProjectRoot, 'public'),
-            join(reporterPath, 'public')
-        )
-        copyReportSpinner.succeed(
-            `Build output copied successfully to "${reporterPath}".`
-        )
+        // First remove the build folder if it exists
+        existsSync(buildFolder) && rmSync(buildFolder, { recursive: true })
+        execSync('npm run build', {
+            stdio: 'inherit',
+            cwd: visualReporterProjectRoot,
+        })
+
+        buildReportSpinner.succeed('Building the report was successful')
     } catch (error) {
-        copyReportSpinner.fail(`Failed to copy the output to "${reporterPath}".`)
+        buildReportSpinner.fail(`Failed to build the report. Error: ${error}`)
         throw error
     }
 
@@ -143,16 +119,20 @@ async function main() {
         )
         const availablePort = await findAvailablePort(Number(serverPort))
 
-        console.log('Starting the Next.js server...')
-        execSync(`NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH=${filePath} npx next start ${reporterPath} -p ${availablePort}`, {
-            stdio: 'inherit',
-            cwd: reporterPath,
-        })
+        console.log('Starting the report server...')
+        try {
+            execSync(`npx vite preview --port ${availablePort}`, {
+                stdio: 'inherit',
+                cwd: visualReporterProjectRoot,
+            })
+        } catch (_error) {
+            console.log('\nManually stopped the server by pressing Ctrl + C')
+        }
     } else {
         console.log(
             '\nServer not started. You can start it manually later using the following command:'
         )
-        console.log(`NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH=${filePath} npx next start ${reporterPath} -p ${serverPort}\n`)
+        console.log(`npx vite preview --port ${serverPort}\n`)
         cleanUpEnvironmentVariables()
 
         process.exit(0)
