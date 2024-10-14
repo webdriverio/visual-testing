@@ -2,11 +2,6 @@ name: Deploy Visual Reporter to GitHub Pages
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to deploy'
-        required: true
-        default: 'main'
 
 permissions:
   contents: read
@@ -27,7 +22,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        
+
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@v4
@@ -48,13 +43,13 @@ jobs:
           pnpm build
           pnpm script:prepare.report
         env:
-          GITHUB_PAGES: 'true'
+          GITHUB_PAGES: "true"
       - name: ⚙️ Setup Pages
         uses: actions/configure-pages@v5
       - name: 📤 Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'build/client'
+          path: "build/client"
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
