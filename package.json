@@ -83,6 +83,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.2",
-    "webdriverio": "^9.1.2"
+    "webdriverio": "^9.2.1"
   }
 }
