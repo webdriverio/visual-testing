@@ -24,6 +24,10 @@ export const config = {
 
 For more information, please refer to the WebdriverIO Visual Testing [documentation](https://webdriver.io/docs/visual-testing).
 
+## Demo
+
+You can find a demo of the WebdriverIO Visual Testing Reporter on [GitHub Pages](https://webdriverio.github.io/visual-testing/)
+
 ## Installation
 
 The easiest way is to keep `@wdio/visual-reporter` as a dev-dependency in your `package.json`, via:
@@ -38,7 +42,7 @@ To build the report you can call the CLI with `npx @wdio/visual-reporter` and an
 
 ### The CLI
 
-https://github.com/user-attachments/assets/eeb22692-928c-4734-a49b-0e22655d2a1d
+https://github.com/user-attachments/assets/fdd8a838-29c0-4235-9bac-fff0269e292e
 
 ### The Visual Reporter
 
