@@ -132,7 +132,7 @@ async function main() {
     if (startServer) {
         console.log('Starting the report server...')
         try {
-            execSync(`npx sirv-cli ${reporterPath}`, {
+            execSync(`npx sirv ${reporterPath}`, {
                 stdio: 'inherit',
                 cwd: visualReporterProjectRoot,
             })
@@ -143,7 +143,7 @@ async function main() {
         console.log(
             '\nServer not started. You can start it manually later using the following command:'
         )
-        console.log(`npx sirv-cli ${reporterPath}\n`)
+        console.log(`npx sirv ${reporterPath}\n`)
         cleanUpEnvironmentVariables()
 
         process.exit(0)
