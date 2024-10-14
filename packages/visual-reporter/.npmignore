@@ -12,8 +12,11 @@ coverage/
 tmp/
 temp/
 out/
-public/static/report/
+public/
+build/static/report/
 demo/
+app/
+scripts/
 
 # Configuration files and scripts
 .env
