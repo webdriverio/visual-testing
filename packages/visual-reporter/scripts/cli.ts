@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 import { confirm, input, select } from '@inquirer/prompts'
-import { existsSync, readFileSync, rmSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
+import { existsSync, mkdirSync, readFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import ora from 'ora'
 import { chooseItems } from './utils/inquirerUtils.js'
-import { cleanUpEnvironmentVariables, findAvailablePort } from './utils/cliUtils.js'
+import { cleanUpEnvironmentVariables } from './utils/cliUtils.js'
 import { CONFIG_HELPER_INTRO } from './utils/constants.js'
 import { validateOutputJson } from './utils/validateOutput.js'
+import { copyDirectory } from './utils/fileHandling.js'
 
 async function main() {
     //
@@ -17,8 +18,8 @@ async function main() {
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = dirname(__filename)
     const visualReporterProjectRoot = resolve(__dirname, '..')
-    const buildFolder = resolve(visualReporterProjectRoot, 'build')
     const currentPath = process.cwd()
+    const isLocalDev = process.env.VISUAL_REPORT_LOCAL_DEV === 'true'
 
     console.log(CONFIG_HELPER_INTRO)
 
@@ -57,6 +58,23 @@ async function main() {
     process.env.VISUAL_REPORT_OUTPUT_JSON_PATH = filePath
 
     //
+    // Choose the report output folder
+    const reportFolderChoice = await select<{ method: 'explore' | 'type' }>({
+        message: 'Where do you want the Visual Report to be created?',
+        choices: [
+            { name: 'Use a "file explorer"', value: { method: 'explore' } },
+            { name: 'Type the file path manually', value: { method: 'type' } },
+        ],
+    })
+
+    const reportPath = await (reportFolderChoice.method === 'explore' ? chooseItems({ currentPath }) : input({
+        message: 'Please enter the file path:',
+    }))
+
+    const reporterPath = join(reportPath, 'report')
+    process.env.VISUAL_REPORT_REPORTER_FOLDER = reporterPath
+
+    //
     // Check if the user wants to run in debug mode
     const runInDebugMode = await confirm({
         message: 'Would you like to run in debug mode?',
@@ -64,6 +82,29 @@ async function main() {
 
     if (runInDebugMode) {
         process.env.VISUAL_REPORT_DEBUG_LEVEL = 'debug'
+    }
+
+    if (!isLocalDev) {
+        //
+        // Copy the report to the specified folder
+        const copyReportSpinner = ora(
+            `Copying report to ${reporterPath}...\n`
+        ).start()
+        try {
+            if (!existsSync(reporterPath)) {
+                mkdirSync(reporterPath, { recursive: true })
+            }
+            copyDirectory(
+                join(visualReporterProjectRoot, 'build', 'client'),
+                reporterPath
+            )
+            copyReportSpinner.succeed(
+                `Build output copied successfully to "${reporterPath}".`
+            )
+        } catch (error) {
+            copyReportSpinner.fail(`Failed to copy the output to "${reporterPath}".`)
+            throw error
+        }
     }
 
     //
@@ -83,43 +124,15 @@ async function main() {
     }
 
     //
-    // Copy the report to the specified folder
-    const buildReportSpinner = ora(
-        'Building the report'
-    ).start()
-    try {
-        // First remove the build folder if it exists
-        existsSync(buildFolder) && rmSync(buildFolder, { recursive: true })
-        execSync('npm run build', {
-            stdio: 'inherit',
-            cwd: visualReporterProjectRoot,
-        })
-
-        buildReportSpinner.succeed('Building the report was successful')
-    } catch (error) {
-        buildReportSpinner.fail(`Failed to build the report. Error: ${error}`)
-        throw error
-    }
-
-    //
     // Check if the user wants to start the server and if so, start the server on the specified port
     const startServer = await confirm({
         message: 'Would you like to start the server to show the report?',
     })
 
-    let serverPort = 3000
     if (startServer) {
-        serverPort = Number(
-            await input({
-                message: 'Please enter a custom server port:',
-                default: '3000',
-            })
-        )
-        const availablePort = await findAvailablePort(Number(serverPort))
-
         console.log('Starting the report server...')
         try {
-            execSync(`npx vite preview --port ${availablePort}`, {
+            execSync(`npx sirv-cli ${reporterPath}`, {
                 stdio: 'inherit',
                 cwd: visualReporterProjectRoot,
             })
@@ -130,7 +143,7 @@ async function main() {
         console.log(
             '\nServer not started. You can start it manually later using the following command:'
         )
-        console.log(`npx vite preview --port ${serverPort}\n`)
+        console.log(`npx sirv-cli ${reporterPath}\n`)
         cleanUpEnvironmentVariables()
 
         process.exit(0)

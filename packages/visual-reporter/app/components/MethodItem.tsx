@@ -6,7 +6,6 @@ import BrowserIcon from './BrowserIcon.js'
 import type { PlatformName } from './PlatformIcon.js'
 import PlatformIcon from './PlatformIcon.js'
 import Overlay from './Overlay.js'
-import { getRelativePath } from '~/utils/files'
 
 interface MethodItemProps {
   data: MethodData;
@@ -18,7 +17,7 @@ const MethodItem: React.FC<MethodItemProps> = ({ data }) => {
     const {
         commandName,
         instanceData: { browser, deviceName, platform },
-        fileData: { actualFilePath, diffFilePath },
+        fileData: { actualThumbnail, diffThumbnail },
         misMatchPercentage,
         tag,
     } = data
@@ -45,11 +44,9 @@ const MethodItem: React.FC<MethodItemProps> = ({ data }) => {
     browser?.version === 'not-known' ? notKnown : browser?.version
     const device = deviceName || notKnown
     const platformVersion = platform.version || notKnown
-    const imagePath = (
-        parseFloat(misMatchPercentage) > 0
-            ? getRelativePath(diffFilePath)
-            : getRelativePath(actualFilePath)
-    ).replace('.png', '-VHTMLR-THUMBNAIL.png')
+    const imagePath = parseFloat(misMatchPercentage) > 0
+        ? diffThumbnail as string
+        : actualThumbnail as string
 
     return (
         <>

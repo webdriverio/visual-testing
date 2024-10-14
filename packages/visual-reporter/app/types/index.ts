@@ -41,11 +41,16 @@ export interface Sizes {
 }
 
 export interface FileData {
-  actualFilePath: string;
-  baselineFilePath: string;
-  diffFilePath: string;
-  fileName: string;
-  size: Sizes;
+    actualFilePath: string;
+    actualThumbnail?: string;
+    baselineFilePath: string;
+    diffFilePath: string;
+    diffThumbnail?: string;
+    fileName: string;
+    original_actualFilePath?: string;
+    original_baselineFilePath?: string;
+    original_diffFilePath?: string;
+    size: Sizes;
 }
 
 export interface MethodData {

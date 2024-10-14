@@ -4,7 +4,6 @@ import type { MethodData } from '../types/index.js'
 import OverlayHeader from './OverlayHeader.js'
 import Canvas from './Canvas.js'
 import { useChangeNavigation } from '../hooks/useChangeNavigation.js'
-import { getRelativePath } from '~/utils/files'
 
 interface OverlayProps {
   data: MethodData;
@@ -16,15 +15,13 @@ const Overlay: React.FC<OverlayProps> = ({ data, onClose }) => {
         boundingBoxes: { diffBoundingBoxes = [], ignoredBoxes=[] },
         fileData: { actualFilePath, baselineFilePath },
     } = data
-    const baselineImagePath = getRelativePath(baselineFilePath)
-    const actualImagePath = getRelativePath(actualFilePath)
     const {
         transform,
         setTransform,
         currentChange,
         handlePrevChange,
         handleNextChange,
-    } = useChangeNavigation(diffBoundingBoxes, actualImagePath)
+    } = useChangeNavigation(diffBoundingBoxes, actualFilePath)
 
     useEffect(() => {
         const handlePopState = () => onClose()
@@ -57,12 +54,12 @@ const Overlay: React.FC<OverlayProps> = ({ data, onClose }) => {
             <div className={styles.content}>
                 <div className={`${styles.canvasContainer} diffContainer`}>
                     <Canvas
-                        imageSrc={baselineImagePath}
+                        imageSrc={baselineFilePath}
                         transform={transform}
                         setTransform={setTransform}
                     />
                     <Canvas
-                        imageSrc={actualImagePath}
+                        imageSrc={actualFilePath}
                         transform={transform}
                         setTransform={setTransform}
                         diffBoxes={diffBoundingBoxes}
