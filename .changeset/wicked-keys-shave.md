@@ -11,8 +11,8 @@
 
 # 💅 Polish `@wdio/visual-reporter`
 
--   Rewrite to [Remix](https://remix.run) to reduce complexity and size
--   Refactor of the assets generation to make it more robust for the demo and external collected files
+-   refactor of the assets generation to make it more robust for the demo and external collected files
+-   reduce package/bundle size
 
 # 🐛 Bugs fixed `@wdio/visual-reporter`
 

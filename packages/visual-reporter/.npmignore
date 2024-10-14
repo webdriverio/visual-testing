@@ -25,6 +25,12 @@ scripts/
 .github/
 .vscode/
 .DS_Store
+.eslintrc.cjs
+.gitignore
+tsconfig.json
+tsconfig.scripts.json
+*.config.ts
+*.config.js
 
 *.mp4
 *.tsbuildinfo
