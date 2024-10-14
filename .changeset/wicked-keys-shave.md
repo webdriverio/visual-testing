@@ -13,6 +13,7 @@
 
 -   refactor of the assets generation to make it more robust for the demo and external collected files
 -   reduce package/bundle size
+-   updated to latest dependencies
 
 # 🐛 Bugs fixed `@wdio/visual-reporter`
 
