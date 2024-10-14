@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@inquirer/prompts": "^6.0.1",
-    "next": "14.2.14",
+    "next": "14.2.15",
     "ora": "^8.1.0",
     "react": "^18",
     "react-dom": "^18",
