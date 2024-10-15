@@ -14,3 +14,9 @@ export function cleanUpEnvironmentVariables() {
     delete process.env.VISUAL_REPORT_LOCAL_DEV
     delete process.env.VISUAL_REPORT_REPORTER_FOLDER
 }
+
+export function getArgValue(argName: string): string {
+    const arg = process.argv.find(arg => arg.startsWith(`${argName}=`))
+
+    return arg ? arg.split('=')[1] : ''
+}
