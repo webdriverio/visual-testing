@@ -1,6 +1,3 @@
-import net from 'node:net'
-import ora from 'ora'
-
 export function clearPreviousPromptLines(message: string) {
     const terminalWidth = process.stdout.columns || 80
     const lineCount = Math.ceil(message.length / terminalWidth)
@@ -12,43 +9,14 @@ export function clearPreviousPromptLines(message: string) {
 }
 
 export function cleanUpEnvironmentVariables() {
-    delete process.env.NEXT_PUBLIC_VISUAL_REPORT_OUTPUT_JSON_PATH
+    delete process.env.VISUAL_REPORT_OUTPUT_JSON_PATH
     delete process.env.VISUAL_REPORT_DEBUG_LEVEL
+    delete process.env.VISUAL_REPORT_LOCAL_DEV
+    delete process.env.VISUAL_REPORT_REPORTER_FOLDER
 }
 
-function checkPortAvailability(port: number): Promise<boolean> {
-    return new Promise((resolve) => {
-        const server = net.createServer()
+export function getArgValue(argName: string): string {
+    const arg = process.argv.find(arg => arg.startsWith(`${argName}=`))
 
-        server.once('error', () => {
-            resolve(false)
-        })
-
-        server.once('listening', () => {
-            server.close(() => {
-                resolve(true)
-            })
-        })
-
-        server.listen(port)
-    })
-}
-
-export async function findAvailablePort(startingPort: number) {
-    let port = startingPort
-    let isAvailable = false
-    console.log(`Checking for available ports starting from "${port}"...`)
-
-    while (!isAvailable) {
-        const spinner = ora(`Trying port ${port}...`).start()
-        isAvailable = await checkPortAvailability(port)
-        if (!isAvailable) {
-            spinner.fail(`Port ${port} is in use.`)
-            port += 1
-        } else {
-            spinner.succeed(`Found available port ${port}.`)
-        }
-    }
-
-    return port
+    return arg ? arg.split('=')[1] : ''
 }

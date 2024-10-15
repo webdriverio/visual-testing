@@ -5,11 +5,12 @@ module.exports = [
             '**/lib/resemble/*',
             '*/*.d.ts',
             '**/dist/*',
+            '**/build/*',
             '**/.next/*',
         ]
     },
     {
-        files: ['**/*.ts', '**/*.js'],
+        files: ['**/*.{ts,tsx,js,jsx,cjs,mjs}'],
         languageOptions: {
             parser: require('@typescript-eslint/parser'),
             ecmaVersion: 2020,
@@ -44,7 +45,7 @@ module.exports = [
             'require-atomic-updates': 'off',
             'linebreak-style': ['error', 'unix'],
             'unicorn/prefer-node-protocol': ['error'],
-            'import/extensions': ['error', 'ignorePackages'],
+            // 'import/extensions': ['error', 'ignorePackages'],
             'no-restricted-syntax': ['error', 'IfStatement > ExpressionStatement > AssignmentExpression'],
             'unicorn/prefer-ternary': 'error',
 
@@ -53,13 +54,13 @@ module.exports = [
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {
-                    "args": "all",
-                    "argsIgnorePattern": "^_",
-                    "caughtErrors": "all",
-                    "caughtErrorsIgnorePattern": "^_",
-                    "destructuredArrayIgnorePattern": "^_",
-                    "varsIgnorePattern": "^_",
-                    "ignoreRestSiblings": true
+                    'args': 'all',
+                    'argsIgnorePattern': '^_',
+                    'caughtErrors': 'all',
+                    'caughtErrorsIgnorePattern': '^_',
+                    'destructuredArrayIgnorePattern': '^_',
+                    'varsIgnorePattern': '^_',
+                    'ignoreRestSiblings': true
                 }
             ],
             '@typescript-eslint/consistent-type-imports': 'error',

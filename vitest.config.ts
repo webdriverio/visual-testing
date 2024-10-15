@@ -13,6 +13,7 @@ export default defineConfig({
             exclude: [
                 'packages/service/src/types.ts',
                 'packages/visual-reporter/',
+                'packages/visual-remix-reporter/',
                 '.eslintrc.cjs',
                 'tests/**',
                 '**/*.interfaces.ts',
@@ -29,7 +30,10 @@ export default defineConfig({
          * not to ESM ported packages
          */
         exclude: [
-            'dist', '.idea', '.git', '.cache',
+            'dist',
+            '.idea',
+            '.git',
+            '.cache',
             '**/node_modules/**',
         ]
     }

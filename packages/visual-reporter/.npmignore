@@ -11,8 +11,12 @@ coverage/
 # Build and temporary directories
 tmp/
 temp/
-# .next/
 out/
+public/
+build/static/report/
+demo/
+app/
+scripts/
 
 # Configuration files and scripts
 .env
@@ -21,6 +25,12 @@ out/
 .github/
 .vscode/
 .DS_Store
+.eslintrc.cjs
+.gitignore
+tsconfig.json
+tsconfig.scripts.json
+*.config.ts
+*.config.js
 
 *.mp4
 *.tsbuildinfo
