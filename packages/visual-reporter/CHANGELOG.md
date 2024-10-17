@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.4.1
+
+### Patch Changes
+
+- 6fb41ff: Fix cli command
+
 ## 0.4.0
 
 ### Minor Changes
