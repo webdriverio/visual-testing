@@ -12,7 +12,7 @@ export const config = {
     services: [
         [
             // Also installed as a dependency
-            "visual-regression",
+            "visual",
             {
                 createJsonReportFiles: true,
             },
@@ -42,7 +42,7 @@ To build the report you can call the CLI or use prompts to answer all questions
 
 ### CLI
 
-You can call `npx @wdio/visual-reporter` with the following arguments
+You can call `npx wdio-visual-reporter` with the following arguments
 
 #### `--jsonOutput`
 
@@ -66,14 +66,13 @@ This will generate extra logs when errors happen
 #### Example usage
 
 ```sh
-npx @wdio/visual-reporter --jsonOutput=/Users/wdio/visual-testing/.tmp/actual/output.json --reportFolder=/Users/wdio/visual-testing/.tmp/ --logLevel=debug
+npx wdio-visual-reporter --jsonOutput=/Users/wdio/visual-testing/.tmp/actual/output.json --reportFolder=/Users/wdio/visual-testing/.tmp/ --logLevel=debug
 ```
 
 This will generate the following logs
 
 ```logs
-npx @wdio/visual-reporter
---jsonOutput=/Users/wdio/visual-testing/.tmp/actual/output.json --reportFolder=/Users/wdio/visual-testing/.tmp/ --logLevel=debug
+npx wdio-visual-reporter --jsonOutput=/Users/wdio/visual-testing/.tmp/actual/output.json --reportFolder=/Users/wdio/visual-testing/.tmp/ --logLevel=debug
 ✔ Build output copied successfully to "/Users/wdio/visual-testing/.tmp/report".
 ⠋ Prepare report assets...
 
@@ -85,7 +84,7 @@ npx @wdio/visual-reporter
 
 ### Prompts
 
-Open a terminal, enter `npx @wdio/visual-reporter` and answer all the questions
+Open a terminal, enter `npx wdio-visual-reporter` and answer all the questions
 
 https://github.com/user-attachments/assets/fdd8a838-29c0-4235-9bac-fff0269e292e
 

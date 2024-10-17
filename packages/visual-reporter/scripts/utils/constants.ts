@@ -10,7 +10,7 @@ export const config = {
     services: [
         [
             // Also installed as a dependency
-            "visual-regression", 
+            "visual",
             {
                 createJsonReportFiles: true,
             },
