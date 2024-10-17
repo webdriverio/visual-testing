@@ -86,7 +86,7 @@ npx wdio-visual-reporter --jsonOutput=/Users/wdio/visual-testing/.tmp/actual/out
 
 Open a terminal, enter `npx wdio-visual-reporter` and answer all the questions
 
-https://github.com/user-attachments/assets/fdd8a838-29c0-4235-9bac-fff0269e292e
+https://github.com/user-attachments/assets/9cd2d0ce-bb19-4c5f-89c5-ea2f01d68fa1
 
 ### The Visual Reporter
 
