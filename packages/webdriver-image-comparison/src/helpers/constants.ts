@@ -166,7 +166,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 124, y: 829, height: 9, width: 143 },
             },
         },
-        // 14Pro|15 (dynamic island)
+        // 14Pro|15|16 (dynamic island)
         852: {
             LANDSCAPE: {
                 SAFE_AREA: 59,
@@ -179,6 +179,21 @@ export const IOS_OFFSETS: IosOffsets = {
                 STATUS_BAR: 59,
                 ADDRESS_BAR: 50,
                 HOME_BAR: { x: 125, y: 837, height: 9, width: 143 },
+            },
+        },
+        // 16 Pro (dynamic island)
+        874: {
+            LANDSCAPE: {
+                SAFE_AREA: 50,
+                STATUS_BAR: 0,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 324, y: 389, height: 9, width: 226 },
+            },
+            PORTRAIT: {
+                SAFE_AREA: 62,
+                STATUS_BAR: 62,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 129, y: 861, height: 9, width: 152 },
             },
         },
         // XSMax|XR|11|11ProMax (notch)
@@ -211,7 +226,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 136, y: 911, height: 9, width: 156 },
             },
         },
-        // 14ProMax (notch)
+        // 14ProMax|16 Plus (notch)
         932: {
             LANDSCAPE: {
                 SAFE_AREA: 59,
@@ -224,6 +239,21 @@ export const IOS_OFFSETS: IosOffsets = {
                 STATUS_BAR: 59,
                 ADDRESS_BAR: 50,
                 HOME_BAR: { x: 137, y: 917, height: 9, width: 158 },
+            },
+        },
+        // 16 Pro Max (dynamic island)
+        956: {
+            LANDSCAPE: {
+                SAFE_AREA: 50,
+                STATUS_BAR: 0,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 355, y: 427, height: 9, width: 246 },
+            },
+            PORTRAIT: {
+                SAFE_AREA: 62,
+                STATUS_BAR: 62,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 142, y: 943, height: 9, width: 158 },
             },
         },
     },
