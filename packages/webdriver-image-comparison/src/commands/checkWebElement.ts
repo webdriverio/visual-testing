@@ -48,7 +48,13 @@ export default async function checkWebElement(
     const executeCompareOptions = {
         devicePixelRatio,
         compareOptions: {
-            wic: checkElementOptions.wic.compareOptions,
+            wic: {
+                ...checkElementOptions.wic.compareOptions,
+                // No need to block out anything on the app for element screenshots
+                blockOutSideBar: false,
+                blockOutStatusBar: false,
+                blockOutToolBar: false,
+            },
             method: compareOptions,
         },
         fileName,
@@ -67,6 +73,8 @@ export default async function checkWebElement(
         isLandscape,
         platformName: instanceData.platformName,
     }
+
+    console.log('executeCompareOptions = ', JSON.stringify(executeCompareOptions, null, 2))
 
     // 2b Now execute the compare and return the data
     return executeImageCompare({
