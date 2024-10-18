@@ -74,8 +74,6 @@ export default async function checkWebElement(
         platformName: instanceData.platformName,
     }
 
-    console.log('executeCompareOptions = ', JSON.stringify(executeCompareOptions, null, 2))
-
     // 2b Now execute the compare and return the data
     return executeImageCompare({
         executor: methods.executor,
