@@ -48,7 +48,13 @@ export default async function checkWebElement(
     const executeCompareOptions = {
         devicePixelRatio,
         compareOptions: {
-            wic: checkElementOptions.wic.compareOptions,
+            wic: {
+                ...checkElementOptions.wic.compareOptions,
+                // No need to block out anything on the app for element screenshots
+                blockOutSideBar: false,
+                blockOutStatusBar: false,
+                blockOutToolBar: false,
+            },
             method: compareOptions,
         },
         fileName,
