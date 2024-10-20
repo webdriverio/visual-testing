@@ -25,6 +25,7 @@ import type {
 } from './images.interfaces.js'
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
 import type { GetElementRect, TakeScreenShot } from './methods.interfaces.js'
+import type { RectanglesOutput } from './rectangles.interfaces.js'
 import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
 import { processDiffPixels } from './processDiffPixels.js'
@@ -368,7 +369,7 @@ export async function executeImageCompare(
 
     // 4b. Determine the ignore rectangles for the block outs
     const blockOut = 'blockOut' in imageCompareOptions ? imageCompareOptions.blockOut || [] : []
-    const webStatusAddressToolBarOptions = []
+    let webStatusAddressToolBarOptions: RectanglesOutput[] = []
 
     if (isMobile && !isNativeContext){
         const statusAddressToolBarOptions = {
@@ -383,6 +384,11 @@ export async function executeImageCompare(
             platformName,
         }
         webStatusAddressToolBarOptions.push(...(await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions)) || [])
+        if (webStatusAddressToolBarOptions.length > 0) {
+            // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full
+            // blockout of the image and the comparison will succeed with 0 % difference
+            webStatusAddressToolBarOptions = webStatusAddressToolBarOptions.filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
+        }
     }
     const ignoredBoxes = [
         // These come from the method
