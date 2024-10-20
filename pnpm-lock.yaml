@@ -261,7 +261,7 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       webdriver-image-comparison:
-        specifier: ^7.2.0
+        specifier: ^7.2.1
         version: link:../webdriver-image-comparison
 
   packages/webdriver-image-comparison:
