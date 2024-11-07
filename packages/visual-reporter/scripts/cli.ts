@@ -14,8 +14,8 @@ import { copyDirectory } from './utils/fileHandling.js'
 async function main() {
     //
     // Set some initial variables
-    const filePath = getArgValue('--jsonOutput') ? resolve(process.cwd(), getArgValue('--jsonOutput')) : undefined
-    const reportPath = getArgValue('--reportFolder') ? resolve(process.cwd(), getArgValue('--reportFolder')) : undefined
+    let filePath = getArgValue('--jsonOutput') ? resolve(process.cwd(), getArgValue('--jsonOutput')) : undefined
+    let reportPath = getArgValue('--reportFolder') ? resolve(process.cwd(), getArgValue('--reportFolder')) : undefined
     const logLevel = getArgValue('--logLevel')
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = dirname(__filename)
