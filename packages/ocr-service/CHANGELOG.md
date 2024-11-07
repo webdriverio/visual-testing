@@ -1,5 +1,11 @@
 # @wdio/ocr-service
 
+## 2.2.1
+
+### Patch Changes
+
+- a34dd5d: Update of deps
+
 ## 2.2.0
 
 ### Minor Changes
