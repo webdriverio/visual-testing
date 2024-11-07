@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.4.3
+
+### Patch Changes
+
+- c740c91: fix paths for cli
+
 ## 0.4.2
 
 ### Patch Changes
