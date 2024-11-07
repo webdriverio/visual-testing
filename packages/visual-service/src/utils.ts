@@ -270,13 +270,22 @@ export function determineNativeContext(
 
     // If not check if it's a mobile
     if (driver.isMobile) {
-        return !!(driver.requestedCapabilities as WebdriverIO.Capabilities)?.browserName === false
-            && (
-                (driver.requestedCapabilities as AppiumCapabilities)?.['appium:app'] !== undefined
-                || (driver.requestedCapabilities as { 'appium:bundleId'?: string })?.['appium:bundleId'] !== undefined
-                || (driver.requestedCapabilities as { 'appium:appPackage'?: string })?.['appium:appPackage'] !== undefined
-            )
-            && (driver.requestedCapabilities as AppiumCapabilities)?.['appium:autoWebview'] !== true
+        const isAppiumAppCapPresent = (capabilities: AppiumCapabilities) => {
+            const appiumKeys = [
+                'appium:app',
+                'appium:bundleId',
+                'appium:appPackage',
+                'appium:appActivity',
+                'appium:appWaitActivity',
+                'appium:appWaitPackage',
+            ]
+            return appiumKeys.some(key => capabilities[key as keyof AppiumCapabilities] !== undefined)
+        }
+        const capabilities = driver.requestedCapabilities as WebdriverIO.Capabilities & AppiumCapabilities
+        const isBrowserNameFalse = !!capabilities.browserName === false
+        const isAutoWebviewFalse = capabilities['appium:autoWebview'] !== true
+
+        return isBrowserNameFalse && isAppiumAppCapPresent(capabilities) && isAutoWebviewFalse
     }
 
     // If not, it's webcontext
