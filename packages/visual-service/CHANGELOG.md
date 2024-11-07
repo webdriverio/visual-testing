@@ -1,5 +1,12 @@
 # @wdio/visual-service
 
+## 6.2.2
+
+### Patch Changes
+
+- a34dd5d: Update of deps
+- d751b8c: fix android app determination
+
 ## 6.2.1
 
 ### Patch Changes
