@@ -85,8 +85,8 @@ importers:
         specifier: ^56.0.0
         version: 56.0.0(eslint@9.14.0(jiti@1.21.6))
       eslint-plugin-wdio:
-        specifier: ^9.0.8
-        version: 9.0.8
+        specifier: ^9.2.11
+        version: 9.2.11
       husky:
         specifier: ^9.1.6
         version: 9.1.6
@@ -3219,8 +3219,8 @@ packages:
     peerDependencies:
       eslint: '>=8.56.0'
 
-  eslint-plugin-wdio@9.0.8:
-    resolution: {integrity: sha512-aCWjI3p1H+AFpiJhcybGMSXqtBUkoVbpZcYhDawb4JWFhHAF8J8bdyanPYvDLoyOKVN4zJ3AFb8G4qxKXq8qXA==}
+  eslint-plugin-wdio@9.2.11:
+    resolution: {integrity: sha512-EtrbAUdQB9ID6OcASu1fcIgKvIiY+dPsQoPRu5PQbu6wx+7Sly4R6niPlUAABox6Is7Dni4hGmQmT4cy9tHamg==}
     engines: {node: '>=18.20.0'}
 
   eslint-scope@8.2.0:
@@ -10460,7 +10460,7 @@ snapshots:
       semver: 7.6.3
       strip-indent: 3.0.0
 
-  eslint-plugin-wdio@9.0.8: {}
+  eslint-plugin-wdio@9.2.11: {}
 
   eslint-scope@8.2.0:
     dependencies:
