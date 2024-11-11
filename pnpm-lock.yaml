@@ -52,8 +52,8 @@ importers:
         specifier: ^9.2.9
         version: 9.2.9
       '@wdio/cli':
-        specifier: ^9.2.10
-        version: 9.2.10
+        specifier: ^9.2.11
+        version: 9.2.11
       '@wdio/globals':
         specifier: ^9.2.11
         version: 9.2.11(@wdio/logger@9.1.3)
@@ -2047,8 +2047,8 @@ packages:
     resolution: {integrity: sha512-YMWNZLg8LshURffnYxkkjAcHyJi+RanW+eL8E948lhTpJQD6xR0SMnxqnb7tDVymEnK9gvVjMsgQhq5Je6K3Eg==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/cli@9.2.10':
-    resolution: {integrity: sha512-5xk2J8qS9Kl1B1kHTMyylXoawz4hw9NdSSl57JSlAwDHrPoLb/1KoT1ndSPungGezEjjd0v5k9U4Lbl+jic/+w==}
+  '@wdio/cli@9.2.11':
+    resolution: {integrity: sha512-vXt5rs4lSNqBpYZkEL2msV3QeczOBqXNdtuEwVolOTChQ6huwnvxARM0l0XAnzDYfGIx3mxIWEVjEQ9TmLQUdw==}
     engines: {node: '>=18.20.0'}
     hasBin: true
 
@@ -8929,12 +8929,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/cli@9.2.10':
+  '@wdio/cli@9.2.11':
     dependencies:
       '@types/node': 20.17.6
       '@vitest/snapshot': 2.1.4
       '@wdio/config': 9.2.8
-      '@wdio/globals': 9.2.8(@wdio/logger@9.1.3)
+      '@wdio/globals': 9.2.11(@wdio/logger@9.1.3)
       '@wdio/logger': 9.1.3
       '@wdio/protocols': 9.2.2
       '@wdio/types': 9.2.2
@@ -8954,7 +8954,7 @@ snapshots:
       read-pkg-up: 10.1.0
       recursive-readdir: 2.2.3
       tsx: 4.19.2
-      webdriverio: 9.2.8
+      webdriverio: 9.2.11
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
