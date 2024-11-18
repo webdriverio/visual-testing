@@ -115,8 +115,8 @@ importers:
         specifier: ^2.1.4
         version: 2.1.4(@types/node@22.9.0)(jsdom@25.0.1)
       webdriverio:
-        specifier: ^9.2.11
-        version: 9.2.11
+        specifier: ^9.2.14
+        version: 9.2.14
 
   packages/ocr-service:
     dependencies:
@@ -286,8 +286,8 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       webdriverio:
-        specifier: ^9.2.11
-        version: 9.2.11
+        specifier: ^9.2.14
+        version: 9.2.14
 
 packages:
 
