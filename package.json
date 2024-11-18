@@ -73,7 +73,7 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-unicorn": "^56.0.0",
     "eslint-plugin-wdio": "^9.2.11",
-    "husky": "^9.1.6",
+    "husky": "^9.1.7",
     "jsdom": "^25.0.1",
     "npm-run-all2": "^7.0.1",
     "release-it": "^17.10.0",
