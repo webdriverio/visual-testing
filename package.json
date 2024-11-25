@@ -49,7 +49,7 @@
     "@wdio/ocr-service": "workspace:^"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.9",
+    "@changesets/cli": "^2.27.10",
     "@tsconfig/node20": "^20.1.4",
     "@types/eslint": "^9.6.1",
     "@types/jsdom": "~21.1.7",
