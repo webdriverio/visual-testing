@@ -35,6 +35,6 @@
     "@types/copyfiles": "~2.4.4",
     "@types/fs-extra": "^11.0.4",
     "copyfiles": "^2.4.1",
-    "webdriverio": "^9.2.14"
+    "webdriverio": "^9.3.1"
   }
 }
