@@ -71,7 +71,7 @@
     "@wdio/types": "^9.2.2",
     "eslint": "^9.15.0",
     "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-unicorn": "^56.0.0",
+    "eslint-plugin-unicorn": "^56.0.1",
     "eslint-plugin-wdio": "^9.2.11",
     "husky": "^9.1.7",
     "jsdom": "^25.0.1",
