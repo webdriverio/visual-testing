@@ -65,7 +65,7 @@
     "@wdio/globals": "^9.2.14",
     "@wdio/local-runner": "^9.3.1",
     "@wdio/mocha-framework": "^9.2.8",
-    "@wdio/sauce-service": "^9.2.14",
+    "@wdio/sauce-service": "^9.3.1",
     "@wdio/shared-store-service": "^9.3.1",
     "@wdio/spec-reporter": "^9.2.14",
     "@wdio/types": "^9.2.2",
