@@ -11,7 +11,12 @@ Difference: baz
 For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html"
 `;
 
-exports[`custom visual matcher > should allow asymmetric matchers 1`] = `
-"Expected image to match with given asymmetric matcher but did not pass!
+exports[`custom visual matcher > should allow asymmetric matchers 1`] = `"Expected image to match with the given asymmetric matcher but did not pass!"`;
+
+exports[`custom visual matcher > toMatchScreenSnapshot with multiremote - failure 1`] = `
+"Instance "androidDevice":
+
+
+Instance "iosDevice":
 "
 `;

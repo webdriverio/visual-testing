@@ -15,7 +15,7 @@ import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 
 declare global {
     namespace WebdriverIO {
-        interface Browser {
+        interface BaseBrowser {
             /**
              * Saves an image of an element
              */
@@ -89,6 +89,8 @@ declare global {
                 options: WaitForStorybookComponentToBeLoaded
             ): Promise<void>;
         }
+        interface Browser extends BaseBrowser {}
+        interface MultiRemoteBrowser extends BaseBrowser {}
         interface Element {}
         interface Capabilities {
             'wdio-ics:options'?:{

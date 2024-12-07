@@ -17,45 +17,71 @@ const asymmetricMatcher =
 function isAsymmetricMatcher (expected: unknown): expected is ExpectWebdriverIO.PartialMatcher {
     return Boolean(expected && typeof expected === 'object' && '$$typeof' in expected && expected.$$typeof === asymmetricMatcher && 'asymmetricMatch' in expected)
 }
-
-function compareResult (result: ImageCompareResult, expected: number | ExpectWebdriverIO.PartialMatcher) {
-    /**
-     * expected value is an asymmetric matcher, e.g.
-     *
-     * ```ts
-     * expect(browser).toMatchScreenSnapshot('foo', expect.closeTo(0, 2))
-     * ```
-     */
+function evaluateResult(
+    result: ImageCompareResult,
+    expected: number | ExpectWebdriverIO.PartialMatcher,
+    instanceName: string
+) {
     if (isAsymmetricMatcher(expected)) {
         const pass = expected.asymmetricMatch(result.misMatchPercentage)
+        const message = `${instanceName !== 'default' ? `Instance "${instanceName}": ` : ''}Expected image to match with the given asymmetric matcher but did not pass!`
+
         return {
             pass,
-            message: () => 'Expected image to match with given asymmetric matcher but did not pass!\n'
+            message: () => message,
         }
     }
 
-    /**
-     * expected value is a number
-     *
-     * ```ts
-     * expect(browser).toMatchScreenSnapshot('foo', 0)
-     * ```
-     */
     if (typeof expected === 'number') {
+        const pass = result.misMatchPercentage <= expected
         return {
-            pass: result.misMatchPercentage <= expected,
-            message: () => (
+            pass,
+            message: () =>
+                instanceName !== 'default' ? `Instance "${instanceName}":\n` : '' +
                 `Expected image mismatch percentage to be at most ${expected}%, but was ${result.misMatchPercentage}%.\n` +
                 'If this is acceptable, you may need to adjust the threshold or update the baseline image if the changes are intentional.\n' +
                 `\nBaseline: ${result.folders.baseline}\n` +
                 `Actual Screenshot: ${result.folders.actual}\n` +
                 `Difference: ${result.folders.diff}\n` +
                 '\nFor guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html'
-            )
         }
     }
 
-    throw new Error(`Invalid matcher, expect either a number or an asymmetric matcher, but found ${expected}`)
+    throw new Error(
+        `Invalid matcher for instance "${instanceName}", expect either a number or an asymmetric matcher, but found ${expected}`
+    )
+}
+
+function isMultiremoteResult(
+    result: ImageCompareResult | Record<string, ImageCompareResult>
+): result is Record<string, ImageCompareResult> {
+    return typeof result === 'object' && Object.values(result)[0]?.misMatchPercentage !== undefined
+}
+
+function compareResult (result: ImageCompareResult, expected: number | ExpectWebdriverIO.PartialMatcher) {
+    const isMultiremote = isMultiremoteResult(result)
+    const results = isMultiremote
+        ? Object.entries(result as unknown as Record<string, ImageCompareResult>).map(([instanceName, instanceResult]) => ({
+            instanceName,
+            result: instanceResult,
+        }))
+        : [{ instanceName: 'default', result }]
+
+    const failureMessages: string[] = []
+    let overallPass = true
+
+    for (const { instanceName, result: instanceResult } of results) {
+        const { pass, message } = evaluateResult(instanceResult, expected, instanceName)
+        if (!pass) {
+            overallPass = false
+            failureMessages.push(message())
+        }
+    }
+
+    return {
+        pass: overallPass,
+        message: () => failureMessages.join('\n\n') || 'All instances passed the visual comparison test.',
+    }
 }
 
 function parseMatcherParams (
@@ -97,7 +123,7 @@ function parseMatcherParams (
 }
 
 export async function toMatchScreenSnapshot (
-    browser: WebdriverIO.Browser,
+    browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
     expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher,
     optionsOrUndefined?: WdioCheckScreenMethodOptions
@@ -108,7 +134,7 @@ export async function toMatchScreenSnapshot (
 }
 
 export async function toMatchFullPageSnapshot (
-    browser: WebdriverIO.Browser,
+    browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
     expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher,
     optionsOrUndefined?: WdioCheckFullPageMethodOptions
@@ -131,7 +157,7 @@ export async function toMatchElementSnapshot (
 }
 
 export async function toMatchTabbablePageSnapshot (
-    browser: WebdriverIO.Browser,
+    browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
     expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher,
     optionsOrUndefined?: WdioCheckFullPageMethodOptions

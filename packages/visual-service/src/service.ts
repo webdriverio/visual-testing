@@ -291,8 +291,8 @@ export default class WdioImageComparisonService extends BaseClass {
             commandName,
             async function (
                 this: WebdriverIO.MultiRemoteBrowser,
-                tag,
                 element,
+                tag,
                 pageOptions = {}
             ) {
                 const returnData: Record<string, any> = {}
