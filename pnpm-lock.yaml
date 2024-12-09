@@ -55,8 +55,8 @@ importers:
         specifier: ^9.4.1
         version: 9.4.1
       '@wdio/globals':
-        specifier: ^9.3.1
-        version: 9.3.1(@wdio/logger@9.1.3)
+        specifier: ^9.4.1
+        version: 9.4.1(@wdio/logger@9.1.3)
       '@wdio/local-runner':
         specifier: ^9.3.1
         version: 9.3.1
@@ -124,8 +124,8 @@ importers:
         specifier: 7.2.0
         version: 7.2.0(@types/node@22.9.3)
       '@wdio/globals':
-        specifier: ^9.3.1
-        version: 9.3.1(@wdio/logger@9.1.3)
+        specifier: ^9.4.1
+        version: 9.4.1(@wdio/logger@9.1.3)
       '@wdio/logger':
         specifier: ^9.1.3
         version: 9.1.3
@@ -249,8 +249,8 @@ importers:
   packages/visual-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^9.3.1
-        version: 9.3.1(@wdio/logger@9.1.3)
+        specifier: ^9.4.1
+        version: 9.4.1(@wdio/logger@9.1.3)
       '@wdio/logger':
         specifier: ^9.1.3
         version: 9.1.3
