@@ -1,5 +1,11 @@
 # @wdio/visual-service
 
+## 6.2.3
+
+### Patch Changes
+
+- cc2b0fb: Fix issue 656
+
 ## 6.2.2
 
 ### Patch Changes
