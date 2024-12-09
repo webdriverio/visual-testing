@@ -49,8 +49,8 @@ importers:
         specifier: ^2.1.4
         version: 2.1.4(vitest@2.1.4(@types/node@22.9.3)(jsdom@25.0.1))
       '@wdio/appium-service':
-        specifier: ^9.3.1
-        version: 9.3.1
+        specifier: ^9.4.1
+        version: 9.4.1
       '@wdio/cli':
         specifier: ^9.4.1
         version: 9.4.1
@@ -2064,8 +2064,8 @@ packages:
   '@vitest/utils@2.1.4':
     resolution: {integrity: sha512-MXDnZn0Awl2S86PSNIim5PWXgIAx8CIkzu35mBdSApUip6RFOGXBCf3YFyeEu8n1IHk4bWD46DeYFu9mQlFIRg==}
 
-  '@wdio/appium-service@9.3.1':
-    resolution: {integrity: sha512-HG5BvOTPm2obMGfAC3CzjGNIWa1mnMEeo//D41rmVXeYQ+coTJEQMBDFSaCae6pAUZgVK0dHqOJZ+jjjDIP9dw==}
+  '@wdio/appium-service@9.4.1':
+    resolution: {integrity: sha512-EthxQ2nMO5VCsfKk1MoYXbM72/OwxKYOB0vvWIwanOfO06nxhpSEhcM5+c1Rv2Anb4PbSAi5TSJG0w/wLsdTOQ==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/cli@9.4.1':
@@ -8937,7 +8937,7 @@ snapshots:
       loupe: 3.1.2
       tinyrainbow: 1.2.0
 
-  '@wdio/appium-service@9.3.1':
+  '@wdio/appium-service@9.4.1':
     dependencies:
       '@wdio/config': 9.2.8
       '@wdio/logger': 9.1.3
@@ -8947,7 +8947,7 @@ snapshots:
       get-port: 7.1.0
       import-meta-resolve: 4.1.0
       tree-kill: 1.2.2
-      webdriverio: 9.3.1
+      webdriverio: 9.4.1
     transitivePeerDependencies:
       - bufferutil
       - puppeteer-core
