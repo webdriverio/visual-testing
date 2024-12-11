@@ -15,8 +15,22 @@ exports[`custom visual matcher > should allow asymmetric matchers 1`] = `"Expect
 
 exports[`custom visual matcher > toMatchScreenSnapshot with multiremote - failure 1`] = `
 "Instance "androidDevice":
+Expected image mismatch percentage to be at most 25%, but was 50%.
+If this is acceptable, you may need to adjust the threshold or update the baseline image if the changes are intentional.
 
+Baseline: baseline/android/Gmail-1344x2992-3.png
+Actual Screenshot: actual/android/Gmail-1344x2992-3.png
+Difference: diff/android/Gmail-1344x2992-3.png
+
+For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html
 
 Instance "iosDevice":
-"
+Expected image mismatch percentage to be at most 25%, but was 26%.
+If this is acceptable, you may need to adjust the threshold or update the baseline image if the changes are intentional.
+
+Baseline: baseline/ios/Contacts-1344x2992-3.png
+Actual Screenshot: actual/ios/Contacts-1344x2992-3.png
+Difference: diff/ios/Contacts-1344x2992-3.png
+
+For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html"
 `;
