@@ -1,5 +1,11 @@
 # @wdio/visual-service
 
+## 6.2.4
+
+### Patch Changes
+
+- 36541dd: Fix issue 679
+
 ## 6.2.3
 
 ### Patch Changes
