@@ -37,7 +37,7 @@ function evaluateResult(
         return {
             pass,
             message: () =>
-                instanceName !== 'default' ? `Instance "${instanceName}":\n` : '' +
+                (instanceName !== 'default' ? `Instance "${instanceName}":\n` : '') +
                 `Expected image mismatch percentage to be at most ${expected}%, but was ${result.misMatchPercentage}%.\n` +
                 'If this is acceptable, you may need to adjust the threshold or update the baseline image if the changes are intentional.\n' +
                 `\nBaseline: ${result.folders.baseline}\n` +
