@@ -1,5 +1,12 @@
 # webdriver-image-comparison
 
+## 7.2.2
+
+### Patch Changes
+
+- 4a4adf1: Fix resize dimensions for mobile
+- 4a4adf1: update deps
+
 ## 7.2.1
 
 ### Patch Changes
