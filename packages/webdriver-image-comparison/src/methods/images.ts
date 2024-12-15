@@ -615,8 +615,7 @@ async function takeResizedBase64Screenshot({
             x: elementRegion.x,
             y: elementRegion.y,
         }, isIOS ? devicePixelRatio : 1),
-        // The assumption is that a user calculated the resizeDimensions from a screenshot which is with the devicePixelRatio
-        resizeDimensions: calculateDprData(resizeDimensions, 1/devicePixelRatio),
+        resizeDimensions,
     })
 
     return resizedBase64Image
@@ -645,6 +644,7 @@ export async function takeBase64ElementScreenshot({
     resizeDimensions: ResizeDimensions,
 }): Promise<string> {
     const shouldTakeResizedScreenshot = resizeDimensions !== DEFAULT_RESIZE_DIMENSIONS
+    console.log('shouldTakeResizedScreenshot = ', shouldTakeResizedScreenshot)
 
     if (!shouldTakeResizedScreenshot) {
         try {

@@ -46,7 +46,13 @@
   },
   "dependencies": {
     "@wdio/visual-service": "workspace:^",
-    "@wdio/ocr-service": "workspace:^"
+    "@wdio/ocr-service": "workspace:^",
+    "webdriver-image-comparison": "workspace:^"
+  },
+  "pnpm": {
+    "overrides": {
+      "webdriver-image-comparison": "workspace:*"
+    }
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.10",
