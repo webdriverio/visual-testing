@@ -644,7 +644,6 @@ export async function takeBase64ElementScreenshot({
     resizeDimensions: ResizeDimensions,
 }): Promise<string> {
     const shouldTakeResizedScreenshot = resizeDimensions !== DEFAULT_RESIZE_DIMENSIONS
-    console.log('shouldTakeResizedScreenshot = ', shouldTakeResizedScreenshot)
 
     if (!shouldTakeResizedScreenshot) {
         try {
