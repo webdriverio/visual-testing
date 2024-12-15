@@ -39,6 +39,8 @@
     "test.saucelabs.desktop": "SAUCE_ENV=desktop wdio ./tests/configs/wdio.saucelabs.web.conf.ts",
     "test.saucelabs.emu.web": "SAUCE_ENV=emu wdio ./tests/configs/wdio.saucelabs.web.conf.ts",
     "test.saucelabs.sims.web": "SAUCE_ENV=sims wdio ./tests/configs/wdio.saucelabs.web.conf.ts",
+    "test.lambdatest.desktop": "LT_ENV=desktop wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
+    "test.lambdatest.web": "wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
     "pnpm.install.workaround": "pnpm install --shamefully-hoist",
     "update.packages": "node ./scripts/update.packages.mjs",
     "prepare": "husky",
