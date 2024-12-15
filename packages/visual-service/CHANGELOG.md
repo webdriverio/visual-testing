@@ -1,5 +1,15 @@
 # @wdio/visual-service
 
+## 6.2.5
+
+### Patch Changes
+
+- 4a4adf1: Fix resize dimensions for mobile
+- 4a4adf1: update deps
+- Updated dependencies [4a4adf1]
+- Updated dependencies [4a4adf1]
+  - webdriver-image-comparison@7.2.2
+
 ## 6.2.4
 
 ### Patch Changes
