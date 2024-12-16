@@ -12,7 +12,6 @@ export const config: WebdriverIO.Config  = {
     // ==========================
     user: process.env.LAMBDATEST_USERNAME,
     key: process.env.LAMBDATEST_ACCESS_KEY,
-    region: 'eu',
     // ============
     // Capabilities
     // ============
@@ -21,6 +20,7 @@ export const config: WebdriverIO.Config  = {
     // Services
     // ========
     services: [
+        'lambdatest',
         // ===================
         // Image compare setup
         // ===================

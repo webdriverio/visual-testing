@@ -1,6 +1,6 @@
 import { config as sharedLambdaTestConfig } from './wdio.lambdatest.shared.conf.ts'
-// import { sauceIosSimWeb } from './sauce.ios.sims.web.ts'
-// import { sauceAndroidEmusWeb } from './sauce.android.emus.web.js'
+// import { lambdaTestIosSimWeb } from './lambdatest.ios.sims.web.ts'
+import { lambdaTestAndroidEmusWeb } from './lambdatest.android.emus.web.js'
 import { lambdaDesktopBrowsers } from './lambdatest.desktop.browsers.ts'
 
 const buildIdentifier = process.env.CI
@@ -13,16 +13,16 @@ export const config: WebdriverIO.Config = {
     // Capabilities
     // ============
     capabilities: [
-        // ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'sims'
-        //     ? sauceIosSimWeb({
+        // ...(!process.env.LT_ENV || process.env.LT_ENV === 'sims'
+        //     ? lambdaTestIosSimWeb({
         //         buildName: buildIdentifier,
         //     })
         //     : []),
-        // ...(!process.env.SAUCE_ENV || process.env.SAUCE_ENV === 'emu'
-        //     ? sauceAndroidEmusWeb({
-        //         buildName: buildIdentifier,
-        //     })
-        //     : []),
+        ...(!process.env.LT_ENV || process.env.LT_ENV === 'emu'
+            ? lambdaTestAndroidEmusWeb({
+                buildName: buildIdentifier,
+            })
+            : []),
         ...(!process.env.LT_ENV || process.env.LT_ENV === 'desktop'
             ? lambdaDesktopBrowsers({
                 buildName: buildIdentifier,
