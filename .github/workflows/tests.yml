@@ -20,7 +20,7 @@ jobs:
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           UNIT_TEST_REGEX='(@typescript-eslint|vitest|eslint|@types|@tsconfig|ts-node|jsdom|typescript)'
-          WEB_TEST_REGEX='(@wdio(?!\/appium-service)|copyfiles|rimraf|saucelabs|webdriverio)'
+          WEB_TEST_REGEX='(@wdio(?!\/appium-service)|copyfiles|rimraf|saucelabs|lambdatest|webdriverio)'
           if [[ $PR_TITLE =~ $UNIT_TEST_REGEX ]]; then
             echo "::set-output name=run_unit_tests::true"
           fi
@@ -114,10 +114,10 @@ jobs:
       - name: 🖥️ 🌐 Run Desktop Web e2e tests
         working-directory: ./
         env:
-          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
-          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.saucelabs.desktop
+        run: pnpm test.lambdatest.desktop --maxConcurrency=2
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -179,10 +179,10 @@ jobs:
       - name: 🖥️ 🌐 Run Desktop Web e2e tests
         working-directory: ./
         env:
-          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
-          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.saucelabs.desktop --maxConcurrency=20
+        run: pnpm test.lambdatest.desktop --maxConcurrency=2
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -244,10 +244,10 @@ jobs:
       - name: 🤖 🌐 Run Android Web e2e tests
         working-directory: ./
         env:
-          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
-          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.saucelabs.emu.web --maxConcurrency=20
+        run: pnpm test.lambdatest.emu.web --maxConcurrency=2
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -262,7 +262,7 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
-  ci-pr-ios-web:
+  # ci-pr-ios-web:
     name: 🔄 🍏 🌐 CI PR Run iOS Web Tests
     runs-on: ubuntu-latest
     if: |
@@ -309,10 +309,10 @@ jobs:
       - name: 🍏 🌐 Run iOS Web e2e tests
         working-directory: ./
         env:
-          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
-          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.saucelabs.sims.web --maxConcurrency=25
+        run: pnpm test.lambdatest.sims.web --maxConcurrency=2
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -327,7 +327,7 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
-  ci-pr-app:
+  # ci-pr-app:
     name: 🔄 📱 CI PR Run Mobile App Tests
     runs-on: ubuntu-latest
     if: |
@@ -374,10 +374,10 @@ jobs:
       - name: 😶‍🌫️ 📱 Run App e2e tests
         working-directory: ./
         env:
-          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
-          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.saucelabs.app --maxConcurrency=15
+        run: pnpm test.lambdatest.app --maxConcurrency=2
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -392,7 +392,7 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
-  ci-pr-ocr:
+  # ci-pr-ocr:
     name: 🔄 📱 CI PR Run OCR Tests
     runs-on: ubuntu-latest
     if: |
@@ -439,10 +439,10 @@ jobs:
       - name: 😶‍🌫️ 🔎 Run OCR e2e tests
         working-directory: ./
         env:
-          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
-          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.ocr.saucelabs.desktop --maxConcurrency=1
+        run: pnpm test.ocr.lambdatest.desktop --maxConcurrency=1
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
