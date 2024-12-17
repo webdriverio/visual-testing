@@ -263,193 +263,193 @@ jobs:
             !.next/
 
   # ci-pr-ios-web:
-    name: 🔄 🍏 🌐 CI PR Run iOS Web Tests
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+  #   name: 🔄 🍏 🌐 CI PR Run iOS Web Tests
+  #   runs-on: ubuntu-latest
+  #   if: |
+  #     github.event_name == 'pull_request' &&
+  #     github.actor != 'dependabot[bot]'
 
-    strategy:
-      matrix:
-        node-version: [20.x]
+  #   strategy:
+  #     matrix:
+  #       node-version: [20.x]
 
-    steps:
-      - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: ⬇️ Checkout Repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
 
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+  #     - name: ⬇️ Checkout PR Repository
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8
+  #     - name: 📦 Setup pnpm
+  #       uses: pnpm/action-setup@v4
+  #       with:
+  #         version: 8
 
-      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
+  #     - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: ${{ matrix.node-version }}
+  #         cache: pnpm
 
-      - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
+  #     - name: 🧩 Install Dependencies
+  #       run: pnpm pnpm.install.workaround
 
-      - name: 🏗️ Build
-        working-directory: ./
-        run: pnpm build
+  #     - name: 🏗️ Build
+  #       working-directory: ./
+  #       run: pnpm build
 
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
+  #     - name: 🧪 Run linting and unit tests
+  #       working-directory: ./
+  #       run: pnpm test
 
-      - name: 🍏 🌐 Run iOS Web e2e tests
-        working-directory: ./
-        env:
-          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
-          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
-          BUILD_PREFIX: true
-        run: pnpm test.lambdatest.sims.web --maxConcurrency=2
+  #     - name: 🍏 🌐 Run iOS Web e2e tests
+  #       working-directory: ./
+  #       env:
+  #         LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+  #         LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+  #         BUILD_PREFIX: true
+  #       run: pnpm test.lambdatest.sims.web --maxConcurrency=2
 
-      - name: 📤 Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: ci-pr-ios-web-logs
-          path: |
-            logs/*.log
-            .tmp/
-            !.tmp/checkActual/
-            !.tmp/saveActual/
-            !.tmp/testDiff/
-            !.next/
+  #     - name: 📤 Upload artifacts
+  #       uses: actions/upload-artifact@v4
+  #       if: failure()
+  #       with:
+  #         name: ci-pr-ios-web-logs
+  #         path: |
+  #           logs/*.log
+  #           .tmp/
+  #           !.tmp/checkActual/
+  #           !.tmp/saveActual/
+  #           !.tmp/testDiff/
+  #           !.next/
 
   # ci-pr-app:
-    name: 🔄 📱 CI PR Run Mobile App Tests
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+  #   name: 🔄 📱 CI PR Run Mobile App Tests
+  #   runs-on: ubuntu-latest
+  #   if: |
+  #     github.event_name == 'pull_request' &&
+  #     github.actor != 'dependabot[bot]'
 
-    strategy:
-      matrix:
-        node-version: [20.x]
+  #   strategy:
+  #     matrix:
+  #       node-version: [20.x]
 
-    steps:
-      - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: ⬇️ Checkout Repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
 
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+  #     - name: ⬇️ Checkout PR Repository
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8
+  #     - name: 📦 Setup pnpm
+  #       uses: pnpm/action-setup@v4
+  #       with:
+  #         version: 8
 
-      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
+  #     - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: ${{ matrix.node-version }}
+  #         cache: pnpm
 
-      - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
+  #     - name: 🧩 Install Dependencies
+  #       run: pnpm pnpm.install.workaround
 
-      - name: 🏗️ Build
-        working-directory: ./
-        run: pnpm build
+  #     - name: 🏗️ Build
+  #       working-directory: ./
+  #       run: pnpm build
 
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
+  #     - name: 🧪 Run linting and unit tests
+  #       working-directory: ./
+  #       run: pnpm test
 
-      - name: 😶‍🌫️ 📱 Run App e2e tests
-        working-directory: ./
-        env:
-          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
-          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
-          BUILD_PREFIX: true
-        run: pnpm test.lambdatest.app --maxConcurrency=2
+  #     - name: 😶‍🌫️ 📱 Run App e2e tests
+  #       working-directory: ./
+  #       env:
+  #         LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+  #         LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+  #         BUILD_PREFIX: true
+  #       run: pnpm test.lambdatest.app --maxConcurrency=2
 
-      - name: 📤 Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: ci-pr-mobile-app-logs
-          path: |
-            logs/*.log
-            .tmp/
-            !.tmp/checkActual/
-            !.tmp/saveActual/
-            !.tmp/testDiff/
-            !.next/
+  #     - name: 📤 Upload artifacts
+  #       uses: actions/upload-artifact@v4
+  #       if: failure()
+  #       with:
+  #         name: ci-pr-mobile-app-logs
+  #         path: |
+  #           logs/*.log
+  #           .tmp/
+  #           !.tmp/checkActual/
+  #           !.tmp/saveActual/
+  #           !.tmp/testDiff/
+  #           !.next/
 
   # ci-pr-ocr:
-    name: 🔄 📱 CI PR Run OCR Tests
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+  #   name: 🔄 📱 CI PR Run OCR Tests
+  #   runs-on: ubuntu-latest
+  #   if: |
+  #     github.event_name == 'pull_request' &&
+  #     github.actor != 'dependabot[bot]'
 
-    strategy:
-      matrix:
-        node-version: [20.x]
+  #   strategy:
+  #     matrix:
+  #       node-version: [20.x]
 
-    steps:
-      - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: ⬇️ Checkout Repository
+  #       if: ${{ github.event_name != 'pull_request_target' }}
+  #       uses: actions/checkout@v3
 
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+  #     - name: ⬇️ Checkout PR Repository
+  #       if: ${{ github.event_name == 'pull_request_target' }}
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8
+  #     - name: 📦 Setup pnpm
+  #       uses: pnpm/action-setup@v4
+  #       with:
+  #         version: 8
 
-      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
+  #     - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: ${{ matrix.node-version }}
+  #         cache: pnpm
 
-      - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
+  #     - name: 🧩 Install Dependencies
+  #       run: pnpm pnpm.install.workaround
 
-      - name: 🏗️ Build
-        working-directory: ./
-        run: pnpm build
+  #     - name: 🏗️ Build
+  #       working-directory: ./
+  #       run: pnpm build
 
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
+  #     - name: 🧪 Run linting and unit tests
+  #       working-directory: ./
+  #       run: pnpm test
 
-      - name: 😶‍🌫️ 🔎 Run OCR e2e tests
-        working-directory: ./
-        env:
-          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
-          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
-          BUILD_PREFIX: true
-        run: pnpm test.ocr.lambdatest.desktop --maxConcurrency=1
+  #     - name: 😶‍🌫️ 🔎 Run OCR e2e tests
+  #       working-directory: ./
+  #       env:
+  #         LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+  #         LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+  #         BUILD_PREFIX: true
+  #       run: pnpm test.ocr.lambdatest.desktop --maxConcurrency=1
 
-      - name: 📤 Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: ci-pr-ocr-logs
-          path: |
-            logs/*.log
-            .tmp/
-            !.next/
+  #     - name: 📤 Upload artifacts
+  #       uses: actions/upload-artifact@v4
+  #       if: failure()
+  #       with:
+  #         name: ci-pr-ocr-logs
+  #         path: |
+  #           logs/*.log
+  #           .tmp/
+  #           !.next/
