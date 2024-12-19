@@ -338,10 +338,33 @@ describe('utils', () => {
             })
             expect(await getInstanceData(driver)).toMatchSnapshot()
         })
+
+        it('should return instance data when the lambdatest capabilities are provided', async() => {
+            const driver = createDriverMock({
+                ...DEFAULT_DESKTOP_BROWSER,
+                requestedCapabilities:{
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    'lt:options': {
+                        deviceName: 'Samsung Galaxy S22 LT',
+                        platformVersion: '11',
+                    },
+                },
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    // @ts-expect-error
+                    platformVersion: '11',
+                },
+                isAndroid: true,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+            })
+            expect(await getInstanceData(driver)).toMatchSnapshot()
+        })
     })
 
     describe('getBrowserObject', () => {
         function createElementMock(parent: WebdriverIO.Browser): WebdriverIO.Element {
+            // @ts-expect-error
             return {
                 isMultiremote: false,
                 sessionId: 'mock-session-id',
