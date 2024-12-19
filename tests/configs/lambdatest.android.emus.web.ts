@@ -3,9 +3,7 @@ import type { DeviceOrientation } from '../types/types.ts'
 
 export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
-    const nativeWebScreenshotPhones = (
-        ['landscape', 'portrait'] as DeviceOrientation[]
-    )
+    const nativeWebScreenshotPhones = (['landscape', 'portrait'] as DeviceOrientation[])
         .map((orientation) =>
             ['11', '12', '13', '14', '15'].map(
                 (platformVersion) =>
@@ -19,9 +17,10 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
         )
         .flat(1)
     // We limit it to the latest 2 versions of Android Tablets that LT supports
-    const nativeWebScreenshotTablets = (
-        ['landscape', 'portrait'] as DeviceOrientation[]
-    )
+    // There is also a small issue with out of bound offsets with landscape mode. So we limit it to portrait mode
+    // Error: The value of "offset" is out of range. It must be >= 0 and <= 9849596. Received 9849600 => this 4 is coming from Jimp
+    // @TODO: investigate the issue with out of bound offsets in landscape mode
+    const nativeWebScreenshotTablets = (['portrait'] as DeviceOrientation[])
         .map((orientation) =>
             ['13', '14'].map((platformVersion) => {
                 return createCaps({

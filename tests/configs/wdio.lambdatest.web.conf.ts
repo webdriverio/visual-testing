@@ -1,5 +1,5 @@
 import { config as sharedLambdaTestConfig } from './wdio.lambdatest.shared.conf.ts'
-// import { lambdaTestIosSimWeb } from './lambdatest.ios.sims.web.ts'
+import { lambdaTestIosSimWeb } from './lambdatest.ios.sims.web.ts'
 import { lambdaTestAndroidEmusWeb } from './lambdatest.android.emus.web.js'
 import { lambdaDesktopBrowsers } from './lambdatest.desktop.browsers.ts'
 
@@ -13,11 +13,11 @@ export const config: WebdriverIO.Config = {
     // Capabilities
     // ============
     capabilities: [
-        // ...(!process.env.LT_ENV || process.env.LT_ENV === 'sims'
-        //     ? lambdaTestIosSimWeb({
-        //         buildName: buildIdentifier,
-        //     })
-        //     : []),
+        ...(!process.env.LT_ENV || process.env.LT_ENV === 'sim'
+            ? lambdaTestIosSimWeb({
+                buildName: buildIdentifier,
+            })
+            : []),
         ...(!process.env.LT_ENV || process.env.LT_ENV === 'emu'
             ? lambdaTestAndroidEmusWeb({
                 buildName: buildIdentifier,
