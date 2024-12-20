@@ -13,7 +13,7 @@ export const config: WebdriverIO.Config = {
     // Capabilities
     // ============
     capabilities: [
-        ...(!process.env.LT_ENV || process.env.LT_ENV === 'sim'
+        ...(!process.env.LT_ENV || process.env.LT_ENV === 'sims'
             ? lambdaTestIosSimWeb({
                 buildName: buildIdentifier,
             })

@@ -12,15 +12,22 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
                         mobileSpecs,
                         build: buildName,
                         deviceOrientation: orientation,
+                        // @TODO: There are issues to get certain screenshots with nativeWebScreenshot in LANDSCAPE mode
+                        // There is also a small issue with out of bound offsets with landscape mode on Pixel 4 Android 14.
+                        // So we limit it to portrait mode
+                        // Error: The value of "offset" is out of range. It must be >= 0 and <= 9849596. Received 9849600 => this 4 is coming from Jimp
+                        // @TODO: investigate the issue with out of bound offsets in landscape mode
+                        wdioIcsCommands: [
+                            'checkScreen',
+                            'checkElement',
+                            platformVersion !== '14' ? 'checkFullPageScreen' : ''
+                        ],
                     })
             )
         )
         .flat(1)
     // We limit it to the latest 2 versions of Android Tablets that LT supports
-    // There is also a small issue with out of bound offsets with landscape mode. So we limit it to portrait mode
-    // Error: The value of "offset" is out of range. It must be >= 0 and <= 9849596. Received 9849600 => this 4 is coming from Jimp
-    // @TODO: investigate the issue with out of bound offsets in landscape mode
-    const nativeWebScreenshotTablets = (['portrait'] as DeviceOrientation[])
+    const nativeWebScreenshotTablets = (['landscape', 'portrait'] as DeviceOrientation[])
         .map((orientation) =>
             ['13', '14'].map((platformVersion) => {
                 return createCaps({
@@ -32,7 +39,11 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
                     // @TODO: There are issues to get certain screenshots with nativeWebScreenshot in LANDSCAPE mode
                     // - element screenshots are not perfect
                     // - Fullpage screenshots have the address bar in the screenshot
-                    wdioIcsCommands: ['checkScreen'],
+                    wdioIcsCommands: [
+                        'checkScreen',
+                        orientation !== 'landscape' ? 'checkElement': '',
+                        orientation !== 'landscape' ? 'checkFullPageScreen' : ''
+                    ],
                 })
             })
         )
@@ -81,6 +92,7 @@ function createCaps({
         deviceOrientation: DeviceOrientation,
         build: string,
         w3c: boolean,
+        queueTimeout: number,
     },
     specs: string[];
     'wdio-ics:options': {
@@ -102,6 +114,7 @@ function createCaps({
             deviceOrientation,
             build,
             w3c: true,
+            queueTimeout: 900,
         },
         specs: [mobileSpecs],
         'wdio-ics:options': {

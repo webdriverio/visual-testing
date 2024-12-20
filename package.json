@@ -42,7 +42,7 @@
     "test.lambdatest.desktop": "LT_ENV=desktop wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
     "test.lambdatest.web": "wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
     "test.lambdatest.emu.web": "LT_ENV=emu wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
-    "test.lambdatest.sim.web": "LT_ENV=sim wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
+    "test.lambdatest.sims.web": "LT_ENV=sims wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
     "pnpm.install.workaround": "pnpm install --shamefully-hoist",
     "update.packages": "node ./scripts/update.packages.mjs",
     "prepare": "husky",

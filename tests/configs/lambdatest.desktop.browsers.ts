@@ -22,6 +22,7 @@ export function lambdaDesktopBrowsers({
             project: '@wdio/visual-testing',
             w3c: true,
             resolution: '1600x1200',
+            queueTimeout: 900,
         }
     }
 

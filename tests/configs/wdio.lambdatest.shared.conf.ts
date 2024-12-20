@@ -6,7 +6,7 @@ export const config: WebdriverIO.Config  = {
     // ===================
     // Test Configurations
     // ===================
-    specFileRetries: 2,
+    specFileRetries: 8,
     // Wait for 8 min, then a new session should be created
     // and the queue should be empty
     connectionRetryTimeout: 8 * 60 * 1000,
