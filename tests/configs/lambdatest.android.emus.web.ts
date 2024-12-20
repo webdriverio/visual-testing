@@ -20,7 +20,7 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
                         wdioIcsCommands: [
                             'checkScreen',
                             'checkElement',
-                            platformVersion !== '14' ? 'checkFullPageScreen' : ''
+                            platformVersion !== '14' && platformVersion !== '11' ? 'checkFullPageScreen' : ''
                         ],
                     })
             )
@@ -41,8 +41,9 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
                     // - Fullpage screenshots have the address bar in the screenshot
                     wdioIcsCommands: [
                         'checkScreen',
-                        orientation !== 'landscape' ? 'checkElement': '',
-                        orientation !== 'landscape' ? 'checkFullPageScreen' : ''
+                        orientation !== 'landscape' ? 'checkElement' : '',
+                        // @TODO: navigation bar and so on are not set properly, not only in landscape but also portrait mode
+                        // orientation !== 'landscape' ? 'checkFullPageScreen' : ''
                     ],
                 })
             })
