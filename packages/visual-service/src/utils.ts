@@ -300,12 +300,23 @@ export function determineNativeContext(
                 'appium:appActivity',
                 'appium:appWaitActivity',
                 'appium:appWaitPackage',
+                'appium:autoWebview',
             ]
-            return appiumKeys.some(key => capabilities[key as keyof AppiumCapabilities] !== undefined)
+            const optionsKeys = appiumKeys.map(key => key.replace('appium:', ''))
+            const isInRoot = appiumKeys.some(key => capabilities[key as keyof AppiumCapabilities] !== undefined)
+            // @ts-expect-error
+            const isInOptions = capabilities['appium:options'] &&
+                // @ts-expect-error
+                optionsKeys.some(key => capabilities['appium:options']?.[key as keyof AppiumCapabilities['appium:options']] !== undefined)
+
+            return !!(isInRoot || isInOptions)
         }
         const capabilities = driver.requestedCapabilities as WebdriverIO.Capabilities & AppiumCapabilities
         const isBrowserNameFalse = !!capabilities.browserName === false
-        const isAutoWebviewFalse = capabilities['appium:autoWebview'] !== true
+        const isAutoWebviewFalse = !(
+            capabilities['appium:autoWebview'] === true ||
+            capabilities['appium:options']?.autoWebview === true
+        )
 
         return isBrowserNameFalse && isAppiumAppCapPresent(capabilities) && isAutoWebviewFalse
     }

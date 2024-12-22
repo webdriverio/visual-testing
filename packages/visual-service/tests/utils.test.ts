@@ -494,5 +494,72 @@ describe('utils', () => {
 
             expect(await determineNativeContext(driver)).toBeTruthy()
         })
+
+        /**
+         * For the `appium:options`
+         */
+        it('should return true for when the app is provided and browser name is empty for the `appium:options`', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { 'app': 'app' }
+            expect(await determineNativeContext(driver)).toBeTruthy()
+        })
+
+        it('should return true for when the app is provided and autoWebview is false for the `appium:options`', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { app: 'app', autoWebview: false }
+
+            expect(await determineNativeContext(driver)).toBeTruthy()
+        })
+
+        it('should return false for when the app is provided and autoWebview is true for the `appium:options`', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { app: 'app', autoWebview: true }
+
+            expect(await determineNativeContext(driver)).toBeFalsy()
+        })
+
+        it('should return true for when appium:appPackage is provided and autoWebview is true for the `appium:options`', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appPackage: 'string', autoWebview: true }
+
+            expect(await determineNativeContext(driver)).toBeFalsy()
+        })
+
+        // For iOS
+        it('should return true for when appium:bundleId is provided and autoWebview is true for the `appium:options`', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { bundleId: 'string', autoWebview: true }
+
+            expect(await determineNativeContext(driver)).toBeFalsy()
+        })
+
+        // For Android
+        it('should return true for when appium:appPackage is provided for the `appium:options`', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appPackage: 'string' }
+
+            expect(await determineNativeContext(driver)).toBeTruthy()
+        })
+
+        it('should return true for when appium:appActivity is provided for the `appium:options`', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appActivity: 'appActivity' }
+
+            expect(await determineNativeContext(driver)).toBeTruthy()
+        })
+
+        it('should return true for when appium:appWaitActivity is provided for the `appium:options`', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appWaitActivity: 'appWaitActivity' }
+
+            expect(await determineNativeContext(driver)).toBeTruthy()
+        })
+
+        it('should return true for when appium:appWaitPackage is provided for the `appium:options`', async() => {
+            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
+            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appWaitPackage: 'appWaitPackage' }
+
+            expect(await determineNativeContext(driver)).toBeTruthy()
+        })
     })
 })
