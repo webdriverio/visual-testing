@@ -3,5 +3,10 @@ type RetriesSpecs = {
     sessionId: string;
     specFileNamePath: string;
 };
+type SauceDeviceOptions = {
+    appiumVersion?: string;
+    build: string;
+    deviceOrientation: DeviceOrientation;
+}
 
-export type { DeviceOrientation, RetriesSpecs }
+export type { DeviceOrientation, RetriesSpecs, SauceDeviceOptions }
