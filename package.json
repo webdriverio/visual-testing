@@ -31,6 +31,7 @@
     "test.local.desktop.storybook.localhost.custom": "npm run test.local.desktop.storybook.localhost -- --skipStories='/example-page.*/gm' --spec='tests/specs/storybook-interaction/*.ts'",
     "test.ocr.local.desktop": "wdio tests/configs/wdio.ocr.local.desktop.conf.ts",
     "test.ocr.saucelabs.desktop": "SAUCE=true wdio tests/configs/wdio.ocr.saucelabs.conf.ts",
+    "test.ocr.lambdatest.desktop": "wdio tests/configs/wdio.ocr.lambdatest.conf.ts",
     "test.unit.coverage": "vitest --coverage",
     "test.saucelabs.app": "wdio ./tests/configs/wdio.saucelabs.app.conf.ts",
     "test.saucelabs.emu.app": "SAUCE_ENV=emu wdio ./tests/configs/wdio.saucelabs.app.conf.ts",

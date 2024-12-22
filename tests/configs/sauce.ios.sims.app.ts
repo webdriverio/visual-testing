@@ -1,8 +1,5 @@
 import { join } from 'node:path'
-import type {
-    DeviceOrientation,
-    ExtendedSauceLabsCapabilities,
-} from '../types/types.ts'
+import type { DeviceOrientation, SauceDeviceOptions } from '../types/types.ts'
 
 export function sauceIosSimApp({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.app.spec.ts')
@@ -30,7 +27,7 @@ export function sauceIosSimApp({ buildName }: { buildName: string }) {
     ]
 
     return [
-        ...(['PORTRAIT'] as DeviceOrientation[])
+        ...(['portrait'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS14Devices.map((device) =>
                     createCaps({
@@ -46,7 +43,7 @@ export function sauceIosSimApp({ buildName }: { buildName: string }) {
                 )
             )
             .flat(1),
-        ...(['PORTRAIT'] as DeviceOrientation[])
+        ...(['portrait'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS15Devices.map((device) =>
                     createCaps({
@@ -62,7 +59,7 @@ export function sauceIosSimApp({ buildName }: { buildName: string }) {
                 )
             )
             .flat(1),
-        ...(['PORTRAIT'] as DeviceOrientation[])
+        ...(['portrait'] as DeviceOrientation[])
             .map((orientation) =>
                 iOS16Devices.map((device) =>
                     createCaps({
@@ -97,17 +94,17 @@ function createCaps({
     mobileSpecs: string,
     orientation: DeviceOrientation,
     platformVersion: string,
-    sauceOptions: ExtendedSauceLabsCapabilities,
+    sauceOptions: SauceDeviceOptions,
 }) {
     return {
         platformName: 'ios',
         'appium:app': 'https://github.com/webdriverio/native-demo-app/releases/download/v1.0.8/ios.simulator.wdio.native.app.v1.0.8.zip',
         'appium:deviceName': deviceName,
         'appium:platformVersion': platformVersion,
-        'appium:orientation': orientation,
+        'appium:orientation': orientation.toUpperCase(),
         'appium:automationName': 'XCUITest',
         'wdio-ics:options': {
-            logName: `${deviceName
+            logName: `app-${deviceName
                 .split(' ')
                 .map(
                     (word) =>
