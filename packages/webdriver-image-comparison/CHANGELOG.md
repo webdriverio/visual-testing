@@ -4,7 +4,11 @@
 
 ### Minor Changes
 
-- 2d033e8: Add LT support including fixing #691 (ingore blinking cursor) and #692 (support appium:options)
+- 2d033e8:  #691 Add option to ignore blinking cursors / carets
+
+### Patch Changes
+
+- Updated dependencies [2d033e8]
 
 ## 7.2.2
 
