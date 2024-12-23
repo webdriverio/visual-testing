@@ -290,7 +290,6 @@ export function determineNativeContext(
     }
 
     // If not check if it's a mobile
-    // @TODO: Also check for LT
     if (driver.isMobile) {
         const isAppiumAppCapPresent = (capabilities: AppiumCapabilities) => {
             const appiumKeys = [
@@ -305,17 +304,23 @@ export function determineNativeContext(
             const optionsKeys = appiumKeys.map(key => key.replace('appium:', ''))
             const isInRoot = appiumKeys.some(key => capabilities[key as keyof AppiumCapabilities] !== undefined)
             // @ts-expect-error
-            const isInOptions = capabilities['appium:options'] &&
+            const isInAppiumOptions = capabilities['appium:options'] &&
                 // @ts-expect-error
                 optionsKeys.some(key => capabilities['appium:options']?.[key as keyof AppiumCapabilities['appium:options']] !== undefined)
+                // @ts-expect-error
+            const isInLtOptions = capabilities['lt:options'] &&
+                // @ts-expect-error
+                optionsKeys.some(key => capabilities['lt:options']?.[key as keyof AppiumCapabilities['lt:options']] !== undefined)
 
-            return !!(isInRoot || isInOptions)
+            return !!(isInRoot || isInAppiumOptions || isInLtOptions)
         }
         const capabilities = driver.requestedCapabilities as WebdriverIO.Capabilities & AppiumCapabilities
         const isBrowserNameFalse = !!capabilities.browserName === false
         const isAutoWebviewFalse = !(
             capabilities['appium:autoWebview'] === true ||
-            capabilities['appium:options']?.autoWebview === true
+            capabilities['appium:options']?.autoWebview === true ||
+            // @ts-expect-error
+            capabilities['lt:options']?.autoWebview === true
         )
 
         return isBrowserNameFalse && isAppiumAppCapPresent(capabilities) && isAutoWebviewFalse
