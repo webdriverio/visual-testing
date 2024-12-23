@@ -23,6 +23,7 @@ exports[`BaseClass > initializes default options correctly 1`] = `
     "saveAboveTolerance": 0,
     "scaleImagesToSameSize": false,
   },
+  "disableBlinkingCursor": false,
   "disableCSSAnimation": false,
   "enableLayoutTesting": false,
   "formatImageName": "{tag}-{browserName}-{width}x{height}-dpr-{dpr}",

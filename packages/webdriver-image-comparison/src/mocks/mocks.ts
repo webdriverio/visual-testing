@@ -25,6 +25,7 @@ export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
         platformVersion: '1234',
     },
     addressBarShadowPadding: 6,
+    disableBlinkingCursor: true,
     disableCSSAnimation: true,
     enableLayoutTesting: false,
     noScrollBars: true,

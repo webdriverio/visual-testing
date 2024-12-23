@@ -36,6 +36,8 @@ export interface ClassOptions {
     /**
      * Class and method options
      */
+    // Disable the blinking cursor in the screenshots
+    disableBlinkingCursor?: boolean;
     // En/Disable all css animations and the input caret in the application.
     disableCSSAnimation?: boolean;
     // Make all text on a page transparent to only focus on the layout.
@@ -111,6 +113,7 @@ export interface DefaultOptions {
     autoSaveBaseline: boolean;
     clearFolder: boolean;
     compareOptions: CompareOptions;
+    disableBlinkingCursor: boolean;
     disableCSSAnimation: boolean;
     enableLayoutTesting: boolean;
     formatImageName: string;

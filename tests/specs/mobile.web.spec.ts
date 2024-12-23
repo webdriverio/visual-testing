@@ -9,13 +9,13 @@ describe('@wdio/visual-service mobile web', () => {
     // @ts-ignore
     const wdioIcsCommands = driver.requestedCapabilities['wdio-ics:options'].commands
     // @ts-ignore
-    const deviceName = driver.requestedCapabilities.deviceName
+    const deviceName = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).deviceName
     // @ts-ignore
-    const platformName = driver.requestedCapabilities.platformName.toLowerCase() === 'android' ? 'Android' : 'iOS'
+    const platformName = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).platformName.toLowerCase() === 'android' ? 'Android' : 'iOS'
     // @ts-ignore
-    const platformVersion = driver.requestedCapabilities.platformVersion
+    const platformVersion = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).platformVersion
     // @ts-ignore
-    const orientation = driver.requestedCapabilities.orientation.toLowerCase()
+    const orientation = (driver.requestedCapabilities['lt:options'].deviceOrientation || driver.requestedCapabilities.orientation).toLowerCase()
 
     beforeEach(async () => {
         await browser.url('')

@@ -152,6 +152,17 @@ async function getMobileInstanceData({
 }
 
 /**
+ * Get the LambdaTest options, these can be case insensitive
+ */
+export function getLtOptions(capabilities: WebdriverIO.Capabilities): any | undefined {
+    const key = Object.keys(capabilities).find(
+        (k) => k.toLowerCase() === 'lt:options'
+    )
+
+    return key ? (capabilities as Record<string, any>)[key] : undefined
+}
+
+/**
  * Get the device name
  */
 function getDeviceName(currentBrowser: WebdriverIO.Browser): string {
@@ -167,11 +178,18 @@ function getDeviceName(currentBrowser: WebdriverIO.Browser): string {
     // - return the "requested" deviceName in the session capabilities
     // - don't use the `appium:deviceName` capability
     const isBrowserStack = 'bstack:options' in requestedCapabilities
-    const bsOptions = (requestedCapabilities as WebdriverIO.Capabilities)['bstack:options']
+    const bsOptions = requestedCapabilities['bstack:options']
     const capName = 'deviceName'
     if (isBrowserStack && bsOptions && capName in bsOptions){
         deviceName = bsOptions[capName as keyof typeof bsOptions] as string
     }
+    // Same for LabdaTest
+    const isLambdaTest = 'lt:options' in requestedCapabilities
+    const ltOptions = getLtOptions(requestedCapabilities)
+    if (isLambdaTest && ltOptions && capName in ltOptions){
+        deviceName = ltOptions[capName as keyof typeof ltOptions] as string
+    }
+
     const { 'appium:deviceName': requestedDeviceName } = requestedCapabilities as AppiumCapabilities
 
     return (deviceName !== NOT_KNOWN ? deviceName : requestedDeviceName || returnedDeviceName || NOT_KNOWN).toLowerCase()
@@ -217,7 +235,10 @@ export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Prom
         ? rawApp.replace(/\\/g, '/').split('/').pop().replace(/[^a-zA-Z0-9.]/g, '_')
         : NOT_KNOWN
     const deviceName = getDeviceName(currentBrowser)
-    const nativeWebScreenshot = !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
+    const ltOptions = getLtOptions(requestedCapabilities)
+    // @TODO: Figure this one out in the future when we know more about the Appium capabilities from LT
+    // 20241216: LT doesn't have the option to take a ChromeDriver screenshot, so if it's Android it's always native
+    const nativeWebScreenshot = isAndroid && ltOptions || !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
     const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? NOT_KNOWN : rawPlatformVersion.toLowerCase()
 
     const { devicePixelRatio: mobileDevicePixelRatio, devicePlatformRect, deviceScreenSize, } = await getMobileInstanceData({ currentBrowser, isAndroid, isMobile })
@@ -278,12 +299,29 @@ export function determineNativeContext(
                 'appium:appActivity',
                 'appium:appWaitActivity',
                 'appium:appWaitPackage',
+                'appium:autoWebview',
             ]
-            return appiumKeys.some(key => capabilities[key as keyof AppiumCapabilities] !== undefined)
+            const optionsKeys = appiumKeys.map(key => key.replace('appium:', ''))
+            const isInRoot = appiumKeys.some(key => capabilities[key as keyof AppiumCapabilities] !== undefined)
+            // @ts-expect-error
+            const isInAppiumOptions = capabilities['appium:options'] &&
+                // @ts-expect-error
+                optionsKeys.some(key => capabilities['appium:options']?.[key as keyof AppiumCapabilities['appium:options']] !== undefined)
+                // @ts-expect-error
+            const isInLtOptions = capabilities['lt:options'] &&
+                // @ts-expect-error
+                optionsKeys.some(key => capabilities['lt:options']?.[key as keyof AppiumCapabilities['lt:options']] !== undefined)
+
+            return !!(isInRoot || isInAppiumOptions || isInLtOptions)
         }
         const capabilities = driver.requestedCapabilities as WebdriverIO.Capabilities & AppiumCapabilities
         const isBrowserNameFalse = !!capabilities.browserName === false
-        const isAutoWebviewFalse = capabilities['appium:autoWebview'] !== true
+        const isAutoWebviewFalse = !(
+            capabilities['appium:autoWebview'] === true ||
+            capabilities['appium:options']?.autoWebview === true ||
+            // @ts-expect-error
+            capabilities['lt:options']?.autoWebview === true
+        )
 
         return isBrowserNameFalse && isAppiumAppCapPresent(capabilities) && isAutoWebviewFalse
     }

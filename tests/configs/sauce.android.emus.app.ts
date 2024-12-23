@@ -1,18 +1,18 @@
 import { join } from 'node:path'
-import type { DeviceOrientation, ExtendedSauceLabsCapabilities } from '../types/types.ts'
+import type { DeviceOrientation, SauceDeviceOptions } from '../types/types.ts'
 
 export function sauceAndroidEmusApp({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.app.spec.ts')
     const emulators = (
-        ['PORTRAIT'] as DeviceOrientation[]
+        ['portrait'] as DeviceOrientation[]
     )
         .map((orientation) =>
             [
-                { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'10.0' },
-                { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'11.0' },
-                { deviceName:'Google Pixel 3 XL GoogleAPI Emulator', platformVersion:'12.0' },
+                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'11.0' },
+                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'12.0' },
                 { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'13.0' },
                 { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'14.0' },
+                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'15.0' },
             ].map(
                 (cap) =>
                     createCaps({
@@ -48,7 +48,7 @@ function createCaps({
     mobileSpecs: string;
     orientation: string;
     platformVersion: string;
-    sauceOptions: ExtendedSauceLabsCapabilities;
+    sauceOptions: SauceDeviceOptions;
 }): {
     platformName: string;
     'appium:app': string;
@@ -60,7 +60,7 @@ function createCaps({
         logName: string;
         commands: string[];
     };
-    'sauce:options': ExtendedSauceLabsCapabilities;
+    'sauce:options': SauceDeviceOptions;
     specs: string[];
 } {
     return {
@@ -68,10 +68,10 @@ function createCaps({
         'appium:app': 'https://github.com/webdriverio/native-demo-app/releases/download/v1.0.8/android.wdio.native.app.v1.0.8.apk',
         'appium:deviceName': deviceName,
         'appium:platformVersion': platformVersion,
-        'appium:orientation': orientation,
+        'appium:orientation': orientation.toUpperCase(),
         'appium:automationName': 'UIAutomator2',
         'wdio-ics:options': {
-            logName: `Emulator${deviceName.replace(
+            logName: `app-Emulator${deviceName.replace(
                 /(\s+|\(+|\)+|Emulator)/g,
                 ''
             )}${orientation.charAt(0).toUpperCase()}${orientation

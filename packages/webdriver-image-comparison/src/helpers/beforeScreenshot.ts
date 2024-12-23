@@ -23,6 +23,7 @@ export default async function beforeScreenshot(
     const { browserName, nativeWebScreenshot, platformName } = options.instanceData
     const {
         addressBarShadowPadding,
+        disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,
         hideElements,
@@ -75,8 +76,8 @@ export default async function beforeScreenshot(
     }
 
     // Set some custom css
-    if (disableCSSAnimation || checkIsMobile(platformName)) {
-        await executor(setCustomCss, { addressBarPadding, disableCSSAnimation, id: CUSTOM_CSS_ID, toolBarPadding })
+    if (disableCSSAnimation || disableBlinkingCursor || checkIsMobile(platformName)) {
+        await executor(setCustomCss, { addressBarPadding, disableBlinkingCursor, disableCSSAnimation, id: CUSTOM_CSS_ID, toolBarPadding })
         // Wait at least 500 milliseconds to make sure the css is applied
         // Not every device is fast enough to apply the css faster
         await waitFor(500)

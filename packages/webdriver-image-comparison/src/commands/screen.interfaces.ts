@@ -8,6 +8,8 @@ export interface SaveScreenOptions {
 }
 
 export interface SaveScreenMethodOptions extends Partial<Folders> {
+    // Disable the blinking cursor
+    disableBlinkingCursor?: boolean;
     // Disable all css animations
     disableCSSAnimation?: boolean;
     // Make all text on a page transparent to only focus on the layout

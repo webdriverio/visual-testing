@@ -29,6 +29,9 @@ export default async function saveWebElement(
         saveElementOptions.wic
     const { executor, screenShot, takeElementScreenshot } = methods
     // 1b. Set the method options to the right values
+    const disableBlinkingCursor: boolean = saveElementOptions.method.disableBlinkingCursor !== undefined
+        ? Boolean(saveElementOptions.method.disableBlinkingCursor)
+        : saveElementOptions.wic.disableBlinkingCursor
     const disableCSSAnimation: boolean = saveElementOptions.method.disableCSSAnimation !== undefined
         ? Boolean(saveElementOptions.method.disableCSSAnimation)
         : saveElementOptions.wic.disableCSSAnimation
@@ -49,6 +52,7 @@ export default async function saveWebElement(
     const beforeOptions: BeforeScreenshotOptions = {
         instanceData,
         addressBarShadowPadding,
+        disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,
         hideElements,
@@ -133,6 +137,7 @@ export default async function saveWebElement(
     const afterOptions: AfterScreenshotOptions = {
         actualFolder: folders.actualFolder,
         base64Image: croppedBase64Image,
+        disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,
         filePath: {

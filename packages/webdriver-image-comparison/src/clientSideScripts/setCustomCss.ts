@@ -22,10 +22,14 @@ export default function setCustomCss(cssOptions: CssOptions): void {
     animation: none !important;
     caret-color: transparent !important;
 }`
-    const { addressBarPadding, disableCSSAnimation, id, toolBarPadding } = cssOptions
+    const { addressBarPadding, disableBlinkingCursor, disableCSSAnimation, id, toolBarPadding } = cssOptions
     const bodyTopPadding = addressBarPadding === 0 ? '' : `body{padding-top:${addressBarPadding}px !important}`
     const bodyBottomPadding = toolBarPadding === 0 ? '' : `body{padding-bottom:${toolBarPadding}px !important}`
-    const css = (disableCSSAnimation ? disableTransformationsTransitionsAnimations : '') + bodyTopPadding + bodyBottomPadding
+    const disableBlinkingCursorCss = disableBlinkingCursor ? ' input, textarea, [contenteditable]{caret-color: transparent !important;}' : ''
+    const css = (disableCSSAnimation ? disableTransformationsTransitionsAnimations : '') +
+        bodyTopPadding +
+        bodyBottomPadding +
+        disableBlinkingCursorCss
     const head = document.head
     const style = document.createElement('style')
 

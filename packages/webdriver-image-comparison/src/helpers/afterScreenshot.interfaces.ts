@@ -14,6 +14,8 @@ export interface AfterScreenshotOptions {
     actualFolder: string;
     // The image
     base64Image: string;
+    // Disable the blinking cursor
+    disableBlinkingCursor?: boolean;
     // Disable all css animations
     disableCSSAnimation?: boolean;
     // Make all text on a page transparent to only focus on the layout

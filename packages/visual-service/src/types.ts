@@ -9,6 +9,7 @@ import type {
     SaveFullPageMethodOptions,
     ClassOptions,
 } from 'webdriver-image-comparison'
+import type { ChainablePromiseElement } from 'webdriverio'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;
@@ -31,12 +32,12 @@ export type MultiremoteCommandResult = {
 }
 
 export interface WdioIcsCommonOptions {
-    hideElements?: WebdriverIO.Element[];
-    removeElements?: WebdriverIO.Element[];
+    hideElements?: (WebdriverIO.Element | ChainablePromiseElement)[];
+    removeElements?: (WebdriverIO.Element | ChainablePromiseElement)[];
 }
 
 export interface WdioIcsScrollOptions extends WdioIcsCommonOptions {
-    hideAfterFirstScroll?: WebdriverIO.Element[];
+    hideAfterFirstScroll?: (WebdriverIO.Element | ChainablePromiseElement)[];
 }
 
 export interface WdioCheckFullPageMethodOptions

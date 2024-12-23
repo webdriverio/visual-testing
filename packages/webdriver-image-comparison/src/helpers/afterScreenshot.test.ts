@@ -17,6 +17,7 @@ describe('afterScreenshot', () => {
         const options = {
             actualFolder: folder,
             base64Image: 'string',
+            disableBlinkingCursor: false,
             disableCSSAnimation: false,
             filePath: {
                 browserName: 'browserName',

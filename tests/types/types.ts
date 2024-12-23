@@ -1,12 +1,12 @@
-import type { Capabilities } from '@wdio/types'
-
-type DeviceOrientation = 'LANDSCAPE' | 'PORTRAIT';
-type ExtendedSauceLabsCapabilities = Capabilities.SauceLabsCapabilities & {
-    deviceOrientation?: DeviceOrientation;
-};
+type DeviceOrientation = 'landscape' | 'portrait';
 type RetriesSpecs = {
     sessionId: string;
     specFileNamePath: string;
 };
+type SauceDeviceOptions = {
+    appiumVersion?: string;
+    build: string;
+    deviceOrientation: DeviceOrientation;
+}
 
-export type { DeviceOrientation, ExtendedSauceLabsCapabilities, RetriesSpecs }
+export type { DeviceOrientation, RetriesSpecs, SauceDeviceOptions }
