@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- 2d033e8: Add LT support including fixing #691 (ingore blinking cursor) and #692 (support appium:options)
+- 2d033e8: update deps
 
 ## 0.4.4
 
