@@ -4,7 +4,9 @@
 
 ### Minor Changes
 
-- 2d033e8: Add LT support including fixing #691 (ingore blinking cursor) and #692 (support appium:options)
+- 2d033e8: Add LambdaTest support
+  - #691 Add option to ignore blinking cursors / carets by providing the option `disableBlinkingCursor`
+  - #692 Add support for `appium:options`
 
 ### Patch Changes
 
