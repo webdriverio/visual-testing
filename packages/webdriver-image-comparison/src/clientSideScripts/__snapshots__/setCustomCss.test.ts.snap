@@ -1,9 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`setCustomCss > should be able to set the custom css with the animations disabled 1`] = `"body{padding-top:6px !important}body{padding-bottom:6px !important}"`;
+exports[`setCustomCss > should be able to set the custom css with the animations disabled 1`] = `""`;
 
 exports[`setCustomCss > should be able to set the custom css with the animations disabled 2`] = `
-"body{padding-top:6px !important}body{padding-bottom:6px !important}
+"
 *, *::before, *::after {
     -o-transition-property: none !important;
     -moz-transition-property: none !important;
@@ -23,38 +23,14 @@ exports[`setCustomCss > should be able to set the custom css with the default op
 
 exports[`setCustomCss > should be able to set the custom css with the default options 2`] = `"body{padding-top:6px !important}body{padding-bottom:6px !important}"`;
 
-exports[`setCustomCss > should be able to set the custom css with the with padding set to 0 1`] = `
-"body{padding-top:6px !important}body{padding-bottom:6px !important}
-*, *::before, *::after {
-    -o-transition-property: none !important;
-    -moz-transition-property: none !important;
-    -ms-transition-property: none !important;
-    -webkit-transition-property: none !important;
-    transition-property: none !important;
-    -webkit-animation: none !important;
-    -moz-animation: none !important;
-    -o-animation: none !important;
-    -ms-animation: none !important;
-    animation: none !important;
-    caret-color: transparent !important;
-}body{padding-top:6px !important}body{padding-bottom:6px !important}"
-`;
+exports[`setCustomCss > should be able to set the custom css with the with disableBlinkingCursor set to true 1`] = `""`;
+
+exports[`setCustomCss > should be able to set the custom css with the with disableBlinkingCursor set to true 2`] = `" input, textarea, [contenteditable]{caret-color: transparent !important;}"`;
+
+exports[`setCustomCss > should be able to set the custom css with the with padding set to 0 1`] = `""`;
 
 exports[`setCustomCss > should be able to set the custom css with the with padding set to 0 2`] = `
-"body{padding-top:6px !important}body{padding-bottom:6px !important}
-*, *::before, *::after {
-    -o-transition-property: none !important;
-    -moz-transition-property: none !important;
-    -ms-transition-property: none !important;
-    -webkit-transition-property: none !important;
-    transition-property: none !important;
-    -webkit-animation: none !important;
-    -moz-animation: none !important;
-    -o-animation: none !important;
-    -ms-animation: none !important;
-    animation: none !important;
-    caret-color: transparent !important;
-}body{padding-top:6px !important}body{padding-bottom:6px !important}
+"
 *, *::before, *::after {
     -o-transition-property: none !important;
     -moz-transition-property: none !important;

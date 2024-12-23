@@ -35,6 +35,9 @@ export default async function saveFullPageScreen(
     } = saveFullPageOptions.wic
 
     // 1c. Set the method options to the right values
+    const disableBlinkingCursor: boolean = saveFullPageOptions.method.disableBlinkingCursor !== undefined
+        ? Boolean(saveFullPageOptions.method.disableBlinkingCursor)
+        : saveFullPageOptions.wic.disableBlinkingCursor
     const disableCSSAnimation: boolean = saveFullPageOptions.method.disableCSSAnimation !== undefined
         ? Boolean(saveFullPageOptions.method.disableCSSAnimation)
         : saveFullPageOptions.wic.disableCSSAnimation
@@ -58,6 +61,7 @@ export default async function saveFullPageScreen(
     const beforeOptions: BeforeScreenshotOptions = {
         instanceData,
         addressBarShadowPadding,
+        disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,
         hideElements,
@@ -103,6 +107,7 @@ export default async function saveFullPageScreen(
     const afterOptions: AfterScreenshotOptions = {
         actualFolder: folders.actualFolder,
         base64Image: fullPageBase64Image,
+        disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,
         filePath: {

@@ -25,6 +25,7 @@ export default async function checkWebElement(
     const saveElementOptions: SaveElementOptions = {
         wic: checkElementOptions.wic,
         method: {
+            disableBlinkingCursor: checkElementOptions.method.disableBlinkingCursor,
             disableCSSAnimation: checkElementOptions.method.disableCSSAnimation,
             enableLayoutTesting: checkElementOptions.method.enableLayoutTesting,
             hideScrollBars: checkElementOptions.method.hideScrollBars,

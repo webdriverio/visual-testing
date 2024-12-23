@@ -16,6 +16,7 @@ describe('options', () => {
                 formatImageName: '{foo}-{bar}',
                 savePerInstance: true,
                 toolBarShadowPadding: 1,
+                disableBlinkingCursor: true,
                 disableCSSAnimation: true,
                 fullPageScrollTimeout: 12345,
                 hideScrollBars: true,

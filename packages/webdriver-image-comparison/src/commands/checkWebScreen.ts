@@ -24,6 +24,7 @@ export default async function checkWebScreen(
     const saveScreenOptions: SaveScreenOptions = {
         wic: checkScreenOptions.wic,
         method: {
+            disableBlinkingCursor: checkScreenOptions.method.disableBlinkingCursor,
             disableCSSAnimation: checkScreenOptions.method.disableCSSAnimation,
             enableLayoutTesting: checkScreenOptions.method.enableLayoutTesting,
             hideScrollBars: checkScreenOptions.method.hideScrollBars,

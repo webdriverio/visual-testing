@@ -29,6 +29,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         /**
          * Module and method options
          */
+        disableBlinkingCursor: options.disableBlinkingCursor ?? false,
         disableCSSAnimation: options.disableCSSAnimation ?? false,
         enableLayoutTesting: options.enableLayoutTesting ?? false,
         fullPageScrollTimeout: options.fullPageScrollTimeout ?? FULL_PAGE_SCROLL_TIMEOUT,

@@ -26,6 +26,9 @@ export default async function saveWebScreen(
         saveScreenOptions.wic
 
     // 1b. Set the method options to the right values
+    const disableBlinkingCursor: boolean = saveScreenOptions.method.disableBlinkingCursor !== undefined
+        ? Boolean(saveScreenOptions.method.disableBlinkingCursor)
+        : saveScreenOptions.wic.disableBlinkingCursor
     const disableCSSAnimation: boolean = saveScreenOptions.method.disableCSSAnimation !== undefined
         ? Boolean(saveScreenOptions.method.disableCSSAnimation)
         : saveScreenOptions.wic.disableCSSAnimation
@@ -45,6 +48,7 @@ export default async function saveWebScreen(
     const beforeOptions: BeforeScreenshotOptions = {
         instanceData,
         addressBarShadowPadding,
+        disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,
         hideElements,
@@ -101,6 +105,7 @@ export default async function saveWebScreen(
     const afterOptions: AfterScreenshotOptions = {
         actualFolder: folders.actualFolder,
         base64Image: croppedBase64Image,
+        disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,
         filePath: {

@@ -20,6 +20,7 @@ export default async function afterScreenshot(executor: Executor, options: After
     const {
         actualFolder,
         base64Image,
+        disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,
         fileName: fileNameOptions,
@@ -68,7 +69,7 @@ export default async function afterScreenshot(executor: Executor, options: After
         }
 
         // Remove the custom set css
-        if (disableCSSAnimation || checkIsMobile(platformName)) {
+        if (disableCSSAnimation || disableBlinkingCursor || checkIsMobile(platformName)) {
             await executor(removeElementFromDom, CUSTOM_CSS_ID)
         }
 

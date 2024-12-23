@@ -29,6 +29,7 @@ export default async function checkFullPageScreen(
     const saveFullPageOptions: SaveFullPageOptions = {
         wic: checkFullPageOptions.wic,
         method: {
+            disableBlinkingCursor: checkFullPageOptions.method.disableBlinkingCursor,
             disableCSSAnimation: checkFullPageOptions.method.disableCSSAnimation,
             enableLayoutTesting: checkFullPageOptions.method.enableLayoutTesting,
             fullPageScrollTimeout: checkFullPageOptions.method.fullPageScrollTimeout,
