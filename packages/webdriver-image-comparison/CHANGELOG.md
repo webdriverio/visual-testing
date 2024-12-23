@@ -1,5 +1,11 @@
 # webdriver-image-comparison
 
+## 7.3.0
+
+### Minor Changes
+
+- 2d033e8: Add LT support including fixing #691 (ingore blinking cursor) and #692 (support appium:options)
+
 ## 7.2.2
 
 ### Patch Changes

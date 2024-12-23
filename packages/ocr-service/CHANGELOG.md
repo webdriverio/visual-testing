@@ -1,5 +1,11 @@
 # @wdio/ocr-service
 
+## 2.2.3
+
+### Patch Changes
+
+- 2d033e8: Add LT support including fixing #691 (ingore blinking cursor) and #692 (support appium:options)
+
 ## 2.2.2
 
 ### Patch Changes

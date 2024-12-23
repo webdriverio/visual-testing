@@ -1,5 +1,16 @@
 # @wdio/visual-service
 
+## 6.3.0
+
+### Minor Changes
+
+- 2d033e8: Add LT support including fixing #691 (ingore blinking cursor) and #692 (support appium:options)
+
+### Patch Changes
+
+- Updated dependencies [2d033e8]
+  - webdriver-image-comparison@7.3.0
+
 ## 6.2.5
 
 ### Patch Changes
