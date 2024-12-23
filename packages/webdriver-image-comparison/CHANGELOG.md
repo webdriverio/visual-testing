@@ -1,5 +1,15 @@
 # webdriver-image-comparison
 
+## 7.3.0
+
+### Minor Changes
+
+- 2d033e8:  #691 Add option to ignore blinking cursors / carets
+
+### Patch Changes
+
+- Updated dependencies [2d033e8]
+
 ## 7.2.2
 
 ### Patch Changes

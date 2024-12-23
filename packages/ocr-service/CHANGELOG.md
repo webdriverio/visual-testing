@@ -1,5 +1,11 @@
 # @wdio/ocr-service
 
+## 2.2.3
+
+### Patch Changes
+
+- 2d033e8: update deps
+
 ## 2.2.2
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @wdio/visual-service
 
+## 6.3.0
+
+### Minor Changes
+
+- 2d033e8: Add LambdaTest support
+  - #691 Add option to ignore blinking cursors / carets by providing the option `disableBlinkingCursor`
+  - #692 Add support for `appium:options`
+
+### Patch Changes
+
+- Updated dependencies [2d033e8]
+  - webdriver-image-comparison@7.3.0
+
 ## 6.2.5
 
 ### Patch Changes

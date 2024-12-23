@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.4.5
+
+### Patch Changes
+
+- 2d033e8: update deps
+
 ## 0.4.4
 
 ### Patch Changes
