@@ -67,8 +67,8 @@ importers:
         specifier: ^9.4.5
         version: 9.4.5
       '@wdio/mocha-framework':
-        specifier: ^9.4.4
-        version: 9.4.4
+        specifier: ^9.5.0
+        version: 9.5.0
       '@wdio/sauce-service':
         specifier: ^9.4.5
         version: 9.4.5
@@ -2075,8 +2075,8 @@ packages:
     resolution: {integrity: sha512-BXx8RXFUW2M4dcO6t5Le95Hi2ZkTQBRsvBQqLekT2rZ6Xmw8ZKZBPf0FptnoftFGg6dYmwnDidYv/0+4PiHjpQ==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/mocha-framework@9.4.4':
-    resolution: {integrity: sha512-GYBSndFT3v/+EVpyZjetCrJStWIugLZKgMdPiLZB3wMX9MsTPpMP2MDyO365kYXkvU4kYNWAwFSSwL6xMFaP+w==}
+  '@wdio/mocha-framework@9.5.0':
+    resolution: {integrity: sha512-bHzgPJeik9z4OBZ4LGLPouzE5KiQflx/EvNJL6iIZkvmoBbWAeSROzjNok6y+PWN4SykHwtTuRs+vXUBINKulg==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/protocols@9.4.4':
@@ -9334,13 +9334,13 @@ snapshots:
       loglevel-plugin-prefix: 0.8.4
       strip-ansi: 7.1.0
 
-  '@wdio/mocha-framework@9.4.4':
+  '@wdio/mocha-framework@9.5.0':
     dependencies:
       '@types/mocha': 10.0.9
       '@types/node': 20.17.6
       '@wdio/logger': 9.4.4
-      '@wdio/types': 9.4.4
-      '@wdio/utils': 9.4.4
+      '@wdio/types': 9.5.0
+      '@wdio/utils': 9.5.0
       mocha: 10.8.2
     transitivePeerDependencies:
       - supports-color
