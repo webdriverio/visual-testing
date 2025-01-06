@@ -76,8 +76,8 @@ importers:
         specifier: ^9.4.5
         version: 9.4.5
       '@wdio/spec-reporter':
-        specifier: ^9.4.4
-        version: 9.4.4
+        specifier: ^9.5.0
+        version: 9.5.0
       '@wdio/types':
         specifier: ^9.4.4
         version: 9.4.4
@@ -2078,8 +2078,8 @@ packages:
     resolution: {integrity: sha512-kchPRhoG/pCn4KhHGiL/ocNhdpR8OkD2e6sANlSUZ4TGBVi86YSIEjc2yXUwLacHknC/EnQk/SFnqd4MsNjGGg==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/reporter@9.4.4':
-    resolution: {integrity: sha512-uP9I2+bsE4ZqEzJeOlMB/h+ou1zm71m2sHq1sxGbjSqQFEkLJDSpTc8QEOm5sXptIA4y7ieTWCz4t6yFs/MkAw==}
+  '@wdio/reporter@9.5.0':
+    resolution: {integrity: sha512-ycdbU97tDT7RCgutM+fSwbd0FIab821BAc0hYopCkB0FIooHUjIjvXmh0QichasS5a21tGe0UXfCcnn1S6V6Fw==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/runner@9.4.5':
@@ -2094,12 +2094,16 @@ packages:
     resolution: {integrity: sha512-piZVFvIqy1IP7cto6ohcqpl6Z9dHYNsL+nqHWVCMqzhaeKkWXzftViWuzZgph1RYkokJwn/quA+HeGMWuyy86A==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/spec-reporter@9.4.4':
-    resolution: {integrity: sha512-dJDywB82KHquR4xUK5Ym51A8JDUWDzOHKT7tNB5w4lFDSNv7B6wVDoIkuUrrZoyjlgjQmcB6z7YmiwCg0+PkTw==}
+  '@wdio/spec-reporter@9.5.0':
+    resolution: {integrity: sha512-xapzWIPZE8E5IHQdhIESJ9u10fZMWi91D0Hu3EiyDvZ6ClJR6LIS/eeGChXVx3+x/OeU6yiOwhmkV4mCUyFeNA==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/types@9.4.4':
     resolution: {integrity: sha512-Z2TAVMZiz4wCfP7ZdHqUXlYfF4qj5bBOV25A7tHxFbbdWPvFb8sSW3SU2+fxSwu02n5sV1mgfRYOsloypOXBnw==}
+    engines: {node: '>=18.20.0'}
+
+  '@wdio/types@9.5.0':
+    resolution: {integrity: sha512-sX1vH6VebVHvgdpySTOXzKNazHBu+yFr5bMvveJ2T4vKjJTJOAwO6nPftjKcgGDfhyYxM3xOCvboKICdQKFgEg==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/utils@9.4.4':
@@ -5110,10 +5114,6 @@ packages:
   object-hash@3.0.0:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
     engines: {node: '>= 6'}
-
-  object-inspect@1.13.2:
-    resolution: {integrity: sha512-IRZSRuzJiynemAXPYtPe5BoI/RESNYR7TYm50MC5Mqbd3Jmw5y790sErYw3V6SryFJD64b74qQQs9wn5Bg/k3g==}
-    engines: {node: '>= 0.4'}
 
   object-inspect@1.13.3:
     resolution: {integrity: sha512-kDCGIbxkDSXE3euJZZXzc6to7fCrKHNI/hSRQnRuQ+BWjFNzZwiFF8fj/6o2t2G9/jTj8PSIYTfCLelLZEeRpA==}
@@ -9313,13 +9313,13 @@ snapshots:
     dependencies:
       '@types/node': 20.17.6
 
-  '@wdio/reporter@9.4.4':
+  '@wdio/reporter@9.5.0':
     dependencies:
       '@types/node': 20.17.6
       '@wdio/logger': 9.4.4
-      '@wdio/types': 9.4.4
+      '@wdio/types': 9.5.0
       diff: 7.0.0
-      object-inspect: 1.13.2
+      object-inspect: 1.13.3
 
   '@wdio/runner@9.4.5':
     dependencies:
@@ -9365,15 +9365,19 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/spec-reporter@9.4.4':
+  '@wdio/spec-reporter@9.5.0':
     dependencies:
-      '@wdio/reporter': 9.4.4
-      '@wdio/types': 9.4.4
-      chalk: 5.3.0
+      '@wdio/reporter': 9.5.0
+      '@wdio/types': 9.5.0
+      chalk: 5.4.1
       easy-table: 1.2.0
       pretty-ms: 9.1.0
 
   '@wdio/types@9.4.4':
+    dependencies:
+      '@types/node': 20.17.6
+
+  '@wdio/types@9.5.0':
     dependencies:
       '@types/node': 20.17.6
 
@@ -10531,7 +10535,7 @@ snapshots:
       is-string: 1.0.7
       is-typed-array: 1.1.13
       is-weakref: 1.0.2
-      object-inspect: 1.13.2
+      object-inspect: 1.13.3
       object-keys: 1.1.1
       object.assign: 4.1.5
       regexp.prototype.flags: 1.5.3
@@ -12370,7 +12374,7 @@ snapshots:
 
   log-symbols@6.0.0:
     dependencies:
-      chalk: 5.3.0
+      chalk: 5.4.1
       is-unicode-supported: 1.3.0
 
   logform@2.7.0:
@@ -13039,8 +13043,6 @@ snapshots:
   object-assign@4.1.1: {}
 
   object-hash@3.0.0: {}
-
-  object-inspect@1.13.2: {}
 
   object-inspect@1.13.3: {}
 
@@ -14200,7 +14202,7 @@ snapshots:
       call-bind: 1.0.8
       es-errors: 1.3.0
       get-intrinsic: 1.2.6
-      object-inspect: 1.13.2
+      object-inspect: 1.13.3
 
   side-channel@1.1.0:
     dependencies:
