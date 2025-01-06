@@ -76,7 +76,7 @@
     "@wdio/globals": "^9.4.5",
     "wdio-lambdatest-service": "^3.0.3",
     "@wdio/local-runner": "^9.4.5",
-    "@wdio/mocha-framework": "^9.4.4",
+    "@wdio/mocha-framework": "^9.5.0",
     "@wdio/sauce-service": "^9.4.5",
     "@wdio/shared-store-service": "^9.4.5",
     "@wdio/spec-reporter": "^9.4.4",
