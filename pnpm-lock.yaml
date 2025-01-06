@@ -122,10 +122,10 @@ importers:
         version: 2.1.8(@types/node@22.10.2)(jsdom@25.0.1)
       wdio-lambdatest-service:
         specifier: ^3.0.3
-        version: 3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.4.5)
+        version: 3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.5.1)
       webdriverio:
-        specifier: ^9.4.5
-        version: 9.4.5
+        specifier: ^9.5.1
+        version: 9.5.1
 
   packages/ocr-service:
     dependencies:
@@ -295,8 +295,8 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       webdriverio:
-        specifier: ^9.4.5
-        version: 9.4.5
+        specifier: ^9.5.1
+        version: 9.5.1
 
 packages:
 
@@ -2053,10 +2053,6 @@ packages:
 
   '@wdio/config@9.5.0':
     resolution: {integrity: sha512-ty0laZy9J6pYpPd9BzNS4/P9RcRFCQfiacQuJFCkaM0NXjOtkWnyMnrqLP09nyUEQYhOGwANwShbsS+EaUkmSQ==}
-    engines: {node: '>=18.20.0'}
-
-  '@wdio/globals@9.4.5':
-    resolution: {integrity: sha512-zdN/2EGOr2HER59CNAtSfmr/M7BMAH5gQJix4iPkDN5buf8PQZHE16GnfKtqKTIBeNgpkBkUyjyCKoIKSUngjw==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/globals@9.5.1':
@@ -9282,17 +9278,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@wdio/globals@9.4.5(@wdio/logger@9.4.4)':
-    optionalDependencies:
-      expect-webdriverio: 5.0.3(@wdio/globals@9.4.5(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.4.5)
-      webdriverio: 9.4.5
-    transitivePeerDependencies:
-      - '@wdio/logger'
-      - bufferutil
-      - puppeteer-core
-      - supports-color
-      - utf-8-validate
-
   '@wdio/globals@9.5.1(@wdio/logger@9.4.4)':
     optionalDependencies:
       expect-webdriverio: 5.0.3(@wdio/globals@9.5.1(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.5.1)
@@ -11108,17 +11093,6 @@ snapshots:
   exit-hook@2.2.1: {}
 
   expect-type@1.1.0: {}
-
-  expect-webdriverio@5.0.3(@wdio/globals@9.4.5(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.4.5):
-    dependencies:
-      '@vitest/snapshot': 2.1.8
-      '@wdio/globals': 9.4.5(@wdio/logger@9.4.4)
-      '@wdio/logger': 9.4.4
-      expect: 29.7.0
-      jest-matcher-utils: 29.7.0
-      lodash.isequal: 4.5.0
-      webdriverio: 9.4.5
-    optional: true
 
   expect-webdriverio@5.0.3(@wdio/globals@9.5.1(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.5.1):
     dependencies:
@@ -15177,7 +15151,7 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.4.5):
+  wdio-lambdatest-service@3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.5.1):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.8
       '@wdio/cli': 9.5.1
@@ -15187,7 +15161,7 @@ snapshots:
       colors: 1.4.0
       form-data: 4.0.1
       source-map-support: 0.5.21
-      webdriverio: 9.4.5
+      webdriverio: 9.5.1
       winston: 3.17.0
     transitivePeerDependencies:
       - debug
