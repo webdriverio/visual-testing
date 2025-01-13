@@ -80,7 +80,7 @@
     "@wdio/sauce-service": "^9.4.5",
     "@wdio/shared-store-service": "^9.4.5",
     "@wdio/spec-reporter": "^9.5.0",
-    "@wdio/types": "^9.4.4",
+    "@wdio/types": "^9.5.0",
     "eslint": "^9.17.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-unicorn": "^56.0.1",
