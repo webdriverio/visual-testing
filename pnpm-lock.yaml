@@ -121,8 +121,8 @@ importers:
         specifier: ^2.1.8
         version: 2.1.8(@types/node@22.10.2)(jsdom@25.0.1)
       wdio-lambdatest-service:
-        specifier: ^3.0.3
-        version: 3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.5.0)(webdriverio@9.5.7)
+        specifier: ^4.0.0
+        version: 4.0.0(@wdio/cli@9.5.1)(@wdio/types@9.5.0)(webdriverio@9.5.7)
       webdriverio:
         specifier: ^9.5.7
         version: 9.5.7
@@ -6894,8 +6894,8 @@ packages:
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
 
-  wdio-lambdatest-service@3.0.3:
-    resolution: {integrity: sha512-1ZV03nEX+8JJSZUPFqIEnep2eyMeIZBCzItxf+HwEfhuCY3ItY1+/E7zIlKVWEP37gbQ3bUB5o/RRwALznQOYA==}
+  wdio-lambdatest-service@4.0.0:
+    resolution: {integrity: sha512-hxB4gEGEA1EUsHmi6TpOtdPSl1i1oGkIKPpdZVlQuMXH0d0CIncrhTtSZeJKiMXOOtYrOmouCPJtrxWOfjI71A==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       '@wdio/cli': ^7.0.0 || ^8.0.0 || ^9.0.0
@@ -15164,7 +15164,7 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.5.0)(webdriverio@9.5.7):
+  wdio-lambdatest-service@4.0.0(@wdio/cli@9.5.1)(@wdio/types@9.5.0)(webdriverio@9.5.7):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.8
       '@wdio/cli': 9.5.1
