@@ -74,7 +74,7 @@
     "@wdio/appium-service": "^9.5.7",
     "@wdio/cli": "^9.5.1",
     "@wdio/globals": "^9.5.1",
-    "wdio-lambdatest-service": "^3.0.3",
+    "wdio-lambdatest-service": "^4.0.0",
     "@wdio/local-runner": "^9.5.1",
     "@wdio/mocha-framework": "^9.5.0",
     "@wdio/sauce-service": "^9.4.5",
