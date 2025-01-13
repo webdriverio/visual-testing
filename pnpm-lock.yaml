@@ -79,8 +79,8 @@ importers:
         specifier: ^9.5.0
         version: 9.5.0
       '@wdio/types':
-        specifier: ^9.4.4
-        version: 9.4.4
+        specifier: ^9.5.0
+        version: 9.5.0
       eslint:
         specifier: ^9.17.0
         version: 9.17.0(jiti@1.21.6)
@@ -122,7 +122,7 @@ importers:
         version: 2.1.8(@types/node@22.10.2)(jsdom@25.0.1)
       wdio-lambdatest-service:
         specifier: ^3.0.3
-        version: 3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.5.7)
+        version: 3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.5.0)(webdriverio@9.5.7)
       webdriverio:
         specifier: ^9.5.7
         version: 9.5.7
@@ -139,8 +139,8 @@ importers:
         specifier: ^9.4.4
         version: 9.4.4
       '@wdio/types':
-        specifier: ^9.4.4
-        version: 9.4.4
+        specifier: ^9.5.0
+        version: 9.5.0
       fuse.js:
         specifier: ^7.0.0
         version: 7.0.0
@@ -264,8 +264,8 @@ importers:
         specifier: ^9.4.4
         version: 9.4.4
       '@wdio/types':
-        specifier: ^9.4.4
-        version: 9.4.4
+        specifier: ^9.5.0
+        version: 9.5.0
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
@@ -15164,12 +15164,12 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.5.7):
+  wdio-lambdatest-service@3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.5.0)(webdriverio@9.5.7):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.8
       '@wdio/cli': 9.5.1
       '@wdio/logger': 7.26.0
-      '@wdio/types': 9.4.4
+      '@wdio/types': 9.5.0
       axios: 1.7.9
       colors: 1.4.0
       form-data: 4.0.1
