@@ -122,10 +122,10 @@ importers:
         version: 2.1.8(@types/node@22.10.2)(jsdom@25.0.1)
       wdio-lambdatest-service:
         specifier: ^3.0.3
-        version: 3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.5.1)
+        version: 3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.5.7)
       webdriverio:
-        specifier: ^9.5.1
-        version: 9.5.1
+        specifier: ^9.5.7
+        version: 9.5.7
 
   packages/ocr-service:
     dependencies:
@@ -295,8 +295,8 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       webdriverio:
-        specifier: ^9.5.1
-        version: 9.5.1
+        specifier: ^9.5.7
+        version: 9.5.7
 
 packages:
 
@@ -15164,7 +15164,7 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.5.1):
+  wdio-lambdatest-service@3.0.3(@wdio/cli@9.5.1)(@wdio/types@9.4.4)(webdriverio@9.5.7):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.8
       '@wdio/cli': 9.5.1
@@ -15174,7 +15174,7 @@ snapshots:
       colors: 1.4.0
       form-data: 4.0.1
       source-map-support: 0.5.21
-      webdriverio: 9.5.1
+      webdriverio: 9.5.7
       winston: 3.17.0
     transitivePeerDependencies:
       - debug
