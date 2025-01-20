@@ -29,7 +29,7 @@
     "watch:scripts": "npm run build:scripts --watch"
   },
   "dependencies": {
-    "@inquirer/prompts": "^7.2.2",
+    "@inquirer/prompts": "^7.2.3",
     "ora": "^8.1.1",
     "sirv-cli": "^3.0.0",
     "sharp": "^0.33.5"
