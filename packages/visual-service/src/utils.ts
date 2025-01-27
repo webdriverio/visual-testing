@@ -319,7 +319,6 @@ export function determineNativeContext(
         const isAutoWebviewFalse = !(
             capabilities['appium:autoWebview'] === true ||
             capabilities['appium:options']?.autoWebview === true ||
-            // @ts-expect-error
             capabilities['lt:options']?.autoWebview === true
         )
 

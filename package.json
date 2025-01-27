@@ -54,11 +54,6 @@
     "@wdio/ocr-service": "workspace:^",
     "webdriver-image-comparison": "workspace:^"
   },
-  "pnpm": {
-    "overrides": {
-      "webdriver-image-comparison": "workspace:*"
-    }
-  },
   "devDependencies": {
     "@changesets/cli": "^2.27.12",
     "@tsconfig/node20": "^20.1.4",

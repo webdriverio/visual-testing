@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  webdriver-image-comparison: workspace:*
-
 importers:
 
   .:
@@ -18,7 +15,7 @@ importers:
         specifier: workspace:^
         version: link:packages/visual-service
       webdriver-image-comparison:
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:packages/webdriver-image-comparison
     devDependencies:
       '@changesets/cli':
@@ -270,8 +267,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       webdriver-image-comparison:
-        specifier: workspace:*
-        version: link:../webdriver-image-comparison
+        specifier: ^7.3.0
+        version: 7.3.0
 
   packages/webdriver-image-comparison:
     dependencies:
@@ -6907,6 +6904,9 @@ packages:
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
+
+  webdriver-image-comparison@7.3.0:
+    resolution: {integrity: sha512-GEkB+YWJ1GnHXXD80wjHUS/heYbMKFPaOwdMbX5eeMpXJ9C4LbYJgn5pXIsjERKhoDTxHweNbLb/ocPDfNTwQg==}
 
   webdriver@9.7.0:
     resolution: {integrity: sha512-O/Ce4I7HcsqlP3kx9L0F14olOsarKkXUz+hSunOTC9YxsiVoOu5yIcRrHyWUQziYgA4K5gobZSKrTuAr+edA4Q==}
@@ -15141,6 +15141,12 @@ snapshots:
       '@zxing/text-encoding': 0.9.0
 
   web-streams-polyfill@3.3.3: {}
+
+  webdriver-image-comparison@7.3.0:
+    dependencies:
+      '@wdio/logger': 9.4.4
+      fs-extra: 11.3.0
+      jimp: 1.6.0
 
   webdriver@9.7.0:
     dependencies:
