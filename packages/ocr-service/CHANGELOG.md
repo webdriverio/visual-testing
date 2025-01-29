@@ -1,5 +1,12 @@
 # @wdio/ocr-service
 
+## 2.2.4
+
+### Patch Changes
+
+- 69d25fe: Multiple fixes:
+
+  - update deps
 ## 2.2.3
 
 ### Patch Changes
