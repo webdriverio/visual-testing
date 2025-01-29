@@ -1,6 +1,7 @@
 import type { Options } from '@wdio/types'
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
+import type { VisualServiceOptions } from '@wdio/visual-service'
 console.log(join(
     process.cwd(),
     'apps',
@@ -83,7 +84,6 @@ export const config: Options.Testrunner = {
             'visual',
             {
                 baselineFolder: join(process.cwd(), './localBaseline/'),
-                debug: true,
                 formatImageName: '{tag}-{logName}-{width}x{height}',
                 screenshotPath: join(process.cwd(), '.tmp/'),
                 autoSaveBaseline: true,
@@ -92,7 +92,7 @@ export const config: Options.Testrunner = {
                 blockOutToolBar: true,
                 clearRuntimeFolder: true,
                 enableLayoutTesting: true,
-            },
+            } satisfies VisualServiceOptions,
         ],
     ],
     // =====

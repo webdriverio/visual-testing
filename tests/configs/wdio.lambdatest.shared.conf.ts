@@ -1,5 +1,6 @@
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
+import type { VisualServiceOptions } from '@wdio/visual-service'
 
 export const config: WebdriverIO.Config  = {
     ...sharedConfig,
@@ -42,9 +43,9 @@ export const config: WebdriverIO.Config  = {
                 blockOutToolBar: true,
                 blockOutSideBar: true,
                 createJsonReportFiles: true,
-                rawMisMatchPercentage: process.env.RAW_MISMATCH || false,
+                rawMisMatchPercentage: !!process.env.RAW_MISMATCH || false,
                 enableLayoutTesting: true,
-            },
+            } satisfies VisualServiceOptions,
         ],
     ],
 }

@@ -3,6 +3,7 @@ import { setValue, getValue } from '@wdio/shared-store-service'
 import { default as SauceLabs, type Job } from 'saucelabs'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 import type { RetriesSpecs } from '../types/types.ts'
+import type { VisualServiceOptions } from '@wdio/visual-service'
 
 const SPEC_FILE_RETRIES = 'specFileRetries'
 
@@ -46,9 +47,9 @@ export const config: WebdriverIO.Config  = {
                 blockOutToolBar: true,
                 blockOutSideBar: true,
                 createJsonReportFiles: true,
-                rawMisMatchPercentage: process.env.RAW_MISMATCH || false,
+                rawMisMatchPercentage: !!process.env.RAW_MISMATCH || false,
                 enableLayoutTesting: true,
-            },
+            } satisfies VisualServiceOptions,
         ],
     ],
     // =====

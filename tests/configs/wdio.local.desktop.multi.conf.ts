@@ -1,11 +1,12 @@
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
+import type { VisualServiceOptions } from '@wdio/visual-service'
 
 export const config: WebdriverIO.Config  = {
     ...sharedConfig,
     // ============
     // Capabilities
-    // ============
+    // ============x
     capabilities: {
         chromeBrowserOne: {
             capabilities: {
@@ -81,7 +82,6 @@ export const config: WebdriverIO.Config  = {
             'visual',
             {
                 baselineFolder: join(process.cwd(), './localBaseline/'),
-                debug: true,
                 formatImageName: '{tag}-{logName}-{width}x{height}',
                 screenshotPath: join(process.cwd(), '.tmp/'),
                 autoSaveBaseline: false,
@@ -90,7 +90,7 @@ export const config: WebdriverIO.Config  = {
                 blockOutToolBar: true,
                 clearRuntimeFolder: true,
                 enableLayoutTesting: true,
-            },
+            } satisfies VisualServiceOptions,
         ],
     ],
     // =====
