@@ -1,5 +1,6 @@
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
+import type { VisualServiceOptions } from '@wdio/visual-service'
 
 export const config: WebdriverIO.Config  = {
     ...sharedConfig,
@@ -28,7 +29,7 @@ export const config: WebdriverIO.Config  = {
                 //     // skipStories: 'example-button--secondary,example-button--small'
                 //     // skipStories: '/.*button.*/gm'
                 // }
-            },
+            } satisfies VisualServiceOptions,
         ]
     ],
 }

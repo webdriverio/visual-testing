@@ -831,7 +831,7 @@ const isNode = function () {
                 // c = createCanvas(w, h);
                 // context = c.getContext("2d");
                 // context.putImageData(img, 0, 0);
-                return img.contain(w, h)
+                return img.contain({w, h})
             }
 
             return img

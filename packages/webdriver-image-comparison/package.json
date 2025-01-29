@@ -27,7 +27,7 @@
     "watch:js": "node -e \"require('fs').watchFile('src/resemble/resemble.jimp.cjs', () => { require('child_process').exec('npm run copy-js'); });\""
   },
   "dependencies": {
-    "fs-extra": "^11.2.0",
+    "fs-extra": "^11.3.0",
     "jimp": "^1.6.0",
     "@wdio/logger": "^9.4.4"
   },
@@ -35,6 +35,6 @@
     "@types/copyfiles": "~2.4.4",
     "@types/fs-extra": "^11.0.4",
     "copyfiles": "^2.4.1",
-    "webdriverio": "^9.5.7"
+    "webdriverio": "^9.7.1"
   }
 }

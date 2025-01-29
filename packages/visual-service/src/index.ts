@@ -4,6 +4,7 @@ import VisualLauncher from './storybook/launcher.js'
 import type {
     Output,
     Result,
+    VisualServiceOptions,
     WdioCheckFullPageMethodOptions,
     WdioSaveFullPageMethodOptions,
     WdioSaveElementMethodOptions,
@@ -174,6 +175,7 @@ declare global {
         }
     }
 }
+export type { VisualServiceOptions }
 
 export default WdioImageComparisonService
 export const launcher = VisualLauncher
