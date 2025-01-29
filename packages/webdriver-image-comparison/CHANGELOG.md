@@ -1,10 +1,20 @@
 # webdriver-image-comparison
 
+## 7.3.1
+
+### Patch Changes
+
+- 69d25fe: Multiple fixes:
+
+  - update deps
+  - fix #728: Missing Type Information in Service Configuration
+  - fix #745: The image comparison process stalls when utilizing the checkElement method to compare screenshots of two different elements
+
 ## 7.3.0
 
 ### Minor Changes
 
-- 2d033e8:  #691 Add option to ignore blinking cursors / carets
+- 2d033e8: #691 Add option to ignore blinking cursors / carets
 
 ### Patch Changes
 

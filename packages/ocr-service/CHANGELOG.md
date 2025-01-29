@@ -1,5 +1,15 @@
 # @wdio/ocr-service
 
+## 2.2.4
+
+### Patch Changes
+
+- 69d25fe: Multiple fixes:
+
+  - update deps
+  - fix #728: Missing Type Information in Service Configuration
+  - fix #745: The image comparison process stalls when utilizing the checkElement method to compare screenshots of two different elements
+
 ## 2.2.3
 
 ### Patch Changes
