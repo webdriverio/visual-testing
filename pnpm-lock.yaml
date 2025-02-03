@@ -106,8 +106,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       saucelabs:
-        specifier: ^8.0.0
-        version: 8.0.0
+        specifier: ^9.0.0
+        version: 9.0.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.12.0)(typescript@5.7.3)
@@ -267,8 +267,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       webdriver-image-comparison:
-        specifier: ^7.3.0
-        version: 7.3.0
+        specifier: ^7.3.1
+        version: 7.3.1
 
   packages/webdriver-image-comparison:
     dependencies:
@@ -6000,6 +6000,10 @@ packages:
     resolution: {integrity: sha512-Rj9m4OCniYk+c4MFuZGqvz64RPX6oRzMqt0bTr9T27IXGnA7Ic7Ms/VHgPtRcJFP6H3sQ169WOzazPZcW4BIAg==}
     hasBin: true
 
+  saucelabs@9.0.0:
+    resolution: {integrity: sha512-0IA4Z5Ewlc/SpLG8tvLnSRaiA5xPwova9kBfRM/GMuGUGOgEWo598135u4e0Ot5Vf7i/A8526GfCrx9K+zM8UA==}
+    hasBin: true
+
   sax@1.4.1:
     resolution: {integrity: sha512-+aWOz7yVScEGoKNd4PA10LZ8sk0A/z5+nXQG5giUO5rprX9jgYsTdov9qCchZiPIZezbZH+jRut8nPodFAX4Jg==}
 
@@ -6942,8 +6946,8 @@ packages:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
 
-  webdriver-image-comparison@7.3.0:
-    resolution: {integrity: sha512-GEkB+YWJ1GnHXXD80wjHUS/heYbMKFPaOwdMbX5eeMpXJ9C4LbYJgn5pXIsjERKhoDTxHweNbLb/ocPDfNTwQg==}
+  webdriver-image-comparison@7.3.1:
+    resolution: {integrity: sha512-XlJ3bJrLy/W3A6PQM0LWzM5tv4Nu4QGTYDXjgHaRSYN7kzm0Z88a4teSOm0aZl5arZK9i86/O34f0rROGEho1A==}
 
   webdriver@9.7.0:
     resolution: {integrity: sha512-O/Ce4I7HcsqlP3kx9L0F14olOsarKkXUz+hSunOTC9YxsiVoOu5yIcRrHyWUQziYgA4K5gobZSKrTuAr+edA4Q==}
@@ -9054,7 +9058,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 20.17.6
+      '@types/node': 22.12.0
     optional: true
 
   '@typescript-eslint/eslint-plugin@8.21.0(@typescript-eslint/parser@8.22.0(eslint@9.19.0(jiti@1.21.6))(typescript@5.7.3))(eslint@9.19.0(jiti@1.21.6))(typescript@5.7.3)':
@@ -14121,6 +14125,17 @@ snapshots:
       tunnel: 0.0.6
       yargs: 17.7.2
 
+  saucelabs@9.0.0:
+    dependencies:
+      change-case: 4.1.2
+      compressing: 1.10.1
+      form-data: 4.0.1
+      got: 11.8.6
+      hash.js: 1.1.7
+      query-string: 7.1.3
+      tunnel: 0.0.6
+      yargs: 17.7.2
+
   sax@1.4.1: {}
 
   saxes@6.0.0:
@@ -15225,7 +15240,7 @@ snapshots:
 
   web-streams-polyfill@3.3.3: {}
 
-  webdriver-image-comparison@7.3.0:
+  webdriver-image-comparison@7.3.1:
     dependencies:
       '@wdio/logger': 9.4.4
       fs-extra: 11.3.0
