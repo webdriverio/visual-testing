@@ -139,8 +139,8 @@ importers:
         specifier: ^9.6.3
         version: 9.6.3
       fuse.js:
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
       jimp:
         specifier: ^1.6.0
         version: 1.6.0
@@ -267,8 +267,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       webdriver-image-comparison:
-        specifier: ^7.3.0
-        version: 7.3.0
+        specifier: ^7.3.1
+        version: 7.3.1
 
   packages/webdriver-image-comparison:
     dependencies:
@@ -3676,8 +3676,8 @@ packages:
   functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
 
-  fuse.js@7.0.0:
-    resolution: {integrity: sha512-14F4hBIxqKvD4Zz/XjDc3y94mNZN6pRv3U13Udo0lNLCWRBUsrMv2xwcF/y/Z5sV6+FQW+/ow68cHpm4sunt8Q==}
+  fuse.js@7.1.0:
+    resolution: {integrity: sha512-trLf4SzuuUxfusZADLINj+dE8clK1frKdmqiJNb1Es75fmI5oY6X2mxLVUciLLjxqw/xr72Dhy+lER6dGd02FQ==}
     engines: {node: '>=10'}
 
   geckodriver@5.0.0:
@@ -6942,8 +6942,8 @@ packages:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
 
-  webdriver-image-comparison@7.3.0:
-    resolution: {integrity: sha512-GEkB+YWJ1GnHXXD80wjHUS/heYbMKFPaOwdMbX5eeMpXJ9C4LbYJgn5pXIsjERKhoDTxHweNbLb/ocPDfNTwQg==}
+  webdriver-image-comparison@7.3.1:
+    resolution: {integrity: sha512-XlJ3bJrLy/W3A6PQM0LWzM5tv4Nu4QGTYDXjgHaRSYN7kzm0Z88a4teSOm0aZl5arZK9i86/O34f0rROGEho1A==}
 
   webdriver@9.7.0:
     resolution: {integrity: sha512-O/Ce4I7HcsqlP3kx9L0F14olOsarKkXUz+hSunOTC9YxsiVoOu5yIcRrHyWUQziYgA4K5gobZSKrTuAr+edA4Q==}
@@ -11416,7 +11416,7 @@ snapshots:
 
   functions-have-names@1.2.3: {}
 
-  fuse.js@7.0.0: {}
+  fuse.js@7.1.0: {}
 
   geckodriver@5.0.0:
     dependencies:
@@ -15225,7 +15225,7 @@ snapshots:
 
   web-streams-polyfill@3.3.3: {}
 
-  webdriver-image-comparison@7.3.0:
+  webdriver-image-comparison@7.3.1:
     dependencies:
       '@wdio/logger': 9.4.4
       fs-extra: 11.3.0
