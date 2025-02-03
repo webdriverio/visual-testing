@@ -46,8 +46,8 @@ importers:
         specifier: ^8.22.0
         version: 8.22.0(eslint@9.19.0(jiti@1.21.6))(typescript@5.7.3)
       '@typescript-eslint/utils':
-        specifier: ^8.21.0
-        version: 8.21.0(eslint@9.19.0(jiti@1.21.6))(typescript@5.7.3)
+        specifier: ^8.22.0
+        version: 8.22.0(eslint@9.19.0(jiti@1.21.6))(typescript@5.7.3)
       '@vitest/coverage-v8':
         specifier: ^2.1.8
         version: 2.1.8(vitest@2.1.8(@types/node@22.12.0)(jsdom@25.0.1))
@@ -267,8 +267,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       webdriver-image-comparison:
-        specifier: ^7.3.0
-        version: 7.3.0
+        specifier: ^7.3.1
+        version: 7.3.1
 
   packages/webdriver-image-comparison:
     dependencies:
@@ -2001,6 +2001,13 @@ packages:
 
   '@typescript-eslint/utils@8.21.0':
     resolution: {integrity: sha512-xcXBfcq0Kaxgj7dwejMbFyq7IOHgpNMtVuDveK7w3ZGwG9owKzhALVwKpTF2yrZmEwl9SWdetf3fxNzJQaVuxw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+      typescript: '>=4.8.4 <5.8.0'
+
+  '@typescript-eslint/utils@8.22.0':
+    resolution: {integrity: sha512-T8oc1MbF8L+Bk2msAvCUzjxVB2Z2f+vXYfcucE2wOmYs7ZUwco5Ep0fYZw8quNwOiw9K8GYVL+Kgc2pETNTLOg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
@@ -6942,8 +6949,8 @@ packages:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
 
-  webdriver-image-comparison@7.3.0:
-    resolution: {integrity: sha512-GEkB+YWJ1GnHXXD80wjHUS/heYbMKFPaOwdMbX5eeMpXJ9C4LbYJgn5pXIsjERKhoDTxHweNbLb/ocPDfNTwQg==}
+  webdriver-image-comparison@7.3.1:
+    resolution: {integrity: sha512-XlJ3bJrLy/W3A6PQM0LWzM5tv4Nu4QGTYDXjgHaRSYN7kzm0Z88a4teSOm0aZl5arZK9i86/O34f0rROGEho1A==}
 
   webdriver@9.7.0:
     resolution: {integrity: sha512-O/Ce4I7HcsqlP3kx9L0F14olOsarKkXUz+hSunOTC9YxsiVoOu5yIcRrHyWUQziYgA4K5gobZSKrTuAr+edA4Q==}
@@ -9145,6 +9152,17 @@ snapshots:
       '@typescript-eslint/scope-manager': 8.21.0
       '@typescript-eslint/types': 8.21.0
       '@typescript-eslint/typescript-estree': 8.21.0(typescript@5.7.3)
+      eslint: 9.19.0(jiti@1.21.6)
+      typescript: 5.7.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/utils@8.22.0(eslint@9.19.0(jiti@1.21.6))(typescript@5.7.3)':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.4.1(eslint@9.19.0(jiti@1.21.6))
+      '@typescript-eslint/scope-manager': 8.22.0
+      '@typescript-eslint/types': 8.22.0
+      '@typescript-eslint/typescript-estree': 8.22.0(typescript@5.7.3)
       eslint: 9.19.0(jiti@1.21.6)
       typescript: 5.7.3
     transitivePeerDependencies:
@@ -15225,7 +15243,7 @@ snapshots:
 
   web-streams-polyfill@3.3.3: {}
 
-  webdriver-image-comparison@7.3.0:
+  webdriver-image-comparison@7.3.1:
     dependencies:
       '@wdio/logger': 9.4.4
       fs-extra: 11.3.0
