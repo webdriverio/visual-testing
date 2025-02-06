@@ -13,7 +13,6 @@ vi.mock('fs')
 
 vi.mock('../../src/storybook/utils.js', ()=>({
     isStorybookMode: vi.fn(() => true),
-    isLocalRunner: vi.fn(() => true),
     isCucumberFramework: vi.fn(() => false),
     scanStorybook: vi.fn(() => ({
         storiesJson: {},

@@ -1,10 +1,12 @@
-import { $, browser } from '@wdio/globals'
-import logger from '@wdio/logger'
-import fetch from 'node-fetch'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
+
+import { $, browser } from '@wdio/globals'
+import logger from '@wdio/logger'
+import type { Options } from '@wdio/types'
 import type { ClassOptions } from 'webdriver-image-comparison'
+
 import type {
     CategoryComponent,
     CreateItContent,
@@ -33,29 +35,22 @@ export function isStorybookMode(): boolean {
 /**
  * Check if the framework is cucumber
  */
-export function isCucumberFramework(framework: string): boolean {
+export function isCucumberFramework(framework: Required<Options.Testrunner>['framework']): boolean {
     return framework.toLowerCase() === 'cucumber'
 }
 
 /**
  * Check if the framework is Jasmine
  */
-export function isJasmineFramework(framework: string): boolean {
+export function isJasmineFramework(framework: Required<Options.Testrunner>['framework']): boolean {
     return framework.toLowerCase() === 'jasmine'
 }
 
 /**
  * Check if the framework is Mocha
  */
-export function isMochaFramework(framework: string): boolean {
+export function isMochaFramework(framework: Required<Options.Testrunner>['framework']): boolean {
     return framework.toLowerCase() === 'mocha'
-}
-
-/**
- * Check if the framework is Mocha
- */
-export function isLocalRunner(runner: string): boolean {
-    return runner.toLowerCase() === 'local'
 }
 
 /**
