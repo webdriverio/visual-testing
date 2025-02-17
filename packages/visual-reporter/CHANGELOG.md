@@ -6,6 +6,10 @@
 
 - 09dbc2d: update deps
 
+### Committers: 1
+
+-   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 0.4.6
 
 ### Patch Changes
