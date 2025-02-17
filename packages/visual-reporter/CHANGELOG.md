@@ -1,5 +1,15 @@
 # @wdio/visual-reporter
 
+## 0.4.7
+
+### Patch Changes
+
+- 09dbc2d: update deps
+
+### Committers: 1
+
+-   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 0.4.6
 
 ### Patch Changes
