@@ -1,7 +1,6 @@
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { mkdirSync, writeFileSync } from 'node:fs'
-import fetch from 'node-fetch'
 import logger from '@wdio/logger'
 import type { Mock } from 'vitest'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
@@ -18,7 +17,6 @@ import {
     getStoriesJson,
     isCucumberFramework,
     isJasmineFramework,
-    isLocalRunner,
     isMochaFramework,
     isStorybookMode,
     itFunction,
@@ -29,6 +27,8 @@ import {
     writeTestFile,
 } from '../../src/storybook/utils.js'
 import type { CapabilityMap, EmulatedDeviceType, ScanStorybookReturnData } from '../../src/storybook/Types.js'
+
+globalThis.fetch = vi.fn()
 
 const log = logger('test')
 vi.mock('@wdio/globals', () => ({
@@ -42,7 +42,6 @@ vi.mock('@wdio/globals', () => ({
     },
 }))
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
-vi.mock('node-fetch')
 vi.mock('node:fs')
 vi.mock('node:os')
 vi.mock('../../src/storybook/deviceDescriptors.ts', () => {
@@ -118,16 +117,6 @@ describe('Storybook utils', () => {
 
         it('should return false if mocha is not provided in the framework', () => {
             expect(isMochaFramework('foobar')).toBe(false)
-        })
-    })
-
-    describe('isLocalRunner', () => {
-        it('should return true if local runner provided', () => {
-            expect(isLocalRunner('local')).toBe(true)
-        })
-
-        it('should return false if runner is not allowed', () => {
-            expect(isLocalRunner('browser')).toBe(false)
         })
     })
 
