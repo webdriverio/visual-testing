@@ -9,6 +9,10 @@
 - Updated dependencies [09dbc2d]
   - webdriver-image-comparison@7.3.2
 
+### Committers: 2
+
+- Christian Bromann ([@christian-bromann](https://github.com/christian-bromann))
+-   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
 ## 6.3.1
 
 ### Patch Changes
