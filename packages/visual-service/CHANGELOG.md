@@ -1,5 +1,14 @@
 # @wdio/visual-service
 
+## 6.3.2
+
+### Patch Changes
+
+- 09dbc2d: update deps
+- 09dbc2d: don't check for runner
+- Updated dependencies [09dbc2d]
+  - webdriver-image-comparison@7.3.2
+
 ## 6.3.1
 
 ### Patch Changes

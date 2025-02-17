@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.4.7
+
+### Patch Changes
+
+- 09dbc2d: update deps
+
 ## 0.4.6
 
 ### Patch Changes
