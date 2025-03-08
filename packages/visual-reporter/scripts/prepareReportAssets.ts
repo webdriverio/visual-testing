@@ -91,10 +91,12 @@ async function resizeImage({ inputFilePath, outputFilePath }: { inputFilePath:st
 }
 
 /**
- * Replaces the `{{vtr-demo-folder}}` placeholder in the file path with the given parent path.
+ * Replaces the `/{{vtr-demo-folder}}` placeholder in the file path with the given parent path.
  */
 function parseFilePath({ parentPath, filePath }: { parentPath: string; filePath: string }): string {
-    return filePath.includes('{{vtr-demo-folder}}') ? normalize(filePath.replace('{{vtr-demo-folder}}', parentPath)) : filePath
+    return filePath.includes('{{vtr-demo-folder}}') ?
+        normalize(join(filePath.replace(/\/?{{vtr-demo-folder}}/, parentPath))) :
+        filePath
 }
 
 /**

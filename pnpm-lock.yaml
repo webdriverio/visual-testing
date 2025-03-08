@@ -78,6 +78,9 @@ importers:
       '@wdio/types':
         specifier: ^9.9.0
         version: 9.9.0
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
       eslint:
         specifier: ^9.20.1
         version: 9.20.1(jiti@1.21.7)
@@ -267,8 +270,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       webdriver-image-comparison:
-        specifier: ^7.3.1
-        version: 7.3.1
+        specifier: ^7.3.2
+        version: 7.3.2
 
   packages/webdriver-image-comparison:
     dependencies:
@@ -2849,6 +2852,11 @@ packages:
 
   create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+
+  cross-env@7.0.3:
+    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -6858,8 +6866,8 @@ packages:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
 
-  webdriver-image-comparison@7.3.1:
-    resolution: {integrity: sha512-XlJ3bJrLy/W3A6PQM0LWzM5tv4Nu4QGTYDXjgHaRSYN7kzm0Z88a4teSOm0aZl5arZK9i86/O34f0rROGEho1A==}
+  webdriver-image-comparison@7.3.2:
+    resolution: {integrity: sha512-l57By4ZvdB4N3eS2dkVsJZsCjG3UIqFdLU99nn6HksoL9ZygZOsnHW5XG+zn1Hsc6WuTA4KhKuYotKdh/zuViA==}
 
   webdriver@9.9.1:
     resolution: {integrity: sha512-VqHDph80Pd/HmeEtoNiqX/ixML/ub8Rw54oviVYm6V7cbnzACrSbSlt9zpdWfjEk+Qkm/CytyYFggan30RfAiQ==}
@@ -10146,6 +10154,10 @@ snapshots:
       readable-stream: 4.7.0
 
   create-require@1.1.1: {}
+
+  cross-env@7.0.3:
+    dependencies:
+      cross-spawn: 7.0.6
 
   cross-spawn@7.0.6:
     dependencies:
@@ -14900,7 +14912,7 @@ snapshots:
 
   web-streams-polyfill@3.3.3: {}
 
-  webdriver-image-comparison@7.3.1:
+  webdriver-image-comparison@7.3.2:
     dependencies:
       '@wdio/logger': 9.4.4
       fs-extra: 11.3.0

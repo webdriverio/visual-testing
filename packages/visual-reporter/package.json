@@ -18,7 +18,7 @@
     "build:report": "remix vite:build",
     "build:scripts": "tsc -p tsconfig.scripts.json",
     "clean": "rimraf coverage build *.tsbuildinfo",
-    "dev": "VISUAL_REPORT_LOCAL_DEV=true run-s build:scripts script:prepare.report && run-p watch:scripts dev:remix",
+    "dev": "cross-env VISUAL_REPORT_LOCAL_DEV=true run-s build:scripts script:prepare.report && run-p watch:scripts dev:remix",
     "dev:remix": "remix vite:dev",
     "script:prepare.report": "node ./dist/prepareReportAssets.js",
     "test:lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
