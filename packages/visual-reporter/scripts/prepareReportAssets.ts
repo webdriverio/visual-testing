@@ -108,7 +108,7 @@ async function createThumbnailForFile(filePath: string): Promise<string|undefine
         const baseName = basename(filePath, ext)
         const fileNamePath = dirname(filePath)
         const outputFilePath = join(fileNamePath, `${baseName}-${thumbnailPostFix}${ext}`)
-        const thumbnailPath = join('static', 'report', outputFilePath.split('static/report/')[1])
+        const thumbnailPath = join('static', 'report', outputFilePath.split(/static[\\/]+report[\\/]+/)[1])
 
         if (existsSync(outputFilePath) || baseName.includes(thumbnailPostFix)) {
             return thumbnailPath
