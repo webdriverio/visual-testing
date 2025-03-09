@@ -91,10 +91,12 @@ async function resizeImage({ inputFilePath, outputFilePath }: { inputFilePath:st
 }
 
 /**
- * Replaces the `{{vtr-demo-folder}}` placeholder in the file path with the given parent path.
+ * Replaces the `/{{vtr-demo-folder}}` placeholder in the file path with the given parent path.
  */
 function parseFilePath({ parentPath, filePath }: { parentPath: string; filePath: string }): string {
-    return filePath.includes('{{vtr-demo-folder}}') ? normalize(filePath.replace('{{vtr-demo-folder}}', parentPath)) : filePath
+    return filePath.includes('{{vtr-demo-folder}}') ?
+        normalize(join(filePath.replace(/\/?{{vtr-demo-folder}}/, parentPath))) :
+        filePath
 }
 
 /**
@@ -106,7 +108,7 @@ async function createThumbnailForFile(filePath: string): Promise<string|undefine
         const baseName = basename(filePath, ext)
         const fileNamePath = dirname(filePath)
         const outputFilePath = join(fileNamePath, `${baseName}-${thumbnailPostFix}${ext}`)
-        const thumbnailPath = join('static', 'report', outputFilePath.split('static/report/')[1])
+        const thumbnailPath = join('static', 'report', outputFilePath.split(/static[\\/]+report[\\/]+/)[1])
 
         if (existsSync(outputFilePath) || baseName.includes(thumbnailPostFix)) {
             return thumbnailPath
