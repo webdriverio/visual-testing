@@ -1,5 +1,11 @@
 # @wdio/visual-reporter
 
+## 0.4.8
+
+### Patch Changes
+
+- 6fb85fc: Fix Windows support
+
 ## 0.4.7
 
 ### Patch Changes
@@ -8,7 +14,7 @@
 
 ### Committers: 1
 
--   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+- Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
 
 ## 0.4.6
 
