@@ -29,7 +29,6 @@
     "@wdio/globals": "^9.9.1",
     "@wdio/logger": "^9.4.4",
     "@wdio/types": "^9.9.0",
-    "node-fetch": "^3.3.2",
     "webdriver-image-comparison": "^7.3.2"
   },
   "devDependencies": {}
