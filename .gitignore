@@ -10,6 +10,7 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+.vitest-ui
 
 # Dependency directories
 node_modules/

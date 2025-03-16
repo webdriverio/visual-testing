@@ -17,6 +17,7 @@
     "test": "run-s test:*",
     "test:lint": "rimraf .eslintcache && eslint packages tests",
     "test:unit": "vitest --coverage --run",
+    "test:unit:ui": "vitest --coverage --ui",
     "test:unit:watch": "vitest --coverage --watch",
     "test.local.init": "rimraf localBaseline && wdio ./tests/configs/wdio.local.init.conf.ts",
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.ts",
@@ -50,22 +51,23 @@
     "watch": "pnpm run -r --parallel watch"
   },
   "dependencies": {
-    "@wdio/visual-service": "workspace:^",
     "@wdio/ocr-service": "workspace:^",
+    "@wdio/visual-service": "workspace:^",
     "webdriver-image-comparison": "workspace:^"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.12",
     "@tsconfig/node20": "^20.1.4",
     "@types/eslint": "^9.6.1",
-    "@types/jsdom": "~21.1.7",
     "@types/inquirer": "^9.0.7",
+    "@types/jsdom": "~21.1.7",
     "@types/node": "^22",
     "@types/xml2js": "~0.4.14",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
     "@typescript-eslint/utils": "^8.24.0",
-    "@vitest/coverage-v8": "^2.1.9",
+    "@vitest/coverage-v8": "^3.0.8",
+    "@vitest/ui": "^3.0.8",
     "@wdio/appium-service": "^9.9.1",
     "@wdio/cli": "^9.9.1",
     "@wdio/globals": "^9.9.1",
@@ -88,8 +90,8 @@
     "saucelabs": "^8.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3",
-    "vitest": "^2.1.9",
-    "webdriverio": "^9.9.1",
-    "wdio-lambdatest-service": "^4.0.0"
+    "vitest": "^3.0.8",
+    "wdio-lambdatest-service": "^4.0.0",
+    "webdriverio": "^9.9.1"
   }
 }
