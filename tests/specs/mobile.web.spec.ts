@@ -6,16 +6,11 @@ import { browser, expect } from '@wdio/globals'
 describe('@wdio/visual-service mobile web', () => {
     // Get the commands that need to be executed
     // 0 means all, otherwise it will only execute the commands that are specified
-    // @ts-ignore
     const wdioIcsCommands = driver.requestedCapabilities['wdio-ics:options'].commands
-    // @ts-ignore
     const deviceName = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).deviceName
-    // @ts-ignore
     const platformName = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).platformName.toLowerCase() === 'android' ? 'Android' : 'iOS'
-    // @ts-ignore
     const platformVersion = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).platformVersion
-    // @ts-ignore
-    const orientation = (driver.requestedCapabilities['lt:options'].deviceOrientation || driver.requestedCapabilities.orientation).toLowerCase()
+    const orientation = (driver.requestedCapabilities['lt:options']?.deviceOrientation || driver.requestedCapabilities.orientation).toLowerCase()
 
     beforeEach(async () => {
         await browser.url('')
@@ -32,9 +27,10 @@ describe('@wdio/visual-service mobile web', () => {
         wdioIcsCommands.length === 0 ||
         wdioIcsCommands.includes('checkScreen')
     ) {
-        it(`should compare a screen successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
+        it.only(`should compare a screen successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
             // @ts-ignore
             this.retries(2)
+            // console.log('driver = ', JSON.stringify(driver, null, 2))
 
             // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
             // We're accepting 0.05%, which is 500 pixels, to be a max difference

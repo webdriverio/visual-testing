@@ -1,6 +1,8 @@
 import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 
+export type MobileViewportRect = { top: number, left: number, width: number, height: number }
+
 export interface InstanceData {
     // The name of the app
     appName: string;
@@ -32,6 +34,8 @@ export interface InstanceData {
     isMobile: boolean;
     // The log name of the instance
     logName: string;
+    // The mobile viewport position
+    mobileViewportPosition: MobileViewportRect;
     // The name of the instance
     name: string;
     // If the instance creates native webscreenshots

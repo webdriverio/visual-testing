@@ -19,6 +19,7 @@ export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
         isIOS: false,
         isMobile: false,
         logName: 'chrome-latest',
+        mobileViewportPosition:{ top: 0, left: 0, width: 0, height: 0 },
         name: 'chrome-name',
         nativeWebScreenshot: true,
         platformName: 'Windows 10',

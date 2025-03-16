@@ -30,6 +30,15 @@ export type MultiremoteCommandResult = {
         cid: string,
         type: string,
 }
+export type RectBounds = { x: number, y: number, width: number, height: number }
+export type DeviceRectangleBound = { top: number, left: number, width: number, height: number }
+export type DeviceRectangles = {
+    statusBarAndAddressBar: DeviceRectangleBound,
+    viewport: DeviceRectangleBound,
+    bottomBar: DeviceRectangleBound,
+    leftSidePadding: DeviceRectangleBound,
+    rightSidePadding: DeviceRectangleBound,
+}
 
 export interface WdioIcsCommonOptions {
     hideElements?: (WebdriverIO.Element | ChainablePromiseElement)[];

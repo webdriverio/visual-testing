@@ -13,7 +13,7 @@ import type {
     TestContext,
 } from 'webdriver-image-comparison'
 import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
-import type { NativeContextType } from './types.js'
+import type { DeviceRectangles, MobileViewportRect, NativeContextType } from './types.js'
 
 interface WdioIcsOptions {
     logName?: string;
@@ -72,16 +72,33 @@ export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {heigh
 }
 
 /**
+ * Get the mobile screen size, this is different for native and webview
+ */
+async function getMobileScreenSize(currentBrowser: WebdriverIO.Browser, isNativeContext: boolean): Promise<{ height: number; width: number }> {
+    let height = 0, width = 0
+
+    if (isNativeContext) {
+        ({ height, width } = await currentBrowser.getWindowSize())
+    } else {
+        const { top, left, width:viewportWidth, height:viewportHeight } = await currentBrowser.execute('mobile: viewportRect') as MobileViewportRect
+        width = left + viewportWidth
+        height = top + viewportHeight
+    }
+
+    return { height, width }
+}
+
+/**
  * Get the mobile instance data
  */
 async function getMobileInstanceData({
     currentBrowser,
-    isAndroid,
-    isMobile
+    isNativeContext,
+    nativeWebScreenshot,
 }: {
     currentBrowser: WebdriverIO.Browser;
-    isAndroid:boolean;
-    isMobile: boolean
+    isNativeContext:boolean;
+    nativeWebScreenshot:boolean;
 }): Promise<{
     devicePixelRatio: number;
     devicePlatformRect: {
@@ -89,7 +106,9 @@ async function getMobileInstanceData({
         homeBar: { height: number; x: number; width: number; y: number };
     };
     deviceScreenSize: { height: number; width: number };
+    mobileViewportPosition: DeviceRectangles
 }>{
+    const { isAndroid, isMobile } = currentBrowser
     const deviceScreenSize = {
         height: 0,
         width: 0,
@@ -99,10 +118,11 @@ async function getMobileInstanceData({
         homeBar: { height: 0, x: 0, width: 0, y: 0 },
     }
     let devicePixelRatio = 1
+    let mobileViewportPosition = { top: 0, left: 0, width: 0, height: 0 }
 
     if (isMobile){
         const currentDriverCapabilities = currentBrowser.capabilities
-        const { height, width } = await currentBrowser.getWindowSize()
+        const { height, width } = await getMobileScreenSize(currentBrowser, isNativeContext)
         deviceScreenSize.height = height
         deviceScreenSize.width = width
 
@@ -142,12 +162,20 @@ async function getMobileInstanceData({
             }
             devicePlatformRect.homeBar = currentOffsets.HOME_BAR
         }
+        mobileViewportPosition = await getMobileViewPortPosition({
+            currentBrowser,
+            isNativeContext,
+            nativeWebScreenshot,
+            screenHeight: height,
+            screenWidth: width,
+        })
     }
 
     return {
         devicePixelRatio,
         devicePlatformRect,
         deviceScreenSize,
+        mobileViewportPosition,
     }
 }
 
@@ -195,10 +223,177 @@ function getDeviceName(currentBrowser: WebdriverIO.Browser): string {
     return (deviceName !== NOT_KNOWN ? deviceName : requestedDeviceName || returnedDeviceName || NOT_KNOWN).toLowerCase()
 }
 
+async function injectWebviewOverlay(currentBrowser: WebdriverIO.Browser, isAndroid: boolean): Promise<void> {
+    await currentBrowser.execute((isAndroid) => {
+        if (document.querySelector('[data-test="ics-overlay"]')) {return}
+
+        const overlay = document.createElement('div')
+        const dpr = isAndroid ? window.devicePixelRatio : 1
+        overlay.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100vw;
+    height: ${document.documentElement.clientHeight}px;
+    background: rgba(255, 165, 0, 0.5); z-index: 2147483647;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: black; font-size: 36px; font-family: Arial, sans-serif; text-align: center;`
+        overlay.dataset.test = 'ics-overlay'
+
+        // Create a text container inside the overlay
+        const textContainer = document.createElement('div')
+        textContainer.innerText = 'This overlay is used to determine the position of the webview.'
+        overlay.appendChild(textContainer)
+
+        overlay.onclick = (event) => {
+            const { clientX: x, clientY: y } = event
+            const data = {
+                x: x * dpr,
+                y: y * dpr,
+                width: window.innerWidth * dpr,
+                height: document.documentElement.clientHeight * dpr,
+            }
+
+            overlay.dataset.icsWebviewData = JSON.stringify(data)
+
+            // Update text with click coordinates
+            textContainer.innerHTML = `
+        This overlay is used to determine the position of the webview.<br>
+        Clicked at: X: ${data.x}, Y: ${data.y}<br/>
+        Dimensions: Viewport width: ${data.width}, Viewport height: ${data.height}`
+        }
+
+        document.body.appendChild(overlay)
+
+    }, isAndroid)
+}
+
+async function loadBase64Html(currentBrowser: WebdriverIO.Browser): Promise<void> {
+    const htmlContent = `
+        <html>
+        <head><title>Base64 Page</title></head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <body>
+            <h1>Hello from Base64!</h1>
+            <p>This page was loaded without visiting a URL.</p>
+        </body>
+        </html>`
+
+    // Convert HTML to Base64
+    const base64Html = Buffer.from(htmlContent).toString('base64')
+
+    // Load the Base64 data URL in the browser
+    await currentBrowser.url(`data:text/html;base64,${base64Html}`)
+}
+
+async function getWebviewPosition({ currentBrowser, nativeClickX, nativeClickY }:{currentBrowser: WebdriverIO.Browser, nativeClickX:number, nativeClickY:number}): Promise<MobileViewportRect> {
+    const { x, y, width, height } = await currentBrowser.execute(() => {
+        const overlay = document.querySelector('[data-test="ics-overlay"]') as HTMLElement | null
+
+        if (!overlay || !overlay.dataset.icsWebviewData) {
+            return { top: 0, left: 0, width: 0, height: 0 }
+        }
+
+        overlay.remove()
+
+        return JSON.parse(overlay.dataset.icsWebviewData)
+    }) as Promise<{x: number, y: number, width: number, height: number}>
+
+    return {
+        top: y,
+        left: x,
+        width: width,
+        height: height,
+    }
+}
+
+async function getMobileViewPortPosition({
+    currentBrowser,
+    isNativeContext,
+    nativeWebScreenshot,
+    screenHeight,
+    screenWidth,
+}: {
+    currentBrowser: WebdriverIO.Browser,
+    isNativeContext: boolean,
+    nativeWebScreenshot: boolean,
+    screenHeight: number,
+    screenWidth: number,
+}): Promise<DeviceRectangles> {
+    const { isAndroid, isIOS } = currentBrowser
+
+    if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
+        // @TODO: Maybe also store the current URL and restore it after the test
+        console.log('load base64 html')
+        await loadBase64Html(currentBrowser)
+        console.log('injecting webview overlay')
+        // Inject the webview layer
+        await injectWebviewOverlay(currentBrowser, isAndroid)
+        // Now execute a native click on the overlay in the center of the screen
+        const nativeClickX = screenWidth / 2
+        const nativeClickY = screenHeight / 2
+        console.log('clicking on overlay on center of screen = ', { x: nativeClickX, y: nativeClickY })
+        await currentBrowser.execute(`mobile: ${isAndroid ? 'clickGesture' : 'tap'}`, { x: nativeClickX, y: nativeClickY })
+        // Wait a bit for the overlay to be updated
+        await currentBrowser.pause(100)
+        // Now get the data from the overlay and remove it
+        const webviewPosition = await getWebviewPosition({ currentBrowser, nativeClickX, nativeClickY })
+        // Now do all the magic
+        const viewportTop = nativeClickY - webviewPosition.top
+        const viewportLeft = nativeClickX - webviewPosition.left
+        const statusBarAndAddressBarHeight = viewportTop
+        const bottomBarHeight = screenHeight - (viewportTop + webviewPosition.height)
+        const leftSidePaddingWidth = viewportLeft
+        const rightSidePaddingWidth = screenWidth - (viewportLeft + webviewPosition.width)
+        const deviceRectangles = {
+            statusBarAndAddressBar: {
+                top: 0,
+                left: 0,
+                width: screenWidth,
+                height: statusBarAndAddressBarHeight,
+            },
+            viewport: {
+                top: viewportTop,
+                left: viewportLeft,
+                width: webviewPosition.width,
+                height: webviewPosition.height,
+            },
+            bottomBar: {
+                top: viewportTop + webviewPosition.height,
+                left: 0,
+                width: screenWidth,
+                height: bottomBarHeight,
+            },
+            leftSidePadding: {
+                top: viewportTop,
+                left: 0,
+                width: leftSidePaddingWidth,
+                height: webviewPosition.height,
+            },
+            rightSidePadding: {
+                top: viewportTop,
+                left: viewportLeft + webviewPosition.width,
+                width: rightSidePaddingWidth,
+                height: webviewPosition.height,
+            },
+        }
+
+        console.log('deviceRectangles = ', deviceRectangles)
+
+        return deviceRectangles
+    }
+
+    // No WebView detected, return empty values
+    return {
+        statusBarAndAddressBar: { top: 0, left: 0, width: 0, height: 0 },
+        viewport: { top: 0, left: 0, width: 0, height: 0 },
+        bottomBar: { top: 0, left: 0, width: 0, height: 0 },
+        leftSidePadding: { top: 0, left: 0, width: 0, height: 0 },
+        rightSidePadding: { top: 0, left: 0, width: 0, height: 0 },
+    }
+}
+
 /**
  * Get the instance data
  */
-export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Promise<InstanceData> {
+export async function getInstanceData(currentBrowser: WebdriverIO.Browser, isNativeContext: boolean): Promise<InstanceData> {
     const NOT_KNOWN = 'not-known'
     const { capabilities: currentCapabilities, requestedCapabilities } = currentBrowser
     const {
@@ -240,9 +435,15 @@ export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Prom
     // 20241216: LT doesn't have the option to take a ChromeDriver screenshot, so if it's Android it's always native
     const nativeWebScreenshot = isAndroid && ltOptions || !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
     const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? NOT_KNOWN : rawPlatformVersion.toLowerCase()
-
-    const { devicePixelRatio: mobileDevicePixelRatio, devicePlatformRect, deviceScreenSize, } = await getMobileInstanceData({ currentBrowser, isAndroid, isMobile })
+    const {
+        devicePixelRatio: mobileDevicePixelRatio,
+        devicePlatformRect,
+        deviceScreenSize,
+        mobileViewportPosition,
+    } = await getMobileInstanceData({ currentBrowser, isNativeContext, nativeWebScreenshot })
     devicePixelRatio = isMobile ? mobileDevicePixelRatio : devicePixelRatio
+
+    console.log('mobileViewportPosition = ', mobileViewportPosition)
 
     return {
         appName,
@@ -256,6 +457,7 @@ export async function getInstanceData(currentBrowser: WebdriverIO.Browser): Prom
         isIOS,
         isMobile,
         logName,
+        mobileViewportPosition,
         name,
         nativeWebScreenshot,
         platformName,
