@@ -98,7 +98,7 @@ describe('utils', () => {
 
         it('should return instance data when the minimum of capabilities is provided', async() => {
             const driver = createDriverMock({})
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, false)).toMatchSnapshot()
         })
 
         it('should return instance data when wdio-ics option log name is provided', async() => {
@@ -111,7 +111,7 @@ describe('utils', () => {
                     },
                 },
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, false)).toMatchSnapshot()
         })
 
         it('should return instance data when wdio-ics option name is provided', async() => {
@@ -124,7 +124,7 @@ describe('utils', () => {
                     },
                 },
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, false)).toMatchSnapshot()
         })
 
         it('should return instance data for an Android mobile app', async() => {
@@ -155,7 +155,7 @@ describe('utils', () => {
                 isMobile: true,
                 getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
 
         it('should return instance data for an iOS iPhone mobile app', async() => {
@@ -189,7 +189,7 @@ describe('utils', () => {
                 getWindowSize: vi.fn().mockResolvedValueOnce({ height: 852, width: 393 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
 
         it('should return instance data for an iOS iPad mobile app', async() => {
@@ -222,7 +222,7 @@ describe('utils', () => {
                 getWindowSize: vi.fn().mockResolvedValueOnce({ height: 1194, width: 834 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
 
         it('should return instance data for an iOS iPad mobile app in landscape mode', async() => {
@@ -256,7 +256,7 @@ describe('utils', () => {
                 getWindowSize: vi.fn().mockResolvedValueOnce({ height: 834, width: 1194 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
 
         it('should return instance data for an iOS iPad mobile app for a non matching screensize', async() => {
@@ -288,7 +288,7 @@ describe('utils', () => {
                 getWindowSize: vi.fn().mockResolvedValueOnce({ height: 888, width: 1234 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
 
         it('should return instance data for a mobile app with incomplete capability data', async() => {
@@ -319,7 +319,7 @@ describe('utils', () => {
                 isMobile: true,
                 getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
 
         it('should return instance data when the browserstack capabilities are provided', async() => {
@@ -336,7 +336,7 @@ describe('utils', () => {
                 isMobile: true,
                 getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
 
         it('should return instance data when the lambdatest capabilities are provided', async() => {
@@ -358,7 +358,7 @@ describe('utils', () => {
                 isMobile: true,
                 getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
     })
 
