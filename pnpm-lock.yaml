@@ -266,9 +266,6 @@ importers:
       '@wdio/types':
         specifier: ^9.9.0
         version: 9.9.0
-      node-fetch:
-        specifier: ^3.3.2
-        version: 3.3.2
       webdriver-image-comparison:
         specifier: ^7.3.2
         version: 7.3.2
