@@ -6,6 +6,9 @@
 
 - 77bc764: Removed unused `node-fetch` dependency
 
+### Committers: 1
+
+-   alcpereira ([@ alcpereira](https://github.com/alcpereira))
 ## 6.3.2
 
 ### Patch Changes
