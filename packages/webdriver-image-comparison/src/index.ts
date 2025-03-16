@@ -27,7 +27,7 @@ export type {
 } from './commands/fullPage.interfaces.js'
 export type { TestContext } from './commands/check.interfaces.js'
 export type { Folders } from './base.interfaces.js'
-export type { InstanceData, MobileViewportRect } from './methods/instanceData.interfaces.js'
+export type { InstanceData, DeviceRectangles } from './methods/instanceData.interfaces.js'
 export type { ResultReport } from './methods/createCompareReport.js'
 
 export {
