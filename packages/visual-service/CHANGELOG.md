@@ -1,5 +1,11 @@
 # @wdio/visual-service
 
+## 6.3.3
+
+### Patch Changes
+
+- 77bc764: Removed unused `node-fetch` dependency
+
 ## 6.3.2
 
 ### Patch Changes
@@ -12,7 +18,8 @@
 ### Committers: 2
 
 - Christian Bromann ([@christian-bromann](https://github.com/christian-bromann))
--   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+- Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 6.3.1
 
 ### Patch Changes
