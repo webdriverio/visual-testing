@@ -1,8 +1,9 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig, coverageConfigDefaults, defaultExclude } from 'vitest/config'
 
 export default defineConfig({
     test: {
         include: ['./packages/**/(tests|src)/**/*.test.ts'],
+        reporters: ['default', ['html', { outputFile: '.vitest-ui/index.html' }]],
         coverage: {
             thresholds: {
                 lines: 50,
@@ -11,30 +12,19 @@ export default defineConfig({
                 branches: 50
             },
             exclude: [
-                'packages/service/src/types.ts',
-                'packages/visual-reporter/',
-                'packages/visual-remix-reporter/',
-                '.eslintrc.cjs',
-                'tests/**',
+                ...coverageConfigDefaults.exclude,
+                // Types
+                '**/types.ts',
                 '**/*.interfaces.ts',
-                '**/storybookTypes.ts',
-                '**/apps/**',
-                '**/dist/**',
+                // Ignored folder
                 '**/resemble/**',
-                'eslint.config.cjs',
-                'vitest.config.ts',
-                '.tmp/**',
+                '**/dist/**',
+                // Others
+                'packages/visual-reporter/', // Need to improve visual reporter tests
             ]
         },
-        /**
-         * not to ESM ported packages
-         */
-        exclude: [
-            'dist',
-            '.idea',
-            '.git',
-            '.cache',
-            '**/node_modules/**',
-        ]
+        exclude: {
+            ...defaultExclude
+        }
     }
 })
