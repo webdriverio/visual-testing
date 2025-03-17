@@ -14,7 +14,6 @@ import type {
     TakeWebElementScreenshot,
     TakeWebElementScreenshotData,
 } from './screenshots.interfaces.js'
-import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import type { ElementRectanglesOptions } from './rectangles.interfaces.js'
@@ -68,9 +67,7 @@ export async function getBase64FullPageScreenshotsData(
             screenWidth,
             sideBar: { width: sideBarWidth },
             statusAddressBar: { height: statusAddressBarHeight },
-        } = <StatusAddressToolBarOffsets>(
-            await executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, { isHybridApp, isLandscape })
-        )
+        } = await executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, { isHybridApp, isLandscape })
 
         const androidNativeMobileOptions = {
             ...nativeMobileOptions,
@@ -97,7 +94,8 @@ export async function getBase64FullPageScreenshotsData(
             sideBar: { width: sideBarWidth },
             statusAddressBar: { height: statusAddressBarHeight },
             toolBar: { y: iosHomeBarY },
-        } = <StatusAddressToolBarOffsets> await executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)
+        } = await executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)
+
         const iosNativeMobileOptions = {
             ...nativeMobileOptions,
             iosHomeBarY,

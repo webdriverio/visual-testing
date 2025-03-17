@@ -207,9 +207,11 @@ export default class WdioImageComparisonService extends BaseClass {
 
                 return command(
                     {
-                        methods:{
-                            executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                return this.execute.bind(browser)(script, ...varArgs) as Promise<T>
+                        methods: {
+                            executor: <ReturnValue, InnerArguments extends unknown[]>(
+                                fn: string | ((...args: InnerArguments) => ReturnValue),
+                                ...args: InnerArguments): Promise<ReturnValue> => {
+                                return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
                             },
                             getElementRect: this.getElementRect.bind(browser),
                             screenShot: this.takeScreenshot.bind(browser),
@@ -257,8 +259,10 @@ export default class WdioImageComparisonService extends BaseClass {
                     return command(
                         {
                             methods: {
-                                executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                    return this.execute.bind(browser)(script, ...varArgs) as Promise<T>
+                                executor: <ReturnValue, InnerArguments extends unknown[]>(
+                                    fn: string | ((...args: InnerArguments) => ReturnValue),
+                                    ...args: InnerArguments): Promise<ReturnValue> => {
+                                    return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
                                 },
                                 getElementRect: this.getElementRect.bind(browser),
                                 screenShot: this.takeScreenshot.bind(browser),
@@ -309,9 +313,11 @@ export default class WdioImageComparisonService extends BaseClass {
 
                     returnData[browserName] = await command(
                         {
-                            methods:{
-                                executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                    return browserInstance.execute.bind(browserInstance)(script, ...varArgs) as Promise<T>
+                            methods: {
+                                executor: <ReturnValue, InnerArguments extends unknown[]>(
+                                    fn: string | ((...args: InnerArguments) => ReturnValue),
+                                    ...args: InnerArguments): Promise<ReturnValue> => {
+                                    return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
                                 },
                                 getElementRect: browserInstance.getElementRect.bind(browserInstance),
                                 screenShot: browserInstance.takeScreenshot.bind(browserInstance),
@@ -368,8 +374,10 @@ export default class WdioImageComparisonService extends BaseClass {
                         returnData[browserName] = await command(
                             {
                                 methods: {
-                                    executor: <T>(script: string | ((...innerArgs: any[]) => unknown), ...varArgs: any[]): Promise<T> => {
-                                        return browserInstance.execute.bind(browserInstance)(script, ...varArgs) as Promise<T>
+                                    executor: <ReturnValue, InnerArguments extends unknown[]>(
+                                        fn: string | ((...args: InnerArguments) => ReturnValue),
+                                        ...args: InnerArguments): Promise<ReturnValue> => {
+                                        return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
                                     },
                                     getElementRect: browserInstance.getElementRect.bind(browserInstance),
                                     screenShot: browserInstance.takeScreenshot.bind(browserInstance),
