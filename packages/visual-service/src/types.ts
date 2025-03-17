@@ -39,6 +39,15 @@ export type DeviceRectangles = {
     leftSidePadding: DeviceRectangleBound,
     rightSidePadding: DeviceRectangleBound,
 }
+export type MobileInstanceData = {
+    devicePixelRatio: number;
+    devicePlatformRect: {
+        statusBar: { height: number; x: number; width: number; y: number };
+        homeBar: { height: number; x: number; width: number; y: number };
+    };
+    deviceRectangles: DeviceRectangles
+    deviceScreenSize: { height: number; width: number };
+}
 
 export interface WdioIcsCommonOptions {
     hideElements?: (WebdriverIO.Element | ChainablePromiseElement)[];
