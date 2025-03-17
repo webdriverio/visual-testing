@@ -103,6 +103,14 @@ export interface ClassOptions {
         url?: string;
         // Version of the storybook, default is 7
         version?: number
+        /**
+         * Additional search parameters to be added to the Storybook URL
+         *
+         * @example { additionalSearchParams: new URLSearchParams({ 'foo': 'bar' }) }
+         * This will generate the following Storybook URL for stories test: `http://storybook.url/iframe.html?id=story-id&foo=bar`
+         *
+         */
+        additionalSearchParams?: URLSearchParams;
     }
 }
 
