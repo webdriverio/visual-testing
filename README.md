@@ -67,6 +67,20 @@ export const config: WebdriverIO.Config  = {
 
 ### Storybook Runner CLI options
 
+#### `--additionalSearchParams`
+
+-   **Type:** `string`
+-   **Mandatory:** No
+-   **Default:** ''
+-   **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --additionalSearchParams="foo=bar&abc=def"`
+
+It will add additional search parameters to the Storybook URL.
+See the [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) documentation for more information. The string must be a valid URLSearchParams string.
+
+> [!NOTE]
+> The double quotes are needed to prevent the `&` from being interpreted as a command separator.
+> For example with `--additionalSearchParams="foo=bar&abc=def"` it will generate the following Storybook URL for stories test: `http://storybook.url/iframe.html?id=story-id&foo=bar&abc=def`.
+
 #### `--browsers`
 
 -   **Type:** `string`

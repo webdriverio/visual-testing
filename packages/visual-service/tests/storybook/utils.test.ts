@@ -272,6 +272,7 @@ describe('Storybook utils', () => {
             skipStories,
             storyData: { id: 'category-component--story1' },
             storybookUrl: 'http://storybook.com/',
+            additionalSearchParams: new URLSearchParams({ foo: 'bar' })
         })
 
         it('generates correct test code with Jasmine framework and skip array', () => {
@@ -496,6 +497,21 @@ describe('Storybook utils', () => {
             expect(mock$).toHaveBeenCalledWith('.storybook-component')
             expect(mock$.mock.results[0].value.waitForDisplayed).toHaveBeenCalled()
             expect(mockBrowser.executeAsync).toHaveBeenCalled()
+        })
+
+        it('should go to the correct URL when given additionalSearchParams', async () => {
+            const mockStorybookModeFunction = vi.fn().mockReturnValue(true)
+            const options = {
+                url: 'http://localhost:6006/',
+                id: 'example-component',
+                additionalSearchParams: new URLSearchParams({ foo: 'bar', baz: 'qux' }),
+            }
+
+            await waitForStorybookComponentToBeLoaded(options, mockStorybookModeFunction)
+
+            // Assertions
+            expect(mockBrowser.url).toHaveBeenCalledWith('http://localhost:6006/iframe.html?id=example-component&foo=bar&baz=qux')
+
         })
     })
 
