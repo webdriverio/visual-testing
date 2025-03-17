@@ -11,9 +11,11 @@ import type {
     CheckElementMethodOptions,
     SaveElementMethodOptions,
     TestContext,
+    DeviceRectangles,
+    DeviceRectangleBound,
 } from 'webdriver-image-comparison'
 import { NOT_KNOWN } from 'webdriver-image-comparison/dist/helpers/constants.js'
-import type { DeviceRectangleBound, DeviceRectangles, MobileInstanceData, NativeContextType } from './types.js'
+import type { MobileInstanceData, NativeContextType } from './types.js'
 import { DEVICE_RECTANGLES } from './constants.js'
 
 interface WdioIcsOptions {
