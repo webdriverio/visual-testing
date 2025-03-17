@@ -117,8 +117,8 @@ async function injectWebviewOverlay(currentBrowser: WebdriverIO.Browser, isAndro
         overlay.onclick = (event) => {
             const { clientX: x, clientY: y } = event
             const data = {
-                x: x * dpr,
-                y: y * dpr,
+                left: x * dpr,
+                top: y * dpr,
                 width: window.innerWidth * dpr,
                 height: document.documentElement.clientHeight * dpr,
             }
@@ -126,7 +126,7 @@ async function injectWebviewOverlay(currentBrowser: WebdriverIO.Browser, isAndro
             overlay.dataset.icsWebviewData = JSON.stringify(data)
             textContainer.innerHTML = `
         This overlay is used to determine the position of the webview.<br>
-        Clicked at: X: ${data.x}, Y: ${data.y}<br/>
+        Clicked at: X: ${data.left}, Y: ${data.top}<br/>
         Dimensions: Viewport width: ${data.width}, Viewport height: ${data.height}`
         }
 
