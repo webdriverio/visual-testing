@@ -154,6 +154,7 @@ describe('utils', () => {
                 isAndroid: true,
                 isMobile: true,
                 getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
             })
             expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
@@ -184,10 +185,11 @@ describe('utils', () => {
                         'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
                     },
                 } as WebdriverIO.Capabilities,
+                isIOS: true,
                 isAndroid: false,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 852, width: 393 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 852, width: 393 } }),
             })
             expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
@@ -217,10 +219,11 @@ describe('utils', () => {
                     'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
 
                 } as WebdriverIO.Capabilities,
+                isIOS: true,
                 isAndroid: false,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 1194, width: 834 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 1194, width: 834 } }),
             })
             expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
@@ -251,10 +254,11 @@ describe('utils', () => {
                     'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
 
                 } as WebdriverIO.Capabilities,
+                isIOS: true,
                 isAndroid: false,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 834, width: 1194 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 834, width: 1194 } }),
             })
             expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
@@ -283,10 +287,11 @@ describe('utils', () => {
                     'appium:platformVersion': '17.0',
                     'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
                 } as WebdriverIO.Capabilities,
+                isIOS: true,
                 isAndroid: false,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 888, width: 1234 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 888, width: 1234 } }),
             })
             expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
@@ -317,7 +322,7 @@ describe('utils', () => {
                 } as WebdriverIO.Capabilities,
                 isAndroid: true,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
             })
             expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
@@ -334,7 +339,7 @@ describe('utils', () => {
                 },
                 isAndroid: true,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
             })
             expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })
@@ -356,7 +361,7 @@ describe('utils', () => {
                 },
                 isAndroid: true,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
             })
             expect(await getInstanceData(driver, true)).toMatchSnapshot()
         })

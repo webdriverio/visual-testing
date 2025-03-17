@@ -298,121 +298,25 @@ describe('rectangles', () => {
     })
 
     describe('determineStatusAddressToolBarRectangles', () => {
-        it('should determine the rectangles for the iOS with a status and toolbar blockout', async () => {
+        it('should determine the rectangles with a status and toolbar blockout', async () => {
             const options = {
                 blockOutSideBar: true,
                 blockOutStatusBar: true,
                 blockOutToolBar: true,
-                isAndroidNativeWebScreenshot: false,
-                isHybridApp: false,
-                isLandscape: false,
-                isMobile: true,
-                isViewPortScreenshot: true,
-                platformName: 'iOS',
-            }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // determineStatusAddressToolBarRectangles for: getIosStatusAddressToolBarOffsets
-                .mockResolvedValueOnce({
-                    sideBar: {
-                        height: 240,
-                        width: 120,
-                        x: 0,
-                        y: 70,
-                    },
-                    statusAddressBar: {
-                        height: 94,
-                        width: 375,
-                        x: 0,
-                        y: 0,
-                    },
-                    toolBar: {
-                        height: 5,
-                        width: 135,
-                        x: 120,
-                        y: 799,
-                    },
-                })
-
-            expect(await determineStatusAddressToolBarRectangles(MOCKED_EXECUTOR, options)).toMatchSnapshot()
-        })
-
-        it('should determine the rectangles for the iOS without a status and toolbar blockout', async () => {
-            const options = {
-                blockOutSideBar: false,
-                blockOutStatusBar: false,
-                blockOutToolBar: false,
-                isAndroidNativeWebScreenshot: false,
-                isHybridApp: false,
-                isLandscape: false,
-                isMobile: true,
-                isViewPortScreenshot: true,
-                platformName: 'iOS',
-            }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // determineStatusAddressToolBarRectangles for: getIosStatusAddressToolBarOffsets
-                .mockResolvedValueOnce({
-                    sideBar: {
-                        height: 240,
-                        width: 120,
-                        x: 0,
-                        y: 70,
-                    },
-                    statusAddressBar: {
-                        height: 94,
-                        width: 375,
-                        x: 0,
-                        y: 0,
-                    },
-                    toolBar: {
-                        height: 5,
-                        width: 135,
-                        x: 0,
-                        y: 799,
-                    },
-                })
-
-            expect(await determineStatusAddressToolBarRectangles(MOCKED_EXECUTOR, options)).toMatchSnapshot()
-        })
-
-        it('should determine the rectangles for Android with a status and toolbar blockout', async () => {
-            const options = {
-                blockOutSideBar: true,
-                blockOutStatusBar: true,
-                blockOutToolBar: true,
+                isAndroid: true,
                 isAndroidNativeWebScreenshot: true,
-                isHybridApp: false,
-                isLandscape: false,
                 isMobile: true,
                 isViewPortScreenshot: true,
-                platformName: 'Android',
             }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // determineStatusAddressToolBarRectangles for: getAndroidStatusAddressToolBarOffsets
-                .mockResolvedValueOnce({
-                    sideBar: {
-                        height: 0,
-                        width: 0,
-                        x: 0,
-                        y: 0,
-                    },
-                    statusAddressBar: {
-                        height: 40,
-                        width: 320,
-                        x: 0,
-                        y: 0,
-                    },
-                    toolBar: {
-                        height: 100,
-                        width: 320,
-                        x: 0,
-                        y: 600,
-                    },
-                })
+            const deviceRectangles =  {
+                statusBarAndAddressBar: { top: 0, left: 0, width: 1344, height: 320 },
+                viewport: { top: 320, left: 0, width: 1344, height: 2601 },
+                bottomBar: { top: 2921, left: 0, width: 1344, height: 71 },
+                leftSidePadding: { top: 320, left: 0, width: 0, height: 2601 },
+                rightSidePadding: { top: 320, left: 1344, width: 0, height: 2601 }
+            }
 
-            expect(await determineStatusAddressToolBarRectangles(MOCKED_EXECUTOR, options)).toMatchSnapshot()
+            expect(await determineStatusAddressToolBarRectangles( { deviceRectangles, options })).toMatchSnapshot()
         })
 
         it('should determine the rectangles that there are no rectangles for this device', async () => {
@@ -420,32 +324,20 @@ describe('rectangles', () => {
                 blockOutSideBar: false,
                 blockOutStatusBar: false,
                 blockOutToolBar: false,
+                isAndroid: false,
                 isAndroidNativeWebScreenshot: false,
-                isHybridApp: false,
-                isLandscape: false,
                 isMobile: true,
                 isViewPortScreenshot: false,
-                platformName: 'Android',
             }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // determineStatusAddressToolBarRectangles for: getAndroidStatusAddressToolBarOffsets
-                .mockResolvedValueOnce({
-                    statusAddressBar: {
-                        height: 40,
-                        width: 320,
-                        x: 0,
-                        y: 0,
-                    },
-                    toolBar: {
-                        height: 100,
-                        width: 320,
-                        x: 0,
-                        y: 600,
-                    },
-                })
+            const deviceRectangles =  {
+                statusBarAndAddressBar: { top: 0, left: 0, width: 1344, height: 320 },
+                viewport: { top: 320, left: 0, width: 1344, height: 2601 },
+                bottomBar: { top: 2921, left: 0, width: 1344, height: 71 },
+                leftSidePadding: { top: 320, left: 0, width: 0, height: 2601 },
+                rightSidePadding: { top: 320, left: 1344, width: 0, height: 2601 }
+            }
 
-            expect(await determineStatusAddressToolBarRectangles(MOCKED_EXECUTOR, options)).toMatchSnapshot()
+            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
         })
     })
 })

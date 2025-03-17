@@ -1,32 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`screenshots > getBase64FullPageScreenshotsData > should get hide elements for the Android nativeWebScreenshot fullpage screenshot 1`] = `
-{
-  "data": [
-    {
-      "canvasWidth": 2732,
-      "canvasYPosition": 0,
-      "imageHeight": 1176,
-      "imageWidth": 2732,
-      "imageXPosition": 0,
-      "imageYPosition": 124,
-      "screenshot": "mocked-screenshot-string",
-    },
-    {
-      "canvasWidth": 2732,
-      "canvasYPosition": 1176,
-      "imageHeight": 400,
-      "imageWidth": 2732,
-      "imageXPosition": 0,
-      "imageYPosition": 924,
-      "screenshot": "mocked-screenshot-string",
-    },
-  ],
-  "fullPageHeight": 1552,
-  "fullPageWidth": 2732,
-}
-`;
-
 exports[`screenshots > getBase64FullPageScreenshotsData > should get the Android ChromeDriver fullpage screenshot data 1`] = `
 {
   "data": [
@@ -50,24 +23,6 @@ exports[`screenshots > getBase64FullPageScreenshotsData > should get the Android
     },
   ],
   "fullPageHeight": 2400,
-  "fullPageWidth": 2732,
-}
-`;
-
-exports[`screenshots > getBase64FullPageScreenshotsData > should get the Android nativeWebScreenshot fullpage screenshot data 1`] = `
-{
-  "data": [
-    {
-      "canvasWidth": 2732,
-      "canvasYPosition": 0,
-      "imageHeight": 1576,
-      "imageWidth": 2732,
-      "imageXPosition": 0,
-      "imageYPosition": 148,
-      "screenshot": "mocked-screenshot-string",
-    },
-  ],
-  "fullPageHeight": 1552,
   "fullPageWidth": 2732,
 }
 `;
@@ -123,60 +78,6 @@ exports[`screenshots > getBase64FullPageScreenshotsData > should get the desktop
   ],
   "fullPageHeight": 6400,
   "fullPageWidth": 2732,
-}
-`;
-
-exports[`screenshots > getBase64FullPageScreenshotsData > should get the iOS fullpage screenshot data 1`] = `
-{
-  "data": [
-    {
-      "canvasWidth": 2732,
-      "canvasYPosition": 0,
-      "imageHeight": 1576,
-      "imageWidth": 2732,
-      "imageXPosition": 0,
-      "imageYPosition": 200,
-      "screenshot": "mocked-screenshot-string",
-    },
-    {
-      "canvasWidth": 2732,
-      "canvasYPosition": 1576,
-      "imageHeight": 824,
-      "imageWidth": 2732,
-      "imageXPosition": 0,
-      "imageYPosition": 976,
-      "screenshot": "mocked-screenshot-string",
-    },
-  ],
-  "fullPageHeight": 2376,
-  "fullPageWidth": 2732,
-}
-`;
-
-exports[`screenshots > getBase64FullPageScreenshotsData > should get the iOS fullpage screenshot data for a landscape iPad 1`] = `
-{
-  "data": [
-    {
-      "canvasWidth": 2412,
-      "canvasYPosition": 0,
-      "imageHeight": 776,
-      "imageWidth": 2412,
-      "imageXPosition": 320,
-      "imageYPosition": 106,
-      "screenshot": "mocked-screenshot-string",
-    },
-    {
-      "canvasWidth": 2412,
-      "canvasYPosition": 776,
-      "imageHeight": 424,
-      "imageWidth": 2412,
-      "imageXPosition": 320,
-      "imageYPosition": 482,
-      "screenshot": "mocked-screenshot-string",
-    },
-  ],
-  "fullPageHeight": 1176,
-  "fullPageWidth": 2412,
 }
 `;
 
@@ -257,33 +158,6 @@ exports[`screenshots > getBase64FullPageScreenshotsData > should hide elements f
     },
   ],
   "fullPageHeight": 6400,
-  "fullPageWidth": 2732,
-}
-`;
-
-exports[`screenshots > getBase64FullPageScreenshotsData > should hide elements for the iOS fullpage screenshot 1`] = `
-{
-  "data": [
-    {
-      "canvasWidth": 2732,
-      "canvasYPosition": 0,
-      "imageHeight": 1576,
-      "imageWidth": 2732,
-      "imageXPosition": 0,
-      "imageYPosition": 200,
-      "screenshot": "mocked-screenshot-string",
-    },
-    {
-      "canvasWidth": 2732,
-      "canvasYPosition": 1576,
-      "imageHeight": 824,
-      "imageWidth": 2732,
-      "imageXPosition": 0,
-      "imageYPosition": 976,
-      "screenshot": "mocked-screenshot-string",
-    },
-  ],
-  "fullPageHeight": 2376,
   "fullPageWidth": 2732,
 }
 `;

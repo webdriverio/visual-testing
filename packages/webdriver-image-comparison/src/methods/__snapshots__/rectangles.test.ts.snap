@@ -9,30 +9,12 @@ exports[`rectangles > determineElementRectangles > should determine them for And
 }
 `;
 
-exports[`rectangles > determineElementRectangles > should determine them for Android Native webscreenshot 1`] = `
-{
-  "height": 360,
-  "width": 360,
-  "x": 300,
-  "y": 30,
-}
-`;
-
 exports[`rectangles > determineElementRectangles > should determine them for a desktop browser 1`] = `
 {
   "height": 40,
   "width": 750,
   "x": 24,
   "y": 68,
-}
-`;
-
-exports[`rectangles > determineElementRectangles > should determine them for iOS 1`] = `
-{
-  "height": 240,
-  "width": 240,
-  "x": 200,
-  "y": 20,
 }
 `;
 
@@ -63,52 +45,33 @@ exports[`rectangles > determineScreenRectangles > should determine them for iOS 
 }
 `;
 
-exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for Android with a status and toolbar blockout 1`] = `
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles that there are no rectangles for this device 1`] = `[]`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles with a status and toolbar blockout 1`] = `
 [
   {
-    "height": 40,
-    "width": 320,
+    "height": 320,
+    "width": 1344,
     "x": 0,
     "y": 0,
   },
   {
-    "height": 100,
-    "width": 320,
+    "height": 71,
+    "width": 1344,
     "x": 0,
-    "y": 600,
+    "y": 2921,
   },
   {
-    "height": 0,
+    "height": 2601,
     "width": 0,
     "x": 0,
-    "y": 0,
+    "y": 320,
+  },
+  {
+    "height": 2601,
+    "width": 0,
+    "x": 1344,
+    "y": 320,
   },
 ]
 `;
-
-exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for the iOS with a status and toolbar blockout 1`] = `
-[
-  {
-    "height": 94,
-    "width": 375,
-    "x": 0,
-    "y": 0,
-  },
-  {
-    "height": 5,
-    "width": 135,
-    "x": 120,
-    "y": 799,
-  },
-  {
-    "height": 240,
-    "width": 120,
-    "x": 0,
-    "y": 70,
-  },
-]
-`;
-
-exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for the iOS without a status and toolbar blockout 1`] = `[]`;
-
-exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles that there are no rectangles for this device 1`] = `[]`;

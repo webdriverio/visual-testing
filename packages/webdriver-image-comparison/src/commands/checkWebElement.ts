@@ -1,5 +1,5 @@
 import { executeImageCompare } from '../methods/images.js'
-import { checkIsMobile } from '../helpers/utils.js'
+import { checkIsAndroid, checkIsMobile } from '../helpers/utils.js'
 import saveWebElement from './saveWebElement.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveElementOptions } from './element.interfaces.js'
@@ -70,6 +70,7 @@ export default async function checkWebElement(
             isMobile: checkIsMobile(instanceData.platformName),
             savePerInstance: checkElementOptions.wic.savePerInstance,
         },
+        isAndroid: checkIsAndroid(instanceData.platformName),
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: checkElementOptions.wic.isHybridApp,
         isLandscape,
@@ -78,7 +79,6 @@ export default async function checkWebElement(
 
     // 2b Now execute the compare and return the data
     return executeImageCompare({
-        executor: methods.executor,
         isViewPortScreenshot: true,
         isNativeContext,
         options: executeCompareOptions,

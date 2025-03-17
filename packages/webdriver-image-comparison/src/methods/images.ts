@@ -321,7 +321,6 @@ export async function makeCroppedBase64Image({
  */
 export async function executeImageCompare(
     {
-        executor,
         isViewPortScreenshot,
         isNativeContext,
         options,
@@ -333,12 +332,9 @@ export async function executeImageCompare(
         devicePixelRatio,
         deviceRectangles,
         ignoreRegions = [],
-        fileName,
         isAndroidNativeWebScreenshot,
         isAndroid,
-        isHybridApp,
-        isLandscape,
-        platformName,
+        fileName,
     } = options
     const { actualFolder, autoSaveBaseline, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
         options.folderOptions
@@ -377,15 +373,13 @@ export async function executeImageCompare(
             blockOutSideBar: imageCompareOptions.blockOutSideBar,
             blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
             blockOutToolBar: imageCompareOptions.blockOutToolBar,
-            isHybridApp,
-            isLandscape,
+            isAndroid,
+            isAndroidNativeWebScreenshot,
             isMobile,
             isViewPortScreenshot,
-            isAndroidNativeWebScreenshot,
-            platformName,
         }
         webStatusAddressToolBarOptions.push(
-            ...(await determineStatusAddressToolBarRectangles({ deviceRectangles, executor, options: statusAddressToolBarOptions })) || []
+            ...(determineStatusAddressToolBarRectangles({ deviceRectangles, options: statusAddressToolBarOptions })) || []
         )
         if (webStatusAddressToolBarOptions.length > 0) {
             // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full

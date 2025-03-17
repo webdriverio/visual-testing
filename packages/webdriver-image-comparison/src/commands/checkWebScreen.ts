@@ -33,7 +33,7 @@ export default async function checkWebScreen(
             waitForFontsLoaded: checkScreenOptions.method.waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, isLandscape } = await saveWebScreen({
+    const { devicePixelRatio, fileName } = await saveWebScreen({
         methods,
         instanceData,
         folders,
@@ -65,13 +65,10 @@ export default async function checkWebScreen(
         isAndroid: checkIsAndroid(instanceData.platformName),
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: checkScreenOptions.wic.isHybridApp,
-        isLandscape,
-        platformName: instanceData.platformName,
     }
 
     // 2b Now execute the compare and return the data
     return executeImageCompare({
-        executor: methods.executor,
         isViewPortScreenshot: true,
         isNativeContext,
         options: executeCompareOptions,

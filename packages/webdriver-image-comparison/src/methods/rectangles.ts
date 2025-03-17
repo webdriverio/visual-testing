@@ -1,7 +1,6 @@
 import type { ChainablePromiseElement } from 'webdriverio'
-import { calculateDprData, checkAndroidNativeWebScreenshot, checkIsIos, getScreenshotSize, isObject } from '../helpers/utils.js'
+import { calculateDprData, getScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementPositionIos } from './elementPosition.js'
-import { IOS_OFFSETS } from '../helpers/constants.js'
 import type {
     ElementRectangles,
     RectanglesOutput,
@@ -9,9 +8,7 @@ import type {
     StatusAddressToolBarRectangles,
     StatusAddressToolBarRectanglesOptions,
 } from './rectangles.interfaces.js'
-import type { Executor, GetElementRect } from './methods.interfaces.js'
-import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
-import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces.js'
+import type { GetElementRect } from './methods.interfaces.js'
 import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
 import type { DeviceRectangles, InstanceData } from './instanceData.interfaces.js'
 
@@ -103,53 +100,41 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
 /**
  * Determine the rectangles for the mobile devices
  */
-export async function determineStatusAddressToolBarRectangles({ deviceRectangles, executor, options }:{
+export function determineStatusAddressToolBarRectangles({ deviceRectangles, options }:{
     deviceRectangles: DeviceRectangles,
-    executor: Executor,
     options: StatusAddressToolBarRectanglesOptions,
-}): Promise<StatusAddressToolBarRectangles> {
+}): StatusAddressToolBarRectangles {
     const {
         blockOutSideBar,
         blockOutStatusBar,
         blockOutToolBar,
+        isAndroid,
         isAndroidNativeWebScreenshot,
-        // isHybridApp,
-        isLandscape,
         isMobile,
         isViewPortScreenshot,
-        platformName,
     } = options
     const rectangles = []
 
     if (
         isViewPortScreenshot &&
         isMobile &&
-        (checkAndroidNativeWebScreenshot(platformName, isAndroidNativeWebScreenshot) || checkIsIos(platformName))
+        ( isAndroid && isAndroidNativeWebScreenshot || !isAndroid )
     ) {
-        let statusAddressBar, toolBar, leftSidePadding, rightSidePadding = { height: 0, width: 0, x: 0, y: 0 }
-
-        if (checkIsIos(platformName)) {
-            (
-                { leftSidePadding, rightSidePadding, statusAddressBar, toolBar } =
-                (await executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)) as StatusAddressToolBarOffsets
-            )
-        } else {
-            statusAddressBar = {
-                x: deviceRectangles.statusBarAndAddressBar.left, y: deviceRectangles.statusBarAndAddressBar.top,
-                width: deviceRectangles.statusBarAndAddressBar.width, height: deviceRectangles.statusBarAndAddressBar.height,
-            }
-            toolBar = {
-                x: deviceRectangles.bottomBar.left, y: deviceRectangles.bottomBar.top,
-                width: deviceRectangles.bottomBar.width, height: deviceRectangles.bottomBar.height,
-            }
-            leftSidePadding = {
-                x: deviceRectangles.leftSidePadding.left, y: deviceRectangles.leftSidePadding.top,
-                width: deviceRectangles.leftSidePadding.width, height: deviceRectangles.leftSidePadding.height,
-            }
-            rightSidePadding = {
-                x: deviceRectangles.rightSidePadding.left, y: deviceRectangles.rightSidePadding.top,
-                width: deviceRectangles.rightSidePadding.width, height: deviceRectangles.rightSidePadding.height,
-            }
+        const statusAddressBar = {
+            x: deviceRectangles.statusBarAndAddressBar.left, y: deviceRectangles.statusBarAndAddressBar.top,
+            width: deviceRectangles.statusBarAndAddressBar.width, height: deviceRectangles.statusBarAndAddressBar.height,
+        }
+        const toolBar = {
+            x: deviceRectangles.bottomBar.left, y: deviceRectangles.bottomBar.top,
+            width: deviceRectangles.bottomBar.width, height: deviceRectangles.bottomBar.height,
+        }
+        const leftSidePadding = {
+            x: deviceRectangles.leftSidePadding.left, y: deviceRectangles.leftSidePadding.top,
+            width: deviceRectangles.leftSidePadding.width, height: deviceRectangles.leftSidePadding.height,
+        }
+        const rightSidePadding = {
+            x: deviceRectangles.rightSidePadding.left, y: deviceRectangles.rightSidePadding.top,
+            width: deviceRectangles.rightSidePadding.width, height: deviceRectangles.rightSidePadding.height,
         }
 
         if (blockOutStatusBar) {

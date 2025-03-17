@@ -1,4 +1,4 @@
-import type { RectanglesOutput } from 'src/methods/rectangles.interfaces.js'
+import type { RectanglesOutput } from '../methods/rectangles.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
 import type {  ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
@@ -41,15 +41,11 @@ export default async function checkAppScreen(
         ]
 
     }
-    const { executor, getElementRect } = methods
+    const { getElementRect } = methods
     const { isAndroid, isMobile } = instanceData
 
     // 2. Take the actual screenshot and retrieve the needed data
-    const {
-        devicePixelRatio,
-        fileName,
-        isLandscape,
-    } = await saveAppScreen({
+    const { devicePixelRatio, fileName } = await saveAppScreen({
         methods,
         instanceData,
         folders,
@@ -88,16 +84,13 @@ export default async function checkAppScreen(
             savePerInstance: checkScreenOptions.wic.savePerInstance,
         },
         ignoreRegions: [...ignoreRegions, ...deviceIgnoreRegions],
+        isAndroid,
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: false,
-        isAndroid,
-        isLandscape,
-        platformName: instanceData.platformName,
     }
 
     // 4b Now execute the compare and return the data
     return executeImageCompare({
-        executor,
         isViewPortScreenshot: true,
         isNativeContext,
         options: executeCompareOptions,

@@ -37,7 +37,8 @@ export default function getAndroidStatusAddressToolBarOffsets(
             y: 0,
         },
         // For now Android doesn't have a side bar
-        sideBar: { height: 0, width: 0, x: 0, y: 0 },
+        leftSidePadding: { height: 0, width: 0, x: 0, y: 0 },
+        rightSidePadding: { height: 0, width: 0, x: 0, y: 0 },
         toolBar: {
             height: toolBarHeight,
             width,

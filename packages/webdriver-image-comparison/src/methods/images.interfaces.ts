@@ -1,7 +1,6 @@
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
 import type { TestContext } from 'src/commands/check.interfaces.js'
-import type { Executor } from './methods.interfaces.js'
 import type { DeviceRectangles } from './instanceData.interfaces.js'
 
 export interface ResizeDimensions {
@@ -16,7 +15,6 @@ export interface ResizeDimensions {
 }
 
 export interface ExecuteImageCompare {
-    executor: Executor;
     options: ImageCompareOptions;
     testContext: TestContext;
     isViewPortScreenshot: boolean;
@@ -42,11 +40,7 @@ export interface ImageCompareOptions {
     // Is it an hybrid app or not
     isHybridApp: boolean;
     // Is this an Android device
-    isAndroid?: boolean;
-    // If it's in Landscape mode
-    isLandscape: boolean;
-    // The name of the platform
-    platformName: string;
+    isAndroid: boolean;
     // If this is a native web screenshot
     isAndroidNativeWebScreenshot: boolean;
 }
