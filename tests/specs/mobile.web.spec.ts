@@ -27,10 +27,9 @@ describe('@wdio/visual-service mobile web', () => {
         wdioIcsCommands.length === 0 ||
         wdioIcsCommands.includes('checkScreen')
     ) {
-        it.only(`should compare a screen successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
+        it(`should compare a screen successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
             // @ts-ignore
             this.retries(2)
-            // console.log('driver = ', JSON.stringify(driver, null, 2))
 
             // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
@@ -46,7 +45,7 @@ describe('@wdio/visual-service mobile web', () => {
         wdioIcsCommands.length === 0 ||
         wdioIcsCommands.includes('checkElement')
     ) {
-        it(`should compare an element successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function() {
+        it.only(`should compare an element successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function() {
             // @ts-ignore
             this.retries(2)
             await expect(

@@ -1,3 +1,4 @@
+import type { DeviceRectangles } from './instanceData.interfaces.js'
 import type { Executor, TakeElementScreenshot, TakeScreenShot } from './methods.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 
@@ -99,6 +100,7 @@ export interface FullPageScreenshotOptions {
 
 export interface TakeWebElementScreenshot {
     devicePixelRatio?: number,
+    deviceRectangles: DeviceRectangles,
     element: any,
     executor: Executor,
     fallback?: boolean,

@@ -35,7 +35,7 @@ export default async function checkWebElement(
             waitForFontsLoaded: checkElementOptions.method.waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, isLandscape } = await saveWebElement({
+    const { devicePixelRatio, fileName } = await saveWebElement({
         methods,
         instanceData,
         folders,
@@ -72,8 +72,6 @@ export default async function checkWebElement(
         },
         isAndroid: checkIsAndroid(instanceData.platformName),
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        isHybridApp: checkElementOptions.wic.isHybridApp,
-        isLandscape,
         platformName: instanceData.platformName,
     }
 

@@ -486,6 +486,7 @@ function logHiddenRemovedError(error: any) {
  */
 export async function takeWebElementScreenshot({
     devicePixelRatio,
+    deviceRectangles,
     element,
     executor,
     fallback = false,
@@ -497,18 +498,18 @@ export async function takeWebElementScreenshot({
     screenShot,
     takeElementScreenshot,
 }:TakeWebElementScreenshot): Promise<TakeWebElementScreenshotData>{
-    if (isIOS || fallback){
+    if (isIOS || fallback) {
         const base64Image = await takeBase64Screenshot(screenShot)
         const elementRectangleOptions: ElementRectanglesOptions = {
             /**
              * ToDo: handle NaA case
              */
             devicePixelRatio: devicePixelRatio || NaN,
+            deviceRectangles,
             innerHeight: innerHeight || NaN,
             isAndroidNativeWebScreenshot,
             isAndroid,
             isIOS,
-            isLandscape,
         }
         const rectangles = await determineElementRectangles({
             executor,

@@ -37,8 +37,6 @@ export interface ImageCompareOptions {
     fileName: string;
     // The folders object
     folderOptions: ImageCompareFolderOptions;
-    // Is it an hybrid app or not
-    isHybridApp: boolean;
     // Is this an Android device
     isAndroid: boolean;
     // If this is a native web screenshot

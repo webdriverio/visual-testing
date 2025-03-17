@@ -89,6 +89,7 @@ export default async function saveWebElement(
     // 3.  Take the screenshot and determine the rectangles
     const { base64Image, rectangles, isWebDriverElementScreenshot } = await takeWebElementScreenshot({
         devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         element,
         executor,
         innerHeight,

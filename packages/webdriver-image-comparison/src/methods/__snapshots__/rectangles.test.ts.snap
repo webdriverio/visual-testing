@@ -9,12 +9,30 @@ exports[`rectangles > determineElementRectangles > should determine them for And
 }
 `;
 
+exports[`rectangles > determineElementRectangles > should determine them for Android Native webscreenshot 1`] = `
+{
+  "height": undefined,
+  "width": undefined,
+  "x": undefined,
+  "y": undefined,
+}
+`;
+
 exports[`rectangles > determineElementRectangles > should determine them for a desktop browser 1`] = `
 {
   "height": 40,
   "width": 750,
   "x": 24,
   "y": 68,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for iOS 1`] = `
+{
+  "height": undefined,
+  "width": undefined,
+  "x": undefined,
+  "y": undefined,
 }
 `;
 

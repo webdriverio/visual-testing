@@ -1,3 +1,4 @@
+import type { DeviceRectangles } from './instanceData.interfaces.js'
 import type { Executor } from './methods.interfaces.js'
 
 export interface RectanglesOptions {
@@ -12,10 +13,10 @@ export interface RectanglesOptions {
 }
 
 export interface ElementRectanglesOptions extends RectanglesOptions {
+    // The device rectangles
+    deviceRectangles: DeviceRectangles;
     // If this is an Android device
     isAndroid: boolean;
-    // If it's landscape
-    isLandscape: boolean;
 }
 
 export interface ScreenRectanglesOptions extends RectanglesOptions {

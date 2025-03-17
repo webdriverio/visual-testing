@@ -241,13 +241,11 @@ async function getMobileViewPortPosition({
         // 3. Click on the overlay in the center of the screen with a native click
         const nativeClickX = screenWidth / 2
         const nativeClickY = screenHeight / 2
-        console.log('Clicking on the overlay at X:', nativeClickX, 'Y:', nativeClickY)
         await currentBrowser.execute(`mobile: ${isAndroid ? 'clickGesture' : 'tap'}`, { x: nativeClickX, y: nativeClickY })
         // We need to wait a bit here, otherwise the click is not registered
         await currentBrowser.pause(100)
         // 4a. Get the data from the overlay and remove it
         const { top, left, width, height } = await getMobileWebviewClickAndDimensions(currentBrowser)
-        console.log({ top, left, width, height })
         // 4.b reset the url
         await currentBrowser.url(currentUrl)
         // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
