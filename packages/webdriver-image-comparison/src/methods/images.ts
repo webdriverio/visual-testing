@@ -330,8 +330,9 @@ export async function executeImageCompare(
 ): Promise<ImageCompareResult | number> {
     // 1. Set some variables
     const {
-        ignoreRegions = [],
         devicePixelRatio,
+        deviceRectangles,
+        ignoreRegions = [],
         fileName,
         isAndroidNativeWebScreenshot,
         isAndroid,
@@ -383,11 +384,14 @@ export async function executeImageCompare(
             isAndroidNativeWebScreenshot,
             platformName,
         }
-        webStatusAddressToolBarOptions.push(...(await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions)) || [])
+        webStatusAddressToolBarOptions.push(
+            ...(await determineStatusAddressToolBarRectangles({ deviceRectangles, executor, options: statusAddressToolBarOptions })) || []
+        )
         if (webStatusAddressToolBarOptions.length > 0) {
             // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full
             // blockout of the image and the comparison will succeed with 0 % difference
-            webStatusAddressToolBarOptions = webStatusAddressToolBarOptions.filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
+            webStatusAddressToolBarOptions = webStatusAddressToolBarOptions
+                .filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
         }
     }
     const ignoredBoxes = [

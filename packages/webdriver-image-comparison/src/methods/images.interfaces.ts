@@ -2,6 +2,7 @@ import type { RectanglesOutput } from './rectangles.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
 import type { TestContext } from 'src/commands/check.interfaces.js'
 import type { Executor } from './methods.interfaces.js'
+import type { DeviceRectangles } from './instanceData.interfaces.js'
 
 export interface ResizeDimensions {
     // The bottom margin
@@ -32,6 +33,8 @@ export interface ImageCompareOptions {
         wic: WicImageCompareOptions;
         method: ScreenMethodImageCompareCompareOptions;
     };
+    // The device rectangles
+    deviceRectangles: DeviceRectangles;
     // The name of the file
     fileName: string;
     // The folders object

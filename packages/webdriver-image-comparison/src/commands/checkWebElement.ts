@@ -47,7 +47,6 @@ export default async function checkWebElement(
     // 2a. Determine the options
     const compareOptions = methodCompareOptions(checkElementOptions.method)
     const executeCompareOptions = {
-        devicePixelRatio,
         compareOptions: {
             wic: {
                 ...checkElementOptions.wic.compareOptions,
@@ -58,6 +57,8 @@ export default async function checkWebElement(
             },
             method: compareOptions,
         },
+        devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         fileName,
         folderOptions: {
             autoSaveBaseline: checkElementOptions.wic.autoSaveBaseline,

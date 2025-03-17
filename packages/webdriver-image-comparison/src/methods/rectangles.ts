@@ -1,7 +1,7 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 import { calculateDprData, checkAndroidNativeWebScreenshot, checkIsIos, getScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementPositionIos } from './elementPosition.js'
-import { IOS_OFFSETS, ANDROID_OFFSETS } from '../helpers/constants.js'
+import { IOS_OFFSETS } from '../helpers/constants.js'
 import type {
     ElementRectangles,
     RectanglesOutput,
@@ -11,10 +11,9 @@ import type {
 } from './rectangles.interfaces.js'
 import type { Executor, GetElementRect } from './methods.interfaces.js'
 import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
-import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
 import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces.js'
 import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
-import type { InstanceData } from './instanceData.interfaces.js'
+import type { DeviceRectangles, InstanceData } from './instanceData.interfaces.js'
 
 /**
  * Determine the element rectangles on the page / screenshot
@@ -104,16 +103,17 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
 /**
  * Determine the rectangles for the mobile devices
  */
-export async function determineStatusAddressToolBarRectangles(
+export async function determineStatusAddressToolBarRectangles({ deviceRectangles, executor, options }:{
+    deviceRectangles: DeviceRectangles,
     executor: Executor,
     options: StatusAddressToolBarRectanglesOptions,
-): Promise<StatusAddressToolBarRectangles> {
+}): Promise<StatusAddressToolBarRectangles> {
     const {
         blockOutSideBar,
         blockOutStatusBar,
         blockOutToolBar,
         isAndroidNativeWebScreenshot,
-        isHybridApp,
+        // isHybridApp,
         isLandscape,
         isMobile,
         isViewPortScreenshot,
@@ -126,12 +126,31 @@ export async function determineStatusAddressToolBarRectangles(
         isMobile &&
         (checkAndroidNativeWebScreenshot(platformName, isAndroidNativeWebScreenshot) || checkIsIos(platformName))
     ) {
-        const { sideBar, statusAddressBar, toolBar } = (await (checkIsIos(platformName)
-            ? executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)
-            : executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, {
-                isHybridApp,
-                isLandscape,
-            }))) as StatusAddressToolBarOffsets
+        let statusAddressBar, toolBar, leftSidePadding, rightSidePadding = { height: 0, width: 0, x: 0, y: 0 }
+
+        if (checkIsIos(platformName)) {
+            (
+                { leftSidePadding, rightSidePadding, statusAddressBar, toolBar } =
+                (await executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)) as StatusAddressToolBarOffsets
+            )
+        } else {
+            statusAddressBar = {
+                x: deviceRectangles.statusBarAndAddressBar.left, y: deviceRectangles.statusBarAndAddressBar.top,
+                width: deviceRectangles.statusBarAndAddressBar.width, height: deviceRectangles.statusBarAndAddressBar.height,
+            }
+            toolBar = {
+                x: deviceRectangles.bottomBar.left, y: deviceRectangles.bottomBar.top,
+                width: deviceRectangles.bottomBar.width, height: deviceRectangles.bottomBar.height,
+            }
+            leftSidePadding = {
+                x: deviceRectangles.leftSidePadding.left, y: deviceRectangles.leftSidePadding.top,
+                width: deviceRectangles.leftSidePadding.width, height: deviceRectangles.leftSidePadding.height,
+            }
+            rightSidePadding = {
+                x: deviceRectangles.rightSidePadding.left, y: deviceRectangles.rightSidePadding.top,
+                width: deviceRectangles.rightSidePadding.width, height: deviceRectangles.rightSidePadding.height,
+            }
+        }
 
         if (blockOutStatusBar) {
             rectangles.push(statusAddressBar)
@@ -142,7 +161,7 @@ export async function determineStatusAddressToolBarRectangles(
         }
 
         if (blockOutSideBar) {
-            rectangles.push(sideBar)
+            rectangles.push(leftSidePadding, rightSidePadding)
         }
     }
 

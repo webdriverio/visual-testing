@@ -52,11 +52,12 @@ export default async function checkFullPageScreen(
     // 2a. Determine the options
     const compareOptions = methodCompareOptions(checkFullPageOptions.method)
     const executeCompareOptions = {
-        devicePixelRatio,
         compareOptions: {
             wic: checkFullPageOptions.wic.compareOptions,
             method: compareOptions,
         },
+        devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         fileName,
         folderOptions: {
             autoSaveBaseline: checkFullPageOptions.wic.autoSaveBaseline,

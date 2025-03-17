@@ -87,11 +87,13 @@ export default function getIosStatusAddressToolBarOffsets(
 
     // 6. Return the offsets
     return {
+        // we don't have a left side bar for now, so default to 0
+        leftSidePadding: { height: 0, width: 0, x: 0, y: 0 },
+        // We only have a side bar with iPads and in landscape mode
+        rightSidePadding: sideBarOffsets,
         safeArea,
         screenHeight: deviceHeight,
         screenWidth: deviceWidth,
-        // We only have a side bar with iPads and in landscape mode
-        sideBar: sideBarOffsets,
         statusAddressBar: {
             height: statusAddressBarHeight,
             width: deviceWidth,

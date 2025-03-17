@@ -70,12 +70,12 @@ export default async function checkAppScreen(
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)
 
     const executeCompareOptions: ImageCompareOptions = {
-        ignoreRegions: [...ignoreRegions, ...deviceIgnoreRegions],
         compareOptions: {
             wic: checkScreenOptions.wic.compareOptions,
             method: methodCompareOptions,
         },
         devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         fileName,
         folderOptions: {
             autoSaveBaseline: checkScreenOptions.wic.autoSaveBaseline,
@@ -87,6 +87,7 @@ export default async function checkAppScreen(
             isMobile,
             savePerInstance: checkScreenOptions.wic.savePerInstance,
         },
+        ignoreRegions: [...ignoreRegions, ...deviceIgnoreRegions],
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: false,
         isAndroid,
