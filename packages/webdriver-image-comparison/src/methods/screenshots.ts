@@ -542,6 +542,7 @@ export async function takeWebElementScreenshot({
     } catch (_e) {
         return takeWebElementScreenshot({
             devicePixelRatio,
+            deviceRectangles,
             element,
             executor,
             fallback: true,

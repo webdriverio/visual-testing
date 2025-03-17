@@ -1,8 +1,7 @@
 import type { ElementPosition } from './elementPosition.interfaces.js'
 
 /**
- * Get the element position to the top of the webview
- * This method is used for Android nativeWebScreenshots and iOS screenshots
+ * Get the element position relative to the viewport
  */
 export function getBoundingClientRect(
     element: HTMLElement,
@@ -10,9 +9,9 @@ export function getBoundingClientRect(
     const { height, width, x, y } = element.getBoundingClientRect()
 
     return {
-        height,
-        width,
-        x,
-        y,
+        height: Math.round(height),
+        width: Math.round(width),
+        x: Math.round(x),
+        y: Math.round(y),
     }
 }

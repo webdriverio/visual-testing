@@ -1,4 +1,3 @@
-import getElementPositionTopWindow from '../clientSideScripts/getElementPositionTopWindow.js'
 import getElementPositionTopDom from '../clientSideScripts/getElementPositionTopDom.js'
 import type { Executor } from './methods.interfaces.js'
 import type { ElementPosition } from '../clientSideScripts/elementPosition.interfaces.js'
@@ -18,11 +17,11 @@ export async function getElementPositionAndroid(
 ): Promise<ElementPosition> {
     // This is the native web screenshot
     if (isAndroidNativeWebScreenshot) {
-        return executor(getElementWebviewPosition, element, { deviceRectangles })
+        return getElementWebviewPosition(executor, element,  { deviceRectangles } )
     }
 
     // This is the ChromeDriver screenshot
-    return executor(getElementPositionTopWindow, element)
+    return executor(getBoundingClientRect, element)
 }
 
 /**
@@ -49,7 +48,7 @@ export async function getElementPositionDesktop(
         return executor(getElementPositionTopDom, element)
     }
 
-    return executor(getElementPositionTopWindow, element)
+    return executor(getBoundingClientRect, element)
 }
 
 /**

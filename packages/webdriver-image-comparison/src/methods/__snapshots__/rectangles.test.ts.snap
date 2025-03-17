@@ -11,10 +11,10 @@ exports[`rectangles > determineElementRectangles > should determine them for And
 
 exports[`rectangles > determineElementRectangles > should determine them for Android Native webscreenshot 1`] = `
 {
-  "height": undefined,
-  "width": undefined,
-  "x": undefined,
-  "y": undefined,
+  "height": 900,
+  "width": 600,
+  "x": 1200,
+  "y": 630,
 }
 `;
 
@@ -29,10 +29,10 @@ exports[`rectangles > determineElementRectangles > should determine them for a d
 
 exports[`rectangles > determineElementRectangles > should determine them for iOS 1`] = `
 {
-  "height": undefined,
-  "width": undefined,
-  "x": undefined,
-  "y": undefined,
+  "height": 240,
+  "width": 240,
+  "x": 260,
+  "y": 60,
 }
 `;
 

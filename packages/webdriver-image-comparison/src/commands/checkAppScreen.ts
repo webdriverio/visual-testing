@@ -86,7 +86,6 @@ export default async function checkAppScreen(
         ignoreRegions: [...ignoreRegions, ...deviceIgnoreRegions],
         isAndroid,
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        isHybridApp: false,
     }
 
     // 4b Now execute the compare and return the data

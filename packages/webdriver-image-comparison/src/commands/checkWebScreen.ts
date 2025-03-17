@@ -64,7 +64,6 @@ export default async function checkWebScreen(
         },
         isAndroid: checkIsAndroid(instanceData.platformName),
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        isHybridApp: checkScreenOptions.wic.isHybridApp,
     }
 
     // 2b Now execute the compare and return the data
