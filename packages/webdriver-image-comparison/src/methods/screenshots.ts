@@ -1,8 +1,6 @@
 import logger from '@wdio/logger'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
-import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
-import { IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getScreenshotSize, waitFor } from '../helpers/utils.js'
 import type { Executor, TakeScreenShot } from './methods.interfaces.js'
 import type {
@@ -13,7 +11,6 @@ import type {
     TakeWebElementScreenshot,
     TakeWebElementScreenshotData,
 } from './screenshots.interfaces.js'
-import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import type { ElementRectanglesOptions } from './rectangles.interfaces.js'
@@ -40,7 +37,6 @@ export async function getBase64FullPageScreenshotsData(
         isAndroidNativeWebScreenshot,
         isAndroidChromeDriverScreenshot,
         isIOS,
-        isLandscape,
         screenHeight,
         screenWidth,
         toolBarShadowPadding,
@@ -55,57 +51,36 @@ export async function getBase64FullPageScreenshotsData(
         ...desktopOptions,
         addressBarShadowPadding,
         deviceRectangles,
+        isAndroid,
         screenHeight,
         screenWidth,
         toolBarShadowPadding,
     }
 
-    if (isAndroid && isAndroidNativeWebScreenshot) {
-        // Create a fullpage screenshot for Android when native screenshot (so including status, address and toolbar) is created
-        return getFullPageScreenshotsDataNativeMobile(takeScreenshot, executor, nativeWebScreenshotOptions)
+    if ((isAndroid && isAndroidNativeWebScreenshot) || isIOS ) {
+        // Create a fullpage screenshot for Android when a native web screenshot (so including status, address and toolbar) is created
+        return getMobileFullPageNativeWebScreenshotsData(takeScreenshot, executor, nativeWebScreenshotOptions)
     } else if (isAndroid && isAndroidChromeDriverScreenshot) {
         const chromeDriverOptions = { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight }
 
         // Create a fullpage screenshot for Android when the ChromeDriver provides the screenshots
-        return getFullPageScreenshotsDataAndroidChromeDriver(takeScreenshot, executor, chromeDriverOptions)
-    } else if (isIOS) {
-        // Create a fullpage screenshot for iOS. iOS screenshots will hold the status, address and toolbar so they need to be removed
-        const {
-            safeArea,
-            screenHeight,
-            screenWidth,
-            leftSidePadding: { width: sideBarWidth },
-            statusAddressBar: { height: statusAddressBarHeight },
-            toolBar: { y: iosHomeBarY },
-        } = <StatusAddressToolBarOffsets> await executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)
-        const iosNativeMobileOptions = {
-            ...nativeWebScreenshotOptions,
-            iosHomeBarY,
-            isLandscape,
-            safeArea,
-            screenHeight,
-            screenWidth,
-            sideBarWidth,
-            statusAddressBarHeight,
-        }
-
-        return getFullPageScreenshotsDataNativeMobile(takeScreenshot, executor, iosNativeMobileOptions)
+        return getAndroidChromeDriverFullPageScreenshotsData(takeScreenshot, executor, chromeDriverOptions)
     }
 
     // Create a fullpage screenshot for all desktops
-    return getFullPageScreenshotsDataDesktop(takeScreenshot, executor, desktopOptions)
+    return getDesktopFullPageScreenshotsData(takeScreenshot, executor, desktopOptions)
 }
 
 /**
  * Take a full page screenshots for native mobile
  */
-export async function getFullPageScreenshotsDataNativeMobile(
+export async function getMobileFullPageNativeWebScreenshotsData(
     takeScreenshot: TakeScreenShot,
     executor: Executor,
     options: FullPageScreenshotNativeMobileOptions,
 ): Promise<FullPageScreenshotsData> {
     const viewportScreenshots = []
-    // The addressBarShadowPadding and toolBarShadowPadding is used because the viewport has a shadow on the address and the tool bar
+    // The addressBarShadowPadding and toolBarShadowPadding is used because the viewport might have a shadow on the address and the tool bar
     // so the cutout of the viewport needs to be a little bit smaller
     const {
         addressBarShadowPadding,
@@ -113,30 +88,16 @@ export async function getFullPageScreenshotsDataNativeMobile(
         deviceRectangles: { viewport },
         fullPageScrollTimeout,
         hideAfterFirstScroll,
-        iosHomeBarY,
+        isAndroid,
         isLandscape,
-        screenHeight,
         toolBarShadowPadding,
     } = options
     // The returned data from the deviceRectangles is in real pixels, not CSS pixels, so we need to divide it by the devicePixelRatio
-    const viewportHeight = Math.round(viewport.height /devicePixelRatio)
-    const viewportWidth= Math.round(viewport.width /devicePixelRatio)
-    const viewportX = Math.round(viewport.left /devicePixelRatio)
-    const viewportY = Math.round(viewport.top / devicePixelRatio)
-    // Calculate the viewport height for iOS devices
-    const iosViewportHeight =
-        viewportHeight -
-        addressBarShadowPadding -
-        toolBarShadowPadding -
-        // This is for iOS devices in landscape mode with a notch. They have a home bar at the bottom of the screen
-        // which is not part of the bottom toolbar. This home bar is not part of the viewport and needs to be subtracted
-        // 1133 is for iPads with a home bar, see the constants
-        (iosHomeBarY && (isLandscape || screenHeight >= 1133) ? screenHeight - iosHomeBarY : 0)
-    console.log('viewportHeight = ', viewportHeight)
-    console.log('iosViewportHeight = ', iosViewportHeight)
-    console.log('addressBarShadowPadding = ', addressBarShadowPadding)
-    console.log('toolBarShadowPadding = ', toolBarShadowPadding)
-
+    // but only for Android, because the deviceRectangles are already in CSS pixels for iOS
+    const viewportHeight = Math.round(viewport.height / (isAndroid ? devicePixelRatio: 1)) -addressBarShadowPadding - toolBarShadowPadding
+    const viewportWidth= Math.round(viewport.width / (isAndroid ? devicePixelRatio: 1))
+    const viewportX = Math.round(viewport.left / (isAndroid ? devicePixelRatio: 1))
+    const viewportY = Math.round(viewport.top / (isAndroid ? devicePixelRatio: 1))
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
@@ -144,7 +105,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
-        const scrollY = iosViewportHeight * i
+        const scrollY = viewportHeight * i
         await executor(scrollToPosition, scrollY)
 
         // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
@@ -168,7 +129,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
 
         // Determine scroll height and check if we need to scroll again
         scrollHeight = await executor(getDocumentScrollHeight)
-        if (scrollHeight && (scrollY + iosViewportHeight < scrollHeight)) {
+        if (scrollHeight && (scrollY + viewportHeight < scrollHeight)) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
         // There is no else
@@ -176,18 +137,11 @@ export async function getFullPageScreenshotsDataNativeMobile(
         // The height of the image of the last 1 could be different
         const imageHeight = amountOfScrollsArray.length === i && scrollHeight
             ? scrollHeight - scrollY
-            : iosViewportHeight
-
+            : viewportHeight
         // The starting position for cropping could be different for the last image
         // The cropping always needs to start at status and address bar height and the address bar shadow padding
         const imageYPosition =
             (amountOfScrollsArray.length === i ? viewportHeight - imageHeight : 0) + viewportY + addressBarShadowPadding
-        console.log('amountOfScrollsArray.length = ', amountOfScrollsArray.length)
-        console.log('i = ', i)
-        console.log('imageHeight = ', imageHeight)
-        console.log('viewport.top = ', viewportY)
-        console.log('addressBarShadowPadding = ', addressBarShadowPadding)
-        console.log('imageYPosition (amountOfScrollsArray.length === i ? viewportHeight - imageHeight : 0) + viewport.top + addressBarShadowPadding = ', imageYPosition)
 
         // Store all the screenshot data in the screenshot object
         viewportScreenshots.push({
@@ -237,7 +191,7 @@ export async function getFullPageScreenshotsDataNativeMobile(
 /**
  * Take a full page screenshot for Android with Chromedriver
  */
-export async function getFullPageScreenshotsDataAndroidChromeDriver(
+export async function getAndroidChromeDriverFullPageScreenshotsData(
     takeScreenshot: TakeScreenShot,
     executor: Executor,
     options: FullPageScreenshotOptions,
@@ -337,7 +291,7 @@ export async function getFullPageScreenshotsDataAndroidChromeDriver(
 /**
  * Take a full page screenshots
  */
-export async function getFullPageScreenshotsDataDesktop(
+export async function getDesktopFullPageScreenshotsData(
     takeScreenshot: TakeScreenShot,
     executor: Executor,
     options: FullPageScreenshotOptions,

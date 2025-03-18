@@ -69,16 +69,14 @@ export interface FullPageScreenshotNativeMobileOptions {
     fullPageScrollTimeout: number;
     // Elements that need to be hidden after the first scroll for a fullpage scroll
     hideAfterFirstScroll: (HTMLElement | HTMLElement[])[];
-    // Position of the home bar for iOS
-    iosHomeBarY?: number;
+    // If it's an Android device
+    isAndroid: boolean;
     // If the device is in landscape mode
     isLandscape?: boolean;
     // The innerheight
     innerHeight: number;
     // The address bar padding for iOS or Android
     toolBarShadowPadding: number;
-    // Height of the screen
-    screenHeight: number;
     // Width of the screen
     screenWidth: number;
 }
