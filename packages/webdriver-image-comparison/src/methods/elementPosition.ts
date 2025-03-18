@@ -6,7 +6,6 @@ import type { Executor } from './methods.interfaces.js'
 import type { ElementPosition } from '../clientSideScripts/elementPosition.interfaces.js'
 import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
 import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
-import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces.js'
 
 /**
  * Get the element position on a Android device
@@ -24,9 +23,7 @@ export async function getElementPositionAndroid(
             screenWidth,
             sideBar: { width: sideBarWidth },
             statusAddressBar: { height },
-        } = <StatusAddressToolBarOffsets>(
-            await executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, { isHybridApp: false, isLandscape })
-        )
+        } = await executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, { isHybridApp: false, isLandscape })
 
         return executor(getElementPositionTopScreenNativeMobile, element, {
             isLandscape,
@@ -84,7 +81,7 @@ export async function getElementPositionIos(
         screenWidth,
         sideBar: { width: sideBarWidth },
         statusAddressBar: { height },
-    } = <StatusAddressToolBarOffsets> await executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)
+    } = await executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)
 
     return executor(getElementPositionTopScreenNativeMobile, element, {
         isLandscape,
