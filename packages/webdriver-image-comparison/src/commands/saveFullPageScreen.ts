@@ -29,7 +29,6 @@ export default async function saveFullPageScreen(
     const {
         addressBarShadowPadding,
         formatImageName,
-        isHybridApp,
         savePerInstance,
         toolBarShadowPadding,
     } = saveFullPageOptions.wic
@@ -78,13 +77,13 @@ export default async function saveFullPageScreen(
     const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
         addressBarShadowPadding: enrichedInstanceData.addressBarShadowPadding,
         devicePixelRatio: devicePixelRatio || NaN,
+        deviceRectangles: instanceData.deviceRectangles,
         fullPageScrollTimeout,
         hideAfterFirstScroll,
         innerHeight: enrichedInstanceData.dimensions.window.innerHeight || NaN,
         isAndroid: enrichedInstanceData.isAndroid,
         isAndroidChromeDriverScreenshot: enrichedInstanceData.isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot: enrichedInstanceData.isAndroidNativeWebScreenshot,
-        isHybridApp,
         isIOS: enrichedInstanceData.isIOS,
         isLandscape,
         screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
@@ -96,6 +95,9 @@ export default async function saveFullPageScreen(
         methods.executor,
         fullPageScreenshotOptions,
     )
+
+    console.log('screenshotsData.fullPageHeight:', screenshotsData.fullPageHeight)
+    console.log('screenshotsData.fullPageWidth:', screenshotsData.fullPageWidth)
 
     // 4.  Make a fullpage base64 image
     const fullPageBase64Image: string = await makeFullPageBase64Image(screenshotsData, {

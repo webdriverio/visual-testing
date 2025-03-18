@@ -32,6 +32,8 @@ export interface FullPageScreenshotDataOptions {
     addressBarShadowPadding: number;
     // The device pixel ratio
     devicePixelRatio: number;
+    // The rectangles of the device
+    deviceRectangles: DeviceRectangles;
     // The amount of milliseconds to wait for a new scroll
     fullPageScrollTimeout: number;
     // Elements that need to be hidden after the first scroll for a fullpage scroll
@@ -44,8 +46,6 @@ export interface FullPageScreenshotDataOptions {
     isAndroidNativeWebScreenshot: boolean;
     // If this is an Android ChromeDriver screenshot
     isAndroidChromeDriverScreenshot: boolean;
-    // Is it an hybrid app or not
-    isHybridApp: boolean;
     // If the instance is an iOS device
     isIOS: boolean;
     // If it's landscape or not
@@ -63,6 +63,8 @@ export interface FullPageScreenshotNativeMobileOptions {
     addressBarShadowPadding: number;
     // The device pixel ratio
     devicePixelRatio: number;
+    // The rectangles of the device
+    deviceRectangles: DeviceRectangles;
     // The amount of milliseconds to wait for a new scroll
     fullPageScrollTimeout: number;
     // Elements that need to be hidden after the first scroll for a fullpage scroll
@@ -73,18 +75,12 @@ export interface FullPageScreenshotNativeMobileOptions {
     isLandscape?: boolean;
     // The innerheight
     innerHeight: number;
-    // The size of the safe area for iOS
-    safeArea: number;
-    // The height of the status and the address bar
-    statusAddressBarHeight: number;
     // The address bar padding for iOS or Android
     toolBarShadowPadding: number;
     // Height of the screen
     screenHeight: number;
     // Width of the screen
     screenWidth: number;
-    // When iOS is in landscape mode and it's an iPad there will be a side bar
-    sideBarWidth: number;
 }
 
 export interface FullPageScreenshotOptions {

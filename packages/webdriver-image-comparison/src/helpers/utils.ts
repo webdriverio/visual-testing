@@ -140,12 +140,12 @@ export function getAddressBarShadowPadding(options: GetAddressBarShadowPaddingOp
 }
 
 /**
- * Get the tool bar shadow padding. This is only needed for iOS
+ * Get the tool bar shadow padding. Add some extra padding for iOS when we have a home bar
  */
 export function getToolBarShadowPadding(options: GetToolBarShadowPaddingOptions): number {
     const { platformName, browserName, toolBarShadowPadding, addShadowPadding } = options
 
-    return checkTestInMobileBrowser(platformName, browserName) && checkIsIos(platformName) && addShadowPadding
+    return checkTestInMobileBrowser(platformName, browserName) && addShadowPadding
         ? checkIsIos(platformName)
             ? // The 9 extra are for iOS home bar for iPhones with a notch or iPads with a home bar
             toolBarShadowPadding + 9
