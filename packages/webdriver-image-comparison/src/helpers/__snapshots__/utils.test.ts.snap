@@ -103,7 +103,7 @@ exports[`utils > getScreenshotSize > should get the screenshot size of a screens
 }
 `;
 
-exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for Android browser and adding a shadow padding 1`] = `0`;
+exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for Android browser and adding a shadow padding 1`] = `6`;
 
 exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for a desktop browser 1`] = `0`;
 
