@@ -12,7 +12,9 @@ export const config: WebdriverIO.Config  = {
     // Capabilities
     // ============
     capabilities: [
-        iOSCaps('iPhone 16 Pro', 'PORTRAIT', '18.2'),
+        // iOSCaps('iPhone 15 Pro', 'PORTRAIT', '17.5', ['checkFullPageScreen']),
+        iOSCaps('iPhone 15 Pro', 'LANDSCAPE', '17.5', ['checkFullPageScreen']),
+        // iOSCaps('iPhone 16 Pro', 'PORTRAIT', '18.2'),
     ],
 }
 
@@ -23,6 +25,7 @@ function iOSCaps(
     // The commands that need to be executed, none means all,
     // otherwise an array of strings with the commands that
     // need to be executed
+    // Options are: 'checkScreen', 'checkElement', 'checkFullPageScreen'
     wdioIcsCommands: string[] = []
 ) {
     return {

@@ -45,7 +45,7 @@ describe('@wdio/visual-service mobile web', () => {
         wdioIcsCommands.length === 0 ||
         wdioIcsCommands.includes('checkElement')
     ) {
-        it.only(`should compare an element successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function() {
+        it(`should compare an element successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function() {
             // @ts-ignore
             this.retries(2)
             await expect(

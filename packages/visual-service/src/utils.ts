@@ -124,10 +124,10 @@ async function injectWebviewOverlay(currentBrowser: WebdriverIO.Browser, isAndro
         overlay.onclick = (event) => {
             const { clientX: x, clientY: y } = event
             const data = {
-                left: x * dpr,
-                top: y * dpr,
-                width: window.innerWidth * dpr,
-                height: document.documentElement.clientHeight * dpr,
+                left: Math.round(x * dpr),
+                top: Math.round(y * dpr),
+                width: Math.round(window.innerWidth * dpr),
+                height: Math.round(document.documentElement.clientHeight * dpr),
             }
 
             overlay.dataset.icsWebviewData = JSON.stringify(data)
@@ -249,12 +249,12 @@ async function getMobileViewPortPosition({
         // 4.b reset the url
         await currentBrowser.url(currentUrl)
         // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
-        const viewportTop = nativeClickY - top
-        const viewportLeft = nativeClickX - left
-        const statusBarAndAddressBarHeight = viewportTop
-        const bottomBarHeight = screenHeight - (viewportTop + height)
-        const leftSidePaddingWidth = viewportLeft
-        const rightSidePaddingWidth = screenWidth - (viewportLeft + width)
+        const viewportTop = Math.max(0, Math.round(nativeClickY - top))
+        const viewportLeft = Math.max(0, Math.round(nativeClickX - left))
+        const statusBarAndAddressBarHeight = Math.max(0, Math.round(viewportTop))
+        const bottomBarHeight = Math.max(0, Math.round(screenHeight - (viewportTop + height)))
+        const leftSidePaddingWidth = Math.max(0, Math.round(viewportLeft))
+        const rightSidePaddingWidth = Math.max(0, Math.round(screenWidth - (viewportLeft + width)))
         const deviceRectangles = {
             statusBarAndAddressBar: { top: 0, left: 0, width: screenWidth, height: statusBarAndAddressBarHeight },
             viewport: { top: viewportTop, left: viewportLeft, width: width, height: height },

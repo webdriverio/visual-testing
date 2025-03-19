@@ -94,10 +94,10 @@ export async function getMobileFullPageNativeWebScreenshotsData(
     } = options
     // The returned data from the deviceRectangles is in real pixels, not CSS pixels, so we need to divide it by the devicePixelRatio
     // but only for Android, because the deviceRectangles are already in CSS pixels for iOS
-    const viewportHeight = Math.round(viewport.height / (isAndroid ? devicePixelRatio: 1)) -addressBarShadowPadding - toolBarShadowPadding
-    const viewportWidth= Math.round(viewport.width / (isAndroid ? devicePixelRatio: 1))
-    const viewportX = Math.round(viewport.left / (isAndroid ? devicePixelRatio: 1))
-    const viewportY = Math.round(viewport.top / (isAndroid ? devicePixelRatio: 1))
+    const viewportHeight = Math.round(viewport.height / (isAndroid ? devicePixelRatio : 1)) - addressBarShadowPadding - toolBarShadowPadding
+    const viewportWidth= Math.round(viewport.width / (isAndroid ? devicePixelRatio : 1))
+    const viewportX = Math.round(viewport.left / (isAndroid ? devicePixelRatio : 1))
+    const viewportY = Math.round(viewport.top / (isAndroid ? devicePixelRatio : 1))
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
@@ -132,16 +132,31 @@ export async function getMobileFullPageNativeWebScreenshotsData(
         if (scrollHeight && (scrollY + viewportHeight < scrollHeight)) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
+        console.log('\n start')
+        console.log('scrollHeight = ', scrollHeight)
+        console.log('scrollY = ', scrollY)
+        console.log('viewportHeight = ', viewportHeight)
+        console.log('scrollY + viewportHeight = ', scrollY + viewportHeight)
+        console.log('scrollHeight && (scrollY + viewportHeight < scrollHeight) = ', scrollHeight && (scrollY + viewportHeight < scrollHeight))
         // There is no else
 
         // The height of the image of the last 1 could be different
         const imageHeight = amountOfScrollsArray.length === i && scrollHeight
-            ? scrollHeight - scrollY
+            ? scrollHeight - scrollY - addressBarShadowPadding - toolBarShadowPadding
             : viewportHeight
         // The starting position for cropping could be different for the last image
         // The cropping always needs to start at status and address bar height and the address bar shadow padding
         const imageYPosition =
             (amountOfScrollsArray.length === i ? viewportHeight - imageHeight : 0) + viewportY + addressBarShadowPadding
+        console.log('amountOfScrollsArray.length = ', amountOfScrollsArray.length)
+        console.log('i = ', i)
+        console.log('viewportHeight = ', viewportHeight)
+        console.log('imageHeight = ', imageHeight)
+        console.log('viewportHeight - imageHeight = ', viewportHeight - imageHeight)
+        console.log('viewportY = ', viewportY)
+        console.log('addressBarShadowPadding = ', addressBarShadowPadding)
+        console.log(' viewportY + addressBarShadowPadding = ', viewportY + addressBarShadowPadding)
+        console.log('imageYPosition = ', imageYPosition)
 
         // Store all the screenshot data in the screenshot object
         viewportScreenshots.push({
@@ -175,6 +190,10 @@ export async function getMobileFullPageNativeWebScreenshotsData(
     if (!scrollHeight) {
         throw new Error('Couldn\'t determine scroll height or screenshot size')
     }
+    console.log('viewport.height = ', viewport.height)
+    console.log('addressBarShadowPadding = ', addressBarShadowPadding)
+    console.log('toolBarShadowPadding = ', toolBarShadowPadding)
+    console.log('deviceRectangles = ', options.deviceRectangles)
 
     return {
         ...calculateDprData(
