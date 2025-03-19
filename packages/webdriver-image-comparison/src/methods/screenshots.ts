@@ -132,12 +132,6 @@ export async function getMobileFullPageNativeWebScreenshotsData(
         if (scrollHeight && (scrollY + viewportHeight < scrollHeight)) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
-        console.log('\n start')
-        console.log('scrollHeight = ', scrollHeight)
-        console.log('scrollY = ', scrollY)
-        console.log('viewportHeight = ', viewportHeight)
-        console.log('scrollY + viewportHeight = ', scrollY + viewportHeight)
-        console.log('scrollHeight && (scrollY + viewportHeight < scrollHeight) = ', scrollHeight && (scrollY + viewportHeight < scrollHeight))
         // There is no else
 
         // The height of the image of the last 1 could be different
@@ -148,15 +142,6 @@ export async function getMobileFullPageNativeWebScreenshotsData(
         // The cropping always needs to start at status and address bar height and the address bar shadow padding
         const imageYPosition =
             (amountOfScrollsArray.length === i ? viewportHeight - imageHeight : 0) + viewportY + addressBarShadowPadding
-        console.log('amountOfScrollsArray.length = ', amountOfScrollsArray.length)
-        console.log('i = ', i)
-        console.log('viewportHeight = ', viewportHeight)
-        console.log('imageHeight = ', imageHeight)
-        console.log('viewportHeight - imageHeight = ', viewportHeight - imageHeight)
-        console.log('viewportY = ', viewportY)
-        console.log('addressBarShadowPadding = ', addressBarShadowPadding)
-        console.log(' viewportY + addressBarShadowPadding = ', viewportY + addressBarShadowPadding)
-        console.log('imageYPosition = ', imageYPosition)
 
         // Store all the screenshot data in the screenshot object
         viewportScreenshots.push({
@@ -190,10 +175,6 @@ export async function getMobileFullPageNativeWebScreenshotsData(
     if (!scrollHeight) {
         throw new Error('Couldn\'t determine scroll height or screenshot size')
     }
-    console.log('viewport.height = ', viewport.height)
-    console.log('addressBarShadowPadding = ', addressBarShadowPadding)
-    console.log('toolBarShadowPadding = ', toolBarShadowPadding)
-    console.log('deviceRectangles = ', options.deviceRectangles)
 
     return {
         ...calculateDprData(
