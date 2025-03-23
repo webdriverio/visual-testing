@@ -209,6 +209,32 @@ async function getMobileWebviewClickAndDimensions(currentBrowser: WebdriverIO.Br
 }
 
 /**
+ * Execute a native click
+ */
+async function executeNativeClick({ currentBrowser, x, y }:{currentBrowser: WebdriverIO.Browser, x: number, y: number}): Promise<void> {
+    if (currentBrowser.isIOS) {
+        return currentBrowser.execute('mobile: tap', { x, y })
+    }
+
+    try {
+        // The `clickGesture` is not working on Appium 1, only on Appium 2
+        await currentBrowser.execute('mobile: clickGesture', { x, y })
+    } catch (error: unknown) {
+        if (
+            error instanceof Error &&
+          /WebDriverError: Unknown mobile command.*?(clickGesture|tap)/i.test(error.message)
+        ) {
+            console.log(
+                'Error executing `clickGesture`, falling back to `doubleClickGesture`. This likely means you are using Appium 1. Is this intentional?'
+            )
+            await currentBrowser.execute('mobile: doubleClickGesture', { x, y })
+        } else {
+            throw error
+        }
+    }
+}
+
+/**
  * Get the mobile viewport position, we determine this by:
  * 1. Loading a base64 HTML page
  * 2. Injecting an overlay on top of the webview with an event listener that stores the click position in the webview
@@ -241,7 +267,7 @@ async function getMobileViewPortPosition({
         // 3. Click on the overlay in the center of the screen with a native click
         const nativeClickX = screenWidth / 2
         const nativeClickY = screenHeight / 2
-        await currentBrowser.execute(`mobile: ${isAndroid ? 'clickGesture' : 'tap'}`, { x: nativeClickX, y: nativeClickY })
+        await executeNativeClick({ currentBrowser, x: nativeClickX, y: nativeClickY })
         // We need to wait a bit here, otherwise the click is not registered
         await currentBrowser.pause(100)
         // 4a. Get the data from the overlay and remove it

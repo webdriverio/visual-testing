@@ -96,9 +96,6 @@ export default async function saveFullPageScreen(
         fullPageScreenshotOptions,
     )
 
-    console.log('screenshotsData.fullPageHeight:', screenshotsData.fullPageHeight)
-    console.log('screenshotsData.fullPageWidth:', screenshotsData.fullPageWidth)
-
     // 4.  Make a fullpage base64 image
     const fullPageBase64Image: string = await makeFullPageBase64Image(screenshotsData, {
         devicePixelRatio: devicePixelRatio || NaN,
