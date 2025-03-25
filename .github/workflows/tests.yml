@@ -21,11 +21,11 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           UNIT_TEST_REGEX='(@typescript-eslint|vitest|eslint|@types|@tsconfig|ts-node|jsdom|typescript)'
           WEB_TEST_REGEX='(@wdio(?!\/appium-service)|copyfiles|rimraf|saucelabs|lambdatest|webdriverio)'
-          if [[ $PR_TITLE =~ $UNIT_TEST_REGEX ]]; then
-            echo "::set-output name=run_unit_tests::true"
+          if [[ "$PR_TITLE" =~ $UNIT_TEST_REGEX ]]; then
+            echo "run_unit_tests=true" >> $GITHUB_OUTPUT
           fi
-          if [[ $PR_TITLE =~ $WEB_TEST_REGEX ]]; then
-            echo "::set-output name=run_web_tests::true"
+          if [[ "$PR_TITLE" =~ $WEB_TEST_REGEX ]]; then
+            echo "run_web_tests=true" >> $GITHUB_OUTPUT
           fi
 
   ci-dependency-unit-test:
