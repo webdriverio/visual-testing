@@ -126,7 +126,10 @@ export async function getStoriesJson(url: string): Promise<Stories> {
 /**
  * Get arg value from the process.argv
  */
-export function getArgvValue(argName: string, parseFunc: (value: string) => any): any {
+export function getArgvValue<ParseFuncReturnType>(
+    argName: string,
+    parseFunc: (value: string) => ParseFuncReturnType
+)  {
     const argWithEqual = argName + '='
     const argv = process.argv
 
