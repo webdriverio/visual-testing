@@ -7,7 +7,7 @@ export default function hideRemoveElements(
         remove: (HTMLElement | HTMLElement[])[];
     },
     hideRemove: boolean,
-): any {
+) {
     const visitedSelectors: Record<string, boolean> = {}
     hideRemoveElements.hide.forEach((element) => {
         if (Array.isArray(element)) {
