@@ -277,6 +277,7 @@ describe('Storybook utils', () => {
         const commonSetup = (framework: string, skipStories: string[] | RegExp, clip: boolean = false) => ({
             clip,
             clipSelector: '#id',
+            compareOptions: { ignoreLess: true },
             folders: { baselineFolder: 'baseline' },
             framework,
             skipStories,
@@ -405,6 +406,9 @@ describe('Storybook utils', () => {
             const testArgs = {
                 clip: false,
                 clipSelector: '#selector',
+                compareOptions: {
+                    ignoreColors: true
+                },
                 folders: {
                     actualFolder: 'actual',
                     baselineFolder: 'baseline',

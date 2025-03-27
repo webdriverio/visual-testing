@@ -125,7 +125,7 @@ exports[`Storybook utils > itFunction > generates correct mocha test code with n
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
     });
     "
 `;
@@ -139,7 +139,7 @@ exports[`Storybook utils > itFunction > generates correct mocha test code with s
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
     });
     "
 `;
@@ -153,7 +153,7 @@ exports[`Storybook utils > itFunction > generates correct test code with Jasmine
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
     });
     "
 `;
@@ -167,7 +167,7 @@ exports[`Storybook utils > itFunction > generates correct test code with Jasmine
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
     });
     "
 `;
@@ -181,7 +181,7 @@ exports[`Storybook utils > itFunction > generates correct test code with for a c
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"baselineFolder":"baseline/category/component/"})
+        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
     });
     "
 `;
@@ -195,7 +195,7 @@ exports[`Storybook utils > itFunction > generates correct test code with for a c
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"baselineFolder":"baseline/category/component/"})
+        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
     });
     "
 `;
@@ -209,7 +209,7 @@ exports[`Storybook utils > itFunction > generates correct test code with mocha f
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
     });
     "
 `;
@@ -223,7 +223,7 @@ exports[`Storybook utils > itFunction > generates correct test code with mocha f
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
     });
     "
 `;
