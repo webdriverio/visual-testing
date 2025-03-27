@@ -82,6 +82,7 @@ export default class VisualLauncher extends BaseClass  {
             const additionalSearchParamsOption = this.#options?.storybook?.additionalSearchParams
             const additionalSearchParamsArgv = getArgvValue('--additionalSearchParams', value => new URLSearchParams(value))
             const additionalSearchParams = additionalSearchParamsOption ?? additionalSearchParamsArgv ?? new URLSearchParams()
+            const getStoriesBaselinePath = this.#options?.storybook?.getStoriesBaselinePath
 
             // Create the test files
             createTestFiles({
@@ -91,6 +92,7 @@ export default class VisualLauncher extends BaseClass  {
                 directoryPath: tempDir,
                 folders: this.folders,
                 framework,
+                getStoriesBaselinePath,
                 numShards,
                 skipStories: parsedSkipStories,
                 storiesJson,

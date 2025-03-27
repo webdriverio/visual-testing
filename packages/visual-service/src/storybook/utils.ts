@@ -150,10 +150,18 @@ export function getArgvValue<ParseFuncReturnType>(
 }
 
 /**
+ * Get the story baseline path for the given category and component
+ */
+const getStoriesBaselinePathFn = ((
+    category: CategoryComponent['category'],
+    component: CategoryComponent['component']
+) => `./${category}/${component}/`)
+
+/**
  * Creates a it function for the test file
  * @TODO: improve this
  */
-export function itFunction({ additionalSearchParams, clip, clipSelector, folders: { baselineFolder }, framework, skipStories, storyData, storybookUrl }: CreateItContent) {
+export function itFunction({ additionalSearchParams, clip, clipSelector, folders, framework, skipStories, storyData, storybookUrl, getStoriesBaselinePath = getStoriesBaselinePathFn  }: CreateItContent) {
     const { id } = storyData
     const screenshotType = clip ? 'n element' : ' viewport'
     const DEFAULT_IT_TEXT = 'it'
@@ -173,8 +181,11 @@ export function itFunction({ additionalSearchParams, clip, clipSelector, folders
 
     // Setup the folder structure
     const { category, component } = extractCategoryAndComponent(id)
+    const storiesBaselinePath = getStoriesBaselinePath(category, component)
     const methodOptions = {
-        baselineFolder: join(baselineFolder, `./${category}/${component}/`),
+        actualFolder: join(folders.actualFolder, storiesBaselinePath),
+        baselineFolder: join(folders.baselineFolder, storiesBaselinePath),
+        diffFolder: join(folders.diffFolder, storiesBaselinePath),
     }
 
     const it = `
@@ -211,11 +222,11 @@ export function writeTestFile(directoryPath: string, fileID: string, testContent
  * Create the test content
  */
 export function createTestContent(
-    { additionalSearchParams, clip, clipSelector, folders, framework, skipStories, stories, storybookUrl }: CreateTestContent,
+    { additionalSearchParams, clip, clipSelector, folders, framework, getStoriesBaselinePath, skipStories, stories, storybookUrl }: CreateTestContent,
     // For testing purposes only
     itFunc = itFunction
 ): string {
-    const itFunctionOptions = { additionalSearchParams, clip, clipSelector, folders, framework, skipStories, storybookUrl }
+    const itFunctionOptions = { additionalSearchParams, clip, clipSelector, folders, framework, getStoriesBaselinePath, skipStories, storybookUrl }
 
     return stories.reduce((acc, storyData) => acc + itFunc({ ...itFunctionOptions, storyData }), '')
 }
@@ -318,14 +329,14 @@ function filterStories(storiesJson: Stories): StorybookData[] {
  * Create the test files
  */
 export function createTestFiles(
-    { additionalSearchParams, clip, clipSelector, directoryPath, folders, framework, numShards, skipStories, storiesJson, storybookUrl }: CreateTestFileOptions,
+    { additionalSearchParams, clip, clipSelector, directoryPath, folders, framework, getStoriesBaselinePath, numShards, skipStories, storiesJson, storybookUrl }: CreateTestFileOptions,
     // For testing purposes only
     createTestCont = createTestContent,
     createFileD = createFileData,
     writeTestF = writeTestFile
 ) {
     const fileNamePrefix = 'visual-storybook'
-    const createTestContentData = { additionalSearchParams, clip, clipSelector, folders, framework, skipStories, stories: storiesJson, storybookUrl }
+    const createTestContentData = { additionalSearchParams, clip, clipSelector, folders, framework, getStoriesBaselinePath, skipStories, stories: storiesJson, storybookUrl }
 
     if (numShards === 1) {
         const testContent = createTestCont(createTestContentData)
