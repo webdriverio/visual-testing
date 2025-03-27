@@ -113,10 +113,13 @@ export interface ClassOptions {
         additionalSearchParams?: URLSearchParams;
         /**
          * Path builder for the story baseline
+         *
          * @param category The component category (e.g. "forms" when the story is "Forms/Input")
          * @param component The component name (e.g. "input" when the story is "Forms/Input")
          * @returns The path where the baseline will be saved, under the `baselineFolder` folder.
-         * Defaults to `category/component`.
+         *
+         * @example (category, component) => `${category}__${component}`
+         * @default (category, component) => `./${category}/${component}/`
          */
         getStoriesBaselinePath?: (category: string, component: string) => string;
     }

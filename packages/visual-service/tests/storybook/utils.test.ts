@@ -278,10 +278,20 @@ describe('Storybook utils', () => {
             clip,
             clipSelector: '#id',
             compareOptions: { ignoreLess: true },
-            folders: { baselineFolder: 'baseline' },
+            folders: {
+                actualFolder: 'actual',
+                baselineFolder: 'baseline',
+                diffFolder: 'diff',
+            },
             framework,
             skipStories,
-            storyData: { id: 'category-component--story1' },
+            storyData: {
+                id: 'category-component--story1',
+                title: 'title',
+                name: 'name',
+                importPath: 'import/path',
+                tags: ['tag1', 'tag2'],
+            },
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams({ foo: 'bar' })
         })
@@ -345,7 +355,6 @@ describe('Storybook utils', () => {
         it('generates correct test code with a custom stories baseline folder', () => {
             const testArgs = commonSetup('mocha', [])
             const getStoriesBaselinePath = (category: string, component: string) => `${category}__${component}`
-            // @ts-ignore
             const result = itFunction({ ...testArgs, getStoriesBaselinePath })
 
             expect(result).toMatchSnapshot()

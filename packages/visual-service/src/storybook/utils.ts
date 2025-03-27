@@ -150,10 +150,18 @@ export function getArgvValue<ParseFuncReturnType>(
 }
 
 /**
+ * Get the story baseline path for the given category and component
+ */
+const getStoriesBaselinePathFn = ((
+    category: CategoryComponent['category'],
+    component: CategoryComponent['component']
+) => `./${category}/${component}/`)
+
+/**
  * Creates a it function for the test file
  * @TODO: improve this
  */
-export function itFunction({ additionalSearchParams, clip, clipSelector, compareOptions, folders: { baselineFolder }, framework, skipStories, storyData, storybookUrl, getStoriesBaselinePath: getStoriesBaselinePathFn }: CreateItContent) {
+export function itFunction({ additionalSearchParams, clip, clipSelector, compareOptions, folders, framework, skipStories, storyData, storybookUrl, getStoriesBaselinePath = getStoriesBaselinePathFn  }: CreateItContent) {
     const { id } = storyData
     const screenshotType = clip ? 'n element' : ' viewport'
     const DEFAULT_IT_TEXT = 'it'
@@ -173,15 +181,12 @@ export function itFunction({ additionalSearchParams, clip, clipSelector, compare
 
     // Setup the folder structure
     const { category, component } = extractCategoryAndComponent(id)
-    const getStoriesBaselinePath =
-        getStoriesBaselinePathFn ??
-        ((
-            category: CategoryComponent['category'],
-            component: CategoryComponent['component']
-        ) => `./${category}/${component}/`)
+    const storiesBaselinePath = getStoriesBaselinePath(category, component)
     const checkMethodOptions = {
         ...compareOptions,
-        baselineFolder: join(baselineFolder, getStoriesBaselinePath(category, component)),
+        actualFolder: join(folders.actualFolder, storiesBaselinePath),
+        baselineFolder: join(folders.baselineFolder, storiesBaselinePath),
+        diffFolder: join(folders.diffFolder, storiesBaselinePath),
     }
 
     const it = `

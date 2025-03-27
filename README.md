@@ -58,6 +58,8 @@ export const config: WebdriverIO.Config  = {
                 skipStories: ['example-button--secondary', 'example-button--small'],
                 url: 'https://www.bbc.co.uk/iplayer/storybook/',
                 version: 6,
+                // Optional - Allows overriding the baselines path. By default it will group the baselines by category and component (e.g. forms/input/baseline.png)
+                getStoriesBaselinePath: (category, component) => `path__${category}__${component}`,
             },
         },
       ],
