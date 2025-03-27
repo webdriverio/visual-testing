@@ -30,6 +30,7 @@ export interface StoriesRes {
 export type Stories = { [key: string]: StorybookData };
 
 export type CreateTestFileOptions = {
+    additionalSearchParams: URLSearchParams;
     clip: boolean;
     clipSelector: string;
     directoryPath: string,
@@ -49,6 +50,7 @@ export interface CapabilityMap {
 }
 
 export type CreateTestContent = {
+    additionalSearchParams: URLSearchParams;
     clip: boolean;
     clipSelector: string;
     folders: Folders;
@@ -59,6 +61,7 @@ export type CreateTestContent = {
 }
 
 export type CreateItContent = {
+    additionalSearchParams: URLSearchParams;
     clip: boolean;
     clipSelector: string;
     folders: Folders;
@@ -83,6 +86,13 @@ export type EmulatedDeviceType = {
 }
 
 export type WaitForStorybookComponentToBeLoaded = {
+    /**
+     * Additional search parameters to be added to the Storybook URL
+     *
+     * @example addtionalSearchParams: new URLSearchParams({ foo: 'bar', abc: 'def' })
+     * This will generate the following Storybook URL for stories test: `http://storybook.url/iframe.html?id=story-id&foo=bar&abc=def`
+     */
+    additionalSearchParams?: URLSearchParams;
     clipSelector?: string,
     id: string;
     timeout?: number,

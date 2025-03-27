@@ -78,9 +78,14 @@ export default class VisualLauncher extends BaseClass  {
             const skipStoriesArgv = getArgvValue('--skipStories', value => value)
             const skipStories = skipStoriesOption ?? skipStoriesArgv ?? []
             const parsedSkipStories = parseSkipStories(skipStories)
+            // --additionalSearchParams
+            const additionalSearchParamsOption = this.#options?.storybook?.additionalSearchParams
+            const additionalSearchParamsArgv = getArgvValue('--additionalSearchParams', value => new URLSearchParams(value))
+            const additionalSearchParams = additionalSearchParamsOption ?? additionalSearchParamsArgv ?? new URLSearchParams()
 
             // Create the test files
             createTestFiles({
+                additionalSearchParams,
                 clip,
                 clipSelector,
                 directoryPath: tempDir,

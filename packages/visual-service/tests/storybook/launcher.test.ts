@@ -57,7 +57,7 @@ describe('Visual Launcher for Storybook', () => {
             expect(vi.mocked(storybookUtils.isCucumberFramework)).toHaveBeenCalledOnce()
             expect(logInfoMock.mock.calls[0][0]).toMatchSnapshot()
             expect(logInfoMock.mock.calls[1][0]).toMatchSnapshot()
-            expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
+            expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(6)
             expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith([])
             expect(vi.mocked(storybookUtils.createTestFiles)).toHaveBeenCalled()
             expect(vi.mocked(storybookUtils.createStorybookCapabilities)).toHaveBeenCalled()
@@ -73,10 +73,11 @@ describe('Visual Launcher for Storybook', () => {
                 .mockReturnValueOnce(false) // --clip
                 .mockReturnValueOnce(undefined) // --clipSelector
                 .mockReturnValueOnce(['foo-bar-foo']) // --skipStories
+                .mockReturnValueOnce('foo=bar') // --additionalSearchParams
 
             await Launcher.onPrepare(config, caps)
 
-            expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
+            expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(6)
             expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith(['foo-bar-foo'])
         })
 
@@ -85,11 +86,11 @@ describe('Visual Launcher for Storybook', () => {
                 throw new Error('onPrepare method is not defined on Launcher')
             }
 
-            options.storybook = { version: 7, numShards: 16, clip: false, clipSelector: 'clipSelector', skipStories: 'skipStories' }
+            options.storybook = { version: 7, numShards: 16, clip: false, clipSelector: 'clipSelector', skipStories: 'skipStories', additionalSearchParams: new URLSearchParams({ foo: 'bar' }) }
 
             await Launcher.onPrepare(config, caps)
 
-            expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(5)
+            expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(6)
             expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith('skipStories')
         })
 
