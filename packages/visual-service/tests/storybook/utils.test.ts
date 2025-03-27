@@ -216,6 +216,16 @@ describe('Storybook utils', () => {
             expect(data).toEqual(['entry1', 'entry2'])
         })
 
+        it('successfully fetches index entries when stories fetch has an invalid json format', async () => {
+            // @ts-ignore
+            vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify({ entries: ['entry1', 'entry2'] }), { status: 200 }))
+            // @ts-ignore
+            vi.mocked(fetch).mockResolvedValueOnce(new Response('invalid json', { status: 200 }))
+
+            const data = await getStoriesJson('http://example.com')
+            expect(data).toEqual(['entry1', 'entry2'])
+        })
+
         it('throws an error when both fetches fail', async () => {
             // @ts-ignore
             vi.mocked(fetch).mockResolvedValueOnce(new Response(null, { status: 404 }))
