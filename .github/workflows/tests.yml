@@ -49,8 +49,6 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -91,8 +89,6 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -156,8 +152,6 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -221,8 +215,6 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -286,8 +278,6 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -351,8 +341,6 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -416,8 +404,6 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
