@@ -11,6 +11,8 @@ on:
         required: true
         type: choice
         options:
+          - 5
+          - 10
           - 15
           - 25
           - 35
