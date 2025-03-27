@@ -1,4 +1,4 @@
-import type { Folders } from 'webdriver-image-comparison'
+import type { CheckElementMethodOptions, Folders } from 'webdriver-image-comparison'
 
 export interface StorybookData {
     id: string;
@@ -32,6 +32,7 @@ export type Stories = { [key: string]: StorybookData };
 export type CreateTestFileOptions = {
     additionalSearchParams: URLSearchParams;
     clip: boolean;
+    compareOptions: CheckElementMethodOptions,
     clipSelector: string;
     directoryPath: string,
     folders: Folders,
@@ -53,6 +54,7 @@ export type CreateTestContent = {
     additionalSearchParams: URLSearchParams;
     clip: boolean;
     clipSelector: string;
+    compareOptions: CheckElementMethodOptions,
     folders: Folders;
     framework: string;
     skipStories: string[] | RegExp;
@@ -64,6 +66,7 @@ export type CreateItContent = {
     additionalSearchParams: URLSearchParams;
     clip: boolean;
     clipSelector: string;
+    compareOptions: CheckElementMethodOptions,
     folders: Folders;
     framework: string;
     skipStories: string[] | RegExp;

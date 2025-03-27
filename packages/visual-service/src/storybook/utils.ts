@@ -153,7 +153,7 @@ export function getArgvValue<ParseFuncReturnType>(
  * Creates a it function for the test file
  * @TODO: improve this
  */
-export function itFunction({ additionalSearchParams, clip, clipSelector, folders: { baselineFolder }, framework, skipStories, storyData, storybookUrl }: CreateItContent) {
+export function itFunction({ additionalSearchParams, clip, clipSelector, compareOptions, folders: { baselineFolder }, framework, skipStories, storyData, storybookUrl }: CreateItContent) {
     const { id } = storyData
     const screenshotType = clip ? 'n element' : ' viewport'
     const DEFAULT_IT_TEXT = 'it'
@@ -173,7 +173,8 @@ export function itFunction({ additionalSearchParams, clip, clipSelector, folders
 
     // Setup the folder structure
     const { category, component } = extractCategoryAndComponent(id)
-    const methodOptions = {
+    const checkMethodOptions = {
+        ...compareOptions,
         baselineFolder: join(baselineFolder, `./${category}/${component}/`),
     }
 
@@ -186,8 +187,8 @@ export function itFunction({ additionalSearchParams, clip, clipSelector, folders
             additionalSearchParams: new URLSearchParams('${additionalSearchParams.toString()}'),
         });
         ${clip
-        ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(methodOptions)})`
-        : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(methodOptions)})`}
+        ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(checkMethodOptions)})`
+        : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(checkMethodOptions)})`}
     });
     `
     return it
@@ -211,11 +212,11 @@ export function writeTestFile(directoryPath: string, fileID: string, testContent
  * Create the test content
  */
 export function createTestContent(
-    { additionalSearchParams, clip, clipSelector, folders, framework, skipStories, stories, storybookUrl }: CreateTestContent,
+    { additionalSearchParams, clip, clipSelector, compareOptions, folders, framework, skipStories, stories, storybookUrl }: CreateTestContent,
     // For testing purposes only
     itFunc = itFunction
 ): string {
-    const itFunctionOptions = { additionalSearchParams, clip, clipSelector, folders, framework, skipStories, storybookUrl }
+    const itFunctionOptions = { additionalSearchParams, clip, clipSelector, compareOptions, folders, framework, skipStories, storybookUrl }
 
     return stories.reduce((acc, storyData) => acc + itFunc({ ...itFunctionOptions, storyData }), '')
 }
@@ -318,14 +319,14 @@ function filterStories(storiesJson: Stories): StorybookData[] {
  * Create the test files
  */
 export function createTestFiles(
-    { additionalSearchParams, clip, clipSelector, directoryPath, folders, framework, numShards, skipStories, storiesJson, storybookUrl }: CreateTestFileOptions,
+    { additionalSearchParams, clip, clipSelector, compareOptions, directoryPath, folders, framework, numShards, skipStories, storiesJson, storybookUrl }: CreateTestFileOptions,
     // For testing purposes only
     createTestCont = createTestContent,
     createFileD = createFileData,
     writeTestF = writeTestFile
 ) {
     const fileNamePrefix = 'visual-storybook'
-    const createTestContentData = { additionalSearchParams, clip, clipSelector, folders, framework, skipStories, stories: storiesJson, storybookUrl }
+    const createTestContentData = { additionalSearchParams, clip, clipSelector, compareOptions, folders, framework, skipStories, stories: storiesJson, storybookUrl }
 
     if (numShards === 1) {
         const testContent = createTestCont(createTestContentData)
