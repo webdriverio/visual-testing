@@ -48,6 +48,7 @@ export const config: WebdriverIO.Config  = {
             debug: true,
             // The storybook options, see cli options for the description
             storybook: {
+                additionalSearchParams: new URLSearchParams({foo: 'bar', abc: 'def'}),
                 clip: false,
                 clipSelector: ''#some-id,
                 numShards: 4,
@@ -280,6 +281,23 @@ describe("Storybook Interaction", () => {
 ```
 
 The options are:
+
+#### `additionalSearchParams`
+
+-   **Type:** [`URLSearchParams`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
+-   **Mandatory:** No
+-   **Default:** `new URLSearchParams()`
+-   **Example:**
+
+```ts
+await browser.waitForStorybookComponentToBeLoaded({
+    additionalSearchParams: new URLSearchParams({ foo: "bar", abc: "def" }),
+    id: "componentId",
+});
+```
+
+This will add additional search parameters to the Storybook URL, in the example above the URL will be `http://storybook.url/iframe.html?id=story-id&foo=bar&abc=def`.
+See the [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) documentation for more information.
 
 #### `clipSelector`
 
