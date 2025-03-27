@@ -112,8 +112,12 @@ export async function getStoriesJson(url: string): Promise<Stories> {
 
         for (const response of [storiesRes, indexRes]) {
             if (response.ok) {
-                const data = await response.json() as StoriesRes | IndexRes
-                return (data as StoriesRes).stories || (data as IndexRes).entries
+                try {
+                    const data = await response.json() as StoriesRes | IndexRes
+                    return (data as StoriesRes).stories || (data as IndexRes).entries
+                } catch (_ign) {
+                    // Ignore the json parse error
+                }
             }
         }
     } catch (_ign) {
