@@ -172,6 +172,20 @@ exports[`Storybook utils > itFunction > generates correct test code with Jasmine
     "
 `;
 
+exports[`Storybook utils > itFunction > generates correct test code with a custom stories baseline folder 1`] = `
+"
+    it(\`should take a viewport screenshot of category-component--story1\`, async () => {
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+            additionalSearchParams: new URLSearchParams('foo=bar'),
+        });
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"baselineFolder":"baseline/category__component"})
+    });
+    "
+`;
+
 exports[`Storybook utils > itFunction > generates correct test code with for a clipped test 1`] = `
 "
     it(\`should take an element screenshot of category-component--story1\`, async () => {

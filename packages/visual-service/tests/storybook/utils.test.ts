@@ -340,6 +340,13 @@ describe('Storybook utils', () => {
             const result = itFunction(testArgs)
 
             expect(result).toMatchSnapshot()
+        })
+
+        it('generates correct test code with a custom stories baseline folder', () => {
+            const testArgs = commonSetup('mocha', [])
+            const getStoriesBaselinePath = (category: string, component: string) => `${category}__${component}`
+            // @ts-ignore
+            const result = itFunction({ ...testArgs, getStoriesBaselinePath })
 
             expect(result).toMatchSnapshot()
         })
