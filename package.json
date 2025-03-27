@@ -51,9 +51,9 @@
     "watch": "pnpm run -r --parallel watch"
   },
   "dependencies": {
-    "@wdio/ocr-service": "workspace:^",
-    "@wdio/visual-service": "workspace:^",
-    "webdriver-image-comparison": "workspace:^"
+    "@wdio/ocr-service": "workspace:*",
+    "@wdio/visual-service": "workspace:*",
+    "webdriver-image-comparison": "workspace:*"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.12",

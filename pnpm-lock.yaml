@@ -9,13 +9,13 @@ importers:
   .:
     dependencies:
       '@wdio/ocr-service':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:packages/ocr-service
       '@wdio/visual-service':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:packages/visual-service
       webdriver-image-comparison:
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:packages/webdriver-image-comparison
     devDependencies:
       '@changesets/cli':
@@ -270,8 +270,8 @@ importers:
         specifier: ^9.9.0
         version: 9.9.0
       webdriver-image-comparison:
-        specifier: ^7.3.2
-        version: 7.3.2
+        specifier: workspace:*
+        version: link:../webdriver-image-comparison
 
   packages/webdriver-image-comparison:
     dependencies:
@@ -6915,9 +6915,6 @@ packages:
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
-
-  webdriver-image-comparison@7.3.2:
-    resolution: {integrity: sha512-l57By4ZvdB4N3eS2dkVsJZsCjG3UIqFdLU99nn6HksoL9ZygZOsnHW5XG+zn1Hsc6WuTA4KhKuYotKdh/zuViA==}
 
   webdriver@9.9.1:
     resolution: {integrity: sha512-VqHDph80Pd/HmeEtoNiqX/ixML/ub8Rw54oviVYm6V7cbnzACrSbSlt9zpdWfjEk+Qkm/CytyYFggan30RfAiQ==}
@@ -15015,12 +15012,6 @@ snapshots:
       '@zxing/text-encoding': 0.9.0
 
   web-streams-polyfill@3.3.3: {}
-
-  webdriver-image-comparison@7.3.2:
-    dependencies:
-      '@wdio/logger': 9.4.4
-      fs-extra: 11.3.0
-      jimp: 1.6.0
 
   webdriver@9.9.1:
     dependencies:
