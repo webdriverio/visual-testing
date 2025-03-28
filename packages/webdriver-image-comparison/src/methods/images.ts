@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { promises as fsPromises, constants } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { Jimp, JimpMime } from 'jimp'
@@ -527,9 +527,9 @@ export async function makeFullPageBase64Image(
 /**
  * Save the base64 image to a file
  */
-export async function saveBase64Image(base64Image: string, filePath: string): Promise<void> {
-    mkdirSync(dirname(filePath), { recursive: true })
-    writeFileSync(filePath, Buffer.from(base64Image, 'base64'))
+export async function saveBase64Image(base64Image: string, filePath: string) {
+    await fsPromises.mkdir(dirname(filePath), { recursive: true })
+    await fsPromises.writeFile(filePath, Buffer.from(base64Image, 'base64'))
 }
 
 /**

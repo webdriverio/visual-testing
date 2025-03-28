@@ -112,8 +112,12 @@ export async function getStoriesJson(url: string): Promise<Stories> {
 
         for (const response of [storiesRes, indexRes]) {
             if (response.ok) {
-                const data = await response.json() as StoriesRes | IndexRes
-                return (data as StoriesRes).stories || (data as IndexRes).entries
+                try {
+                    const data = await response.json() as StoriesRes | IndexRes
+                    return (data as StoriesRes).stories || (data as IndexRes).entries
+                } catch (_ign) {
+                    // Ignore the json parse error
+                }
             }
         }
     } catch (_ign) {
@@ -126,7 +130,10 @@ export async function getStoriesJson(url: string): Promise<Stories> {
 /**
  * Get arg value from the process.argv
  */
-export function getArgvValue(argName: string, parseFunc: (value: string) => any): any {
+export function getArgvValue<ParseFuncReturnType>(
+    argName: string,
+    parseFunc: (value: string) => ParseFuncReturnType
+)  {
     const argWithEqual = argName + '='
     const argv = process.argv
 
@@ -146,7 +153,7 @@ export function getArgvValue(argName: string, parseFunc: (value: string) => any)
  * Creates a it function for the test file
  * @TODO: improve this
  */
-export function itFunction({ clip, clipSelector, folders: { baselineFolder }, framework, skipStories, storyData, storybookUrl }: CreateItContent) {
+export function itFunction({ additionalSearchParams, clip, clipSelector, compareOptions, folders: { baselineFolder }, framework, skipStories, storyData, storybookUrl }: CreateItContent) {
     const { id } = storyData
     const screenshotType = clip ? 'n element' : ' viewport'
     const DEFAULT_IT_TEXT = 'it'
@@ -166,7 +173,8 @@ export function itFunction({ clip, clipSelector, folders: { baselineFolder }, fr
 
     // Setup the folder structure
     const { category, component } = extractCategoryAndComponent(id)
-    const methodOptions = {
+    const checkMethodOptions = {
+        ...compareOptions,
         baselineFolder: join(baselineFolder, `./${category}/${component}/`),
     }
 
@@ -176,10 +184,11 @@ export function itFunction({ clip, clipSelector, folders: { baselineFolder }, fr
             clipSelector: '${clipSelector}',
             id: '${id}',
             storybookUrl: '${storybookUrl}',
+            additionalSearchParams: new URLSearchParams('${additionalSearchParams.toString()}'),
         });
         ${clip
-        ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(methodOptions)})`
-        : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(methodOptions)})`}
+        ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(checkMethodOptions)})`
+        : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(checkMethodOptions)})`}
     });
     `
     return it
@@ -203,11 +212,11 @@ export function writeTestFile(directoryPath: string, fileID: string, testContent
  * Create the test content
  */
 export function createTestContent(
-    { clip, clipSelector, folders, framework, skipStories, stories, storybookUrl }: CreateTestContent,
+    { additionalSearchParams, clip, clipSelector, compareOptions, folders, framework, skipStories, stories, storybookUrl }: CreateTestContent,
     // For testing purposes only
     itFunc = itFunction
 ): string {
-    const itFunctionOptions = { clip, clipSelector, folders, framework, skipStories, storybookUrl }
+    const itFunctionOptions = { additionalSearchParams, clip, clipSelector, compareOptions, folders, framework, skipStories, storybookUrl }
 
     return stories.reduce((acc, storyData) => acc + itFunc({ ...itFunctionOptions, storyData }), '')
 }
@@ -223,12 +232,21 @@ export async function waitForStorybookComponentToBeLoaded(
     const isStorybook = isStorybookModeFunc()
     if (isStorybook) {
         const {
+            additionalSearchParams,
             clipSelector = process.env.VISUAL_STORYBOOK_CLIP_SELECTOR,
             id,
             url = process.env.VISUAL_STORYBOOK_URL,
             timeout = 11000,
         } = options
-        await browser.url(`${url}iframe.html?id=${id}`)
+        const baseUrl = new URL('iframe.html', url)
+        const searchParams = new URLSearchParams({ id })
+        if (additionalSearchParams) {
+            for (const [key, value] of additionalSearchParams) {
+                searchParams.append(key, value)
+            }
+        }
+        baseUrl.search = searchParams.toString()
+        await browser.url(baseUrl.toString())
         await $(clipSelector as string).waitForDisplayed()
         await browser.executeAsync(async (timeout, done) => {
             let timedOut = false
@@ -301,14 +319,14 @@ function filterStories(storiesJson: Stories): StorybookData[] {
  * Create the test files
  */
 export function createTestFiles(
-    { clip, clipSelector, directoryPath, folders, framework, numShards, skipStories, storiesJson, storybookUrl }: CreateTestFileOptions,
+    { additionalSearchParams, clip, clipSelector, compareOptions, directoryPath, folders, framework, numShards, skipStories, storiesJson, storybookUrl }: CreateTestFileOptions,
     // For testing purposes only
     createTestCont = createTestContent,
     createFileD = createFileData,
     writeTestF = writeTestFile
 ) {
     const fileNamePrefix = 'visual-storybook'
-    const createTestContentData = { clip, clipSelector, folders, framework, skipStories, stories: storiesJson, storybookUrl }
+    const createTestContentData = { additionalSearchParams, clip, clipSelector, compareOptions, folders, framework, skipStories, stories: storiesJson, storybookUrl }
 
     if (numShards === 1) {
         const testContent = createTestCont(createTestContentData)

@@ -2,7 +2,7 @@ import { rmdirSync } from 'node:fs'
 import logger from '@wdio/logger'
 import { SevereServiceError } from 'webdriverio'
 import type { Capabilities } from '@wdio/types'
-import type { ClassOptions } from 'webdriver-image-comparison'
+import type { ClassOptions, CheckElementMethodOptions  } from 'webdriver-image-comparison'
 import { BaseClass } from 'webdriver-image-comparison'
 import {
     createStorybookCapabilities,
@@ -52,6 +52,22 @@ export default class VisualLauncher extends BaseClass  {
             capabilities.length = 0
             log.info('Clearing the current capabilities.')
 
+            // Get compare options from config
+            const compareOptions: CheckElementMethodOptions = {
+                blockOutSideBar: this.#options.blockOutSideBar,
+                blockOutStatusBar: this.#options.blockOutStatusBar,
+                blockOutToolBar: this.#options.blockOutToolBar,
+                ignoreAlpha: this.#options.ignoreAlpha,
+                ignoreAntialiasing: this.#options.ignoreAntialiasing,
+                ignoreColors: this.#options.ignoreColors,
+                ignoreLess: this.#options.ignoreLess,
+                ignoreNothing: this.#options.ignoreNothing,
+                rawMisMatchPercentage: this.#options.rawMisMatchPercentage,
+                returnAllCompareData: this.#options.returnAllCompareData,
+                saveAboveTolerance: this.#options.saveAboveTolerance,
+                scaleImagesToSameSize: this.#options.scaleImagesToSameSize,
+            }
+
             // Determine some run options
             // --version
             const versionOption = this.#options?.storybook?.version
@@ -78,11 +94,17 @@ export default class VisualLauncher extends BaseClass  {
             const skipStoriesArgv = getArgvValue('--skipStories', value => value)
             const skipStories = skipStoriesOption ?? skipStoriesArgv ?? []
             const parsedSkipStories = parseSkipStories(skipStories)
+            // --additionalSearchParams
+            const additionalSearchParamsOption = this.#options?.storybook?.additionalSearchParams
+            const additionalSearchParamsArgv = getArgvValue('--additionalSearchParams', value => new URLSearchParams(value))
+            const additionalSearchParams = additionalSearchParamsOption ?? additionalSearchParamsArgv ?? new URLSearchParams()
 
             // Create the test files
             createTestFiles({
+                additionalSearchParams,
                 clip,
                 clipSelector,
+                compareOptions,
                 directoryPath: tempDir,
                 folders: this.folders,
                 framework,

@@ -216,6 +216,16 @@ describe('Storybook utils', () => {
             expect(data).toEqual(['entry1', 'entry2'])
         })
 
+        it('successfully fetches index entries when stories fetch has an invalid json format', async () => {
+            // @ts-ignore
+            vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify({ entries: ['entry1', 'entry2'] }), { status: 200 }))
+            // @ts-ignore
+            vi.mocked(fetch).mockResolvedValueOnce(new Response('invalid json', { status: 200 }))
+
+            const data = await getStoriesJson('http://example.com')
+            expect(data).toEqual(['entry1', 'entry2'])
+        })
+
         it('throws an error when both fetches fail', async () => {
             // @ts-ignore
             vi.mocked(fetch).mockResolvedValueOnce(new Response(null, { status: 404 }))
@@ -267,11 +277,13 @@ describe('Storybook utils', () => {
         const commonSetup = (framework: string, skipStories: string[] | RegExp, clip: boolean = false) => ({
             clip,
             clipSelector: '#id',
+            compareOptions: { ignoreLess: true },
             folders: { baselineFolder: 'baseline' },
             framework,
             skipStories,
             storyData: { id: 'category-component--story1' },
             storybookUrl: 'http://storybook.com/',
+            additionalSearchParams: new URLSearchParams({ foo: 'bar' })
         })
 
         it('generates correct test code with Jasmine framework and skip array', () => {
@@ -394,6 +406,9 @@ describe('Storybook utils', () => {
             const testArgs = {
                 clip: false,
                 clipSelector: '#selector',
+                compareOptions: {
+                    ignoreColors: true
+                },
                 folders: {
                     actualFolder: 'actual',
                     baselineFolder: 'baseline',
@@ -496,6 +511,21 @@ describe('Storybook utils', () => {
             expect(mock$).toHaveBeenCalledWith('.storybook-component')
             expect(mock$.mock.results[0].value.waitForDisplayed).toHaveBeenCalled()
             expect(mockBrowser.executeAsync).toHaveBeenCalled()
+        })
+
+        it('should go to the correct URL when given additionalSearchParams', async () => {
+            const mockStorybookModeFunction = vi.fn().mockReturnValue(true)
+            const options = {
+                url: 'http://localhost:6006/',
+                id: 'example-component',
+                additionalSearchParams: new URLSearchParams({ foo: 'bar', baz: 'qux' }),
+            }
+
+            await waitForStorybookComponentToBeLoaded(options, mockStorybookModeFunction)
+
+            // Assertions
+            expect(mockBrowser.url).toHaveBeenCalledWith('http://localhost:6006/iframe.html?id=example-component&foo=bar&baz=qux')
+
         })
     })
 

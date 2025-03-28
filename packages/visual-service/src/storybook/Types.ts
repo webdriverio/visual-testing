@@ -1,4 +1,4 @@
-import type { Folders } from 'webdriver-image-comparison'
+import type { CheckElementMethodOptions, Folders } from 'webdriver-image-comparison'
 
 export interface StorybookData {
     id: string;
@@ -30,7 +30,9 @@ export interface StoriesRes {
 export type Stories = { [key: string]: StorybookData };
 
 export type CreateTestFileOptions = {
+    additionalSearchParams: URLSearchParams;
     clip: boolean;
+    compareOptions: CheckElementMethodOptions,
     clipSelector: string;
     directoryPath: string,
     folders: Folders,
@@ -49,8 +51,10 @@ export interface CapabilityMap {
 }
 
 export type CreateTestContent = {
+    additionalSearchParams: URLSearchParams;
     clip: boolean;
     clipSelector: string;
+    compareOptions: CheckElementMethodOptions,
     folders: Folders;
     framework: string;
     skipStories: string[] | RegExp;
@@ -59,8 +63,10 @@ export type CreateTestContent = {
 }
 
 export type CreateItContent = {
+    additionalSearchParams: URLSearchParams;
     clip: boolean;
     clipSelector: string;
+    compareOptions: CheckElementMethodOptions,
     folders: Folders;
     framework: string;
     skipStories: string[] | RegExp;
@@ -83,6 +89,13 @@ export type EmulatedDeviceType = {
 }
 
 export type WaitForStorybookComponentToBeLoaded = {
+    /**
+     * Additional search parameters to be added to the Storybook URL
+     *
+     * @example addtionalSearchParams: new URLSearchParams({ foo: 'bar', abc: 'def' })
+     * This will generate the following Storybook URL for stories test: `http://storybook.url/iframe.html?id=story-id&foo=bar&abc=def`
+     */
+    additionalSearchParams?: URLSearchParams;
     clipSelector?: string,
     id: string;
     timeout?: number,
