@@ -1,6 +1,15 @@
+
 import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 
+export type DeviceRectangleBound = { top: number, left: number, width: number, height: number }
+export type DeviceRectangles = {
+    statusBarAndAddressBar: DeviceRectangleBound,
+    viewport: DeviceRectangleBound,
+    bottomBar: DeviceRectangleBound,
+    leftSidePadding: DeviceRectangleBound,
+    rightSidePadding: DeviceRectangleBound,
+}
 export interface InstanceData {
     // The name of the app
     appName: string;
@@ -17,6 +26,8 @@ export interface InstanceData {
         statusBar: RectanglesOutput;
         homeBar: RectanglesOutput;
     }
+    // The mobile viewport position
+    deviceRectangles: DeviceRectangles;
     // The Device Screen size
     deviceScreenSize: {
         // The Device Screen Height

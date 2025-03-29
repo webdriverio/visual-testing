@@ -22,6 +22,38 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
       "y": 0,
     },
   },
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+  },
   "deviceScreenSize": {
     "height": 1,
     "width": 1,
@@ -62,6 +94,38 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
       "width": 0,
       "x": 0,
       "y": 0,
+    },
+  },
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
     },
   },
   "deviceScreenSize": {

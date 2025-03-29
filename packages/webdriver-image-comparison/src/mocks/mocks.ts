@@ -15,6 +15,13 @@ export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
             statusBar: { x: 0, y:0, width: 0, height: 0 },
             homeBar: { x: 0, y:0, width: 0, height: 0 },
         },
+        deviceRectangles: {
+            statusBarAndAddressBar: { top: 0, left: 0, width: 0, height: 0 },
+            viewport: { top: 0, left: 0, width: 0, height: 0 },
+            bottomBar: { top: 0, left: 0, width: 0, height: 0 },
+            leftSidePadding: { top: 0, left: 0, width: 0, height: 0 },
+            rightSidePadding: { top: 0, left: 0, width: 0, height: 0 },
+        },
         isAndroid: false,
         isIOS: false,
         isMobile: false,

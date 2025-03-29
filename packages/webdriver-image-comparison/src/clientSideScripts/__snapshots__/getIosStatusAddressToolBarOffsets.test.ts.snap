@@ -2,15 +2,21 @@
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status bar height for an iPhone 11 with iOS 13 to validate the iPhone 11 hack 1`] = `
 {
-  "safeArea": 48,
-  "screenHeight": 896,
-  "screenWidth": 375,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 48,
+  "screenHeight": 896,
+  "screenWidth": 375,
   "statusAddressBar": {
     "height": 94,
     "width": 375,
@@ -28,15 +34,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status bar h
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status bar height for an iPhone 11 with iOS 13 to validate the iPhone 11 hack in landscape mode 1`] = `
 {
-  "safeArea": 44,
-  "screenHeight": 375,
-  "screenWidth": 896,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 44,
+  "screenHeight": 375,
+  "screenWidth": 896,
   "statusAddressBar": {
     "height": 50,
     "width": 896,
@@ -54,15 +66,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status bar h
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status bar height for an iPhone 11 with iOS 15 1`] = `
 {
-  "safeArea": 48,
-  "screenHeight": 896,
-  "screenWidth": 375,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 48,
+  "screenHeight": 896,
+  "screenWidth": 375,
   "statusAddressBar": {
     "height": 48,
     "width": 375,
@@ -80,15 +98,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status bar h
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status, address and toolbar height for a default iPhone with iOS 14 in Portrait mode 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 667,
-  "screenWidth": 375,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 667,
+  "screenWidth": 375,
   "statusAddressBar": {
     "height": 70,
     "width": 375,
@@ -106,15 +130,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status, addr
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status, address and toolbar height for a default iPhone with iOS 14 in landscape mode 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 375,
-  "screenWidth": 667,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 375,
+  "screenWidth": 667,
   "statusAddressBar": {
     "height": 50,
     "width": 667,
@@ -132,15 +162,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status, addr
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status, address and toolbar height for a default iPhone with iOS 15 in landscape mode 1`] = `
 {
-  "safeArea": 44,
-  "screenHeight": 375,
-  "screenWidth": 812,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 44,
+  "screenHeight": 375,
+  "screenWidth": 812,
   "statusAddressBar": {
     "height": 50,
     "width": 812,
@@ -158,15 +194,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status, addr
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status, address and toolbar height for a default iPhone with iOS 15 in portrait mode 1`] = `
 {
-  "safeArea": 44,
-  "screenHeight": 812,
-  "screenWidth": 375,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 44,
+  "screenHeight": 812,
+  "screenWidth": 375,
   "statusAddressBar": {
     "height": 44,
     "width": 375,
@@ -184,15 +226,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status, addr
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status, address and toolbar height for an iPad 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 1366,
-  "screenWidth": 1024,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 1366,
+  "screenWidth": 1024,
   "statusAddressBar": {
     "height": 74,
     "width": 1024,
@@ -210,15 +258,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status, addr
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status, address and toolbar height for an iPad in landscape mode 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 1024,
-  "screenWidth": 1366,
-  "sideBar": {
+  "leftSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "rightSidePadding": {
     "height": 950,
     "width": 320,
     "x": 0,
     "y": 74,
   },
+  "safeArea": 0,
+  "screenHeight": 1024,
+  "screenWidth": 1366,
   "statusAddressBar": {
     "height": 74,
     "width": 1366,
@@ -236,15 +290,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status, addr
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status, address and toolbar height for an iPad with big sizes 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 5432,
-  "screenWidth": 9876,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 5432,
+  "screenWidth": 9876,
   "statusAddressBar": {
     "height": 70,
     "width": 9876,
@@ -262,15 +322,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status, addr
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status, address and toolbar height for an iPhone with extreme not known dimensions 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 896,
-  "screenWidth": 1024,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 896,
+  "screenWidth": 1024,
   "statusAddressBar": {
     "height": 70,
     "width": 1024,
@@ -288,15 +354,21 @@ exports[`getIosStatusAddressToolBarOffsets > should get the correct status, addr
 
 exports[`getIosStatusAddressToolBarOffsets > should get the correct status, address and toolbar height for the iPad Pro 12.9 2017 hack in landscape mode 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 1024,
-  "screenWidth": 1366,
-  "sideBar": {
+  "leftSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "rightSidePadding": {
     "height": 954,
     "width": 320,
     "x": 0,
     "y": 70,
   },
+  "safeArea": 0,
+  "screenHeight": 1024,
+  "screenWidth": 1366,
   "statusAddressBar": {
     "height": 70,
     "width": 1366,

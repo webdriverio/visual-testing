@@ -113,7 +113,7 @@ export function lambdaDesktopBrowsers({
                 platformName: 'MacOS Sequoia',
             },
             'wdio-ics:options': {
-                logName: 'BigSurSafari14',
+                logName: 'SafariLatest',
             },
         },
     ]

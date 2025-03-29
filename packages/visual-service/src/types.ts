@@ -8,6 +8,7 @@ import type {
     CheckFullPageMethodOptions,
     SaveFullPageMethodOptions,
     ClassOptions,
+    DeviceRectangles,
 } from 'webdriver-image-comparison'
 import type { ChainablePromiseElement } from 'webdriverio'
 
@@ -29,6 +30,16 @@ export type MultiremoteCommandResult = {
         sessionId: string | undefined,
         cid: string,
         type: string,
+}
+export type RectBounds = { x: number, y: number, width: number, height: number }
+export type MobileInstanceData = {
+    devicePixelRatio: number;
+    devicePlatformRect: {
+        statusBar: { height: number; x: number; width: number; y: number };
+        homeBar: { height: number; x: number; width: number; y: number };
+    };
+    deviceRectangles: DeviceRectangles
+    deviceScreenSize: { height: number; width: number };
 }
 
 export interface WdioIcsCommonOptions {

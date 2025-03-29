@@ -9,7 +9,8 @@ import checkFullPageScreen from './commands/checkFullPageScreen.js'
 import checkTabbablePage from './commands/checkTabbablePage.js'
 import { ClassOptions } from './helpers/options.interfaces.js'
 import { ImageCompareResult } from './methods/images.interfaces.js'
-import { IOS_OFFSETS, FOLDERS, DEFAULT_TEST_CONTEXT } from './helpers/constants.js'
+import { DEFAULT_TEST_CONTEXT, IOS_OFFSETS, FOLDERS, NOT_KNOWN } from './helpers/constants.js'
+import { getMobileScreenSize, getMobileViewPortPosition } from './helpers/utils.js'
 
 export type { ScreenshotOutput } from './helpers/afterScreenshot.interfaces.js'
 export type {
@@ -27,7 +28,7 @@ export type {
 } from './commands/fullPage.interfaces.js'
 export type { TestContext } from './commands/check.interfaces.js'
 export type { Folders } from './base.interfaces.js'
-export type { InstanceData } from './methods/instanceData.interfaces.js'
+export type { DeviceRectangles, DeviceRectangleBound, InstanceData } from './methods/instanceData.interfaces.js'
 export type { ResultReport } from './methods/createCompareReport.js'
 
 export {
@@ -37,6 +38,7 @@ export {
     DEFAULT_TEST_CONTEXT,
     IOS_OFFSETS,
     FOLDERS,
+    NOT_KNOWN,
     saveScreen,
     saveElement,
     saveFullPageScreen,
@@ -45,4 +47,6 @@ export {
     checkElement,
     checkFullPageScreen,
     checkTabbablePage,
+    getMobileScreenSize,
+    getMobileViewPortPosition,
 }

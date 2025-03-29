@@ -10,13 +10,14 @@ describe('screenshots', () => {
         it('should get the Android nativeWebScreenshot fullpage screenshot data', async () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
-                devicePixelRatio: 2,
+                devicePixelRatio: 1,
+                // @ts-expect-error
+                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: true,
                 isAndroidNativeWebScreenshot: true,
                 isAndroidChromeDriverScreenshot: false,
-                isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
                 toolBarShadowPadding: 6,
@@ -26,23 +27,21 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-                // For await executor(getAndroidStatusAddressToolBarOffsets, OFFSETS.ANDROID))
-                .mockResolvedValueOnce({
-                    isLandscape: false,
-                    safeArea: 0,
-                    statusAddressBar: { height: 56 },
-                    screenHeight: 768,
-                    screenWidth: 1366,
-                    sideBar: { width: 0 },
-                })
-                // THIS NEEDS TO BE FIXED IN THE FUTURE
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
+                // scrollToPosition
                 .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
+                // hideScrollBars
                 .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
+                // getDocumentScrollHeight
                 .mockResolvedValueOnce(788)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
+                // hideScrollBars
+                .mockResolvedValueOnce({})
+                // scrollToPosition
+                .mockResolvedValueOnce({})
+                // hideScrollBars
+                .mockResolvedValueOnce({})
+                // getDocumentScrollHeight
+                .mockResolvedValueOnce(788)
+                // hideScrollBars
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
@@ -55,13 +54,14 @@ describe('screenshots', () => {
         it('should get hide elements for the Android nativeWebScreenshot fullpage screenshot', async () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
-                devicePixelRatio: 2,
+                devicePixelRatio: 1,
+                // @ts-expect-error
+                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 600,
                 isAndroid: true,
                 isAndroidNativeWebScreenshot: true,
                 isAndroidChromeDriverScreenshot: false,
-                isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
                 toolBarShadowPadding: 6,
@@ -71,16 +71,6 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-                // For await executor(getAndroidStatusAddressToolBarOffsets, OFFSETS.ANDROID))
-                .mockResolvedValueOnce({
-                    isLandscape: false,
-                    safeArea: 0,
-                    statusAddressBar: { height: 56 },
-                    screenHeight: 768,
-                    screenWidth: 1366,
-                    sideBar: { width: 0 },
-                })
-                // THIS NEEDS TO BE FIXED IN THE FUTURE
                 // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
                 // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
@@ -114,12 +104,13 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
+                // @ts-expect-error
+                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: true,
                 isAndroidNativeWebScreenshot: false,
                 isAndroidChromeDriverScreenshot: true,
-                isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
                 toolBarShadowPadding: 6,
@@ -159,12 +150,13 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
+                // @ts-expect-error
+                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: true,
                 isAndroidNativeWebScreenshot: false,
                 isAndroidChromeDriverScreenshot: true,
-                isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
                 toolBarShadowPadding: 6,
@@ -208,6 +200,8 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
+                // @ts-expect-error
+                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: false,
@@ -223,16 +217,6 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-                .mockResolvedValueOnce({
-                    isLandscape: false,
-                    safeArea: 44,
-                    screenHeight: 768,
-                    screenWidth: 1366,
-                    sideBar: { width: 0 },
-                    statusAddressBar: { height: 94 },
-                    toolBar: { y: 329 },
-                })
-                // THIS NEEDS TO BE FIXED IN THE FUTURE
                 // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
                 // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
@@ -262,12 +246,13 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
+                // @ts-expect-error
+                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 400,
                 isAndroid: false,
                 isAndroidNativeWebScreenshot: false,
                 isAndroidChromeDriverScreenshot: false,
-                isHybridApp: false,
                 isIOS: true,
                 isLandscape: false,
                 toolBarShadowPadding: 6,
@@ -277,16 +262,6 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-                .mockResolvedValueOnce({
-                    isLandscape: true,
-                    safeArea: 0,
-                    screenHeight: 384,
-                    screenWidth: 683,
-                    sideBar: { width: 160 },
-                    statusAddressBar: { height: 47 },
-                    toolBar: { y: 75 },
-                })
-                // THIS NEEDS TO BE FIXED IN THE FUTURE
                 // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
                 // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
@@ -316,12 +291,13 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
+                // @ts-expect-error
+                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: false,
                 isAndroidNativeWebScreenshot: false,
                 isAndroidChromeDriverScreenshot: false,
-                isHybridApp: false,
                 isIOS: true,
                 isLandscape: false,
                 toolBarShadowPadding: 6,
@@ -331,17 +307,6 @@ describe('screenshots', () => {
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
-                // getBase64FullPageScreenshotsData: For await executor(getIosStatusAddressToolBarOffsets)
-                .mockResolvedValueOnce({
-                    isLandscape: false,
-                    safeArea: 44,
-                    screenHeight: 768,
-                    screenWidth: 1366,
-                    sideBar: { width: 0 },
-                    statusAddressBar: { height: 94 },
-                    toolBar: { y: 329 },
-                })
-                // THIS NEEDS TO BE FIXED IN THE FUTURE
                 // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
                 .mockResolvedValueOnce({})
                 // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
@@ -375,12 +340,13 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
+                // @ts-expect-error
+                deviceRectangles: { viewport: { left: 0, top: 0, width: 0, height: 0 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 768,
                 isAndroid: false,
                 isAndroidNativeWebScreenshot: false,
                 isAndroidChromeDriverScreenshot: false,
-                isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
                 toolBarShadowPadding: 6,
@@ -427,12 +393,13 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
+                // @ts-expect-error
+                deviceRectangles: { viewport: { left: 0, top: 0, width: 0, height: 0 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 768,
                 isAndroid: false,
                 isAndroidNativeWebScreenshot: false,
                 isAndroidChromeDriverScreenshot: false,
-                isHybridApp: false,
                 isIOS: false,
                 isLandscape: false,
                 toolBarShadowPadding: 6,

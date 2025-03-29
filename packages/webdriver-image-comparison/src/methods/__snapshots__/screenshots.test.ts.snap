@@ -4,26 +4,26 @@ exports[`screenshots > getBase64FullPageScreenshotsData > should get hide elemen
 {
   "data": [
     {
-      "canvasWidth": 2732,
+      "canvasWidth": 1366,
       "canvasYPosition": 0,
-      "imageHeight": 1176,
-      "imageWidth": 2732,
+      "imageHeight": 756,
+      "imageWidth": 1366,
       "imageXPosition": 0,
-      "imageYPosition": 124,
+      "imageYPosition": 6,
       "screenshot": "mocked-screenshot-string",
     },
     {
-      "canvasWidth": 2732,
-      "canvasYPosition": 1176,
-      "imageHeight": 400,
-      "imageWidth": 2732,
+      "canvasWidth": 1366,
+      "canvasYPosition": 756,
+      "imageHeight": 20,
+      "imageWidth": 1366,
       "imageXPosition": 0,
-      "imageYPosition": 924,
+      "imageYPosition": 742,
       "screenshot": "mocked-screenshot-string",
     },
   ],
-  "fullPageHeight": 1552,
-  "fullPageWidth": 2732,
+  "fullPageHeight": 776,
+  "fullPageWidth": 1366,
 }
 `;
 
@@ -58,17 +58,26 @@ exports[`screenshots > getBase64FullPageScreenshotsData > should get the Android
 {
   "data": [
     {
-      "canvasWidth": 2732,
+      "canvasWidth": 1366,
       "canvasYPosition": 0,
-      "imageHeight": 1576,
-      "imageWidth": 2732,
+      "imageHeight": 756,
+      "imageWidth": 1366,
       "imageXPosition": 0,
-      "imageYPosition": 148,
+      "imageYPosition": 6,
+      "screenshot": "mocked-screenshot-string",
+    },
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 756,
+      "imageHeight": 20,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 742,
       "screenshot": "mocked-screenshot-string",
     },
   ],
-  "fullPageHeight": 1552,
-  "fullPageWidth": 2732,
+  "fullPageHeight": 776,
+  "fullPageWidth": 1366,
 }
 `;
 
@@ -132,19 +141,19 @@ exports[`screenshots > getBase64FullPageScreenshotsData > should get the iOS ful
     {
       "canvasWidth": 2732,
       "canvasYPosition": 0,
-      "imageHeight": 1576,
+      "imageHeight": 1512,
       "imageWidth": 2732,
       "imageXPosition": 0,
-      "imageYPosition": 200,
+      "imageYPosition": 12,
       "screenshot": "mocked-screenshot-string",
     },
     {
       "canvasWidth": 2732,
-      "canvasYPosition": 1576,
-      "imageHeight": 824,
+      "canvasYPosition": 1512,
+      "imageHeight": 864,
       "imageWidth": 2732,
       "imageXPosition": 0,
-      "imageYPosition": 976,
+      "imageYPosition": 660,
       "screenshot": "mocked-screenshot-string",
     },
   ],
@@ -157,26 +166,17 @@ exports[`screenshots > getBase64FullPageScreenshotsData > should get the iOS ful
 {
   "data": [
     {
-      "canvasWidth": 2412,
+      "canvasWidth": 2732,
       "canvasYPosition": 0,
-      "imageHeight": 776,
-      "imageWidth": 2412,
-      "imageXPosition": 320,
-      "imageYPosition": 106,
-      "screenshot": "mocked-screenshot-string",
-    },
-    {
-      "canvasWidth": 2412,
-      "canvasYPosition": 776,
-      "imageHeight": 424,
-      "imageWidth": 2412,
-      "imageXPosition": 320,
-      "imageYPosition": 482,
+      "imageHeight": 1176,
+      "imageWidth": 2732,
+      "imageXPosition": 0,
+      "imageYPosition": 348,
       "screenshot": "mocked-screenshot-string",
     },
   ],
   "fullPageHeight": 1176,
-  "fullPageWidth": 2412,
+  "fullPageWidth": 2732,
 }
 `;
 
@@ -267,19 +267,19 @@ exports[`screenshots > getBase64FullPageScreenshotsData > should hide elements f
     {
       "canvasWidth": 2732,
       "canvasYPosition": 0,
-      "imageHeight": 1576,
+      "imageHeight": 1512,
       "imageWidth": 2732,
       "imageXPosition": 0,
-      "imageYPosition": 200,
+      "imageYPosition": 12,
       "screenshot": "mocked-screenshot-string",
     },
     {
       "canvasWidth": 2732,
-      "canvasYPosition": 1576,
-      "imageHeight": 824,
+      "canvasYPosition": 1512,
+      "imageHeight": 864,
       "imageWidth": 2732,
       "imageXPosition": 0,
-      "imageYPosition": 976,
+      "imageYPosition": 660,
       "screenshot": "mocked-screenshot-string",
     },
   ],
