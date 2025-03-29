@@ -177,7 +177,11 @@ export default class WdioImageComparisonService extends BaseClass {
             currentBrowser,
             this._isNativeContext as NativeContextType
         )
-        const instanceData = await getInstanceData(currentBrowser, isNativeContext)
+        const instanceData = await getInstanceData({
+            currentBrowser,
+            initialDeviceRectangles: this.deviceRectangles,
+            isNativeContext,
+        })
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
             this.#addElementCommand(currentBrowser, commandName, command, instanceData, isNativeContext)
@@ -309,7 +313,11 @@ export default class WdioImageComparisonService extends BaseClass {
                         browserInstance,
                         self._isNativeContext as NativeContextType
                     )
-                    const instanceData = await getInstanceData(browserInstance, isNativeContext)
+                    const instanceData = await getInstanceData({
+                        currentBrowser: browserInstance,
+                        initialDeviceRectangles: self.deviceRectangles,
+                        isNativeContext
+                    })
 
                     returnData[browserName] = await command(
                         {
@@ -369,7 +377,11 @@ export default class WdioImageComparisonService extends BaseClass {
                         browserInstance,
                         self._isNativeContext as NativeContextType
                         )
-                        const instanceData = await getInstanceData(browserInstance, isNativeContext)
+                        const instanceData = await getInstanceData({
+                            currentBrowser: browserInstance,
+                            initialDeviceRectangles: self.deviceRectangles,
+                            isNativeContext
+                        })
 
                         returnData[browserName] = await command(
                             {
