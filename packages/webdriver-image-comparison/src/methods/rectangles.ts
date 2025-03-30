@@ -1,5 +1,5 @@
 import type { ChainablePromiseElement } from 'webdriverio'
-import { calculateDprData, getScreenshotSize, isObject } from '../helpers/utils.js'
+import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import type {
     DeviceRectangles,
@@ -31,7 +31,7 @@ export async function determineElementRectangles({
         isAndroidNativeWebScreenshot,
         isIOS,
     } = options
-    const { height } = getScreenshotSize(base64Image, devicePixelRatio)
+    const { height } = getBase64ScreenshotSize(base64Image, devicePixelRatio)
     let elementPosition
 
     // Determine the element position on the screenshot
@@ -79,7 +79,7 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
         isAndroidNativeWebScreenshot,
         isLandscape,
     } = options
-    const { height, width } = getScreenshotSize(base64Image, devicePixelRatio)
+    const { height, width } = getBase64ScreenshotSize(base64Image, devicePixelRatio)
 
     // Determine the width
     const screenshotWidth = isIOS || isAndroidChromeDriverScreenshot ? width : innerWidth

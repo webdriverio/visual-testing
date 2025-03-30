@@ -39,6 +39,7 @@ export type DeviceRectangles = {
     homeBar: RectanglesOutput,
     leftSidePadding: RectanglesOutput,
     rightSidePadding: RectanglesOutput,
+    screenSize: { height: number, width: number},
     statusBarAndAddressBar: RectanglesOutput,
     statusBar: RectanglesOutput,
     viewport: RectanglesOutput,

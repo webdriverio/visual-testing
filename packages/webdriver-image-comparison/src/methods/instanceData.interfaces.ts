@@ -15,13 +15,6 @@ export interface InstanceData {
     devicePixelRatio: number;
     // The mobile viewport position
     deviceRectangles: DeviceRectangles;
-    // The Device Screen size
-    deviceScreenSize: {
-        // The Device Screen Height
-        height: number;
-        // The Device Screen Width
-        width: number;
-    };
     // Is this an Android device
     isAndroid: boolean;
     // Is this an iOS device

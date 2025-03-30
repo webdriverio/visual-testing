@@ -13,7 +13,7 @@ import {
     formatFileName,
     getAddressBarShadowPadding,
     getAndCreatePath,
-    getScreenshotSize,
+    getBase64ScreenshotSize,
     getToolBarShadowPadding,
 } from './utils.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
@@ -408,13 +408,13 @@ describe('utils', () => {
     //   });
     // });
 
-    describe('getScreenshotSize', () => {
+    describe('getBase64ScreenshotSize', () => {
         it('should get the screenshot size of a screenshot string with the default DPR', () => {
-            expect(getScreenshotSize(IMAGE_STRING)).toMatchSnapshot()
+            expect(getBase64ScreenshotSize(IMAGE_STRING)).toMatchSnapshot()
         })
 
         it('should get the screenshot size of a screenshot string with DRP 2', () => {
-            expect(getScreenshotSize(IMAGE_STRING, 2)).toMatchSnapshot()
+            expect(getBase64ScreenshotSize(IMAGE_STRING, 2)).toMatchSnapshot()
         })
     })
 })

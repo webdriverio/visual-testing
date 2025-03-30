@@ -33,6 +33,10 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
       "x": 0,
       "y": 0,
     },
+    "screenSize": {
+      "height": 1,
+      "width": 1,
+    },
     "statusBar": {
       "height": 0,
       "width": 0,
@@ -51,10 +55,6 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 1,
-    "width": 1,
   },
   "isAndroid": false,
   "isAndroidChromeDriverScreenshot": false,
@@ -105,6 +105,10 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
       "x": 0,
       "y": 0,
     },
+    "screenSize": {
+      "height": 1,
+      "width": 1,
+    },
     "statusBar": {
       "height": 0,
       "width": 0,
@@ -123,10 +127,6 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 1,
-    "width": 1,
   },
   "isAndroid": false,
   "isAndroidChromeDriverScreenshot": false,

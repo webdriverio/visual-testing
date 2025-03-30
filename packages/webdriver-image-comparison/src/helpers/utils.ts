@@ -6,6 +6,7 @@ import type {
     FormatFileNameOptions,
     GetAddressBarShadowPaddingOptions,
     GetAndCreatePathOptions,
+    GetMobileViewPortPositionOptions,
     GetToolBarShadowPaddingOptions,
     ScreenshotSize,
 } from './utils.interfaces.js'
@@ -180,7 +181,7 @@ export async function waitFor(milliseconds: number): Promise<void> {
 /**
  * Get the size of a screenshot in pixels without the device pixel ratio
  */
-export function getScreenshotSize(screenshot: string, devicePixelRation = 1): ScreenshotSize {
+export function getBase64ScreenshotSize(screenshot: string, devicePixelRation = 1): ScreenshotSize {
     return {
         height: Math.round(Buffer.from(screenshot, 'base64').readUInt32BE(20) / devicePixelRation),
         width: Math.round(Buffer.from(screenshot, 'base64').readUInt32BE(16) / devicePixelRation),
@@ -191,7 +192,7 @@ export function getScreenshotSize(screenshot: string, devicePixelRation = 1): Sc
  * Get the device pixel ratio
  */
 export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {height:number, width: number}): number {
-    const screenshotSize = getScreenshotSize(screenshot)
+    const screenshotSize = getBase64ScreenshotSize(screenshot)
     const devicePixelRatio = screenshotSize.width / deviceScreenSize.width
 
     return Math.round(devicePixelRatio)
@@ -447,20 +448,7 @@ export async function getMobileViewPortPosition({
     nativeWebScreenshot,
     screenHeight,
     screenWidth,
-}: {
-    initialDeviceRectangles: DeviceRectangles,
-    isNativeContext: boolean,
-    isAndroid: boolean,
-        isIOS: boolean,
-        methods: {
-            executor: Executor,
-            getUrl: () => Promise<string>,
-            url: (arg:string) => Promise<WebdriverIO.Request|void>,
-    }
-    nativeWebScreenshot: boolean,
-    screenHeight: number,
-    screenWidth: number,
-}): Promise<DeviceRectangles> {
+}: GetMobileViewPortPositionOptions): Promise<DeviceRectangles> {
 
     if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
         const currentUrl = await getUrl()
@@ -487,11 +475,12 @@ export async function getMobileViewPortPosition({
         const rightSidePaddingWidth = Math.max(0, Math.round(screenWidth - (viewportLeft + width)))
         const deviceRectangles = {
             ...initialDeviceRectangles,
-            statusBarAndAddressBar: { y: 0, x: 0, width: screenWidth, height: statusBarAndAddressBarHeight },
-            viewport: { y: viewportTop, x: viewportLeft, width: width, height: height },
             bottomBar: { y: viewportTop + height, x: 0, width: screenWidth, height: bottomBarHeight },
             leftSidePadding: { y: viewportTop, x: 0, width: leftSidePaddingWidth, height: height },
             rightSidePadding: { y: viewportTop, x: viewportLeft + width, width: rightSidePaddingWidth, height: height },
+            screenSize: { height: screenHeight, width: screenWidth },
+            statusBarAndAddressBar: { y: 0, x: 0, width: screenWidth, height: statusBarAndAddressBarHeight },
+            viewport: { y: viewportTop, x: viewportLeft, width: width, height: height },
         }
 
         return deviceRectangles

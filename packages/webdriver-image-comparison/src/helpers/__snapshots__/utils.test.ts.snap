@@ -89,14 +89,14 @@ exports[`utils > getAndCreatePath > should create the folder and return the fold
 
 exports[`utils > getAndCreatePath > should create the folder and return the folder name for a device that needs to have its own folder 2`] = `true`;
 
-exports[`utils > getScreenshotSize > should get the screenshot size of a screenshot string with DRP 2 1`] = `
+exports[`utils > getBase64ScreenshotSize > should get the screenshot size of a screenshot string with DRP 2 1`] = `
 {
   "height": 768,
   "width": 1366,
 }
 `;
 
-exports[`utils > getScreenshotSize > should get the screenshot size of a screenshot string with the default DPR 1`] = `
+exports[`utils > getBase64ScreenshotSize > should get the screenshot size of a screenshot string with the default DPR 1`] = `
 {
   "height": 1536,
   "width": 2732,

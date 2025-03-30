@@ -55,6 +55,7 @@ export const DEVICE_RECTANGLES: DeviceRectangles = {
     rightSidePadding: { y: 0, x: 0, width: 0, height: 0 },
     statusBar: { y: 0, x: 0, width: 0, height: 0 },
     statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
+    screenSize: { width: 0, height: 0 },
     viewport: { y: 0, x: 0, width: 0, height: 0 },
 }
 

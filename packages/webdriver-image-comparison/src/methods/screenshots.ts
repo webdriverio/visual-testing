@@ -1,7 +1,7 @@
 import logger from '@wdio/logger'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
-import { calculateDprData, getScreenshotSize, waitFor } from '../helpers/utils.js'
+import { calculateDprData, getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
 import type { Executor, TakeScreenShot } from './methods.interfaces.js'
 import type {
     FullPageScreenshotOptions,
@@ -226,7 +226,7 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(
 
         // Take the screenshot
         const screenshot = await takeBase64Screenshot(takeScreenshot)
-        screenshotSize = getScreenshotSize(screenshot, devicePixelRatio)
+        screenshotSize = getBase64ScreenshotSize(screenshot, devicePixelRatio)
 
         // Determine scroll height and check if we need to scroll again
         scrollHeight = await executor(getDocumentScrollHeight)
@@ -324,7 +324,7 @@ export async function getDesktopFullPageScreenshotsData(
 
         // Take the screenshot
         const screenshot = await takeBase64Screenshot(takeScreenshot)
-        screenshotSize = getScreenshotSize(screenshot, devicePixelRatio)
+        screenshotSize = getBase64ScreenshotSize(screenshot, devicePixelRatio)
 
         // The actual screenshot size might be slightly different than the inner height
         // In that case, use the screenshot size instead of the innerHeight
@@ -469,7 +469,7 @@ export async function takeWebElementScreenshot({
 
     try {
         const   base64Image = await takeElementScreenshot!((await element as WebdriverIO.Element).elementId)
-        const { height, width } = getScreenshotSize(base64Image)
+        const { height, width } = getBase64ScreenshotSize(base64Image)
         const rectangles = { x: 0, y: 0, width, height }
 
         if (rectangles.width === 0 || rectangles.height === 0) {

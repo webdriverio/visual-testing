@@ -13,6 +13,7 @@ describe('rectangles', () => {
                     homeBar: { y: 0, x: 0, width: 0, height: 0 },
                     leftSidePadding: { y: 0, x: 0, width: 0, height: 0 },
                     rightSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+                    screenSize: { height: 0, width: 0 },
                     statusBar: { y: 0, x: 0, width: 0, height: 0 },
                     statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
                     viewport: { y: 20, x: 30, width: 0, height: 0 },
@@ -48,6 +49,7 @@ describe('rectangles', () => {
                 deviceRectangles: {
                     homeBar: { y: 0, x: 0, width: 0, height: 0 },
                     statusBar: { y: 0, x: 0, width: 0, height: 0 },
+                    screenSize: { height: 0, width: 0 },
                     statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
                     viewport: { y: 200, x: 300, width: 0, height: 0 },
                     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -85,6 +87,7 @@ describe('rectangles', () => {
                 deviceRectangles: {
                     homeBar: { y: 0, x: 0, width: 0, height: 0 },
                     statusBar: { y: 0, x: 0, width: 0, height: 0 },
+                    screenSize: { height: 0, width: 0 },
                     statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
                     viewport: { y: 200, x: 300, width: 0, height: 0 },
                     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -122,6 +125,7 @@ describe('rectangles', () => {
                 deviceRectangles: {
                     homeBar: { y: 0, x: 0, width: 0, height: 0 },
                     statusBar: { y: 0, x: 0, width: 0, height: 0 },
+                    screenSize: { height: 0, width: 0 },
                     statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
                     viewport: { y: 0, x: 0, width: 0, height: 0 },
                     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -159,6 +163,7 @@ describe('rectangles', () => {
                 deviceRectangles: {
                     homeBar: { y: 0, x: 0, width: 0, height: 0 },
                     statusBar: { y: 0, x: 0, width: 0, height: 0 },
+                    screenSize: { height: 0, width: 0 },
                     statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
                     viewport: { y: 0, x: 0, width: 0, height: 0 },
                     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -197,6 +202,7 @@ describe('rectangles', () => {
                 deviceRectangles: {
                     homeBar: { y: 0, x: 0, width: 0, height: 0 },
                     statusBar: { y: 0, x: 0, width: 0, height: 0 },
+                    screenSize: { height: 0, width: 0 },
                     statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
                     viewport: { y: 0, x: 0, width: 0, height: 0 },
                     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -235,6 +241,7 @@ describe('rectangles', () => {
                 deviceRectangles: {
                     homeBar: { y: 0, x: 0, width: 0, height: 0 },
                     statusBar: { y: 0, x: 0, width: 0, height: 0 },
+                    screenSize: { height: 0, width: 0 },
                     statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
                     viewport: { y: 0, x: 0, width: 0, height: 0 },
                     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -325,6 +332,7 @@ describe('rectangles', () => {
             const deviceRectangles =  {
                 homeBar: { y: 0, x: 0, width: 0, height: 0 },
                 statusBar: { y: 0, x: 0, width: 0, height: 0 },
+                screenSize: { height: 0, width: 0 },
                 statusBarAndAddressBar: { y: 0, x: 0, width: 1344, height: 320 },
                 viewport: { y: 320, x: 0, width: 1344, height: 2601 },
                 bottomBar: { y: 2921, x: 0, width: 1344, height: 71 },
@@ -348,6 +356,7 @@ describe('rectangles', () => {
             const deviceRectangles =  {
                 homeBar: { y: 0, x: 0, width: 0, height: 0 },
                 statusBar: { y: 0, x: 0, width: 0, height: 0 },
+                screenSize: { height: 0, width: 0 },
                 statusBarAndAddressBar: { y: 0, x: 0, width: 1344, height: 320 },
                 viewport: { y: 320, x: 0, width: 1344, height: 2601 },
                 bottomBar: { y: 2921, x: 0, width: 1344, height: 71 },

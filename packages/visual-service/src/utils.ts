@@ -1,24 +1,16 @@
 import type { Capabilities } from '@wdio/types'
 import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
 import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from 'webdriver-image-comparison'
+import type { Folders, InstanceData, TestContext } from 'webdriver-image-comparison'
 import type {
-    Folders,
-    InstanceData,
-    CheckScreenMethodOptions,
-    SaveScreenMethodOptions,
-    CheckFullPageMethodOptions,
-    SaveFullPageMethodOptions,
-    CheckElementMethodOptions,
-    SaveElementMethodOptions,
-    TestContext,
-    DeviceRectangles,
-} from 'webdriver-image-comparison'
-import type { MobileInstanceData, NativeContextType } from './types.js'
-
-interface WdioIcsOptions {
-    logName?: string;
-    name?: string;
-}
+    EnrichTestContextOptions,
+    getFolderMethodOptions,
+    GetInstanceDataOptions,
+    GetMobileInstanceDataOptions,
+    MobileInstanceData,
+    NativeContextType,
+    WdioIcsOptions,
+} from './types.js'
 
 /**
  * Get the folders data
@@ -26,13 +18,6 @@ interface WdioIcsOptions {
  * If folder options are passed in use those values
  * Otherwise, use the values set during instantiation
  */
-type getFolderMethodOptions =
-    | CheckElementMethodOptions
-    | CheckFullPageMethodOptions
-    | CheckScreenMethodOptions
-    | SaveElementMethodOptions
-    | SaveFullPageMethodOptions
-    | SaveScreenMethodOptions;
 
 export function getFolders(
     methodOptions: getFolderMethodOptions,
@@ -47,9 +32,9 @@ export function getFolders(
 }
 
 /**
- * Get the size of a screenshot in pixels without the device pixel ratio
+ * Get the size of a base64 screenshot in pixels without the device pixel ratio
  */
-export function getScreenshotSize(screenshot: string, devicePixelRation = 1): {
+export function getBase64ScreenshotSize(screenshot: string, devicePixelRation = 1): {
     height: number;
     width: number;
 } {
@@ -63,7 +48,7 @@ export function getScreenshotSize(screenshot: string, devicePixelRation = 1): {
  * Get the device pixel ratio
  */
 export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {height:number, width: number}): number {
-    const screenshotSize = getScreenshotSize(screenshot)
+    const screenshotSize = getBase64ScreenshotSize(screenshot)
     const devicePixelRatio = Math.round(screenshotSize.width / deviceScreenSize.width) === Math.round(screenshotSize.height / deviceScreenSize.height)
         ? Math.round(screenshotSize.width / deviceScreenSize.width)
         : Math.round(screenshotSize.height / deviceScreenSize.width)
@@ -79,17 +64,8 @@ async function getMobileInstanceData({
     initialDeviceRectangles,
     isNativeContext,
     nativeWebScreenshot,
-}: {
-    currentBrowser: WebdriverIO.Browser;
-    initialDeviceRectangles: DeviceRectangles;
-    isNativeContext:boolean;
-    nativeWebScreenshot:boolean;
-}): Promise<MobileInstanceData>{
+}: GetMobileInstanceDataOptions): Promise<MobileInstanceData>{
     const { isAndroid, isIOS, isMobile } = currentBrowser
-    const deviceScreenSize = {
-        height: 0,
-        width: 0,
-    }
     let devicePixelRatio = 1
     let deviceRectangles = initialDeviceRectangles
 
@@ -100,9 +76,11 @@ async function getMobileInstanceData({
         const getUrl = () => currentBrowser.getUrl()
         const url = (arg:string) => currentBrowser.url(arg)
         const currentDriverCapabilities = currentBrowser.capabilities
-        const { height, width } = await getMobileScreenSize({ executor, isIOS })
-        deviceScreenSize.height = height
-        deviceScreenSize.width = width
+        const { height: screenHeight, width: screenWidth } = await getMobileScreenSize({ executor, isIOS })
+        // Update the width for the device rectangles
+        // bottomBar, screenSize, statusBarAndAddressBar
+        deviceRectangles.screenSize.height = screenHeight
+        deviceRectangles.screenSize.width = deviceRectangles.bottomBar.width = deviceRectangles.statusBarAndAddressBar.width = deviceRectangles.statusBar.width = screenWidth
         deviceRectangles = await getMobileViewPortPosition({
             initialDeviceRectangles,
             isAndroid,
@@ -114,8 +92,8 @@ async function getMobileInstanceData({
                 url,
             },
             nativeWebScreenshot,
-            screenHeight: height,
-            screenWidth: width,
+            screenHeight,
+            screenWidth,
         })
 
         // @TODO: 20250317: When we have all things tested with the above, we can simplify the below part to only use the iOS part
@@ -132,16 +110,18 @@ async function getMobileInstanceData({
             if (currentDriverCapabilities?.statBarHeight !== undefined){
                 // @ts-ignore
                 deviceRectangles.statusBar.height = currentDriverCapabilities?.statBarHeight
-                deviceRectangles.statusBar.width = width
+                deviceRectangles.statusBar.width = deviceRectangles.screenSize.width
             }
         } else {
             // This is to already determine the device pixel ratio if it's not set in the capabilities
             const base64Image = await currentBrowser.takeScreenshot()
-            devicePixelRatio = getDevicePixelRatio(base64Image, deviceScreenSize)
-            const isIphone = width < 1024 && height < 1024
+            devicePixelRatio = getDevicePixelRatio(base64Image, deviceRectangles.screenSize)
+            const isIphone = deviceRectangles.screenSize.width < 1024 && deviceRectangles.screenSize.height < 1024
             const deviceType = isIphone ? 'IPHONE' : 'IPAD'
             const defaultPortraitHeight = isIphone ? 667 : 1024
-            const portraitHeight = width > height ? width : height
+            const portraitHeight = deviceRectangles.screenSize.width > deviceRectangles.screenSize.height ?
+                deviceRectangles.screenSize.width :
+                deviceRectangles.screenSize.height
             const offsetPortraitHeight = Object.keys(IOS_OFFSETS[deviceType]).indexOf(portraitHeight.toString()) > -1 ?
                 portraitHeight :
                 defaultPortraitHeight
@@ -151,7 +131,7 @@ async function getMobileInstanceData({
             deviceRectangles.statusBar = {
                 x: 0,
                 y: 0,
-                width,
+                width: deviceRectangles.screenSize.width,
                 height: currentOffsets.STATUS_BAR,
             }
             deviceRectangles.homeBar = currentOffsets.HOME_BAR
@@ -160,7 +140,6 @@ async function getMobileInstanceData({
 
     return {
         devicePixelRatio,
-        deviceScreenSize,
         deviceRectangles,
     }
 }
@@ -216,11 +195,7 @@ export async function getInstanceData({
     currentBrowser,
     initialDeviceRectangles,
     isNativeContext
-}: {
-        currentBrowser: WebdriverIO.Browser,
-        initialDeviceRectangles: DeviceRectangles,
-        isNativeContext: boolean
-    }): Promise<InstanceData> {
+}: GetInstanceDataOptions): Promise<InstanceData> {
     const { capabilities: currentCapabilities, requestedCapabilities } = currentBrowser
     const {
         browserName: rawBrowserName = NOT_KNOWN,
@@ -264,7 +239,6 @@ export async function getInstanceData({
     const {
         devicePixelRatio: mobileDevicePixelRatio,
         deviceRectangles,
-        deviceScreenSize,
     } = await getMobileInstanceData({ currentBrowser, initialDeviceRectangles, isNativeContext, nativeWebScreenshot })
     devicePixelRatio = isMobile ? mobileDevicePixelRatio : devicePixelRatio
 
@@ -275,7 +249,6 @@ export async function getInstanceData({
         deviceName,
         devicePixelRatio,
         deviceRectangles,
-        deviceScreenSize,
         isAndroid,
         isIOS,
         isMobile,
@@ -298,9 +271,7 @@ export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browse
 /**
  * We can't say it's native context if the autoWebview is provided and set to true, for all other cases we can say it's native
  */
-export function determineNativeContext(
-    driver: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
-): NativeContextType {
+export function determineNativeContext(driver: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser): NativeContextType {
     // First check if it's multi remote
     if (driver.isMultiremote) {
         return Object.keys(driver).reduce((acc, instanceName) => {
@@ -393,14 +364,7 @@ export function enrichTestContext(
             platformVersion,
         },
         tag,
-    }:
-    {
-        commandName: string;
-        currentTestContext: TestContext;
-        instanceData: InstanceData;
-        tag: string;
-    }
-): TestContext {
+    }: EnrichTestContextOptions): TestContext {
     return {
         commandName,
         instanceData: {

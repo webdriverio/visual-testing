@@ -9,6 +9,8 @@ import type {
     SaveFullPageMethodOptions,
     ClassOptions,
     DeviceRectangles,
+    TestContext,
+    InstanceData,
 } from 'webdriver-image-comparison'
 import type { ChainablePromiseElement } from 'webdriverio'
 
@@ -31,11 +33,38 @@ export type MultiremoteCommandResult = {
         cid: string,
         type: string,
 }
-export type RectBounds = { x: number, y: number, width: number, height: number }
 export type MobileInstanceData = {
     devicePixelRatio: number;
-    deviceRectangles: DeviceRectangles
-    deviceScreenSize: { height: number; width: number };
+    deviceRectangles: DeviceRectangles;
+}
+export type getFolderMethodOptions =
+    | CheckElementMethodOptions
+    | CheckFullPageMethodOptions
+    | CheckScreenMethodOptions
+    | SaveElementMethodOptions
+    | SaveFullPageMethodOptions
+    | SaveScreenMethodOptions;
+export type GetInstanceDataOptions = {
+    currentBrowser: WebdriverIO.Browser,
+    initialDeviceRectangles: DeviceRectangles,
+    isNativeContext: boolean
+}
+export type EnrichTestContextOptions = {
+    commandName: string;
+    currentTestContext: TestContext;
+    instanceData: InstanceData;
+    tag: string;
+}
+export type GetMobileInstanceDataOptions = {
+    currentBrowser: WebdriverIO.Browser;
+    initialDeviceRectangles: DeviceRectangles;
+    isNativeContext:boolean;
+    nativeWebScreenshot:boolean;
+}
+
+export interface WdioIcsOptions {
+    logName?: string;
+    name?: string;
 }
 
 export interface WdioIcsCommonOptions {
