@@ -21,8 +21,8 @@ export function injectWebviewOverlay(isAndroid: boolean): void {
     overlay.onclick = (event) => {
         const { clientX: x, clientY: y } = event
         const data = {
-            left: Math.round(x * dpr),
-            top: Math.round(y * dpr),
+            x: Math.round(x * dpr),
+            y: Math.round(y * dpr),
             width: Math.round(window.innerWidth * dpr),
             height: Math.round(document.documentElement.clientHeight * dpr),
         }
@@ -30,7 +30,7 @@ export function injectWebviewOverlay(isAndroid: boolean): void {
         overlay.dataset.icsWebviewData = JSON.stringify(data)
         textContainer.innerHTML = `
         This overlay is used to determine the position of the webview.<br>
-        Clicked at: X: ${data.left}, Y: ${data.top}<br/>
+        Clicked at: X: ${data.x}, Y: ${data.y}<br/>
         Dimensions: Viewport width: ${data.width}, Viewport height: ${data.height}`
     }
 

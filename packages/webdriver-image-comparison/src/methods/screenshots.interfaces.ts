@@ -1,4 +1,4 @@
-import type { DeviceRectangles } from './instanceData.interfaces.js'
+import type { DeviceRectangles } from './rectangles.interfaces.js'
 import type { Executor, TakeElementScreenshot, TakeScreenShot } from './methods.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 

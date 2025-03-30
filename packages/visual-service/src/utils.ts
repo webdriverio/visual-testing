@@ -90,10 +90,6 @@ async function getMobileInstanceData({
         height: 0,
         width: 0,
     }
-    const devicePlatformRect = {
-        statusBar: { height: 0, x: 0, width: 0, y: 0 },
-        homeBar: { height: 0, x: 0, width: 0, y: 0 },
-    }
     let devicePixelRatio = 1
     let deviceRectangles = initialDeviceRectangles
 
@@ -135,8 +131,8 @@ async function getMobileInstanceData({
             // @ts-ignore
             if (currentDriverCapabilities?.statBarHeight !== undefined){
                 // @ts-ignore
-                devicePlatformRect.statusBar.height = currentDriverCapabilities?.statBarHeight
-                devicePlatformRect.statusBar.width = width
+                deviceRectangles.statusBar.height = currentDriverCapabilities?.statBarHeight
+                deviceRectangles.statusBar.width = width
             }
         } else {
             // This is to already determine the device pixel ratio if it's not set in the capabilities
@@ -152,19 +148,18 @@ async function getMobileInstanceData({
             const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight].PORTRAIT
             // NOTE: The values for iOS are based on CSS pixels, so we need to multiply them with the devicePixelRatio,
             // This will NOT be done here but in a central place
-            devicePlatformRect.statusBar = {
-                y: 0,
+            deviceRectangles.statusBar = {
                 x: 0,
+                y: 0,
                 width,
                 height: currentOffsets.STATUS_BAR,
             }
-            devicePlatformRect.homeBar = currentOffsets.HOME_BAR
+            deviceRectangles.homeBar = currentOffsets.HOME_BAR
         }
     }
 
     return {
         devicePixelRatio,
-        devicePlatformRect,
         deviceScreenSize,
         deviceRectangles,
     }
@@ -268,8 +263,6 @@ export async function getInstanceData({
     const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? NOT_KNOWN : rawPlatformVersion.toLowerCase()
     const {
         devicePixelRatio: mobileDevicePixelRatio,
-        // @TODO: Figure out what the devicePlatformRect do
-        devicePlatformRect,
         deviceRectangles,
         deviceScreenSize,
     } = await getMobileInstanceData({ currentBrowser, initialDeviceRectangles, isNativeContext, nativeWebScreenshot })
@@ -281,7 +274,6 @@ export async function getInstanceData({
         browserVersion,
         deviceName,
         devicePixelRatio,
-        devicePlatformRect,
         deviceRectangles,
         deviceScreenSize,
         isAndroid,

@@ -2,7 +2,7 @@ import getElementPositionTopDom from '../clientSideScripts/getElementPositionTop
 import type { Executor } from './methods.interfaces.js'
 import type { ElementPosition } from '../clientSideScripts/elementPosition.interfaces.js'
 import { getBoundingClientRect } from '../clientSideScripts/getBoundingClientRect.js'
-import type { DeviceRectangles } from './instanceData.interfaces.js'
+import type { DeviceRectangles } from './rectangles.interfaces.js'
 
 /**
  * Get the element position on a Android device
@@ -57,15 +57,14 @@ export async function getElementPositionDesktop(
 export async function getElementWebviewPosition(
     executor: Executor,
     element: HTMLElement,
-    { deviceRectangles: { viewport:{ left, top } } }: { deviceRectangles: DeviceRectangles },
+    { deviceRectangles: { viewport:{ x, y } } }: { deviceRectangles: DeviceRectangles },
 ): Promise<ElementPosition> {
-    const { height, width, x, y } = (await executor(getBoundingClientRect, element)) as ElementPosition
+    const { height, width, x:boundingClientX, y:boundingClientY } = (await executor(getBoundingClientRect, element)) as ElementPosition
 
-    // Now add the viewport offsets
     return {
         height,
         width,
-        x: left + x,
-        y: top + y,
+        x: boundingClientX + x,
+        y: boundingClientY + y,
     }
 }

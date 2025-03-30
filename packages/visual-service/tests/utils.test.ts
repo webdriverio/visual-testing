@@ -4,11 +4,13 @@ import { determineNativeContext, getBrowserObject, getDevicePixelRatio, getFolde
 import type { AppiumCapabilities } from '@wdio/types/build/Capabilities.js'
 
 const DEVICE_RECTANGLES = {
-    statusBarAndAddressBar: { top: 0, left: 0, width: 0, height: 0 },
-    viewport: { top: 0, left: 0, width: 0, height: 0 },
-    bottomBar: { top: 0, left: 0, width: 0, height: 0 },
-    leftSidePadding: { top: 0, left: 0, width: 0, height: 0 },
-    rightSidePadding: { top: 0, left: 0, width: 0, height: 0 },
+    bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+    homeBar: { y: 0, x: 0, width: 0, height: 0 },
+    leftSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+    rightSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+    statusBar: { y: 0, x: 0, width: 0, height: 0 },
+    statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
+    viewport: { y: 0, x: 0, width: 0, height: 0 },
 }
 
 describe('utils', () => {

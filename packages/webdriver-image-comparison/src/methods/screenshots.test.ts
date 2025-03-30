@@ -12,7 +12,7 @@ describe('screenshots', () => {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 1,
                 // @ts-expect-error
-                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
+                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: true,
@@ -56,7 +56,7 @@ describe('screenshots', () => {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 1,
                 // @ts-expect-error
-                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
+                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 600,
                 isAndroid: true,
@@ -201,7 +201,7 @@ describe('screenshots', () => {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
                 // @ts-expect-error
-                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
+                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: false,
@@ -247,7 +247,7 @@ describe('screenshots', () => {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
                 // @ts-expect-error
-                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
+                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 400,
                 isAndroid: false,
@@ -292,7 +292,7 @@ describe('screenshots', () => {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
                 // @ts-expect-error
-                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
+                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: false,
@@ -341,7 +341,7 @@ describe('screenshots', () => {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
                 // @ts-expect-error
-                deviceRectangles: { viewport: { left: 0, top: 0, width: 0, height: 0 } },
+                deviceRectangles: { viewport: { x: 0, y: 0, width: 0, height: 0 } },
                 fullPageScrollTimeout: 1,
                 innerHeight: 768,
                 isAndroid: false,

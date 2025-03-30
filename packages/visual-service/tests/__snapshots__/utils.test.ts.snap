@@ -23,8 +23,26 @@ exports[`utils > getInstanceData > should return instance data for a mobile app 
   "browserVersion": "not_known",
   "deviceName": "not_known",
   "devicePixelRatio": 3.5,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
@@ -36,37 +54,17 @@ exports[`utils > getInstanceData > should return instance data for a mobile app 
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "rightSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -91,8 +89,26 @@ exports[`utils > getInstanceData > should return instance data for an Android mo
   "browserVersion": "not_known",
   "deviceName": "android emulator",
   "devicePixelRatio": 3.5,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
@@ -104,37 +120,17 @@ exports[`utils > getInstanceData > should return instance data for an Android mo
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "rightSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -159,12 +155,30 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
   "browserVersion": "not_known",
   "deviceName": "ipad",
   "devicePixelRatio": 0,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 9,
       "width": 276,
       "x": 279,
       "y": 1179,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "statusBar": {
       "height": 24,
@@ -172,37 +186,17 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "rightSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -227,8 +221,26 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
   "browserVersion": "not_known",
   "deviceName": "ipad",
   "devicePixelRatio": 0,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
@@ -240,37 +252,17 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "rightSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -295,12 +287,30 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
   "browserVersion": "not_known",
   "deviceName": "ipad",
   "devicePixelRatio": 0,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 9,
       "width": 276,
       "x": 279,
       "y": 1179,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "statusBar": {
       "height": 24,
@@ -308,37 +318,17 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "rightSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -363,12 +353,30 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPhone
   "browserVersion": "not_known",
   "deviceName": "iphone 15 pro",
   "devicePixelRatio": 0,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 9,
       "width": 143,
       "x": 125,
       "y": 837,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "statusBar": {
       "height": 59,
@@ -376,37 +384,17 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPhone
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "rightSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -431,50 +419,48 @@ exports[`utils > getInstanceData > should return instance data when the browsers
   "browserVersion": "75.123",
   "deviceName": "samsung galaxy s22",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
     },
-    "statusBar": {
+    "leftSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "rightSidePadding": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 144,
+      "width": 100,
+      "x": 0,
+      "y": 0,
     },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -499,50 +485,48 @@ exports[`utils > getInstanceData > should return instance data when the lambdate
   "browserVersion": "75.123",
   "deviceName": "samsung galaxy s22 lt",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
     },
-    "statusBar": {
+    "leftSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "rightSidePadding": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBar": {
+      "height": 144,
+      "width": 100,
+      "x": 0,
+      "y": 0,
     },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -570,8 +554,26 @@ exports[`utils > getInstanceData > should return instance data when the minimum 
   "browserVersion": "75.123",
   "deviceName": "not_known",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
@@ -583,37 +585,17 @@ exports[`utils > getInstanceData > should return instance data when the minimum 
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "rightSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -638,8 +620,26 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
   "browserVersion": "75.123",
   "deviceName": "not_known",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
@@ -651,37 +651,17 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "rightSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {
@@ -706,8 +686,26 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
   "browserVersion": "75.123",
   "deviceName": "not_known",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
@@ -719,37 +717,17 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceRectangles": {
-    "bottomBar": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "leftSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "rightSidePadding": {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "statusBarAndAddressBar": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
     "viewport": {
       "height": 0,
-      "left": 0,
-      "top": 0,
       "width": 0,
+      "x": 0,
+      "y": 0,
     },
   },
   "deviceScreenSize": {

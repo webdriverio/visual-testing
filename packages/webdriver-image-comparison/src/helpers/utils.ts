@@ -9,11 +9,11 @@ import type {
     GetToolBarShadowPaddingOptions,
     ScreenshotSize,
 } from './utils.interfaces.js'
-import type { DeviceRectangles } from '../methods/instanceData.interfaces.js'
 import type { Executor } from '../methods/methods.interfaces.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
+import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 
 /**
  * Get and create a folder
@@ -475,22 +475,23 @@ export async function getMobileViewPortPosition({
         // We need to wait a bit here, otherwise the click is not registered
         await waitFor(100)
         // 4a. Get the data from the overlay and remove it
-        const { top, left, width, height } = await executor(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
+        const { y, x, width, height } = await executor(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
         // 4.b reset the url
         await url(currentUrl)
         // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
-        const viewportTop = Math.max(0, Math.round(nativeClickY - top))
-        const viewportLeft = Math.max(0, Math.round(nativeClickX - left))
+        const viewportTop = Math.max(0, Math.round(nativeClickY - y))
+        const viewportLeft = Math.max(0, Math.round(nativeClickX - x))
         const statusBarAndAddressBarHeight = Math.max(0, Math.round(viewportTop))
         const bottomBarHeight = Math.max(0, Math.round(screenHeight - (viewportTop + height)))
         const leftSidePaddingWidth = Math.max(0, Math.round(viewportLeft))
         const rightSidePaddingWidth = Math.max(0, Math.round(screenWidth - (viewportLeft + width)))
         const deviceRectangles = {
-            statusBarAndAddressBar: { top: 0, left: 0, width: screenWidth, height: statusBarAndAddressBarHeight },
-            viewport: { top: viewportTop, left: viewportLeft, width: width, height: height },
-            bottomBar: { top: viewportTop + height, left: 0, width: screenWidth, height: bottomBarHeight },
-            leftSidePadding: { top: viewportTop, left: 0, width: leftSidePaddingWidth, height: height },
-            rightSidePadding: { top: viewportTop, left: viewportLeft + width, width: rightSidePaddingWidth, height: height },
+            ...initialDeviceRectangles,
+            statusBarAndAddressBar: { y: 0, x: 0, width: screenWidth, height: statusBarAndAddressBarHeight },
+            viewport: { y: viewportTop, x: viewportLeft, width: width, height: height },
+            bottomBar: { y: viewportTop + height, x: 0, width: screenWidth, height: bottomBarHeight },
+            leftSidePadding: { y: viewportTop, x: 0, width: leftSidePaddingWidth, height: height },
+            rightSidePadding: { y: viewportTop, x: viewportLeft + width, width: rightSidePaddingWidth, height: height },
         }
 
         return deviceRectangles

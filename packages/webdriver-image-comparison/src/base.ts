@@ -5,7 +5,7 @@ import { defaultOptions } from './helpers/options.js'
 import { DEVICE_RECTANGLES, FOLDERS } from './helpers/constants.js'
 import type { Folders } from './base.interfaces.js'
 import type { ClassOptions, DefaultOptions } from './helpers/options.interfaces.js'
-import type { DeviceRectangles } from './methods/instanceData.interfaces.js'
+import type { DeviceRectangles } from './methods/rectangles.interfaces.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison')
 

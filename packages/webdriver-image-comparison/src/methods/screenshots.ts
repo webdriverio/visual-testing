@@ -96,8 +96,8 @@ export async function getMobileFullPageNativeWebScreenshotsData(
     // but only for Android, because the deviceRectangles are already in CSS pixels for iOS
     const viewportHeight = Math.round(viewport.height / (isAndroid ? devicePixelRatio : 1)) - addressBarShadowPadding - toolBarShadowPadding
     const viewportWidth= Math.round(viewport.width / (isAndroid ? devicePixelRatio : 1))
-    const viewportX = Math.round(viewport.left / (isAndroid ? devicePixelRatio : 1))
-    const viewportY = Math.round(viewport.top / (isAndroid ? devicePixelRatio : 1))
+    const viewportX = Math.round(viewport.x / (isAndroid ? devicePixelRatio : 1))
+    const viewportY = Math.round(viewport.y / (isAndroid ? devicePixelRatio : 1))
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined

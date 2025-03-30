@@ -2,6 +2,7 @@ import type { ChainablePromiseElement } from 'webdriverio'
 import { calculateDprData, getScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import type {
+    DeviceRectangles,
     ElementRectangles,
     RectanglesOutput,
     ScreenRectanglesOptions,
@@ -10,7 +11,7 @@ import type {
 } from './rectangles.interfaces.js'
 import type { GetElementRect } from './methods.interfaces.js'
 import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
-import type { DeviceRectangles, InstanceData } from './instanceData.interfaces.js'
+import type { InstanceData } from './instanceData.interfaces.js'
 
 /**
  * Determine the element rectangles on the page / screenshot
@@ -121,19 +122,19 @@ export function determineStatusAddressToolBarRectangles({ deviceRectangles, opti
         ( isAndroid && isAndroidNativeWebScreenshot || !isAndroid )
     ) {
         const statusAddressBar = {
-            x: deviceRectangles.statusBarAndAddressBar.left, y: deviceRectangles.statusBarAndAddressBar.top,
+            x: deviceRectangles.statusBarAndAddressBar.x, y: deviceRectangles.statusBarAndAddressBar.y,
             width: deviceRectangles.statusBarAndAddressBar.width, height: deviceRectangles.statusBarAndAddressBar.height,
         }
         const toolBar = {
-            x: deviceRectangles.bottomBar.left, y: deviceRectangles.bottomBar.top,
+            x: deviceRectangles.bottomBar.x, y: deviceRectangles.bottomBar.y,
             width: deviceRectangles.bottomBar.width, height: deviceRectangles.bottomBar.height,
         }
         const leftSidePadding = {
-            x: deviceRectangles.leftSidePadding.left, y: deviceRectangles.leftSidePadding.top,
+            x: deviceRectangles.leftSidePadding.x, y: deviceRectangles.leftSidePadding.y,
             width: deviceRectangles.leftSidePadding.width, height: deviceRectangles.leftSidePadding.height,
         }
         const rightSidePadding = {
-            x: deviceRectangles.rightSidePadding.left, y: deviceRectangles.rightSidePadding.top,
+            x: deviceRectangles.rightSidePadding.x, y: deviceRectangles.rightSidePadding.y,
             width: deviceRectangles.rightSidePadding.width, height: deviceRectangles.rightSidePadding.height,
         }
 
@@ -269,7 +270,7 @@ export async function determineDeviceBlockOuts({ isAndroid, screenCompareOptions
 }){
     const rectangles: RectanglesOutput[] = []
     const { blockOutStatusBar, blockOutToolBar } = screenCompareOptions
-    const { devicePlatformRect:{ homeBar, statusBar } } = instanceData
+    const { deviceRectangles:{ homeBar, statusBar } } = instanceData
 
     if (blockOutStatusBar){
         rectangles.push(statusBar)

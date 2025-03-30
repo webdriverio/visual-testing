@@ -1,4 +1,3 @@
-import type { DeviceRectangles } from './instanceData.interfaces.js'
 import type { Executor } from './methods.interfaces.js'
 
 export interface RectanglesOptions {
@@ -33,6 +32,16 @@ export interface RectanglesOutput {
     width: number;
     x: number;
     y: number;
+}
+
+export type DeviceRectangles = {
+    bottomBar: RectanglesOutput,
+    homeBar: RectanglesOutput,
+    leftSidePadding: RectanglesOutput,
+    rightSidePadding: RectanglesOutput,
+    statusBarAndAddressBar: RectanglesOutput,
+    statusBar: RectanglesOutput,
+    viewport: RectanglesOutput,
 }
 
 export interface StatusAddressToolBarRectanglesOptions {
