@@ -440,7 +440,7 @@ export async function takeWebElementScreenshot({
     screenShot,
     takeElementScreenshot,
 }:TakeWebElementScreenshot): Promise<TakeWebElementScreenshotData>{
-    if (isIOS || fallback) {
+    if (fallback) {
         const base64Image = await takeBase64Screenshot(screenShot)
         const elementRectangleOptions: ElementRectanglesOptions = {
             /**
@@ -482,6 +482,7 @@ export async function takeWebElementScreenshot({
             rectangles,
         }
     } catch (_e) {
+        log.warn('The element screenshot failed, falling back to cutting the full device/viewport screenshot:', _e)
         return takeWebElementScreenshot({
             devicePixelRatio,
             deviceRectangles,
@@ -497,5 +498,4 @@ export async function takeWebElementScreenshot({
             takeElementScreenshot,
         })
     }
-
 }

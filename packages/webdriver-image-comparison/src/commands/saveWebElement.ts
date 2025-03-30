@@ -7,7 +7,7 @@ import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
-import { getScreenshotSize } from '../helpers/utils.js'
+import { getScreenshotSize, waitFor } from '../helpers/utils.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 
@@ -84,6 +84,8 @@ export default async function saveWebElement(
     let currentPosition: number | undefined
     if (autoElementScroll) {
         currentPosition = await executor(scrollElementIntoView, element, addressBarShadowPadding)
+        // We need to wait for the scroll to finish before taking the screenshot
+        await waitFor(100)
     }
 
     // 3.  Take the screenshot and determine the rectangles

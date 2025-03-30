@@ -9,7 +9,7 @@ import checkFullPageScreen from './commands/checkFullPageScreen.js'
 import checkTabbablePage from './commands/checkTabbablePage.js'
 import { ClassOptions } from './helpers/options.interfaces.js'
 import { ImageCompareResult } from './methods/images.interfaces.js'
-import { DEFAULT_TEST_CONTEXT, IOS_OFFSETS, FOLDERS, NOT_KNOWN } from './helpers/constants.js'
+import { DEFAULT_TEST_CONTEXT, DEVICE_RECTANGLES, IOS_OFFSETS, FOLDERS, NOT_KNOWN } from './helpers/constants.js'
 import { getMobileScreenSize, getMobileViewPortPosition } from './helpers/utils.js'
 
 export type { ScreenshotOutput } from './helpers/afterScreenshot.interfaces.js'
@@ -36,6 +36,7 @@ export {
     ClassOptions,
     ImageCompareResult,
     DEFAULT_TEST_CONTEXT,
+    DEVICE_RECTANGLES,
     IOS_OFFSETS,
     FOLDERS,
     NOT_KNOWN,

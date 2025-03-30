@@ -9,10 +9,11 @@ import type {
     GetToolBarShadowPaddingOptions,
     ScreenshotSize,
 } from './utils.interfaces.js'
-import type { DeviceRectangleBound, DeviceRectangles } from '../methods/instanceData.interfaces.js'
+import type { DeviceRectangles } from '../methods/instanceData.interfaces.js'
 import type { Executor } from '../methods/methods.interfaces.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
+import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
 
 /**
  * Get and create a folder
@@ -425,28 +426,6 @@ export async function executeNativeClick({ executor, isIOS, x, y }:{executor: Ex
 }
 
 /**
- * Get the webview click and viewport dimensions
- */
-async function getMobileWebviewClickAndDimensions(executor:Executor): Promise<DeviceRectangleBound> {
-    return executor(() => {
-        const overlay = document.querySelector('[data-test="ics-overlay"]') as HTMLElement | null
-        const defaultValue = { top: 0, left: 0, width: 0, height: 0 }
-
-        if (!overlay || !overlay.dataset.icsWebviewData) {
-            return defaultValue
-        }
-
-        overlay.remove()
-
-        try {
-            return JSON.parse(overlay.dataset.icsWebviewData)
-        } catch {
-            return defaultValue
-        }
-    })
-}
-
-/**
  * Get the mobile viewport position, we determine this by:
  * 1. Loading a base64 HTML page
  * 2. Injecting an overlay on top of the webview with an event listener that stores the click position in the webview
@@ -496,7 +475,7 @@ export async function getMobileViewPortPosition({
         // We need to wait a bit here, otherwise the click is not registered
         await waitFor(100)
         // 4a. Get the data from the overlay and remove it
-        const { top, left, width, height } = await getMobileWebviewClickAndDimensions(executor)
+        const { top, left, width, height } = await executor(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
         // 4.b reset the url
         await url(currentUrl)
         // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
