@@ -269,6 +269,9 @@ importers:
       '@wdio/types':
         specifier: ^9.9.0
         version: 9.9.0
+      expect-webdriverio:
+        specifier: ^5.1.0
+        version: 5.1.0(@wdio/globals@9.9.1(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.9.1)
       webdriver-image-comparison:
         specifier: workspace:*
         version: link:../webdriver-image-comparison
