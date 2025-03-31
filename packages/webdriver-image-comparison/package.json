@@ -25,12 +25,10 @@
     "watch:tsc": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "fs-extra": "^11.3.0",
     "jimp": "^1.6.0",
     "@wdio/logger": "^9.4.4"
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
     "webdriverio": "^9.14.0"
   }
 }
