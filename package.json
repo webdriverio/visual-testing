@@ -78,7 +78,7 @@
     "@wdio/spec-reporter": "^9.12.2",
     "@wdio/types": "^9.12.2",
     "cross-env": "^7.0.3",
-    "eslint": "^9.20.1",
+    "eslint": "^9.23.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-unicorn": "^56.0.1",
     "eslint-plugin-wdio": "^9.9.1",
