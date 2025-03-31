@@ -14,7 +14,7 @@
 - Updated dependencies [307fbec]
   - webdriver-image-comparison@7.4.0
 
-### Committers: 1
+### Committers: 2
 
 - Fábio Correia [@fabioatcorreia](https://github.com/fabioatcorreia)
 - alcpereira ([@alcpereira](https://github.com/alcpereira))
