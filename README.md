@@ -237,13 +237,13 @@ Two tests on two different components are executed. Each test first sets a state
 The above spec file can be saved in a folder and added to the command line with the following command:
 
 ```sh
-npm run test.local.desktop.storybook.localhost -- --spec='tests/specs/storybook-interaction/*.ts'
+pnpm run test.local.desktop.storybook.localhost -- --spec='tests/specs/storybook-interaction/*.ts'
 ```
 
 The Storybook runner will first automatically scan your Storybook instance and then add your tests to the stories that need to be compared. If you don't want the components that you use for interaction testing to be compared twice, you can add a filter to remove the "default" stories from the scan by providing the [`--skipStories`](#--skipstories) filter. This would look like this:
 
 ```sh
-npm run test.local.desktop.storybook.localhost -- --skipStories="/example-page.*/gm" --spec='tests/specs/storybook-interaction/*.ts'
+pnpm run test.local.desktop.storybook.localhost -- --skipStories="/example-page.*/gm" --spec='tests/specs/storybook-interaction/*.ts'
 ```
 
 ### New Custom Command
@@ -493,7 +493,7 @@ devDependencies:
 -   eslint-plugin-wdio 9.0.8
 -   husky 9.1.6
 -   jsdom 25.0.1
--   npm-run-all2 6.2.3
+-   pnpm-run-all2 6.2.3
 -   release-it 17.6.0
 -   rimraf 6.0.1
 -   saucelabs 8.0.0
@@ -516,7 +516,7 @@ Please join our [Discord](https://discord.webdriver.io) Server if you have any q
 
 ### Issues
 
-If you have questions, bugs or feature requests, please file an issue. Before submitting an issue, please search the issue archive to help reduce duplicates, and read the [FAQ](../README.md#faq).
+If you have questions, bugs or feature requests, please file an issue. Before submitting an issue, please search the issue archive to help reduce duplicates, and read the [FAQ](https://webdriver.io/docs/visual-testing/faq/).
 
 If you can't find it there you can submit an issue where you can submit:
 
@@ -574,7 +574,7 @@ First, a local baseline needs to be created. This can be done with:
 
 ```sh
 // With the webdriver protocol
-$ npm run test.local.init
+$ pnpm run test.local.init
 ````
 
 This command will create a folder called `localBaseline` that will hold all the baseline images.
@@ -583,7 +583,7 @@ Then run:
 
 ```sh
 // With the webdriver protocol
-npm run test.local.desktop
+pnpm run test.local.desktop
 ```
 
 This will run all tests on a local machine on Chrome.
@@ -593,7 +593,7 @@ This will run all tests on a local machine on Chrome.
 First, a local baseline needs to be created. This can be done with:
 
 ```sh
-npm run test.local.desktop.storybook
+pnpm run test.local.desktop.storybook
 ```
 
 This will Storybook tests with Chrome in headless mode against a Demo Storybook repo located at https://govuk-react.github.io/govuk-react/.
@@ -601,7 +601,7 @@ This will Storybook tests with Chrome in headless mode against a Demo Storybook 
 To run the tests with more browsers you can run
 
 ```sh
-npm run test.local.desktop.storybook -- --browsers=chrome,firefox,edge,safari
+pnpm run test.local.desktop.storybook -- --browsers=chrome,firefox,edge,safari
 ```
 
 > [!NOTE]
@@ -612,10 +612,10 @@ npm run test.local.desktop.storybook -- --browsers=chrome,firefox,edge,safari
 The command below is used to test the build on GitHub Actions, it can only be used there and not for local development.
 
 ```
-$ npm run test.saucelabs
+$ pnpm run test.saucelabs
 ```
 
-It will test against a lot of configurations that can be found [here](./tests/configs/wdio.saucelabs.conf.js).
+It will test against a lot of configurations that can be found [here](./tests/configs/wdio.saucelabs.web.conf.ts).
 All PRs are automatically checked against Sauce Labs.
 
 ## Releasing
