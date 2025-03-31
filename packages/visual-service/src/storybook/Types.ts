@@ -1,4 +1,4 @@
-import type { CheckElementMethodOptions, Folders } from 'webdriver-image-comparison'
+import type { CheckElementMethodOptions, ClassOptions, Folders } from 'webdriver-image-comparison'
 
 export interface StorybookData {
     id: string;
@@ -41,7 +41,7 @@ export type CreateTestFileOptions = {
     skipStories: string[] | RegExp,
     storiesJson: StorybookData[],
     storybookUrl: string;
-}
+} & Pick<CreateTestContent, 'getStoriesBaselinePath'>
 
 export interface CapabilityMap {
     chrome: WebdriverIO.Capabilities;
@@ -60,7 +60,7 @@ export type CreateTestContent = {
     skipStories: string[] | RegExp;
     stories: StorybookData[];
     storybookUrl: string;
-}
+} & Pick<CreateItContent, 'getStoriesBaselinePath'>
 
 export type CreateItContent = {
     additionalSearchParams: URLSearchParams;
@@ -72,7 +72,7 @@ export type CreateItContent = {
     skipStories: string[] | RegExp;
     storyData: StorybookData;
     storybookUrl: string;
-}
+} & Pick<NonNullable<ClassOptions['storybook']>, 'getStoriesBaselinePath'>
 
 export type CategoryComponent = { category: string, component: string }
 

@@ -125,7 +125,7 @@ exports[`Storybook utils > itFunction > generates correct mocha test code with n
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"actualFolder":"actual/category/component/","baselineFolder":"baseline/category/component/","diffFolder":"diff/category/component/"})
     });
     "
 `;
@@ -139,7 +139,7 @@ exports[`Storybook utils > itFunction > generates correct mocha test code with s
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"actualFolder":"actual/category/component/","baselineFolder":"baseline/category/component/","diffFolder":"diff/category/component/"})
     });
     "
 `;
@@ -153,7 +153,7 @@ exports[`Storybook utils > itFunction > generates correct test code with Jasmine
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"actualFolder":"actual/category/component/","baselineFolder":"baseline/category/component/","diffFolder":"diff/category/component/"})
     });
     "
 `;
@@ -167,7 +167,21 @@ exports[`Storybook utils > itFunction > generates correct test code with Jasmine
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"actualFolder":"actual/category/component/","baselineFolder":"baseline/category/component/","diffFolder":"diff/category/component/"})
+    });
+    "
+`;
+
+exports[`Storybook utils > itFunction > generates correct test code with a custom stories baseline folder 1`] = `
+"
+    it(\`should take a viewport screenshot of category-component--story1\`, async () => {
+        await browser.waitForStorybookComponentToBeLoaded({
+            clipSelector: '#id',
+            id: 'category-component--story1',
+            storybookUrl: 'http://storybook.com/',
+            additionalSearchParams: new URLSearchParams('foo=bar'),
+        });
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"actualFolder":"actual/category__component","baselineFolder":"baseline/category__component","diffFolder":"diff/category__component"})
     });
     "
 `;
@@ -181,21 +195,7 @@ exports[`Storybook utils > itFunction > generates correct test code with for a c
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
-    });
-    "
-`;
-
-exports[`Storybook utils > itFunction > generates correct test code with for a clipped test 2`] = `
-"
-    it(\`should take an element screenshot of category-component--story1\`, async () => {
-        await browser.waitForStorybookComponentToBeLoaded({
-            clipSelector: '#id',
-            id: 'category-component--story1',
-            storybookUrl: 'http://storybook.com/',
-            additionalSearchParams: new URLSearchParams('foo=bar'),
-        });
-        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
+        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"ignoreLess":true,"actualFolder":"actual/category/component/","baselineFolder":"baseline/category/component/","diffFolder":"diff/category/component/"})
     });
     "
 `;
@@ -209,7 +209,7 @@ exports[`Storybook utils > itFunction > generates correct test code with mocha f
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"actualFolder":"actual/category/component/","baselineFolder":"baseline/category/component/","diffFolder":"diff/category/component/"})
     });
     "
 `;
@@ -223,7 +223,7 @@ exports[`Storybook utils > itFunction > generates correct test code with mocha f
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"baselineFolder":"baseline/category/component/"})
+        await expect(browser).toMatchScreenSnapshot('category-component--story1', {"ignoreLess":true,"actualFolder":"actual/category/component/","baselineFolder":"baseline/category/component/","diffFolder":"diff/category/component/"})
     });
     "
 `;
