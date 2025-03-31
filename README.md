@@ -514,7 +514,7 @@ Please join our [Discord](https://discord.webdriver.io) Server if you have any q
 
 ### Issues
 
-If you have questions, bugs or feature requests, please file an issue. Before submitting an issue, please search the issue archive to help reduce duplicates, and read the [FAQ](../README.md#faq).
+If you have questions, bugs or feature requests, please file an issue. Before submitting an issue, please search the issue archive to help reduce duplicates, and read the [FAQ](https://webdriver.io/docs/visual-testing/faq/).
 
 If you can't find it there you can submit an issue where you can submit:
 
@@ -613,7 +613,7 @@ The command below is used to test the build on GitHub Actions, it can only be us
 $ npm run test.saucelabs
 ```
 
-It will test against a lot of configurations that can be found [here](./tests/configs/wdio.saucelabs.conf.js).
+It will test against a lot of configurations that can be found [here](./tests/configs/wdio.saucelabs.web.conf.ts).
 All PRs are automatically checked against Sauce Labs.
 
 ## Releasing
