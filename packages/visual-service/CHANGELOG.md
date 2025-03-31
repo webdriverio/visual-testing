@@ -18,6 +18,7 @@
 
 - Fábio Correia [@fabioatcorreia](https://github.com/fabioatcorreia)
 - alcpereira ([@alcpereira](https://github.com/alcpereira))
+
 ## 6.3.3
 
 ### Patch Changes
