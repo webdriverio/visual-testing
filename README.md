@@ -393,6 +393,7 @@ This will result in the following logs
 
 <details>
     <summary>Open to see an example of the logs</summary>
+    
 ```logs
 ==========================
 🤖 Package update Wizard 🧙
