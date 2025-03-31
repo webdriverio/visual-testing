@@ -75,7 +75,7 @@
     "@wdio/mocha-framework": "^9.9.0",
     "@wdio/sauce-service": "^9.9.1",
     "@wdio/shared-store-service": "^9.9.1",
-    "@wdio/spec-reporter": "^9.9.0",
+    "@wdio/spec-reporter": "^9.12.2",
     "@wdio/types": "^9.12.2",
     "cross-env": "^7.0.3",
     "eslint": "^9.20.1",
