@@ -1,5 +1,24 @@
 # @wdio/visual-service
 
+## 6.4.0
+
+### Minor Changes
+
+- 7f859aa: Add `additionalSearchParams` to the Storybook Runner API
+- 307fbec: Add `getStoriesBaselinePath` to Storybook Runner API, enabling custom file paths (e.g. files with a flat hierarchy in the baselines folder)
+
+### Patch Changes
+
+- 3d232d1: Fix compareOptions not passed from config to the storybook runner tests
+- Updated dependencies [7f859aa]
+- Updated dependencies [307fbec]
+  - webdriver-image-comparison@7.4.0
+
+### Committers: 2
+
+- Fábio Correia [@fabioatcorreia](https://github.com/fabioatcorreia)
+- alcpereira ([@alcpereira](https://github.com/alcpereira))
+
 ## 6.3.3
 
 ### Patch Changes
@@ -8,7 +27,8 @@
 
 ### Committers: 1
 
--   alcpereira ([@ alcpereira](https://github.com/alcpereira))
+- alcpereira ([@ alcpereira](https://github.com/alcpereira))
+
 ## 6.3.2
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # webdriver-image-comparison
 
+## 7.4.0
+
+### Minor Changes
+
+- 7f859aa: Add `additionalSearchParams` to the Storybook Runner API
+- 307fbec: Add `getStoriesBaselinePath` to Storybook Runner API, enabling custom file paths (e.g. files with a flat hierarchy in the baselines folder)
+
+### Committers: 2
+
+- Fábio Correia [@fabioatcorreia](https://github.com/fabioatcorreia)
+- alcpereira ([@alcpereira](https://github.com/alcpereira))
+
 ## 7.3.2
 
 ### Patch Changes
@@ -8,7 +20,7 @@
 
 ### Committers: 1
 
--   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+- Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
 
 ## 7.3.1
 
