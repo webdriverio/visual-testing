@@ -235,13 +235,13 @@ Two tests on two different components are executed. Each test first sets a state
 The above spec file can be saved in a folder and added to the command line with the following command:
 
 ```sh
-npm run test.local.desktop.storybook.localhost -- --spec='tests/specs/storybook-interaction/*.ts'
+pnpm run test.local.desktop.storybook.localhost -- --spec='tests/specs/storybook-interaction/*.ts'
 ```
 
 The Storybook runner will first automatically scan your Storybook instance and then add your tests to the stories that need to be compared. If you don't want the components that you use for interaction testing to be compared twice, you can add a filter to remove the "default" stories from the scan by providing the [`--skipStories`](#--skipstories) filter. This would look like this:
 
 ```sh
-npm run test.local.desktop.storybook.localhost -- --skipStories="/example-page.*/gm" --spec='tests/specs/storybook-interaction/*.ts'
+pnpm run test.local.desktop.storybook.localhost -- --skipStories="/example-page.*/gm" --spec='tests/specs/storybook-interaction/*.ts'
 ```
 
 ### New Custom Command
@@ -400,7 +400,7 @@ This will result in the following logs
 ? Do you want to update the package.json files? yes
 Updating root 'package.json' for minor updates...
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing...
-Using pnpm
+Using ppnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/package.json
 [====================] 38/38 100%
 
@@ -410,30 +410,30 @@ Upgrading /Users/wswebcreation/Git/wdio/visual-testing/package.json
 @vitest/coverage-v8 ^2.1.1 → ^2.1.2
 vitest ^2.1.1 → ^2.1.2
 
-Run pnpm install to install new versions.
+Run ppnpm install to install new versions.
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/ocr-service...
-Using pnpm
+Using ppnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/ocr-service/package.json
 [====================] 11/11 100%
 
 All dependencies match the minor package versions :)
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-reporter...
-Using pnpm
+Using ppnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-reporter/package.json
 [====================] 11/11 100%
 
 eslint-config-next 14.2.13 → 14.2.14
 next 14.2.13 → 14.2.14
 
-Run pnpm install to install new versions.
+Run ppnpm install to install new versions.
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-service...
-Using pnpm
+Using ppnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-service/package.json
 [====================] 5/5 100%
 
 All dependencies match the minor package versions :)
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/webdriver-image-comparison...
-Using pnpm
+Using ppnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/webdriver-image-comparison/package.json
 [====================] 8/8 100%
 
@@ -447,8 +447,8 @@ Removing dependencies in webdriver-image-comparison...
 ? Would you like reinstall the dependencies? yes
 Installing dependencies in /Users/wswebcreation/Git/wdio/visual-testing...
 
-> @wdio/visual-testing-monorepo@ pnpm.install.workaround /Users/wswebcreation/Git/wdio/visual-testing
-> pnpm install --shamefully-hoist
+> @wdio/visual-testing-monorepo@ ppnpm.install.workaround /Users/wswebcreation/Git/wdio/visual-testing
+> ppnpm install --shamefully-hoist
 
 Scope: all 5 workspace projects
 Lockfile is up to date, resolution step is skipped
@@ -491,7 +491,7 @@ devDependencies:
 -   eslint-plugin-wdio 9.0.8
 -   husky 9.1.6
 -   jsdom 25.0.1
--   npm-run-all2 6.2.3
+-   pnpm-run-all2 6.2.3
 -   release-it 17.6.0
 -   rimraf 6.0.1
 -   saucelabs 8.0.0
@@ -539,25 +539,25 @@ To create a PR for this project and start contributing follow this step-by-step 
     ```sh
     $ cd visual-testing
     $ corepack enable
-    $ pnpm pnpm.install.workaround
+    $ ppnpm ppnpm.install.workaround
     ```
 
 -   Run the watch mode that will automatically transpile the code
 
     ```sh
-    $ pnpm watch
+    $ ppnpm watch
     ```
 
     to build the project, run:
 
     ```sh
-    $ pnpm build
+    $ ppnpm build
     ```
 
 -   Ensure that your changes don't break any tests, run:
 
     ```sh
-    $ pnpm test
+    $ ppnpm test
     ```
 
 This project uses [changesets](https://github.com/changesets/changesets) to automatically create changelogs and releases.
@@ -572,7 +572,7 @@ First, a local baseline needs to be created. This can be done with:
 
 ```sh
 // With the webdriver protocol
-$ npm run test.local.init
+$ pnpm run test.local.init
 ````
 
 This command will create a folder called `localBaseline` that will hold all the baseline images.
@@ -581,7 +581,7 @@ Then run:
 
 ```sh
 // With the webdriver protocol
-npm run test.local.desktop
+pnpm run test.local.desktop
 ```
 
 This will run all tests on a local machine on Chrome.
@@ -591,7 +591,7 @@ This will run all tests on a local machine on Chrome.
 First, a local baseline needs to be created. This can be done with:
 
 ```sh
-npm run test.local.desktop.storybook
+pnpm run test.local.desktop.storybook
 ```
 
 This will Storybook tests with Chrome in headless mode against a Demo Storybook repo located at https://govuk-react.github.io/govuk-react/.
@@ -599,7 +599,7 @@ This will Storybook tests with Chrome in headless mode against a Demo Storybook 
 To run the tests with more browsers you can run
 
 ```sh
-npm run test.local.desktop.storybook -- --browsers=chrome,firefox,edge,safari
+pnpm run test.local.desktop.storybook -- --browsers=chrome,firefox,edge,safari
 ```
 
 > [!NOTE]
@@ -610,7 +610,7 @@ npm run test.local.desktop.storybook -- --browsers=chrome,firefox,edge,safari
 The command below is used to test the build on GitHub Actions, it can only be used there and not for local development.
 
 ```
-$ npm run test.saucelabs
+$ pnpm run test.saucelabs
 ```
 
 It will test against a lot of configurations that can be found [here](./tests/configs/wdio.saucelabs.web.conf.ts).
