@@ -77,10 +77,12 @@ async function getMobileInstanceData({
         const url = (arg:string) => currentBrowser.url(arg)
         const currentDriverCapabilities = currentBrowser.capabilities
         const { height: screenHeight, width: screenWidth } = await getMobileScreenSize({ executor, isIOS })
-        // Update the width for the device rectangles
-        // bottomBar, screenSize, statusBarAndAddressBar
+        // Update the width for the device rectangles for bottomBar, screenSize, statusBar, statusBarAndAddressBar
         deviceRectangles.screenSize.height = screenHeight
-        deviceRectangles.screenSize.width = deviceRectangles.bottomBar.width = deviceRectangles.statusBarAndAddressBar.width = deviceRectangles.statusBar.width = screenWidth
+        deviceRectangles.screenSize.width = screenWidth
+        deviceRectangles.bottomBar.width = screenWidth
+        deviceRectangles.statusBarAndAddressBar.width = screenWidth
+        deviceRectangles.statusBar.width = screenWidth
         deviceRectangles = await getMobileViewPortPosition({
             initialDeviceRectangles,
             isAndroid,
