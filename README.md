@@ -400,7 +400,7 @@ This will result in the following logs
 ? Do you want to update the package.json files? yes
 Updating root 'package.json' for minor updates...
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing...
-Using ppnpm
+Using pnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/package.json
 [====================] 38/38 100%
 
@@ -410,30 +410,30 @@ Upgrading /Users/wswebcreation/Git/wdio/visual-testing/package.json
 @vitest/coverage-v8 ^2.1.1 → ^2.1.2
 vitest ^2.1.1 → ^2.1.2
 
-Run ppnpm install to install new versions.
+Run pnpm install to install new versions.
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/ocr-service...
-Using ppnpm
+Using pnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/ocr-service/package.json
 [====================] 11/11 100%
 
 All dependencies match the minor package versions :)
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-reporter...
-Using ppnpm
+Using pnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-reporter/package.json
 [====================] 11/11 100%
 
 eslint-config-next 14.2.13 → 14.2.14
 next 14.2.13 → 14.2.14
 
-Run ppnpm install to install new versions.
+Run pnpm install to install new versions.
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-service...
-Using ppnpm
+Using pnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/visual-service/package.json
 [====================] 5/5 100%
 
 All dependencies match the minor package versions :)
 Updating packages for minor updates in /Users/wswebcreation/Git/wdio/visual-testing/packages/webdriver-image-comparison...
-Using ppnpm
+Using pnpm
 Upgrading /Users/wswebcreation/Git/wdio/visual-testing/packages/webdriver-image-comparison/package.json
 [====================] 8/8 100%
 
@@ -447,8 +447,8 @@ Removing dependencies in webdriver-image-comparison...
 ? Would you like reinstall the dependencies? yes
 Installing dependencies in /Users/wswebcreation/Git/wdio/visual-testing...
 
-> @wdio/visual-testing-monorepo@ ppnpm.install.workaround /Users/wswebcreation/Git/wdio/visual-testing
-> ppnpm install --shamefully-hoist
+> @wdio/visual-testing-monorepo@ pnpm.install.workaround /Users/wswebcreation/Git/wdio/visual-testing
+> pnpm install --shamefully-hoist
 
 Scope: all 5 workspace projects
 Lockfile is up to date, resolution step is skipped
@@ -539,25 +539,25 @@ To create a PR for this project and start contributing follow this step-by-step 
     ```sh
     $ cd visual-testing
     $ corepack enable
-    $ ppnpm ppnpm.install.workaround
+    $ pnpm pnpm.install.workaround
     ```
 
 -   Run the watch mode that will automatically transpile the code
 
     ```sh
-    $ ppnpm watch
+    $ pnpm watch
     ```
 
     to build the project, run:
 
     ```sh
-    $ ppnpm build
+    $ pnpm build
     ```
 
 -   Ensure that your changes don't break any tests, run:
 
     ```sh
-    $ ppnpm test
+    $ pnpm test
     ```
 
 This project uses [changesets](https://github.com/changesets/changesets) to automatically create changelogs and releases.
