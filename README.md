@@ -511,6 +511,7 @@ All packages updated!
 ````
 
 </details>
+
 ### Questions
 
 Please join our [Discord](https://discord.webdriver.io) Server if you have any questions or issues contributing to this project. Catch us contributors in the `🙏-contributing` channel.
@@ -631,4 +632,4 @@ To release a version of any of the packages listed above, do the following:
 
 ## Credits
 
-`@wdio/visual-testing` uses an open-source license from Sauce Labs.
+`@wdio/visual-testing` uses an open-source license from [LambdaTest](https://www.lambdatest.com/) and [Sauce Labs](https://saucelabs.com/).
