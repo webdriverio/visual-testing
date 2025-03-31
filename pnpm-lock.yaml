@@ -228,8 +228,8 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(eslint@9.23.0(jiti@1.21.7))
       isbot:
-        specifier: ^5.1.22
-        version: 5.1.22
+        specifier: ^5.1.25
+        version: 5.1.25
       postcss:
         specifier: ^8.5.2
         version: 8.5.2
@@ -4437,8 +4437,8 @@ packages:
   isarray@2.0.5:
     resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
 
-  isbot@5.1.22:
-    resolution: {integrity: sha512-RqCFY3cJy3c2y1I+rMn81cfzAR4XJwfPBC+M8kffUjbPzxApzyyv7Tbm1C/gXXq2dSCuD238pKFEWlQMTWsTFw==}
+  isbot@5.1.25:
+    resolution: {integrity: sha512-mqU76fmT7cpGG0JX1EzhCZIC+xovpH6TD2SAK18alonk0RG/RgChpGduJTYzRaq9a0COoFA99M9JVtEUOcScIw==}
     engines: {node: '>=18'}
 
   isexe@2.0.0:
@@ -12268,7 +12268,7 @@ snapshots:
 
   isarray@2.0.5: {}
 
-  isbot@5.1.22: {}
+  isbot@5.1.25: {}
 
   isexe@2.0.0: {}
 
