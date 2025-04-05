@@ -50,6 +50,7 @@ export interface ClassOptions {
     /**
      * Compare options
      */
+    // DEPRECATED: Use `compareOptions` instead
     // Automatically block out the side bar for iPads in landscape mode during comparisons. This prevents failures on the tab/private/bookmark native component.
     blockOutSideBar?: boolean;
     // Automatically block out the status and address bar during comparisons. This prevents failures on time, wifi or battery status.
@@ -81,6 +82,40 @@ export interface ClassOptions {
     saveAboveTolerance?: number;
     //Scale images to same size before comparison
     scaleImagesToSameSize?: boolean;
+    // The new options object that will be used for the comparison
+    compareOptions?: {
+        // Automatically block out the side bar for iPads in landscape mode during comparisons. This prevents failures on the tab/private/bookmark native component.
+        blockOutSideBar?: boolean;
+        // Automatically block out the status and address bar during comparisons. This prevents failures on time, wifi or battery status.
+        // This is mobile only.
+        blockOutStatusBar?: boolean;
+        // Automatically block out the tool bar. This is mobile only.
+        blockOutToolBar?: boolean;
+        // Create JSON report files with all comparison data, this can be used to create a custom (HTML) report.
+        createJsonReportFiles?: boolean;
+        // The proximity of the diff pixels to determine if a diff pixel is part of a group that is used for the JSON report files.
+        // The higher the number the more pixels will be grouped, the lower the number the less pixels will be grouped due to accuracy.
+        // Default is 5 pixels
+        diffPixelBoundingBoxProximity?: number;
+        // Compare images and discard alpha.
+        ignoreAlpha?: boolean;
+        // Compare images and discard anti aliasing.
+        ignoreAntialiasing?: boolean;
+        // Even though the images are in colour, the comparison wil compare 2 black/white images
+        ignoreColors?: boolean;
+        // Compare images and compare with `red = 16, green = 16, blue = 16, alpha = 16, minBrightness=16, maxBrightness=240`
+        ignoreLess?: boolean;
+        // Compare images and compare with `red = 0, green = 0, blue = 0, alpha = 0, minBrightness=0, maxBrightness=255`
+        ignoreNothing?: boolean;
+        // If true the return percentage will be like `0.12345678`, default is `0.12`
+        rawMisMatchPercentage?: boolean;
+        // This will return all compare data, not only the mismatch percentage
+        returnAllCompareData?: boolean;
+        // Allowable value of misMatchPercentage that prevents saving image with differences
+        saveAboveTolerance?: number;
+        //Scale images to same size before comparison
+        scaleImagesToSameSize?: boolean;
+    }
 
     /**
      * Tabbable options
@@ -145,7 +180,7 @@ export interface DefaultOptions {
     waitForFontsLoaded: boolean;
 }
 
-interface CompareOptions {
+export interface CompareOptions {
     blockOutSideBar: boolean;
     blockOutStatusBar: boolean;
     blockOutToolBar: boolean;

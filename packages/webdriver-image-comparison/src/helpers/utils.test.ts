@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, afterEach, vi } from 'vitest'
 import { existsSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import {
@@ -15,9 +15,15 @@ import {
     getAndCreatePath,
     getScreenshotSize,
     getToolBarShadowPadding,
+    logAllDeprecatedCompareOptions,
 } from './utils.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
+import type { CompareOptions } from './options.interfaces.js'
+import logger from '@wdio/logger'
+
+const log = logger('test')
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
 describe('utils', () => {
     describe('getAndCreatePath', () => {
@@ -415,6 +421,48 @@ describe('utils', () => {
 
         it('should get the screenshot size of a screenshot string with DRP 2', () => {
             expect(getScreenshotSize(IMAGE_STRING, 2)).toMatchSnapshot()
+        })
+    })
+
+    describe('logAllDeprecatedCompareOptions', () => {
+        it('should log all deprecated compare options', () => {
+            const warnSpy = vi.spyOn(log, 'warn')
+            const options: CompareOptions = {
+                blockOutSideBar: true,
+                blockOutStatusBar: true,
+                blockOutToolBar: true,
+                createJsonReportFiles: true,
+                diffPixelBoundingBoxProximity: 5,
+                ignoreAlpha: true,
+                ignoreAntialiasing: true,
+                ignoreColors: true,
+                ignoreLess: true,
+                ignoreNothing: true,
+                rawMisMatchPercentage: true,
+                returnAllCompareData: true,
+                saveAboveTolerance: 100,
+                scaleImagesToSameSize: true,
+            }
+
+            const result = logAllDeprecatedCompareOptions(options)
+
+            expect(result).toMatchSnapshot()
+            expect(warnSpy).toHaveBeenCalledWith(`The following root-level compare options are deprecated and should be moved under 'compareOptions':
+  - blockOutSideBar
+  - blockOutStatusBar
+  - blockOutToolBar
+  - createJsonReportFiles
+  - diffPixelBoundingBoxProximity
+  - ignoreAlpha
+  - ignoreAntialiasing
+  - ignoreColors
+  - ignoreLess
+  - ignoreNothing
+  - rawMisMatchPercentage
+  - returnAllCompareData
+  - saveAboveTolerance
+  - scaleImagesToSameSize
+In the next major version, these options will be removed from the root level and only be available under 'compareOptions'`)
         })
     })
 })
