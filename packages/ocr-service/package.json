@@ -30,7 +30,7 @@
   "dependencies": {
     "@wdio/globals": "^9.12.0",
     "@wdio/logger": "^9.4.4",
-    "@wdio/types": "^9.10.1",
+    "@wdio/types": "^9.12.2",
     "fuse.js": "^7.1.0",
     "@inquirer/prompts": "7.3.3",
     "jimp": "^1.6.0",

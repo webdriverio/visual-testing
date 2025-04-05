@@ -2,9 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "allowJs": true,
     "rootDir": "./src",
     "outDir": "./dist",
     "baseUrl": "."
   },
-  "include": ["./src/**/*.ts"]
+  "include": ["./src/**/*.ts", "./src/resemble/resemble.jimp.cjs"]
 }

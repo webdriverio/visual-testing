@@ -1,6 +1,6 @@
 {
   "name": "webdriver-image-comparison",
-  "version": "7.3.2",
+  "version": "7.4.0",
   "author": "Wim Selles - wswebcreation",
   "description": "An image compare module that can be used for different NodeJS Test automation frameworks that support the webdriver protocol",
   "keywords": [],
@@ -17,14 +17,12 @@
     "url": "https://github.com/webdriverio/visual-testing/issues"
   },
   "scripts": {
-    "build": "run-s clean:build copy-js build:*",
+    "build": "run-s clean:build build:*",
     "build:tsc": "tsc --project ./tsconfig.json",
     "clean:build": "rimraf coverage dist .tmp",
     "clean:watch": "rimraf coverage .tmp",
-    "copy-js": "copyfiles -u 1 src/resemble/resemble.jimp.cjs dist/",
-    "watch": "run-s clean:watch copy-js watch:*",
-    "watch:tsc": "pnpm run build:tsc -w",
-    "watch:js": "node -e \"require('fs').watchFile('src/resemble/resemble.jimp.cjs', () => { require('child_process').exec('npm run copy-js'); });\""
+    "watch": "run-s clean:watch watch:tsc",
+    "watch:tsc": "pnpm run build:tsc -w"
   },
   "dependencies": {
     "fs-extra": "^11.3.0",
@@ -32,9 +30,7 @@
     "@wdio/logger": "^9.4.4"
   },
   "devDependencies": {
-    "@types/copyfiles": "~2.4.4",
     "@types/fs-extra": "^11.0.4",
-    "copyfiles": "^2.4.1",
     "webdriverio": "^9.12.0"
   }
 }
