@@ -19,16 +19,38 @@ exports[`utils > getFolders > should be able to return the correct folders when 
 exports[`utils > getInstanceData > should return instance data for a mobile app with incomplete capability data 1`] = `
 {
   "appName": "",
-  "browserName": "not-known",
-  "browserVersion": "not-known",
+  "browserName": "not_known",
+  "browserVersion": "not_known",
   "deviceName": "not_known",
   "devicePixelRatio": 3.5,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 200,
+      "width": 100,
     },
     "statusBar": {
       "height": 144,
@@ -36,10 +58,18 @@ exports[`utils > getInstanceData > should return instance data for a mobile app 
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 200,
-    "width": 100,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": true,
   "isIOS": false,
@@ -47,24 +77,46 @@ exports[`utils > getInstanceData > should return instance data for a mobile app 
   "logName": "",
   "name": "",
   "nativeWebScreenshot": false,
-  "platformName": "not-known",
-  "platformVersion": "not-known",
+  "platformName": "not_known",
+  "platformVersion": "not_known",
 }
 `;
 
 exports[`utils > getInstanceData > should return instance data for an Android mobile app 1`] = `
 {
   "appName": "android.apk",
-  "browserName": "not-known",
-  "browserVersion": "not-known",
+  "browserName": "not_known",
+  "browserVersion": "not_known",
   "deviceName": "android emulator",
   "devicePixelRatio": 3.5,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 200,
+      "width": 100,
     },
     "statusBar": {
       "height": 144,
@@ -72,10 +124,18 @@ exports[`utils > getInstanceData > should return instance data for an Android mo
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 200,
-    "width": 100,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": true,
   "isIOS": false,
@@ -91,16 +151,38 @@ exports[`utils > getInstanceData > should return instance data for an Android mo
 exports[`utils > getInstanceData > should return instance data for an iOS iPad mobile app 1`] = `
 {
   "appName": "ios.zip",
-  "browserName": "not-known",
-  "browserVersion": "not-known",
+  "browserName": "not_known",
+  "browserVersion": "not_known",
   "deviceName": "ipad",
   "devicePixelRatio": 0,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 834,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 9,
       "width": 276,
       "x": 279,
       "y": 1179,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 1194,
+      "width": 834,
     },
     "statusBar": {
       "height": 24,
@@ -108,13 +190,21 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 1194,
-    "width": 834,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 834,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": false,
-  "isIOS": false,
+  "isIOS": true,
   "isMobile": true,
   "logName": "",
   "name": "",
@@ -127,16 +217,38 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
 exports[`utils > getInstanceData > should return instance data for an iOS iPad mobile app for a non matching screensize 1`] = `
 {
   "appName": "ios.zip",
-  "browserName": "not-known",
-  "browserVersion": "not-known",
+  "browserName": "not_known",
+  "browserVersion": "not_known",
   "deviceName": "ipad",
   "devicePixelRatio": 0,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 1234,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 888,
+      "width": 1234,
     },
     "statusBar": {
       "height": 20,
@@ -144,13 +256,21 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 888,
-    "width": 1234,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 1234,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": false,
-  "isIOS": false,
+  "isIOS": true,
   "isMobile": true,
   "logName": "",
   "name": "",
@@ -163,16 +283,38 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
 exports[`utils > getInstanceData > should return instance data for an iOS iPad mobile app in landscape mode 1`] = `
 {
   "appName": "ios.zip",
-  "browserName": "not-known",
-  "browserVersion": "not-known",
+  "browserName": "not_known",
+  "browserVersion": "not_known",
   "deviceName": "ipad",
   "devicePixelRatio": 0,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 1194,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 9,
       "width": 276,
       "x": 279,
       "y": 1179,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 834,
+      "width": 1194,
     },
     "statusBar": {
       "height": 24,
@@ -180,13 +322,21 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 834,
-    "width": 1194,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 1194,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": false,
-  "isIOS": false,
+  "isIOS": true,
   "isMobile": true,
   "logName": "",
   "name": "",
@@ -199,16 +349,38 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
 exports[`utils > getInstanceData > should return instance data for an iOS iPhone mobile app 1`] = `
 {
   "appName": "ios.zip",
-  "browserName": "not-known",
-  "browserVersion": "not-known",
+  "browserName": "not_known",
+  "browserVersion": "not_known",
   "deviceName": "iphone 15 pro",
   "devicePixelRatio": 0,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 393,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 9,
       "width": 143,
       "x": 125,
       "y": 837,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 852,
+      "width": 393,
     },
     "statusBar": {
       "height": 59,
@@ -216,13 +388,21 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPhone
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 852,
-    "width": 393,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 393,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": false,
-  "isIOS": false,
+  "isIOS": true,
   "isMobile": true,
   "logName": "",
   "name": "",
@@ -234,28 +414,58 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPhone
 
 exports[`utils > getInstanceData > should return instance data when the browserstack capabilities are provided 1`] = `
 {
-  "appName": "not-known",
+  "appName": "not_known",
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "samsung galaxy s22",
-  "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "devicePixelRatio": 3.5,
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
     },
-    "statusBar": {
+    "leftSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 200,
-    "width": 100,
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 200,
+      "width": 100,
+    },
+    "statusBar": {
+      "height": 50,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": true,
   "isIOS": false,
@@ -264,34 +474,64 @@ exports[`utils > getInstanceData > should return instance data when the browsers
   "name": "",
   "nativeWebScreenshot": false,
   "platformName": "osx",
-  "platformVersion": "not-known",
+  "platformVersion": "not_known",
 }
 `;
 
 exports[`utils > getInstanceData > should return instance data when the lambdatest capabilities are provided 1`] = `
 {
-  "appName": "not-known",
+  "appName": "not_known",
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "samsung galaxy s22 lt",
-  "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "devicePixelRatio": 3.5,
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
     },
-    "statusBar": {
+    "leftSidePadding": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 200,
-    "width": 100,
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 200,
+      "width": 100,
+    },
+    "statusBar": {
+      "height": 50,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": true,
   "isIOS": false,
@@ -309,17 +549,39 @@ exports[`utils > getInstanceData > should return instance data when the lambdate
 
 exports[`utils > getInstanceData > should return instance data when the minimum of capabilities is provided 1`] = `
 {
-  "appName": "not-known",
+  "appName": "not_known",
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "not_known",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 0,
+      "width": 0,
     },
     "statusBar": {
       "height": 0,
@@ -327,10 +589,18 @@ exports[`utils > getInstanceData > should return instance data when the minimum 
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 0,
-    "width": 0,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": false,
   "isIOS": false,
@@ -339,23 +609,45 @@ exports[`utils > getInstanceData > should return instance data when the minimum 
   "name": "",
   "nativeWebScreenshot": false,
   "platformName": "osx",
-  "platformVersion": "not-known",
+  "platformVersion": "not_known",
 }
 `;
 
 exports[`utils > getInstanceData > should return instance data when wdio-ics option log name is provided 1`] = `
 {
-  "appName": "not-known",
+  "appName": "not_known",
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "not_known",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 0,
+      "width": 0,
     },
     "statusBar": {
       "height": 0,
@@ -363,10 +655,18 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 0,
-    "width": 0,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": false,
   "isIOS": false,
@@ -375,23 +675,45 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
   "name": "",
   "nativeWebScreenshot": false,
   "platformName": "osx",
-  "platformVersion": "not-known",
+  "platformVersion": "not_known",
 }
 `;
 
 exports[`utils > getInstanceData > should return instance data when wdio-ics option name is provided 1`] = `
 {
-  "appName": "not-known",
+  "appName": "not_known",
   "browserName": "chrome",
   "browserVersion": "75.123",
   "deviceName": "not_known",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 0,
+      "width": 0,
     },
     "statusBar": {
       "height": 0,
@@ -399,10 +721,18 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 0,
-    "width": 0,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": false,
   "isIOS": false,
@@ -411,6 +741,6 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
   "name": "wdio-ics-name",
   "nativeWebScreenshot": false,
   "platformName": "osx",
-  "platformVersion": "not-known",
+  "platformVersion": "not_known",
 }
 `;

@@ -1,6 +1,18 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { determineNativeContext, getBrowserObject, getDevicePixelRatio, getFolders, getInstanceData, getScreenshotSize } from '../src/utils.js'
+import { determineNativeContext, getBrowserObject, getDevicePixelRatio, getFolders, getInstanceData, getBase64ScreenshotSize } from '../src/utils.js'
+// @TODO: Remove this import when the types are fixed
 import type { AppiumCapabilities } from '@wdio/types/build/Capabilities.js'
+
+const DEVICE_RECTANGLES = {
+    bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+    homeBar: { y: 0, x: 0, width: 0, height: 0 },
+    leftSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+    rightSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+    screenSize: { height: 0, width: 0 },
+    statusBar: { y: 0, x: 0, width: 0, height: 0 },
+    statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
+    viewport: { y: 0, x: 0, width: 0, height: 0 },
+}
 
 describe('utils', () => {
     describe('getFolders', () => {
@@ -31,21 +43,21 @@ describe('utils', () => {
         })
     })
 
-    describe('getScreenshotSize', () => {
+    describe('getBase64ScreenshotSize', () => {
         // Transparent image of 20x40 pixels
         const mockScreenshot = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAoCAIAAABxU02MAAAAJElEQVR4nO3LMQEAAAgDILV/59nBV/jpJHU15ynLsizLsvw+L/3pA02VPl1RAAAAAElFTkSuQmCC'
         const width = 20
         const height = 40
 
         it('should correctly calculate size with default device pixel ratio', () => {
-            const size = getScreenshotSize(mockScreenshot)
+            const size = getBase64ScreenshotSize(mockScreenshot)
             expect(size.width).toEqual(width)
             expect(size.height).toEqual(height)
         })
 
         it('should correctly calculate size with different device pixel ratios', () => {
             const dpr = 2
-            const size = getScreenshotSize(mockScreenshot, dpr)
+            const size = getBase64ScreenshotSize(mockScreenshot, dpr)
             expect(size.width).toEqual(width/dpr)
             expect(size.height).toEqual(height/dpr)
         })
@@ -98,7 +110,7 @@ describe('utils', () => {
 
         it('should return instance data when the minimum of capabilities is provided', async() => {
             const driver = createDriverMock({})
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:false })).toMatchSnapshot()
         })
 
         it('should return instance data when wdio-ics option log name is provided', async() => {
@@ -111,7 +123,7 @@ describe('utils', () => {
                     },
                 },
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:false })).toMatchSnapshot()
         })
 
         it('should return instance data when wdio-ics option name is provided', async() => {
@@ -124,7 +136,7 @@ describe('utils', () => {
                     },
                 },
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:false })).toMatchSnapshot()
         })
 
         it('should return instance data for an Android mobile app', async() => {
@@ -154,8 +166,9 @@ describe('utils', () => {
                 isAndroid: true,
                 isMobile: true,
                 getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
 
         it('should return instance data for an iOS iPhone mobile app', async() => {
@@ -184,12 +197,13 @@ describe('utils', () => {
                         'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
                     },
                 } as WebdriverIO.Capabilities,
+                isIOS: true,
                 isAndroid: false,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 852, width: 393 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 852, width: 393 } }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
 
         it('should return instance data for an iOS iPad mobile app', async() => {
@@ -217,12 +231,13 @@ describe('utils', () => {
                     'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
 
                 } as WebdriverIO.Capabilities,
+                isIOS: true,
                 isAndroid: false,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 1194, width: 834 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 1194, width: 834 } }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
 
         it('should return instance data for an iOS iPad mobile app in landscape mode', async() => {
@@ -251,12 +266,13 @@ describe('utils', () => {
                     'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
 
                 } as WebdriverIO.Capabilities,
+                isIOS: true,
                 isAndroid: false,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 834, width: 1194 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 834, width: 1194 } }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
 
         it('should return instance data for an iOS iPad mobile app for a non matching screensize', async() => {
@@ -283,12 +299,13 @@ describe('utils', () => {
                     'appium:platformVersion': '17.0',
                     'appium:app': '/Users/WebdriverIO/visual-testing/apps/ios.zip',
                 } as WebdriverIO.Capabilities,
+                isIOS: true,
                 isAndroid: false,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ height: 888, width: 1234 }),
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 888, width: 1234 } }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
 
         it('should return instance data for a mobile app with incomplete capability data', async() => {
@@ -317,14 +334,19 @@ describe('utils', () => {
                 } as WebdriverIO.Capabilities,
                 isAndroid: true,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
 
         it('should return instance data when the browserstack capabilities are provided', async() => {
             const driver = createDriverMock({
-                ...DEFAULT_DESKTOP_BROWSER,
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    // @ts-ignore
+                    pixelRatio: 3.5,
+                    statBarHeight: 50,
+                },
                 requestedCapabilities:{
                     ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
                     'bstack:options': {
@@ -334,14 +356,21 @@ describe('utils', () => {
                 },
                 isAndroid: true,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
 
         it('should return instance data when the lambdatest capabilities are provided', async() => {
             const driver = createDriverMock({
-                ...DEFAULT_DESKTOP_BROWSER,
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    // @ts-ignore
+                    deviceName: 'Samsung Galaxy S22 LT',
+                    platformVersion: '11',
+                    pixelRatio: 3.5,
+                    statBarHeight: 50,
+                },
                 requestedCapabilities:{
                     ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
                     'lt:options': {
@@ -349,16 +378,11 @@ describe('utils', () => {
                         platformVersion: '11',
                     },
                 },
-                capabilities: {
-                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
-                    // @ts-expect-error
-                    platformVersion: '11',
-                },
                 isAndroid: true,
                 isMobile: true,
-                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
             })
-            expect(await getInstanceData(driver)).toMatchSnapshot()
+            expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
     })
 

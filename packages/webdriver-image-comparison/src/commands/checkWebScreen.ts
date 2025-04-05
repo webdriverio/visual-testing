@@ -1,6 +1,6 @@
 import saveWebScreen from './saveWebScreen.js'
 import { executeImageCompare } from '../methods/images.js'
-import { checkIsMobile } from '../helpers/utils.js'
+import { checkIsAndroid, checkIsMobile } from '../helpers/utils.js'
 import type { ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveScreenOptions } from './screen.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
@@ -33,7 +33,7 @@ export default async function checkWebScreen(
             waitForFontsLoaded: checkScreenOptions.method.waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, isLandscape } = await saveWebScreen({
+    const { devicePixelRatio, fileName } = await saveWebScreen({
         methods,
         instanceData,
         folders,
@@ -45,11 +45,12 @@ export default async function checkWebScreen(
     // 2a. Determine the compare options
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)
     const executeCompareOptions: ImageCompareOptions = {
-        devicePixelRatio,
         compareOptions: {
             wic: checkScreenOptions.wic.compareOptions,
             method: methodCompareOptions,
         },
+        devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         fileName,
         folderOptions: {
             autoSaveBaseline: checkScreenOptions.wic.autoSaveBaseline,
@@ -61,15 +62,12 @@ export default async function checkWebScreen(
             isMobile: checkIsMobile(instanceData.platformName),
             savePerInstance: checkScreenOptions.wic.savePerInstance,
         },
+        isAndroid: checkIsAndroid(instanceData.platformName),
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        isHybridApp: checkScreenOptions.wic.isHybridApp,
-        isLandscape,
-        platformName: instanceData.platformName,
     }
 
     // 2b Now execute the compare and return the data
     return executeImageCompare({
-        executor: methods.executor,
         isViewPortScreenshot: true,
         isNativeContext,
         options: executeCompareOptions,

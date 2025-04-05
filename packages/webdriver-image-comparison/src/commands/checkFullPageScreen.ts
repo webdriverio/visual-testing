@@ -1,5 +1,5 @@
 import { executeImageCompare } from '../methods/images.js'
-import { checkIsMobile } from '../helpers/utils.js'
+import { checkIsAndroid, checkIsMobile } from '../helpers/utils.js'
 import saveFullPageScreen from './saveFullPageScreen.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveFullPageOptions } from './fullPage.interfaces.js'
@@ -40,7 +40,7 @@ export default async function checkFullPageScreen(
             waitForFontsLoaded: checkFullPageOptions.method.waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, isLandscape } = await saveFullPageScreen({
+    const { devicePixelRatio, fileName } = await saveFullPageScreen({
         methods,
         instanceData,
         folders,
@@ -52,11 +52,12 @@ export default async function checkFullPageScreen(
     // 2a. Determine the options
     const compareOptions = methodCompareOptions(checkFullPageOptions.method)
     const executeCompareOptions = {
-        devicePixelRatio,
         compareOptions: {
             wic: checkFullPageOptions.wic.compareOptions,
             method: compareOptions,
         },
+        devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         fileName,
         folderOptions: {
             autoSaveBaseline: checkFullPageOptions.wic.autoSaveBaseline,
@@ -68,15 +69,14 @@ export default async function checkFullPageScreen(
             isMobile: checkIsMobile(instanceData.platformName),
             savePerInstance: checkFullPageOptions.wic.savePerInstance,
         },
+        isAndroid: checkIsAndroid(instanceData.platformName),
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: checkFullPageOptions.wic.isHybridApp,
-        isLandscape,
         platformName: instanceData.platformName,
     }
 
     // 2b Now execute the compare and return the data
     return executeImageCompare({
-        executor: methods.executor,
         isViewPortScreenshot: false,
         isNativeContext,
         options: executeCompareOptions,

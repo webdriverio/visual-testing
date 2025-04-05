@@ -6,9 +6,15 @@ import type {
     FormatFileNameOptions,
     GetAddressBarShadowPaddingOptions,
     GetAndCreatePathOptions,
+    GetMobileViewPortPositionOptions,
     GetToolBarShadowPaddingOptions,
     ScreenshotSize,
 } from './utils.interfaces.js'
+import type { Executor } from '../methods/methods.interfaces.js'
+import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
+import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
+import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
+import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 
 /**
  * Get and create a folder
@@ -140,12 +146,12 @@ export function getAddressBarShadowPadding(options: GetAddressBarShadowPaddingOp
 }
 
 /**
- * Get the tool bar shadow padding. This is only needed for iOS
+ * Get the tool bar shadow padding. Add some extra padding for iOS when we have a home bar
  */
 export function getToolBarShadowPadding(options: GetToolBarShadowPaddingOptions): number {
     const { platformName, browserName, toolBarShadowPadding, addShadowPadding } = options
 
-    return checkTestInMobileBrowser(platformName, browserName) && checkIsIos(platformName) && addShadowPadding
+    return checkTestInMobileBrowser(platformName, browserName) && addShadowPadding
         ? checkIsIos(platformName)
             ? // The 9 extra are for iOS home bar for iPhones with a notch or iPads with a home bar
             toolBarShadowPadding + 9
@@ -175,7 +181,7 @@ export async function waitFor(milliseconds: number): Promise<void> {
 /**
  * Get the size of a screenshot in pixels without the device pixel ratio
  */
-export function getScreenshotSize(screenshot: string, devicePixelRation = 1): ScreenshotSize {
+export function getBase64ScreenshotSize(screenshot: string, devicePixelRation = 1): ScreenshotSize {
     return {
         height: Math.round(Buffer.from(screenshot, 'base64').readUInt32BE(20) / devicePixelRation),
         width: Math.round(Buffer.from(screenshot, 'base64').readUInt32BE(16) / devicePixelRation),
@@ -186,7 +192,7 @@ export function getScreenshotSize(screenshot: string, devicePixelRation = 1): Sc
  * Get the device pixel ratio
  */
 export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {height:number, width: number}): number {
-    const screenshotSize = getScreenshotSize(screenshot)
+    const screenshotSize = getBase64ScreenshotSize(screenshot)
     const devicePixelRatio = screenshotSize.width / deviceScreenSize.width
 
     return Math.round(devicePixelRatio)
@@ -324,4 +330,162 @@ export function isStorybook(){
  */
 export function updateVisualBaseline(): boolean {
     return process.argv.includes('--update-visual-baseline')
+}
+
+/**
+ * Get the mobile screen size, this is different for native and webview
+ */
+export async function getMobileScreenSize({
+    executor,
+    isIOS
+}: {
+    executor: Executor,
+    isIOS: boolean
+}): Promise<{ height: number; width: number }> {
+    let height = 0, width = 0
+
+    if (isIOS) {
+        ({ screenSize: { height, width } } = (await executor('mobile: deviceScreenInfo')) as {
+            statusBarSize: { width: number, height: number },
+            scale: number,
+            screenSize: { width: number, height: number },
+        })
+    // It's Android
+    } else {
+        const { realDisplaySize } = (await executor('mobile: deviceInfo')) as { realDisplaySize: string }
+
+        if (!realDisplaySize || !/^\d+x\d+$/.test(realDisplaySize)) {
+            throw new Error(`Invalid realDisplaySize format. Expected 'widthxheight', got "${realDisplaySize}"`)
+        }
+        [width, height] = realDisplaySize.split('x').map(Number)
+    }
+
+    return { height, width }
+}
+
+/**
+ * Load a base64 HTML page in the browser
+ */
+export async function loadBase64Html({ executor, isIOS, url }: {executor:Executor, isIOS:boolean, url:any}): Promise<void> {
+    const htmlContent = `
+        <html>
+        <head>
+            <title>Base64 Page</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    // Force correct viewport settings
+                    const meta = document.querySelector("meta[name='viewport']");
+                    if (!meta) {
+                        const newMeta = document.createElement("meta");
+                        newMeta.name = "viewport";
+                        newMeta.content = "width=device-width, initial-scale=1";
+                        document.head.appendChild(newMeta);
+                    }
+                });
+            </script>
+        </head>
+        <body>
+            <h1>Hello from Base64!</h1>
+            <p>This page was loaded without visiting a URL.</p>
+        </body>
+        </html>`
+
+    const base64Html = Buffer.from(htmlContent).toString('base64')
+
+    await url(`data:text/html;base64,${base64Html}`)
+
+    if (isIOS) {
+        await executor(checkMetaTag)
+    }
+}
+
+/**
+ * Execute a native click
+ */
+export async function executeNativeClick({ executor, isIOS, x, y }:{executor: Executor, isIOS:boolean, x: number, y: number}): Promise<void> {
+    if (isIOS) {
+        return executor('mobile: tap', { x, y })
+    }
+
+    try {
+        // The `clickGesture` is not working on Appium 1, only on Appium 2
+        await executor('mobile: clickGesture', { x, y })
+    } catch (error: unknown) {
+        if (
+            error instanceof Error &&
+          /WebDriverError: Unknown mobile command.*?(clickGesture|tap)/i.test(error.message)
+        ) {
+            console.log(
+                'Error executing `clickGesture`, falling back to `doubleClickGesture`. This likely means you are using Appium 1. Is this intentional?'
+            )
+            await executor('mobile: doubleClickGesture', { x, y })
+        } else {
+            throw error
+        }
+    }
+}
+
+/**
+ * Get the mobile viewport position, we determine this by:
+ * 1. Loading a base64 HTML page
+ * 2. Injecting an overlay on top of the webview with an event listener that stores the click position in the webview
+ * 3. Clicking on the overlay in the center of the screen with a native click
+ * 4. Getting the data from the overlay and removing it
+ * 5. Calculating the position of the viewport based on the click position of the native click vs the overlay
+ * 6. Returning the calculated values
+ */
+export async function getMobileViewPortPosition({
+    initialDeviceRectangles,
+    isAndroid,
+    isIOS,
+    isNativeContext,
+    methods: {
+        executor,
+        getUrl,
+        url,
+    },
+    nativeWebScreenshot,
+    screenHeight,
+    screenWidth,
+}: GetMobileViewPortPositionOptions): Promise<DeviceRectangles> {
+
+    if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
+        const currentUrl = await getUrl()
+        // 1. Load a base64 HTML page
+        await loadBase64Html({ executor, isIOS, url })
+        // 2. Inject an overlay on top of the webview with an event listener that stores the click position in the webview
+        await executor(injectWebviewOverlay, isAndroid)
+        // 3. Click on the overlay in the center of the screen with a native click
+        const nativeClickX = screenWidth / 2
+        const nativeClickY = screenHeight / 2
+        await executeNativeClick({ executor, isIOS, x: nativeClickX, y: nativeClickY })
+        // We need to wait a bit here, otherwise the click is not registered
+        await waitFor(100)
+        // 4a. Get the data from the overlay and remove it
+        const { y, x, width, height } = await executor(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
+        // 4.b reset the url
+        await url(currentUrl)
+        // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
+        const viewportTop = Math.max(0, Math.round(nativeClickY - y))
+        const viewportLeft = Math.max(0, Math.round(nativeClickX - x))
+        const statusBarAndAddressBarHeight = Math.max(0, Math.round(viewportTop))
+        const bottomBarHeight = Math.max(0, Math.round(screenHeight - (viewportTop + height)))
+        const leftSidePaddingWidth = Math.max(0, Math.round(viewportLeft))
+        const rightSidePaddingWidth = Math.max(0, Math.round(screenWidth - (viewportLeft + width)))
+        const deviceRectangles = {
+            ...initialDeviceRectangles,
+            bottomBar: { y: viewportTop + height, x: 0, width: screenWidth, height: bottomBarHeight },
+            leftSidePadding: { y: viewportTop, x: 0, width: leftSidePaddingWidth, height: height },
+            rightSidePadding: { y: viewportTop, x: viewportLeft + width, width: rightSidePaddingWidth, height: height },
+            screenSize: { height: screenHeight, width: screenWidth },
+            statusBarAndAddressBar: { y: 0, x: 0, width: screenWidth, height: statusBarAndAddressBarHeight },
+            viewport: { y: viewportTop, x: viewportLeft, width: width, height: height },
+        }
+
+        return deviceRectangles
+    }
+
+    // No WebView detected, return empty values
+    return initialDeviceRectangles
 }

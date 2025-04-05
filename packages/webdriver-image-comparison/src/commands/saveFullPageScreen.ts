@@ -29,7 +29,6 @@ export default async function saveFullPageScreen(
     const {
         addressBarShadowPadding,
         formatImageName,
-        isHybridApp,
         savePerInstance,
         toolBarShadowPadding,
     } = saveFullPageOptions.wic
@@ -78,13 +77,13 @@ export default async function saveFullPageScreen(
     const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
         addressBarShadowPadding: enrichedInstanceData.addressBarShadowPadding,
         devicePixelRatio: devicePixelRatio || NaN,
+        deviceRectangles: instanceData.deviceRectangles,
         fullPageScrollTimeout,
         hideAfterFirstScroll,
         innerHeight: enrichedInstanceData.dimensions.window.innerHeight || NaN,
         isAndroid: enrichedInstanceData.isAndroid,
         isAndroidChromeDriverScreenshot: enrichedInstanceData.isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot: enrichedInstanceData.isAndroidNativeWebScreenshot,
-        isHybridApp,
         isIOS: enrichedInstanceData.isIOS,
         isLandscape,
         screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
