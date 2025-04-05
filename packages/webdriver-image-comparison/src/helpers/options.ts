@@ -1,7 +1,14 @@
-import { DEFAULT_FORMAT_STRING, DEFAULT_SHADOW, DEFAULT_TABBABLE_OPTIONS, FULL_PAGE_SCROLL_TIMEOUT, STORYBOOK_FORMAT_STRING } from './constants.js'
+import {
+    DEFAULT_COMPARE_OPTIONS,
+    DEFAULT_FORMAT_STRING,
+    DEFAULT_SHADOW,
+    DEFAULT_TABBABLE_OPTIONS,
+    FULL_PAGE_SCROLL_TIMEOUT,
+    STORYBOOK_FORMAT_STRING,
+} from './constants.js'
 import type { ClassOptions, DefaultOptions } from './options.interfaces.js'
 import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
-import { isStorybook } from './utils.js'
+import { logAllDeprecatedCompareOptions, isStorybook } from './utils.js'
 
 /**
  * Determine the default options
@@ -44,20 +51,9 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
          * Compare options
          */
         compareOptions: {
-            blockOutSideBar: options.blockOutSideBar ?? true,
-            blockOutStatusBar: options.blockOutStatusBar ?? true,
-            blockOutToolBar: options.blockOutToolBar ?? true,
-            createJsonReportFiles: options.createJsonReportFiles ?? false,
-            diffPixelBoundingBoxProximity: options.diffPixelBoundingBoxProximity ?? 5,
-            ignoreAlpha: options.ignoreAlpha ?? false,
-            ignoreAntialiasing: options.ignoreAntialiasing ?? false,
-            ignoreColors: options.ignoreColors ?? false,
-            ignoreLess: options.ignoreLess ?? false,
-            ignoreNothing: options.ignoreNothing ?? false,
-            rawMisMatchPercentage: options.rawMisMatchPercentage ?? false,
-            returnAllCompareData: options.returnAllCompareData ?? false,
-            saveAboveTolerance: options.saveAboveTolerance ?? 0,
-            scaleImagesToSameSize: options.scaleImagesToSameSize ?? false,
+            ...DEFAULT_COMPARE_OPTIONS,
+            ...logAllDeprecatedCompareOptions(options),
+            ...(options.compareOptions ? options.compareOptions : {}),
         },
 
         /**

@@ -116,3 +116,22 @@ exports[`utils > getToolBarShadowPadding > should return 0 when this is a check 
 exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for an iOS app with adding a shadow padding 1`] = `0`;
 
 exports[`utils > getToolBarShadowPadding > should return 15 when this is a check for iOS browser and adding a shadow padding 1`] = `15`;
+
+exports[`utils > logAllDeprecatedCompareOptions > should log all deprecated compare options 1`] = `
+{
+  "blockOutSideBar": true,
+  "blockOutStatusBar": true,
+  "blockOutToolBar": true,
+  "createJsonReportFiles": true,
+  "diffPixelBoundingBoxProximity": 5,
+  "ignoreAlpha": true,
+  "ignoreAntialiasing": true,
+  "ignoreColors": true,
+  "ignoreLess": true,
+  "ignoreNothing": true,
+  "rawMisMatchPercentage": true,
+  "returnAllCompareData": true,
+  "saveAboveTolerance": 100,
+  "scaleImagesToSameSize": true,
+}
+`;

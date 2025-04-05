@@ -2,6 +2,22 @@ import type { IosOffsets } from './constants.interfaces.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import type { TestContext } from 'src/commands/check.interfaces.js'
 
+export const DEFAULT_COMPARE_OPTIONS = {
+    blockOutSideBar: true,
+    blockOutStatusBar: true,
+    blockOutToolBar: true,
+    createJsonReportFiles: false,
+    diffPixelBoundingBoxProximity: 5,
+    ignoreAlpha: false,
+    ignoreAntialiasing: false,
+    ignoreColors: false,
+    ignoreLess: false,
+    ignoreNothing: false,
+    rawMisMatchPercentage: false,
+    returnAllCompareData: false,
+    saveAboveTolerance: 0,
+    scaleImagesToSameSize: false,
+}
 export const DEFAULT_FORMAT_STRING = '{tag}-{browserName}-{width}x{height}-dpr-{dpr}'
 export const STORYBOOK_FORMAT_STRING = '{tag}-{logName}-{width}x{height}-dpr-{dpr}'
 export const PLATFORMS = {
