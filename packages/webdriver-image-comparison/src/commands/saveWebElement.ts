@@ -7,7 +7,7 @@ import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
-import { getScreenshotSize } from '../helpers/utils.js'
+import { getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 
@@ -84,11 +84,14 @@ export default async function saveWebElement(
     let currentPosition: number | undefined
     if (autoElementScroll) {
         currentPosition = await executor(scrollElementIntoView, element, addressBarShadowPadding)
+        // We need to wait for the scroll to finish before taking the screenshot
+        await waitFor(100)
     }
 
     // 3.  Take the screenshot and determine the rectangles
     const { base64Image, rectangles, isWebDriverElementScreenshot } = await takeWebElementScreenshot({
         devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         element,
         executor,
         innerHeight,
@@ -111,7 +114,7 @@ export default async function saveWebElement(
 
     // When the element has no height or width, we default to the viewport screen size
     if (rectangles.width === 0 || rectangles.height === 0) {
-        const { height, width } = getScreenshotSize(base64Image)
+        const { height, width } = getBase64ScreenshotSize(base64Image)
         rectangles.width = width
         rectangles.height = height
         rectangles.x = 0

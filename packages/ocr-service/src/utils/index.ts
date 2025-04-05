@@ -3,7 +3,7 @@ import { mkdirSync } from 'node:fs'
 import type { ChainablePromiseElement } from 'webdriverio'
 import type { ClickPoint, DetermineClickPointOptions, Rectangles, RectReturn, ScreenshotSize } from '../types.js'
 
-export function getScreenshotSize(screenshot: string): ScreenshotSize {
+export function getBase64ScreenshotSize(screenshot: string): ScreenshotSize {
     return {
         height: Math.round(Buffer.from(screenshot, 'base64').readUInt32BE(20)),
         width: Math.round(Buffer.from(screenshot, 'base64').readUInt32BE(16)),

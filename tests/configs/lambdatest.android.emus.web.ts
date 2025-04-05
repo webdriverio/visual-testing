@@ -12,16 +12,7 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
                         mobileSpecs,
                         build: buildName,
                         deviceOrientation: orientation,
-                        // @TODO: There are issues to get certain screenshots with nativeWebScreenshot in LANDSCAPE mode
-                        // There is also a small issue with out of bound offsets with landscape mode on Pixel 4 Android 14.
-                        // So we limit it to portrait mode
-                        // Error: The value of "offset" is out of range. It must be >= 0 and <= 9849596. Received 9849600 => this 4 is coming from Jimp
-                        // @TODO: investigate the issue with out of bound offsets in landscape mode
-                        wdioIcsCommands: [
-                            'checkScreen',
-                            'checkElement',
-                            platformVersion !== '14' && platformVersion !== '11' ? 'checkFullPageScreen' : ''
-                        ],
+                        wdioIcsCommands: ['checkScreen', 'checkElement', 'checkFullPageScreen'],
                     })
             )
         )
@@ -39,12 +30,7 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
                     // @TODO: There are issues to get certain screenshots with nativeWebScreenshot in LANDSCAPE mode
                     // - element screenshots are not perfect
                     // - Fullpage screenshots have the address bar in the screenshot
-                    wdioIcsCommands: [
-                        'checkScreen',
-                        orientation !== 'landscape' ? 'checkElement' : '',
-                        // @TODO: navigation bar and so on are not set properly, not only in landscape but also portrait mode
-                        // orientation !== 'landscape' ? 'checkFullPageScreen' : ''
-                    ],
+                    wdioIcsCommands: ['checkScreen', 'checkElement', 'checkFullPageScreen'],
                 })
             })
         )

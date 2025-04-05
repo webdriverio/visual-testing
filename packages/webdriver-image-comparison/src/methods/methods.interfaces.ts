@@ -1,10 +1,16 @@
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 
-/** Binding to the `await browser.execute()` method */
-export type Executor = <ReturnValue, InnerArguments extends unknown[]>(
-    fn: string | ((...args: InnerArguments) => ReturnValue),
-    ...args: InnerArguments
+// There a multiple ways to call the executor method, for mobile and web
+type ExecuteScript = <ReturnValue, Args extends unknown[]>(
+    fn: (...args: Args) => ReturnValue,
+    ...args: Args
+  ) => Promise<ReturnValue>;
+
+type ExecuteMobile = <ReturnValue>(
+    fn: string,
+    args?: Record<string, any>
 ) => Promise<ReturnValue>;
+export type Executor = ExecuteScript & ExecuteMobile;
 export type GetElementRect = (elementId: string) => Promise<RectanglesOutput>
 export type TakeScreenShot = () => Promise<string>;
 export type TakeElementScreenshot = (elementId: string) => Promise<string>;

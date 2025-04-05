@@ -176,7 +176,7 @@ jobs:
           LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
           LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.lambdatest.desktop --maxConcurrency=3
+        run: pnpm test.lambdatest.desktop --maxConcurrency=4
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -239,7 +239,7 @@ jobs:
           LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
           LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.lambdatest.emu.web --maxConcurrency=4
+        run: pnpm test.lambdatest.emu.web --maxConcurrency=6
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
@@ -302,7 +302,7 @@ jobs:
           LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
           LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.lambdatest.sims.web --maxConcurrency=4
+        run: pnpm test.lambdatest.sims.web --maxConcurrency=6
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
