@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path'
 import { Jimp, JimpMime } from 'jimp'
 import logger from '@wdio/logger'
 import compareImages from '../resemble/compareImages.js'
-import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getScreenshotSize, updateVisualBaseline } from '../helpers/utils.js'
+import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getBase64ScreenshotSize, updateVisualBaseline } from '../helpers/utils.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
 import { determineStatusAddressToolBarRectangles, isWdioElement } from './rectangles.js'
 import type {
@@ -112,7 +112,7 @@ export async function checkBaselineImageExists(
  * Get the rotated image if needed
  */
 async function getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandscape, base64Image }: RotatedImage): Promise<string> {
-    const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
+    const { height: screenshotHeight, width: screenshotWidth } = getBase64ScreenshotSize(base64Image)
     const isRotated = !isWebDriverElementScreenshot && isLandscape && screenshotHeight > screenshotWidth
 
     return isRotated ? await rotateBase64Image({ base64Image, degrees: 90 }) : base64Image
@@ -209,8 +209,8 @@ async function handleIOSBezelCorners({
 
             image.composite(await Jimp.read(Buffer.from(topBase64Image, 'base64')), 0, 0)
             image.composite(await Jimp.read(Buffer.from(bottomBase64Image, 'base64')),
-                isLandscape ? width - getScreenshotSize(bottomImage).height : 0,
-                isLandscape ? 0 : height - getScreenshotSize(bottomImage).height
+                isLandscape ? width - getBase64ScreenshotSize(bottomImage).height : 0,
+                isLandscape ? 0 : height - getBase64ScreenshotSize(bottomImage).height
             )
         } else {
             isIosBezelError = true
@@ -279,7 +279,7 @@ export async function makeCroppedBase64Image({
 }: CroppedBase64Image): Promise<string> {
     // Rotate the image if needed and get the screenshot size
     const newBase64Image = await getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandscape, base64Image })
-    const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(base64Image)
+    const { height: screenshotHeight, width: screenshotWidth } = getBase64ScreenshotSize(base64Image)
 
     // Determine/Get the size of the cropped screenshot and cut out dimensions
     const { top, right, bottom, left } = { ...DEFAULT_RESIZE_DIMENSIONS, ...resizeDimensions }
@@ -321,7 +321,6 @@ export async function makeCroppedBase64Image({
  */
 export async function executeImageCompare(
     {
-        executor,
         isViewPortScreenshot,
         isNativeContext,
         options,
@@ -330,14 +329,12 @@ export async function executeImageCompare(
 ): Promise<ImageCompareResult | number> {
     // 1. Set some variables
     const {
-        ignoreRegions = [],
         devicePixelRatio,
-        fileName,
+        deviceRectangles,
+        ignoreRegions = [],
         isAndroidNativeWebScreenshot,
         isAndroid,
-        isHybridApp,
-        isLandscape,
-        platformName,
+        fileName,
     } = options
     const { actualFolder, autoSaveBaseline, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
         options.folderOptions
@@ -376,18 +373,19 @@ export async function executeImageCompare(
             blockOutSideBar: imageCompareOptions.blockOutSideBar,
             blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
             blockOutToolBar: imageCompareOptions.blockOutToolBar,
-            isHybridApp,
-            isLandscape,
+            isAndroid,
+            isAndroidNativeWebScreenshot,
             isMobile,
             isViewPortScreenshot,
-            isAndroidNativeWebScreenshot,
-            platformName,
         }
-        webStatusAddressToolBarOptions.push(...(await determineStatusAddressToolBarRectangles(executor, statusAddressToolBarOptions)) || [])
+        webStatusAddressToolBarOptions.push(
+            ...(determineStatusAddressToolBarRectangles({ deviceRectangles, options: statusAddressToolBarOptions })) || []
+        )
         if (webStatusAddressToolBarOptions.length > 0) {
             // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full
             // blockout of the image and the comparison will succeed with 0 % difference
-            webStatusAddressToolBarOptions = webStatusAddressToolBarOptions.filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
+            webStatusAddressToolBarOptions = webStatusAddressToolBarOptions
+                .filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
         }
     }
     const ignoredBoxes = [
@@ -467,9 +465,9 @@ export async function executeImageCompare(
                 ...(storeDiffs && { diffFolderPath: diffFolderPath }),
             },
             size: {
-                actual: getScreenshotSize(readFileSync(actualFilePath).toString('base64'), devicePixelRatio),
-                baseline: getScreenshotSize(readFileSync(baselineFilePath).toString('base64'), devicePixelRatio),
-                ...(storeDiffs && { diff: getScreenshotSize(readFileSync(diffFilePath).toString('base64'), devicePixelRatio) }),
+                actual: getBase64ScreenshotSize(readFileSync(actualFilePath).toString('base64'), devicePixelRatio),
+                baseline: getBase64ScreenshotSize(readFileSync(baselineFilePath).toString('base64'), devicePixelRatio),
+                ...(storeDiffs && { diff: getBase64ScreenshotSize(readFileSync(diffFilePath).toString('base64'), devicePixelRatio) }),
             },
             testContext,
         })
@@ -509,7 +507,7 @@ export async function makeFullPageBase64Image(
     // Load all the images
     for (let i = 0; i < amountOfScreenshots; i++) {
         const currentScreenshot = screenshotsData.data[i].screenshot
-        const { height: screenshotHeight, width: screenshotWidth } = getScreenshotSize(currentScreenshot, devicePixelRatio)
+        const { height: screenshotHeight, width: screenshotWidth } = getBase64ScreenshotSize(currentScreenshot, devicePixelRatio)
         const isRotated = isLandscape && screenshotHeight > screenshotWidth
         const newBase64Image = isRotated ? await rotateBase64Image({ base64Image: currentScreenshot, degrees: 90 }) : currentScreenshot
         const { canvasYPosition, imageHeight, imageWidth, imageXPosition, imageYPosition } = screenshotsData.data[i]

@@ -12,10 +12,10 @@ export interface RectanglesOptions {
 }
 
 export interface ElementRectanglesOptions extends RectanglesOptions {
+    // The device rectangles
+    deviceRectangles: DeviceRectangles;
     // If this is an Android device
     isAndroid: boolean;
-    // If it's landscape
-    isLandscape: boolean;
 }
 
 export interface ScreenRectanglesOptions extends RectanglesOptions {
@@ -34,6 +34,17 @@ export interface RectanglesOutput {
     y: number;
 }
 
+export type DeviceRectangles = {
+    bottomBar: RectanglesOutput,
+    homeBar: RectanglesOutput,
+    leftSidePadding: RectanglesOutput,
+    rightSidePadding: RectanglesOutput,
+    screenSize: { height: number, width: number},
+    statusBarAndAddressBar: RectanglesOutput,
+    statusBar: RectanglesOutput,
+    viewport: RectanglesOutput,
+}
+
 export interface StatusAddressToolBarRectanglesOptions {
     // If the side bar needs to be blocked out
     blockOutSideBar: boolean;
@@ -41,18 +52,14 @@ export interface StatusAddressToolBarRectanglesOptions {
     blockOutStatusBar: boolean;
     // If the tool bar needs to be blocked out
     blockOutToolBar: boolean;
+    // Determine if it's an Android device
+    isAndroid: boolean;
     // The name of the platform
     isAndroidNativeWebScreenshot: boolean;
-    // Is it an hybrid app or not
-    isHybridApp: boolean;
-    // If it's in landscape mode
-    isLandscape: boolean;
     // If the instance is a mobile phone
     isMobile: boolean;
     // If the comparison needs to be done for a viewport screenshot or not
     isViewPortScreenshot: boolean;
-    // The name of the platform
-    platformName: string;
 }
 
 export type StatusAddressToolBarRectangles = Array<RectanglesOutput>;

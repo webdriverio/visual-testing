@@ -2,14 +2,16 @@ import { join, normalize } from 'node:path'
 import { rmSync } from 'node:fs'
 import logger from '@wdio/logger'
 import { defaultOptions } from './helpers/options.js'
-import { FOLDERS } from './helpers/constants.js'
+import { DEVICE_RECTANGLES, FOLDERS } from './helpers/constants.js'
 import type { Folders } from './base.interfaces.js'
 import type { ClassOptions, DefaultOptions } from './helpers/options.interfaces.js'
+import type { DeviceRectangles } from './methods/rectangles.interfaces.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison')
 
 export default class BaseClass {
     defaultOptions: DefaultOptions
+    deviceRectangles: DeviceRectangles
     folders: Folders
 
     constructor(options: ClassOptions) {
@@ -28,6 +30,8 @@ export default class BaseClass {
             baselineFolder,
             diffFolder: join(baseFolder, FOLDERS.DIFF),
         }
+
+        this.deviceRectangles = DEVICE_RECTANGLES
 
         if (options.clearRuntimeFolder) {
             log.info('\x1b[33m\n##############################\n!!CLEARING!!\n##############################\x1b[0m')

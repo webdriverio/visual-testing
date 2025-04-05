@@ -17,6 +17,7 @@ vi.mock('webdriver-image-comparison', () => ({
     saveTabbablePage: vi.fn(),
     checkTabbablePage: vi.fn(),
     DEFAULT_TEST_CONTEXT: {},
+    NOT_KNOWN: 'not_known',
 }))
 vi.mock('@wdio/globals', async () => ({
     expect: {

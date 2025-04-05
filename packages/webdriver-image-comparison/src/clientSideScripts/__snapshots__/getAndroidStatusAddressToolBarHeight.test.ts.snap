@@ -2,15 +2,21 @@
 
 exports[`getAndroidStatusAddressToolBarOffsets > should get the android status, address and toolbar height with major and minor version in the navigator 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 732,
-  "screenWidth": 412,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 732,
+  "screenWidth": 412,
   "statusAddressBar": {
     "height": 80,
     "width": 412,
@@ -28,15 +34,21 @@ exports[`getAndroidStatusAddressToolBarOffsets > should get the android status, 
 
 exports[`getAndroidStatusAddressToolBarOffsets > should get the android status, address and toolbar height with major, minor and patch version in the navigator 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 732,
-  "screenWidth": 412,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 732,
+  "screenWidth": 412,
   "statusAddressBar": {
     "height": 80,
     "width": 412,
@@ -54,15 +66,21 @@ exports[`getAndroidStatusAddressToolBarOffsets > should get the android status, 
 
 exports[`getAndroidStatusAddressToolBarOffsets > should get the android status, address and toolbar height with only a major version in the navigator 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 732,
-  "screenWidth": 412,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 732,
+  "screenWidth": 412,
   "statusAddressBar": {
     "height": 80,
     "width": 412,
@@ -80,15 +98,21 @@ exports[`getAndroidStatusAddressToolBarOffsets > should get the android status, 
 
 exports[`getAndroidStatusAddressToolBarOffsets > should set the default toolbar height when the toolbar height will become negative 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 732,
-  "screenWidth": 412,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 732,
+  "screenWidth": 412,
   "statusAddressBar": {
     "height": 24,
     "width": 412,
@@ -106,15 +130,21 @@ exports[`getAndroidStatusAddressToolBarOffsets > should set the default toolbar 
 
 exports[`getAndroidStatusAddressToolBarOffsets > should set the dimensions properly for a device in landscape mode 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 732,
-  "screenWidth": 732,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 732,
+  "screenWidth": 732,
   "statusAddressBar": {
     "height": 24,
     "width": 412,
@@ -132,15 +162,21 @@ exports[`getAndroidStatusAddressToolBarOffsets > should set the dimensions prope
 
 exports[`getAndroidStatusAddressToolBarOffsets > should set the dimensions properly for a table in landscape mode 1`] = `
 {
-  "safeArea": 0,
-  "screenHeight": 1024,
-  "screenWidth": 1024,
-  "sideBar": {
+  "leftSidePadding": {
     "height": 0,
     "width": 0,
     "x": 0,
     "y": 0,
   },
+  "rightSidePadding": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "safeArea": 0,
+  "screenHeight": 1024,
+  "screenWidth": 1024,
   "statusAddressBar": {
     "height": 24,
     "width": 1024,

@@ -1,5 +1,5 @@
 import { executeImageCompare } from '../methods/images.js'
-import { checkIsMobile } from '../helpers/utils.js'
+import { checkIsAndroid, checkIsMobile } from '../helpers/utils.js'
 import saveWebElement from './saveWebElement.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveElementOptions } from './element.interfaces.js'
@@ -35,7 +35,7 @@ export default async function checkWebElement(
             waitForFontsLoaded: checkElementOptions.method.waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, isLandscape } = await saveWebElement({
+    const { devicePixelRatio, fileName } = await saveWebElement({
         methods,
         instanceData,
         folders,
@@ -47,7 +47,6 @@ export default async function checkWebElement(
     // 2a. Determine the options
     const compareOptions = methodCompareOptions(checkElementOptions.method)
     const executeCompareOptions = {
-        devicePixelRatio,
         compareOptions: {
             wic: {
                 ...checkElementOptions.wic.compareOptions,
@@ -58,6 +57,8 @@ export default async function checkWebElement(
             },
             method: compareOptions,
         },
+        devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         fileName,
         folderOptions: {
             autoSaveBaseline: checkElementOptions.wic.autoSaveBaseline,
@@ -69,15 +70,13 @@ export default async function checkWebElement(
             isMobile: checkIsMobile(instanceData.platformName),
             savePerInstance: checkElementOptions.wic.savePerInstance,
         },
+        isAndroid: checkIsAndroid(instanceData.platformName),
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        isHybridApp: checkElementOptions.wic.isHybridApp,
-        isLandscape,
         platformName: instanceData.platformName,
     }
 
     // 2b Now execute the compare and return the data
     return executeImageCompare({
-        executor: methods.executor,
         isViewPortScreenshot: true,
         isNativeContext,
         options: executeCompareOptions,
