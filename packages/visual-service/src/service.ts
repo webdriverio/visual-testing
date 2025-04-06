@@ -17,7 +17,14 @@ import {
 } from 'webdriver-image-comparison'
 import type { TestContext } from 'webdriver-image-comparison'
 import { SevereServiceError } from 'webdriverio'
-import { determineNativeContext, enrichTestContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
+import {
+    determineNativeContext,
+    enrichTestContext,
+    getFolders,
+    getInstanceData,
+    getNativeContext,
+    isBiDiScreenshotSupported,
+} from './utils.js'
 import {
     toMatchScreenSnapshot,
     toMatchFullPageSnapshot,
@@ -263,12 +270,14 @@ export default class WdioImageComparisonService extends BaseClass {
                     return command(
                         {
                             methods: {
+                                bidiScreenshot: isBiDiScreenshotSupported(browser) ? this.browsingContextCaptureScreenshot.bind(browser) : undefined,
                                 executor: <ReturnValue, InnerArguments extends unknown[]>(
                                     fn: string | ((...args: InnerArguments) => ReturnValue),
                                     ...args: InnerArguments): Promise<ReturnValue> => {
                                     return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
                                 },
                                 getElementRect: this.getElementRect.bind(browser),
+                                getWindowHandle: this.getWindowHandle.bind(browser),
                                 screenShot: this.takeScreenshot.bind(browser),
                             },
                             instanceData,
@@ -386,12 +395,14 @@ export default class WdioImageComparisonService extends BaseClass {
                         returnData[browserName] = await command(
                             {
                                 methods: {
+                                    bidiScreenshot: isBiDiScreenshotSupported(browserInstance) ? browserInstance.browsingContextCaptureScreenshot.bind(browserInstance) : undefined,
                                     executor: <ReturnValue, InnerArguments extends unknown[]>(
                                         fn: string | ((...args: InnerArguments) => ReturnValue),
                                         ...args: InnerArguments): Promise<ReturnValue> => {
                                         return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
                                     },
                                     getElementRect: browserInstance.getElementRect.bind(browserInstance),
+                                    getWindowHandle: browserInstance.getWindowHandle.bind(browserInstance),
                                     screenShot: browserInstance.takeScreenshot.bind(browserInstance),
                                 },
                                 instanceData,
