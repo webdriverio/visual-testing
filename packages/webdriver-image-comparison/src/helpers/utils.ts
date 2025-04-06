@@ -489,3 +489,14 @@ export async function getMobileViewPortPosition({
     // No WebView detected, return empty values
     return initialDeviceRectangles
 }
+
+/**
+ * Get the value of a method or the default value
+ */
+export function getMethodOrWicOption<T, K extends keyof T>(
+    method: Partial<T> | undefined,
+    wic: T,
+    key: K
+): T[K] {
+    return method?.[key] ?? wic[key]
+}

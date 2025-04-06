@@ -14,6 +14,7 @@ import {
     getAddressBarShadowPadding,
     getAndCreatePath,
     getBase64ScreenshotSize,
+    getMethodOrWicOption,
     getToolBarShadowPadding,
 } from './utils.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
@@ -415,6 +416,42 @@ describe('utils', () => {
 
         it('should get the screenshot size of a screenshot string with DRP 2', () => {
             expect(getBase64ScreenshotSize(IMAGE_STRING, 2)).toMatchSnapshot()
+        })
+    })
+
+    describe('getMethodOrWicOption', () => {
+        const defaultOptions = {
+            disableBlinkingCursor: true,
+            fullPageScrollTimeout: 500,
+        }
+
+        it('should return the method value if it is defined (boolean)', () => {
+            const method = { disableBlinkingCursor: false }
+            const result = getMethodOrWicOption(method, defaultOptions, 'disableBlinkingCursor')
+            expect(result).toBe(false)
+        })
+
+        it('should return the wic value if method is undefined (boolean)', () => {
+            const method = {}
+            const result = getMethodOrWicOption(method, defaultOptions, 'disableBlinkingCursor')
+            expect(result).toBe(true)
+        })
+
+        it('should return the wic value if method is undefined (number)', () => {
+            const method = {}
+            const result = getMethodOrWicOption(method, defaultOptions, 'fullPageScrollTimeout')
+            expect(result).toBe(500)
+        })
+
+        it('should return the method value if it is defined (number)', () => {
+            const method = { fullPageScrollTimeout: 1000 }
+            const result = getMethodOrWicOption(method, defaultOptions, 'fullPageScrollTimeout')
+            expect(result).toBe(1000)
+        })
+
+        it('should return the wic value if method itself is undefined', () => {
+            const result = getMethodOrWicOption(undefined, defaultOptions, 'disableBlinkingCursor')
+            expect(result).toBe(true)
         })
     })
 })

@@ -7,7 +7,7 @@ import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
-import { getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
+import { getBase64ScreenshotSize, getMethodOrWicOption, waitFor } from '../helpers/utils.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 
@@ -29,24 +29,14 @@ export default async function saveWebElement(
         saveElementOptions.wic
     const { executor, screenShot, takeElementScreenshot } = methods
     // 1b. Set the method options to the right values
-    const disableBlinkingCursor: boolean = saveElementOptions.method.disableBlinkingCursor !== undefined
-        ? Boolean(saveElementOptions.method.disableBlinkingCursor)
-        : saveElementOptions.wic.disableBlinkingCursor
-    const disableCSSAnimation: boolean = saveElementOptions.method.disableCSSAnimation !== undefined
-        ? Boolean(saveElementOptions.method.disableCSSAnimation)
-        : saveElementOptions.wic.disableCSSAnimation
-    const enableLayoutTesting: boolean = saveElementOptions.method.enableLayoutTesting !== undefined
-        ? Boolean(saveElementOptions.method.enableLayoutTesting)
-        : saveElementOptions.wic.enableLayoutTesting
-    const hideScrollBars: boolean = saveElementOptions.method.hideScrollBars !== undefined
-        ? Boolean(saveElementOptions.method.hideScrollBars)
-        : saveElementOptions.wic.hideScrollBars
-    const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
+    const disableBlinkingCursor = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'disableBlinkingCursor')
+    const disableCSSAnimation = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'disableCSSAnimation')
+    const enableLayoutTesting = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'enableLayoutTesting')
     const hideElements: HTMLElement[] = saveElementOptions.method.hideElements || []
+    const hideScrollBars = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'hideScrollBars')
     const removeElements: HTMLElement[] = saveElementOptions.method.removeElements || []
-    const waitForFontsLoaded: boolean = saveElementOptions.method.waitForFontsLoaded !== undefined
-        ? Boolean(saveElementOptions.method.waitForFontsLoaded)
-        : saveElementOptions.wic.waitForFontsLoaded
+    const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
+    const waitForFontsLoaded = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'waitForFontsLoaded')
 
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {

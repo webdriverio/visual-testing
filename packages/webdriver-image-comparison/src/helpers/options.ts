@@ -18,6 +18,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         addIOSBezelCorners: options.addIOSBezelCorners ?? false,
         autoSaveBaseline: options.autoSaveBaseline ?? true,
         clearFolder: options.clearRuntimeFolder ?? false,
+        createBidiFullPageScreenshots: options.createBidiFullPageScreenshots ?? true,
         // Storybook will have it's own default format string
         formatImageName: options.formatImageName ?? (isStorybook() ? STORYBOOK_FORMAT_STRING : DEFAULT_FORMAT_STRING),
         isHybridApp: options.isHybridApp ?? false,

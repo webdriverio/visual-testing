@@ -6,6 +6,7 @@ import type { ScreenshotOutput, AfterScreenshotOptions } from '../helpers/afterS
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
 import type { FullPageScreenshotDataOptions, FullPageScreenshotsData } from '../methods/screenshots.interfaces.js'
 import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
+import { getMethodOrWicOption } from '../helpers/utils.js'
 
 /**
  * Saves an image of the full page
@@ -34,27 +35,16 @@ export default async function saveFullPageScreen(
     } = saveFullPageOptions.wic
 
     // 1c. Set the method options to the right values
-    const disableBlinkingCursor: boolean = saveFullPageOptions.method.disableBlinkingCursor !== undefined
-        ? Boolean(saveFullPageOptions.method.disableBlinkingCursor)
-        : saveFullPageOptions.wic.disableBlinkingCursor
-    const disableCSSAnimation: boolean = saveFullPageOptions.method.disableCSSAnimation !== undefined
-        ? Boolean(saveFullPageOptions.method.disableCSSAnimation)
-        : saveFullPageOptions.wic.disableCSSAnimation
-    const enableLayoutTesting: boolean = saveFullPageOptions.method.enableLayoutTesting !== undefined
-        ? Boolean(saveFullPageOptions.method.enableLayoutTesting)
-        : saveFullPageOptions.wic.enableLayoutTesting
-    const hideScrollBars: boolean = saveFullPageOptions.method.hideScrollBars !== undefined
-        ? Boolean(saveFullPageOptions.method.hideScrollBars)
-        : saveFullPageOptions.wic.hideScrollBars
-    const fullPageScrollTimeout: number = saveFullPageOptions.method.fullPageScrollTimeout !== undefined
-        ? saveFullPageOptions.method.fullPageScrollTimeout!
-        : saveFullPageOptions.wic.fullPageScrollTimeout
-    const hideElements: HTMLElement[] = saveFullPageOptions.method.hideElements || []
-    const removeElements: HTMLElement[] = saveFullPageOptions.method.removeElements || []
+    const createBidiFullPageScreenshots = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'createBidiFullPageScreenshots')
+    const disableBlinkingCursor = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'disableBlinkingCursor')
+    const disableCSSAnimation = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'disableCSSAnimation')
+    const enableLayoutTesting = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'enableLayoutTesting')
+    const fullPageScrollTimeout = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'fullPageScrollTimeout')
     const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
-    const waitForFontsLoaded: boolean = saveFullPageOptions.method.waitForFontsLoaded !== undefined
-        ? Boolean(saveFullPageOptions.method.waitForFontsLoaded)
-        : saveFullPageOptions.wic.waitForFontsLoaded
+    const hideElements: HTMLElement[] = saveFullPageOptions.method.hideElements || []
+    const hideScrollBars = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'hideScrollBars')
+    const removeElements: HTMLElement[] = saveFullPageOptions.method.removeElements || []
+    const waitForFontsLoaded = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'waitForFontsLoaded')
 
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {
@@ -74,7 +64,7 @@ export default async function saveFullPageScreen(
     const isLandscape = enrichedInstanceData.dimensions.window.isLandscape
     let fullPageBase64Image: string
 
-    if (typeof methods.bidiScreenshot === 'function' && typeof methods.getWindowHandle === 'function') {
+    if (typeof methods.bidiScreenshot === 'function' && typeof methods.getWindowHandle === 'function' && createBidiFullPageScreenshots) {
         // 3a.  Fullpage screenshots are taken in one go with the Bidi protocol
         const contextID = await methods.getWindowHandle()
         fullPageBase64Image =( await methods.bidiScreenshot({ context: contextID, origin: 'document' })).data
@@ -151,3 +141,4 @@ export default async function saveFullPageScreen(
     // 6.  Return the data
     return afterScreenshot(methods.executor, afterOptions!)
 }
+
