@@ -367,7 +367,11 @@ export async function getMobileScreenSize({
     } catch (error: unknown) {
         log.warn('Error getting mobile screen size:\n', error, '\nFalling back to window.screen.height and window.screen.width');
         // This is a fallback and not 100% accurate, but we need to have something =)
-        ({ height, width } = await executor(() => ({ height: window.screen.height, width: window.screen.width })))
+        ({ height, width } = await executor(() => {
+            const { height, width } = window.screen
+            const isPortrait = window.matchMedia('(orientation: portrait)').matches
+            return { height: isPortrait? height: width, width: isPortrait? width: height }
+        }))
     }
 
     return { height, width }
