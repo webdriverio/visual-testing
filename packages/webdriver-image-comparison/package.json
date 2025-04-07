@@ -31,6 +31,6 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "webdriverio": "^9.9.1"
+    "webdriverio": "^9.12.4"
   }
 }
