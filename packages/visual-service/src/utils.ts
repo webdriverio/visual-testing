@@ -1,6 +1,6 @@
 import type { Capabilities } from '@wdio/types'
 import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
-import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from 'webdriver-image-comparison'
+import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN, ViewportContextManager } from 'webdriver-image-comparison'
 import type { Folders, InstanceData, TestContext } from 'webdriver-image-comparison'
 import type {
     EnrichTestContextOptions,
@@ -139,6 +139,9 @@ async function getMobileInstanceData({
             deviceRectangles.homeBar = currentOffsets.HOME_BAR
         }
     }
+
+    // Store final viewport state before returning
+    ViewportContextManager.getInstance().set(deviceRectangles)
 
     return {
         devicePixelRatio,

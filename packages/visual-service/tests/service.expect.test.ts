@@ -15,6 +15,13 @@ vi.mock('webdriver-image-comparison', () => ({
     checkTabbablePage: vi.fn(),
     DEFAULT_TEST_CONTEXT: {},
     NOT_KNOWN: 'not_known',
+    ViewportContextManager: {
+        getInstance: vi.fn(() => ({
+            get: vi.fn(),
+            set: vi.fn(),
+            clear: vi.fn(),
+        })),
+    },
 }))
 
 const log = logger('test')
