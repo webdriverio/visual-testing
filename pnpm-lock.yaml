@@ -58,8 +58,8 @@ importers:
         specifier: ^9.12.2
         version: 9.12.2
       '@wdio/cli':
-        specifier: ^9.12.2
-        version: 9.12.2
+        specifier: ^9.12.4
+        version: 9.12.4
       '@wdio/globals':
         specifier: ^9.9.1
         version: 9.9.1(@wdio/logger@9.4.4)
@@ -125,7 +125,7 @@ importers:
         version: 3.0.8(@types/debug@4.1.12)(@types/node@22.13.4)(@vitest/ui@3.0.8)(jsdom@25.0.1)
       wdio-lambdatest-service:
         specifier: ^4.0.0
-        version: 4.0.0(@wdio/cli@9.12.2)(@wdio/types@9.12.2)(webdriverio@9.12.4)
+        version: 4.0.0(@wdio/cli@9.12.4)(@wdio/types@9.12.2)(webdriverio@9.12.4)
       webdriverio:
         specifier: ^9.12.4
         version: 9.12.4
@@ -2230,8 +2230,8 @@ packages:
     resolution: {integrity: sha512-oUgx0axcj/nlyrnGv0PshQ9HOXgKdmMA8HtYi/q+AOlUVjmQMa+Jd2D4BD3Gjv+yRAcmKSef9D8oLxRW4WvsUA==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/cli@9.12.2':
-    resolution: {integrity: sha512-SLTTmArCbtGla/d0ZLMgKNH5amR8vwh5JLuZyU1UfEvD9IPaO2/jktgRyuAmH+XVIKha33OEBNMkTDqeBaVkyg==}
+  '@wdio/cli@9.12.4':
+    resolution: {integrity: sha512-Y0DxrJXplNfY4Ds15SY7fI9/05STMldxtN+47rdVXcsDnwq31tM82YvmHecUngxu6P9urO8LuEobdSGwDlHnLw==}
     engines: {node: '>=18.20.0'}
     hasBin: true
 
@@ -2253,6 +2253,10 @@ packages:
 
   '@wdio/globals@9.12.2':
     resolution: {integrity: sha512-zx/saq1qsThElECALs+lZNRzK6cF902HIK7gSkH3PZmAKNZWGEltwaLrxWemKQq6pms28kZ8BV0LoJhztizpOg==}
+    engines: {node: '>=18.20.0'}
+
+  '@wdio/globals@9.12.4':
+    resolution: {integrity: sha512-p5t6r0QLOqZbEeNoJc6zv6beYeQm+olIQmuMONbQKLxj1BO5uHRUUCI7BAyYuiPVnPpEhvTYEKQuSZ3mh4Dw8Q==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/globals@9.9.1':
@@ -6754,10 +6758,6 @@ packages:
     resolution: {integrity: sha512-OduNjVJsFbifKb57UqZ2EMP1i4u64Xwow3NYXUtBbD4vIwJdQd4+xl8YDou1dlm4DVrtwT/7Ky8z8WyCULVfxw==}
     engines: {node: '>=16'}
 
-  type-fest@4.38.0:
-    resolution: {integrity: sha512-2dBz5D5ycHIoliLYLi0Q2V7KRaDlH0uWIvmk7TYlAg5slqwiPv1ezJdZm1QEM0xgk29oYWMCbIG7E6gHpvChlg==}
-    engines: {node: '>=16'}
-
   type-fest@4.39.1:
     resolution: {integrity: sha512-uW9qzd66uyHYxwyVBYiwS4Oi0qZyUqwjU+Oevr6ZogYiXt99EOYtwvzMSLw1c3lYo2HzJsep/NB23iEVEgjG/w==}
     engines: {node: '>=16'}
@@ -9586,16 +9586,16 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/cli@9.12.2':
+  '@wdio/cli@9.12.4':
     dependencies:
-      '@types/node': 20.17.28
+      '@types/node': 20.17.30
       '@vitest/snapshot': 2.1.9
-      '@wdio/config': 9.12.2
-      '@wdio/globals': 9.12.2(@wdio/logger@9.4.4)
+      '@wdio/config': 9.12.3
+      '@wdio/globals': 9.12.4(@wdio/logger@9.4.4)
       '@wdio/logger': 9.4.4
-      '@wdio/protocols': 9.12.2
-      '@wdio/types': 9.12.2
-      '@wdio/utils': 9.12.2
+      '@wdio/protocols': 9.12.3
+      '@wdio/types': 9.12.3
+      '@wdio/utils': 9.12.3
       async-exit-hook: 2.0.1
       chalk: 5.4.1
       chokidar: 4.0.3
@@ -9610,7 +9610,7 @@ snapshots:
       read-pkg-up: 10.1.0
       recursive-readdir: 2.2.3
       tsx: 4.19.3
-      webdriverio: 9.12.2
+      webdriverio: 9.12.4
       yargs: 17.7.2
     transitivePeerDependencies:
       - bare-buffer
@@ -9666,6 +9666,18 @@ snapshots:
     optionalDependencies:
       expect-webdriverio: 5.1.0(@wdio/globals@9.12.2(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.12.2)
       webdriverio: 9.12.2
+    transitivePeerDependencies:
+      - '@wdio/logger'
+      - bare-buffer
+      - bufferutil
+      - puppeteer-core
+      - supports-color
+      - utf-8-validate
+
+  '@wdio/globals@9.12.4(@wdio/logger@9.4.4)':
+    optionalDependencies:
+      expect-webdriverio: 5.1.0(@wdio/globals@9.12.4(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.12.4)
+      webdriverio: 9.12.4
     transitivePeerDependencies:
       - '@wdio/logger'
       - bare-buffer
@@ -11440,6 +11452,17 @@ snapshots:
       jest-matcher-utils: 29.7.0
       lodash.isequal: 4.5.0
       webdriverio: 9.12.2
+
+  expect-webdriverio@5.1.0(@wdio/globals@9.12.4(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.12.4):
+    dependencies:
+      '@vitest/snapshot': 2.1.9
+      '@wdio/globals': 9.12.4(@wdio/logger@9.4.4)
+      '@wdio/logger': 9.4.4
+      expect: 29.7.0
+      jest-matcher-utils: 29.7.0
+      lodash.isequal: 4.5.0
+      webdriverio: 9.12.4
+    optional: true
 
   expect-webdriverio@5.1.0(@wdio/globals@9.9.1(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.12.4):
     dependencies:
@@ -14037,7 +14060,7 @@ snapshots:
     dependencies:
       find-up: 6.3.0
       read-pkg: 8.1.0
-      type-fest: 4.38.0
+      type-fest: 4.39.1
 
   read-pkg-up@7.0.1:
     dependencies:
@@ -15109,8 +15132,6 @@ snapshots:
 
   type-fest@4.26.0: {}
 
-  type-fest@4.38.0: {}
-
   type-fest@4.39.1: {}
 
   type-is@1.6.18:
@@ -15448,10 +15469,10 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@4.0.0(@wdio/cli@9.12.2)(@wdio/types@9.12.2)(webdriverio@9.12.4):
+  wdio-lambdatest-service@4.0.0(@wdio/cli@9.12.4)(@wdio/types@9.12.2)(webdriverio@9.12.4):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.8
-      '@wdio/cli': 9.12.2
+      '@wdio/cli': 9.12.4
       '@wdio/logger': 7.26.0
       '@wdio/types': 9.12.2
       axios: 1.7.9
