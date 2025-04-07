@@ -103,6 +103,233 @@ exports[`utils > getBase64ScreenshotSize > should get the screenshot size of a s
 }
 `;
 
+exports[`utils > getDevicePixelRatio > should return 1 when the screenshot width equals device screen width 1`] = `85`;
+
+exports[`utils > getDevicePixelRatio > should return 2 when the screenshot width is double the device screen width 1`] = `171`;
+
+exports[`utils > getDevicePixelRatio > should round the result to the nearest integer 1`] = `161`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "ipadair" 1`] = `
+{
+  "bottomImageName": "ipadair4th.ipadair5th-bottom",
+  "topImageName": "ipadair4th.ipadair5th-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "ipadmini" 1`] = `
+{
+  "bottomImageName": "ipadmini6th-bottom",
+  "topImageName": "ipadmini6th-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "ipadpro11" 1`] = `
+{
+  "bottomImageName": "ipadpro11-bottom",
+  "topImageName": "ipadpro11-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "ipadpro129" 1`] = `
+{
+  "bottomImageName": "ipadpro129-bottom",
+  "topImageName": "ipadpro129-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone11" 1`] = `
+{
+  "bottomImageName": "iphonexr.iphone11-bottom",
+  "topImageName": "iphonexr.iphone11-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone11pro" 1`] = `
+{
+  "bottomImageName": "iphonex.iphonexs.iphone11pro-bottom",
+  "topImageName": "iphonex.iphonexs.iphone11pro-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone11promax" 1`] = `
+{
+  "bottomImageName": "iphone11promax-bottom",
+  "topImageName": "iphone11promax-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone12" 1`] = `
+{
+  "bottomImageName": "iphone12.iphone12pro.iphone13.iphone13pro.iphone14-bottom",
+  "topImageName": "iphone12.iphone12pro-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone12mini" 1`] = `
+{
+  "bottomImageName": "iphone12mini.iphone13mini-bottom",
+  "topImageName": "iphone12mini-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone12pro" 1`] = `
+{
+  "bottomImageName": "iphone12.iphone12pro.iphone13.iphone13pro.iphone14-bottom",
+  "topImageName": "iphone12.iphone12pro-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone12promax" 1`] = `
+{
+  "bottomImageName": "iphone12promax.iphone13promax.iphone14plus-bottom",
+  "topImageName": "iphone12promax-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone13" 1`] = `
+{
+  "bottomImageName": "iphone12.iphone12pro.iphone13.iphone13pro.iphone14-bottom",
+  "topImageName": "iphone13.iphone13pro.iphone14-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone13mini" 1`] = `
+{
+  "bottomImageName": "iphone12mini.iphone13mini-bottom",
+  "topImageName": "iphone13mini-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone13pro" 1`] = `
+{
+  "bottomImageName": "iphone12.iphone12pro.iphone13.iphone13pro.iphone14-bottom",
+  "topImageName": "iphone13.iphone13pro.iphone14-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone13promax" 1`] = `
+{
+  "bottomImageName": "iphone12promax.iphone13promax.iphone14plus-bottom",
+  "topImageName": "iphone13promax.iphone14plus-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone14" 1`] = `
+{
+  "bottomImageName": "iphone12.iphone12pro.iphone13.iphone13pro.iphone14-bottom",
+  "topImageName": "iphone13.iphone13pro.iphone14-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone14plus" 1`] = `
+{
+  "bottomImageName": "iphone12promax.iphone13promax.iphone14plus-bottom",
+  "topImageName": "iphone13promax.iphone14plus-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone14pro" 1`] = `
+{
+  "bottomImageName": "iphone14pro-bottom",
+  "topImageName": "iphone14pro-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone14promax" 1`] = `
+{
+  "bottomImageName": "iphone14promax-bottom",
+  "topImageName": "iphone14promax-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphone15" 1`] = `
+{
+  "bottomImageName": "iphone15-bottom",
+  "topImageName": "iphone15-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphonex" 1`] = `
+{
+  "bottomImageName": "iphonex.iphonexs.iphone11pro-bottom",
+  "topImageName": "iphonex.iphonexs.iphone11pro-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphonexr" 1`] = `
+{
+  "bottomImageName": "iphonexr.iphone11-bottom",
+  "topImageName": "iphonexr.iphone11-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphonexs" 1`] = `
+{
+  "bottomImageName": "iphonex.iphonexs.iphone11pro-bottom",
+  "topImageName": "iphonex.iphonexs.iphone11pro-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should return bezel image names for "iphonexsmax" 1`] = `
+{
+  "bottomImageName": "iphonexsmax-bottom",
+  "topImageName": "iphonexsmax-top",
+}
+`;
+
+exports[`utils > getIosBezelImageNames > should throw an error for unsupported device names 1`] = `[Error: Could not find iOS bezel images for device unsupportedDevice]`;
+
+exports[`utils > getMobileViewPortPosition > should return correct device rectangles for iOS WebView flow 1`] = `
+{
+  "bottomBar": {
+    "height": 600,
+    "width": 400,
+    "x": 0,
+    "y": 200,
+  },
+  "homeBar": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "leftSidePadding": {
+    "height": 100,
+    "width": 50,
+    "x": 0,
+    "y": 100,
+  },
+  "rightSidePadding": {
+    "height": 100,
+    "width": 250,
+    "x": 150,
+    "y": 100,
+  },
+  "screenSize": {
+    "height": 800,
+    "width": 400,
+  },
+  "statusBar": {
+    "height": 0,
+    "width": 0,
+    "x": 0,
+    "y": 0,
+  },
+  "statusBarAndAddressBar": {
+    "height": 100,
+    "width": 400,
+    "x": 0,
+    "y": 0,
+  },
+  "viewport": {
+    "height": 100,
+    "width": 100,
+    "x": 50,
+    "y": 100,
+  },
+}
+`;
+
 exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for Android browser and adding a shadow padding 1`] = `6`;
 
 exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for a desktop browser 1`] = `0`;
