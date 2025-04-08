@@ -11,7 +11,6 @@ import { ClassOptions } from './helpers/options.interfaces.js'
 import { ImageCompareResult } from './methods/images.interfaces.js'
 import { DEFAULT_TEST_CONTEXT, DEVICE_RECTANGLES, IOS_OFFSETS, FOLDERS, NOT_KNOWN } from './helpers/constants.js'
 import { getMobileScreenSize, getMobileViewPortPosition } from './helpers/utils.js'
-import { ViewportContextManager } from './helpers/viewportContextManager.js'
 
 export type { ScreenshotOutput } from './helpers/afterScreenshot.interfaces.js'
 export type {
@@ -52,5 +51,4 @@ export {
     checkTabbablePage,
     getMobileScreenSize,
     getMobileViewPortPosition,
-    ViewportContextManager,
 }

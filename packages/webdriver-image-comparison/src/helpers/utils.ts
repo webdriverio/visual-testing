@@ -7,6 +7,7 @@ import type {
     FormatFileNameOptions,
     GetAddressBarShadowPaddingOptions,
     GetAndCreatePathOptions,
+    GetMobileScreenSizeOptions,
     GetMobileViewPortPositionOptions,
     GetToolBarShadowPaddingOptions,
     ScreenshotSize,
@@ -339,21 +340,25 @@ export function updateVisualBaseline(): boolean {
  * Get the mobile screen size, this is different for native and webview
  */
 export async function getMobileScreenSize({
+    currentBrowser,
     executor,
-    isIOS
-}: {
-    executor: Executor,
-    isIOS: boolean
-}): Promise<{ height: number; width: number }> {
+    isIOS,
+    isNativeContext,
+}: GetMobileScreenSizeOptions): Promise<{ height: number; width: number }> {
     let height = 0, width = 0
+    const isLandscape = (await currentBrowser.getOrientation()).toUpperCase() === 'LANDSCAPE'
 
     try {
+
         if (isIOS) {
-            ({ screenSize: { height, width } } = (await executor('mobile: deviceScreenInfo')) as {
+            const { screenSize: { height:iosHeight, width:iosWidth } } = (await executor('mobile: deviceScreenInfo')) as {
                 statusBarSize: { width: number, height: number },
                 scale: number,
                 screenSize: { width: number, height: number },
-            })
+            }
+
+            height = isLandscape ? iosWidth : iosHeight
+            width = isLandscape ? iosHeight : iosWidth
 
             // It's Android
         } else {
@@ -362,16 +367,28 @@ export async function getMobileScreenSize({
             if (!realDisplaySize || !/^\d+x\d+$/.test(realDisplaySize)) {
                 throw new Error(`Invalid realDisplaySize format. Expected 'widthxheight', got "${realDisplaySize}"`)
             }
-            [width, height] = realDisplaySize.split('x').map(Number)
+            const [androidWidth, AndroidHeight] = realDisplaySize.split('x').map(Number)
+            height = isLandscape ? androidWidth : AndroidHeight
+            width = isLandscape ? AndroidHeight : androidWidth
         }
     } catch (error: unknown) {
-        log.warn('Error getting mobile screen size:\n', error, '\nFalling back to window.screen.height and window.screen.width');
-        // This is a fallback and not 100% accurate, but we need to have something =)
-        ({ height, width } = await executor(() => {
-            const { height, width } = window.screen
-            const isPortrait = window.matchMedia('(orientation: portrait)').matches
-            return { height: isPortrait? height: width, width: isPortrait? width: height }
-        }))
+        log.warn('Error getting mobile screen size:\n', error, `\nFalling back to ${isNativeContext ?
+            '`getWindowSize()` which might not be as accurate' :
+            'window.screen.height and window.screen.width'}`
+        )
+
+        if (isNativeContext) {
+            const { height: deviceHeight, width: deviceWidth } = await currentBrowser.getWindowSize()
+            height = isLandscape ? deviceWidth : deviceHeight
+            width = isLandscape ? deviceHeight : deviceWidth
+        } else {
+            // This is a fallback and not 100% accurate, but we need to have something =)
+            ({ height, width } = await executor(() => {
+                const { height, width } = window.screen
+                const isPortrait = window.matchMedia('(orientation: portrait)').matches
+                return { height: isPortrait ? height : width, width: isPortrait ? width : height }
+            }))
+        }
     }
 
     return { height, width }

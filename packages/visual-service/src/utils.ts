@@ -1,6 +1,6 @@
 import type { Capabilities } from '@wdio/types'
 import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
-import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN, ViewportContextManager } from 'webdriver-image-comparison'
+import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from 'webdriver-image-comparison'
 import type { Folders, InstanceData, TestContext } from 'webdriver-image-comparison'
 import type {
     EnrichTestContextOptions,
@@ -10,6 +10,7 @@ import type {
     MobileInstanceData,
     NativeContextType,
     WdioIcsOptions,
+    WrapWithContextOptions,
 } from './types.js'
 
 /**
@@ -76,7 +77,12 @@ async function getMobileInstanceData({
         const getUrl = () => currentBrowser.getUrl()
         const url = (arg:string) => currentBrowser.url(arg)
         const currentDriverCapabilities = currentBrowser.capabilities
-        const { height: screenHeight, width: screenWidth } = await getMobileScreenSize({ executor, isIOS })
+        const { height: screenHeight, width: screenWidth } = await getMobileScreenSize({
+            currentBrowser,
+            executor,
+            isIOS,
+            isNativeContext,
+        })
         // Update the width for the device rectangles for bottomBar, screenSize, statusBar, statusBarAndAddressBar
         deviceRectangles.screenSize.height = screenHeight
         deviceRectangles.screenSize.width = screenWidth
@@ -139,9 +145,6 @@ async function getMobileInstanceData({
             deviceRectangles.homeBar = currentOffsets.HOME_BAR
         }
     }
-
-    // Store final viewport state before returning
-    ViewportContextManager.getInstance().set(deviceRectangles)
 
     return {
         devicePixelRatio,
@@ -245,6 +248,7 @@ export async function getInstanceData({
         devicePixelRatio: mobileDevicePixelRatio,
         deviceRectangles,
     } = await getMobileInstanceData({ currentBrowser, initialDeviceRectangles, isNativeContext, nativeWebScreenshot })
+
     devicePixelRatio = isMobile ? mobileDevicePixelRatio : devicePixelRatio
 
     return {
@@ -393,4 +397,27 @@ export function enrichTestContext(
         title,
     }
 }
+/**
+ * Wrap the command with the context manager
+ * This will make sure that the context manager is updated when needed
+ * and that the command is executed in the correct context
+ */
+export function wrapWithContext<T extends (...args: any[]) => any>(opts: WrapWithContextOptions<T>): () => Promise<ReturnType<T>> {
+    const { browser, command, contextManager, isNativeContext, getArgs } = opts
 
+    return async function (this: WebdriverIO.Browser): Promise<ReturnType<T>> {
+        if (contextManager.needsUpdate) {
+            const instanceData: InstanceData = await getInstanceData({
+                currentBrowser: browser,
+                initialDeviceRectangles: contextManager.getViewportContext(),
+                isNativeContext,
+            })
+
+            contextManager.setViewPortContext(instanceData.deviceRectangles)
+        }
+
+        const finalArgs = getArgs()
+
+        return command.apply(this, finalArgs)
+    }
+}

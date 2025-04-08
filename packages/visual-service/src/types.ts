@@ -13,6 +13,7 @@ import type {
     InstanceData,
 } from 'webdriver-image-comparison'
 import type { ChainablePromiseElement } from 'webdriverio'
+import type { ContextManager } from './contextManager.js'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;
@@ -60,6 +61,14 @@ export type GetMobileInstanceDataOptions = {
     initialDeviceRectangles: DeviceRectangles;
     isNativeContext:boolean;
     nativeWebScreenshot:boolean;
+}
+
+export interface WrapWithContextOptions<T extends (...args: any[]) => any> {
+    browser: WebdriverIO.Browser
+    command: T
+    contextManager: ContextManager
+    isNativeContext: boolean
+    getArgs: () => Parameters<T>
 }
 
 export interface WdioIcsOptions {
