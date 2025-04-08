@@ -167,6 +167,7 @@ describe('utils', () => {
                 isMobile: true,
                 getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
                 execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -202,6 +203,8 @@ describe('utils', () => {
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
                 execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 852, width: 393 } }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -236,6 +239,8 @@ describe('utils', () => {
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
                 execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 1194, width: 834 } }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -271,6 +276,8 @@ describe('utils', () => {
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
                 execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 834, width: 1194 } }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -304,6 +311,8 @@ describe('utils', () => {
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
                 execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 888, width: 1234 } }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -335,6 +344,8 @@ describe('utils', () => {
                 isAndroid: true,
                 isMobile: true,
                 execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -356,7 +367,9 @@ describe('utils', () => {
                 },
                 isAndroid: true,
                 isMobile: true,
-                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize: '100x200' }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -380,7 +393,9 @@ describe('utils', () => {
                 },
                 isAndroid: true,
                 isMobile: true,
-                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize: '100x200' }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })

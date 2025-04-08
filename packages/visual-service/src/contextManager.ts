@@ -15,7 +15,6 @@ export class ContextManager {
     }
 
     getViewportContext(): DeviceRectangles {
-        console.log('this.cachedViewport = ', this.cachedViewport)
         return this.cachedViewport
     }
 
