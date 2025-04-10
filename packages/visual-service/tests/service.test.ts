@@ -60,9 +60,9 @@ describe('@wdio/visual-service', () => {
     })
 
     describe('before', () => {
-        let service
-        let browser
-        let browserInstance
+        let service: VisualService
+        let browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+        let browserInstance: WebdriverIO.Browser
         let chromeInstance
         let firefoxInstance
         const commands = ['saveElement', 'checkElement', 'saveScreen', 'saveFullPageScreen', 'saveTabbablePage', 'checkScreen', 'checkFullPageScreen', 'checkTabbablePage', 'waitForStorybookComponentToBeLoaded']
@@ -84,6 +84,7 @@ describe('@wdio/visual-service', () => {
             browser = {
                 isMultiremote: false,
                 addCommand: vi.fn((name, fn) => {
+                    // @ts-expect-error
                     browser[name] = fn
                 }),
                 capabilities: {},
@@ -94,8 +95,10 @@ describe('@wdio/visual-service', () => {
                 firefox: firefoxInstance,
                 on: vi.fn(),
             } as any as WebdriverIO.Browser
+            // @ts-expect-error
             browserInstance = {
                 addCommand: vi.fn((name, fn) => {
+                    // @ts-expect-error
                     browserInstance[name] = fn
                 }),
                 capabilities: {},
@@ -114,7 +117,9 @@ describe('@wdio/visual-service', () => {
 
         it('adds command to multiremote browser in before hook', async () => {
             browser.isMultiremote = true
+            // @ts-expect-error
             browser.getInstances = vi.fn().mockReturnValue(['chrome', 'firefox'])
+            // @ts-expect-error
             browser.getInstance = vi.fn().mockReturnValue(browserInstance)
 
             await service.before({
@@ -162,24 +167,6 @@ describe('@wdio/visual-service', () => {
             await service.before({}, [], browser)
 
             expect(log.warn).toMatchSnapshot()
-        })
-    })
-
-    describe('afterCommand', () => {
-        it('should set _isNativeContext to true when dealing with a native app', () => {
-            const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
-            service.afterCommand('getContext', [], 'NATIVE_APP', undefined)
-
-            // @ts-ignore
-            expect(service._isNativeContext).toBe(true)
-        })
-
-        it('should set _isNativeContext to false when not dealing with a native app', () => {
-            const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
-            service.afterCommand('getContext', [], 'WEBVIEW', undefined)
-
-            // @ts-ignore
-            expect(service._isNativeContext).toBe(false)
         })
     })
 })

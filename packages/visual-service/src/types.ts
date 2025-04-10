@@ -23,17 +23,6 @@ type MultiResult = {
     [browserName: string]: ImageCompareResult | number;
 };
 export type Result = MultiResult | (ImageCompareResult | number);
-export type NativeContextType = boolean | Record<string, boolean>
-export type MultiremoteCommandResult = {
-        command: string,
-        method: string,
-        endpoint: string,
-        body: Record<string, any>,
-        result: { value: string },
-        sessionId: string | undefined,
-        cid: string,
-        type: string,
-}
 export type MobileInstanceData = {
     devicePixelRatio: number;
     deviceRectangles: DeviceRectangles;
@@ -67,7 +56,6 @@ export interface WrapWithContextOptions<T extends (...args: any[]) => any> {
     browser: WebdriverIO.Browser
     command: T
     contextManager: ContextManager
-    isNativeContext: boolean
     getArgs: () => Parameters<T>
 }
 

@@ -8,9 +8,7 @@ import type {
     GetInstanceDataOptions,
     GetMobileInstanceDataOptions,
     MobileInstanceData,
-    NativeContextType,
     WdioIcsOptions,
-    WrapWithContextOptions,
 } from './types.js'
 
 /**
@@ -278,76 +276,34 @@ export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browse
 }
 
 /**
- * We can't say it's native context if the autoWebview is provided and set to true, for all other cases we can say it's native
- */
-export function determineNativeContext(driver: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser): NativeContextType {
-    // First check if it's multi remote
-    if (driver.isMultiremote) {
-        return Object.keys(driver).reduce((acc, instanceName) => {
-            const instance = (driver as any)[instanceName] as WebdriverIO.Browser
-
-            if (instance.sessionId) {
-                acc[instance.sessionId] = determineNativeContext(instance) as boolean
-            }
-            return acc
-        }, {} as Record<string, boolean>)
-    }
-
-    // If not check if it's a mobile
-    if (driver.isMobile) {
-        const isAppiumAppCapPresent = (capabilities: AppiumCapabilities) => {
-            const appiumKeys = [
-                'appium:app',
-                'appium:bundleId',
-                'appium:appPackage',
-                'appium:appActivity',
-                'appium:appWaitActivity',
-                'appium:appWaitPackage',
-                'appium:autoWebview',
-            ]
-            const optionsKeys = appiumKeys.map(key => key.replace('appium:', ''))
-            const isInRoot = appiumKeys.some(key => capabilities[key as keyof AppiumCapabilities] !== undefined)
-            // @ts-expect-error
-            const isInAppiumOptions = capabilities['appium:options'] &&
-                // @ts-expect-error
-                optionsKeys.some(key => capabilities['appium:options']?.[key as keyof AppiumCapabilities['appium:options']] !== undefined)
-                // @ts-expect-error
-            const isInLtOptions = capabilities['lt:options'] &&
-                // @ts-expect-error
-                optionsKeys.some(key => capabilities['lt:options']?.[key as keyof AppiumCapabilities['lt:options']] !== undefined)
-
-            return !!(isInRoot || isInAppiumOptions || isInLtOptions)
-        }
-        const capabilities = driver.requestedCapabilities as WebdriverIO.Capabilities & AppiumCapabilities
-        const isBrowserNameFalse = !!capabilities.browserName === false
-        const isAutoWebviewFalse = !(
-            capabilities['appium:autoWebview'] === true ||
-            capabilities['appium:options']?.autoWebview === true ||
-            capabilities['lt:options']?.autoWebview === true
-        )
-
-        return isBrowserNameFalse && isAppiumAppCapPresent(capabilities) && isAutoWebviewFalse
-    }
-
-    // If not, it's webcontext
-    return false
-}
-
-/**
  * Get the native context for the current browser
  */
-export function getNativeContext(
-    browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
-    currentBrowser: WebdriverIO.Browser,
-    nativeContext: NativeContextType
+const appiumKeys = ['app', 'bundleId', 'appPackage', 'appActivity', 'appWaitActivity', 'appWaitPackage'] as const
+type AppiumKeysType = typeof appiumKeys[number]
+export function getNativeContext({ capabilities, isMobile }:
+    { capabilities: WebdriverIO.Capabilities, isMobile: boolean }
 ): boolean {
-    if (browser.isMultiremote) {
-        return (nativeContext as any)[currentBrowser.sessionId]
-    } else if (typeof nativeContext === 'boolean') {
-        return nativeContext
+    if (!capabilities || typeof capabilities !== 'object' || !isMobile) {
+        return false
     }
 
-    return false
+    const isAppiumAppCapPresent = (capabilities: Capabilities.RequestedStandaloneCapabilities) => {
+        return appiumKeys.some((key) => (
+            (capabilities as Capabilities.AppiumCapabilities)[key as keyof Capabilities.AppiumCapabilities] !== undefined ||
+            (capabilities as WebdriverIO.Capabilities)['appium:options']?.[key as AppiumKeysType] !== undefined ||
+            (capabilities as WebdriverIO.Capabilities)['lt:options']?.[key as AppiumKeysType] !== undefined
+        ))
+    }
+    const isBrowserNameFalse = !!capabilities?.browserName === false
+    const isAutoWebviewFalse = !(
+        // @ts-expect-error
+        capabilities?.autoWebview === true ||
+        capabilities['appium:autoWebview'] === true ||
+        capabilities['appium:options']?.autoWebview === true ||
+        capabilities['lt:options']?.autoWebview === true
+    )
+
+    return isBrowserNameFalse && isAppiumAppCapPresent(capabilities) && isAutoWebviewFalse
 }
 
 /**
@@ -397,27 +353,4 @@ export function enrichTestContext(
         title,
     }
 }
-/**
- * Wrap the command with the context manager
- * This will make sure that the context manager is updated when needed
- * and that the command is executed in the correct context
- */
-export function wrapWithContext<T extends (...args: any[]) => any>(opts: WrapWithContextOptions<T>): () => Promise<ReturnType<T>> {
-    const { browser, command, contextManager, isNativeContext, getArgs } = opts
 
-    return async function (this: WebdriverIO.Browser): Promise<ReturnType<T>> {
-        if (contextManager.needsUpdate) {
-            const instanceData: InstanceData = await getInstanceData({
-                currentBrowser: browser,
-                initialDeviceRectangles: contextManager.getViewportContext(),
-                isNativeContext,
-            })
-
-            contextManager.setViewPortContext(instanceData.deviceRectangles)
-        }
-
-        const finalArgs = getArgs()
-
-        return command.apply(this, finalArgs)
-    }
-}
