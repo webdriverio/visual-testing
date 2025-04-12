@@ -367,9 +367,7 @@ export async function getMobileScreenSize({
             if (!realDisplaySize || !/^\d+x\d+$/.test(realDisplaySize)) {
                 throw new Error(`Invalid realDisplaySize format. Expected 'widthxheight', got "${realDisplaySize}"`)
             }
-            const [androidWidth, AndroidHeight] = realDisplaySize.split('x').map(Number)
-            height = isLandscape ? androidWidth : AndroidHeight
-            width = isLandscape ? AndroidHeight : androidWidth
+            [width, height] = realDisplaySize.split('x').map(Number)
         }
     } catch (error: unknown) {
         log.warn('Error getting mobile screen size:\n', error, `\nFalling back to ${isNativeContext ?

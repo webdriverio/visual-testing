@@ -609,15 +609,6 @@ describe('utils', () => {
             expect(result).toEqual({ width: 1080, height: 2400 })
         })
 
-        it('returns Android screen size in landscape', async () => {
-            const executor = vi.fn().mockResolvedValue({ realDisplaySize: '1080x2400' })
-            const browser = { getOrientation: vi.fn().mockResolvedValue('LANDSCAPE') } as any
-
-            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: false, isNativeContext: true })
-
-            expect(result).toEqual({ width: 2400, height: 1080 })
-        })
-
         it('falls back for iOS when screenSize is missing (web context)', async () => {
             const executor = vi.fn()
                 .mockRejectedValueOnce(new Error('Missing screenSize'))

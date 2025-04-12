@@ -438,7 +438,10 @@ export default class WdioImageComparisonService extends BaseClass {
                         throw new Error(`No ContextManager found for browser instance: ${browserName}`)
                     }
 
-                    const isNativeContext = getNativeContext({ capabilities: browserInstance.capabilities, isMobile: browserInstance.isMobile })
+                    const isNativeContext = getNativeContext({
+                        capabilities: browserInstance.requestedCapabilities,
+                        isMobile: browserInstance.isMobile,
+                    })
                     const initialInstanceData = await getInstanceData({
                         currentBrowser: browserInstance,
                         initialDeviceRectangles: contextManager.getViewportContext(),

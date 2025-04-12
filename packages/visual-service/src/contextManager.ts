@@ -14,7 +14,7 @@ export class ContextManager {
 
     constructor(browser: WebdriverIO.Browser) {
         this.#browser = browser
-        const capabilities = this.#browser.capabilities
+        const capabilities = this.#browser.requestedCapabilities
         this.#isNativeContext = getNativeContext({ capabilities, isMobile: this.#browser.isMobile })
         this.#browser.on('result', this.#onCommandResult.bind(this))
     }

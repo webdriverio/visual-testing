@@ -42,8 +42,6 @@ describe('@wdio/visual-service mobile web', () => {
             const newOrientation = orientation.toUpperCase() === 'LANDSCAPE' ? 'PORTRAIT' : 'LANDSCAPE'
 
             await browser.pause(2000)
-            // @TODO: This fails for portrait to landscape for Android, iOS works
-            // you can see this in the diff-screenshots the blockouts are not correct
             await browser.setOrientation(newOrientation)
             await browser.pause(2000)
             const newResult = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}`) as number
