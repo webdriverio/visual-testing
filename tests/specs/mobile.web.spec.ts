@@ -48,6 +48,8 @@ describe('@wdio/visual-service mobile web', () => {
             if (newResult > 0 && result < 0.05) {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
             }
+            // Before the expect we need to revert the orientation otherwise the next test will not start in the default orientation
+            await browser.setOrientation(orientation)
             await expect(newResult < 0.05 ? 0 : newResult).toEqual(0)
         })
     }
