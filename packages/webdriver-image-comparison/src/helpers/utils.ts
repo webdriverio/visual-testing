@@ -346,20 +346,15 @@ export async function getMobileScreenSize({
     isNativeContext,
 }: GetMobileScreenSizeOptions): Promise<{ height: number; width: number }> {
     let height = 0, width = 0
-    const isLandscape = (await currentBrowser.getOrientation()).toUpperCase() === 'LANDSCAPE'
+    const isLandscapeByOrientation = (await currentBrowser.getOrientation()).toUpperCase() === 'LANDSCAPE'
 
     try {
-
         if (isIOS) {
-            const { screenSize: { height:iosHeight, width:iosWidth } } = (await executor('mobile: deviceScreenInfo')) as {
+            ({ screenSize: { height, width } } = (await executor('mobile: deviceScreenInfo')) as {
                 statusBarSize: { width: number, height: number },
                 scale: number,
                 screenSize: { width: number, height: number },
-            }
-
-            height = isLandscape ? iosWidth : iosHeight
-            width = isLandscape ? iosHeight : iosWidth
-
+            })
             // It's Android
         } else {
             const { realDisplaySize } = (await executor('mobile: deviceInfo')) as { realDisplaySize: string }
@@ -376,17 +371,21 @@ export async function getMobileScreenSize({
         )
 
         if (isNativeContext) {
-            const { height: deviceHeight, width: deviceWidth } = await currentBrowser.getWindowSize()
-            height = isLandscape ? deviceWidth : deviceHeight
-            width = isLandscape ? deviceHeight : deviceWidth
+            ({ height, width } = await currentBrowser.getWindowSize())
         } else {
             // This is a fallback and not 100% accurate, but we need to have something =)
             ({ height, width } = await executor(() => {
                 const { height, width } = window.screen
-                const isPortrait = window.matchMedia('(orientation: portrait)').matches
-                return { height: isPortrait ? height : width, width: isPortrait ? width : height }
+                return { height, width }
             }))
         }
+    }
+
+    // There are issues where the landscape mode by orientation is not the same as the landscape mode by value
+    // So we need to check and fix this
+    const isLandscapeByValue = width > height
+    if (isLandscapeByOrientation !== isLandscapeByValue) {
+        [height, width] = [width, height]
     }
 
     return { height, width }

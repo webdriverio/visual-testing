@@ -318,9 +318,9 @@ describe('utils', () => {
                 isAndroid: false,
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
-                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 834, width: 1194 } }),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 1194, width: 834 } }),
                 getWindowSize: vi.fn(),
-                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
+                getOrientation: vi.fn().mockResolvedValue('LANDSCAPE')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -353,9 +353,9 @@ describe('utils', () => {
                 isAndroid: false,
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
-                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 888, width: 1234 } }),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 1234, width: 888 } }),
                 getWindowSize: vi.fn(),
-                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
+                getOrientation: vi.fn().mockResolvedValue('LANDSCAPE')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
