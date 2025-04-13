@@ -48,7 +48,9 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         waitForFontsLoaded: options.waitForFontsLoaded ?? true,
 
         /**
-         * Compare options
+         * Defining the compare options by overwriting them sequentially:
+         * First the default ones (fallback), then the root compareOptions (deprecated), then the ones from
+         * the `options.compareOptions`
          */
         compareOptions: {
             ...DEFAULT_COMPARE_OPTIONS,
