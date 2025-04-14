@@ -117,6 +117,13 @@ describe('getData', () => {
         vi.mocked(getBase64ScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
         const result = await getData(browser, options)
+        const sanitizedCalls = logInfoMock.mock.calls.map((args) =>
+            args.map((msg) =>
+                typeof msg === 'string'
+                    ? msg.replace(/'[\d.]+s'/g, "'X.XXXs'")
+                    : msg
+            )
+        )
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
@@ -128,7 +135,7 @@ describe('getData', () => {
             language: 'ENG'
         })
         expect(adjustElementBbox).toHaveBeenCalledTimes(4)
-        expect(logInfoMock.mock.calls).toMatchSnapshot()
+        expect(sanitizedCalls).toMatchSnapshot()
         expect(result).toMatchSnapshot()
     })
 

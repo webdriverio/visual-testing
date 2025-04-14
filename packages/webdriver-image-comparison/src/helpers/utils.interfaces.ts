@@ -117,3 +117,10 @@ export interface GetMobileViewPortPositionOptions {
     screenHeight: number,
     screenWidth: number,
 }
+
+export interface GetMobileScreenSizeOptions {
+    currentBrowser: WebdriverIO.Browser,
+    executor: Executor,
+    isIOS: boolean,
+    isNativeContext: boolean,
+}

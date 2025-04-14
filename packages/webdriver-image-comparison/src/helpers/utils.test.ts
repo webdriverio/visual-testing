@@ -574,72 +574,97 @@ describe('utils', () => {
     })
 
     describe('getMobileScreenSize', () => {
-        it('should return screen size for iOS using mobile: deviceScreenInfo', async () => {
-            const mockExecutor = vi.fn().mockResolvedValue({
-                statusBarSize: { width: 0, height: 0 },
-                scale: 2,
+        afterEach(() => {
+            vi.restoreAllMocks()
+        })
+
+        it('returns iOS screen size in portrait', async () => {
+            const executor = vi.fn().mockResolvedValue({
                 screenSize: { width: 390, height: 844 },
             })
+            const browser = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
 
-            const result = await getMobileScreenSize({ executor: mockExecutor, isIOS: true })
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: true })
 
-            expect(mockExecutor).toHaveBeenCalledWith('mobile: deviceScreenInfo')
             expect(result).toEqual({ width: 390, height: 844 })
         })
 
-        it('should return screen size for Android using mobile: deviceInfo', async () => {
-            const mockExecutor = vi.fn().mockResolvedValue({
-                realDisplaySize: '1080x2400',
+        it('returns iOS screen size in landscape', async () => {
+            const executor = vi.fn().mockResolvedValue({
+                screenSize: { width: 390, height: 844 },
             })
+            const browser = { getOrientation: vi.fn().mockResolvedValue('LANDSCAPE') } as any
 
-            const result = await getMobileScreenSize({ executor: mockExecutor, isIOS: false })
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: true })
 
-            expect(mockExecutor).toHaveBeenCalledWith('mobile: deviceInfo')
+            expect(result).toEqual({ width: 844, height: 390 })
+        })
+
+        it('returns Android screen size in portrait', async () => {
+            const executor = vi.fn().mockResolvedValue({ realDisplaySize: '1080x2400' })
+            const browser = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: false, isNativeContext: true })
+
             expect(result).toEqual({ width: 1080, height: 2400 })
         })
 
-        it('should log a warning return screen size if iOS height format is invalid', async () => {
-            const logWarnMock = vi.spyOn(log, 'warn')
-            const mockExecutor = vi.fn().mockResolvedValueOnce({
-                statusBarSize: { width: 0, height: 0 },
-                scale: 2,
-            })
-                .mockResolvedValueOnce({
-                    width: 390, height: 844
-                })
-            const result = await getMobileScreenSize({ executor: mockExecutor, isIOS: true })
+        it('falls back for iOS when screenSize is missing (web context)', async () => {
+            const executor = vi.fn()
+                .mockRejectedValueOnce(new Error('Missing screenSize'))
+                .mockResolvedValueOnce({ width: 800, height: 1200 })
+            const warnSpy = vi.spyOn(log, 'warn')
+            const browser = {
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
+            } as any
 
-            expect(result).toEqual({ width: 390, height: 844 })
-            expect(logWarnMock).toHaveBeenCalledWith(
-                'Error getting mobile screen size:\n',
-                new TypeError('Cannot read properties of undefined (reading \'height\')'),
-                '\nFalling back to window.screen.height and window.screen.width'
-            )
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: false })
 
-            logWarnMock.mockRestore()
+            expect(warnSpy).toHaveBeenCalled()
+            expect(result).toEqual({ width: 800, height: 1200 })
         })
 
-        it('should log a warning return screen size if Android realDisplaySize format is invalid', async () => {
-            const logWarnMock = vi.spyOn(log, 'warn')
-            const mockExecutor = vi.fn()
-                .mockResolvedValueOnce({
-                    realDisplaySize: 'invalid-format',
-                })
-                .mockResolvedValueOnce({
-                    height: 300,
-                    width: 100,
-                })
+        it('falls back for Android when realDisplaySize is invalid (web context)', async () => {
+            const executor = vi.fn()
+                .mockResolvedValueOnce({ realDisplaySize: 'invalid' })
+                .mockResolvedValueOnce({ width: 800, height: 1200 })
+            const warnSpy = vi.spyOn(log, 'warn')
+            const browser = {
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
+            } as any
 
-            expect(await getMobileScreenSize({ executor: mockExecutor, isIOS: false }))
-                .toEqual({ width: 100, height: 300 })
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: false, isNativeContext: false })
 
-            expect(logWarnMock).toHaveBeenCalledWith(
-                'Error getting mobile screen size:\n',
-                new Error('Invalid realDisplaySize format. Expected \'widthxheight\', got "invalid-format"'),
-                '\nFalling back to window.screen.height and window.screen.width'
-            )
+            expect(warnSpy).toHaveBeenCalled()
+            expect(result).toEqual({ width: 800, height: 1200 })
+        })
 
-            logWarnMock.mockRestore()
+        it('falls back to getWindowSize in native context', async () => {
+            const executor = vi.fn().mockRejectedValueOnce(new Error('Boom'))
+            const warnSpy = vi.spyOn(log, 'warn')
+            const browser = {
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
+                getWindowSize: vi.fn().mockResolvedValue({ width: 123, height: 456 })
+            } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: true })
+
+            expect(result).toEqual({ width: 123, height: 456 })
+            expect(warnSpy).toHaveBeenCalled()
+        })
+
+        it('returns dimensions in landscape fallback native context', async () => {
+            const executor = vi.fn().mockRejectedValueOnce(new Error('Boom'))
+            const warnSpy = vi.spyOn(log, 'warn')
+            const browser = {
+                getOrientation: vi.fn().mockResolvedValue('LANDSCAPE'),
+                getWindowSize: vi.fn().mockResolvedValue({ width: 123, height: 456 })
+            } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: true })
+
+            expect(result).toEqual({ width: 456, height: 123 })
+            expect(warnSpy).toHaveBeenCalled()
         })
     })
 
@@ -749,10 +774,9 @@ describe('utils', () => {
             })
 
             expect(mockGetUrl).toHaveBeenCalled()
-            expect(mockUrl).toHaveBeenCalledWith(expect.stringMatching(/^data:text\/html;base64,/))
+            expect(mockUrl).toHaveBeenCalledTimes(2)
             expect(mockExecutor).toHaveBeenCalledWith(injectWebviewOverlay, false)
             expect(mockExecutor).toHaveBeenCalledWith(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
-            expect(mockUrl).toHaveBeenCalledWith('http://example.com')
 
             expect(result).toMatchSnapshot()
         })

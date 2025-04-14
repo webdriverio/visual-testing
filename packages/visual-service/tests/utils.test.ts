@@ -1,7 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { determineNativeContext, getBrowserObject, getDevicePixelRatio, getFolders, getInstanceData, getBase64ScreenshotSize } from '../src/utils.js'
-// @TODO: Remove this import when the types are fixed
-import type { AppiumCapabilities } from '@wdio/types/build/Capabilities.js'
+import { describe, it, expect, afterEach, vi } from 'vitest'
+import {
+    getBrowserObject,
+    getDevicePixelRatio, getFolders,
+    getInstanceData,
+    getBase64ScreenshotSize,
+    getNativeContext,
+    enrichTestContext,
+    getLtOptions,
+} from '../src/utils.js'
 
 const DEVICE_RECTANGLES = {
     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -81,6 +87,43 @@ describe('utils', () => {
             const deviceScreenSize = { width: 20, height: 40 }
 
             expect(getDevicePixelRatio(mockScreenshot, deviceScreenSize)).toBe(1)
+        })
+    })
+
+    describe('getLtOptions', () => {
+        it('should return the lt:options when it exists (correct casing)', () => {
+            const caps = {
+                'lt:options': { user: 'wim', project: 'testProject' }
+            }
+
+            expect(getLtOptions(caps)).toMatchSnapshot()
+        })
+
+        it('should return the lt:options when it exists (different casing)', () => {
+            const caps = {
+                'LT:OPTIONS': { user: 'upperCase', project: 'testUpper' }
+            }
+
+            // @ts-expect-error
+            expect(getLtOptions(caps)).toMatchSnapshot()
+        })
+
+        it('should return undefined when lt:options does not exist', () => {
+            const caps = {
+                platformName: 'iOS',
+                deviceName: 'iPhone 14'
+            }
+
+            expect(getLtOptions(caps)).toBeUndefined()
+        })
+
+        it('should return undefined when capabilities is an empty object', () => {
+            expect(getLtOptions({})).toBeUndefined()
+        })
+
+        it('should handle unexpected types gracefully', () => {
+            const caps = Object.create(null)
+            expect(getLtOptions(caps)).toBeUndefined()
         })
     })
 
@@ -167,6 +210,7 @@ describe('utils', () => {
                 isMobile: true,
                 getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
                 execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -202,6 +246,8 @@ describe('utils', () => {
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
                 execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 852, width: 393 } }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -236,6 +282,8 @@ describe('utils', () => {
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
                 execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 1194, width: 834 } }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -270,7 +318,9 @@ describe('utils', () => {
                 isAndroid: false,
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
-                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 834, width: 1194 } }),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 1194, width: 834 } }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('LANDSCAPE')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -303,7 +353,9 @@ describe('utils', () => {
                 isAndroid: false,
                 isMobile: true,
                 takeScreenshot: vi.fn().mockResolvedValueOnce(mockScreenshot),
-                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 888, width: 1234 } }),
+                execute: vi.fn().mockResolvedValueOnce({ screenSize: { height: 1234, width: 888 } }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('LANDSCAPE')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -335,6 +387,8 @@ describe('utils', () => {
                 isAndroid: true,
                 isMobile: true,
                 execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -356,7 +410,9 @@ describe('utils', () => {
                 },
                 isAndroid: true,
                 isMobile: true,
-                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize: '100x200' }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -380,7 +436,9 @@ describe('utils', () => {
                 },
                 isAndroid: true,
                 isMobile: true,
-                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize:'100x200' }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize: '100x200' }),
+                getWindowSize: vi.fn(),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
@@ -425,232 +483,128 @@ describe('utils', () => {
         })
     })
 
-    describe('determineNativeContext', ()=>{
-        const DRIVER_DEFAULTS = {
-            sessionId: 'sessionId',
-            isMobile: true,
-            capabilities:{} as WebdriverIO.Capabilities,
-            requestedCapabilities:{} as WebdriverIO.Capabilities | AppiumCapabilities,
-        }
-        let driver = {} as WebdriverIO.Browser
-        beforeEach(() => {
-            driver = structuredClone(DRIVER_DEFAULTS) as WebdriverIO.Browser
+    describe('getNativeContext', () => {
+        it('should return false if capabilities is not an object', () => {
+            expect(getNativeContext({ capabilities: null as any, isMobile: true })).toBe(false)
+            expect(getNativeContext({ capabilities: undefined as any, isMobile: true })).toBe(false)
+            expect(getNativeContext({ capabilities: 'not-object' as any, isMobile: true })).toBe(false)
         })
 
-        it('should return false for desktop browsers', async() => {
-            driver.isMobile = false
-            expect(await determineNativeContext(driver)).toBeFalsy()
+        it('should return false if isMobile is false', () => {
+            expect(getNativeContext({ capabilities: {}, isMobile: false })).toBe(false)
         })
 
-        it('should return false for mobile browsers when no browser has been set', async() => {
-            expect(await determineNativeContext(driver)).toBeFalsy()
+        it('should return false if browserName is present', () => {
+            const capabilities = { browserName: 'chrome' }
+            expect(getNativeContext({ capabilities, isMobile: true })).toBe(false)
         })
 
-        it('should return false for mobile browsers', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = 'chrome'
-            expect(await determineNativeContext(driver)).toBeFalsy()
+        it('should return false if autoWebview is true in various places', () => {
+            const variants = [
+                { autoWebview: true },
+                { 'appium:autoWebview': true },
+                { 'appium:options': { autoWebview: true } },
+                { 'lt:options': { autoWebview: true } },
+            ]
+
+            for (const caps of variants) {
+                const capabilities = { browserName: undefined, ...caps }
+                expect(getNativeContext({ capabilities, isMobile: true })).toBe(false)
+            }
         })
 
-        it('should return true for when the app is provided and browser name is empty', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:app'] = 'app'
-            expect(await determineNativeContext(driver)).toBeTruthy()
+        it('should return true if browserName is falsy, autoWebview is false, and appium app caps are present in root', () => {
+            const capabilities = {
+                browserName: undefined,
+                app: 'my.app',
+            }
+            expect(getNativeContext({ capabilities, isMobile: true })).toBe(true)
         })
 
-        it('should return true for when the app is provided and autoWebview is false', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:app'] = 'app';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:autoWebview'] = false
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
+        it('should return true if appPackage is in appium:options and autoWebview is false', () => {
+            const capabilities = {
+                browserName: undefined,
+                'appium:options': {
+                    appPackage: 'com.example',
+                },
+            }
+            expect(getNativeContext({ capabilities, isMobile: true })).toBe(true)
         })
 
-        it('should return false for when the app is provided and autoWebview is true', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:app'] = 'app';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:autoWebview'] = true
-
-            expect(await determineNativeContext(driver)).toBeFalsy()
+        it('should return true if bundleId is in lt:options and autoWebview is false', () => {
+            const capabilities = {
+                browserName: undefined,
+                'lt:options': {
+                    bundleId: 'com.example.app',
+                },
+            }
+            expect(getNativeContext({ capabilities, isMobile: true })).toBe(true)
         })
 
-        it('should return true for when appium:appPackage is provided and autoWebview is true', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:appPackage'] = 'string';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:autoWebview'] = true
-
-            expect(await determineNativeContext(driver)).toBeFalsy()
+        it('should return false if no appium-related caps are found', () => {
+            const capabilities = {
+                browserName: undefined,
+                someOtherCap: true
+            }
+            expect(getNativeContext({ capabilities, isMobile: true })).toBe(false)
         })
+    })
 
-        // For iOS
-        it('should return true for when appium:bundleId is provided and autoWebview is true', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:bundleId'] = 'string';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:autoWebview'] = true
+    describe('enrichTestContext', () => {
+        it('should generate the expected TestContext structure with values', () => {
+            const result = enrichTestContext({
+                commandName: 'checkScreen',
+                currentTestContext: {
+                    commandName: 'checkScreen',
+                    framework: 'mocha',
+                    parent: 'Login tests',
+                    tag: 'login-screen',
+                    title: 'should show login screen',
+                    instanceData: {
+                        browser: {
+                            name: 'chrome',
+                            version: '114',
+                        },
+                        deviceName: 'Pixel_5',
+                        platform: {
+                            name: 'android',
+                            version: '13.0',
+                        },
+                        app: 'myApp.apk',
+                        isMobile: true,
+                        isAndroid: true,
+                        isIOS: false,
+                    }
+                },
+                instanceData: {
+                    appName: 'myApp.apk',
+                    browserName: 'chrome',
+                    browserVersion: '114',
+                    deviceName: 'Pixel_5',
+                    isMobile: true,
+                    isAndroid: true,
+                    isIOS: false,
+                    platformName: 'android',
+                    platformVersion: '13.0',
+                    devicePixelRatio: 3.5,
+                    deviceRectangles: {
+                        bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+                        homeBar: { y: 0, x: 0, width: 0, height: 0 },
+                        leftSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+                        rightSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+                        statusBar: { y: 0, x: 0, width: 0, height: 0 },
+                        statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
+                        screenSize: { width: 0, height: 0 },
+                        viewport: { y: 0, x: 0, width: 0, height: 0 },
+                    },
+                    logName: 'Pixel_5_Chrome',
+                    name: 'Pixel_5',
+                    nativeWebScreenshot: false,
+                },
+                tag: 'login-screen'
+            })
 
-            expect(await determineNativeContext(driver)).toBeFalsy()
-        })
-
-        // For Android
-        it('should return true for when appium:appPackage is provided', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:appPackage'] = 'string'
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when appium:appActivity is provided', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:appActivity'] = 'appActivity'
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when appium:appWaitActivity is provided', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:appWaitActivity'] = 'appWaitActivity'
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when appium:appWaitPackage is provided', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:appWaitPackage'] = 'appWaitPackage'
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        /**
-         * For the `appium:options`
-         */
-        it('should return true for when the app is provided and browser name is empty for the `appium:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { 'app': 'app' }
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when the app is provided and autoWebview is false for the `appium:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { app: 'app', autoWebview: false }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return false for when the app is provided and autoWebview is true for the `appium:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { app: 'app', autoWebview: true }
-
-            expect(await determineNativeContext(driver)).toBeFalsy()
-        })
-
-        it('should return true for when appPackage is provided and autoWebview is true for the `appium:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appPackage: 'string', autoWebview: true }
-
-            expect(await determineNativeContext(driver)).toBeFalsy()
-        })
-
-        // For iOS
-        it('should return true for when bundleId is provided and autoWebview is true for the `appium:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { bundleId: 'string', autoWebview: true }
-
-            expect(await determineNativeContext(driver)).toBeFalsy()
-        })
-
-        // For Android
-        it('should return true for when appPackage is provided for the `appium:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appPackage: 'string' }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when appActivity is provided for the `appium:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appActivity: 'appActivity' }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when appWaitActivity is provided for the `appium:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appWaitActivity: 'appWaitActivity' }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when appWaitPackage is provided for the `appium:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['appium:options'] = { appWaitPackage: 'appWaitPackage' }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        /**
-         * For the `lt:options`
-         */
-        it('should return true for when the app is provided and browser name is empty for the `lt:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['lt:options'] = { 'app': 'app' }
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when the app is provided and autoWebview is false for the `lt:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['lt:options'] = { app: 'app', autoWebview: false }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return false for when the app is provided and autoWebview is true for the `lt:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['lt:options'] = { app: 'app', autoWebview: true }
-
-            expect(await determineNativeContext(driver)).toBeFalsy()
-        })
-
-        it('should return true for when appPackage is provided and autoWebview is true for the `lt:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['lt:options'] = { appPackage: 'string', autoWebview: true }
-
-            expect(await determineNativeContext(driver)).toBeFalsy()
-        })
-
-        // For iOS
-        it('should return true for when bundleId is provided and autoWebview is true for the `lt:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['lt:options'] = { bundleId: 'string', autoWebview: true }
-
-            expect(await determineNativeContext(driver)).toBeFalsy()
-        })
-
-        // For Android
-        it('should return true for when appPackage is provided for the `lt:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['lt:options'] = { appPackage: 'string' }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when appActivity is provided for the `lt:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['lt:options'] = { appActivity: 'appActivity' }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when appWaitActivity is provided for the `lt:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['lt:options'] = { appWaitActivity: 'appWaitActivity' }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
-        })
-
-        it('should return true for when appWaitPackage is provided for the `lt:options`', async() => {
-            (driver.capabilities as WebdriverIO.Capabilities).browserName = '';
-            (driver.requestedCapabilities as AppiumCapabilities)['lt:options'] = { appWaitPackage: 'appWaitPackage' }
-
-            expect(await determineNativeContext(driver)).toBeTruthy()
+            expect(result).toMatchSnapshot()
         })
     })
 })

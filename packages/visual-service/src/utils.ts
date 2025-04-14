@@ -8,7 +8,6 @@ import type {
     GetInstanceDataOptions,
     GetMobileInstanceDataOptions,
     MobileInstanceData,
-    NativeContextType,
     WdioIcsOptions,
 } from './types.js'
 
@@ -76,7 +75,12 @@ async function getMobileInstanceData({
         const getUrl = () => currentBrowser.getUrl()
         const url = (arg:string) => currentBrowser.url(arg)
         const currentDriverCapabilities = currentBrowser.capabilities
-        const { height: screenHeight, width: screenWidth } = await getMobileScreenSize({ executor, isIOS })
+        const { height: screenHeight, width: screenWidth } = await getMobileScreenSize({
+            currentBrowser,
+            executor,
+            isIOS,
+            isNativeContext,
+        })
         // Update the width for the device rectangles for bottomBar, screenSize, statusBar, statusBarAndAddressBar
         deviceRectangles.screenSize.height = screenHeight
         deviceRectangles.screenSize.width = screenWidth
@@ -242,6 +246,7 @@ export async function getInstanceData({
         devicePixelRatio: mobileDevicePixelRatio,
         deviceRectangles,
     } = await getMobileInstanceData({ currentBrowser, initialDeviceRectangles, isNativeContext, nativeWebScreenshot })
+
     devicePixelRatio = isMobile ? mobileDevicePixelRatio : devicePixelRatio
 
     return {
@@ -271,76 +276,35 @@ export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browse
 }
 
 /**
- * We can't say it's native context if the autoWebview is provided and set to true, for all other cases we can say it's native
- */
-export function determineNativeContext(driver: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser): NativeContextType {
-    // First check if it's multi remote
-    if (driver.isMultiremote) {
-        return Object.keys(driver).reduce((acc, instanceName) => {
-            const instance = (driver as any)[instanceName] as WebdriverIO.Browser
-
-            if (instance.sessionId) {
-                acc[instance.sessionId] = determineNativeContext(instance) as boolean
-            }
-            return acc
-        }, {} as Record<string, boolean>)
-    }
-
-    // If not check if it's a mobile
-    if (driver.isMobile) {
-        const isAppiumAppCapPresent = (capabilities: AppiumCapabilities) => {
-            const appiumKeys = [
-                'appium:app',
-                'appium:bundleId',
-                'appium:appPackage',
-                'appium:appActivity',
-                'appium:appWaitActivity',
-                'appium:appWaitPackage',
-                'appium:autoWebview',
-            ]
-            const optionsKeys = appiumKeys.map(key => key.replace('appium:', ''))
-            const isInRoot = appiumKeys.some(key => capabilities[key as keyof AppiumCapabilities] !== undefined)
-            // @ts-expect-error
-            const isInAppiumOptions = capabilities['appium:options'] &&
-                // @ts-expect-error
-                optionsKeys.some(key => capabilities['appium:options']?.[key as keyof AppiumCapabilities['appium:options']] !== undefined)
-                // @ts-expect-error
-            const isInLtOptions = capabilities['lt:options'] &&
-                // @ts-expect-error
-                optionsKeys.some(key => capabilities['lt:options']?.[key as keyof AppiumCapabilities['lt:options']] !== undefined)
-
-            return !!(isInRoot || isInAppiumOptions || isInLtOptions)
-        }
-        const capabilities = driver.requestedCapabilities as WebdriverIO.Capabilities & AppiumCapabilities
-        const isBrowserNameFalse = !!capabilities.browserName === false
-        const isAutoWebviewFalse = !(
-            capabilities['appium:autoWebview'] === true ||
-            capabilities['appium:options']?.autoWebview === true ||
-            capabilities['lt:options']?.autoWebview === true
-        )
-
-        return isBrowserNameFalse && isAppiumAppCapPresent(capabilities) && isAutoWebviewFalse
-    }
-
-    // If not, it's webcontext
-    return false
-}
-
-/**
  * Get the native context for the current browser
  */
-export function getNativeContext(
-    browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
-    currentBrowser: WebdriverIO.Browser,
-    nativeContext: NativeContextType
+const appiumKeys = ['app', 'bundleId', 'appPackage', 'appActivity', 'appWaitActivity', 'appWaitPackage'] as const
+type AppiumKeysType = typeof appiumKeys[number]
+export function getNativeContext({ capabilities, isMobile }:
+    { capabilities: WebdriverIO.Capabilities, isMobile: boolean }
 ): boolean {
-    if (browser.isMultiremote) {
-        return (nativeContext as any)[currentBrowser.sessionId]
-    } else if (typeof nativeContext === 'boolean') {
-        return nativeContext
+    if (!capabilities || typeof capabilities !== 'object' || !isMobile) {
+        return false
     }
 
-    return false
+    const isAppiumAppCapPresent = (capabilities: Capabilities.RequestedStandaloneCapabilities) => {
+        return appiumKeys.some((key) => (
+            (capabilities as Capabilities.AppiumCapabilities)[key as keyof Capabilities.AppiumCapabilities] !== undefined ||
+            (capabilities as Capabilities.AppiumCapabilities)[`appium:${key}`as keyof Capabilities.AppiumCapabilities] !== undefined ||
+            (capabilities as WebdriverIO.Capabilities)['appium:options']?.[key as AppiumKeysType] !== undefined ||
+            (capabilities as WebdriverIO.Capabilities)['lt:options']?.[key as AppiumKeysType] !== undefined
+        ))
+    }
+    const isBrowserNameFalse = !!capabilities?.browserName === false
+    const isAutoWebviewFalse = !(
+        // @ts-expect-error
+        capabilities?.autoWebview === true ||
+        capabilities['appium:autoWebview'] === true ||
+        capabilities['appium:options']?.autoWebview === true ||
+        capabilities['lt:options']?.autoWebview === true
+    )
+
+    return isBrowserNameFalse && isAppiumAppCapPresent(capabilities) && isAutoWebviewFalse
 }
 
 /**

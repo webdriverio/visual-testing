@@ -15,9 +15,10 @@ import {
     FOLDERS,
     DEFAULT_TEST_CONTEXT,
 } from 'webdriver-image-comparison'
-import type { TestContext } from 'webdriver-image-comparison'
+import type { InstanceData, TestContext } from 'webdriver-image-comparison'
 import { SevereServiceError } from 'webdriverio'
-import { determineNativeContext, enrichTestContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
+import { enrichTestContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
+import { wrapWithContext } from './wrapWithContext.js'
 import {
     toMatchScreenSnapshot,
     toMatchFullPageSnapshot,
@@ -26,8 +27,9 @@ import {
 } from './matcher.js'
 import { waitForStorybookComponentToBeLoaded } from './storybook/utils.js'
 import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
-import type { MultiremoteCommandResult, NativeContextType, VisualServiceOptions } from './types.js'
+import type { VisualServiceOptions } from './types.js'
 import { PAGE_OPTIONS_MAP } from './constants.js'
+import { ContextManager } from './contextManager.js'
 
 const log = logger('@wdio/visual-service')
 const elementCommands = { saveElement, checkElement }
@@ -47,12 +49,12 @@ export default class WdioImageComparisonService extends BaseClass {
     #currentFilePath?: string
     #testContext: TestContext
     #browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
-    private _isNativeContext: NativeContextType | undefined
+    private _contextManager?: ContextManager
+    private _contextManagers?: Map<string, ContextManager> = new Map()
 
     constructor(options: VisualServiceOptions, _: WebdriverIO.Capabilities, config: WebdriverIO.Config) {
         super(options)
         this.#config = config
-        this._isNativeContext = undefined
         this.#testContext = DEFAULT_TEST_CONTEXT
     }
 
@@ -69,17 +71,12 @@ export default class WdioImageComparisonService extends BaseClass {
         browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     ) {
         this.#browser = browser
-        this._isNativeContext = determineNativeContext(this.#browser)
 
         if (!this.#browser.isMultiremote) {
             log.info('Adding commands to global browser')
             await this.#addCommandsToBrowser(this.#browser)
         } else {
             await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiremoteCapabilities)
-        }
-
-        if (browser.isMultiremote) {
-            this.#setupMultiremoteContextListener()
         }
 
         /**
@@ -107,14 +104,6 @@ export default class WdioImageComparisonService extends BaseClass {
     // For Cucumber only
     beforeScenario(world: Frameworks.World) {
         this.#testContext = this.#getTestContext(world)
-    }
-
-    afterCommand(commandName: string, _args: string[], result: number | string, error: any) {
-        // This is for the cases where in the E2E tests we switch to a WEBVIEW or back to NATIVE_APP context
-        if (commandName === 'getContext' && error === undefined && typeof result === 'string') {
-            // Multiremote logic is handled in the `before` method during an event listener
-            this._isNativeContext = this.#browser?.isMultiremote ? this._isNativeContext : result.includes('NATIVE')
-        }
     }
 
     #getBaselineFolder() {
@@ -146,7 +135,12 @@ export default class WdioImageComparisonService extends BaseClass {
          */
         for (const browserName of browserNames) {
             log.info(`Adding commands to Multi Browser: ${browserName}`)
+
             const browserInstance = browser.getInstance(browserName)
+            const contextManager = new ContextManager(browserInstance)
+
+            this._contextManagers?.set(browserName, contextManager)
+
             await this.#addCommandsToBrowser(browserInstance)
         }
 
@@ -172,123 +166,166 @@ export default class WdioImageComparisonService extends BaseClass {
      * Add commands to the "normal" browser object
      */
     async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
-        const isNativeContext = getNativeContext(
-            this.#browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
-            currentBrowser,
-            this._isNativeContext as NativeContextType
-        )
+        this._contextManager = new ContextManager(currentBrowser);
+        (currentBrowser as any).visualService = this
         const instanceData = await getInstanceData({
             currentBrowser,
-            initialDeviceRectangles: this.deviceRectangles,
-            isNativeContext,
+            initialDeviceRectangles: this._contextManager.getViewportContext(),
+            isNativeContext: this._contextManager.isNativeContext,
         })
 
+        // Update the context manager with the current viewport
+        this._contextManager.setViewPortContext(instanceData.deviceRectangles)
+
         for (const [commandName, command] of Object.entries(elementCommands)) {
-            this.#addElementCommand(currentBrowser, commandName, command, instanceData, isNativeContext)
+            this.#addElementCommand(currentBrowser, commandName, command, instanceData)
         }
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
-            this.#addPageCommand(currentBrowser, commandName, command, instanceData, isNativeContext)
+            this.#addPageCommand(currentBrowser, commandName, command, instanceData)
         }
     }
 
     /**
      * Add new element commands to the browser object
      */
-    #addElementCommand(browser: WebdriverIO.Browser, commandName: string, command: any, instanceData: any, isNativeContext: boolean) {
+    #addElementCommand(
+        browser: WebdriverIO.Browser,
+        commandName: string,
+        command: any,
+        initialInstanceData: InstanceData,
+    ) {
         log.info(`Adding element command "${commandName}" to browser object`)
 
+        const elementOptionsKey = commandName === 'saveElement' ? 'saveElementOptions' : 'checkElementOptions'
         const self = this
+
         browser.addCommand(
             commandName,
             function (
-                this: typeof browser,
-                element,
-                tag,
-                elementOptions = {},
+                this: WebdriverIO.Browser,
+                element: WebdriverIO.Element,
+                tag: string,
+                elementOptions = {}
             ) {
-                const elementOptionsKey = commandName === 'saveElement' ? 'saveElementOptions' : 'checkElementOptions'
+                const wrapped = wrapWithContext({
+                    browser,
+                    command,
+                    contextManager: self.contextManager,
+                    getArgs: () => {
+                        const updatedInstanceData = {
+                            ...initialInstanceData,
+                            deviceRectangles: self.contextManager.getViewportContext(),
+                        }
+                        const isCurrentContextNative = self.contextManager.isNativeContext
 
-                return command(
-                    {
-                        methods: {
-                            executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                fn: string | ((...args: InnerArguments) => ReturnValue),
-                                ...args: InnerArguments): Promise<ReturnValue> => {
-                                return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
+                        return [{
+                            methods: {
+                                executor: <ReturnValue, InnerArguments extends unknown[]>(
+                                    fn: string | ((...args: InnerArguments) => ReturnValue),
+                                    ...args: InnerArguments
+                                ): Promise<ReturnValue> => {
+                                    return this.execute(fn, ...args) as Promise<ReturnValue>
+                                },
+                                getElementRect: this.getElementRect.bind(this),
+                                screenShot: this.takeScreenshot.bind(this),
+                                takeElementScreenshot: this.takeElementScreenshot.bind(this),
                             },
-                            getElementRect: this.getElementRect.bind(browser),
-                            screenShot: this.takeScreenshot.bind(browser),
-                            takeElementScreenshot: this.takeElementScreenshot.bind(browser),
-                        },
-                        instanceData,
-                        folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
-                        element,
-                        tag,
-                        [elementOptionsKey]: {
-                            wic: self.defaultOptions,
-                            method: elementOptions,
-                        },
-                        isNativeContext,
-                        testContext: enrichTestContext({
-                            commandName,
-                            currentTestContext: self.#testContext,
-                            instanceData,
+                            instanceData: updatedInstanceData,
+                            folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
+                            element,
                             tag,
-                        })
+                            [elementOptionsKey]: {
+                                wic: self.defaultOptions,
+                                method: elementOptions,
+                            },
+                            isNativeContext: isCurrentContextNative,
+                            testContext: enrichTestContext({
+                                commandName,
+                                currentTestContext: self.#testContext,
+                                instanceData: updatedInstanceData,
+                                tag,
+                            }),
+                        }]
                     }
-                )
-            })
+                })
+
+                return wrapped.call(this)
+            }
+        )
     }
 
     /**
      * Add new page commands to the browser object
      */
-    #addPageCommand(browser: WebdriverIO.Browser, commandName: string, command: any, instanceData: any, isNativeContext: boolean) {
+    #addPageCommand(
+        browser: WebdriverIO.Browser,
+        commandName: string,
+        command: any,
+        initialInstanceData: InstanceData,
+    ) {
         log.info(`Adding browser command "${commandName}" to browser object`)
 
         const self = this
         const pageOptionsKey = PAGE_OPTIONS_MAP[commandName]
 
         if (commandName === 'waitForStorybookComponentToBeLoaded') {
-            browser.addCommand(commandName, (options: WaitForStorybookComponentToBeLoaded) => waitForStorybookComponentToBeLoaded(options))
-        } else {
-            browser.addCommand(
-                commandName,
-                function (
-                    this: typeof browser,
-                    tag,
-                    pageOptions = {}
-                ) {
-                    return command(
-                        {
+            browser.addCommand(commandName, (options: WaitForStorybookComponentToBeLoaded) =>
+                waitForStorybookComponentToBeLoaded(options)
+            )
+            return
+        }
+
+        browser.addCommand(
+            commandName,
+            function (
+                this: WebdriverIO.Browser,
+                tag: string,
+                pageOptions = {}
+            ) {
+                const wrapped = wrapWithContext({
+                    browser,
+                    command,
+                    contextManager: self.contextManager,
+                    getArgs: () => {
+                        const updatedInstanceData = {
+                            ...initialInstanceData,
+                            deviceRectangles: self.contextManager.getViewportContext()
+                        }
+                        const isCurrentContextNative = self.contextManager.isNativeContext
+
+                        return [{
                             methods: {
                                 executor: <ReturnValue, InnerArguments extends unknown[]>(
                                     fn: string | ((...args: InnerArguments) => ReturnValue),
-                                    ...args: InnerArguments): Promise<ReturnValue> => {
-                                    return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
+                                    ...args: InnerArguments
+                                ): Promise<ReturnValue> => {
+                                    return this.execute(fn, ...args) as Promise<ReturnValue>
                                 },
-                                getElementRect: this.getElementRect.bind(browser),
-                                screenShot: this.takeScreenshot.bind(browser),
+                                getElementRect: this.getElementRect.bind(this),
+                                screenShot: this.takeScreenshot.bind(this),
                             },
-                            instanceData,
+                            instanceData: updatedInstanceData,
                             folders: getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
                             tag,
-                            [pageOptionsKey]:{
+                            [pageOptionsKey]: {
                                 wic: self.defaultOptions,
                                 method: pageOptions,
                             },
-                            isNativeContext,
+                            isNativeContext: isCurrentContextNative,
                             testContext: enrichTestContext({
                                 commandName,
                                 currentTestContext: self.#testContext,
-                                instanceData,
+                                instanceData: updatedInstanceData,
                                 tag,
-                            })
-                        }
-                    )
+                            }),
+                        }]
+                    }
                 })
-        }
+
+                return wrapped.call(this)
+            }
+        )
     }
 
     #addMultiremoteElementCommand(browser: WebdriverIO.MultiRemoteBrowser, browserNames: string[], commandName: string, command: any) {
@@ -301,137 +338,162 @@ export default class WdioImageComparisonService extends BaseClass {
                 this: WebdriverIO.MultiRemoteBrowser,
                 element,
                 tag,
-                pageOptions = {}
+                elementOptions = {}
             ) {
                 const returnData: Record<string, any> = {}
                 const elementOptionsKey = commandName === 'saveElement' ? 'saveElementOptions' : 'checkElementOptions'
 
                 for (const browserName of browserNames) {
                     const browserInstance = browser.getInstance(browserName)
-                    const isNativeContext = getNativeContext(
-                        self.#browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
-                        browserInstance,
-                        self._isNativeContext as NativeContextType
-                    )
-                    const instanceData = await getInstanceData({
+                    const contextManager = self._contextManagers?.get(browserName)
+
+                    if (!contextManager) {
+                        throw new Error(`No ContextManager found for browser instance: ${browserName}`)
+                    }
+
+                    const isNativeContext = contextManager.isNativeContext
+                    const initialInstanceData = await getInstanceData({
                         currentBrowser: browserInstance,
-                        initialDeviceRectangles: self.deviceRectangles,
+                        initialDeviceRectangles: contextManager.getViewportContext(),
                         isNativeContext
                     })
 
-                    returnData[browserName] = await command(
-                        {
-                            methods: {
-                                executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                    fn: string | ((...args: InnerArguments) => ReturnValue),
-                                    ...args: InnerArguments): Promise<ReturnValue> => {
-                                    return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
-                                },
-                                getElementRect: browserInstance.getElementRect.bind(browserInstance),
-                                screenShot: browserInstance.takeScreenshot.bind(browserInstance),
-                                takeElementScreenshot: browserInstance.takeElementScreenshot.bind(browserInstance),
-                            },
-                            instanceData,
-                            folders:getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
-                            tag,
-                            element,
-                            [elementOptionsKey]:{
-                                wic: self.defaultOptions,
-                                method: pageOptions,
-                            },
-                            isNativeContext,
-                            testContext: enrichTestContext({
-                                commandName,
-                                currentTestContext: self.#testContext,
-                                instanceData,
-                                tag,
-                            })
-                        }
-                    )
-                }
-                return returnData
-            })
-    }
+                    const wrapped = wrapWithContext({
+                        browser: browserInstance,
+                        command,
+                        contextManager,
+                        getArgs: () => {
+                            const updatedInstanceData = {
+                                ...initialInstanceData,
+                                deviceRectangles: contextManager.getViewportContext(),
+                            }
 
-    #addMultiremoteCommand(browser: WebdriverIO.MultiRemoteBrowser, browserNames: string[], commandName: string, command: any) {
-        log.info(`Adding browser command "${commandName}" to Multi browser object`)
-        const self = this
-
-        if (commandName === 'waitForStorybookComponentToBeLoaded') {
-            browser.addCommand(commandName, waitForStorybookComponentToBeLoaded)
-        } else {
-            browser.addCommand(
-                commandName,
-                async function (
-                    this: WebdriverIO.MultiRemoteBrowser,
-                    tag,
-                    pageOptions = {}
-                ) {
-                    const returnData: Record<string, any> = {}
-                    const pageOptionsKey = PAGE_OPTIONS_MAP[commandName]
-
-                    for (const browserName of browserNames) {
-                        const browserInstance = browser.getInstance(browserName)
-                        const isNativeContext = getNativeContext(
-                        self.#browser as WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
-                        browserInstance,
-                        self._isNativeContext as NativeContextType
-                        )
-                        const instanceData = await getInstanceData({
-                            currentBrowser: browserInstance,
-                            initialDeviceRectangles: self.deviceRectangles,
-                            isNativeContext
-                        })
-
-                        returnData[browserName] = await command(
-                            {
+                            return [{
                                 methods: {
                                     executor: <ReturnValue, InnerArguments extends unknown[]>(
                                         fn: string | ((...args: InnerArguments) => ReturnValue),
-                                        ...args: InnerArguments): Promise<ReturnValue> => {
-                                        return this.execute.bind(browser)(fn, ...args) as Promise<ReturnValue>
+                                        ...args: InnerArguments
+                                    ): Promise<ReturnValue> => {
+                                        return browserInstance.execute(fn, ...args) as Promise<ReturnValue>
                                     },
                                     getElementRect: browserInstance.getElementRect.bind(browserInstance),
                                     screenShot: browserInstance.takeScreenshot.bind(browserInstance),
+                                    takeElementScreenshot: browserInstance.takeElementScreenshot.bind(browserInstance),
                                 },
-                                instanceData,
-                                folders:getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                                instanceData: updatedInstanceData,
+                                folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
                                 tag,
-                                [pageOptionsKey]:{
+                                element,
+                                [elementOptionsKey]: {
                                     wic: self.defaultOptions,
-                                    method: pageOptions,
+                                    method: elementOptions,
                                 },
                                 isNativeContext,
                                 testContext: enrichTestContext({
                                     commandName,
                                     currentTestContext: self.#testContext,
-                                    instanceData,
+                                    instanceData: updatedInstanceData,
                                     tag,
-                                })
-                            })
-                    }
-                    return returnData
-                })
-        }
+                                }),
+                            }]
+                        }
+                    })
+
+                    returnData[browserName] = await wrapped.call(browserInstance)
+                }
+
+                return returnData
+            })
     }
 
-    #setupMultiremoteContextListener() {
-        const multiremoteBrowser = this.#browser as WebdriverIO.MultiRemoteBrowser
-        const browserInstances = multiremoteBrowser.instances
+    #addMultiremoteCommand(
+        browser: WebdriverIO.MultiRemoteBrowser,
+        browserNames: string[],
+        commandName: string,
+        command: any
+    ) {
+        log.info(`Adding browser command "${commandName}" to Multi browser object`)
+        const self = this
 
-        for (const instanceName of browserInstances) {
-            const instance = (multiremoteBrowser as any)[instanceName]
-            instance.on('result', (result:MultiremoteCommandResult) => {
-                if (result.command === 'getContext') {
-                    const value = result.result.value
-                    const sessionId = instance.sessionId
-                    if (typeof this._isNativeContext !== 'object' || this._isNativeContext === null) {
-                        this._isNativeContext = {}
-                    }
-                    this._isNativeContext[sessionId] = value.includes('NATIVE')
-                }
-            })
+        if (commandName === 'waitForStorybookComponentToBeLoaded') {
+            browser.addCommand(commandName, waitForStorybookComponentToBeLoaded)
+            return
         }
+
+        browser.addCommand(
+            commandName,
+            async function (
+                this: WebdriverIO.MultiRemoteBrowser,
+                tag,
+                pageOptions = {}
+            ) {
+                const returnData: Record<string, any> = {}
+                const pageOptionsKey = PAGE_OPTIONS_MAP[commandName]
+
+                for (const browserName of browserNames) {
+                    const browserInstance = browser.getInstance(browserName)
+                    const contextManager = self._contextManagers?.get(browserName)
+
+                    if (!contextManager) {
+                        throw new Error(`No ContextManager found for browser instance: ${browserName}`)
+                    }
+
+                    const isNativeContext = getNativeContext({
+                        capabilities: browserInstance.requestedCapabilities,
+                        isMobile: browserInstance.isMobile,
+                    })
+                    const initialInstanceData = await getInstanceData({
+                        currentBrowser: browserInstance,
+                        initialDeviceRectangles: contextManager.getViewportContext(),
+                        isNativeContext
+                    })
+
+                    const wrapped = wrapWithContext({
+                        browser: browserInstance,
+                        command,
+                        contextManager,
+                        getArgs: () => {
+                            const updatedInstanceData = {
+                                ...initialInstanceData,
+                                deviceRectangles: contextManager.getViewportContext()
+                            }
+                            const isCurrentContextNative = contextManager.isNativeContext
+
+                            return [{
+                                methods: {
+                                    executor: <ReturnValue, InnerArguments extends unknown[]>(
+                                        fn: string | ((...args: InnerArguments) => ReturnValue),
+                                        ...args: InnerArguments
+                                    ): Promise<ReturnValue> => {
+                                        return browserInstance.execute(fn, ...args) as Promise<ReturnValue>
+                                    },
+                                    getElementRect: browserInstance.getElementRect.bind(browserInstance),
+                                    screenShot: browserInstance.takeScreenshot.bind(browserInstance),
+                                },
+                                instanceData: updatedInstanceData,
+                                folders: getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                                tag,
+                                [pageOptionsKey]: {
+                                    wic: self.defaultOptions,
+                                    method: pageOptions,
+                                },
+                                isNativeContext: isCurrentContextNative,
+                                testContext: enrichTestContext({
+                                    commandName,
+                                    currentTestContext: self.#testContext,
+                                    instanceData: updatedInstanceData,
+                                    tag,
+                                }),
+                            }]
+                        }
+                    })
+
+                    returnData[browserName] = await wrapped.call(browserInstance)
+                }
+
+                return returnData
+            }
+        )
     }
 
     #getTestContext(test: Frameworks.Test | Frameworks.World): TestContext {
@@ -483,5 +545,12 @@ export default class WdioImageComparisonService extends BaseClass {
         }
 
         throw new SevereServiceError(`Framework ${framework} is not supported by the Visual Service and should be either "mocha", "jasmine" or "cucumber".`)
+    }
+
+    get contextManager(): ContextManager {
+        if (!this._contextManager) {
+            throw new Error('ContextManager has not been initialized')
+        }
+        return this._contextManager
     }
 }
