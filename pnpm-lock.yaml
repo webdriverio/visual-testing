@@ -73,8 +73,8 @@ importers:
         specifier: ^9.12.5
         version: 9.12.5
       '@wdio/shared-store-service':
-        specifier: ^9.12.2
-        version: 9.12.2
+        specifier: ^9.12.5
+        version: 9.12.5
       '@wdio/spec-reporter':
         specifier: ^9.12.3
         version: 9.12.3
@@ -2349,8 +2349,8 @@ packages:
     resolution: {integrity: sha512-h2zSu9iG93XDt+Bl8Cw3mBG2h4QGr/37gHAYov8IPjRgd57ObKK/IFENSIXelvrnLsAVVx8Gdnf3P98PbAZrHw==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/shared-store-service@9.12.2':
-    resolution: {integrity: sha512-39z1sPqFIT0y7BTKuNHPJrfwmFW491dm3AJciRHNEt9Zw97KDUx6oG7ZdylAd4LJpm4NnFrjdGN4WuNBOHiYYw==}
+  '@wdio/shared-store-service@9.12.5':
+    resolution: {integrity: sha512-ryJy71iAJ+tGxbj1iyEj56gWZE2CzDHZhioWwvhKOOj13e1xPFs7cjga93NJgBXFhQjG+0UvZG/He1EVMskdZA==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/spec-reporter@9.12.3':
@@ -9401,7 +9401,7 @@ snapshots:
 
   '@types/ws@8.5.14':
     dependencies:
-      '@types/node': 22.14.0
+      '@types/node': 20.17.30
     optional: true
 
   '@types/xml2js@0.4.14':
@@ -9416,7 +9416,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 22.14.0
+      '@types/node': 20.17.30
     optional: true
 
   '@typescript-eslint/eslint-plugin@8.29.0(@typescript-eslint/parser@8.29.1(eslint@9.23.0(jiti@1.21.7))(typescript@5.7.3))(eslint@9.23.0(jiti@1.21.7))(typescript@5.7.3)':
@@ -9912,13 +9912,13 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/shared-store-service@9.12.2':
+  '@wdio/shared-store-service@9.12.5':
     dependencies:
       '@polka/parse': 1.0.0-next.0
       '@wdio/logger': 9.4.4
-      '@wdio/types': 9.12.2
+      '@wdio/types': 9.12.3
       polka: 0.5.2
-      webdriverio: 9.12.2
+      webdriverio: 9.12.5
     transitivePeerDependencies:
       - bare-buffer
       - bufferutil
