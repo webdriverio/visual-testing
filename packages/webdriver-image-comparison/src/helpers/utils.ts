@@ -359,10 +359,10 @@ export function logAllDeprecatedCompareOptions(options: ClassOptions) {
         )
     }
 
-    return foundDeprecatedKeys.reduce((acc, key) => {
-        if (options[key as keyof CompareOptions] !== undefined) {
-            acc[key as keyof CompareOptions] = options[key as keyof CompareOptions] as any
+    return foundDeprecatedKeys.reduce<Partial<CompareOptions>>((acc, key) => {
+        if (options[key] !== undefined) {
+            acc[key] = options[key] as any;
         }
-        return acc
-    }, {} as Partial<CompareOptions>)
+        return acc;
+    }, {});
 }
