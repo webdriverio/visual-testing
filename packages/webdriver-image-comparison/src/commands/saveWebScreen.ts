@@ -7,6 +7,7 @@ import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import type { RectanglesOutput, ScreenRectanglesOptions } from '../methods/rectangles.interfaces.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
+import { getMethodOrWicOption } from '../helpers/utils.js'
 
 /**
  * Saves an image of the viewport of the screen
@@ -26,23 +27,13 @@ export default async function saveWebScreen(
         saveScreenOptions.wic
 
     // 1b. Set the method options to the right values
-    const disableBlinkingCursor: boolean = saveScreenOptions.method.disableBlinkingCursor !== undefined
-        ? Boolean(saveScreenOptions.method.disableBlinkingCursor)
-        : saveScreenOptions.wic.disableBlinkingCursor
-    const disableCSSAnimation: boolean = saveScreenOptions.method.disableCSSAnimation !== undefined
-        ? Boolean(saveScreenOptions.method.disableCSSAnimation)
-        : saveScreenOptions.wic.disableCSSAnimation
-    const enableLayoutTesting: boolean = saveScreenOptions.method.enableLayoutTesting !== undefined
-        ? Boolean(saveScreenOptions.method.enableLayoutTesting)
-        : saveScreenOptions.wic.enableLayoutTesting
-    const hideScrollBars: boolean = saveScreenOptions.method.hideScrollBars !== undefined
-        ? Boolean(saveScreenOptions.method.hideScrollBars)
-        : saveScreenOptions.wic.hideScrollBars
+    const disableBlinkingCursor = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'disableBlinkingCursor')
+    const disableCSSAnimation = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'disableCSSAnimation')
+    const enableLayoutTesting = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'enableLayoutTesting')
+    const hideScrollBars = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'hideScrollBars')
     const hideElements: HTMLElement[] = saveScreenOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveScreenOptions.method.removeElements || []
-    const waitForFontsLoaded: boolean = saveScreenOptions.method.waitForFontsLoaded !== undefined
-        ? Boolean(saveScreenOptions.method.waitForFontsLoaded)
-        : saveScreenOptions.wic.waitForFontsLoaded
+    const waitForFontsLoaded = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'waitForFontsLoaded')
 
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {

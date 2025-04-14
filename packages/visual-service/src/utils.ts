@@ -355,3 +355,13 @@ export function enrichTestContext(
     }
 }
 
+/**
+ * Check if the current browser supports isBidi screenshots
+ */
+export function isBiDiScreenshotSupported(driver: WebdriverIO.Browser): boolean {
+    const { isBidi } = driver
+    const isBiDiSupported = typeof driver.browsingContextCaptureScreenshot === 'function'
+
+    return isBidi && isBiDiSupported
+}
+

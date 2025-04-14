@@ -17,8 +17,13 @@ import {
 } from 'webdriver-image-comparison'
 import type { InstanceData, TestContext } from 'webdriver-image-comparison'
 import { SevereServiceError } from 'webdriverio'
-import { enrichTestContext, getFolders, getInstanceData, getNativeContext } from './utils.js'
-import { wrapWithContext } from './wrapWithContext.js'
+import {
+    enrichTestContext,
+    getFolders,
+    getInstanceData,
+    getNativeContext,
+    isBiDiScreenshotSupported,
+} from './utils.js'
 import {
     toMatchScreenSnapshot,
     toMatchFullPageSnapshot,
@@ -30,6 +35,7 @@ import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 import type { VisualServiceOptions } from './types.js'
 import { PAGE_OPTIONS_MAP } from './constants.js'
 import { ContextManager } from './contextManager.js'
+import { wrapWithContext } from './wrapWithContext.js'
 
 const log = logger('@wdio/visual-service')
 const elementCommands = { saveElement, checkElement }
@@ -296,14 +302,16 @@ export default class WdioImageComparisonService extends BaseClass {
 
                         return [{
                             methods: {
+                                bidiScreenshot: isBiDiScreenshotSupported(browser) ? this.browsingContextCaptureScreenshot.bind(browser) : undefined,
                                 executor: <ReturnValue, InnerArguments extends unknown[]>(
                                     fn: string | ((...args: InnerArguments) => ReturnValue),
                                     ...args: InnerArguments
                                 ): Promise<ReturnValue> => {
                                     return this.execute(fn, ...args) as Promise<ReturnValue>
                                 },
-                                getElementRect: this.getElementRect.bind(this),
-                                screenShot: this.takeScreenshot.bind(this),
+                                getElementRect: this.getElementRect.bind(browser),
+                                getWindowHandle: this.getWindowHandle.bind(browser),
+                                screenShot: this.takeScreenshot.bind(browser),
                             },
                             instanceData: updatedInstanceData,
                             folders: getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
@@ -370,6 +378,7 @@ export default class WdioImageComparisonService extends BaseClass {
 
                             return [{
                                 methods: {
+                                    bidiScreenshot: isBiDiScreenshotSupported(browserInstance) ? browserInstance.browsingContextCaptureScreenshot.bind(browserInstance) : undefined,
                                     executor: <ReturnValue, InnerArguments extends unknown[]>(
                                         fn: string | ((...args: InnerArguments) => ReturnValue),
                                         ...args: InnerArguments
@@ -377,6 +386,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                         return browserInstance.execute(fn, ...args) as Promise<ReturnValue>
                                     },
                                     getElementRect: browserInstance.getElementRect.bind(browserInstance),
+                                    getWindowHandle: browserInstance.getWindowHandle.bind(browserInstance),
                                     screenShot: browserInstance.takeScreenshot.bind(browserInstance),
                                     takeElementScreenshot: browserInstance.takeElementScreenshot.bind(browserInstance),
                                 },

@@ -23,6 +23,7 @@ exports[`BaseClass > initializes default options correctly 1`] = `
     "saveAboveTolerance": 0,
     "scaleImagesToSameSize": false,
   },
+  "createBidiFullPageScreenshots": true,
   "disableBlinkingCursor": false,
   "disableCSSAnimation": false,
   "enableLayoutTesting": false,
