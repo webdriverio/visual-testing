@@ -49,7 +49,6 @@ describe('ContextManager', () => {
 
     it('should handle orientation change command', async () => {
         const cm = new ContextManager(browserMock)
-        console.log('cm = ', cm)
         const event = {
             command: 'setOrientation',
             body: { orientation: 'LANDSCAPE' },
@@ -57,7 +56,6 @@ describe('ContextManager', () => {
         }
         // @ts-ignore
         await eventHandlers.result(event)
-        console.log('cm after = ', cm)
         expect(cm.needsUpdate).toBe(true)
     })
 
