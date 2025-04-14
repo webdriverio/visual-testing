@@ -9,7 +9,7 @@ describe('@wdio/visual-service mobile app', () => {
     const wdioIcsCommands = driver.requestedCapabilities['wdio-ics:options'].commands
     const deviceName = driver.requestedCapabilities.deviceName
     const orientation = driver.requestedCapabilities.orientation
-    const platformVersion = driver.requestedCapabilities.platformVersion as string
+    const platformVersion = driver.requestedCapabilities.platformVersion
 
     beforeEach(async () => {
         await relaunchApp()
@@ -40,7 +40,7 @@ describe('@wdio/visual-service mobile app', () => {
             expect(result < 0.05 ? 0 : result).toEqual(0)
         })
 
-        if (parseFloat(platformVersion) >= 13) {
+        if (driver.isIOS || (driver.isAndroid && parseFloat(platformVersion) >= 13)) {
             it(`should compare a webview screenshot successful for '${deviceName}' in ${orientation}-mode`, async () => {
                 await $('~Webview').click()
                 await driver.pause(2000)
@@ -52,6 +52,8 @@ describe('@wdio/visual-service mobile app', () => {
                     hideElements: [$('.hero__title')]
                 }
                 ) as number
+                // Rest the context because the rest will be for native
+                await driver.switchContext('NATIVE_APP')
 
                 await expect(result < 0.05 ? 0 : result).toEqual(0)
             })
