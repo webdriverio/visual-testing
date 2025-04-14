@@ -13,6 +13,7 @@ import type {
     InstanceData,
 } from 'webdriver-image-comparison'
 import type { ChainablePromiseElement } from 'webdriverio'
+import type { ContextManager } from './contextManager.js'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;
@@ -22,17 +23,6 @@ type MultiResult = {
     [browserName: string]: ImageCompareResult | number;
 };
 export type Result = MultiResult | (ImageCompareResult | number);
-export type NativeContextType = boolean | Record<string, boolean>
-export type MultiremoteCommandResult = {
-        command: string,
-        method: string,
-        endpoint: string,
-        body: Record<string, any>,
-        result: { value: string },
-        sessionId: string | undefined,
-        cid: string,
-        type: string,
-}
 export type MobileInstanceData = {
     devicePixelRatio: number;
     deviceRectangles: DeviceRectangles;
@@ -60,6 +50,13 @@ export type GetMobileInstanceDataOptions = {
     initialDeviceRectangles: DeviceRectangles;
     isNativeContext:boolean;
     nativeWebScreenshot:boolean;
+}
+
+export interface WrapWithContextOptions<T extends (...args: any[]) => any> {
+    browser: WebdriverIO.Browser
+    command: T
+    contextManager: ContextManager
+    getArgs: () => Parameters<T>
 }
 
 export interface WdioIcsOptions {

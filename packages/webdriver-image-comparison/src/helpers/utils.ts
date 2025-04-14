@@ -1,4 +1,5 @@
 import { join } from 'node:path'
+import logger from '@wdio/logger'
 import { DESKTOP, NOT_KNOWN, PLATFORMS } from './constants.js'
 import { mkdirSync } from 'node:fs'
 import type {
@@ -6,6 +7,7 @@ import type {
     FormatFileNameOptions,
     GetAddressBarShadowPaddingOptions,
     GetAndCreatePathOptions,
+    GetMobileScreenSizeOptions,
     GetMobileViewPortPositionOptions,
     GetToolBarShadowPaddingOptions,
     ScreenshotSize,
@@ -15,6 +17,8 @@ import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
+
+const log = logger('@wdio/visual-service:webdriver-image-comparison:utils')
 
 /**
  * Get and create a folder
@@ -336,28 +340,52 @@ export function updateVisualBaseline(): boolean {
  * Get the mobile screen size, this is different for native and webview
  */
 export async function getMobileScreenSize({
+    currentBrowser,
     executor,
-    isIOS
-}: {
-    executor: Executor,
-    isIOS: boolean
-}): Promise<{ height: number; width: number }> {
+    isIOS,
+    isNativeContext,
+}: GetMobileScreenSizeOptions): Promise<{ height: number; width: number }> {
     let height = 0, width = 0
+    const isLandscapeByOrientation = (await currentBrowser.getOrientation()).toUpperCase() === 'LANDSCAPE'
 
-    if (isIOS) {
-        ({ screenSize: { height, width } } = (await executor('mobile: deviceScreenInfo')) as {
-            statusBarSize: { width: number, height: number },
-            scale: number,
-            screenSize: { width: number, height: number },
-        })
-    // It's Android
-    } else {
-        const { realDisplaySize } = (await executor('mobile: deviceInfo')) as { realDisplaySize: string }
+    try {
+        if (isIOS) {
+            ({ screenSize: { height, width } } = (await executor('mobile: deviceScreenInfo')) as {
+                statusBarSize: { width: number, height: number },
+                scale: number,
+                screenSize: { width: number, height: number },
+            })
+            // It's Android
+        } else {
+            const { realDisplaySize } = (await executor('mobile: deviceInfo')) as { realDisplaySize: string }
 
-        if (!realDisplaySize || !/^\d+x\d+$/.test(realDisplaySize)) {
-            throw new Error(`Invalid realDisplaySize format. Expected 'widthxheight', got "${realDisplaySize}"`)
+            if (!realDisplaySize || !/^\d+x\d+$/.test(realDisplaySize)) {
+                throw new Error(`Invalid realDisplaySize format. Expected 'widthxheight', got "${realDisplaySize}"`)
+            }
+            [width, height] = realDisplaySize.split('x').map(Number)
         }
-        [width, height] = realDisplaySize.split('x').map(Number)
+    } catch (error: unknown) {
+        log.warn('Error getting mobile screen size:\n', error, `\nFalling back to ${isNativeContext ?
+            '`getWindowSize()` which might not be as accurate' :
+            'window.screen.height and window.screen.width'}`
+        )
+
+        if (isNativeContext) {
+            ({ height, width } = await currentBrowser.getWindowSize())
+        } else {
+            // This is a fallback and not 100% accurate, but we need to have something =)
+            ({ height, width } = await executor(() => {
+                const { height, width } = window.screen
+                return { height, width }
+            }))
+        }
+    }
+
+    // There are issues where the landscape mode by orientation is not the same as the landscape mode by value
+    // So we need to check and fix this
+    const isLandscapeByValue = width > height
+    if (isLandscapeByOrientation !== isLandscapeByValue) {
+        [height, width] = [width, height]
     }
 
     return { height, width }
@@ -416,7 +444,7 @@ export async function executeNativeClick({ executor, isIOS, x, y }:{executor: Ex
             error instanceof Error &&
           /WebDriverError: Unknown mobile command.*?(clickGesture|tap)/i.test(error.message)
         ) {
-            console.log(
+            log.warn(
                 'Error executing `clickGesture`, falling back to `doubleClickGesture`. This likely means you are using Appium 1. Is this intentional?'
             )
             await executor('mobile: doubleClickGesture', { x, y })

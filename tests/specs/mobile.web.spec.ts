@@ -38,6 +38,19 @@ describe('@wdio/visual-service mobile web', () => {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
             }
             await expect(result < 0.05 ? 0 : result).toEqual(0)
+
+            const newOrientation = orientation.toUpperCase() === 'LANDSCAPE' ? 'PORTRAIT' : 'LANDSCAPE'
+
+            await browser.pause(2000)
+            await browser.setOrientation(newOrientation)
+            await browser.pause(2000)
+            const newResult = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}`) as number
+            if (newResult > 0 && result < 0.05) {
+                console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
+            }
+            // Before the expect we need to revert the orientation otherwise the next test will not start in the default orientation
+            await browser.setOrientation(orientation)
+            await expect(newResult < 0.05 ? 0 : newResult).toEqual(0)
         })
     }
 

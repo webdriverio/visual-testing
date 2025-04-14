@@ -1,5 +1,30 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`utils > enrichTestContext > should generate the expected TestContext structure with values 1`] = `
+{
+  "commandName": "checkScreen",
+  "framework": "mocha",
+  "instanceData": {
+    "app": "myApp.apk",
+    "browser": {
+      "name": "chrome",
+      "version": "114",
+    },
+    "deviceName": "Pixel_5",
+    "isAndroid": true,
+    "isIOS": false,
+    "isMobile": true,
+    "platform": {
+      "name": "android",
+      "version": "13.0",
+    },
+  },
+  "parent": "Login tests",
+  "tag": "login-screen",
+  "title": "should show login screen",
+}
+`;
+
 exports[`utils > getFolders > should be able to return the correct folders when method options are provided 1`] = `
 {
   "actualFolder": "methodActual",
@@ -742,5 +767,19 @@ exports[`utils > getInstanceData > should return instance data when wdio-ics opt
   "nativeWebScreenshot": false,
   "platformName": "osx",
   "platformVersion": "not_known",
+}
+`;
+
+exports[`utils > getLtOptions > should return the lt:options when it exists (correct casing) 1`] = `
+{
+  "project": "testProject",
+  "user": "wim",
+}
+`;
+
+exports[`utils > getLtOptions > should return the lt:options when it exists (different casing) 1`] = `
+{
+  "project": "testUpper",
+  "user": "upperCase",
 }
 `;

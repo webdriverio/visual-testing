@@ -6,12 +6,10 @@ import { driver } from '@wdio/globals'
 describe('@wdio/visual-service mobile app', () => {
     // Get the commands that need to be executed
     // 0 means all, otherwise it will only execute the commands that are specified
-    // @ts-ignore
     const wdioIcsCommands = driver.requestedCapabilities['wdio-ics:options'].commands
-    // @ts-ignore
     const deviceName = driver.requestedCapabilities.deviceName
-    // @ts-ignore
     const orientation = driver.requestedCapabilities.orientation
+    const platformVersion = driver.requestedCapabilities.platformVersion
 
     beforeEach(async () => {
         await relaunchApp()
@@ -41,6 +39,25 @@ describe('@wdio/visual-service mobile app', () => {
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
             expect(result < 0.05 ? 0 : result).toEqual(0)
         })
+
+        if (driver.isIOS || (driver.isAndroid && parseFloat(platformVersion) >= 13)) {
+            it(`should compare a webview screenshot successful for '${deviceName}' in ${orientation}-mode`, async () => {
+                await $('~Webview').click()
+                await driver.pause(2000)
+                await driver.switchContext({ title: /.*WebdriverIO.*/ })
+                await driver.pause(2000)
+                await driver.url('https://guinea-pig.webdriver.io/image-compare.html')
+                const result = await browser.checkScreen('web-app', {
+                    ignore: [$('.navbar__brand')],
+                    hideElements: [$('.hero__title')]
+                }
+                ) as number
+                // Rest the context because the rest will be for native
+                await driver.switchContext('NATIVE_APP')
+
+                await expect(result < 0.05 ? 0 : result).toEqual(0)
+            })
+        }
     }
 
     if (
