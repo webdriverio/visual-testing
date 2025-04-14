@@ -1,3 +1,6 @@
+import type { Executor } from '../methods/methods.interfaces.js'
+import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
+
 export interface GetAndCreatePathOptions {
     // The name of the browser
     browserName: string;
@@ -98,4 +101,26 @@ export interface GetToolBarShadowPaddingOptions {
 export interface ScreenshotSize {
     height: number;
     width: number;
+}
+
+export interface GetMobileViewPortPositionOptions {
+    initialDeviceRectangles: DeviceRectangles,
+    isNativeContext: boolean,
+    isAndroid: boolean,
+    isIOS: boolean,
+    methods: {
+        executor: Executor,
+        getUrl: () => Promise<string>,
+        url: (arg:string) => Promise<WebdriverIO.Request|void>,
+    }
+    nativeWebScreenshot: boolean,
+    screenHeight: number,
+    screenWidth: number,
+}
+
+export interface GetMobileScreenSizeOptions {
+    currentBrowser: WebdriverIO.Browser,
+    executor: Executor,
+    isIOS: boolean,
+    isNativeContext: boolean,
 }

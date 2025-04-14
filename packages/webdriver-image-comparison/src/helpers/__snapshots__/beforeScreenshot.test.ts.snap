@@ -8,12 +8,34 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 1,
+      "width": 1,
     },
     "statusBar": {
       "height": 0,
@@ -21,10 +43,18 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 1,
-    "width": 1,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": false,
   "isAndroidChromeDriverScreenshot": false,
@@ -50,12 +80,34 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
   "devicePixelRatio": 1,
-  "devicePlatformRect": {
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
     "homeBar": {
       "height": 0,
       "width": 0,
       "x": 0,
       "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 1,
+      "width": 1,
     },
     "statusBar": {
       "height": 0,
@@ -63,10 +115,18 @@ exports[`beforeScreenshot > should be able to return the enriched instance data 
       "x": 0,
       "y": 0,
     },
-  },
-  "deviceScreenSize": {
-    "height": 1,
-    "width": 1,
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
   },
   "isAndroid": false,
   "isAndroidChromeDriverScreenshot": false,

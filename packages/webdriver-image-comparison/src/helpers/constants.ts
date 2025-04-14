@@ -1,6 +1,7 @@
 import type { IosOffsets } from './constants.interfaces.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
-import type { TestContext } from 'src/commands/check.interfaces.js'
+import type { TestContext } from '../commands/check.interfaces.js'
+import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 
 export const DEFAULT_COMPARE_OPTIONS = {
     blockOutSideBar: true,
@@ -62,6 +63,16 @@ export const DEFAULT_TABBABLE_OPTIONS = {
         color: '#000',
         width: 1,
     },
+}
+export const DEVICE_RECTANGLES: DeviceRectangles = {
+    bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+    homeBar: { y: 0, x: 0, width: 0, height: 0 },
+    leftSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+    rightSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+    statusBar: { y: 0, x: 0, width: 0, height: 0 },
+    statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
+    screenSize: { width: 0, height: 0 },
+    viewport: { y: 0, x: 0, width: 0, height: 0 },
 }
 
 /**

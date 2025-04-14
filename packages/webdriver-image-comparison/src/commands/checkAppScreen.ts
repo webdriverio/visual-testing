@@ -1,4 +1,4 @@
-import type { RectanglesOutput } from 'src/methods/rectangles.interfaces.js'
+import type { RectanglesOutput } from '../methods/rectangles.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
 import type {  ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
@@ -41,15 +41,11 @@ export default async function checkAppScreen(
         ]
 
     }
-    const { executor, getElementRect } = methods
+    const { getElementRect } = methods
     const { isAndroid, isMobile } = instanceData
 
     // 2. Take the actual screenshot and retrieve the needed data
-    const {
-        devicePixelRatio,
-        fileName,
-        isLandscape,
-    } = await saveAppScreen({
+    const { devicePixelRatio, fileName } = await saveAppScreen({
         methods,
         instanceData,
         folders,
@@ -70,12 +66,12 @@ export default async function checkAppScreen(
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)
 
     const executeCompareOptions: ImageCompareOptions = {
-        ignoreRegions: [...ignoreRegions, ...deviceIgnoreRegions],
         compareOptions: {
             wic: checkScreenOptions.wic.compareOptions,
             method: methodCompareOptions,
         },
         devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         fileName,
         folderOptions: {
             autoSaveBaseline: checkScreenOptions.wic.autoSaveBaseline,
@@ -87,16 +83,13 @@ export default async function checkAppScreen(
             isMobile,
             savePerInstance: checkScreenOptions.wic.savePerInstance,
         },
-        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        isHybridApp: false,
+        ignoreRegions: [...ignoreRegions, ...deviceIgnoreRegions],
         isAndroid,
-        isLandscape,
-        platformName: instanceData.platformName,
+        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
     }
 
     // 4b Now execute the compare and return the data
     return executeImageCompare({
-        executor,
         isViewPortScreenshot: true,
         isNativeContext,
         options: executeCompareOptions,

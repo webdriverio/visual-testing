@@ -1,18 +1,15 @@
 import type { ChainablePromiseElement } from 'webdriverio'
-import { calculateDprData, checkAndroidNativeWebScreenshot, checkIsIos, getScreenshotSize, isObject } from '../helpers/utils.js'
-import { getElementPositionAndroid, getElementPositionDesktop, getElementPositionIos } from './elementPosition.js'
-import { IOS_OFFSETS, ANDROID_OFFSETS } from '../helpers/constants.js'
+import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
+import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import type {
+    DeviceRectangles,
     ElementRectangles,
     RectanglesOutput,
     ScreenRectanglesOptions,
     StatusAddressToolBarRectangles,
     StatusAddressToolBarRectanglesOptions,
 } from './rectangles.interfaces.js'
-import type { Executor, GetElementRect } from './methods.interfaces.js'
-import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
-import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
-import type { StatusAddressToolBarOffsets } from '../clientSideScripts/statusAddressToolBarOffsets.interfaces.js'
+import type { GetElementRect } from './methods.interfaces.js'
 import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
 import type { InstanceData } from './instanceData.interfaces.js'
 
@@ -28,20 +25,20 @@ export async function determineElementRectangles({
     // Determine screenshot data
     const {
         devicePixelRatio,
+        deviceRectangles,
         innerHeight,
         isAndroid,
         isAndroidNativeWebScreenshot,
         isIOS,
-        isLandscape,
     } = options
-    const { height } = getScreenshotSize(base64Image, devicePixelRatio)
+    const { height } = getBase64ScreenshotSize(base64Image, devicePixelRatio)
     let elementPosition
 
     // Determine the element position on the screenshot
     if (isIOS) {
-        elementPosition = await getElementPositionIos(executor, element, { isLandscape })
+        elementPosition = await getElementWebviewPosition(executor, element, { deviceRectangles })
     } else if (isAndroid) {
-        elementPosition = await getElementPositionAndroid(executor, element, { isAndroidNativeWebScreenshot, isLandscape })
+        elementPosition = await getElementPositionAndroid(executor, element, { deviceRectangles, isAndroidNativeWebScreenshot })
     } else {
         elementPosition = await getElementPositionDesktop(executor, element, { innerHeight, screenshotHeight: height })
     }
@@ -82,7 +79,7 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
         isAndroidNativeWebScreenshot,
         isLandscape,
     } = options
-    const { height, width } = getScreenshotSize(base64Image, devicePixelRatio)
+    const { height, width } = getBase64ScreenshotSize(base64Image, devicePixelRatio)
 
     // Determine the width
     const screenshotWidth = isIOS || isAndroidChromeDriverScreenshot ? width : innerWidth
@@ -104,34 +101,42 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
 /**
  * Determine the rectangles for the mobile devices
  */
-export async function determineStatusAddressToolBarRectangles(
-    executor: Executor,
+export function determineStatusAddressToolBarRectangles({ deviceRectangles, options }:{
+    deviceRectangles: DeviceRectangles,
     options: StatusAddressToolBarRectanglesOptions,
-): Promise<StatusAddressToolBarRectangles> {
+}): StatusAddressToolBarRectangles {
     const {
         blockOutSideBar,
         blockOutStatusBar,
         blockOutToolBar,
+        isAndroid,
         isAndroidNativeWebScreenshot,
-        isHybridApp,
-        isLandscape,
         isMobile,
         isViewPortScreenshot,
-        platformName,
     } = options
     const rectangles = []
 
     if (
         isViewPortScreenshot &&
         isMobile &&
-        (checkAndroidNativeWebScreenshot(platformName, isAndroidNativeWebScreenshot) || checkIsIos(platformName))
+        ( isAndroid && isAndroidNativeWebScreenshot || !isAndroid )
     ) {
-        const { sideBar, statusAddressBar, toolBar } = (await (checkIsIos(platformName)
-            ? executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)
-            : executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, {
-                isHybridApp,
-                isLandscape,
-            }))) as StatusAddressToolBarOffsets
+        const statusAddressBar = {
+            x: deviceRectangles.statusBarAndAddressBar.x, y: deviceRectangles.statusBarAndAddressBar.y,
+            width: deviceRectangles.statusBarAndAddressBar.width, height: deviceRectangles.statusBarAndAddressBar.height,
+        }
+        const toolBar = {
+            x: deviceRectangles.bottomBar.x, y: deviceRectangles.bottomBar.y,
+            width: deviceRectangles.bottomBar.width, height: deviceRectangles.bottomBar.height,
+        }
+        const leftSidePadding = {
+            x: deviceRectangles.leftSidePadding.x, y: deviceRectangles.leftSidePadding.y,
+            width: deviceRectangles.leftSidePadding.width, height: deviceRectangles.leftSidePadding.height,
+        }
+        const rightSidePadding = {
+            x: deviceRectangles.rightSidePadding.x, y: deviceRectangles.rightSidePadding.y,
+            width: deviceRectangles.rightSidePadding.width, height: deviceRectangles.rightSidePadding.height,
+        }
 
         if (blockOutStatusBar) {
             rectangles.push(statusAddressBar)
@@ -142,7 +147,7 @@ export async function determineStatusAddressToolBarRectangles(
         }
 
         if (blockOutSideBar) {
-            rectangles.push(sideBar)
+            rectangles.push(leftSidePadding, rightSidePadding)
         }
     }
 
@@ -265,7 +270,7 @@ export async function determineDeviceBlockOuts({ isAndroid, screenCompareOptions
 }){
     const rectangles: RectanglesOutput[] = []
     const { blockOutStatusBar, blockOutToolBar } = screenCompareOptions
-    const { devicePlatformRect:{ homeBar, statusBar } } = instanceData
+    const { deviceRectangles:{ homeBar, statusBar } } = instanceData
 
     if (blockOutStatusBar){
         rectangles.push(statusBar)

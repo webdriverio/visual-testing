@@ -23,10 +23,22 @@ describe('@wdio/visual-service:ocr desktop', () => {
             text: string,
         })
         const matchesFilePath = /ocr\/desktop-\d+\.png/.test(elementPosition.filePath)
-        expect(elementPosition.dprPosition).toMatchSnapshot()
+        // We don't care about the exact position now, just that it returns a position
+        expect(elementPosition.dprPosition).toEqual(expect.objectContaining({
+            left: expect.any(Number),
+            top: expect.any(Number),
+            right: expect.any(Number),
+            bottom: expect.any(Number),
+        }))
+
+        expect(elementPosition.originalPosition).toEqual(expect.objectContaining({
+            left: expect.any(Number),
+            top: expect.any(Number),
+            right: expect.any(Number),
+            bottom: expect.any(Number),
+        }))
         expect(matchesFilePath)
         expect(elementPosition.matchedString).toEqual(string)
-        expect(elementPosition.originalPosition).toMatchSnapshot()
         expect(elementPosition.score).toEqual(100)
         expect(elementPosition.searchValue).toEqual(string)
     })

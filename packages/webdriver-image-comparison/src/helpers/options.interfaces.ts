@@ -12,6 +12,8 @@ export interface ClassOptions {
     addIOSBezelCorners?: boolean;
     // Delete runtime folder (actual & diff) on initialization
     clearRuntimeFolder?: boolean;
+    // Create fullpage screenshots with the bidi protocol
+    createBidiFullPageScreenshots?: boolean;
     // The naming of the saved images can be customized by passing the parameter `formatImageName` with a format string
     formatImageName?: string;
     // Is it an hybrid app or not
@@ -167,6 +169,7 @@ export interface DefaultOptions {
     autoSaveBaseline: boolean;
     clearFolder: boolean;
     compareOptions: CompareOptions;
+    createBidiFullPageScreenshots: boolean;
     disableBlinkingCursor: boolean;
     disableCSSAnimation: boolean;
     enableLayoutTesting: boolean;

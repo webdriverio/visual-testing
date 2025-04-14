@@ -1,11 +1,8 @@
-import getElementPositionTopWindow from '../clientSideScripts/getElementPositionTopWindow.js'
 import getElementPositionTopDom from '../clientSideScripts/getElementPositionTopDom.js'
-import { getElementPositionTopScreenNativeMobile } from '../clientSideScripts/getElementPositionTopScreenNativeMobile.js'
-import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import type { Executor } from './methods.interfaces.js'
 import type { ElementPosition } from '../clientSideScripts/elementPosition.interfaces.js'
-import getAndroidStatusAddressToolBarOffsets from '../clientSideScripts/getAndroidStatusAddressToolBarOffsets.js'
-import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatusAddressToolBarOffsets.js'
+import { getBoundingClientRect } from '../clientSideScripts/getBoundingClientRect.js'
+import type { DeviceRectangles } from './rectangles.interfaces.js'
 
 /**
  * Get the element position on a Android device
@@ -13,30 +10,18 @@ import getIosStatusAddressToolBarOffsets from '../clientSideScripts/getIosStatus
 export async function getElementPositionAndroid(
     executor: Executor,
     element: HTMLElement,
-    { isAndroidNativeWebScreenshot, isLandscape }: { isAndroidNativeWebScreenshot: boolean; isLandscape: boolean },
+    { deviceRectangles, isAndroidNativeWebScreenshot }: {
+        deviceRectangles: DeviceRectangles,
+        isAndroidNativeWebScreenshot: boolean;
+    },
 ): Promise<ElementPosition> {
     // This is the native web screenshot
     if (isAndroidNativeWebScreenshot) {
-        const {
-            safeArea,
-            screenHeight,
-            screenWidth,
-            sideBar: { width: sideBarWidth },
-            statusAddressBar: { height },
-        } = await executor(getAndroidStatusAddressToolBarOffsets, ANDROID_OFFSETS, { isHybridApp: false, isLandscape })
-
-        return executor(getElementPositionTopScreenNativeMobile, element, {
-            isLandscape,
-            safeArea,
-            screenHeight,
-            screenWidth,
-            sideBarWidth,
-            statusBarAddressBarHeight: height,
-        })
+        return getElementWebviewPosition(executor, element,  { deviceRectangles } )
     }
 
     // This is the ChromeDriver screenshot
-    return executor(getElementPositionTopWindow, element)
+    return executor(getBoundingClientRect, element)
 }
 
 /**
@@ -63,32 +48,23 @@ export async function getElementPositionDesktop(
         return executor(getElementPositionTopDom, element)
     }
 
-    return executor(getElementPositionTopWindow, element)
+    return executor(getBoundingClientRect, element)
 }
 
 /**
- * Get the element position on iOS Safari
+ * Get the element position calculated from the webview
  */
-export async function getElementPositionIos(
+export async function getElementWebviewPosition(
     executor: Executor,
     element: HTMLElement,
-    { isLandscape }: { isLandscape: boolean },
+    { deviceRectangles: { viewport:{ x, y } } }: { deviceRectangles: DeviceRectangles },
 ): Promise<ElementPosition> {
-    // Determine status and address bar height
-    const {
-        safeArea,
-        screenHeight,
-        screenWidth,
-        sideBar: { width: sideBarWidth },
-        statusAddressBar: { height },
-    } = await executor(getIosStatusAddressToolBarOffsets, IOS_OFFSETS, isLandscape)
+    const { height, width, x:boundingClientX, y:boundingClientY } = (await executor(getBoundingClientRect, element)) as ElementPosition
 
-    return executor(getElementPositionTopScreenNativeMobile, element, {
-        isLandscape,
-        safeArea,
-        screenHeight,
-        screenWidth,
-        sideBarWidth,
-        statusBarAddressBarHeight: height,
-    })
+    return {
+        height,
+        width,
+        x: boundingClientX + x,
+        y: boundingClientY + y,
+    }
 }

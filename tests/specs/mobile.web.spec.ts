@@ -6,16 +6,11 @@ import { browser, expect } from '@wdio/globals'
 describe('@wdio/visual-service mobile web', () => {
     // Get the commands that need to be executed
     // 0 means all, otherwise it will only execute the commands that are specified
-    // @ts-ignore
     const wdioIcsCommands = driver.requestedCapabilities['wdio-ics:options'].commands
-    // @ts-ignore
     const deviceName = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).deviceName
-    // @ts-ignore
     const platformName = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).platformName.toLowerCase() === 'android' ? 'Android' : 'iOS'
-    // @ts-ignore
     const platformVersion = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).platformVersion
-    // @ts-ignore
-    const orientation = (driver.requestedCapabilities['lt:options'].deviceOrientation || driver.requestedCapabilities.orientation).toLowerCase()
+    const orientation = (driver.requestedCapabilities['lt:options']?.deviceOrientation || driver.requestedCapabilities.orientation).toLowerCase()
 
     beforeEach(async () => {
         await browser.url('')
@@ -43,6 +38,19 @@ describe('@wdio/visual-service mobile web', () => {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
             }
             await expect(result < 0.05 ? 0 : result).toEqual(0)
+
+            const newOrientation = orientation.toUpperCase() === 'LANDSCAPE' ? 'PORTRAIT' : 'LANDSCAPE'
+
+            await browser.pause(2000)
+            await browser.setOrientation(newOrientation)
+            await browser.pause(2000)
+            const newResult = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}`) as number
+            if (newResult > 0 && result < 0.05) {
+                console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
+            }
+            // Before the expect we need to revert the orientation otherwise the next test will not start in the default orientation
+            await browser.setOrientation(orientation)
+            await expect(newResult < 0.05 ? 0 : newResult).toEqual(0)
         })
     }
 

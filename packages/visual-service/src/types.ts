@@ -8,8 +8,12 @@ import type {
     CheckFullPageMethodOptions,
     SaveFullPageMethodOptions,
     ClassOptions,
+    DeviceRectangles,
+    TestContext,
+    InstanceData,
 } from 'webdriver-image-comparison'
 import type { ChainablePromiseElement } from 'webdriverio'
+import type { ContextManager } from './contextManager.js'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;
@@ -19,16 +23,45 @@ type MultiResult = {
     [browserName: string]: ImageCompareResult | number;
 };
 export type Result = MultiResult | (ImageCompareResult | number);
-export type NativeContextType = boolean | Record<string, boolean>
-export type MultiremoteCommandResult = {
-        command: string,
-        method: string,
-        endpoint: string,
-        body: Record<string, any>,
-        result: { value: string },
-        sessionId: string | undefined,
-        cid: string,
-        type: string,
+export type MobileInstanceData = {
+    devicePixelRatio: number;
+    deviceRectangles: DeviceRectangles;
+}
+export type getFolderMethodOptions =
+    | CheckElementMethodOptions
+    | CheckFullPageMethodOptions
+    | CheckScreenMethodOptions
+    | SaveElementMethodOptions
+    | SaveFullPageMethodOptions
+    | SaveScreenMethodOptions;
+export type GetInstanceDataOptions = {
+    currentBrowser: WebdriverIO.Browser,
+    initialDeviceRectangles: DeviceRectangles,
+    isNativeContext: boolean
+}
+export type EnrichTestContextOptions = {
+    commandName: string;
+    currentTestContext: TestContext;
+    instanceData: InstanceData;
+    tag: string;
+}
+export type GetMobileInstanceDataOptions = {
+    currentBrowser: WebdriverIO.Browser;
+    initialDeviceRectangles: DeviceRectangles;
+    isNativeContext:boolean;
+    nativeWebScreenshot:boolean;
+}
+
+export interface WrapWithContextOptions<T extends (...args: any[]) => any> {
+    browser: WebdriverIO.Browser
+    command: T
+    contextManager: ContextManager
+    getArgs: () => Parameters<T>
+}
+
+export interface WdioIcsOptions {
+    logName?: string;
+    name?: string;
 }
 
 export interface WdioIcsCommonOptions {

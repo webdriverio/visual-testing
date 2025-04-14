@@ -70,6 +70,8 @@ function createCaps({
         'appium:platformVersion': platformVersion,
         'appium:orientation': orientation.toUpperCase(),
         'appium:automationName': 'UIAutomator2',
+        // @ts-expect-error
+        'appium:nativeWebScreenshot': true,
         'wdio-ics:options': {
             logName: `app-Emulator${deviceName.replace(
                 /(\s+|\(+|\)+|Emulator)/g,

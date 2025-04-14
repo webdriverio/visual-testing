@@ -6,31 +6,39 @@ export function lambdaTestIosSimWeb({ buildName }: { buildName: string }) {
     const iOSDevices = [
         {
             // 812
+            appiumVersion: '2.16.2',
             deviceName: 'iPhone 13 mini',
             platformVersion: '17.5',
         },
         {
             // 844
+            appiumVersion: '2.16.2',
             deviceName: 'iPhone 13 Pro',
             platformVersion: '16.0',
         },
         {
             // 852
+            appiumVersion: '2.16.2',
             deviceName: 'iPhone 14 Pro',
             platformVersion: '17.5',
         },
         {
             // 932
+            appiumVersion: '2.16.2',
             deviceName: 'iPhone 15 Pro Max',
             platformVersion: '18.0',
         }
     ]
 
     return [
-        ...(['landscape', 'portrait'] as DeviceOrientation[])
+        ...([
+            'landscape',
+            'portrait'
+        ] as DeviceOrientation[])
             .map((orientation) => iOSDevices
-                .map(({ deviceName, platformVersion }) => ({
+                .map(({ appiumVersion, deviceName, platformVersion }) => ({
                     'lt:options': {
+                        ...(appiumVersion ? { appiumVersion } : {}),
                         deviceName,
                         platformName: 'ios',
                         platformVersion,
