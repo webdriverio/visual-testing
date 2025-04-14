@@ -67,8 +67,8 @@ importers:
         specifier: ^9.12.2
         version: 9.12.2
       '@wdio/mocha-framework':
-        specifier: ^9.9.0
-        version: 9.9.0
+        specifier: ^9.12.5
+        version: 9.12.5
       '@wdio/sauce-service':
         specifier: ^9.12.5
         version: 9.12.5
@@ -2316,8 +2316,8 @@ packages:
     resolution: {integrity: sha512-BXx8RXFUW2M4dcO6t5Le95Hi2ZkTQBRsvBQqLekT2rZ6Xmw8ZKZBPf0FptnoftFGg6dYmwnDidYv/0+4PiHjpQ==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/mocha-framework@9.9.0':
-    resolution: {integrity: sha512-k+b1R7K9588OHf7oltKC87+mmks/LdTkesahqgiKYTHNpepZmpsneT6wuC6CYe4bnXUZCe11aBHqmFZ1BUcq6Q==}
+  '@wdio/mocha-framework@9.12.5':
+    resolution: {integrity: sha512-QNyvTjz2mgLn80NwtE3P1XhMa6ve65FZhb/N9XMYl5ATKSLh/HTl458eVdpVaSh/9FHaZpfkruEJdCB8milYeQ==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/protocols@9.12.2':
@@ -8934,6 +8934,7 @@ snapshots:
     transitivePeerDependencies:
       - bare-buffer
       - supports-color
+    optional: true
 
   '@puppeteer/browsers@2.9.0':
     dependencies:
@@ -9848,13 +9849,13 @@ snapshots:
       loglevel-plugin-prefix: 0.8.4
       strip-ansi: 7.1.0
 
-  '@wdio/mocha-framework@9.9.0':
+  '@wdio/mocha-framework@9.12.5':
     dependencies:
       '@types/mocha': 10.0.10
       '@types/node': 20.17.30
       '@wdio/logger': 9.4.4
-      '@wdio/types': 9.9.0
-      '@wdio/utils': 9.9.0
+      '@wdio/types': 9.12.3
+      '@wdio/utils': 9.12.5
       mocha: 10.8.2
     transitivePeerDependencies:
       - bare-buffer
@@ -9956,6 +9957,7 @@ snapshots:
   '@wdio/types@9.9.0':
     dependencies:
       '@types/node': 20.17.30
+    optional: true
 
   '@wdio/utils@9.12.2':
     dependencies:
@@ -10032,6 +10034,7 @@ snapshots:
     transitivePeerDependencies:
       - bare-buffer
       - supports-color
+    optional: true
 
   '@web3-storage/multipart-parser@1.0.0': {}
 
@@ -10891,7 +10894,8 @@ snapshots:
 
   deep-object-diff@1.1.9: {}
 
-  deepmerge-ts@7.1.4: {}
+  deepmerge-ts@7.1.4:
+    optional: true
 
   deepmerge-ts@7.1.5: {}
 
