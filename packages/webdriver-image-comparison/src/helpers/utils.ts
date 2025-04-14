@@ -338,7 +338,7 @@ export function updateVisualBaseline(): boolean {
 }
 /**
  * Log the deprecated root compareOptions (at `ClassOptions` level)
-  * and returns non-undefined ones to be added back to the config
+ * and returns non-undefined ones to be added back to the config
  */
 export function logAllDeprecatedCompareOptions(options: ClassOptions) {
     const deprecatedKeys: (keyof CompareOptions)[] = [

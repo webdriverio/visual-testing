@@ -27,13 +27,13 @@ import {
     logAllDeprecatedCompareOptions,
     updateVisualBaseline,
 } from './utils.js'
-import type { CompareOptions } from './options.interfaces.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 import { DEVICE_RECTANGLES } from './constants.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
+import type { ClassOptions } from './options.interfaces.js'
 
 vi.mock('../clientSideScripts/injectWebviewOverlay.js', () => ({
     injectWebviewOverlay: Symbol('injectWebviewOverlay'),
@@ -808,44 +808,65 @@ describe('utils', () => {
     })
 
     describe('logAllDeprecatedCompareOptions', () => {
-        it('should log all deprecated compare options', () => {
-            const warnSpy = vi.spyOn(log, 'warn')
-            const options: CompareOptions = {
-                blockOutSideBar: true,
-                blockOutStatusBar: true,
-                blockOutToolBar: true,
-                createJsonReportFiles: true,
-                diffPixelBoundingBoxProximity: 5,
-                ignoreAlpha: true,
-                ignoreAntialiasing: true,
-                ignoreColors: true,
-                ignoreLess: true,
-                ignoreNothing: true,
-                rawMisMatchPercentage: true,
-                returnAllCompareData: true,
-                saveAboveTolerance: 100,
-                scaleImagesToSameSize: true,
+        const allDeprecatedOptions = {
+            blockOutSideBar: true,
+            blockOutStatusBar: true,
+            blockOutToolBar: true,
+            createJsonReportFiles: true,
+            diffPixelBoundingBoxProximity: 5,
+            ignoreAlpha: true,
+            ignoreAntialiasing: true,
+            ignoreColors: true,
+            ignoreLess: true,
+            ignoreNothing: true,
+            rawMisMatchPercentage: true,
+            returnAllCompareData: true,
+            saveAboveTolerance: 100,
+            scaleImagesToSameSize: true,
+        }
+
+        it('should log a deprecation warning for each deprecated key', () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+
+            logAllDeprecatedCompareOptions(allDeprecatedOptions)
+
+            expect(warnSpy).toHaveBeenCalledTimes(1)
+            expect(warnSpy.mock.calls[0][0]).toMatchSnapshot()
+        })
+
+        it('should return a subset of CompareOptions with deprecated keys only', () => {
+            const result = logAllDeprecatedCompareOptions(allDeprecatedOptions)
+            expect(result).toMatchSnapshot()
+        })
+
+        it('should only return deprecated keys when full config is provided', () => {
+            const fullOptions: ClassOptions = {
+                addressBarShadowPadding: 10,
+                autoElementScroll: true,
+                addIOSBezelCorners: false,
+                clearRuntimeFolder: false,
+                createBidiFullPageScreenshots: true,
+                formatImageName: 'test',
+                isHybridApp: false,
+                savePerInstance: true,
+                toolBarShadowPadding: 5,
+                waitForFontsLoaded: true,
+                autoSaveBaseline: true,
+                screenshotPath: './screenshots',
+                baselineFolder: './baseline',
+                disableBlinkingCursor: false,
+                disableCSSAnimation: false,
+                enableLayoutTesting: true,
+                fullPageScrollTimeout: 500,
+                hideScrollBars: true,
+                storybook: { url: 'http://localhost:6006' },
+
+                // Add deprecated keys mixed in
+                ...allDeprecatedOptions
             }
 
-            const result = logAllDeprecatedCompareOptions(options)
-
-            expect(result).toMatchSnapshot()
-            expect(warnSpy).toHaveBeenCalledWith(`The following root-level compare options are deprecated and should be moved under 'compareOptions':
-  - blockOutSideBar
-  - blockOutStatusBar
-  - blockOutToolBar
-  - createJsonReportFiles
-  - diffPixelBoundingBoxProximity
-  - ignoreAlpha
-  - ignoreAntialiasing
-  - ignoreColors
-  - ignoreLess
-  - ignoreNothing
-  - rawMisMatchPercentage
-  - returnAllCompareData
-  - saveAboveTolerance
-  - scaleImagesToSameSize
-In the next major version, these options will be removed from the root level and only be available under 'compareOptions'`)
+            const result = logAllDeprecatedCompareOptions(fullOptions)
+            expect(result).toEqual(allDeprecatedOptions)
         })
     })
 })
