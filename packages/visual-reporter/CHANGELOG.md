@@ -1,5 +1,15 @@
 # @wdio/visual-reporter
 
+## 0.4.9
+
+### Patch Changes
+
+- 8aaaf98: fix script for GH-pages
+
+### Committers: 1
+
+- Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 0.4.8
 
 ### Patch Changes
@@ -8,7 +18,7 @@
 
 ### Committers: 1
 
--   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+- Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
 
 ## 0.4.7
 
