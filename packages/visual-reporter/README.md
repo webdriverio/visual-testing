@@ -88,6 +88,11 @@ Open a terminal, enter `npx wdio-visual-reporter` and answer all the questions
 
 https://github.com/user-attachments/assets/9cd2d0ce-bb19-4c5f-89c5-ea2f01d68fa1
 
+### Deploy to GitHub Pages
+
+You can find a workflow [here](../../.github/workflows/deploy-visual-reporter.yml). Make sure you change the `GITHUB_PAGES` variable to the path of your reporter
+
+
 ### The Visual Reporter
 
 https://github.com/user-attachments/assets/9cdfec36-e1ff-4b48-a842-23f3f7d5768e

@@ -2,7 +2,7 @@ import { vitePlugin as remix } from '@remix-run/dev'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
-const baseName = process.env.GITHUB_PAGES === 'true' ? '/visual-testing/' : ''
+const baseName = process.env.GITHUB_PAGES || ''
 
 export default defineConfig({
     plugins: [
