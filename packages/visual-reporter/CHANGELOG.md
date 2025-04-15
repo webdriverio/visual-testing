@@ -6,6 +6,10 @@
 
 - 8aaaf98: fix script for GH-pages
 
+### Committers: 1
+
+- Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 0.4.8
 
 ### Patch Changes
