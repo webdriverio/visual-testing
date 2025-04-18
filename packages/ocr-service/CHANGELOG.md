@@ -1,5 +1,19 @@
 # @wdio/ocr-service
 
+## 2.2.6
+
+### Patch Changes
+
+- 42956e4:  🔧 Other
+
+  - 🆙 Updated dependencies
+
+  ***
+
+  ## Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 2.2.5
 
 ### Patch Changes
@@ -8,7 +22,7 @@
 
 ### Committers: 1
 
--   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+- Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
 
 ## 2.2.4
 

@@ -1,5 +1,19 @@
 # @wdio/visual-reporter
 
+## 0.4.10
+
+### Patch Changes
+
+- 42956e4:  🔧 Other
+
+  - 🆙 Updated dependencies
+
+  ***
+
+  ## Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 0.4.9
 
 ### Patch Changes
