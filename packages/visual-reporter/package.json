@@ -2,7 +2,7 @@
   "name": "@wdio/visual-reporter",
   "author": "Wim Selles - wswebcreation",
   "description": "Visual Testing HTML Report for the @wdio/visual-service module",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "license": "MIT",
   "homepage": "https://webdriver.io/docs/visual-testing",
   "repository": {
@@ -32,17 +32,17 @@
     "@inquirer/prompts": "^7.4.1",
     "ora": "^8.2.0",
     "sirv-cli": "^3.0.1",
-    "sharp": "^0.34.0"
+    "sharp": "^0.34.1"
   },
   "devDependencies": {
-    "@remix-run/node": "^2.16.4",
-    "@remix-run/react": "^2.16.4",
-    "@remix-run/serve": "^2.16.4",
     "@remix-run/dev": "^2.16.4",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
-    "@typescript-eslint/eslint-plugin": "^8.29.0",
-    "@typescript-eslint/parser": "^8.29.0",
+    "@remix-run/node": "^2.16.5",
+    "@remix-run/react": "^2.16.5",
+    "@remix-run/serve": "^2.16.4",
+    "@typescript-eslint/eslint-plugin": "^8.29.1",
+    "@typescript-eslint/parser": "^8.29.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.24.0",
     "eslint-import-resolver-typescript": "^3.10.0",
@@ -50,7 +50,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "isbot": "^5.1.25",
+    "isbot": "^5.1.26",
     "postcss": "^8.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -58,7 +58,7 @@
     "react-select": "^5.10.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
-    "vite": "^5.4.17",
+    "vite": "^5.4.18",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "engines": {
