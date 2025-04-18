@@ -4,6 +4,8 @@
 
 ### Patch Changes
 
+- 42956e4:  🔧 Other
+
   - 🆙 Updated dependencies
 
   ***
