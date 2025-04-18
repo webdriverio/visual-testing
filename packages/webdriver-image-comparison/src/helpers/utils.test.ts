@@ -24,6 +24,7 @@ import {
     isObject,
     isStorybook,
     loadBase64Html,
+    logAllDeprecatedCompareOptions,
     updateVisualBaseline,
 } from './utils.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
@@ -32,6 +33,7 @@ import { DEVICE_RECTANGLES } from './constants.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
+import type { ClassOptions } from './options.interfaces.js'
 
 vi.mock('../clientSideScripts/injectWebviewOverlay.js', () => ({
     injectWebviewOverlay: Symbol('injectWebviewOverlay'),
@@ -802,6 +804,69 @@ describe('utils', () => {
             })
 
             expect(result).toEqual(DEVICE_RECTANGLES)
+        })
+    })
+
+    describe('logAllDeprecatedCompareOptions', () => {
+        const allDeprecatedOptions = {
+            blockOutSideBar: true,
+            blockOutStatusBar: true,
+            blockOutToolBar: true,
+            createJsonReportFiles: true,
+            diffPixelBoundingBoxProximity: 5,
+            ignoreAlpha: true,
+            ignoreAntialiasing: true,
+            ignoreColors: true,
+            ignoreLess: true,
+            ignoreNothing: true,
+            rawMisMatchPercentage: true,
+            returnAllCompareData: true,
+            saveAboveTolerance: 100,
+            scaleImagesToSameSize: true,
+        }
+
+        it('should log a deprecation warning for each deprecated key', () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+
+            logAllDeprecatedCompareOptions(allDeprecatedOptions)
+
+            expect(warnSpy).toHaveBeenCalledTimes(1)
+            expect(warnSpy.mock.calls[0][0]).toMatchSnapshot()
+        })
+
+        it('should return a subset of CompareOptions with deprecated keys only', () => {
+            const result = logAllDeprecatedCompareOptions(allDeprecatedOptions)
+            expect(result).toMatchSnapshot()
+        })
+
+        it('should only return deprecated keys when full config is provided', () => {
+            const fullOptions: ClassOptions = {
+                addressBarShadowPadding: 10,
+                autoElementScroll: true,
+                addIOSBezelCorners: false,
+                clearRuntimeFolder: false,
+                createBidiFullPageScreenshots: true,
+                formatImageName: 'test',
+                isHybridApp: false,
+                savePerInstance: true,
+                toolBarShadowPadding: 5,
+                waitForFontsLoaded: true,
+                autoSaveBaseline: true,
+                screenshotPath: './screenshots',
+                baselineFolder: './baseline',
+                disableBlinkingCursor: false,
+                disableCSSAnimation: false,
+                enableLayoutTesting: true,
+                fullPageScrollTimeout: 500,
+                hideScrollBars: true,
+                storybook: { url: 'http://localhost:6006' },
+
+                // Add deprecated keys mixed in
+                ...allDeprecatedOptions
+            }
+
+            const result = logAllDeprecatedCompareOptions(fullOptions)
+            expect(result).toEqual(allDeprecatedOptions)
         })
     })
 })

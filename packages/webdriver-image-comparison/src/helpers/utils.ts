@@ -1,5 +1,5 @@
-import { join } from 'node:path'
 import logger from '@wdio/logger'
+import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN, PLATFORMS } from './constants.js'
 import { mkdirSync } from 'node:fs'
 import type {
@@ -12,6 +12,7 @@ import type {
     GetToolBarShadowPaddingOptions,
     ScreenshotSize,
 } from './utils.interfaces.js'
+import type { ClassOptions, CompareOptions } from './options.interfaces.js'
 import type { Executor } from '../methods/methods.interfaces.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
@@ -334,6 +335,43 @@ export function isStorybook(){
  */
 export function updateVisualBaseline(): boolean {
     return process.argv.includes('--update-visual-baseline')
+}
+/**
+ * Log the deprecated root compareOptions (at `ClassOptions` level)
+ * and returns non-undefined ones to be added back to the config
+ */
+export function logAllDeprecatedCompareOptions(options: ClassOptions) {
+    const deprecatedKeys: (keyof CompareOptions)[] = [
+        'blockOutSideBar',
+        'blockOutStatusBar',
+        'blockOutToolBar',
+        'createJsonReportFiles',
+        'diffPixelBoundingBoxProximity',
+        'ignoreAlpha',
+        'ignoreAntialiasing',
+        'ignoreColors',
+        'ignoreLess',
+        'ignoreNothing',
+        'rawMisMatchPercentage',
+        'returnAllCompareData',
+        'saveAboveTolerance',
+        'scaleImagesToSameSize',
+    ]
+    const foundDeprecatedKeys = deprecatedKeys.filter((key) => key in options)
+
+    if (foundDeprecatedKeys.length > 0) {
+        log.warn(
+            'The following root-level compare options are deprecated and should be moved under \'compareOptions\':\n' +
+            foundDeprecatedKeys.map((k) => `  - ${k}`).join('\n') + '\nIn the next major version, these options will be removed from the root level and only be available under \'compareOptions\'',
+        )
+    }
+
+    return foundDeprecatedKeys.reduce<Partial<CompareOptions>>((acc, key) => {
+        if (options[key] !== undefined) {
+            acc[key] = options[key] as any
+        }
+        return acc
+    }, {})
 }
 
 /**
