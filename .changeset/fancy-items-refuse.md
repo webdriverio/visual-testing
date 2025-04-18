@@ -26,7 +26,7 @@ export const config = {
             "visual",
             {
                 // Some options, see the docs for more
-                createBidiFullPageScreenshots: true // Default is `true
+                userBasedFullPageScreenshot: false // Default is `false
                 // ... more options
             },
         ],
@@ -39,6 +39,6 @@ or on the test level
 
 ```ts
 await expect(browser).toMatchFullPageSnapshot('fullPage', {
-  createBidiFullPageScreenshots: true, // `true` by default
+  userBasedFullPageScreenshot: false, // `false` by default
 })
 ```

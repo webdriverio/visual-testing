@@ -845,7 +845,7 @@ describe('utils', () => {
                 autoElementScroll: true,
                 addIOSBezelCorners: false,
                 clearRuntimeFolder: false,
-                createBidiFullPageScreenshots: true,
+                userBasedFullPageScreenshot: false,
                 formatImageName: 'test',
                 isHybridApp: false,
                 savePerInstance: true,

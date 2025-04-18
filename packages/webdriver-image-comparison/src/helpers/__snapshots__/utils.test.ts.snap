@@ -363,25 +363,6 @@ exports[`utils > logAllDeprecatedCompareOptions > should log a deprecation warni
 In the next major version, these options will be removed from the root level and only be available under 'compareOptions'"
 `;
 
-exports[`utils > logAllDeprecatedCompareOptions > should log all deprecated compare options 1`] = `
-{
-  "blockOutSideBar": true,
-  "blockOutStatusBar": true,
-  "blockOutToolBar": true,
-  "createJsonReportFiles": true,
-  "diffPixelBoundingBoxProximity": 5,
-  "ignoreAlpha": true,
-  "ignoreAntialiasing": true,
-  "ignoreColors": true,
-  "ignoreLess": true,
-  "ignoreNothing": true,
-  "rawMisMatchPercentage": true,
-  "returnAllCompareData": true,
-  "saveAboveTolerance": 100,
-  "scaleImagesToSameSize": true,
-}
-`;
-
 exports[`utils > logAllDeprecatedCompareOptions > should return a subset of CompareOptions with deprecated keys only 1`] = `
 {
   "blockOutSideBar": true,

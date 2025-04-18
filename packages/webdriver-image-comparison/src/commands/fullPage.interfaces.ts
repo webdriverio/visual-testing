@@ -12,7 +12,7 @@ export interface SaveFullPageMethodOptions extends Partial<Folders> {
     // The padding that needs to be added to the address bar on iOS and Android
     addressBarShadowPadding?: number;
     // Create fullpage screenshots with the bidi protocol
-    createBidiFullPageScreenshots?: boolean;
+    userBasedFullPageScreenshot?: boolean;
     // Disable the blinking cursor
     disableBlinkingCursor?: boolean;
     // Disable all css animations

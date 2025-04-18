@@ -27,9 +27,9 @@ export interface ClassOptions {
     clearRuntimeFolder?: boolean;
 
     /**
-     * Create fullpage screenshots with the BiDi protocol.
+     * Use user based fullpage screenshots, by default the desktop screenshots are taken with the BiDi protocol.
      */
-    createBidiFullPageScreenshots?: boolean;
+    userBasedFullPageScreenshot?: boolean;
 
     /**
      * Customize the naming of saved images using a format string.
@@ -303,9 +303,9 @@ export interface DefaultOptions {
     compareOptions: CompareOptions;
 
     /**
-     * Enable full-page screenshots via the WebDriver BiDi protocol.
+     * Use user based fullpage screenshots, by default the desktop screenshots are taken with the BiDi protocol.
      */
-    createBidiFullPageScreenshots: boolean;
+    userBasedFullPageScreenshot: boolean;
 
     /**
      * Disable the blinking cursor in the screenshot.
