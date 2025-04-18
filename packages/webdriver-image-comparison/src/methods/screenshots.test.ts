@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { getBase64FullPageScreenshotsData } from './screenshots.js'
 import type { FullPageScreenshotDataOptions } from './screenshots.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
+import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 
 describe('screenshots', () => {
     describe('getBase64FullPageScreenshotsData', () => {
@@ -11,8 +12,10 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 1,
-                // @ts-expect-error
-                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
+                },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: true,
@@ -55,8 +58,10 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 1,
-                // @ts-expect-error
-                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
+                },
                 fullPageScrollTimeout: 1,
                 innerHeight: 600,
                 isAndroid: true,
@@ -104,8 +109,10 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
-                // @ts-expect-error
-                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
+                },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: true,
@@ -150,8 +157,10 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
-                // @ts-expect-error
-                deviceRectangles: { viewport: { left: 0, top: 0, width: 1366, height: 768 } },
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
+                },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: true,
@@ -200,14 +209,15 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
-                // @ts-expect-error
-                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
+                },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: false,
                 isAndroidNativeWebScreenshot: false,
                 isAndroidChromeDriverScreenshot: false,
-                isHybridApp: false,
                 isIOS: true,
                 isLandscape: false,
                 toolBarShadowPadding: 6,
@@ -246,8 +256,10 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
-                // @ts-expect-error
-                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
+                },
                 fullPageScrollTimeout: 1,
                 innerHeight: 400,
                 isAndroid: false,
@@ -291,8 +303,10 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
-                // @ts-expect-error
-                deviceRectangles: { viewport: { x: 0, y: 0, width: 1366, height: 768 } },
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
+                },
                 fullPageScrollTimeout: 1,
                 innerHeight: 800,
                 isAndroid: false,
@@ -340,8 +354,10 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
-                // @ts-expect-error
-                deviceRectangles: { viewport: { x: 0, y: 0, width: 0, height: 0 } },
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    viewport: { x: 0, y: 0, width: 0, height: 0 }
+                },
                 fullPageScrollTimeout: 1,
                 innerHeight: 768,
                 isAndroid: false,
@@ -393,8 +409,7 @@ describe('screenshots', () => {
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 6,
                 devicePixelRatio: 2,
-                // @ts-expect-error
-                deviceRectangles: { viewport: { left: 0, top: 0, width: 0, height: 0 } },
+                deviceRectangles: DEVICE_RECTANGLES,
                 fullPageScrollTimeout: 1,
                 innerHeight: 768,
                 isAndroid: false,
