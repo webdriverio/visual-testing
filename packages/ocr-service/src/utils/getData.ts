@@ -1,7 +1,7 @@
 import logger from '@wdio/logger'
 import { getNodeOcrData, getSystemOcrData } from './tesseract.js'
 import type { GetOcrData, Line, GetData, GetDataOptions, RectReturn, Words } from '../types.js'
-import { adjustElementBbox, getScreenshotSize, isRectanglesObject } from './index.js'
+import { adjustElementBbox, getBase64ScreenshotSize, isRectanglesObject } from './index.js'
 import { drawHighlightedWords, processImage } from './imageProcessing.js'
 
 const log = logger('@wdio/ocr-service:getData')
@@ -22,7 +22,7 @@ export default async function getData(browser: WebdriverIO.Browser, options: Get
         if (!cliFile) {
             const screenSize = await browser.getWindowSize()
             screenshot = await browser.takeScreenshot()
-            const { width } = getScreenshotSize(screenshot)
+            const { width } = getBase64ScreenshotSize(screenshot)
             dpr = width / screenSize.width
         } else {
             screenshot = cliFile

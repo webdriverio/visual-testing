@@ -14,6 +14,17 @@ vi.mock('webdriver-image-comparison', () => ({
     saveTabbablePage: vi.fn(),
     checkTabbablePage: vi.fn(),
     DEFAULT_TEST_CONTEXT: {},
+    NOT_KNOWN: 'not_known',
+    DEVICE_RECTANGLES: {
+        bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+        homeBar: { y: 0, x: 0, width: 0, height: 0 },
+        leftSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+        rightSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+        statusBar: { y: 0, x: 0, width: 0, height: 0 },
+        statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
+        screenSize: { width: 0, height: 0 },
+        viewport: { y: 0, x: 0, width: 0, height: 0 },
+    }
 }))
 
 const log = logger('test')
@@ -28,7 +39,8 @@ describe('@wdio/visual-service', () => {
             isMultiremote: false,
             addCommand: vi.fn(),
             capabilities: {},
-            requestedCapabilities: {}
+            requestedCapabilities: {},
+            on: vi.fn(),
         } as any as WebdriverIO.Browser
         await service.before({}, [], browser)
         // expect(log.warn).toBeCalledTimes(1)

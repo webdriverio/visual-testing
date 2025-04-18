@@ -37,7 +37,7 @@ exports[`getData > processes OCR data correctly using a haystack 1`] = `
     "Using system installed version of Tesseract",
   ],
   [
-    "It took '0.000s' to process the image.",
+    "It took 'X.XXXs' to process the image.",
   ],
   [
     "The following text was found through OCR:

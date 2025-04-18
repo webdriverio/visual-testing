@@ -1,6 +1,7 @@
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { existsSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
+import logger from '@wdio/logger'
 import {
     calculateDprData,
     checkAndroidChromeDriverScreenshot,
@@ -10,14 +11,44 @@ import {
     checkIsMobile,
     checkTestInBrowser,
     checkTestInMobileBrowser,
+    executeNativeClick,
     formatFileName,
     getAddressBarShadowPadding,
     getAndCreatePath,
-    getScreenshotSize,
+    getBase64ScreenshotSize,
+    getDevicePixelRatio,
+    getIosBezelImageNames,
+    getMobileScreenSize,
+    getMobileViewPortPosition,
     getToolBarShadowPadding,
+    isObject,
+    isStorybook,
+    loadBase64Html,
+    logAllDeprecatedCompareOptions,
+    updateVisualBaseline,
 } from './utils.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
+import { DEVICE_RECTANGLES } from './constants.js'
+import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
+import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
+import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
+import type { ClassOptions } from './options.interfaces.js'
+
+vi.mock('../clientSideScripts/injectWebviewOverlay.js', () => ({
+    injectWebviewOverlay: Symbol('injectWebviewOverlay'),
+}))
+
+vi.mock('../clientSideScripts/getMobileWebviewClickAndDimensions.js', () => ({
+    getMobileWebviewClickAndDimensions: Symbol('getMobileWebviewClickAndDimensions'),
+}))
+
+vi.mock('../clientSideScripts/checkMetaTag.js', () => ({
+    checkMetaTag: Symbol('checkMetaTag'),
+}))
+
+const log = logger('test')
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
 describe('utils', () => {
     describe('getAndCreatePath', () => {
@@ -408,13 +439,434 @@ describe('utils', () => {
     //   });
     // });
 
-    describe('getScreenshotSize', () => {
+    describe('getBase64ScreenshotSize', () => {
         it('should get the screenshot size of a screenshot string with the default DPR', () => {
-            expect(getScreenshotSize(IMAGE_STRING)).toMatchSnapshot()
+            expect(getBase64ScreenshotSize(IMAGE_STRING)).toMatchSnapshot()
         })
 
         it('should get the screenshot size of a screenshot string with DRP 2', () => {
-            expect(getScreenshotSize(IMAGE_STRING, 2)).toMatchSnapshot()
+            expect(getBase64ScreenshotSize(IMAGE_STRING, 2)).toMatchSnapshot()
+        })
+    })
+
+    describe('getDevicePixelRatio', () => {
+        it('should return 1 when the screenshot width equals device screen width', () => {
+            const deviceScreenSize = { width: 32, height: 64 }
+            expect(getDevicePixelRatio(IMAGE_STRING, deviceScreenSize)).toMatchSnapshot()
+        })
+
+        it('should return 2 when the screenshot width is double the device screen width', () => {
+            const deviceScreenSize = { width: 16, height: 32 }
+            expect(getDevicePixelRatio(IMAGE_STRING, deviceScreenSize)).toMatchSnapshot()
+        })
+
+        it('should round the result to the nearest integer', () => {
+            const deviceScreenSize = { width: 17, height: 32 }
+            expect(getDevicePixelRatio(IMAGE_STRING, deviceScreenSize)).toMatchSnapshot()
+        })
+    })
+
+    describe('getIosBezelImageNames', () => {
+        const supportedDevices = [
+            'iphonex',
+            'iphonexs',
+            'iphonexsmax',
+            'iphonexr',
+            'iphone11',
+            'iphone11pro',
+            'iphone11promax',
+            'iphone12',
+            'iphone12mini',
+            'iphone12pro',
+            'iphone12promax',
+            'iphone13',
+            'iphone13mini',
+            'iphone13pro',
+            'iphone13promax',
+            'iphone14',
+            'iphone14plus',
+            'iphone14pro',
+            'iphone14promax',
+            'iphone15',
+            'ipadmini',
+            'ipadair',
+            'ipadpro11',
+            'ipadpro129',
+        ]
+
+        supportedDevices.forEach((device) => {
+            it(`should return bezel image names for "${device}"`, () => {
+                expect(getIosBezelImageNames(device)).toMatchSnapshot()
+            })
+        })
+
+        it('should throw an error for unsupported device names', () => {
+            expect(() => getIosBezelImageNames('unsupportedDevice')).toThrowErrorMatchingSnapshot()
+        })
+    })
+
+    describe('isObject', () => {
+        it('should return true for a plain object', () => {
+            expect(isObject({})).toBe(true)
+        })
+
+        it('should return true for a function', () => {
+            expect(isObject(() => {})).toBe(true)
+        })
+
+        it('should return false for null', () => {
+            expect(isObject(null)).toBe(false)
+        })
+
+        it('should return false for undefined', () => {
+            expect(isObject(undefined)).toBe(false)
+        })
+
+        it('should return false for a string', () => {
+            expect(isObject('string')).toBe(false)
+        })
+
+        it('should return false for a number', () => {
+            expect(isObject(123)).toBe(false)
+        })
+
+        it('should return false for a boolean', () => {
+            expect(isObject(true)).toBe(false)
+        })
+
+        it('should return true for an array (since typeof array is object)', () => {
+            expect(isObject([])).toBe(true)
+        })
+    })
+
+    describe('isStorybook', () => {
+        const originalArgv = [...process.argv]
+
+        afterEach(() => {
+            process.argv = [...originalArgv]
+        })
+
+        it('should return true when "--storybook" is in process.argv', () => {
+            process.argv.push('--storybook')
+            expect(isStorybook()).toBe(true)
+        })
+
+        it('should return false when "--storybook" is not in process.argv', () => {
+            process.argv = originalArgv.filter(arg => arg !== '--storybook')
+            expect(isStorybook()).toBe(false)
+        })
+    })
+
+    describe('updateVisualBaseline', () => {
+        const originalArgv = [...process.argv]
+
+        afterEach(() => {
+            process.argv = [...originalArgv]
+        })
+
+        it('should return true when "--update-visual-baseline" is in process.argv', () => {
+            process.argv.push('--update-visual-baseline')
+            expect(updateVisualBaseline()).toBe(true)
+        })
+
+        it('should return false when "--update-visual-baseline" is not in process.argv', () => {
+            process.argv = originalArgv.filter(arg => arg !== '--update-visual-baseline')
+            expect(updateVisualBaseline()).toBe(false)
+        })
+    })
+
+    describe('getMobileScreenSize', () => {
+        afterEach(() => {
+            vi.restoreAllMocks()
+        })
+
+        it('returns iOS screen size in portrait', async () => {
+            const executor = vi.fn().mockResolvedValue({
+                screenSize: { width: 390, height: 844 },
+            })
+            const browser = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: true })
+
+            expect(result).toEqual({ width: 390, height: 844 })
+        })
+
+        it('returns iOS screen size in landscape', async () => {
+            const executor = vi.fn().mockResolvedValue({
+                screenSize: { width: 390, height: 844 },
+            })
+            const browser = { getOrientation: vi.fn().mockResolvedValue('LANDSCAPE') } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: true })
+
+            expect(result).toEqual({ width: 844, height: 390 })
+        })
+
+        it('returns Android screen size in portrait', async () => {
+            const executor = vi.fn().mockResolvedValue({ realDisplaySize: '1080x2400' })
+            const browser = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: false, isNativeContext: true })
+
+            expect(result).toEqual({ width: 1080, height: 2400 })
+        })
+
+        it('falls back for iOS when screenSize is missing (web context)', async () => {
+            const executor = vi.fn()
+                .mockRejectedValueOnce(new Error('Missing screenSize'))
+                .mockResolvedValueOnce({ width: 800, height: 1200 })
+            const warnSpy = vi.spyOn(log, 'warn')
+            const browser = {
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
+            } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: false })
+
+            expect(warnSpy).toHaveBeenCalled()
+            expect(result).toEqual({ width: 800, height: 1200 })
+        })
+
+        it('falls back for Android when realDisplaySize is invalid (web context)', async () => {
+            const executor = vi.fn()
+                .mockResolvedValueOnce({ realDisplaySize: 'invalid' })
+                .mockResolvedValueOnce({ width: 800, height: 1200 })
+            const warnSpy = vi.spyOn(log, 'warn')
+            const browser = {
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
+            } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: false, isNativeContext: false })
+
+            expect(warnSpy).toHaveBeenCalled()
+            expect(result).toEqual({ width: 800, height: 1200 })
+        })
+
+        it('falls back to getWindowSize in native context', async () => {
+            const executor = vi.fn().mockRejectedValueOnce(new Error('Boom'))
+            const warnSpy = vi.spyOn(log, 'warn')
+            const browser = {
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
+                getWindowSize: vi.fn().mockResolvedValue({ width: 123, height: 456 })
+            } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: true })
+
+            expect(result).toEqual({ width: 123, height: 456 })
+            expect(warnSpy).toHaveBeenCalled()
+        })
+
+        it('returns dimensions in landscape fallback native context', async () => {
+            const executor = vi.fn().mockRejectedValueOnce(new Error('Boom'))
+            const warnSpy = vi.spyOn(log, 'warn')
+            const browser = {
+                getOrientation: vi.fn().mockResolvedValue('LANDSCAPE'),
+                getWindowSize: vi.fn().mockResolvedValue({ width: 123, height: 456 })
+            } as any
+
+            const result = await getMobileScreenSize({ executor, currentBrowser: browser, isIOS: true, isNativeContext: true })
+
+            expect(result).toEqual({ width: 456, height: 123 })
+            expect(warnSpy).toHaveBeenCalled()
+        })
+    })
+
+    describe('loadBase64Html', () => {
+        const mockUrl = vi.fn()
+        const mockExecutor = vi.fn()
+
+        afterEach(() => {
+            vi.clearAllMocks()
+        })
+
+        it('should call url with base64 html and skip executor for Android', async () => {
+            await loadBase64Html({ executor: mockExecutor, isIOS: false, url: mockUrl })
+
+            expect(mockUrl).toHaveBeenCalledTimes(1)
+            expect(mockUrl.mock.calls[0][0]).toMatch(/^data:text\/html;base64,/)
+            expect(mockExecutor).not.toHaveBeenCalled()
+        })
+
+        it('should call url with base64 html and call executor for iOS', async () => {
+            await loadBase64Html({ executor: mockExecutor, isIOS: true, url: mockUrl })
+
+            expect(mockUrl).toHaveBeenCalledTimes(1)
+            expect(mockUrl.mock.calls[0][0]).toMatch(/^data:text\/html;base64,/)
+            expect(mockExecutor).toHaveBeenCalledWith(checkMetaTag)
+        })
+    })
+
+    describe('executeNativeClick', () => {
+        const coords = { x: 100, y: 200 }
+
+        afterEach(() => {
+            vi.clearAllMocks()
+        })
+
+        it('should call executor with "mobile: tap" on iOS', async () => {
+            const executor = vi.fn()
+            await executeNativeClick({ executor, isIOS: true, ...coords })
+
+            expect(executor).toHaveBeenCalledWith('mobile: tap', coords)
+        })
+
+        it('should call executor with "mobile: clickGesture" on Android (Appium 2)', async () => {
+            const executor = vi.fn()
+            await executeNativeClick({ executor, isIOS: false, ...coords })
+
+            expect(executor).toHaveBeenCalledWith('mobile: clickGesture', coords)
+        })
+
+        it('should fall back to "doubleClickGesture" when clickGesture fails (Appium 1)', async () => {
+            const executor = vi.fn()
+                .mockRejectedValueOnce(new Error('WebDriverError: Unknown mobile command: clickGesture'))
+                .mockResolvedValueOnce(undefined)
+            const logWarnMock = vi.spyOn(log, 'warn')
+
+            await executeNativeClick({ executor, isIOS: false, ...coords })
+
+            expect(executor).toHaveBeenCalledWith('mobile: clickGesture', coords)
+            expect(executor).toHaveBeenCalledWith('mobile: doubleClickGesture', coords)
+            expect(logWarnMock).toHaveBeenCalledWith(expect.stringContaining('falling back to `doubleClickGesture`'))
+
+            logWarnMock.mockRestore()
+        })
+
+        it('should throw the error if it’s not a known Appium command error', async () => {
+            const executor = vi.fn().mockRejectedValueOnce(new Error('Some unexpected error'))
+
+            await expect(executeNativeClick({ executor, isIOS: false, ...coords }))
+                .rejects
+                .toThrowError('Some unexpected error')
+        })
+    })
+
+    describe('getMobileViewPortPosition', () => {
+        const mockExecutor = vi.fn()
+        const mockUrl = vi.fn()
+        const mockGetUrl = vi.fn().mockResolvedValue('http://example.com')
+
+        const baseOptions = {
+            isAndroid: false,
+            isIOS: true,
+            isNativeContext: false,
+            nativeWebScreenshot: true,
+            screenHeight: 800,
+            screenWidth: 400,
+            methods: {
+                executor: mockExecutor,
+                url: mockUrl,
+                getUrl: mockGetUrl,
+            },
+        }
+
+        beforeEach(() => {
+            vi.clearAllMocks()
+        })
+
+        it('should return correct device rectangles for iOS WebView flow', async () => {
+            mockExecutor
+                .mockResolvedValueOnce(undefined) // checkMetaTag (loadBase64Html)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // nativeClick
+                .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
+
+            const result = await getMobileViewPortPosition({
+                ...baseOptions,
+                initialDeviceRectangles: DEVICE_RECTANGLES,
+            })
+
+            expect(mockGetUrl).toHaveBeenCalled()
+            expect(mockUrl).toHaveBeenCalledTimes(2)
+            expect(mockExecutor).toHaveBeenCalledWith(injectWebviewOverlay, false)
+            expect(mockExecutor).toHaveBeenCalledWith(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
+
+            expect(result).toMatchSnapshot()
+        })
+
+        it('should return initialDeviceRectangles if not WebView (native context)', async () => {
+            const result = await getMobileViewPortPosition({
+                ...baseOptions,
+                isNativeContext: true,
+                initialDeviceRectangles: DEVICE_RECTANGLES,
+            })
+
+            expect(result).toEqual(DEVICE_RECTANGLES)
+            expect(mockExecutor).not.toHaveBeenCalled()
+        })
+
+        it('should return initialDeviceRectangles if Android + not nativeWebScreenshot', async () => {
+            const result = await getMobileViewPortPosition({
+                ...baseOptions,
+                isAndroid: true,
+                isIOS: false,
+                nativeWebScreenshot: false,
+                initialDeviceRectangles: DEVICE_RECTANGLES,
+            })
+
+            expect(result).toEqual(DEVICE_RECTANGLES)
+        })
+    })
+
+    describe('logAllDeprecatedCompareOptions', () => {
+        const allDeprecatedOptions = {
+            blockOutSideBar: true,
+            blockOutStatusBar: true,
+            blockOutToolBar: true,
+            createJsonReportFiles: true,
+            diffPixelBoundingBoxProximity: 5,
+            ignoreAlpha: true,
+            ignoreAntialiasing: true,
+            ignoreColors: true,
+            ignoreLess: true,
+            ignoreNothing: true,
+            rawMisMatchPercentage: true,
+            returnAllCompareData: true,
+            saveAboveTolerance: 100,
+            scaleImagesToSameSize: true,
+        }
+
+        it('should log a deprecation warning for each deprecated key', () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+
+            logAllDeprecatedCompareOptions(allDeprecatedOptions)
+
+            expect(warnSpy).toHaveBeenCalledTimes(1)
+            expect(warnSpy.mock.calls[0][0]).toMatchSnapshot()
+        })
+
+        it('should return a subset of CompareOptions with deprecated keys only', () => {
+            const result = logAllDeprecatedCompareOptions(allDeprecatedOptions)
+            expect(result).toMatchSnapshot()
+        })
+
+        it('should only return deprecated keys when full config is provided', () => {
+            const fullOptions: ClassOptions = {
+                addressBarShadowPadding: 10,
+                autoElementScroll: true,
+                addIOSBezelCorners: false,
+                clearRuntimeFolder: false,
+                userBasedFullPageScreenshot: false,
+                formatImageName: 'test',
+                isHybridApp: false,
+                savePerInstance: true,
+                toolBarShadowPadding: 5,
+                waitForFontsLoaded: true,
+                autoSaveBaseline: true,
+                screenshotPath: './screenshots',
+                baselineFolder: './baseline',
+                disableBlinkingCursor: false,
+                disableCSSAnimation: false,
+                enableLayoutTesting: true,
+                fullPageScrollTimeout: 500,
+                hideScrollBars: true,
+                storybook: { url: 'http://localhost:6006' },
+
+                // Add deprecated keys mixed in
+                ...allDeprecatedOptions
+            }
+
+            const result = logAllDeprecatedCompareOptions(fullOptions)
+            expect(result).toEqual(allDeprecatedOptions)
         })
     })
 })

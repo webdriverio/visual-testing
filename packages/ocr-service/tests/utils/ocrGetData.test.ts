@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import getData from '../../src/utils/getData.js'
 import * as Tesseract from '../../src/utils/tesseract.js'
 import * as ImageProcessing from '../../src/utils/imageProcessing.js'
-import { adjustElementBbox, getScreenshotSize, isRectanglesObject } from '../../src/utils/index.js'
+import { adjustElementBbox, getBase64ScreenshotSize, isRectanglesObject } from '../../src/utils/index.js'
 
 const browser = wdioBrowser
 const log = logger('test')
@@ -15,7 +15,7 @@ vi.mock('../../src/utils/tesseract.js')
 vi.mock('../../src/utils/imageProcessing.js')
 vi.mock('../../src/utils/index.js')
 vi.mock('webdriver-image-comparison/dist/helpers/utils', () => ({
-    getScreenshotSize: vi.fn(() => ({ width: 1200 })),
+    getBase64ScreenshotSize: vi.fn(() => ({ width: 1200 })),
 }))
 vi.mock('../../src/utils/tesseract.js', () => ({
     getNodeOcrData: vi.fn().mockResolvedValue({
@@ -42,7 +42,7 @@ vi.mock('@wdio/globals', () => ({
         isAndroid: false,
         isIOS: false,
         getElementRect:vi.fn().mockResolvedValue({ x: 10, y: 20, width: 300, height: 400 }),
-        getScreenshotSize:vi.fn().mockReturnValue({ width: 1200 }),
+        getBase64ScreenshotSize:vi.fn().mockReturnValue({ width: 1200 }),
         getWindowSize: vi.fn().mockResolvedValue({ width: 1200, height: 800 }),
         takeScreenshot:vi.fn().mockResolvedValue('screenshotData'),
     }
@@ -61,13 +61,13 @@ describe('getData', () => {
             language: 'ENG',
             ocrImagesPath: '/fake/ocr/path'
         }
-        vi.mocked(getScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
+        vi.mocked(getBase64ScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
         const result = await getData(browser, options)
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
-        expect(getScreenshotSize).toHaveBeenCalledWith('screenshotData')
+        expect(getBase64ScreenshotSize).toHaveBeenCalledWith('screenshotData')
         expect(isRectanglesObject).not.toHaveBeenCalled()
         expect(ImageProcessing.processImage).toHaveBeenCalledTimes(1)
         expect(Tesseract.getSystemOcrData).toHaveBeenCalledWith({
@@ -87,13 +87,13 @@ describe('getData', () => {
             language: 'ENG',
             ocrImagesPath: '/fake/ocr/path'
         }
-        vi.mocked(getScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
+        vi.mocked(getBase64ScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
         const result = await getData(browser, options)
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
-        expect(getScreenshotSize).toHaveBeenCalledWith('screenshotData')
+        expect(getBase64ScreenshotSize).toHaveBeenCalledWith('screenshotData')
         expect(isRectanglesObject).not.toHaveBeenCalled()
         expect(ImageProcessing.processImage).toHaveBeenCalledTimes(1)
         expect(Tesseract.getNodeOcrData).toHaveBeenCalledWith({
@@ -114,13 +114,20 @@ describe('getData', () => {
             language: 'ENG',
             ocrImagesPath: '/fake/ocr/path'
         }
-        vi.mocked(getScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
+        vi.mocked(getBase64ScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
 
         const result = await getData(browser, options)
+        const sanitizedCalls = logInfoMock.mock.calls.map((args) =>
+            args.map((msg) =>
+                typeof msg === 'string'
+                    ? msg.replace(/'[\d.]+s'/g, "'X.XXXs'")
+                    : msg
+            )
+        )
 
         expect(browser.getWindowSize).toHaveBeenCalled()
         expect(browser.takeScreenshot).toHaveBeenCalled()
-        expect(getScreenshotSize).toHaveBeenCalledWith('screenshotData')
+        expect(getBase64ScreenshotSize).toHaveBeenCalledWith('screenshotData')
         expect(isRectanglesObject).toHaveBeenCalledTimes(1)
         expect(ImageProcessing.processImage).toHaveBeenCalledTimes(2)
         expect(Tesseract.getSystemOcrData).toHaveBeenCalledWith({
@@ -128,7 +135,7 @@ describe('getData', () => {
             language: 'ENG'
         })
         expect(adjustElementBbox).toHaveBeenCalledTimes(4)
-        expect(logInfoMock.mock.calls).toMatchSnapshot()
+        expect(sanitizedCalls).toMatchSnapshot()
         expect(result).toMatchSnapshot()
     })
 

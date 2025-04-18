@@ -12,18 +12,8 @@ export const config: WebdriverIO.Config  = {
     // Capabilities
     // ============
     capabilities: [
-        // androidCaps('Pixel_2_XL_Android_9_API_28', 'PORTRAIT', '9.0'),
-        // androidCaps('Pixel_2_XL_Android_9_API_28', 'PORTRAIT', '9.0', true),
-        // androidCaps('Pixel_3_XL_Android_10_API_29', 'PORTRAIT', '10.0', ),
-        // androidCaps('Pixel_3_XL_Android_10_API_29', 'PORTRAIT', '10.0', true),
-        // androidCaps('Pixel_4_XL_Android_11_API_30', 'PORTRAIT', '11.0'),
-        // androidCaps('Pixel_4_XL_Android_11_API_30', 'PORTRAIT', '11.0', true),
-        // androidCaps('Pixel_5_Android_12_API_32', 'PORTRAIT', '12.0'),
-        // androidCaps('Pixel_5_Android_12_API_32', 'PORTRAIT', '12.0', true),
-        // androidCaps('Pixel_6_Pro_Android_13_API_33', 'PORTRAIT', '13.0'),
-        // androidCaps('Pixel_6_Pro_Android_13_API_33', 'PORTRAIT', '13.0', true),
-        androidCaps('Pixel_7_Pro_Android_14_API_34', 'PORTRAIT', '14.0'),
-        // androidCaps('Pixel_7_Pro_Android_14_API_34', 'PORTRAIT', '14.0', true),
+        // androidCaps('Pixel_8_Pro_Android_15_API_35', 'PORTRAIT', '15.0', true),
+        androidCaps('Pixel_8_Pro_Android_15_API_35', 'LANDSCAPE', '15.0', true),
     ],
 }
 

@@ -48,6 +48,7 @@ exports[`BaseClass > initializes default options correctly 1`] = `
     },
   },
   "toolBarShadowPadding": 6,
+  "userBasedFullPageScreenshot": false,
   "waitForFontsLoaded": true,
 }
 `;

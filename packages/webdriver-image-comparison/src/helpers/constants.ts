@@ -1,7 +1,24 @@
 import type { IosOffsets } from './constants.interfaces.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
-import type { TestContext } from 'src/commands/check.interfaces.js'
+import type { TestContext } from '../commands/check.interfaces.js'
+import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 
+export const DEFAULT_COMPARE_OPTIONS = {
+    blockOutSideBar: true,
+    blockOutStatusBar: true,
+    blockOutToolBar: true,
+    createJsonReportFiles: false,
+    diffPixelBoundingBoxProximity: 5,
+    ignoreAlpha: false,
+    ignoreAntialiasing: false,
+    ignoreColors: false,
+    ignoreLess: false,
+    ignoreNothing: false,
+    rawMisMatchPercentage: false,
+    returnAllCompareData: false,
+    saveAboveTolerance: 0,
+    scaleImagesToSameSize: false,
+}
 export const DEFAULT_FORMAT_STRING = '{tag}-{browserName}-{width}x{height}-dpr-{dpr}'
 export const STORYBOOK_FORMAT_STRING = '{tag}-{logName}-{width}x{height}-dpr-{dpr}'
 export const PLATFORMS = {
@@ -46,6 +63,16 @@ export const DEFAULT_TABBABLE_OPTIONS = {
         color: '#000',
         width: 1,
     },
+}
+export const DEVICE_RECTANGLES: DeviceRectangles = {
+    bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+    homeBar: { y: 0, x: 0, width: 0, height: 0 },
+    leftSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+    rightSidePadding: { y: 0, x: 0, width: 0, height: 0 },
+    statusBar: { y: 0, x: 0, width: 0, height: 0 },
+    statusBarAndAddressBar: { y: 0, x: 0, width: 0, height: 0 },
+    screenSize: { width: 0, height: 0 },
+    viewport: { y: 0, x: 0, width: 0, height: 0 },
 }
 
 /**

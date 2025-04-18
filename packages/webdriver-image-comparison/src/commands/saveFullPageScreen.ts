@@ -6,6 +6,7 @@ import type { ScreenshotOutput, AfterScreenshotOptions } from '../helpers/afterS
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
 import type { FullPageScreenshotDataOptions, FullPageScreenshotsData } from '../methods/screenshots.interfaces.js'
 import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
+import { getMethodOrWicOption } from '../helpers/utils.js'
 
 /**
  * Saves an image of the full page
@@ -29,33 +30,21 @@ export default async function saveFullPageScreen(
     const {
         addressBarShadowPadding,
         formatImageName,
-        isHybridApp,
         savePerInstance,
         toolBarShadowPadding,
     } = saveFullPageOptions.wic
 
     // 1c. Set the method options to the right values
-    const disableBlinkingCursor: boolean = saveFullPageOptions.method.disableBlinkingCursor !== undefined
-        ? Boolean(saveFullPageOptions.method.disableBlinkingCursor)
-        : saveFullPageOptions.wic.disableBlinkingCursor
-    const disableCSSAnimation: boolean = saveFullPageOptions.method.disableCSSAnimation !== undefined
-        ? Boolean(saveFullPageOptions.method.disableCSSAnimation)
-        : saveFullPageOptions.wic.disableCSSAnimation
-    const enableLayoutTesting: boolean = saveFullPageOptions.method.enableLayoutTesting !== undefined
-        ? Boolean(saveFullPageOptions.method.enableLayoutTesting)
-        : saveFullPageOptions.wic.enableLayoutTesting
-    const hideScrollBars: boolean = saveFullPageOptions.method.hideScrollBars !== undefined
-        ? Boolean(saveFullPageOptions.method.hideScrollBars)
-        : saveFullPageOptions.wic.hideScrollBars
-    const fullPageScrollTimeout: number = saveFullPageOptions.method.fullPageScrollTimeout !== undefined
-        ? saveFullPageOptions.method.fullPageScrollTimeout!
-        : saveFullPageOptions.wic.fullPageScrollTimeout
-    const hideElements: HTMLElement[] = saveFullPageOptions.method.hideElements || []
-    const removeElements: HTMLElement[] = saveFullPageOptions.method.removeElements || []
+    const userBasedFullPageScreenshot = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'userBasedFullPageScreenshot')
+    const disableBlinkingCursor = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'disableBlinkingCursor')
+    const disableCSSAnimation = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'disableCSSAnimation')
+    const enableLayoutTesting = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'enableLayoutTesting')
+    const fullPageScrollTimeout = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'fullPageScrollTimeout')
     const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
-    const waitForFontsLoaded: boolean = saveFullPageOptions.method.waitForFontsLoaded !== undefined
-        ? Boolean(saveFullPageOptions.method.waitForFontsLoaded)
-        : saveFullPageOptions.wic.waitForFontsLoaded
+    const hideElements: HTMLElement[] = saveFullPageOptions.method.hideElements || []
+    const hideScrollBars = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'hideScrollBars')
+    const removeElements: HTMLElement[] = saveFullPageOptions.method.removeElements || []
+    const waitForFontsLoaded = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'waitForFontsLoaded')
 
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {
@@ -73,35 +62,42 @@ export default async function saveFullPageScreen(
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(methods.executor, beforeOptions, true)
     const devicePixelRatio = enrichedInstanceData.dimensions.window.devicePixelRatio
     const isLandscape = enrichedInstanceData.dimensions.window.isLandscape
+    let fullPageBase64Image: string
 
-    // 3.  Fullpage screenshots are taken per scrolled viewport
-    const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
-        addressBarShadowPadding: enrichedInstanceData.addressBarShadowPadding,
-        devicePixelRatio: devicePixelRatio || NaN,
-        fullPageScrollTimeout,
-        hideAfterFirstScroll,
-        innerHeight: enrichedInstanceData.dimensions.window.innerHeight || NaN,
-        isAndroid: enrichedInstanceData.isAndroid,
-        isAndroidChromeDriverScreenshot: enrichedInstanceData.isAndroidChromeDriverScreenshot,
-        isAndroidNativeWebScreenshot: enrichedInstanceData.isAndroidNativeWebScreenshot,
-        isHybridApp,
-        isIOS: enrichedInstanceData.isIOS,
-        isLandscape,
-        screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
-        screenWidth: enrichedInstanceData.dimensions.window.screenWidth || NaN,
-        toolBarShadowPadding: enrichedInstanceData.toolBarShadowPadding,
+    if (typeof methods.bidiScreenshot === 'function' && typeof methods.getWindowHandle === 'function' && userBasedFullPageScreenshot) {
+        // 3a.  Fullpage screenshots are taken in one go with the Bidi protocol
+        const contextID = await methods.getWindowHandle()
+        fullPageBase64Image =( await methods.bidiScreenshot({ context: contextID, origin: 'document' })).data
+    } else {
+    // 3b.  Fullpage screenshots are taken per scrolled viewport
+        const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
+            addressBarShadowPadding: enrichedInstanceData.addressBarShadowPadding,
+            devicePixelRatio: devicePixelRatio || NaN,
+            deviceRectangles: instanceData.deviceRectangles,
+            fullPageScrollTimeout,
+            hideAfterFirstScroll,
+            innerHeight: enrichedInstanceData.dimensions.window.innerHeight || NaN,
+            isAndroid: enrichedInstanceData.isAndroid,
+            isAndroidChromeDriverScreenshot: enrichedInstanceData.isAndroidChromeDriverScreenshot,
+            isAndroidNativeWebScreenshot: enrichedInstanceData.isAndroidNativeWebScreenshot,
+            isIOS: enrichedInstanceData.isIOS,
+            isLandscape,
+            screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
+            screenWidth: enrichedInstanceData.dimensions.window.screenWidth || NaN,
+            toolBarShadowPadding: enrichedInstanceData.toolBarShadowPadding,
+        }
+        const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(
+            methods.screenShot,
+            methods.executor,
+            fullPageScreenshotOptions,
+        )
+
+        // 4.  Make a fullpage base64 image by scrolling and stitching the images together
+        fullPageBase64Image = await makeFullPageBase64Image(screenshotsData, {
+            devicePixelRatio: devicePixelRatio || NaN,
+            isLandscape,
+        })
     }
-    const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(
-        methods.screenShot,
-        methods.executor,
-        fullPageScreenshotOptions,
-    )
-
-    // 4.  Make a fullpage base64 image
-    const fullPageBase64Image: string = await makeFullPageBase64Image(screenshotsData, {
-        devicePixelRatio: devicePixelRatio || NaN,
-        isLandscape,
-    })
 
     // 5.  The after the screenshot methods
     const afterOptions: AfterScreenshotOptions = {
@@ -145,3 +141,4 @@ export default async function saveFullPageScreen(
     // 6.  Return the data
     return afterScreenshot(methods.executor, afterOptions!)
 }
+

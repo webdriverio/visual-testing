@@ -1,5 +1,6 @@
+
 import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces.js'
-import type { RectanglesOutput } from './rectangles.interfaces.js'
+import type { DeviceRectangles } from './rectangles.interfaces.js'
 
 export interface InstanceData {
     // The name of the app
@@ -12,18 +13,8 @@ export interface InstanceData {
     deviceName: string;
     // The devicePixelRatio of the instance
     devicePixelRatio: number;
-    // The Device Platform Rect
-    devicePlatformRect: {
-        statusBar: RectanglesOutput;
-        homeBar: RectanglesOutput;
-    }
-    // The Device Screen size
-    deviceScreenSize: {
-        // The Device Screen Height
-        height: number;
-        // The Device Screen Width
-        width: number;
-    };
+    // The mobile viewport position
+    deviceRectangles: DeviceRectangles;
     // Is this an Android device
     isAndroid: boolean;
     // Is this an iOS device

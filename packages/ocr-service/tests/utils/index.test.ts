@@ -1,6 +1,6 @@
 import { mkdirSync } from 'node:fs'
 import { describe, it, expect, vi } from 'vitest'
-import { adjustElementBbox, createOcrDir, determineClickPoint, getDprPositions, getScreenshotSize, isRectanglesObject } from '../../src/utils/index.js'
+import { adjustElementBbox, createOcrDir, determineClickPoint, getDprPositions, getBase64ScreenshotSize, isRectanglesObject } from '../../src/utils/index.js'
 import type { RectReturn } from '../../src/types.js'
 
 vi.mock('node:fs', () => ({
@@ -15,26 +15,26 @@ function createMockScreenshot(width: number, height: number): string {
     return buffer.toString('base64')
 }
 
-describe('getScreenshotSize', () => {
+describe('getBase64ScreenshotSize', () => {
     it('should correctly extract dimensions from a valid screenshot', () => {
         const width = 800
         const height = 600
         const base64 = createMockScreenshot(width, height)
-        const result = getScreenshotSize(base64)
+        const result = getBase64ScreenshotSize(base64)
 
         expect(result).toEqual({ width: width, height: height })
     })
 
     it('should handle invalid base64 strings gracefully', () => {
         const invalidBase64 = 'not-a-real-base64-string'
-        const action = () => getScreenshotSize(invalidBase64)
+        const action = () => getBase64ScreenshotSize(invalidBase64)
 
         expect(action).toThrowError()
     })
 
     it('should handle unexpected data layout', () => {
         const malformedBase64 = Buffer.from([1, 2, 3, 4, 5]).toString('base64')
-        const action = () => getScreenshotSize(malformedBase64)
+        const action = () => getBase64ScreenshotSize(malformedBase64)
 
         expect(action).toThrowError()
     })

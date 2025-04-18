@@ -1,3 +1,4 @@
+import { checkIsAndroid } from '../helpers/utils.js'
 import { methodCompareOptions } from '../helpers/options.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
@@ -22,10 +23,9 @@ export default async function checkAppElement(
 ): Promise<ImageCompareResult | number> {
     // 1. Set some vars
     const { isMobile } = instanceData
-    const { executor } = methods
 
     // 2. Save the element and return the data
-    const { devicePixelRatio, fileName, isLandscape } = await saveAppElement({
+    const { devicePixelRatio, fileName } = await saveAppElement({
         methods,
         instanceData,
         folders,
@@ -40,7 +40,6 @@ export default async function checkAppElement(
     // 3a. Determine the options
     const compareOptions = methodCompareOptions(checkElementOptions.method)
     const executeCompareOptions = {
-        devicePixelRatio,
         compareOptions: {
             wic: {
                 ...checkElementOptions.wic.compareOptions,
@@ -51,6 +50,8 @@ export default async function checkAppElement(
             },
             method: compareOptions,
         },
+        devicePixelRatio,
+        deviceRectangles: instanceData.deviceRectangles,
         fileName,
         folderOptions: {
             autoSaveBaseline: checkElementOptions.wic.autoSaveBaseline,
@@ -62,15 +63,14 @@ export default async function checkAppElement(
             isMobile,
             savePerInstance: checkElementOptions.wic.savePerInstance,
         },
+        isAndroid: checkIsAndroid(instanceData.platformName),
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: checkElementOptions.wic.isHybridApp,
-        isLandscape,
         platformName: instanceData.platformName,
     }
 
     // 3b Now execute the compare and return the data
     return executeImageCompare({
-        executor,
         options: executeCompareOptions,
         testContext,
         isViewPortScreenshot: false,

@@ -1,3 +1,4 @@
+import logger from '@wdio/logger'
 import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN, PLATFORMS } from './constants.js'
 import { mkdirSync } from 'node:fs'
@@ -6,9 +7,19 @@ import type {
     FormatFileNameOptions,
     GetAddressBarShadowPaddingOptions,
     GetAndCreatePathOptions,
+    GetMobileScreenSizeOptions,
+    GetMobileViewPortPositionOptions,
     GetToolBarShadowPaddingOptions,
     ScreenshotSize,
 } from './utils.interfaces.js'
+import type { ClassOptions, CompareOptions } from './options.interfaces.js'
+import type { Executor } from '../methods/methods.interfaces.js'
+import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
+import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
+import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
+import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
+
+const log = logger('@wdio/visual-service:webdriver-image-comparison:utils')
 
 /**
  * Get and create a folder
@@ -140,12 +151,12 @@ export function getAddressBarShadowPadding(options: GetAddressBarShadowPaddingOp
 }
 
 /**
- * Get the tool bar shadow padding. This is only needed for iOS
+ * Get the tool bar shadow padding. Add some extra padding for iOS when we have a home bar
  */
 export function getToolBarShadowPadding(options: GetToolBarShadowPaddingOptions): number {
     const { platformName, browserName, toolBarShadowPadding, addShadowPadding } = options
 
-    return checkTestInMobileBrowser(platformName, browserName) && checkIsIos(platformName) && addShadowPadding
+    return checkTestInMobileBrowser(platformName, browserName) && addShadowPadding
         ? checkIsIos(platformName)
             ? // The 9 extra are for iOS home bar for iPhones with a notch or iPads with a home bar
             toolBarShadowPadding + 9
@@ -175,7 +186,7 @@ export async function waitFor(milliseconds: number): Promise<void> {
 /**
  * Get the size of a screenshot in pixels without the device pixel ratio
  */
-export function getScreenshotSize(screenshot: string, devicePixelRation = 1): ScreenshotSize {
+export function getBase64ScreenshotSize(screenshot: string, devicePixelRation = 1): ScreenshotSize {
     return {
         height: Math.round(Buffer.from(screenshot, 'base64').readUInt32BE(20) / devicePixelRation),
         width: Math.round(Buffer.from(screenshot, 'base64').readUInt32BE(16) / devicePixelRation),
@@ -186,7 +197,7 @@ export function getScreenshotSize(screenshot: string, devicePixelRation = 1): Sc
  * Get the device pixel ratio
  */
 export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {height:number, width: number}): number {
-    const screenshotSize = getScreenshotSize(screenshot)
+    const screenshotSize = getBase64ScreenshotSize(screenshot)
     const devicePixelRatio = screenshotSize.width / deviceScreenSize.width
 
     return Math.round(devicePixelRatio)
@@ -324,4 +335,234 @@ export function isStorybook(){
  */
 export function updateVisualBaseline(): boolean {
     return process.argv.includes('--update-visual-baseline')
+}
+/**
+ * Log the deprecated root compareOptions (at `ClassOptions` level)
+ * and returns non-undefined ones to be added back to the config
+ */
+export function logAllDeprecatedCompareOptions(options: ClassOptions) {
+    const deprecatedKeys: (keyof CompareOptions)[] = [
+        'blockOutSideBar',
+        'blockOutStatusBar',
+        'blockOutToolBar',
+        'createJsonReportFiles',
+        'diffPixelBoundingBoxProximity',
+        'ignoreAlpha',
+        'ignoreAntialiasing',
+        'ignoreColors',
+        'ignoreLess',
+        'ignoreNothing',
+        'rawMisMatchPercentage',
+        'returnAllCompareData',
+        'saveAboveTolerance',
+        'scaleImagesToSameSize',
+    ]
+    const foundDeprecatedKeys = deprecatedKeys.filter((key) => key in options)
+
+    if (foundDeprecatedKeys.length > 0) {
+        log.warn(
+            'The following root-level compare options are deprecated and should be moved under \'compareOptions\':\n' +
+            foundDeprecatedKeys.map((k) => `  - ${k}`).join('\n') + '\nIn the next major version, these options will be removed from the root level and only be available under \'compareOptions\'',
+        )
+    }
+
+    return foundDeprecatedKeys.reduce<Partial<CompareOptions>>((acc, key) => {
+        if (options[key] !== undefined) {
+            acc[key] = options[key] as any
+        }
+        return acc
+    }, {})
+}
+
+/**
+ * Get the mobile screen size, this is different for native and webview
+ */
+export async function getMobileScreenSize({
+    currentBrowser,
+    executor,
+    isIOS,
+    isNativeContext,
+}: GetMobileScreenSizeOptions): Promise<{ height: number; width: number }> {
+    let height = 0, width = 0
+    const isLandscapeByOrientation = (await currentBrowser.getOrientation()).toUpperCase() === 'LANDSCAPE'
+
+    try {
+        if (isIOS) {
+            ({ screenSize: { height, width } } = (await executor('mobile: deviceScreenInfo')) as {
+                statusBarSize: { width: number, height: number },
+                scale: number,
+                screenSize: { width: number, height: number },
+            })
+            // It's Android
+        } else {
+            const { realDisplaySize } = (await executor('mobile: deviceInfo')) as { realDisplaySize: string }
+
+            if (!realDisplaySize || !/^\d+x\d+$/.test(realDisplaySize)) {
+                throw new Error(`Invalid realDisplaySize format. Expected 'widthxheight', got "${realDisplaySize}"`)
+            }
+            [width, height] = realDisplaySize.split('x').map(Number)
+        }
+    } catch (error: unknown) {
+        log.warn('Error getting mobile screen size:\n', error, `\nFalling back to ${isNativeContext ?
+            '`getWindowSize()` which might not be as accurate' :
+            'window.screen.height and window.screen.width'}`
+        )
+
+        if (isNativeContext) {
+            ({ height, width } = await currentBrowser.getWindowSize())
+        } else {
+            // This is a fallback and not 100% accurate, but we need to have something =)
+            ({ height, width } = await executor(() => {
+                const { height, width } = window.screen
+                return { height, width }
+            }))
+        }
+    }
+
+    // There are issues where the landscape mode by orientation is not the same as the landscape mode by value
+    // So we need to check and fix this
+    const isLandscapeByValue = width > height
+    if (isLandscapeByOrientation !== isLandscapeByValue) {
+        [height, width] = [width, height]
+    }
+
+    return { height, width }
+}
+
+/**
+ * Load a base64 HTML page in the browser
+ */
+export async function loadBase64Html({ executor, isIOS, url }: {executor:Executor, isIOS:boolean, url:any}): Promise<void> {
+    const htmlContent = `
+        <html>
+        <head>
+            <title>Base64 Page</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    // Force correct viewport settings
+                    const meta = document.querySelector("meta[name='viewport']");
+                    if (!meta) {
+                        const newMeta = document.createElement("meta");
+                        newMeta.name = "viewport";
+                        newMeta.content = "width=device-width, initial-scale=1";
+                        document.head.appendChild(newMeta);
+                    }
+                });
+            </script>
+        </head>
+        <body>
+            <h1>Hello from Base64!</h1>
+            <p>This page was loaded without visiting a URL.</p>
+        </body>
+        </html>`
+
+    const base64Html = Buffer.from(htmlContent).toString('base64')
+
+    await url(`data:text/html;base64,${base64Html}`)
+
+    if (isIOS) {
+        await executor(checkMetaTag)
+    }
+}
+
+/**
+ * Execute a native click
+ */
+export async function executeNativeClick({ executor, isIOS, x, y }:{executor: Executor, isIOS:boolean, x: number, y: number}): Promise<void> {
+    if (isIOS) {
+        return executor('mobile: tap', { x, y })
+    }
+
+    try {
+        // The `clickGesture` is not working on Appium 1, only on Appium 2
+        await executor('mobile: clickGesture', { x, y })
+    } catch (error: unknown) {
+        if (
+            error instanceof Error &&
+          /WebDriverError: Unknown mobile command.*?(clickGesture|tap)/i.test(error.message)
+        ) {
+            log.warn(
+                'Error executing `clickGesture`, falling back to `doubleClickGesture`. This likely means you are using Appium 1. Is this intentional?'
+            )
+            await executor('mobile: doubleClickGesture', { x, y })
+        } else {
+            throw error
+        }
+    }
+}
+
+/**
+ * Get the mobile viewport position, we determine this by:
+ * 1. Loading a base64 HTML page
+ * 2. Injecting an overlay on top of the webview with an event listener that stores the click position in the webview
+ * 3. Clicking on the overlay in the center of the screen with a native click
+ * 4. Getting the data from the overlay and removing it
+ * 5. Calculating the position of the viewport based on the click position of the native click vs the overlay
+ * 6. Returning the calculated values
+ */
+export async function getMobileViewPortPosition({
+    initialDeviceRectangles,
+    isAndroid,
+    isIOS,
+    isNativeContext,
+    methods: {
+        executor,
+        getUrl,
+        url,
+    },
+    nativeWebScreenshot,
+    screenHeight,
+    screenWidth,
+}: GetMobileViewPortPositionOptions): Promise<DeviceRectangles> {
+
+    if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
+        const currentUrl = await getUrl()
+        // 1. Load a base64 HTML page
+        await loadBase64Html({ executor, isIOS, url })
+        // 2. Inject an overlay on top of the webview with an event listener that stores the click position in the webview
+        await executor(injectWebviewOverlay, isAndroid)
+        // 3. Click on the overlay in the center of the screen with a native click
+        const nativeClickX = screenWidth / 2
+        const nativeClickY = screenHeight / 2
+        await executeNativeClick({ executor, isIOS, x: nativeClickX, y: nativeClickY })
+        // We need to wait a bit here, otherwise the click is not registered
+        await waitFor(100)
+        // 4a. Get the data from the overlay and remove it
+        const { y, x, width, height } = await executor(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
+        // 4.b reset the url
+        await url(currentUrl)
+        // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
+        const viewportTop = Math.max(0, Math.round(nativeClickY - y))
+        const viewportLeft = Math.max(0, Math.round(nativeClickX - x))
+        const statusBarAndAddressBarHeight = Math.max(0, Math.round(viewportTop))
+        const bottomBarHeight = Math.max(0, Math.round(screenHeight - (viewportTop + height)))
+        const leftSidePaddingWidth = Math.max(0, Math.round(viewportLeft))
+        const rightSidePaddingWidth = Math.max(0, Math.round(screenWidth - (viewportLeft + width)))
+        const deviceRectangles = {
+            ...initialDeviceRectangles,
+            bottomBar: { y: viewportTop + height, x: 0, width: screenWidth, height: bottomBarHeight },
+            leftSidePadding: { y: viewportTop, x: 0, width: leftSidePaddingWidth, height: height },
+            rightSidePadding: { y: viewportTop, x: viewportLeft + width, width: rightSidePaddingWidth, height: height },
+            screenSize: { height: screenHeight, width: screenWidth },
+            statusBarAndAddressBar: { y: 0, x: 0, width: screenWidth, height: statusBarAndAddressBarHeight },
+            viewport: { y: viewportTop, x: viewportLeft, width: width, height: height },
+        }
+
+        return deviceRectangles
+    }
+
+    // No WebView detected, return empty values
+    return initialDeviceRectangles
+}
+
+/**
+ * Get the value of a method or the default value
+ */
+export function getMethodOrWicOption<T, K extends keyof T>(
+    method: Partial<T> | undefined,
+    wic: T,
+    key: K
+): T[K] {
+    return method?.[key] ?? wic[key]
 }
