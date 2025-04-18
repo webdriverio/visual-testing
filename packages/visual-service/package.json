@@ -26,9 +26,9 @@
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "@wdio/globals": "^9.12.4",
+    "@wdio/globals": "^9.12.6",
     "@wdio/logger": "^9.4.4",
-    "@wdio/types": "^9.12.3",
+    "@wdio/types": "^9.12.6",
     "expect-webdriverio": "^5.1.0",
     "webdriver-image-comparison": "workspace:*"
   }

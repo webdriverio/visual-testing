@@ -19,7 +19,7 @@ importers:
         version: link:packages/webdriver-image-comparison
     devDependencies:
       '@changesets/cli':
-        specifier: ^2.29.0
+        specifier: ^2.29.2
         version: 2.29.2
       '@tsconfig/node20':
         specifier: ^20.1.5
@@ -40,13 +40,13 @@ importers:
         specifier: ~0.4.14
         version: 0.4.14
       '@typescript-eslint/eslint-plugin':
-        specifier: ^8.29.1
+        specifier: ^8.30.1
         version: 8.30.1(@typescript-eslint/parser@8.30.1(eslint@9.24.0(jiti@1.21.7))(typescript@5.8.3))(eslint@9.24.0(jiti@1.21.7))(typescript@5.8.3)
       '@typescript-eslint/parser':
-        specifier: ^8.29.1
+        specifier: ^8.30.1
         version: 8.30.1(eslint@9.24.0(jiti@1.21.7))(typescript@5.8.3)
       '@typescript-eslint/utils':
-        specifier: ^8.29.1
+        specifier: ^8.30.1
         version: 8.30.1(eslint@9.24.0(jiti@1.21.7))(typescript@5.8.3)
       '@vitest/coverage-v8':
         specifier: ^3.1.1
@@ -55,31 +55,31 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(vitest@3.1.1)
       '@wdio/appium-service':
-        specifier: ^9.12.4
+        specifier: ^9.12.6
         version: 9.12.6
       '@wdio/cli':
-        specifier: ^9.12.5
+        specifier: ^9.12.6
         version: 9.12.6
       '@wdio/globals':
-        specifier: ^9.12.4
+        specifier: ^9.12.6
         version: 9.12.6(@wdio/logger@9.4.4)
       '@wdio/local-runner':
-        specifier: ^9.12.5
+        specifier: ^9.12.6
         version: 9.12.6
       '@wdio/mocha-framework':
-        specifier: ^9.12.5
+        specifier: ^9.12.6
         version: 9.12.6
       '@wdio/sauce-service':
-        specifier: ^9.12.5
+        specifier: ^9.12.6
         version: 9.12.6
       '@wdio/shared-store-service':
-        specifier: ^9.12.5
+        specifier: ^9.12.6
         version: 9.12.6
       '@wdio/spec-reporter':
-        specifier: ^9.12.3
+        specifier: ^9.12.6
         version: 9.12.6
       '@wdio/types':
-        specifier: ^9.12.3
+        specifier: ^9.12.6
         version: 9.12.6
       cross-env:
         specifier: ^7.0.3
@@ -100,7 +100,7 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
       jsdom:
-        specifier: ^26.0.0
+        specifier: ^26.1.0
         version: 26.1.0
       npm-run-all2:
         specifier: ^7.0.2
@@ -127,7 +127,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@wdio/cli@9.12.6)(@wdio/types@9.12.6)(webdriverio@9.12.6)
       webdriverio:
-        specifier: ^9.12.4
+        specifier: ^9.12.6
         version: 9.12.6
 
   packages/ocr-service:
@@ -136,13 +136,13 @@ importers:
         specifier: 7.4.1
         version: 7.4.1(@types/node@22.14.0)
       '@wdio/globals':
-        specifier: ^9.12.4
+        specifier: ^9.12.6
         version: 9.12.6(@wdio/logger@9.4.4)
       '@wdio/logger':
         specifier: ^9.4.4
         version: 9.4.4
       '@wdio/types':
-        specifier: ^9.12.3
+        specifier: ^9.12.6
         version: 9.12.6
       fuse.js:
         specifier: ^7.1.0
@@ -183,7 +183,7 @@ importers:
         version: 3.0.1
     devDependencies:
       '@remix-run/dev':
-        specifier: ^2.16.4
+        specifier: ^2.16.5
         version: 2.16.5(@remix-run/react@2.16.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3))(@remix-run/serve@2.16.5(typescript@5.8.3))(@types/node@22.14.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.14.0)(typescript@5.8.3))(typescript@5.8.3)(vite@5.4.18(@types/node@22.14.0))
       '@remix-run/node':
         specifier: ^2.16.5
@@ -192,7 +192,7 @@ importers:
         specifier: ^2.16.5
         version: 2.16.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3)
       '@remix-run/serve':
-        specifier: ^2.16.4
+        specifier: ^2.16.5
         version: 2.16.5(typescript@5.8.3)
       '@types/react':
         specifier: ^18.3.20
@@ -201,10 +201,10 @@ importers:
         specifier: ^18.3.6
         version: 18.3.6(@types/react@18.3.20)
       '@typescript-eslint/eslint-plugin':
-        specifier: ^8.29.1
+        specifier: ^8.30.1
         version: 8.30.1(@typescript-eslint/parser@8.30.1(eslint@9.24.0(jiti@1.21.7))(typescript@5.8.3))(eslint@9.24.0(jiti@1.21.7))(typescript@5.8.3)
       '@typescript-eslint/parser':
-        specifier: ^8.29.1
+        specifier: ^8.30.1
         version: 8.30.1(eslint@9.24.0(jiti@1.21.7))(typescript@5.8.3)
       autoprefixer:
         specifier: ^10.4.21
@@ -261,13 +261,13 @@ importers:
   packages/visual-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^9.12.4
+        specifier: ^9.12.6
         version: 9.12.6(@wdio/logger@9.4.4)
       '@wdio/logger':
         specifier: ^9.4.4
         version: 9.4.4
       '@wdio/types':
-        specifier: ^9.12.3
+        specifier: ^9.12.6
         version: 9.12.6
       expect-webdriverio:
         specifier: ^5.1.0
@@ -292,7 +292,7 @@ importers:
         specifier: ^11.0.4
         version: 11.0.4
       webdriverio:
-        specifier: ^9.12.4
+        specifier: ^9.12.6
         version: 9.12.6
 
 packages:
