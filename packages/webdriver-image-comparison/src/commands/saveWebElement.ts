@@ -90,7 +90,8 @@ export default async function saveWebElement(
         isIOS,
         isLandscape,
         // When the element needs to be resized, we need to take a screenshot of the whole page
-        fallback: !!saveElementOptions.method.resizeDimensions || false,
+        // or when devicePixelRatio is different than 1 as the browser takeElementScreenshot does not consider DPR
+        fallback: (devicePixelRatio && devicePixelRatio > 1) || !!saveElementOptions.method.resizeDimensions || false,
         screenShot,
         takeElementScreenshot,
     })
