@@ -32,7 +32,7 @@
     "@wdio/logger": "^9.4.4",
     "@wdio/types": "^9.12.6",
     "fuse.js": "^7.1.0",
-    "@inquirer/prompts": "7.4.1",
+    "@inquirer/prompts": "7.5.0",
     "jimp": "^1.6.0",
     "node-tesseract-ocr": "^2.2.1",
     "tesseract.js": "^5.1.1",
