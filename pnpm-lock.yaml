@@ -73,8 +73,8 @@ importers:
         specifier: ^9.12.6
         version: 9.12.6
       '@wdio/shared-store-service':
-        specifier: ^9.12.6
-        version: 9.12.6
+        specifier: ^9.12.7
+        version: 9.12.7
       '@wdio/spec-reporter':
         specifier: ^9.12.6
         version: 9.12.6
@@ -271,7 +271,7 @@ importers:
         version: 9.12.6
       expect-webdriverio:
         specifier: ^5.1.0
-        version: 5.1.0(@wdio/globals@9.12.6(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.12.6)
+        version: 5.1.0(@wdio/globals@9.12.6(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.12.7)
       webdriver-image-comparison:
         specifier: workspace:*
         version: link:../webdriver-image-comparison
@@ -1979,6 +1979,9 @@ packages:
   '@types/node@20.17.30':
     resolution: {integrity: sha512-7zf4YyHA+jvBNfVrk2Gtvs6x7E8V+YDW05bNfG2XkWDJfYRXrTiP/DsB2zSYTaHX0bGIujTBQdMVAhb+j7mwpg==}
 
+  '@types/node@20.17.32':
+    resolution: {integrity: sha512-zeMXFn8zQ+UkjK4ws0RiOC9EWByyW1CcVmLe+2rQocXRsGEDxUCwPEIVgpsGcLHS/P8JkT0oa3839BRABS0oPw==}
+
   '@types/node@22.14.0':
     resolution: {integrity: sha512-Kmpl+z84ILoG+3T/zQFyAJsU6EPTmOCj8/2+83fSN6djd6I4o7uOuGIH6vq3PrjY5BGitSbFuMN18j3iknubbA==}
 
@@ -2291,8 +2294,8 @@ packages:
     resolution: {integrity: sha512-LMOrFfsynXD3+XTCl/yQsgm3K1kGiY1pNV33dVpjw1qPUy8GVSKrSsLs5XOlPHy6QSfW+vTPTsGvHK0NfIi39w==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/shared-store-service@9.12.6':
-    resolution: {integrity: sha512-5D95o27hf8rIAZgK1l0BB41Vj4I45WVmGqs4BkxGDD4Y6MPqhUgxmG64K8JHVcQzdnD8mub5o8O8aZnMVt3MLg==}
+  '@wdio/shared-store-service@9.12.7':
+    resolution: {integrity: sha512-ZfgwS/RcoEmFD74nfx4CQDIzbOAyOCPtXB5fjXZwdVpveWlNkaBb+/x6u17Gup5elQ3zn7AQWB4bQUFvquhXJg==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/spec-reporter@9.12.6':
@@ -4044,6 +4047,9 @@ packages:
 
   htmlfy@0.6.6:
     resolution: {integrity: sha512-NsJ/YV/FQ9XpU0t+TkCMqXVsedNqSSImrI1E4aRBX8uDSaXzF7FOBl/8HKnnqm50RngNfLIoAVLyPQbyVi8EaQ==}
+
+  htmlfy@0.6.7:
+    resolution: {integrity: sha512-r8hRd+oIM10lufovN+zr3VKPTYEIvIwqXGucidh2XQufmiw6sbUXFUFjWlfjo3AnefIDTyzykVzQ8IUVuT1peQ==}
 
   htmlparser2@9.1.0:
     resolution: {integrity: sha512-5zfg6mHUoaer/97TxnGpxmbR7zJtPwIYFMZ/H5ucTlPZhKvtum05yiPK3Mgai3a0DyVxv7qYqoweaEd2nrYQzQ==}
@@ -7040,6 +7046,15 @@ packages:
       puppeteer-core:
         optional: true
 
+  webdriverio@9.12.7:
+    resolution: {integrity: sha512-HxpLQrFuadfE65dqh+Qc2pdvz18FbsdpdiZogy8VUBtxRanijbOsi4cV84ffGXab8Ownzu+bNBJuJjlTBDX00Q==}
+    engines: {node: '>=18.20.0'}
+    peerDependencies:
+      puppeteer-core: '>=22.x || <=24.x'
+    peerDependenciesMeta:
+      puppeteer-core:
+        optional: true
+
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
 
@@ -9123,6 +9138,10 @@ snapshots:
     dependencies:
       undici-types: 6.19.8
 
+  '@types/node@20.17.32':
+    dependencies:
+      undici-types: 6.19.8
+
   '@types/node@22.14.0':
     dependencies:
       undici-types: 6.21.0
@@ -9190,7 +9209,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 20.17.30
+      '@types/node': 22.14.1
     optional: true
 
   '@typescript-eslint/eslint-plugin@8.30.1(@typescript-eslint/parser@8.30.1(eslint@9.25.0(jiti@1.21.7))(typescript@5.8.3))(eslint@9.25.0(jiti@1.21.7))(typescript@5.8.3)':
@@ -9620,13 +9639,13 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/shared-store-service@9.12.6':
+  '@wdio/shared-store-service@9.12.7':
     dependencies:
       '@polka/parse': 1.0.0-next.0
       '@wdio/logger': 9.4.4
       '@wdio/types': 9.12.6
       polka: 0.5.2
-      webdriverio: 9.12.6
+      webdriverio: 9.12.7
     transitivePeerDependencies:
       - bare-buffer
       - bufferutil
@@ -11210,6 +11229,16 @@ snapshots:
       lodash.isequal: 4.5.0
       webdriverio: 9.12.6
 
+  expect-webdriverio@5.1.0(@wdio/globals@9.12.6(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.12.7):
+    dependencies:
+      '@vitest/snapshot': 2.1.9
+      '@wdio/globals': 9.12.6(@wdio/logger@9.4.4)
+      '@wdio/logger': 9.4.4
+      expect: 29.7.0
+      jest-matcher-utils: 29.7.0
+      lodash.isequal: 4.5.0
+      webdriverio: 9.12.7
+
   expect@29.7.0:
     dependencies:
       '@jest/expect-utils': 29.7.0
@@ -11762,6 +11791,8 @@ snapshots:
   html-escaper@2.0.2: {}
 
   htmlfy@0.6.6: {}
+
+  htmlfy@0.6.7: {}
 
   htmlparser2@9.1.0:
     dependencies:
@@ -15234,6 +15265,39 @@ snapshots:
       css-value: 0.0.1
       grapheme-splitter: 1.0.4
       htmlfy: 0.6.6
+      is-plain-obj: 4.1.0
+      jszip: 3.10.1
+      lodash.clonedeep: 4.5.0
+      lodash.zip: 4.2.0
+      query-selector-shadow-dom: 1.0.1
+      resq: 1.11.0
+      rgb2hex: 0.2.5
+      serialize-error: 11.0.3
+      urlpattern-polyfill: 10.0.0
+      webdriver: 9.12.6
+    transitivePeerDependencies:
+      - bare-buffer
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  webdriverio@9.12.7:
+    dependencies:
+      '@types/node': 20.17.32
+      '@types/sinonjs__fake-timers': 8.1.5
+      '@wdio/config': 9.12.6
+      '@wdio/logger': 9.4.4
+      '@wdio/protocols': 9.12.5
+      '@wdio/repl': 9.4.4
+      '@wdio/types': 9.12.6
+      '@wdio/utils': 9.12.6
+      archiver: 7.0.1
+      aria-query: 5.3.2
+      cheerio: 1.0.0
+      css-shorthand-properties: 1.1.2
+      css-value: 0.0.1
+      grapheme-splitter: 1.0.4
+      htmlfy: 0.6.7
       is-plain-obj: 4.1.0
       jszip: 3.10.1
       lodash.clonedeep: 4.5.0
