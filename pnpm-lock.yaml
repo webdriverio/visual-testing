@@ -70,8 +70,8 @@ importers:
         specifier: ^9.12.6
         version: 9.12.6
       '@wdio/sauce-service':
-        specifier: ^9.12.6
-        version: 9.12.6
+        specifier: ^9.12.7
+        version: 9.12.7
       '@wdio/shared-store-service':
         specifier: ^9.12.7
         version: 9.12.7
@@ -2297,8 +2297,8 @@ packages:
     resolution: {integrity: sha512-2t59euER8jnZkTQ7Co2OsW7TIA5oWNgQu2vzMU1+vlK+PGt3FQeMSB1JYtfMYDlnWdyNAXx1wrM7Odv6tLcTpg==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/sauce-service@9.12.6':
-    resolution: {integrity: sha512-LMOrFfsynXD3+XTCl/yQsgm3K1kGiY1pNV33dVpjw1qPUy8GVSKrSsLs5XOlPHy6QSfW+vTPTsGvHK0NfIi39w==}
+  '@wdio/sauce-service@9.12.7':
+    resolution: {integrity: sha512-xp9xFHReijFwUjUmRDNZ88PRAaSsowHEauEVfe5wH2b2GE4pz+aginYRB5eJPgrOK/7EA57xxNGoTxmWvWw0Mg==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/shared-store-service@9.12.7':
@@ -9766,13 +9766,13 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/sauce-service@9.12.6':
+  '@wdio/sauce-service@9.12.7':
     dependencies:
       '@wdio/logger': 9.4.4
       '@wdio/types': 9.12.6
       '@wdio/utils': 9.12.6
       saucelabs: 9.0.2
-      webdriverio: 9.12.6
+      webdriverio: 9.12.7
     transitivePeerDependencies:
       - bare-buffer
       - bufferutil
