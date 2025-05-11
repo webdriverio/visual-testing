@@ -13,7 +13,7 @@ import type {
 } from './screenshots.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
-import type { ElementRectanglesOptions } from './rectangles.interfaces.js'
+import type { ElementRectanglesOptions, RectanglesOutput } from './rectangles.interfaces.js'
 import { determineElementRectangles } from './rectangles.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison-screenshots')
@@ -406,15 +406,20 @@ export async function takeBase64Screenshot(takeScreenshot: TakeScreenShot): Prom
 /**
  * Take a bidi screenshot
  */
-export async function takeBase64BiDiScreenshot({ bidiScreenshot, getWindowHandle, origin = 'viewport' }:{
+export async function takeBase64BiDiScreenshot({ bidiScreenshot, getWindowHandle, origin = 'viewport', clip }:{
     bidiScreenshot: BidiScreenshot,
     getWindowHandle: GetWindowHandle,
-    origin?: 'viewport' | 'document'
+    origin?: 'viewport' | 'document',
+    clip?: RectanglesOutput
 }): Promise<string> {
     log.info('Taking a BiDi screenshot')
     const contextID = await getWindowHandle()
 
-    return (await bidiScreenshot({ context: contextID, origin })).data
+    return (await bidiScreenshot({
+        context: contextID,
+        origin,
+        ...(clip ? { clip: { ...clip, type: 'box' } } : {})
+    })).data
 }
 
 /**

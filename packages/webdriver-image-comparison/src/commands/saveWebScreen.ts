@@ -71,11 +71,13 @@ export default async function saveWebScreen(
     let base64Image: string
 
     if (canUseBidiScreenshot(methods)) {
+        // 3a. Take the screenshot with the BiDi method
         base64Image = await takeBase64BiDiScreenshot({
             bidiScreenshot: methods.bidiScreenshot!,
             getWindowHandle: methods.getWindowHandle!,
         })
     } else {
+        // 3b. Take the screenshot with the regular method
         base64Image = await takeBase64Screenshot(methods.screenShot)
 
         // Determine the rectangles
