@@ -7,7 +7,7 @@ import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import type { RectanglesOutput, ScreenRectanglesOptions } from '../methods/rectangles.interfaces.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
-import { getMethodOrWicOption } from '../helpers/utils.js'
+import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
 
 /**
  * Saves an image of the viewport of the screen
@@ -70,9 +70,11 @@ export default async function saveWebScreen(
     // 3.  Take the screenshot
     let base64Image: string
 
-    if (typeof methods.bidiScreenshot === 'function' && typeof methods.getWindowHandle === 'function') {
-        const { bidiScreenshot, getWindowHandle } = methods
-        base64Image = await takeBase64BiDiScreenshot({ bidiScreenshot, getWindowHandle })
+    if (canUseBidiScreenshot(methods)) {
+        base64Image = await takeBase64BiDiScreenshot({
+            bidiScreenshot: methods.bidiScreenshot!,
+            getWindowHandle: methods.getWindowHandle!,
+        })
     } else {
         base64Image = await takeBase64Screenshot(methods.screenShot)
 

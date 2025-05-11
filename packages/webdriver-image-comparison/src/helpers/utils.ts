@@ -13,7 +13,7 @@ import type {
     ScreenshotSize,
 } from './utils.interfaces.js'
 import type { ClassOptions, CompareOptions } from './options.interfaces.js'
-import type { Executor } from '../methods/methods.interfaces.js'
+import type { Executor, Methods } from '../methods/methods.interfaces.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
@@ -565,4 +565,11 @@ export function getMethodOrWicOption<T, K extends keyof T>(
     key: K
 ): T[K] {
     return method?.[key] ?? wic[key]
+}
+
+/**
+ * Determine if the Bidi screenshot can be used
+ */
+export function canUseBidiScreenshot(methods: Methods): boolean {
+    return typeof methods.bidiScreenshot === 'function' && typeof methods.getWindowHandle === 'function'
 }

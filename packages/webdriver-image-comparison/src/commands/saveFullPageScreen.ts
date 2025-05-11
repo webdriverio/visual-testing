@@ -1,12 +1,12 @@
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
-import { getBase64FullPageScreenshotsData } from '../methods/screenshots.js'
+import { getBase64FullPageScreenshotsData, takeBase64BiDiScreenshot } from '../methods/screenshots.js'
 import { makeFullPageBase64Image } from '../methods/images.js'
 import type { ScreenshotOutput, AfterScreenshotOptions } from '../helpers/afterScreenshot.interfaces.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
 import type { FullPageScreenshotDataOptions, FullPageScreenshotsData } from '../methods/screenshots.interfaces.js'
 import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
-import { getMethodOrWicOption } from '../helpers/utils.js'
+import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
 
 /**
  * Saves an image of the full page
@@ -64,12 +64,15 @@ export default async function saveFullPageScreen(
     const isLandscape = enrichedInstanceData.dimensions.window.isLandscape
     let fullPageBase64Image: string
 
-    if (typeof methods.bidiScreenshot === 'function' && typeof methods.getWindowHandle === 'function' && userBasedFullPageScreenshot) {
+    if (canUseBidiScreenshot(methods) && !userBasedFullPageScreenshot) {
         // 3a.  Fullpage screenshots are taken in one go with the Bidi protocol
-        const contextID = await methods.getWindowHandle()
-        fullPageBase64Image =( await methods.bidiScreenshot({ context: contextID, origin: 'document' })).data
+        fullPageBase64Image = await takeBase64BiDiScreenshot({
+            bidiScreenshot: methods.bidiScreenshot!,
+            getWindowHandle: methods.getWindowHandle!,
+            origin: 'document',
+        })
     } else {
-    // 3b.  Fullpage screenshots are taken per scrolled viewport
+        // 3b.  Fullpage screenshots are taken per scrolled viewport
         const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
             addressBarShadowPadding: enrichedInstanceData.addressBarShadowPadding,
             devicePixelRatio: devicePixelRatio || NaN,
