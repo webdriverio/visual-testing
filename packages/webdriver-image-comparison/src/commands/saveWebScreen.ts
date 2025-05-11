@@ -1,4 +1,4 @@
-import { takeBase64Screenshot } from '../methods/screenshots.js'
+import { takeBase64BiDiScreenshot, takeBase64Screenshot } from '../methods/screenshots.js'
 import { makeCroppedBase64Image } from '../methods/images.js'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
@@ -68,34 +68,41 @@ export default async function saveWebScreen(
     } = enrichedInstanceData
 
     // 3.  Take the screenshot
-    const base64Image: string = await takeBase64Screenshot(methods.screenShot)
+    let base64Image: string
 
-    // Determine the rectangles
-    const screenRectangleOptions: ScreenRectanglesOptions = {
-        devicePixelRatio: devicePixelRatio || NaN,
-        innerHeight: innerHeight || NaN,
-        innerWidth: innerWidth || NaN,
-        isAndroidChromeDriverScreenshot,
-        isAndroidNativeWebScreenshot,
-        isIOS,
-        isLandscape,
+    if (typeof methods.bidiScreenshot === 'function' && typeof methods.getWindowHandle === 'function') {
+        const { bidiScreenshot, getWindowHandle } = methods
+        base64Image = await takeBase64BiDiScreenshot({ bidiScreenshot, getWindowHandle })
+    } else {
+        base64Image = await takeBase64Screenshot(methods.screenShot)
+
+        // Determine the rectangles
+        const screenRectangleOptions: ScreenRectanglesOptions = {
+            devicePixelRatio: devicePixelRatio || NaN,
+            innerHeight: innerHeight || NaN,
+            innerWidth: innerWidth || NaN,
+            isAndroidChromeDriverScreenshot,
+            isAndroidNativeWebScreenshot,
+            isIOS,
+            isLandscape,
+        }
+        const rectangles: RectanglesOutput = determineScreenRectangles(base64Image, screenRectangleOptions)
+        // 4.  Make a cropped base64 image
+        base64Image = await makeCroppedBase64Image({
+            addIOSBezelCorners,
+            base64Image,
+            deviceName,
+            devicePixelRatio: devicePixelRatio || NaN,
+            isIOS,
+            isLandscape,
+            rectangles,
+        })
     }
-    const rectangles: RectanglesOutput = determineScreenRectangles(base64Image, screenRectangleOptions)
-    // 4.  Make a cropped base64 image
-    const croppedBase64Image: string = await makeCroppedBase64Image({
-        addIOSBezelCorners,
-        base64Image,
-        deviceName,
-        devicePixelRatio: devicePixelRatio || NaN,
-        isIOS,
-        isLandscape,
-        rectangles,
-    })
 
     // 5.  The after the screenshot methods
     const afterOptions: AfterScreenshotOptions = {
         actualFolder: folders.actualFolder,
-        base64Image: croppedBase64Image,
+        base64Image,
         disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,

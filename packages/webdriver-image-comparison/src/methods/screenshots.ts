@@ -2,7 +2,7 @@ import logger from '@wdio/logger'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
 import { calculateDprData, getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
-import type { Executor, TakeScreenShot } from './methods.interfaces.js'
+import type { BidiScreenshot, Executor, GetWindowHandle, TakeScreenShot } from './methods.interfaces.js'
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
@@ -401,6 +401,20 @@ export async function getDesktopFullPageScreenshotsData(
  */
 export async function takeBase64Screenshot(takeScreenshot: TakeScreenShot): Promise<string> {
     return takeScreenshot()
+}
+
+/**
+ * Take a bidi screenshot
+ */
+export async function takeBase64BiDiScreenshot({ bidiScreenshot, getWindowHandle, origin = 'viewport' }:{
+    bidiScreenshot: BidiScreenshot,
+    getWindowHandle: GetWindowHandle,
+    origin?: 'viewport' | 'document'
+}): Promise<string> {
+    log.info('Taking a BiDi screenshot')
+    const contextID = await getWindowHandle()
+
+    return (await bidiScreenshot({ context: contextID, origin })).data
 }
 
 /**
