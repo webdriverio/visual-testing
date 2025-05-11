@@ -18,6 +18,9 @@ export interface SaveElementMethodOptions extends Partial<Folders> {
     disableCSSAnimation?: boolean;
     // Make all text on a page transparent to only focus on the layout
     enableLayoutTesting?: boolean;
+    // By default the screenshots are taken with the BiDi protocol if Bidi is available.
+    // If you want to use the legacy method, set this to true.
+    enableLegacyScreenshotMethod?: boolean;
     // Hide all scrollbars
     hideScrollBars?: boolean;
     // The resizeDimensions

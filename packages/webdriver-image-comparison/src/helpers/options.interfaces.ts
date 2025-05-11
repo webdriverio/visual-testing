@@ -32,6 +32,12 @@ export interface ClassOptions {
     userBasedFullPageScreenshot?: boolean;
 
     /**
+     * By default the screenshots are taken with the BiDi protocol if Bidi is available.
+     * If you want to use the legacy method, set this to true.
+     */
+    enableLegacyScreenshotMethod?: boolean;
+
+    /**
      * Customize the naming of saved images using a format string.
      */
     formatImageName?: string;
@@ -306,6 +312,12 @@ export interface DefaultOptions {
      * Use user based fullpage screenshots, by default the desktop screenshots are taken with the BiDi protocol.
      */
     userBasedFullPageScreenshot: boolean;
+
+    /**
+     * By default the screenshots are taken with the BiDi protocol if Bidi is available.
+     * If you want to use the legacy method, set this to true.
+     */
+    enableLegacyScreenshotMethod: boolean;
 
     /**
      * Disable the blinking cursor in the screenshot.

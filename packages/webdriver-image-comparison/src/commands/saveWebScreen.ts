@@ -30,6 +30,7 @@ export default async function saveWebScreen(
     const disableBlinkingCursor = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'disableBlinkingCursor')
     const disableCSSAnimation = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'disableCSSAnimation')
     const enableLayoutTesting = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'enableLayoutTesting')
+    const enableLegacyScreenshotMethod = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'enableLegacyScreenshotMethod')
     const hideScrollBars = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'hideScrollBars')
     const hideElements: HTMLElement[] = saveScreenOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveScreenOptions.method.removeElements || []
@@ -70,7 +71,7 @@ export default async function saveWebScreen(
     // 3.  Take the screenshot
     let base64Image: string
 
-    if (canUseBidiScreenshot(methods)) {
+    if (canUseBidiScreenshot(methods) && !isMobile && !enableLegacyScreenshotMethod) {
         // 3a. Take the screenshot with the BiDi method
         base64Image = await takeBase64BiDiScreenshot({
             bidiScreenshot: methods.bidiScreenshot!,

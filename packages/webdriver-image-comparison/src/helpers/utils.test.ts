@@ -848,6 +848,7 @@ describe('utils', () => {
                 addIOSBezelCorners: false,
                 clearRuntimeFolder: false,
                 userBasedFullPageScreenshot: false,
+                enableLegacyScreenshotMethod: false,
                 formatImageName: 'test',
                 isHybridApp: false,
                 savePerInstance: true,

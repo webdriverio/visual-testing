@@ -39,6 +39,7 @@ export default async function saveFullPageScreen(
     const disableBlinkingCursor = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'disableBlinkingCursor')
     const disableCSSAnimation = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'disableCSSAnimation')
     const enableLayoutTesting = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'enableLayoutTesting')
+    const enableLegacyScreenshotMethod = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'enableLegacyScreenshotMethod')
     const fullPageScrollTimeout = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'fullPageScrollTimeout')
     const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
     const hideElements: HTMLElement[] = saveFullPageOptions.method.hideElements || []
@@ -64,7 +65,7 @@ export default async function saveFullPageScreen(
     const isLandscape = enrichedInstanceData.dimensions.window.isLandscape
     let fullPageBase64Image: string
 
-    if (canUseBidiScreenshot(methods) && !userBasedFullPageScreenshot) {
+    if (canUseBidiScreenshot(methods) && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)) {
         // 3a.  Fullpage screenshots are taken in one go with the Bidi protocol
         fullPageBase64Image = await takeBase64BiDiScreenshot({
             bidiScreenshot: methods.bidiScreenshot!,

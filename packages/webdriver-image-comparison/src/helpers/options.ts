@@ -26,6 +26,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         autoSaveBaseline: options.autoSaveBaseline ?? true,
         clearFolder: options.clearRuntimeFolder ?? false,
         userBasedFullPageScreenshot: options.userBasedFullPageScreenshot ?? false,
+        enableLegacyScreenshotMethod: options.enableLegacyScreenshotMethod ?? false,
         // Storybook will have it's own default format string
         formatImageName: options.formatImageName ?? (isStorybook() ? STORYBOOK_FORMAT_STRING : DEFAULT_FORMAT_STRING),
         isHybridApp: options.isHybridApp ?? false,

@@ -32,6 +32,7 @@ export default async function checkFullPageScreen(
             disableBlinkingCursor: checkFullPageOptions.method.disableBlinkingCursor,
             disableCSSAnimation: checkFullPageOptions.method.disableCSSAnimation,
             enableLayoutTesting: checkFullPageOptions.method.enableLayoutTesting,
+            enableLegacyScreenshotMethod: checkFullPageOptions.method.enableLegacyScreenshotMethod,
             fullPageScrollTimeout: checkFullPageOptions.method.fullPageScrollTimeout,
             hideAfterFirstScroll: checkFullPageOptions.method.hideAfterFirstScroll || [],
             hideScrollBars: checkFullPageOptions.method.hideScrollBars,

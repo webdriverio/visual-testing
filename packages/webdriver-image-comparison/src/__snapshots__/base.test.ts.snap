@@ -26,6 +26,7 @@ exports[`BaseClass > initializes default options correctly 1`] = `
   "disableBlinkingCursor": false,
   "disableCSSAnimation": false,
   "enableLayoutTesting": false,
+  "enableLegacyScreenshotMethod": false,
   "formatImageName": "{tag}-{browserName}-{width}x{height}-dpr-{dpr}",
   "fullPageScrollTimeout": 1500,
   "hideScrollBars": true,

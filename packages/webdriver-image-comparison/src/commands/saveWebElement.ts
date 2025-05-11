@@ -32,6 +32,7 @@ export default async function saveWebElement(
     const disableBlinkingCursor = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'disableBlinkingCursor')
     const disableCSSAnimation = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'disableCSSAnimation')
     const enableLayoutTesting = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'enableLayoutTesting')
+    const enableLegacyScreenshotMethod = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'enableLegacyScreenshotMethod')
     const hideElements: HTMLElement[] = saveElementOptions.method.hideElements || []
     const hideScrollBars = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'hideScrollBars')
     const removeElements: HTMLElement[] = saveElementOptions.method.removeElements || []
@@ -72,7 +73,7 @@ export default async function saveWebElement(
 
     let base64Image: string
 
-    if (canUseBidiScreenshot(methods)) {
+    if (canUseBidiScreenshot(methods) && !isMobile && !enableLegacyScreenshotMethod) {
         // 3a. Take the screenshot with the BiDi method
         // We also need to clip the image to the element size, taking into account the DPR
         // and also clipt if from the document, not the viewport

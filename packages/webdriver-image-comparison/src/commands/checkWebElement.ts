@@ -28,6 +28,7 @@ export default async function checkWebElement(
             disableBlinkingCursor: checkElementOptions.method.disableBlinkingCursor,
             disableCSSAnimation: checkElementOptions.method.disableCSSAnimation,
             enableLayoutTesting: checkElementOptions.method.enableLayoutTesting,
+            enableLegacyScreenshotMethod: checkElementOptions.method.enableLegacyScreenshotMethod,
             hideScrollBars: checkElementOptions.method.hideScrollBars,
             resizeDimensions: checkElementOptions.method.resizeDimensions,
             hideElements: checkElementOptions.method.hideElements || [],

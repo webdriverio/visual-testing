@@ -27,6 +27,7 @@ export default async function checkWebScreen(
             disableBlinkingCursor: checkScreenOptions.method.disableBlinkingCursor,
             disableCSSAnimation: checkScreenOptions.method.disableCSSAnimation,
             enableLayoutTesting: checkScreenOptions.method.enableLayoutTesting,
+            enableLegacyScreenshotMethod: checkScreenOptions.method.enableLegacyScreenshotMethod,
             hideScrollBars: checkScreenOptions.method.hideScrollBars,
             hideElements: checkScreenOptions.method.hideElements || [],
             removeElements: checkScreenOptions.method.removeElements || [],
