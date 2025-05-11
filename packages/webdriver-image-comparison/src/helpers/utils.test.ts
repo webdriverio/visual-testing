@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import logger from '@wdio/logger'
 import {
     calculateDprData,
+    canUseBidiScreenshot,
     checkAndroidChromeDriverScreenshot,
     checkAndroidNativeWebScreenshot,
     checkIsAndroid,
@@ -18,6 +19,7 @@ import {
     getBase64ScreenshotSize,
     getDevicePixelRatio,
     getIosBezelImageNames,
+    getMethodOrWicOption,
     getMobileScreenSize,
     getMobileViewPortPosition,
     getToolBarShadowPadding,
@@ -869,4 +871,88 @@ describe('utils', () => {
             expect(result).toEqual(allDeprecatedOptions)
         })
     })
+
+    describe('getMethodOrWicOption', () => {
+        const defaultOptions = {
+            foo: 'bar',
+            count: 42,
+            isEnabled: true,
+        }
+
+        it('should return value from method if defined', () => {
+            const method = { foo: 'baz' }
+
+            const result = getMethodOrWicOption(method, defaultOptions, 'foo')
+            expect(result).toBe('baz')
+        })
+
+        it('should return value from wic if method is undefined', () => {
+            const result = getMethodOrWicOption(undefined, defaultOptions, 'count')
+            expect(result).toBe(42)
+        })
+
+        it('should return value from wic if key in method is undefined', () => {
+            const method = { foo: undefined }
+
+            const result = getMethodOrWicOption(method, defaultOptions, 'foo')
+            expect(result).toBe('bar')
+        })
+
+        it('should return boolean value from method if defined', () => {
+            const method = { isEnabled: false }
+
+            const result = getMethodOrWicOption(method, defaultOptions, 'isEnabled')
+            expect(result).toBe(false)
+        })
+
+        it('should return value from wic for a missing key in method', () => {
+            const method = {}
+
+            const result = getMethodOrWicOption(method, defaultOptions, 'count')
+            expect(result).toBe(42)
+        })
+    })
+
+    describe('canUseBidiScreenshot', () => {
+        it('should return true when both bidiScreenshot and getWindowHandle are functions', () => {
+            const methods = {
+                bidiScreenshot: vi.fn(),
+                getWindowHandle: vi.fn(),
+            } as any
+
+            expect(canUseBidiScreenshot(methods)).toBe(true)
+        })
+
+        it('should return false if bidiScreenshot is missing', () => {
+            const methods = {
+                getWindowHandle: vi.fn(),
+            } as any
+
+            expect(canUseBidiScreenshot(methods)).toBe(false)
+        })
+
+        it('should return false if getWindowHandle is missing', () => {
+            const methods = {
+                bidiScreenshot: vi.fn(),
+            } as any
+
+            expect(canUseBidiScreenshot(methods)).toBe(false)
+        })
+
+        it('should return false if both are missing', () => {
+            const methods = {} as any
+
+            expect(canUseBidiScreenshot(methods)).toBe(false)
+        })
+
+        it('should return false if either is not a function', () => {
+            const methods = {
+                bidiScreenshot: 'notAFunction',
+                getWindowHandle: () => 'someId'
+            } as any
+
+            expect(canUseBidiScreenshot(methods)).toBe(false)
+        })
+    })
+
 })
