@@ -81,7 +81,7 @@ export default async function saveWebElement(
         base64Image = await takeBase64BiDiScreenshot({
             bidiScreenshot: methods.bidiScreenshot!,
             getWindowHandle: methods.getWindowHandle!,
-            origin: 'document',
+            origin: 'viewport',
             clip: {
                 x: Math.floor(rect.x),
                 y: Math.floor(rect.y),
