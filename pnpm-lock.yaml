@@ -125,10 +125,10 @@ importers:
         version: 3.1.1(@types/debug@4.1.12)(@types/node@22.15.17)(@vitest/ui@3.1.1)(jsdom@26.1.0)
       wdio-lambdatest-service:
         specifier: ^4.0.0
-        version: 4.0.0(@wdio/cli@9.12.7)(@wdio/types@9.12.6)(webdriverio@9.12.7)
+        version: 4.0.0(@wdio/cli@9.12.7)(@wdio/types@9.12.6)(webdriverio@9.13.0)
       webdriverio:
-        specifier: ^9.12.7
-        version: 9.12.7
+        specifier: ^9.13.0
+        version: 9.13.0
 
   packages/ocr-service:
     dependencies:
@@ -292,8 +292,8 @@ importers:
         specifier: ^11.0.4
         version: 11.0.4
       webdriverio:
-        specifier: ^9.12.7
-        version: 9.12.7
+        specifier: ^9.13.0
+        version: 9.13.0
 
 packages:
 
@@ -9469,7 +9469,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 20.17.32
+      '@types/node': 22.15.17
 
   '@types/xml2js@0.4.14':
     dependencies:
@@ -9920,7 +9920,7 @@ snapshots:
 
   '@wdio/repl@9.4.4':
     dependencies:
-      '@types/node': 20.17.32
+      '@types/node': 20.17.46
 
   '@wdio/reporter@9.12.6':
     dependencies:
@@ -10388,7 +10388,7 @@ snapshots:
       chalk: 5.4.1
       cli-boxes: 3.0.0
       string-width: 7.2.0
-      type-fest: 4.40.1
+      type-fest: 4.41.0
       widest-line: 5.0.0
       wrap-ansi: 9.0.0
 
@@ -14311,7 +14311,7 @@ snapshots:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.2
       parse-json: 7.1.1
-      type-fest: 4.40.1
+      type-fest: 4.41.0
 
   read-yaml-file@1.1.0:
     dependencies:
@@ -15742,7 +15742,7 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@4.0.0(@wdio/cli@9.12.7)(@wdio/types@9.12.6)(webdriverio@9.12.7):
+  wdio-lambdatest-service@4.0.0(@wdio/cli@9.12.7)(@wdio/types@9.12.6)(webdriverio@9.13.0):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.9
       '@wdio/cli': 9.12.7
@@ -15752,7 +15752,7 @@ snapshots:
       colors: 1.4.0
       form-data: 4.0.2
       source-map-support: 0.5.21
-      webdriverio: 9.12.7
+      webdriverio: 9.13.0
       winston: 3.17.0
     transitivePeerDependencies:
       - debug
@@ -15768,7 +15768,7 @@ snapshots:
 
   webdriver@9.12.6:
     dependencies:
-      '@types/node': 20.17.32
+      '@types/node': 20.17.46
       '@types/ws': 8.18.1
       '@wdio/config': 9.12.6
       '@wdio/logger': 9.4.4
