@@ -63,7 +63,7 @@
     "@types/jsdom": "~21.1.7",
     "@types/node": "^22",
     "@types/xml2js": "~0.4.14",
-    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/eslint-plugin": "^8.32.0",
     "@wdio/globals": "^9.12.7",
     "@wdio/mocha-framework": "^9.12.6",
     "@typescript-eslint/parser": "^8.31.1",
