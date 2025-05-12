@@ -36,6 +36,7 @@ export const config: WebdriverIO.Config = {
     specs: [
         '../specs/basics.spec.ts',
         '../specs/desktop.spec.ts',
+        '../specs/desktop.bidi.emulated.spec.ts',
         '../specs/matcher.spec.ts',
         '../specs/checkMethodsFolders.spec.ts',
         '../specs/saveMethodsFolders.spec.ts',

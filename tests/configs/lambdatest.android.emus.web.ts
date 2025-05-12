@@ -80,6 +80,12 @@ function createCaps({
         build: string,
         w3c: boolean,
         queueTimeout: number,
+        /**
+         * There are issues with the Chrome version on LT
+         * the installed versions sometimes give tabs as the first page.
+         * This should be fixed in the future and below is a workaround
+         */
+        chromeVersion: 126,
     },
     specs: string[];
     'wdio-ics:options': {

@@ -15,6 +15,7 @@ export function lambdaDesktopBrowsers({
         './tests/specs/checkMethodsFolders.spec.ts'
     )
     const deskSpecs = join(process.cwd(), './tests/specs/desktop.spec.ts')
+    const bidiEmulatedDesktopSpecs = join(process.cwd(), './tests/specs/desktop.bidi.emulated.spec.ts')
     const defaultBrowserLambdaTestOptions = {
         'LT:Options': {
             platformName: 'Windows 10',
@@ -69,6 +70,16 @@ export function lambdaDesktopBrowsers({
             browserVersion: 'latest',
             platformName: 'Windows 10',
             specs: [deskSpecs],
+            ...defaultBrowserLambdaTestOptions,
+            'wdio-ics:options': {
+                logName: 'chrome-latest',
+            },
+        },
+        {
+            browserName: 'chrome',
+            browserVersion: 'latest',
+            platformName: 'Windows 10',
+            specs: [bidiEmulatedDesktopSpecs],
             ...defaultBrowserLambdaTestOptions,
             'wdio-ics:options': {
                 logName: 'chrome-latest',

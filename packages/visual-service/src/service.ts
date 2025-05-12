@@ -227,6 +227,7 @@ export default class WdioImageComparisonService extends BaseClass {
 
                         return [{
                             methods: {
+                                bidiScreenshot: isBiDiScreenshotSupported(browser) ? this.browsingContextCaptureScreenshot.bind(browser) : undefined,
                                 executor: <ReturnValue, InnerArguments extends unknown[]>(
                                     fn: string | ((...args: InnerArguments) => ReturnValue),
                                     ...args: InnerArguments
@@ -234,6 +235,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                     return this.execute(fn, ...args) as Promise<ReturnValue>
                                 },
                                 getElementRect: this.getElementRect.bind(this),
+                                getWindowHandle: this.getWindowHandle.bind(browser),
                                 screenShot: this.takeScreenshot.bind(this),
                                 takeElementScreenshot: this.takeElementScreenshot.bind(this),
                             },
@@ -471,6 +473,7 @@ export default class WdioImageComparisonService extends BaseClass {
 
                             return [{
                                 methods: {
+                                    bidiScreenshot: isBiDiScreenshotSupported(browserInstance) ? browserInstance.browsingContextCaptureScreenshot.bind(browserInstance) : undefined,
                                     executor: <ReturnValue, InnerArguments extends unknown[]>(
                                         fn: string | ((...args: InnerArguments) => ReturnValue),
                                         ...args: InnerArguments
@@ -478,6 +481,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                         return browserInstance.execute(fn, ...args) as Promise<ReturnValue>
                                     },
                                     getElementRect: browserInstance.getElementRect.bind(browserInstance),
+                                    getWindowHandle: browserInstance.getWindowHandle.bind(browserInstance),
                                     screenShot: browserInstance.takeScreenshot.bind(browserInstance),
                                 },
                                 instanceData: updatedInstanceData,

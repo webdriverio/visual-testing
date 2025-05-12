@@ -2,7 +2,7 @@ import logger from '@wdio/logger'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
 import { calculateDprData, getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
-import type { Executor, TakeScreenShot } from './methods.interfaces.js'
+import type { BidiScreenshot, Executor, GetWindowHandle, TakeScreenShot } from './methods.interfaces.js'
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
@@ -13,7 +13,7 @@ import type {
 } from './screenshots.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
-import type { ElementRectanglesOptions } from './rectangles.interfaces.js'
+import type { ElementRectanglesOptions, RectanglesOutput } from './rectangles.interfaces.js'
 import { determineElementRectangles } from './rectangles.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison-screenshots')
@@ -401,6 +401,25 @@ export async function getDesktopFullPageScreenshotsData(
  */
 export async function takeBase64Screenshot(takeScreenshot: TakeScreenShot): Promise<string> {
     return takeScreenshot()
+}
+
+/**
+ * Take a bidi screenshot
+ */
+export async function takeBase64BiDiScreenshot({ bidiScreenshot, getWindowHandle, origin = 'viewport', clip }:{
+    bidiScreenshot: BidiScreenshot,
+    getWindowHandle: GetWindowHandle,
+    origin?: 'viewport' | 'document',
+    clip?: RectanglesOutput
+}): Promise<string> {
+    log.info('Taking a BiDi screenshot')
+    const contextID = await getWindowHandle()
+
+    return (await bidiScreenshot({
+        context: contextID,
+        origin,
+        ...(clip ? { clip: { ...clip, type: 'box' } } : {})
+    })).data
 }
 
 /**
