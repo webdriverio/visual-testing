@@ -79,8 +79,8 @@ importers:
         specifier: ^9.13.0
         version: 9.13.0
       '@wdio/types':
-        specifier: ^9.12.6
-        version: 9.12.6
+        specifier: ^9.13.0
+        version: 9.13.0
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -125,7 +125,7 @@ importers:
         version: 3.1.1(@types/debug@4.1.12)(@types/node@22.15.17)(@vitest/ui@3.1.1)(jsdom@26.1.0)
       wdio-lambdatest-service:
         specifier: ^4.0.0
-        version: 4.0.0(@wdio/cli@9.12.7)(@wdio/types@9.12.6)(webdriverio@9.13.0)
+        version: 4.0.0(@wdio/cli@9.12.7)(@wdio/types@9.13.0)(webdriverio@9.13.0)
       webdriverio:
         specifier: ^9.13.0
         version: 9.13.0
@@ -142,8 +142,8 @@ importers:
         specifier: ^9.4.4
         version: 9.4.4
       '@wdio/types':
-        specifier: ^9.12.6
-        version: 9.12.6
+        specifier: ^9.13.0
+        version: 9.13.0
       fuse.js:
         specifier: ^7.1.0
         version: 7.1.0
@@ -267,8 +267,8 @@ importers:
         specifier: ^9.4.4
         version: 9.4.4
       '@wdio/types':
-        specifier: ^9.12.6
-        version: 9.12.6
+        specifier: ^9.13.0
+        version: 9.13.0
       expect-webdriverio:
         specifier: ^5.1.0
         version: 5.1.0(@wdio/globals@9.13.0(@wdio/logger@9.4.4))(@wdio/logger@9.4.4)(webdriverio@9.13.0)
@@ -1996,9 +1996,6 @@ packages:
 
   '@types/node@16.9.1':
     resolution: {integrity: sha512-QpLcX9ZSsq3YYUUnD3nFDY8H7wctAhQj/TFKL8Ya8v5fMm3CFXxo8zStsLAl780ltoYoo1WvKUVGBQK+1ifr7g==}
-
-  '@types/node@20.17.30':
-    resolution: {integrity: sha512-7zf4YyHA+jvBNfVrk2Gtvs6x7E8V+YDW05bNfG2XkWDJfYRXrTiP/DsB2zSYTaHX0bGIujTBQdMVAhb+j7mwpg==}
 
   '@types/node@20.17.46':
     resolution: {integrity: sha512-0PQHLhZPWOxGW4auogW0eOQAuNIlCYvibIpG67ja0TOJ6/sehu+1en7sfceUn+QQtx4Rk3GxbLNwPh0Cav7TWw==}
@@ -9353,7 +9350,7 @@ snapshots:
 
   '@types/jsonfile@6.1.4':
     dependencies:
-      '@types/node': 22.14.0
+      '@types/node': 22.15.17
 
   '@types/keyv@3.1.4':
     dependencies:
@@ -9376,10 +9373,6 @@ snapshots:
   '@types/node@12.20.55': {}
 
   '@types/node@16.9.1': {}
-
-  '@types/node@20.17.30':
-    dependencies:
-      undici-types: 6.19.8
 
   '@types/node@20.17.46':
     dependencies:
@@ -9969,7 +9962,7 @@ snapshots:
 
   '@wdio/types@9.12.6':
     dependencies:
-      '@types/node': 20.17.30
+      '@types/node': 20.17.46
 
   '@wdio/types@9.13.0':
     dependencies:
@@ -15714,12 +15707,12 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@4.0.0(@wdio/cli@9.12.7)(@wdio/types@9.12.6)(webdriverio@9.13.0):
+  wdio-lambdatest-service@4.0.0(@wdio/cli@9.12.7)(@wdio/types@9.13.0)(webdriverio@9.13.0):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.9
       '@wdio/cli': 9.12.7
       '@wdio/logger': 7.26.0
-      '@wdio/types': 9.12.6
+      '@wdio/types': 9.13.0
       axios: 1.8.4
       colors: 1.4.0
       form-data: 4.0.2
