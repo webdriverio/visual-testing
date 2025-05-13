@@ -10,6 +10,7 @@ import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js
 import { canUseBidiScreenshot, getBase64ScreenshotSize, getMethodOrWicOption, waitFor } from '../helpers/utils.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
+import type { BidiScreenshot, GetWindowHandle } from '../methods/methods.interfaces.js'
 
 /**
  * Saves an image of an element
@@ -78,17 +79,27 @@ export default async function saveWebElement(
         // We also need to clip the image to the element size, taking into account the DPR
         // and also clipt if from the document, not the viewport
         const rect = await methods.getElementRect!((await element as WebdriverIO.Element).elementId)
-        base64Image = await takeBase64BiDiScreenshot({
-            bidiScreenshot: methods.bidiScreenshot!,
-            getWindowHandle: methods.getWindowHandle!,
-            origin: 'document',
-            clip: {
-                x: Math.floor(rect.x),
-                y: Math.floor(rect.y),
-                width: Math.floor(rect.width),
-                height: Math.floor(rect.height),
-            },
-        })
+        const clip = { x: Math.floor(rect.x), y: Math.floor(rect.y), width: Math.floor(rect.width), height: Math.floor(rect.height) }
+        const { bidiScreenshot, getWindowHandle } = methods as { bidiScreenshot: BidiScreenshot; getWindowHandle: GetWindowHandle }
+        const takeBiDiElementScreenshot = (origin: 'document' | 'viewport') =>
+            takeBase64BiDiScreenshot({ bidiScreenshot, getWindowHandle, origin, clip })
+
+        try {
+            // By default we take the screenshot from the document
+            base64Image = await takeBiDiElementScreenshot('viewport')
+        } catch (err: any) {
+            // But when we get a zero dimension error (meaning the element might be bigger than the
+            // viewport or it might not be in the viewport), we need to take the screenshot from the document.
+            const isZeroDimensionError = typeof err?.message === 'string' && err.message.includes(
+                'WebDriver Bidi command "browsingContext.captureScreenshot" failed with error: unable to capture screen - Unable to capture screenshot with zero dimensions'
+            )
+
+            if (!isZeroDimensionError) {
+                throw err
+            }
+
+            base64Image = await takeBiDiElementScreenshot('document')
+        }
     } else {
         // Scroll the element into top of the viewport and return the current scroll position
         let currentPosition: number | undefined
