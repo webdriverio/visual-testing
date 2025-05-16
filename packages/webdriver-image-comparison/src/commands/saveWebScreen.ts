@@ -20,6 +20,7 @@ export default async function saveWebScreen(
         tag,
         saveScreenOptions,
         isNativeContext = false,
+        isEmulated = false,
     }: InternalSaveScreenMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
@@ -35,7 +36,7 @@ export default async function saveWebScreen(
     const hideElements: HTMLElement[] = saveScreenOptions.method.hideElements || []
     const removeElements: HTMLElement[] = saveScreenOptions.method.removeElements || []
     const waitForFontsLoaded = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'waitForFontsLoaded')
-
+    console.log('isEmulated = ', isEmulated)
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {
         instanceData,

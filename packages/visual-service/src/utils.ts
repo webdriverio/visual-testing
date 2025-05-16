@@ -195,6 +195,13 @@ function getDeviceName(currentBrowser: WebdriverIO.Browser): string {
 }
 
 /**
+ * Check if the current browser is an emulated browser
+ */
+export function isEmulatedBrowser(capabilities: WebdriverIO.Capabilities): boolean {
+    return !!(capabilities['goog:chromeOptions']?.mobileEmulation || capabilities['ms:edgeOptions']?.mobileEmulation)
+}
+
+/**
  * Get the instance data
  */
 export async function getInstanceData({
@@ -222,7 +229,6 @@ export async function getInstanceData({
         'wdio-ics:options' in requestedCapabilities
             ? (requestedCapabilities['wdio-ics:options'] as WdioIcsOptions)?.name ?? ''
             : ''
-
     // Mobile data
     const { isAndroid, isIOS, isMobile } = currentBrowser
     const {

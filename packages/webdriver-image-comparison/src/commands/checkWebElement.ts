@@ -19,6 +19,7 @@ export default async function checkWebElement(
         checkElementOptions,
         testContext,
         isNativeContext = false,
+        isEmulated = false,
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1. Take the actual element screenshot and retrieve the needed data
@@ -39,6 +40,7 @@ export default async function checkWebElement(
     const { devicePixelRatio, fileName } = await saveWebElement({
         methods,
         instanceData,
+        isEmulated,
         folders,
         element,
         tag,

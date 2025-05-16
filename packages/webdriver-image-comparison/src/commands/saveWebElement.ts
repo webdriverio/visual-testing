@@ -23,6 +23,7 @@ export default async function saveWebElement(
         element,
         tag,
         saveElementOptions,
+        isEmulated,
     }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
@@ -39,7 +40,7 @@ export default async function saveWebElement(
     const removeElements: HTMLElement[] = saveElementOptions.method.removeElements || []
     const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
     const waitForFontsLoaded = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'waitForFontsLoaded')
-
+    console.log('isEmulated = ', isEmulated)
     // 2.  Prepare the beforeScreenshot
     const beforeOptions: BeforeScreenshotOptions = {
         instanceData,

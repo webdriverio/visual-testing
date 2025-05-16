@@ -14,6 +14,7 @@ export default async function checkTabbablePage(
         folders,
         tag,
         checkTabbableOptions,
+        isEmulated = false,
         isNativeContext = false,
         testContext,
     }: InternalCheckTabbablePageMethodOptions
@@ -35,6 +36,7 @@ export default async function checkTabbablePage(
         checkFullPageOptions:
         checkTabbableOptions,
         isNativeContext,
+        isEmulated,
         testContext,
     })
 

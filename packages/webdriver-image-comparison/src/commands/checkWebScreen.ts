@@ -17,6 +17,7 @@ export default async function checkWebScreen(
         tag,
         checkScreenOptions,
         isNativeContext = false,
+        isEmulated = false,
         testContext,
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
@@ -41,6 +42,7 @@ export default async function checkWebScreen(
         tag,
         saveScreenOptions,
         isNativeContext,
+        isEmulated,
     })
 
     // 2a. Determine the compare options

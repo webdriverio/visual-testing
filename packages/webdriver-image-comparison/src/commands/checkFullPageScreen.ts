@@ -17,6 +17,7 @@ export default async function checkFullPageScreen(
         tag,
         checkFullPageOptions,
         isNativeContext = false,
+        isEmulated = false,
         testContext,
     }: InternalCheckFullPageMethodOptions
 ): Promise<ImageCompareResult | number> {
@@ -48,6 +49,7 @@ export default async function checkFullPageScreen(
         tag,
         saveFullPageOptions,
         isNativeContext,
+        isEmulated,
     })
 
     // 2a. Determine the options

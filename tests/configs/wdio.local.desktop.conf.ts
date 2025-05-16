@@ -24,6 +24,9 @@ export const config: WebdriverIO.Config = {
             browserName: 'chrome',
             'goog:chromeOptions': {
                 args: chromeArgs,
+                mobileEmulation: {
+                    deviceName: 'Galaxy S9+'
+                },
             },
             'wdio-ics:options': {
                 logName: 'local-chrome-latest',

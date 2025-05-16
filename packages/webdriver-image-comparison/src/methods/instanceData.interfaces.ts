@@ -3,71 +3,72 @@ import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.int
 import type { DeviceRectangles } from './rectangles.interfaces.js'
 
 export interface InstanceData {
-    // The name of the app
+    /** The name of the app */
     appName: string;
-    // The browser name of the instance
+    /** The browser name of the instance */
     browserName: string;
-    // The browser version of the instance
+    /** The browser version of the instance */
     browserVersion: string;
-    // The device name of the instance
+    /** The device name of the instance */
     deviceName: string;
-    // The devicePixelRatio of the instance
+    /** The devicePixelRatio of the instance */
     devicePixelRatio: number;
-    // The mobile viewport position
+    /** The mobile viewport position */
     deviceRectangles: DeviceRectangles;
-    // Is this an Android device
+    /** Is this an Android device */
     isAndroid: boolean;
-    // Is this an iOS device
+    /** Is this an iOS device */
     isIOS: boolean;
-    // Is this a mobile instance
+    /** Is this a mobile instance */
     isMobile: boolean;
-    // The log name of the instance
+    /** The log name of the instance */
     logName: string;
-    // The name of the instance
+    /** The name of the instance */
     name: string;
-    // If the instance creates native webscreenshots
+    /** If the instance creates native webscreenshots */
     nativeWebScreenshot: boolean;
-    // The platform name of the instance
+    /** The platform name of the instance */
     platformName: string;
-    // The platform version of the instance
+    /** The platform version of the instance */
     platformVersion: string;
 }
 
 export interface InstanceOptions {
-    // The browser name of the instance
+    /** The shadow padding for the address bar */
     addressBarShadowPadding: number;
-    // The browser name of the instance
+    /** The shadow padding for the tool bar */
     toolBarShadowPadding: number;
-    // The browser name of the instance
+    /** The browser name of the instance */
     browserName: string;
-    // The browser version of the instance
+    /** The browser version of the instance */
     browserVersion: string;
-    // The device name of the instance
+    /** The device name of the instance */
     deviceName: string;
-    // The log name of the instance
+    /** The log name of the instance */
     logName: string;
-    // The name of the instance
+    /** The name of the instance */
     name: string;
-    // If the instance creates native webscreenshots
+    /** If the instance creates native webscreenshots */
     nativeWebScreenshot: boolean;
+    /** The platform name of the instance */
     platformName: string;
-    // The platform version of the instance
+    /** The platform version of the instance */
     platformVersion: string;
 }
 
 export interface EnrichedInstanceData extends ScreenDimensions, InstanceOptions {
-    // Is this an Android device
+    /** Is this an Android device */
     isAndroid: boolean;
-    // Is this an Android ChromeDriver screenshot
+    /** Is this an Android ChromeDriver screenshot */
     isAndroidChromeDriverScreenshot: boolean;
-    // Is this an Android Native screenshot
+    /** Is this an Android Native screenshot */
     isAndroidNativeWebScreenshot: boolean;
-    // Is this an iOS device
+    /** Is this an iOS device */
     isIOS: boolean;
-    // Is this a mobile instance
+    /** Is this a mobile instance */
     isMobile: boolean;
-    // Is this a test in a desktop browser
+    /** Is this a test in a desktop browser */
     isTestInBrowser: boolean;
-    // Is this a test in a mobile browser
+    /** Is this a test in a mobile browser */
     isTestInMobileBrowser: boolean;
 }

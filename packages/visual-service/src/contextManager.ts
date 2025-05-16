@@ -1,7 +1,7 @@
 import logger from '@wdio/logger'
 import type { DeviceRectangles } from 'webdriver-image-comparison'
 import { DEVICE_RECTANGLES } from 'webdriver-image-comparison'
-import { getNativeContext } from './utils.js'
+import { getNativeContext, isEmulatedBrowser } from './utils.js'
 
 const log = logger('@wdio/visual-service:ContextManager')
 
@@ -10,12 +10,13 @@ export class ContextManager {
     #needsUpdate = false
     #currentContext?: string
     #isNativeContext: boolean
+    #isEmulated: boolean
     private cachedViewport: DeviceRectangles = DEVICE_RECTANGLES
-
     constructor(browser: WebdriverIO.Browser) {
         this.#browser = browser
         const capabilities = this.#browser.requestedCapabilities
         this.#isNativeContext = getNativeContext({ capabilities, isMobile: this.#browser.isMobile })
+        this.#isEmulated = isEmulatedBrowser(capabilities)
         this.#browser.on('result', this.#onCommandResult.bind(this))
     }
 
@@ -53,6 +54,10 @@ export class ContextManager {
 
     get isNativeContext() {
         return this.#isNativeContext
+    }
+
+    get isEmulated() {
+        return this.#isEmulated
     }
 
     async #onCommandResult(event: { command: string, body: unknown, result: unknown }) {

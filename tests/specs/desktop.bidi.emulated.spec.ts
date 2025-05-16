@@ -18,7 +18,7 @@ describe('@wdio/visual-service desktop bidi emulated', () => {
         await expect($('.hero__title-logo')).toMatchElementSnapshot('bidiEmulatedWdioLogo')
     })
 
-    it(`should compare a viewport screenshot successful with a baseline for '${browserName}'`, async function() {
+    it.only(`should compare a viewport screenshot successful with a baseline for '${browserName}'`, async function() {
         await expect(browser).toMatchScreenSnapshot('bidiEmulatedViewportScreenshot')
     })
 

@@ -12,6 +12,7 @@ export interface InternalSaveMethodOptions {
     folders: Folders;
     tag: string;
     isNativeContext?: boolean;
+    isEmulated?: boolean;
 }
 
 export interface InternalSaveFullPageMethodOptions extends InternalSaveMethodOptions {

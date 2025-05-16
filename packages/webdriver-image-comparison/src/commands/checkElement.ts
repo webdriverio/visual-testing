@@ -16,9 +16,10 @@ export default async function checkElement(
         checkElementOptions,
         isNativeContext,
         testContext,
+        isEmulated = false,
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
     return isNativeContext
         ? checkAppElement({ methods, instanceData, folders, element, tag, checkElementOptions, isNativeContext, testContext })
-        : checkWebElement({ methods, instanceData, folders, element, tag, checkElementOptions, testContext })
+        : checkWebElement({ methods, instanceData, folders, element, tag, checkElementOptions, isEmulated, testContext })
 }

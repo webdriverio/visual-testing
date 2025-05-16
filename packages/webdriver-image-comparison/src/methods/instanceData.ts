@@ -23,6 +23,7 @@ export default async function getEnrichedInstanceData(
 ): Promise<EnrichedInstanceData> {
     // Get the current browser data
     const browserData = await executor(getScreenDimensions)
+    console.log('browserData = ', browserData)
     const { addressBarShadowPadding, toolBarShadowPadding, browserName, nativeWebScreenshot, platformName } = instanceOptions
 
     // Determine some constants

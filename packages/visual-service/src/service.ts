@@ -224,6 +224,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             deviceRectangles: self.contextManager.getViewportContext(),
                         }
                         const isCurrentContextNative = self.contextManager.isNativeContext
+                        const isEmulated = self.contextManager.isEmulated
 
                         return [{
                             methods: {
@@ -247,6 +248,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 wic: self.defaultOptions,
                                 method: elementOptions,
                             },
+                            isEmulated,
                             isNativeContext: isCurrentContextNative,
                             testContext: enrichTestContext({
                                 commandName,
@@ -301,6 +303,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             deviceRectangles: self.contextManager.getViewportContext()
                         }
                         const isCurrentContextNative = self.contextManager.isNativeContext
+                        const isEmulated = self.contextManager.isEmulated
 
                         return [{
                             methods: {
@@ -323,6 +326,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 method: pageOptions,
                             },
                             isNativeContext: isCurrentContextNative,
+                            isEmulated,
                             testContext: enrichTestContext({
                                 commandName,
                                 currentTestContext: self.#testContext,
@@ -377,6 +381,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 ...initialInstanceData,
                                 deviceRectangles: contextManager.getViewportContext(),
                             }
+                            const isEmulated = contextManager.isEmulated
 
                             return [{
                                 methods: {
@@ -401,6 +406,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                     method: elementOptions,
                                 },
                                 isNativeContext,
+                                isEmulated,
                                 testContext: enrichTestContext({
                                     commandName,
                                     currentTestContext: self.#testContext,
@@ -470,6 +476,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 deviceRectangles: contextManager.getViewportContext()
                             }
                             const isCurrentContextNative = contextManager.isNativeContext
+                            const isEmulated = contextManager.isEmulated
 
                             return [{
                                 methods: {
@@ -492,6 +499,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                     method: pageOptions,
                                 },
                                 isNativeContext: isCurrentContextNative,
+                                isEmulated,
                                 testContext: enrichTestContext({
                                     commandName,
                                     currentTestContext: self.#testContext,
