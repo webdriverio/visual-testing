@@ -84,6 +84,11 @@ export default class WdioImageComparisonService extends BaseClass {
         } else {
             await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiremoteCapabilities)
         }
+        // There is an issue with the emulation mode for Chrome or Edge with WebdriverIO v9
+        // It doesn't set the correct emulation mode for the browser based on the capabilities
+        // So we need to set the emulation mode manually
+        // this is a temporary fix until the issue is fixed in WebdriverIO v9 and enough users have upgraded to the latest version
+        await this.#setEmulation(this.#browser, capabilities)
 
         /**
          * add custom matcher for visual comparison when expect has been added.
@@ -566,5 +571,45 @@ export default class WdioImageComparisonService extends BaseClass {
             throw new Error('ContextManager has not been initialized')
         }
         return this._contextManager
+    }
+
+    async #setEmulationForBrowser(browserInstance: WebdriverIO.Browser, capabilities: WebdriverIO.Capabilities) {
+        if (!browserInstance.isBidi) {
+            return
+        }
+
+        const chromeMobileEmulation = capabilities['goog:chromeOptions']?.mobileEmulation
+        const edgeMobileEmulation = capabilities['ms:edgeOptions']?.mobileEmulation
+        const mobileEmulation = chromeMobileEmulation || edgeMobileEmulation
+
+        if (!mobileEmulation) {
+            return
+        }
+
+        const { deviceName, deviceMetrics } = mobileEmulation
+
+        if (deviceName) {
+            await (browserInstance.emulate as any)('device', deviceName)
+            return
+        }
+
+        const { pixelRatio: devicePixelRatio = 1, width = 320, height = 658 } = deviceMetrics || {}
+        await browserInstance.browsingContextSetViewport({
+            context: await browserInstance.getWindowHandle(),
+            devicePixelRatio,
+            viewport: { width, height }
+        })
+    }
+
+    async #setEmulation(browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser, capabilities: WebdriverIO.Capabilities) {
+        if (browser.isMultiremote) {
+            const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
+            for (const browserInstance of Object.values(multiremoteBrowser)) {
+                await this.#setEmulationForBrowser(browserInstance, browserInstance.capabilities)
+            }
+            return
+        }
+
+        await this.#setEmulationForBrowser(browser as WebdriverIO.Browser, capabilities)
     }
 }

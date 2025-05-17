@@ -1,54 +1,89 @@
 export interface ScreenDimensions {
     dimensions: {
         body: {
-            // Minimum height the element would require in order to fit all the content in the viewport without using a vertical scrollbar.
-            // The height is measured in the same way as clientHeight: it includes the element's padding, but not its border, margin or
-            // horizontal scrollbar (if present). It can also include the height of pseudo-elements such as ::before or ::after.
-            // If the element's content can fit without a need for vertical scrollbar, its scrollHeight is equal to clientHeight
+            /**
+             * Mobile & Desktop: Total scrollable height of the body element, including content not visible on screen.
+             * Includes padding but not border, margin or horizontal scrollbar.
+             * Equal to clientHeight if no vertical scrolling is needed.
+             */
             scrollHeight?: number;
-            // measurement in pixels of the element's CSS height, including any borders, padding, and horizontal scrollbars (if rendered).
-            // It does not include the height of pseudo-elements such as ::before or ::after. For the document body object, the measurement
-            // includes total linear content height instead of the element's CSS height. Floated elements extending below other
-            // linear content are ignored
+            /**
+             * Mobile & Desktop: Height of body element including padding and borders, but not margins.
+             * For document.body, represents total linear content height.
+             * Floated elements extending below other linear content are ignored.
+             */
             offsetHeight?: number;
         };
         html: {
-            // Inner width of an element in pixels. It includes padding but excludes borders, margins, and vertical scrollbars (if present)
+            /**
+             * Mobile & Desktop: Viewport width excluding scrollbars.
+             * Includes padding but not borders, margins, or vertical scrollbars.
+             */
             clientWidth?: number;
-            // The width is measured in the same way as clientWidth: it includes the element's padding, but not its border, margin or vertical
-            // scrollbar (if present). It can also include the width of pseudo-elements such as ::before or ::after. If the element's content
-            // can fit without a need for horizontal scrollbar, its scrollWidth is equal to clientWidth
+            /**
+             * Mobile & Desktop: Total scrollable width including overflow content.
+             * Includes padding but not borders, margins, or vertical scrollbars.
+             * Equal to clientWidth if no horizontal scrolling is needed.
+             */
             scrollWidth?: number;
-            // Inner height of an element in pixels. It includes padding but excludes borders, margins, and horizontal scrollbars (if present)
+            /**
+             * Mobile & Desktop: Viewport height excluding scrollbars.
+             * Includes padding but not borders, margins, or horizontal scrollbars.
+             */
             clientHeight?: number;
-            // The height is measured in the same way as clientHeight: it includes the element's padding, but not its border, margin or
-            // horizontal scrollbar (if present). It can also include the height of pseudo-elements such as ::before or ::after. If the element's
-            // content can fit without a need for vertical scrollbar, its scrollHeight is equal to clientHeight
+            /**
+             * Mobile & Desktop: Total scrollable height including overflow content.
+             * Includes padding but not borders, margins, or horizontal scrollbars.
+             * Equal to clientHeight if no vertical scrolling is needed.
+             */
             scrollHeight?: number;
-            // Measurement in pixels of the element's CSS height, including any borders, padding, and horizontal scrollbars (if rendered).
-            // It does not include the height of pseudo-elements such as ::before or ::after. For the document body object, the measurement
-            // includes total linear content height instead of the element's CSS height. Floated elements extending below other linear
-            // content are ignored
+            /**
+             * Mobile & Desktop: Height of html element including padding and borders.
+             * For document.documentElement, represents total rendered height including overflow.
+             * Floated elements extending below other linear content are ignored.
+             */
             offsetHeight?: number;
         };
         window: {
-            // Width (in pixels) of the browser window viewport including, if rendered, the vertical scrollbar.
+            /**
+             * Mobile: Viewport width (changes with zoom)
+             * Desktop: Viewport width including vertical scrollbar
+             */
             innerWidth?: number;
-            // Height (in pixels) of the browser window viewport including, if rendered, the horizontal scrollbar.
+            /**
+             * Mobile: Viewport height (changes with zoom)
+             * Desktop: Viewport height including horizontal scrollbar
+             */
             innerHeight?: number;
-            // Determines based on `window.matchMedia` if the screen is in landscape mode
+            /**
+             * Mobile: True if device is in landscape orientation
+             * Desktop: Based on viewport aspect ratio using matchMedia
+             */
             isLandscape: boolean;
-            // Width of the outside of the browser window. It represents the width of the whole browser window including sidebar (if expanded),
-            // window chrome and window resizing borders/handles.
+            /**
+             * Mobile: Full browser width including UI elements
+             * Desktop: Browser window width including window chrome/borders
+             */
             outerWidth?: number;
-            // Height in pixels of the whole browser window. It represents the height of the whole browser window including sidebar
-            // (if expanded), window chrome and window resizing borders/handles.
+            /**
+             * Mobile: Full browser height including UI elements
+             * Desktop: Browser window height including window chrome/borders
+             */
             outerHeight?: number;
-            // The ratio of the resolution in physical pixels to the resolution in CSS pixels for the current display device.
+            /**
+             * Mobile: Physical pixel ratio (typically >1 for high DPI screens)
+             * Desktop: Usually 1, or higher for high DPI displays
+             */
             devicePixelRatio?: number;
-            // The width of the screen
+            /**
+             * Mobile: Physical screen width in CSS pixels
+             * Desktop: Monitor width in pixels
+             */
             screenWidth?: number;
-            // The height of the screen
+            /**
+             * Mobile: Physical screen height in CSS pixels
+             * Desktop: Monitor height in pixels
+             */
             screenHeight?: number;
         };
     };

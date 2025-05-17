@@ -84,6 +84,17 @@ export function lambdaDesktopBrowsers({
             'wdio-ics:options': {
                 logName: 'chrome-latest',
             },
+            'goog:chromeOptions': {
+                mobileEmulation: {
+                    deviceMetrics: {
+                        width: 320,
+                        height: 658,
+                        pixelRatio: 4.5,
+                    },
+                    userAgent:
+                      'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/17.4 Mobile/15A372 Safari/604.1',
+                },
+            }
         },
         {
             browserName: 'firefox',
