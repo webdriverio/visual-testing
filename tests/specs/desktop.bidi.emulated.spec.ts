@@ -18,6 +18,10 @@ describe('@wdio/visual-service desktop bidi emulated', () => {
         await expect(browser).toMatchScreenSnapshot('bidiEmulatedViewportScreenshot')
     })
 
+    it(`should compare a viewport screenshot successful with a baseline for '${browserName}' with the legacy API`, async function () {
+        await expect(browser).toMatchScreenSnapshot('legacyEmulatedViewportScreenshot', { enableLegacyScreenshotMethod: true })
+    })
+
     it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function() {
         await expect(browser).toMatchFullPageSnapshot('bidiEmulatedFullPage')
     })
