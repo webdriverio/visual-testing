@@ -574,6 +574,10 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     async #setEmulationForBrowser(browserInstance: WebdriverIO.Browser, capabilities: WebdriverIO.Capabilities) {
+        if (!browserInstance.isBidi) {
+            return
+        }
+
         const chromeMobileEmulation = capabilities['goog:chromeOptions']?.mobileEmulation
         const edgeMobileEmulation = capabilities['ms:edgeOptions']?.mobileEmulation
         const mobileEmulation = chromeMobileEmulation || edgeMobileEmulation
@@ -598,10 +602,6 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     async #setEmulation(browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser, capabilities: WebdriverIO.Capabilities) {
-        if (!browser.isBidi) {
-            return
-        }
-
         if (browser.isMultiremote) {
             const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
             for (const browserInstance of Object.values(multiremoteBrowser)) {
