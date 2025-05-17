@@ -5,10 +5,6 @@ describe('@wdio/visual-service desktop bidi emulated', () => {
     // @ts-ignore
     const browserName = `${browser.capabilities.browserName}-${browser.capabilities.browserVersion}`
 
-    before(async function() {
-        await browser.emulate('device', 'Galaxy S9 +')
-    })
-
     beforeEach(async () => {
         await browser.url('')
         await $('.hero__title-logo').waitForDisplayed()
@@ -18,13 +14,15 @@ describe('@wdio/visual-service desktop bidi emulated', () => {
         await expect($('.hero__title-logo')).toMatchElementSnapshot('bidiEmulatedWdioLogo')
     })
 
-    it(`should compare a viewport screenshot successful with a baseline for '${browserName}'`, async function() {
+    it(`should compare a viewport screenshot successful with a baseline for '${browserName}'`, async function () {
         await expect(browser).toMatchScreenSnapshot('bidiEmulatedViewportScreenshot')
     })
 
-    // Disabled because of the issue with the full page screenshot for Bidi in emulated mode
-    // It's not taking the full page screenshot, but stitching the images together in a wrong way
-    // it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function() {
-    //     await expect(browser).toMatchFullPageSnapshot('bidiEmulatedFullPage')
-    // })
+    it(`should compare a viewport screenshot successful with a baseline for '${browserName}' with the legacy API`, async function () {
+        await expect(browser).toMatchScreenSnapshot('legacyEmulatedViewportScreenshot', { enableLegacyScreenshotMethod: true })
+    })
+
+    it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function() {
+        await expect(browser).toMatchFullPageSnapshot('bidiEmulatedFullPage')
+    })
 })
