@@ -91,7 +91,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1",
-    "webdriverio": "^9.13.0",
+    "webdriverio": "^9.14.0",
     "wdio-lambdatest-service": "^4.0.0"
   },
   "packageManager": "pnpm@9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7"
