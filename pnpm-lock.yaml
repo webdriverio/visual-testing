@@ -70,8 +70,8 @@ importers:
         specifier: ^9.14.0
         version: 9.14.0
       '@wdio/sauce-service':
-        specifier: ^9.13.0
-        version: 9.13.0
+        specifier: ^9.14.0
+        version: 9.14.0
       '@wdio/shared-store-service':
         specifier: ^9.14.0
         version: 9.14.0
@@ -2344,8 +2344,8 @@ packages:
     resolution: {integrity: sha512-4HhNLXcKKzphlQvxY2nvJLj1mE+yd87rIvhldEO3HleMDq0h9C1K+m45J0SxzQmT5i7VVBuhiuXzgZV300bh8g==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/sauce-service@9.13.0':
-    resolution: {integrity: sha512-ZFvFRa6wzbYsFAVLuYM+93Z3VDUA2zp8UfxoTpZc0jBwNckSA7QOSSLcHlN3yNR4Oo7mOt5Bw/YhQLP8Yq5Uxw==}
+  '@wdio/sauce-service@9.14.0':
+    resolution: {integrity: sha512-r7yKQz5U2OwQPisDf9lgBi8OOBSmK+GOTTTefXpN/f/4uOoz0l+crMl6xqQWFRTguEXxAY7/qUHRVohU81ACKg==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/shared-store-service@9.14.0':
@@ -8316,7 +8316,7 @@ snapshots:
       '@inquirer/figures': 1.0.11
       '@inquirer/type': 2.0.0
       '@types/mute-stream': 0.0.4
-      '@types/node': 22.15.17
+      '@types/node': 22.15.19
       '@types/wrap-ansi': 3.0.0
       ansi-escapes: 4.3.2
       cli-width: 4.1.0
@@ -9267,7 +9267,7 @@ snapshots:
 
   '@types/mute-stream@0.0.4':
     dependencies:
-      '@types/node': 22.15.17
+      '@types/node': 22.15.19
 
   '@types/node@12.20.55': {}
 
@@ -9823,13 +9823,13 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/sauce-service@9.13.0':
+  '@wdio/sauce-service@9.14.0':
     dependencies:
       '@wdio/logger': 9.4.4
-      '@wdio/types': 9.13.0
-      '@wdio/utils': 9.13.0
+      '@wdio/types': 9.14.0
+      '@wdio/utils': 9.14.0
       saucelabs: 9.0.2
-      webdriverio: 9.13.0
+      webdriverio: 9.14.0
     transitivePeerDependencies:
       - bare-buffer
       - bufferutil
