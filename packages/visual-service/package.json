@@ -28,7 +28,7 @@
   "dependencies": {
     "@wdio/globals": "^9.13.0",
     "@wdio/logger": "^9.4.4",
-    "@wdio/types": "^9.13.0",
+    "@wdio/types": "^9.14.0",
     "expect-webdriverio": "^5.1.0",
     "webdriver-image-comparison": "workspace:*"
   }
