@@ -58,8 +58,8 @@ importers:
         specifier: ^9.13.0
         version: 9.13.0
       '@wdio/cli':
-        specifier: ^9.13.0
-        version: 9.13.0
+        specifier: ^9.14.0
+        version: 9.14.0
       '@wdio/globals':
         specifier: ^9.13.0
         version: 9.13.0(@wdio/logger@9.4.4)
@@ -125,7 +125,7 @@ importers:
         version: 3.1.1(@types/debug@4.1.12)(@types/node@22.15.17)(@vitest/ui@3.1.1)(jsdom@26.1.0)
       wdio-lambdatest-service:
         specifier: ^4.0.0
-        version: 4.0.0(@wdio/cli@9.13.0)(@wdio/types@9.14.0)(webdriverio@9.14.0)
+        version: 4.0.0(@wdio/cli@9.14.0)(@wdio/types@9.14.0)(webdriverio@9.14.0)
       webdriverio:
         specifier: ^9.14.0
         version: 9.14.0
@@ -2291,8 +2291,8 @@ packages:
     resolution: {integrity: sha512-ocqRlWuF1jah7wPi42lqV6523trJeeKrcdQVExgp70E8czu7gtQr3LKJTFjO76eTzz43WhA4s9QP9bAEM481hA==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/cli@9.13.0':
-    resolution: {integrity: sha512-VulWwI3MFXK1E0nMxK9/EBCBhVJ9tktI/vFzexXKsWRZVDCWRAfwyq0lxiaAKaIkToQ4aVjB88nGC2mD0oROHA==}
+  '@wdio/cli@9.14.0':
+    resolution: {integrity: sha512-bS7015C54gZMs0gZrCQPFes5CqoVGtwTzlSzJBy0HBx94E8AQw/6feH1FyN6asz4uyfifpUbdpq7Q/7CkaEnGA==}
     engines: {node: '>=18.20.0'}
     hasBin: true
 
@@ -9789,16 +9789,16 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/cli@9.13.0':
+  '@wdio/cli@9.14.0':
     dependencies:
-      '@types/node': 20.17.46
+      '@types/node': 20.17.48
       '@vitest/snapshot': 2.1.9
-      '@wdio/config': 9.13.0
-      '@wdio/globals': 9.13.0(@wdio/logger@9.4.4)
+      '@wdio/config': 9.14.0
+      '@wdio/globals': 9.14.0(@wdio/logger@9.4.4)
       '@wdio/logger': 9.4.4
-      '@wdio/protocols': 9.13.0
-      '@wdio/types': 9.13.0
-      '@wdio/utils': 9.13.0
+      '@wdio/protocols': 9.14.0
+      '@wdio/types': 9.14.0
+      '@wdio/utils': 9.14.0
       async-exit-hook: 2.0.1
       chalk: 5.4.1
       chokidar: 4.0.3
@@ -9813,7 +9813,7 @@ snapshots:
       read-pkg-up: 10.1.0
       recursive-readdir: 2.2.3
       tsx: 4.19.4
-      webdriverio: 9.13.0
+      webdriverio: 9.14.0
       yargs: 17.7.2
     transitivePeerDependencies:
       - bare-buffer
@@ -15650,10 +15650,10 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@4.0.0(@wdio/cli@9.13.0)(@wdio/types@9.14.0)(webdriverio@9.14.0):
+  wdio-lambdatest-service@4.0.0(@wdio/cli@9.14.0)(@wdio/types@9.14.0)(webdriverio@9.14.0):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.9
-      '@wdio/cli': 9.13.0
+      '@wdio/cli': 9.14.0
       '@wdio/logger': 7.26.0
       '@wdio/types': 9.14.0
       axios: 1.8.4
