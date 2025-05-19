@@ -80,7 +80,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^9.27.0",
     "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-unicorn": "^56.0.1",
+    "eslint-plugin-unicorn": "^59.0.1",
     "eslint-plugin-wdio": "^9.9.1",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
