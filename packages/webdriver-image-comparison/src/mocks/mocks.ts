@@ -7,6 +7,7 @@ export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
         browserVersion: '75.0.1',
         deviceName: '',
         devicePixelRatio: 1,
+        initialDevicePixelRatio: 1,
         deviceRectangles: {
             statusBar: { y: 0, x: 0, width: 0, height: 0 },
             homeBar: { y: 0, x: 0, width: 0, height: 0 },
