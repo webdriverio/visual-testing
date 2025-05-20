@@ -32,6 +32,7 @@ describe('getEnrichedInstanceData', () => {
                 },
                 window: {
                     devicePixelRatio: 1,
+                    isEmulated: false,
                     innerHeight: 768,
                     innerWidth: 1024,
                     outerHeight: 768,
@@ -74,6 +75,7 @@ describe('getEnrichedInstanceData', () => {
                 },
                 window: {
                     devicePixelRatio: 1,
+                    isEmulated: false,
                     innerHeight: 768,
                     innerWidth: 1024,
                     outerHeight: 768,
@@ -116,6 +118,7 @@ describe('getEnrichedInstanceData', () => {
                 },
                 window: {
                     devicePixelRatio: 1,
+                    isEmulated: false,
                     innerHeight: 768,
                     innerWidth: 1024,
                     outerHeight: 768,
@@ -158,6 +161,7 @@ describe('getEnrichedInstanceData', () => {
                 },
                 window: {
                     devicePixelRatio: 1,
+                    isEmulated: false,
                     innerHeight: 768,
                     innerWidth: 1024,
                     outerHeight: 768,

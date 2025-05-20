@@ -72,14 +72,22 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
     // Determine screenshot data
     const {
         devicePixelRatio,
+        enableLegacyScreenshotMethod,
+        initialDevicePixelRatio,
         innerHeight,
         innerWidth,
+        isEmulated,
         isIOS,
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
         isLandscape,
     } = options
-    const { height, width } = getBase64ScreenshotSize(base64Image, devicePixelRatio)
+
+    // For #967: When a screenshot of an emulated device is taken, but the browser was initially
+    // started as a "desktop" session, so not with emulated caps, we need to store the initial
+    // devicePixelRatio when we take a screenshot and enableLegacyScreenshotMethod is enabled
+    const internalDpr = isEmulated && enableLegacyScreenshotMethod ? initialDevicePixelRatio : devicePixelRatio
+    const { height, width } = getBase64ScreenshotSize(base64Image, internalDpr)
 
     // Determine the width
     const screenshotWidth = isIOS || isAndroidChromeDriverScreenshot ? width : innerWidth
@@ -94,7 +102,7 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
             x: 0,
             y: 0,
         },
-        devicePixelRatio,
+        internalDpr,
     )
 }
 

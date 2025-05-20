@@ -284,6 +284,9 @@ describe('rectangles', () => {
                 isIOS: true,
                 devicePixelRatio: 2,
                 isLandscape: false,
+                initialDevicePixelRatio: 2,
+                enableLegacyScreenshotMethod: false,
+                isEmulated: false,
             }
 
             expect(await determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
@@ -298,6 +301,9 @@ describe('rectangles', () => {
                 isIOS: false,
                 devicePixelRatio: 2,
                 isLandscape: false,
+                initialDevicePixelRatio: 2,
+                enableLegacyScreenshotMethod: false,
+                isEmulated: false,
             }
 
             expect(await determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
@@ -312,6 +318,9 @@ describe('rectangles', () => {
                 isIOS: false,
                 devicePixelRatio: 2,
                 isLandscape: false,
+                initialDevicePixelRatio: 2,
+                enableLegacyScreenshotMethod: false,
+                isEmulated: false,
             }
 
             expect(await determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()

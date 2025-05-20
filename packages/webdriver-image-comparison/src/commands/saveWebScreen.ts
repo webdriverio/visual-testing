@@ -55,8 +55,19 @@ export default async function saveWebScreen(
         browserVersion,
         deviceName,
         dimensions: {
-            window: { devicePixelRatio, innerHeight, innerWidth, isLandscape, outerHeight, outerWidth, screenHeight, screenWidth },
+            window: {
+                devicePixelRatio,
+                innerHeight,
+                innerWidth,
+                isEmulated,
+                isLandscape,
+                outerHeight,
+                outerWidth,
+                screenHeight,
+                screenWidth,
+            },
         },
+        initialDevicePixelRatio,
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
         isIOS,
@@ -84,10 +95,13 @@ export default async function saveWebScreen(
         // Determine the rectangles
         const screenRectangleOptions: ScreenRectanglesOptions = {
             devicePixelRatio: devicePixelRatio || NaN,
+            enableLegacyScreenshotMethod,
             innerHeight: innerHeight || NaN,
             innerWidth: innerWidth || NaN,
             isAndroidChromeDriverScreenshot,
             isAndroidNativeWebScreenshot,
+            isEmulated: isEmulated || false,
+            initialDevicePixelRatio: initialDevicePixelRatio || NaN,
             isIOS,
             isLandscape,
         }

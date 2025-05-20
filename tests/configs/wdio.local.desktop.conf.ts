@@ -73,6 +73,7 @@ export const config: WebdriverIO.Config = {
                 createJsonReportFiles: true,
                 clearRuntimeFolder: true,
                 enableLayoutTesting: true,
+                enableLegacyScreenshotMethod: true,
             },
         ]
     ],

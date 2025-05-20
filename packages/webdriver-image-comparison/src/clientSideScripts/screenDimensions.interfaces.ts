@@ -76,6 +76,11 @@ export interface ScreenDimensions {
              */
             devicePixelRatio?: number;
             /**
+             * Mobile: Always false
+             * Desktop: Depending if the screen is emulated to a "mobile" device
+             */
+            isEmulated?: boolean;
+            /**
              * Mobile: Physical screen width in CSS pixels
              * Desktop: Monitor width in pixels
              */

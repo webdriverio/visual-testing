@@ -142,6 +142,7 @@ describe('utils', () => {
                 browserVersion: '75.123',
                 platformName: 'osx',
             },
+            execute: vi.fn().mockResolvedValue(1),
         } as any as WebdriverIO.Browser
         const createDriverMock = (customProps: Partial<WebdriverIO.Browser>) => {
             return ({ ...DEFAULT_DESKTOP_BROWSER, ...customProps }) as WebdriverIO.Browser
@@ -165,6 +166,7 @@ describe('utils', () => {
                         logName: 'wdio-ics-logName',
                     },
                 },
+                execute: vi.fn().mockResolvedValue(1),
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:false })).toMatchSnapshot()
         })
@@ -178,6 +180,7 @@ describe('utils', () => {
                         name: 'wdio-ics-name',
                     },
                 },
+                execute: vi.fn().mockResolvedValue(1),
             })
             expect(await getInstanceData({ currentBrowser: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:false })).toMatchSnapshot()
         })
@@ -597,6 +600,7 @@ describe('utils', () => {
                         screenSize: { width: 0, height: 0 },
                         viewport: { y: 0, x: 0, width: 0, height: 0 },
                     },
+                    initialDevicePixelRatio: 3.5,
                     logName: 'Pixel_5_Chrome',
                     name: 'Pixel_5',
                     nativeWebScreenshot: false,

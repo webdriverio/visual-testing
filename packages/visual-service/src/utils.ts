@@ -212,7 +212,10 @@ export async function getInstanceData({
     // Generic data
     const browserName = rawBrowserName === '' ? NOT_KNOWN : rawBrowserName.toLowerCase()
     const browserVersion = rawBrowserVersion === '' ? NOT_KNOWN : rawBrowserVersion.toLowerCase()
-    let devicePixelRatio = 1
+    // For #967: When a screenshot of an emulated device is taken, but the browser was initially
+    // started as a "desktop" session, so not with emulated caps, we need to store the initial
+    // devicePixelRatio when we take a screenshot and enableLegacyScreenshotMethod is enabled
+    let devicePixelRatio = !currentBrowser.isMobile ? (await currentBrowser.execute('return window.devicePixelRatio')) as number : 1
     const platformName = rawPlatformName === '' ? NOT_KNOWN : rawPlatformName.toLowerCase()
     const logName =
         'wdio-ics:options' in requestedCapabilities
@@ -256,6 +259,7 @@ export async function getInstanceData({
         deviceName,
         devicePixelRatio,
         deviceRectangles,
+        initialDevicePixelRatio: devicePixelRatio,
         isAndroid,
         isIOS,
         isMobile,
