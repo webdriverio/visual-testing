@@ -59,8 +59,18 @@ export default async function saveWebElement(
         browserVersion,
         deviceName,
         dimensions: {
-            window: { devicePixelRatio, innerHeight, isLandscape, outerHeight, outerWidth, screenHeight, screenWidth },
+            window: {
+                devicePixelRatio,
+                innerHeight,
+                isEmulated,
+                isLandscape,
+                outerHeight,
+                outerWidth,
+                screenHeight,
+                screenWidth,
+            },
         },
+        initialDevicePixelRatio,
         isAndroid,
         isAndroidNativeWebScreenshot,
         isIOS,
@@ -115,13 +125,16 @@ export default async function saveWebElement(
             deviceRectangles: instanceData.deviceRectangles,
             element,
             executor,
+            initialDevicePixelRatio,
+            isEmulated,
             innerHeight,
             isAndroidNativeWebScreenshot,
             isAndroid,
             isIOS,
             isLandscape,
             // When the element needs to be resized, we need to take a screenshot of the whole page
-            fallback: !!saveElementOptions.method.resizeDimensions || false,
+            // also when it's emulated
+            fallback: (!!saveElementOptions.method.resizeDimensions || isEmulated) || false,
             screenShot,
             takeElementScreenshot,
         })

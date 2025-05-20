@@ -98,6 +98,8 @@ export interface TakeWebElementScreenshot {
     element: any,
     executor: Executor,
     fallback?: boolean,
+    initialDevicePixelRatio: number,
+    isEmulated: boolean,
     innerHeight?: number,
     isAndroidNativeWebScreenshot: boolean,
     isAndroid: boolean,

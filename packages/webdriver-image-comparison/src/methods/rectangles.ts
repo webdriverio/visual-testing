@@ -26,12 +26,15 @@ export async function determineElementRectangles({
     const {
         devicePixelRatio,
         deviceRectangles,
+        initialDevicePixelRatio,
         innerHeight,
         isAndroid,
         isAndroidNativeWebScreenshot,
+        isEmulated,
         isIOS,
     } = options
-    const { height } = getBase64ScreenshotSize(base64Image, devicePixelRatio)
+    const internalDpr = isEmulated ? initialDevicePixelRatio : devicePixelRatio
+    const { height } = getBase64ScreenshotSize(base64Image, internalDpr)
     let elementPosition
 
     // Determine the element position on the screenshot
@@ -42,7 +45,6 @@ export async function determineElementRectangles({
     } else {
         elementPosition = await getElementPositionDesktop(executor, element, { innerHeight, screenshotHeight: height })
     }
-
     // Validate if the element is visible
     if (elementPosition.height === 0 || elementPosition.width === 0) {
         let selectorMessage = ' '
@@ -61,7 +63,7 @@ export async function determineElementRectangles({
             x: elementPosition.x,
             y: elementPosition.y,
         },
-        devicePixelRatio,
+        internalDpr,
     )
 }
 

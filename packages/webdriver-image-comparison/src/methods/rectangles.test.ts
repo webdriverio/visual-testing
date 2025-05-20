@@ -21,6 +21,8 @@ describe('rectangles', () => {
                 isAndroidNativeWebScreenshot: false,
                 innerHeight: 678,
                 isIOS: true,
+                initialDevicePixelRatio: 2,
+                isEmulated: false,
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
@@ -56,6 +58,8 @@ describe('rectangles', () => {
                     leftSidePadding: { y: 0, x: 0, width: 0, height: 0 },
                     rightSidePadding: { y: 0, x: 0, width: 0, height: 0 },
                 },
+                initialDevicePixelRatio: 3,
+                isEmulated: false,
                 isAndroidNativeWebScreenshot: true,
                 innerHeight: 678,
                 isIOS: false,
@@ -97,6 +101,8 @@ describe('rectangles', () => {
                 isAndroidNativeWebScreenshot: false,
                 innerHeight: 678,
                 isIOS: false,
+                initialDevicePixelRatio: 1,
+                isEmulated: false,
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
@@ -135,6 +141,8 @@ describe('rectangles', () => {
                 isAndroidNativeWebScreenshot: false,
                 innerHeight: 500,
                 isIOS: false,
+                initialDevicePixelRatio: 2,
+                isEmulated: false,
             }
             const MOCKED_EXECUTOR = vi
                 .fn()
@@ -173,6 +181,8 @@ describe('rectangles', () => {
                 isAndroidNativeWebScreenshot: false,
                 innerHeight: 500,
                 isIOS: false,
+                initialDevicePixelRatio: 2,
+                isEmulated: false,
             }
             const MOCKED_EXECUTOR = vi.fn().mockResolvedValueOnce({
                 height: 0,
@@ -212,6 +222,8 @@ describe('rectangles', () => {
                 isAndroidNativeWebScreenshot: false,
                 innerHeight: 500,
                 isIOS: false,
+                initialDevicePixelRatio: 2,
+                isEmulated: false,
             }
             const MOCKED_EXECUTOR = vi.fn().mockResolvedValueOnce({
                 height: 375,
@@ -251,6 +263,8 @@ describe('rectangles', () => {
                 isAndroidNativeWebScreenshot: false,
                 innerHeight: 500,
                 isIOS: false,
+                initialDevicePixelRatio: 2,
+                isEmulated: false,
             }
             const MOCKED_EXECUTOR = vi.fn().mockResolvedValueOnce({
                 height: 375,

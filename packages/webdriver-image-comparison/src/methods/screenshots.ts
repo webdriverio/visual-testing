@@ -451,6 +451,8 @@ export async function takeWebElementScreenshot({
     element,
     executor,
     fallback = false,
+    initialDevicePixelRatio,
+    isEmulated,
     innerHeight,
     isAndroidNativeWebScreenshot,
     isAndroid,
@@ -467,16 +469,18 @@ export async function takeWebElementScreenshot({
              */
             devicePixelRatio: devicePixelRatio || NaN,
             deviceRectangles,
+            initialDevicePixelRatio,
             innerHeight: innerHeight || NaN,
+            isEmulated,
             isAndroidNativeWebScreenshot,
             isAndroid,
             isIOS,
         }
         const rectangles = await determineElementRectangles({
-            executor,
             base64Image,
-            options: elementRectangleOptions,
             element,
+            executor,
+            options: elementRectangleOptions,
         })
 
         return {
@@ -508,6 +512,8 @@ export async function takeWebElementScreenshot({
             element,
             executor,
             fallback: true,
+            initialDevicePixelRatio,
+            isEmulated,
             innerHeight,
             isAndroidNativeWebScreenshot,
             isAndroid,

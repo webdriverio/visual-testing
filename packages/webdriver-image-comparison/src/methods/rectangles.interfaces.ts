@@ -16,6 +16,10 @@ export interface ElementRectanglesOptions extends RectanglesOptions {
     deviceRectangles: DeviceRectangles;
     /** If this is an Android device */
     isAndroid: boolean;
+    /** If the screen is emulated */
+    isEmulated: boolean;
+    /** The initial devicePixelRatio of the instance */
+    initialDevicePixelRatio: number;
 }
 
 export interface ScreenRectanglesOptions extends RectanglesOptions {

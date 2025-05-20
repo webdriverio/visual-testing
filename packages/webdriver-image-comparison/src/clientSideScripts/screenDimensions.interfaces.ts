@@ -79,7 +79,7 @@ export interface ScreenDimensions {
              * Mobile: Always false
              * Desktop: Depending if the screen is emulated to a "mobile" device
              */
-            isEmulated?: boolean;
+            isEmulated: boolean;
             /**
              * Mobile: Physical screen width in CSS pixels
              * Desktop: Monitor width in pixels
