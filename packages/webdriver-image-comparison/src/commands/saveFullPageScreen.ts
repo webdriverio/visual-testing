@@ -61,11 +61,36 @@ export default async function saveFullPageScreen(
         waitForFontsLoaded,
     }
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(methods.executor, beforeOptions, true)
-    const devicePixelRatio = enrichedInstanceData.dimensions.window.devicePixelRatio
-    const isLandscape = enrichedInstanceData.dimensions.window.isLandscape
+    const {
+        browserName,
+        browserVersion,
+        deviceName,
+        dimensions: {
+            window: {
+                devicePixelRatio,
+                innerHeight,
+                isEmulated,
+                isLandscape,
+                outerHeight,
+                outerWidth,
+                screenHeight,
+                screenWidth,
+            },
+        },
+        isAndroid,
+        isAndroidChromeDriverScreenshot,
+        isAndroidNativeWebScreenshot,
+        isIOS,
+        isMobile,
+        isTestInBrowser,
+        logName,
+        name,
+        platformName,
+        platformVersion,
+    } = enrichedInstanceData
     let fullPageBase64Image: string
 
-    if (canUseBidiScreenshot(methods) && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)) {
+    if (canUseBidiScreenshot(methods) && !isEmulated &&(!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)) {
         // 3a.  Fullpage screenshots are taken in one go with the Bidi protocol
         fullPageBase64Image = await takeBase64BiDiScreenshot({
             bidiScreenshot: methods.bidiScreenshot!,
@@ -75,20 +100,20 @@ export default async function saveFullPageScreen(
     } else {
         // 3b.  Fullpage screenshots are taken per scrolled viewport
         const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
-            addressBarShadowPadding: enrichedInstanceData.addressBarShadowPadding,
+            addressBarShadowPadding,
             devicePixelRatio: devicePixelRatio || NaN,
             deviceRectangles: instanceData.deviceRectangles,
             fullPageScrollTimeout,
             hideAfterFirstScroll,
-            innerHeight: enrichedInstanceData.dimensions.window.innerHeight || NaN,
-            isAndroid: enrichedInstanceData.isAndroid,
-            isAndroidChromeDriverScreenshot: enrichedInstanceData.isAndroidChromeDriverScreenshot,
-            isAndroidNativeWebScreenshot: enrichedInstanceData.isAndroidNativeWebScreenshot,
-            isIOS: enrichedInstanceData.isIOS,
+            innerHeight: innerHeight || NaN,
+            isAndroid,
+            isAndroidChromeDriverScreenshot,
+            isAndroidNativeWebScreenshot,
+            isIOS,
             isLandscape,
-            screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
-            screenWidth: enrichedInstanceData.dimensions.window.screenWidth || NaN,
-            toolBarShadowPadding: enrichedInstanceData.toolBarShadowPadding,
+            screenHeight: screenHeight || NaN,
+            screenWidth: screenWidth || NaN,
+            toolBarShadowPadding: toolBarShadowPadding,
         }
         const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(
             methods.screenShot,
@@ -111,34 +136,34 @@ export default async function saveFullPageScreen(
         disableCSSAnimation,
         enableLayoutTesting,
         filePath: {
-            browserName: enrichedInstanceData.browserName,
-            deviceName: enrichedInstanceData.deviceName,
-            isMobile: enrichedInstanceData.isMobile,
+            browserName,
+            deviceName,
+            isMobile,
             savePerInstance,
         },
         fileName: {
-            browserName: enrichedInstanceData.browserName,
-            browserVersion: enrichedInstanceData.browserVersion,
-            deviceName: enrichedInstanceData.deviceName,
-            devicePixelRatio: enrichedInstanceData.dimensions.window.devicePixelRatio || NaN,
+            browserName,
+            browserVersion,
+            deviceName,
+            devicePixelRatio: devicePixelRatio || NaN,
             formatImageName,
-            isMobile: enrichedInstanceData.isMobile,
-            isTestInBrowser: enrichedInstanceData.isTestInBrowser,
-            logName: enrichedInstanceData.logName,
-            name: enrichedInstanceData.name,
-            outerHeight: enrichedInstanceData.dimensions.window.outerHeight || NaN,
-            outerWidth: enrichedInstanceData.dimensions.window.outerWidth || NaN,
-            platformName: enrichedInstanceData.platformName,
-            platformVersion: enrichedInstanceData.platformVersion,
-            screenHeight: enrichedInstanceData.dimensions.window.screenHeight || NaN,
-            screenWidth: enrichedInstanceData.dimensions.window.screenWidth || NaN,
+            isMobile,
+            isTestInBrowser,
+            logName,
+            name,
+            outerHeight: outerHeight || NaN,
+            outerWidth: outerWidth || NaN,
+            platformName,
+            platformVersion,
+            screenHeight: screenHeight || NaN,
+            screenWidth: screenWidth || NaN,
             tag,
         },
         hideElements,
         hideScrollBars,
         isLandscape,
         isNativeContext: false,
-        platformName: instanceData.platformName,
+        platformName,
         removeElements,
     }
 

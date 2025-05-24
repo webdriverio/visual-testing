@@ -132,6 +132,39 @@ function mergeBoundingBoxes(boxes: BoundingBox[], proximity: number): BoundingBo
 function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[] {
     log.info('Processing diff pixels started')
     log.info(`Processing ${diffPixels.length} diff pixels`)
+
+    // Calculate total pixels and diff percentage
+    let maxX = 0
+    let maxY = 0
+    for (const pixel of diffPixels) {
+        maxX = Math.max(maxX, pixel.x)
+        maxY = Math.max(maxY, pixel.y)
+    }
+    const totalPixels = diffPixels.length > 0 ? (maxX + 1) * (maxY + 1) : 0
+    const diffPercentage = totalPixels > 0 ? (diffPixels.length / totalPixels) * 100 : 0
+
+    log.info(`Total pixels in image: ${totalPixels.toLocaleString()}`)
+    log.info(`Number of diff pixels: ${diffPixels.length.toLocaleString()}`)
+    log.info(`Diff percentage: ${diffPercentage.toFixed(2)}%`)
+
+    // Fail fast if there are too many differences
+    const MAX_DIFF_PERCENTAGE = 20 // 20% threshold
+    const MAX_DIFF_PIXELS = 5000000 // 5M pixels threshold
+
+    if (diffPercentage > MAX_DIFF_PERCENTAGE || diffPixels.length > MAX_DIFF_PIXELS) {
+        log.error(`Too many differences detected! Diff percentage: ${diffPercentage.toFixed(2)}%, Diff pixels: ${diffPixels.length.toLocaleString()}`)
+        log.error('This likely indicates a major visual difference or an issue with the comparison.')
+        log.error('Consider checking if the baseline image is correct or if there are major UI changes.')
+
+        // Return a single bounding box covering the entire image
+        return [{
+            left: 0,
+            top: 0,
+            right: maxX,
+            bottom: maxY
+        }]
+    }
+
     const totalStartTime = Date.now()
 
     const ds = new DisjointSet()
