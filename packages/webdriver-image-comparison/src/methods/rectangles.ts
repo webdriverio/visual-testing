@@ -26,12 +26,15 @@ export async function determineElementRectangles({
     const {
         devicePixelRatio,
         deviceRectangles,
+        initialDevicePixelRatio,
         innerHeight,
         isAndroid,
         isAndroidNativeWebScreenshot,
+        isEmulated,
         isIOS,
     } = options
-    const { height } = getBase64ScreenshotSize(base64Image, devicePixelRatio)
+    const internalDpr = isEmulated ? initialDevicePixelRatio : devicePixelRatio
+    const { height } = getBase64ScreenshotSize(base64Image, internalDpr)
     let elementPosition
 
     // Determine the element position on the screenshot
@@ -42,7 +45,6 @@ export async function determineElementRectangles({
     } else {
         elementPosition = await getElementPositionDesktop(executor, element, { innerHeight, screenshotHeight: height })
     }
-
     // Validate if the element is visible
     if (elementPosition.height === 0 || elementPosition.width === 0) {
         let selectorMessage = ' '
@@ -61,7 +63,7 @@ export async function determineElementRectangles({
             x: elementPosition.x,
             y: elementPosition.y,
         },
-        devicePixelRatio,
+        internalDpr,
     )
 }
 
@@ -72,14 +74,22 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
     // Determine screenshot data
     const {
         devicePixelRatio,
+        enableLegacyScreenshotMethod,
+        initialDevicePixelRatio,
         innerHeight,
         innerWidth,
+        isEmulated,
         isIOS,
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
         isLandscape,
     } = options
-    const { height, width } = getBase64ScreenshotSize(base64Image, devicePixelRatio)
+
+    // For #967: When a screenshot of an emulated device is taken, but the browser was initially
+    // started as a "desktop" session, so not with emulated caps, we need to store the initial
+    // devicePixelRatio when we take a screenshot and enableLegacyScreenshotMethod is enabled
+    const internalDpr = isEmulated && enableLegacyScreenshotMethod ? initialDevicePixelRatio : devicePixelRatio
+    const { height, width } = getBase64ScreenshotSize(base64Image, internalDpr)
 
     // Determine the width
     const screenshotWidth = isIOS || isAndroidChromeDriverScreenshot ? width : innerWidth
@@ -94,7 +104,7 @@ export function determineScreenRectangles(base64Image: string, options: ScreenRe
             x: 0,
             y: 0,
         },
-        devicePixelRatio,
+        internalDpr,
     )
 }
 

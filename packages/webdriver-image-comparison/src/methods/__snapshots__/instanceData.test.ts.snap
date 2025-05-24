@@ -3,6 +3,7 @@
 exports[`getEnrichedInstanceData > should be able to enrich the instance data with all the defaults for Android ChromeDriver with no shadow padding 1`] = `
 {
   "addressBarShadowPadding": 0,
+  "appName": "not_known",
   "body": {
     "offsetHeight": 0,
     "scrollHeight": 0,
@@ -10,6 +11,55 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
+  "devicePixelRatio": 1,
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 0,
+      "width": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "html": {
     "clientHeight": 0,
     "clientWidth": 0,
@@ -17,6 +67,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
     "scrollHeight": 0,
     "scrollWidth": 0,
   },
+  "initialDevicePixelRatio": 1,
   "isAndroid": true,
   "isAndroidChromeDriverScreenshot": true,
   "isAndroidNativeWebScreenshot": false,
@@ -34,6 +85,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
     "devicePixelRatio": 1,
     "innerHeight": 768,
     "innerWidth": 1024,
+    "isEmulated": false,
     "outerHeight": 768,
     "outerWidth": 1024,
     "screenHeight": 0,
@@ -45,6 +97,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
 exports[`getEnrichedInstanceData > should be able to enrich the instance data with all the defaults for Android Native Webscreenshot with no shadow padding 1`] = `
 {
   "addressBarShadowPadding": 0,
+  "appName": "not_known",
   "body": {
     "offsetHeight": 0,
     "scrollHeight": 0,
@@ -52,6 +105,55 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
+  "devicePixelRatio": 1,
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 0,
+      "width": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "html": {
     "clientHeight": 0,
     "clientWidth": 0,
@@ -59,6 +161,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
     "scrollHeight": 0,
     "scrollWidth": 0,
   },
+  "initialDevicePixelRatio": 1,
   "isAndroid": true,
   "isAndroidChromeDriverScreenshot": false,
   "isAndroidNativeWebScreenshot": true,
@@ -76,6 +179,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
     "devicePixelRatio": 1,
     "innerHeight": 768,
     "innerWidth": 1024,
+    "isEmulated": false,
     "outerHeight": 768,
     "outerWidth": 1024,
     "screenHeight": 0,
@@ -87,6 +191,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
 exports[`getEnrichedInstanceData > should be able to enrich the instance data with all the defaults for desktop with no shadow padding 1`] = `
 {
   "addressBarShadowPadding": 0,
+  "appName": "not_known",
   "body": {
     "offsetHeight": 0,
     "scrollHeight": 0,
@@ -94,6 +199,55 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
+  "devicePixelRatio": 1,
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 0,
+      "width": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "html": {
     "clientHeight": 0,
     "clientWidth": 0,
@@ -101,6 +255,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
     "scrollHeight": 0,
     "scrollWidth": 0,
   },
+  "initialDevicePixelRatio": 1,
   "isAndroid": false,
   "isAndroidChromeDriverScreenshot": false,
   "isAndroidNativeWebScreenshot": false,
@@ -118,6 +273,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
     "devicePixelRatio": 1,
     "innerHeight": 768,
     "innerWidth": 1024,
+    "isEmulated": false,
     "outerHeight": 768,
     "outerWidth": 1024,
     "screenHeight": 0,
@@ -129,6 +285,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
 exports[`getEnrichedInstanceData > should be able to enrich the instance data with all the defaults for iOS with shadow padding 1`] = `
 {
   "addressBarShadowPadding": 6,
+  "appName": "not_known",
   "body": {
     "offsetHeight": 0,
     "scrollHeight": 0,
@@ -136,6 +293,55 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
+  "devicePixelRatio": 1,
+  "deviceRectangles": {
+    "bottomBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "homeBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "leftSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "rightSidePadding": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "screenSize": {
+      "height": 0,
+      "width": 0,
+    },
+    "statusBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "statusBarAndAddressBar": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    "viewport": {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+  },
   "html": {
     "clientHeight": 0,
     "clientWidth": 0,
@@ -143,6 +349,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
     "scrollHeight": 0,
     "scrollWidth": 0,
   },
+  "initialDevicePixelRatio": 1,
   "isAndroid": false,
   "isAndroidChromeDriverScreenshot": false,
   "isAndroidNativeWebScreenshot": false,
@@ -160,6 +367,7 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
     "devicePixelRatio": 1,
     "innerHeight": 768,
     "innerWidth": 1024,
+    "isEmulated": false,
     "outerHeight": 768,
     "outerWidth": 1024,
     "screenHeight": 0,

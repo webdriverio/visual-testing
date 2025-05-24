@@ -48,6 +48,7 @@ describe('@wdio/visual-service', () => {
                 capabilities: {},
                 requestedCapabilities: {},
                 on: vi.fn(),
+                execute: vi.fn().mockResolvedValue(1),
             } as any as WebdriverIO.Browser
             const spy = vi.spyOn(service, 'before')
 
@@ -93,7 +94,7 @@ describe('@wdio/visual-service', () => {
                 getInstance: vi.fn().mockReturnValue(browserInstance),
                 chrome: chromeInstance,
                 firefox: firefoxInstance,
-                on: vi.fn(),
+                on: vi.fn(), execute: vi.fn().mockResolvedValue(1),
             } as any as WebdriverIO.Browser
             // @ts-expect-error
             browserInstance = {
@@ -121,6 +122,7 @@ describe('@wdio/visual-service', () => {
             browser.getInstances = vi.fn().mockReturnValue(['chrome', 'firefox'])
             // @ts-expect-error
             browser.getInstance = vi.fn().mockReturnValue(browserInstance)
+            browserInstance.execute = vi.fn().mockResolvedValue(1)
 
             await service.before({
                 'chrome': { capabilities: {} },
@@ -143,6 +145,7 @@ describe('@wdio/visual-service', () => {
                 capabilities: {},
                 requestedCapabilities: {},
                 on: vi.fn(),
+                execute: vi.fn().mockResolvedValue(1),
             } as any as WebdriverIO.Browser
 
             await service.before({}, [], browser)
@@ -162,6 +165,7 @@ describe('@wdio/visual-service', () => {
                 capabilities: {},
                 requestedCapabilities: {},
                 on: vi.fn(),
+                execute: vi.fn().mockResolvedValue(1),
             } as any as WebdriverIO.Browser
 
             await service.before({}, [], browser)

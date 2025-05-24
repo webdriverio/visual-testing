@@ -13,6 +13,7 @@ vi.mock('webdriver-image-comparison', () => ({
     saveScreen: vi.fn(),
     saveTabbablePage: vi.fn(),
     checkTabbablePage: vi.fn(),
+    execute: vi.fn(),
     DEFAULT_TEST_CONTEXT: {},
     NOT_KNOWN: 'not_known',
     DEVICE_RECTANGLES: {
@@ -41,6 +42,7 @@ describe('@wdio/visual-service', () => {
             capabilities: {},
             requestedCapabilities: {},
             on: vi.fn(),
+            execute: vi.fn(),
         } as any as WebdriverIO.Browser
         await service.before({}, [], browser)
         // expect(log.warn).toBeCalledTimes(1)

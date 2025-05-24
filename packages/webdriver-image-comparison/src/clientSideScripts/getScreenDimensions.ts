@@ -80,6 +80,12 @@ export default function getScreenDimensions(): ScreenDimensions {
          */
         devicePixelRatio: window.devicePixelRatio,
         /**
+         * Mobile: Always false
+         * Desktop: Always false
+         * Emulated: Always true
+         */
+        isEmulated: isLikelyEmulated,
+        /**
          * Mobile: Physical screen width in CSS pixels
          * Desktop: Monitor width in pixels
          * Emulated: It will be the same as window.innerWidth

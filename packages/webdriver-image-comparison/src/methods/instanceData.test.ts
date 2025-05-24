@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import getEnrichedInstanceData from './instanceData.js'
+import { DEVICE_RECTANGLES, NOT_KNOWN } from '../helpers/constants.js'
 
 describe('getEnrichedInstanceData', () => {
     it('should be able to enrich the instance data with all the defaults for desktop with no shadow padding', async () => {
@@ -14,6 +15,14 @@ describe('getEnrichedInstanceData', () => {
             nativeWebScreenshot: false,
             platformName: 'platformName',
             platformVersion: 'platformVersion',
+            // Defaults
+            appName: NOT_KNOWN,
+            devicePixelRatio: 1,
+            deviceRectangles: DEVICE_RECTANGLES,
+            initialDevicePixelRatio: 1,
+            isAndroid: false,
+            isIOS: false,
+            isMobile: false,
         }
         const MOCKED_EXECUTOR = vi
             .fn()
@@ -32,6 +41,7 @@ describe('getEnrichedInstanceData', () => {
                 },
                 window: {
                     devicePixelRatio: 1,
+                    isEmulated: false,
                     innerHeight: 768,
                     innerWidth: 1024,
                     outerHeight: 768,
@@ -56,6 +66,14 @@ describe('getEnrichedInstanceData', () => {
             nativeWebScreenshot: false,
             platformName: 'Android',
             platformVersion: '8.0',
+            // Defaults
+            appName: NOT_KNOWN,
+            devicePixelRatio: 1,
+            deviceRectangles: DEVICE_RECTANGLES,
+            initialDevicePixelRatio: 1,
+            isAndroid: true,
+            isIOS: false,
+            isMobile: true,
         }
         const MOCKED_EXECUTOR = vi
             .fn()
@@ -74,6 +92,7 @@ describe('getEnrichedInstanceData', () => {
                 },
                 window: {
                     devicePixelRatio: 1,
+                    isEmulated: false,
                     innerHeight: 768,
                     innerWidth: 1024,
                     outerHeight: 768,
@@ -98,6 +117,14 @@ describe('getEnrichedInstanceData', () => {
             nativeWebScreenshot: true,
             platformName: 'Android',
             platformVersion: '8.0',
+            // Defaults
+            appName: NOT_KNOWN,
+            devicePixelRatio: 1,
+            deviceRectangles: DEVICE_RECTANGLES,
+            initialDevicePixelRatio: 1,
+            isAndroid: true,
+            isIOS: false,
+            isMobile: true,
         }
         const MOCKED_EXECUTOR = vi
             .fn()
@@ -116,6 +143,7 @@ describe('getEnrichedInstanceData', () => {
                 },
                 window: {
                     devicePixelRatio: 1,
+                    isEmulated: false,
                     innerHeight: 768,
                     innerWidth: 1024,
                     outerHeight: 768,
@@ -140,6 +168,14 @@ describe('getEnrichedInstanceData', () => {
             nativeWebScreenshot: false,
             platformName: 'iOS',
             platformVersion: '12.4',
+            // Defaults
+            appName: NOT_KNOWN,
+            devicePixelRatio: 1,
+            deviceRectangles: DEVICE_RECTANGLES,
+            initialDevicePixelRatio: 1,
+            isAndroid: false,
+            isIOS: true,
+            isMobile: true,
         }
         const MOCKED_EXECUTOR = vi
             .fn()
@@ -158,6 +194,7 @@ describe('getEnrichedInstanceData', () => {
                 },
                 window: {
                     devicePixelRatio: 1,
+                    isEmulated: false,
                     innerHeight: 768,
                     innerWidth: 1024,
                     outerHeight: 768,

@@ -18,11 +18,21 @@ describe('@wdio/visual-service desktop bidi emulated', () => {
         await expect(browser).toMatchScreenSnapshot('bidiEmulatedViewportScreenshot')
     })
 
-    it(`should compare a viewport screenshot successful with a baseline for '${browserName}' with the legacy API`, async function () {
-        await expect(browser).toMatchScreenSnapshot('legacyEmulatedViewportScreenshot', { enableLegacyScreenshotMethod: true })
+    // NOTE: Bidi screenshots are not supported in emulated mode, it will fallback to the legacy API automatically
+    // This is a bug in the bidi protocol, it should be fixed in the future
+    it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function() {
+        await expect(browser).toMatchFullPageSnapshot('bidiLegacyEmulatedFullPage', { hideAfterFirstScroll: [await $('nav.navbar')] })
     })
 
-    it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function() {
-        await expect(browser).toMatchFullPageSnapshot('bidiEmulatedFullPage')
+    it(`should compare an element successful with a baseline for '${browserName}' with the legacy API`, async function() {
+        await expect($('.hero__title-logo')).toMatchElementSnapshot('legacyEmulatedWdioLogo', {
+            enableLegacyScreenshotMethod: true,
+            // We need to remove the navbar otherwise it will be in the screenshot
+            removeElements: [await $('nav.navbar')]
+        })
+    })
+
+    it(`should compare a viewport screenshot successful with a baseline for '${browserName}' with the legacy API`, async function () {
+        await expect(browser).toMatchScreenSnapshot('legacyEmulatedViewportScreenshot', { enableLegacyScreenshotMethod: true })
     })
 })
