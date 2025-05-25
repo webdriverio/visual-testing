@@ -22,7 +22,7 @@ export default async function getEnrichedInstanceData(
     addShadowPadding: boolean,
 ): Promise<EnrichedInstanceData> {
     // Get the current browser data
-    const browserData = await executor(getScreenDimensions)
+    const browserData = await executor(getScreenDimensions, instanceOptions.isMobile)
     const { addressBarShadowPadding, toolBarShadowPadding, browserName, nativeWebScreenshot, platformName } = instanceOptions
 
     // Determine some constants

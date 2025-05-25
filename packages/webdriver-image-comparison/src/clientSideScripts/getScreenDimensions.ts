@@ -3,7 +3,7 @@ import type { ScreenDimensions } from './screenDimensions.interfaces.js'
 /**
  * Get all the screen dimensions
  */
-export default function getScreenDimensions(): ScreenDimensions {
+export default function getScreenDimensions(isMobile: boolean): ScreenDimensions {
     // We need to determine if the screen is emulated, because that would return different values
     const width = window.innerWidth
     const height = window.innerHeight
@@ -11,6 +11,7 @@ export default function getScreenDimensions(): ScreenDimensions {
     const minEdge = Math.min(width, height)
     const maxEdge = Math.max(width, height)
     const isLikelyEmulated =
+        !isMobile &&              // Only check for emulated on desktop
         dpr >= 2 &&               // High-DPI signal
         minEdge <= 800 &&         // Catch phones/tablets in portrait/landscape
         maxEdge <= 1280 &&        // Conservative max for emulated tablet sizes
