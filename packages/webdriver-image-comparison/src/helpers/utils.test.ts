@@ -673,27 +673,25 @@ describe('utils', () => {
     })
 
     describe('loadBase64Html', () => {
-        const mockUrl = vi.fn()
         const mockExecutor = vi.fn()
 
         afterEach(() => {
             vi.clearAllMocks()
         })
 
-        it('should call url with base64 html and skip executor for Android', async () => {
-            await loadBase64Html({ executor: mockExecutor, isIOS: false, url: mockUrl })
+        it('should call executor with blob URL creation for all platforms', async () => {
+            await loadBase64Html({ executor: mockExecutor, isIOS: false })
 
-            expect(mockUrl).toHaveBeenCalledTimes(1)
-            expect(mockUrl.mock.calls[0][0]).toMatch(/^data:text\/html;base64,/)
-            expect(mockExecutor).not.toHaveBeenCalled()
+            expect(mockExecutor).toHaveBeenCalledTimes(1)
+            expect(mockExecutor).toHaveBeenCalledWith(expect.any(Function), expect.any(String))
         })
 
-        it('should call url with base64 html and call executor for iOS', async () => {
-            await loadBase64Html({ executor: mockExecutor, isIOS: true, url: mockUrl })
+        it('should call executor with blob URL creation and checkMetaTag for iOS', async () => {
+            await loadBase64Html({ executor: mockExecutor, isIOS: true })
 
-            expect(mockUrl).toHaveBeenCalledTimes(1)
-            expect(mockUrl.mock.calls[0][0]).toMatch(/^data:text\/html;base64,/)
-            expect(mockExecutor).toHaveBeenCalledWith(checkMetaTag)
+            expect(mockExecutor).toHaveBeenCalledTimes(2)
+            expect(mockExecutor).toHaveBeenNthCalledWith(1, expect.any(Function), expect.any(String))
+            expect(mockExecutor).toHaveBeenNthCalledWith(2, checkMetaTag)
         })
     })
 
@@ -733,7 +731,7 @@ describe('utils', () => {
             logWarnMock.mockRestore()
         })
 
-        it('should throw the error if it’s not a known Appium command error', async () => {
+        it('should throw the error if it\'s not a known Appium command error', async () => {
             const executor = vi.fn().mockRejectedValueOnce(new Error('Some unexpected error'))
 
             await expect(executeNativeClick({ executor, isIOS: false, ...coords }))
@@ -767,6 +765,7 @@ describe('utils', () => {
 
         it('should return correct device rectangles for iOS WebView flow', async () => {
             mockExecutor
+                .mockResolvedValueOnce(undefined) // executor for the blob (loadBase64Html)
                 .mockResolvedValueOnce(undefined) // checkMetaTag (loadBase64Html)
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce(undefined) // nativeClick
@@ -778,7 +777,7 @@ describe('utils', () => {
             })
 
             expect(mockGetUrl).toHaveBeenCalled()
-            expect(mockUrl).toHaveBeenCalledTimes(2)
+            expect(mockUrl).toHaveBeenCalledTimes(1)
             expect(mockExecutor).toHaveBeenCalledWith(injectWebviewOverlay, false)
             expect(mockExecutor).toHaveBeenCalledWith(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
 

@@ -432,7 +432,7 @@ export async function getMobileScreenSize({
 /**
  * Load a base64 HTML page in the browser
  */
-export async function loadBase64Html({ executor, isIOS, url }: {executor:Executor, isIOS:boolean, url:any}): Promise<void> {
+export async function loadBase64Html({ executor, isIOS }: {executor:Executor, isIOS:boolean}): Promise<void> {
     const htmlContent = `
         <html>
         <head>
@@ -457,9 +457,11 @@ export async function loadBase64Html({ executor, isIOS, url }: {executor:Executo
         </body>
         </html>`
 
-    const base64Html = Buffer.from(htmlContent).toString('base64')
-
-    await url(`data:text/html;base64,${base64Html}`)
+    await executor((htmlContent) => {
+        const blob = new Blob([htmlContent], { type: 'text/html' })
+        const blobUrl = URL.createObjectURL(blob)
+        window.location.href = blobUrl
+    }, htmlContent)
 
     if (isIOS) {
         await executor(checkMetaTag)
@@ -519,7 +521,7 @@ export async function getMobileViewPortPosition({
     if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
         const currentUrl = await getUrl()
         // 1. Load a base64 HTML page
-        await loadBase64Html({ executor, isIOS, url })
+        await loadBase64Html({ executor, isIOS })
         // 2. Inject an overlay on top of the webview with an event listener that stores the click position in the webview
         await executor(injectWebviewOverlay, isAndroid)
         // 3. Click on the overlay in the center of the screen with a native click
