@@ -5,6 +5,7 @@
     "target": "es2022",
     "lib": ["es2022", "dom"],
     "types": [
+      "@wdio/browserstack-service",
       "@wdio/globals/types",
       "@wdio/mocha-framework",
       "@wdio/sauce-service",

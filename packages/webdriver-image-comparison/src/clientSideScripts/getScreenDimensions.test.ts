@@ -5,6 +5,16 @@ import { CONFIGURABLE } from '../mocks/mocks.js'
 import getScreenDimensions from './getScreenDimensions.js'
 
 describe('getScreenDimensions', () => {
+    it('should get the needed screen dimensions for a real device', () => {
+        Object.defineProperty(window, 'matchMedia', {
+            value: vi.fn().mockImplementation(() => ({
+                matches: true,
+            })),
+            ...CONFIGURABLE,
+        })
+        expect(getScreenDimensions(true)).toMatchSnapshot()
+    })
+
     it('should get the needed screen dimensions', () => {
         Object.defineProperty(window, 'matchMedia', {
             value: vi.fn().mockImplementation(() => ({
@@ -12,7 +22,7 @@ describe('getScreenDimensions', () => {
             })),
             ...CONFIGURABLE,
         })
-        expect(getScreenDimensions()).toMatchSnapshot()
+        expect(getScreenDimensions(false)).toMatchSnapshot()
     })
 
     it('should get the needed screen dimensions if the outerHeight and outerWidth are set to 0', () => {
@@ -27,7 +37,7 @@ describe('getScreenDimensions', () => {
             ...CONFIGURABLE,
         })
 
-        expect(getScreenDimensions()).toMatchSnapshot()
+        expect(getScreenDimensions(false)).toMatchSnapshot()
     })
 
     it('should return zeroed dimensions if the document attributes are null', () => {
@@ -40,7 +50,7 @@ describe('getScreenDimensions', () => {
             ...CONFIGURABLE,
         })
 
-        expect(getScreenDimensions()).toMatchSnapshot()
+        expect(getScreenDimensions(false)).toMatchSnapshot()
     })
 
     it('should detect mobile emulation and return emulated dimensions', () => {
@@ -67,7 +77,7 @@ describe('getScreenDimensions', () => {
             ...CONFIGURABLE,
         })
 
-        const dimensions = getScreenDimensions()
+        const dimensions = getScreenDimensions(false)
 
         Object.defineProperty(window, 'screen', {
             value: originalScreen,
@@ -106,7 +116,7 @@ describe('getScreenDimensions', () => {
             ...CONFIGURABLE,
         })
 
-        const dimensions = getScreenDimensions()
+        const dimensions = getScreenDimensions(false)
 
         Object.defineProperty(window, 'screen', {
             value: originalScreen,
@@ -145,7 +155,7 @@ describe('getScreenDimensions', () => {
             ...CONFIGURABLE,
         })
 
-        const dimensions = getScreenDimensions()
+        const dimensions = getScreenDimensions(false)
 
         Object.defineProperty(window, 'screen', {
             value: originalScreen,

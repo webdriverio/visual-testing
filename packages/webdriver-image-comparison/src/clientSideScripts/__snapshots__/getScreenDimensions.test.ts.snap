@@ -29,6 +29,35 @@ exports[`getScreenDimensions > should get the needed screen dimensions 1`] = `
 }
 `;
 
+exports[`getScreenDimensions > should get the needed screen dimensions for a real device 1`] = `
+{
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "isLandscape": true,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
+  },
+}
+`;
+
 exports[`getScreenDimensions > should get the needed screen dimensions if the outerHeight and outerWidth are set to 0 1`] = `
 {
   "dimensions": {

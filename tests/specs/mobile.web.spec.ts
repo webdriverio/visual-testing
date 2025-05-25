@@ -7,10 +7,24 @@ describe('@wdio/visual-service mobile web', () => {
     // Get the commands that need to be executed
     // 0 means all, otherwise it will only execute the commands that are specified
     const wdioIcsCommands = driver.requestedCapabilities['wdio-ics:options'].commands
-    const deviceName = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).deviceName
-    const platformName = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).platformName.toLowerCase() === 'android' ? 'Android' : 'iOS'
-    const platformVersion = (driver.requestedCapabilities['lt:options'] || driver.requestedCapabilities).platformVersion
-    const orientation = (driver.requestedCapabilities['lt:options']?.deviceOrientation || driver.requestedCapabilities.orientation).toLowerCase()
+    const deviceName = (
+        driver.requestedCapabilities['lt:options']?.deviceOrientation ||
+        driver.requestedCapabilities['bstack:options']?.deviceOrientation ||
+        driver.requestedCapabilities.orientation
+    ).deviceName
+    const platformName = (
+        driver.requestedCapabilities['lt:options']?.platformName ||
+        driver.requestedCapabilities.platformName
+    ).toLowerCase() === 'android' ? 'Android' : 'iOS'
+    const platformVersion =
+        driver.requestedCapabilities['lt:options']?.platformVersion ||
+        driver.requestedCapabilities['bstack:options']?.osVersion ||
+        driver.requestedCapabilities.platformVersion
+    const orientation = (
+        driver.requestedCapabilities['lt:options']?.deviceOrientation ||
+        driver.requestedCapabilities['bstack:options']?.deviceOrientation ||
+        driver.requestedCapabilities.orientation
+    ).toLowerCase()
 
     beforeEach(async () => {
         await browser.url('')
