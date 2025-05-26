@@ -37,7 +37,7 @@
   "devDependencies": {
     "@remix-run/node": "^2.16.7",
     "@remix-run/react": "^2.16.6",
-    "@remix-run/serve": "^2.16.6",
+    "@remix-run/serve": "^2.16.7",
     "@remix-run/dev": "^2.16.6",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
