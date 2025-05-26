@@ -35,7 +35,7 @@
     "sharp": "^0.34.1"
   },
   "devDependencies": {
-    "@remix-run/node": "^2.16.6",
+    "@remix-run/node": "^2.16.7",
     "@remix-run/react": "^2.16.6",
     "@remix-run/serve": "^2.16.6",
     "@remix-run/dev": "^2.16.6",
