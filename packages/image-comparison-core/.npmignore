@@ -1,0 +1,14 @@
+.DS_Store
+.idea/
+node_modules/
+coverage/
+.tmp/
+.gitignore
+perfecto.config.json
+local.config.json
+localBaseline/
+docs/
+.eslintcache
+tsconfig.json
+src
+*.tgz

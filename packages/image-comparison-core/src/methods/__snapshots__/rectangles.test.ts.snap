@@ -1,0 +1,95 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`rectangles > determineElementRectangles > should determine them for Android ChromeDriver 1`] = `
+{
+  "height": 20,
+  "width": 375,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for Android Native webscreenshot 1`] = `
+{
+  "height": 900,
+  "width": 600,
+  "x": 1200,
+  "y": 630,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for a desktop browser 1`] = `
+{
+  "height": 40,
+  "width": 750,
+  "x": 24,
+  "y": 68,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for iOS 1`] = `
+{
+  "height": 240,
+  "width": 240,
+  "x": 260,
+  "y": 60,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for Android ChromeDriver 1`] = `
+{
+  "height": 1106,
+  "width": 2732,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for Android Native webscreenshot 1`] = `
+{
+  "height": 1536,
+  "width": 750,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for iOS 1`] = `
+{
+  "height": 1536,
+  "width": 2732,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles that there are no rectangles for this device 1`] = `[]`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles with a status and toolbar blockout 1`] = `
+[
+  {
+    "height": 320,
+    "width": 1344,
+    "x": 0,
+    "y": 0,
+  },
+  {
+    "height": 71,
+    "width": 1344,
+    "x": 0,
+    "y": 2921,
+  },
+  {
+    "height": 2601,
+    "width": 0,
+    "x": 0,
+    "y": 320,
+  },
+  {
+    "height": 2601,
+    "width": 0,
+    "x": 1344,
+    "y": 320,
+  },
+]
+`;

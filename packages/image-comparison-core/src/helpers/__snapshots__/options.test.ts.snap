@@ -1,0 +1,160 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`options > defaultOptions > should return the default options when no options are provided 1`] = `
+{
+  "addIOSBezelCorners": false,
+  "addressBarShadowPadding": 6,
+  "autoElementScroll": true,
+  "autoSaveBaseline": true,
+  "clearFolder": false,
+  "compareOptions": {
+    "blockOutSideBar": true,
+    "blockOutStatusBar": true,
+    "blockOutToolBar": true,
+    "createJsonReportFiles": false,
+    "diffPixelBoundingBoxProximity": 5,
+    "ignoreAlpha": false,
+    "ignoreAntialiasing": false,
+    "ignoreColors": false,
+    "ignoreLess": false,
+    "ignoreNothing": false,
+    "rawMisMatchPercentage": false,
+    "returnAllCompareData": false,
+    "saveAboveTolerance": 0,
+    "scaleImagesToSameSize": false,
+  },
+  "disableBlinkingCursor": false,
+  "disableCSSAnimation": false,
+  "enableLayoutTesting": false,
+  "enableLegacyScreenshotMethod": false,
+  "formatImageName": "{tag}-{browserName}-{width}x{height}-dpr-{dpr}",
+  "fullPageScrollTimeout": 1500,
+  "hideScrollBars": true,
+  "isHybridApp": false,
+  "savePerInstance": false,
+  "tabbableOptions": {
+    "circle": {
+      "backgroundColor": "#ff0000",
+      "borderColor": "#000",
+      "borderWidth": 1,
+      "fontColor": "#fff",
+      "fontFamily": "Arial",
+      "fontSize": 10,
+      "showNumber": true,
+      "size": 10,
+    },
+    "line": {
+      "color": "#000",
+      "width": 1,
+    },
+  },
+  "toolBarShadowPadding": 6,
+  "userBasedFullPageScreenshot": false,
+  "waitForFontsLoaded": true,
+}
+`;
+
+exports[`options > defaultOptions > should return the provided options when options are provided 1`] = `
+{
+  "addIOSBezelCorners": false,
+  "addressBarShadowPadding": 1,
+  "autoElementScroll": true,
+  "autoSaveBaseline": true,
+  "clearFolder": false,
+  "compareOptions": {
+    "blockOutSideBar": true,
+    "blockOutStatusBar": true,
+    "blockOutToolBar": true,
+    "createJsonReportFiles": true,
+    "diffPixelBoundingBoxProximity": 123,
+    "ignoreAlpha": true,
+    "ignoreAntialiasing": true,
+    "ignoreColors": true,
+    "ignoreLess": true,
+    "ignoreNothing": true,
+    "rawMisMatchPercentage": true,
+    "returnAllCompareData": true,
+    "saveAboveTolerance": 12,
+    "scaleImagesToSameSize": true,
+  },
+  "disableBlinkingCursor": true,
+  "disableCSSAnimation": true,
+  "enableLayoutTesting": false,
+  "enableLegacyScreenshotMethod": false,
+  "formatImageName": "{foo}-{bar}",
+  "fullPageScrollTimeout": 12345,
+  "hideScrollBars": true,
+  "isHybridApp": false,
+  "savePerInstance": true,
+  "tabbableOptions": {
+    "circle": {
+      "backgroundColor": "backgroundColor",
+      "borderColor": "borderColor",
+      "borderWidth": 123,
+      "fontColor": "fontColor",
+      "fontFamily": "fontFamily",
+      "fontSize": 321,
+      "showNumber": false,
+      "size": 567,
+    },
+    "line": {
+      "color": "color",
+      "width": 987,
+    },
+  },
+  "toolBarShadowPadding": 1,
+  "userBasedFullPageScreenshot": false,
+  "waitForFontsLoaded": true,
+}
+`;
+
+exports[`options > methodCompareOptions > should not return the method options when no options are provided 1`] = `{}`;
+
+exports[`options > methodCompareOptions > should return the provided options when options are provided 1`] = `
+{
+  "blockOut": [
+    {
+      "height": 1,
+      "width": 2,
+      "x": 3,
+      "y": 4,
+    },
+  ],
+  "ignoreAlpha": true,
+  "ignoreAntialiasing": true,
+  "ignoreColors": true,
+  "ignoreLess": true,
+  "ignoreNothing": true,
+  "rawMisMatchPercentage": true,
+  "returnAllCompareData": true,
+  "saveAboveTolerance": 12,
+  "scaleImagesToSameSize": true,
+}
+`;
+
+exports[`options > screenMethodCompareOptions > should not return the screen method options when no options are provided 1`] = `{}`;
+
+exports[`options > screenMethodCompareOptions > should return the provided options when options are provided 1`] = `
+{
+  "blockOut": [
+    {
+      "height": 1,
+      "width": 2,
+      "x": 3,
+      "y": 4,
+    },
+  ],
+  "blockOutSideBar": false,
+  "blockOutStatusBar": false,
+  "blockOutToolBar": false,
+  "ignoreAlpha": true,
+  "ignoreAntialiasing": true,
+  "ignoreColors": true,
+  "ignoreLess": true,
+  "ignoreNothing": true,
+  "rawMisMatchPercentage": true,
+  "returnAllCompareData": true,
+  "saveAboveTolerance": 12,
+  "scaleImagesToSameSize": true,
+}
+`;

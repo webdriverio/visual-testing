@@ -1,0 +1,103 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`toggleTextTransparency > should make text transparent when enabled 1`] = `
+<div
+  id="testDiv"
+  style="color: transparent;"
+>
+  
+                
+  <p
+    style="color: transparent;"
+  >
+    Paragraph
+  </p>
+  
+                
+  <span
+    style="color: transparent;"
+  >
+    Span
+  </span>
+  
+                
+  <script>
+    console.log('script')
+  </script>
+  
+                
+  <style>
+    body { background-color: blue; }
+  </style>
+  
+            
+</div>
+`;
+
+exports[`toggleTextTransparency > should remove transparent style when disabled 1`] = `
+<div
+  id="testDiv"
+  style="color: transparent;"
+>
+  
+                
+  <p
+    style="color: transparent;"
+  >
+    Paragraph
+  </p>
+  
+                
+  <span
+    style="color: transparent;"
+  >
+    Span
+  </span>
+  
+                
+  <script>
+    console.log('script')
+  </script>
+  
+                
+  <style>
+    body { background-color: blue; }
+  </style>
+  
+            
+</div>
+`;
+
+exports[`toggleTextTransparency > should remove transparent style when disabled 2`] = `
+<div
+  id="testDiv"
+  style="color: transparent;"
+>
+  
+                
+  <p
+    style="color: transparent;"
+  >
+    Paragraph
+  </p>
+  
+                
+  <span
+    style="color: transparent;"
+  >
+    Span
+  </span>
+  
+                
+  <script>
+    console.log('script')
+  </script>
+  
+                
+  <style>
+    body { background-color: blue; }
+  </style>
+  
+            
+</div>
+`;

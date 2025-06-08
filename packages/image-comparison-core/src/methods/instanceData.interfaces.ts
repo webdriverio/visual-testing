@@ -1,0 +1,60 @@
+
+import type { ScreenDimensions } from '../clientSideScripts/screenDimensions.interfaces.js'
+import type { DeviceRectangles } from './rectangles.interfaces.js'
+
+export interface InstanceData {
+    /** The name of the app */
+    appName: string;
+    /** The browser name of the instance */
+    browserName: string;
+    /** The browser version of the instance */
+    browserVersion: string;
+    /** The device name of the instance */
+    deviceName: string;
+    /** The devicePixelRatio of the instance */
+    devicePixelRatio: number;
+    /** The mobile viewport position */
+    deviceRectangles: DeviceRectangles;
+    /** The initial devicePixelRatio of the instance */
+    initialDevicePixelRatio: number;
+    /** Is this an Android device */
+    isAndroid: boolean;
+    /** Is this an iOS device */
+    isIOS: boolean;
+    /** Is this a mobile instance */
+    isMobile: boolean;
+    /** The log name of the instance */
+    logName: string;
+    /** The name of the instance */
+    name: string;
+    /** If the instance creates native webscreenshots */
+    nativeWebScreenshot: boolean;
+    /** The platform name of the instance */
+    platformName: string;
+    /** The platform version of the instance */
+    platformVersion: string;
+}
+
+export interface InstanceOptions extends InstanceData {
+    /** The browser name of the instance */
+    addressBarShadowPadding: number;
+    /** The browser name of the instance */
+    toolBarShadowPadding: number;
+}
+
+export interface EnrichedInstanceData extends ScreenDimensions, InstanceOptions {
+    /** Is this an Android device */
+    isAndroid: boolean;
+    /** Is this an Android ChromeDriver screenshot */
+    isAndroidChromeDriverScreenshot: boolean;
+    /** Is this an Android Native screenshot */
+    isAndroidNativeWebScreenshot: boolean;
+    /** Is this an iOS device */
+    isIOS: boolean;
+    /** Is this a mobile instance */
+    isMobile: boolean;
+    /** Is this a test in a desktop browser */
+    isTestInBrowser: boolean;
+    /** Is this a test in a mobile browser */
+    isTestInMobileBrowser: boolean;
+}

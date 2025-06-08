@@ -1,0 +1,46 @@
+{
+  "name": "@wdio/image-comparison-core",
+  "version": "0.01",
+  "author": "Wim Selles - wswebcreation",
+  "description": "Image comparison core module for @wdio/visual-service - WebdriverIO visual testing framework",
+  "keywords": [
+    "webdriverio",
+    "wdio",
+    "visual-testing",
+    "image-comparison",
+    "screenshot",
+    "visual-regression",
+    "testing",
+    "automation"
+  ],
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "homepage": "https://webdriver.io/docs/visual-testing",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webdriverio/visual-testing.git"
+  },
+  "bugs": {
+    "url": "https://github.com/webdriverio/visual-testing/issues"
+  },
+  "scripts": {
+    "build": "run-s clean:build build:*",
+    "build:tsc": "tsc --project ./tsconfig.json",
+    "clean:build": "rimraf coverage dist .tmp",
+    "clean:watch": "rimraf coverage .tmp",
+    "watch": "run-s clean:watch watch:tsc",
+    "watch:tsc": "pnpm run build:tsc -w"
+  },
+  "dependencies": {
+    "fs-extra": "^11.3.0",
+    "jimp": "^1.6.0",
+    "@wdio/logger": "^9.15.0",
+    "@wdio/types": "^9.15.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "webdriverio": "^9.15.0"
+  }
+}
