@@ -14,7 +14,6 @@ import type {
     ScreenshotSize,
 } from './utils.interfaces.js'
 import type { ClassOptions, CompareOptions } from './options.interfaces.js'
-import type { Executor } from '../methods/methods.interfaces.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
@@ -471,14 +470,14 @@ export async function loadBase64Html({ isIOS }: {isIOS: boolean}): Promise<void>
 /**
  * Execute a native click
  */
-export async function executeNativeClick({ executor, isIOS, x, y }:{executor: Executor, isIOS:boolean, x: number, y: number}): Promise<void> {
+export async function executeNativeClick({ isIOS, x, y }:{ isIOS:boolean, x: number, y: number}): Promise<void> {
     if (isIOS) {
-        return executor('mobile: tap', { x, y })
+        return browser.execute('mobile: tap', { x, y })
     }
 
     try {
         // The `clickGesture` is not working on Appium 1, only on Appium 2
-        await executor('mobile: clickGesture', { x, y })
+        await browser.execute('mobile: clickGesture', { x, y })
     } catch (error: unknown) {
         if (
             error instanceof Error &&
@@ -487,7 +486,7 @@ export async function executeNativeClick({ executor, isIOS, x, y }:{executor: Ex
             log.warn(
                 'Error executing `clickGesture`, falling back to `doubleClickGesture`. This likely means you are using Appium 1. Is this intentional?'
             )
-            await executor('mobile: doubleClickGesture', { x, y })
+            await browser.execute('mobile: doubleClickGesture', { x, y })
         } else {
             throw error
         }
@@ -509,7 +508,6 @@ export async function getMobileViewPortPosition({
     isIOS,
     isNativeContext,
     methods: {
-        executor,
         getUrl,
         url,
     },
@@ -523,15 +521,15 @@ export async function getMobileViewPortPosition({
         // 1. Load a base64 HTML page
         await loadBase64Html({ isIOS })
         // 2. Inject an overlay on top of the webview with an event listener that stores the click position in the webview
-        await executor(injectWebviewOverlay, isAndroid)
+        await browser.execute(injectWebviewOverlay, isAndroid)
         // 3. Click on the overlay in the center of the screen with a native click
         const nativeClickX = screenWidth / 2
         const nativeClickY = screenHeight / 2
-        await executeNativeClick({ executor, isIOS, x: nativeClickX, y: nativeClickY })
+        await executeNativeClick({ isIOS, x: nativeClickX, y: nativeClickY })
         // We need to wait a bit here, otherwise the click is not registered
         await waitFor(100)
         // 4a. Get the data from the overlay and remove it
-        const { y, x, width, height } = await executor(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
+        const { y, x, width, height } = await browser.execute(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
         // 4.b reset the url
         await url(currentUrl)
         // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay

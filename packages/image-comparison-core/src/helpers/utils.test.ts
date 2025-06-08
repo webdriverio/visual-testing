@@ -34,7 +34,6 @@ import {
 import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 import { DEVICE_RECTANGLES } from './constants.js'
-import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
 import type { ClassOptions } from './options.interfaces.js'
@@ -737,51 +736,60 @@ describe('utils', () => {
 
     describe('executeNativeClick', () => {
         const coords = { x: 100, y: 200 }
+        let mockBrowser: any
+
+        beforeEach(async () => {
+            vi.clearAllMocks()
+            const { browser } = await vi.importMock('@wdio/globals') as any
+            mockBrowser = browser
+        })
 
         afterEach(() => {
             vi.clearAllMocks()
         })
 
-        it('should call executor with "mobile: tap" on iOS', async () => {
-            const executor = vi.fn()
-            await executeNativeClick({ executor, isIOS: true, ...coords })
+        it('should call browser.execute with "mobile: tap" on iOS', async () => {
+            mockBrowser.execute = vi.fn()
 
-            expect(executor).toHaveBeenCalledWith('mobile: tap', coords)
+            await executeNativeClick({ isIOS: true, ...coords })
+
+            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: tap', coords)
         })
 
-        it('should call executor with "mobile: clickGesture" on Android (Appium 2)', async () => {
-            const executor = vi.fn()
-            await executeNativeClick({ executor, isIOS: false, ...coords })
+        it('should call browser.execute with "mobile: clickGesture" on Android (Appium 2)', async () => {
+            mockBrowser.execute = vi.fn()
 
-            expect(executor).toHaveBeenCalledWith('mobile: clickGesture', coords)
+            await executeNativeClick({ isIOS: false, ...coords })
+
+            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: clickGesture', coords)
         })
 
         it('should fall back to "doubleClickGesture" when clickGesture fails (Appium 1)', async () => {
-            const executor = vi.fn()
+            mockBrowser.execute = vi.fn()
                 .mockRejectedValueOnce(new Error('WebDriverError: Unknown mobile command: clickGesture'))
                 .mockResolvedValueOnce(undefined)
             const logWarnMock = vi.spyOn(log, 'warn')
 
-            await executeNativeClick({ executor, isIOS: false, ...coords })
+            await executeNativeClick({ isIOS: false, ...coords })
 
-            expect(executor).toHaveBeenCalledWith('mobile: clickGesture', coords)
-            expect(executor).toHaveBeenCalledWith('mobile: doubleClickGesture', coords)
+            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: clickGesture', coords)
+            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: doubleClickGesture', coords)
             expect(logWarnMock).toHaveBeenCalledWith(expect.stringContaining('falling back to `doubleClickGesture`'))
 
             logWarnMock.mockRestore()
         })
 
         it('should throw the error if it\'s not a known Appium command error', async () => {
-            const executor = vi.fn().mockRejectedValueOnce(new Error('Some unexpected error'))
+            mockBrowser.execute = vi.fn().mockRejectedValueOnce(new Error('Some unexpected error'))
 
-            await expect(executeNativeClick({ executor, isIOS: false, ...coords }))
+            await expect(executeNativeClick({ isIOS: false, ...coords }))
                 .rejects
                 .toThrowError('Some unexpected error')
         })
     })
 
     describe('getMobileViewPortPosition', () => {
-        const mockExecutor = vi.fn()
+        let mockBrowser: any
         const mockUrl = vi.fn()
         const mockGetUrl = vi.fn().mockResolvedValue('http://example.com')
 
@@ -793,22 +801,23 @@ describe('utils', () => {
             screenHeight: 800,
             screenWidth: 400,
             methods: {
-                executor: mockExecutor,
                 url: mockUrl,
                 getUrl: mockGetUrl,
             },
         }
 
-        beforeEach(() => {
+        beforeEach(async () => {
             vi.clearAllMocks()
+            const { browser } = await vi.importMock('@wdio/globals') as any
+            mockBrowser = browser
         })
 
         it('should return correct device rectangles for iOS WebView flow', async () => {
-            mockExecutor
-                .mockResolvedValueOnce(undefined) // executor for the blob (loadBase64Html)
-                .mockResolvedValueOnce(undefined) // checkMetaTag (loadBase64Html)
+            mockBrowser.execute = vi.fn()
+                .mockResolvedValueOnce(undefined) // loadBase64Html
+                .mockResolvedValueOnce(undefined) // checkMetaTag
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
-                .mockResolvedValueOnce(undefined) // nativeClick
+                .mockResolvedValueOnce(undefined) // executeNativeClick
                 .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
 
             const result = await getMobileViewPortPosition({
@@ -818,8 +827,7 @@ describe('utils', () => {
 
             expect(mockGetUrl).toHaveBeenCalled()
             expect(mockUrl).toHaveBeenCalledTimes(1)
-            expect(mockExecutor).toHaveBeenCalledWith(injectWebviewOverlay, false)
-            expect(mockExecutor).toHaveBeenCalledWith(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
+            expect(mockBrowser.execute).toHaveBeenCalledWith(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
 
             expect(result).toMatchSnapshot()
         })
@@ -832,7 +840,7 @@ describe('utils', () => {
             })
 
             expect(result).toEqual(DEVICE_RECTANGLES)
-            expect(mockExecutor).not.toHaveBeenCalled()
+            expect(mockBrowser.execute).not.toHaveBeenCalled()
         })
 
         it('should return initialDeviceRectangles if Android + not nativeWebScreenshot', async () => {

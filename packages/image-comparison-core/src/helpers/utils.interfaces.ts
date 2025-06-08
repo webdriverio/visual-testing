@@ -1,4 +1,3 @@
-import type { Executor } from '../methods/methods.interfaces.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 
 export interface GetAndCreatePathOptions {
@@ -109,7 +108,6 @@ export interface GetMobileViewPortPositionOptions {
     isAndroid: boolean,
     isIOS: boolean,
     methods: {
-        executor: Executor,
         getUrl: () => Promise<string>,
         url: (arg:string) => Promise<WebdriverIO.Request|void>,
     }
