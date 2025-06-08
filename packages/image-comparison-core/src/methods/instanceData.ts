@@ -10,19 +10,18 @@ import {
     getToolBarShadowPadding,
 } from '../helpers/utils.js'
 import getScreenDimensions from '../clientSideScripts/getScreenDimensions.js'
-import type { Executor } from './methods.interfaces.js'
 import type { EnrichedInstanceData, InstanceOptions } from './instanceData.interfaces.js'
+import { browser } from '@wdio/globals'
 
 /**
  * Enrich the instance data with more data
  */
 export default async function getEnrichedInstanceData(
-    executor: Executor,
     instanceOptions: InstanceOptions,
     addShadowPadding: boolean,
 ): Promise<EnrichedInstanceData> {
     // Get the current browser data
-    const browserData = await executor(getScreenDimensions, instanceOptions.isMobile)
+    const browserData = await browser.execute(getScreenDimensions, instanceOptions.isMobile)
     const { addressBarShadowPadding, toolBarShadowPadding, browserName, nativeWebScreenshot, platformName } = instanceOptions
 
     // Determine some constants

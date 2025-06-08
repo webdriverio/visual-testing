@@ -60,7 +60,7 @@ export default async function saveFullPageScreen(
         toolBarShadowPadding,
         waitForFontsLoaded,
     }
-    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(methods.executor, beforeOptions, true)
+    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(beforeOptions, true)
     const {
         browserName,
         browserVersion,

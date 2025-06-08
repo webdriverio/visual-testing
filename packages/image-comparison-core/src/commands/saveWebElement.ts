@@ -53,7 +53,7 @@ export default async function saveWebElement(
         toolBarShadowPadding,
         waitForFontsLoaded,
     }
-    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(executor, beforeOptions, true)
+    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(beforeOptions, true)
     const {
         browserName,
         browserVersion,

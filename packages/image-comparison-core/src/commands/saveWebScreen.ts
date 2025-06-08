@@ -49,7 +49,7 @@ export default async function saveWebScreen(
         toolBarShadowPadding,
         waitForFontsLoaded,
     }
-    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(methods.executor, beforeOptions)
+    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(beforeOptions)
     const {
         browserName,
         browserVersion,
