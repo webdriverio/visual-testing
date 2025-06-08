@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { join } from 'node:path'
+import type { ChainablePromiseElement } from 'webdriverio'
 import { determineElementRectangles, determineScreenRectangles, determineStatusAddressToolBarRectangles, determineIgnoreRegions } from './rectangles.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 import type { ElementRectanglesOptions, ScreenRectanglesOptions, StatusAddressToolBarRectanglesOptions, DeviceRectangles } from './rectangles.interfaces.js'
@@ -539,6 +540,7 @@ describe('rectangles', () => {
                 123
             ]
 
+            // @ts-expect-error - invalid ignore regions
             await expect(determineIgnoreRegions(mockBrowserInstance, invalidIgnores))
                 .rejects.toThrow('Invalid elements or regions')
         })
@@ -564,7 +566,7 @@ describe('rectangles', () => {
             mockGetElementRect.mockResolvedValueOnce({ x: 50, y: 60, width: 200, height: 250 })
                 .mockResolvedValueOnce({ x: 70, y: 80, width: 300, height: 350 })
 
-            const result = await determineIgnoreRegions(mockBrowserInstance, [[mockElement1, mockElement2]])
+            const result = await determineIgnoreRegions(mockBrowserInstance, [mockElement1, mockElement2])
 
             expect(result).toEqual([
                 { x: 50, y: 60, width: 200, height: 250 },
@@ -578,7 +580,7 @@ describe('rectangles', () => {
 
             mockGetElementRect.mockResolvedValueOnce({ x: 50, y: 60, width: 200, height: 250 })
 
-            const result = await determineIgnoreRegions(mockBrowserInstance, [chainableElement])
+            const result = await determineIgnoreRegions(mockBrowserInstance, [chainableElement as unknown as ChainablePromiseElement])
 
             expect(result).toEqual([
                 { x: 50, y: 60, width: 200, height: 250 }
