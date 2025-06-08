@@ -10,7 +10,6 @@ import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js
 import { canUseBidiScreenshot, getBase64ScreenshotSize, getMethodOrWicOption, waitFor } from '../helpers/utils.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
-import type { BidiScreenshot, GetWindowHandle } from '../methods/methods.interfaces.js'
 
 /**
  * Saves an image of an element
@@ -90,9 +89,7 @@ export default async function saveWebElement(
         // and also clipt if from the document, not the viewport
         const rect = await methods.getElementRect!((await element as WebdriverIO.Element).elementId)
         const clip = { x: Math.floor(rect.x), y: Math.floor(rect.y), width: Math.floor(rect.width), height: Math.floor(rect.height) }
-        const { bidiScreenshot, getWindowHandle } = methods as { bidiScreenshot: BidiScreenshot; getWindowHandle: GetWindowHandle }
-        const takeBiDiElementScreenshot = (origin: 'document' | 'viewport') =>
-            takeBase64BiDiScreenshot({ bidiScreenshot, getWindowHandle, origin, clip })
+        const takeBiDiElementScreenshot = (origin: 'document' | 'viewport') => takeBase64BiDiScreenshot({ origin, clip })
 
         try {
             // By default we take the screenshot from the document

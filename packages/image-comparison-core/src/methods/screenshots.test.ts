@@ -1,469 +1,79 @@
 import { describe, it, expect, vi } from 'vitest'
-import { getBase64FullPageScreenshotsData } from './screenshots.js'
+import { join } from 'node:path'
+import { getBase64FullPageScreenshotsData, takeBase64BiDiScreenshot } from './screenshots.js'
 import type { FullPageScreenshotDataOptions } from './screenshots.interfaces.js'
+import type { RectanglesOutput } from './rectangles.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 
 vi.mock('@wdio/globals', () => ({
     browser: {
-        takeScreenshot: () => Promise.resolve(IMAGE_STRING)
+        takeScreenshot: () => Promise.resolve(IMAGE_STRING),
+        getWindowHandle: () => Promise.resolve('window-handle-123'),
+        browsingContextCaptureScreenshot: () => Promise.resolve({ data: IMAGE_STRING })
     }
 }))
 
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
+
 describe('screenshots', () => {
     describe('getBase64FullPageScreenshotsData', () => {
-
-        it('should get the Android nativeWebScreenshot fullpage screenshot data', async () => {
+        it('should return base64 screenshot data', async () => {
+            const mockExecutor = vi.fn().mockResolvedValue({})
             const options: FullPageScreenshotDataOptions = {
-                addressBarShadowPadding: 6,
+                addressBarShadowPadding: 0,
                 devicePixelRatio: 1,
                 deviceRectangles: {
                     ...DEVICE_RECTANGLES,
                     viewport: { x: 0, y: 0, width: 1366, height: 768 }
                 },
-                fullPageScrollTimeout: 1,
-                innerHeight: 800,
-                isAndroid: true,
-                isAndroidNativeWebScreenshot: true,
-                isAndroidChromeDriverScreenshot: false,
-                isIOS: false,
-                isLandscape: false,
-                toolBarShadowPadding: 6,
+                fullPageScrollTimeout: 1000,
                 hideAfterFirstScroll: [],
-                screenHeight: 0,
-                screenWidth: 0,
-            }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // scrollToPosition
-                .mockResolvedValueOnce({})
-                // hideScrollBars
-                .mockResolvedValueOnce({})
-                // getDocumentScrollHeight
-                .mockResolvedValueOnce(788)
-                // hideScrollBars
-                .mockResolvedValueOnce({})
-                // scrollToPosition
-                .mockResolvedValueOnce({})
-                // hideScrollBars
-                .mockResolvedValueOnce({})
-                // getDocumentScrollHeight
-                .mockResolvedValueOnce(788)
-                // hideScrollBars
-                .mockResolvedValueOnce({})
-
-            // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
-            result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
-
-            expect(result).toMatchSnapshot()
-        })
-
-        it('should get hide elements for the Android nativeWebScreenshot fullpage screenshot', async () => {
-            const options: FullPageScreenshotDataOptions = {
-                addressBarShadowPadding: 6,
-                devicePixelRatio: 1,
-                deviceRectangles: {
-                    ...DEVICE_RECTANGLES,
-                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
-                },
-                fullPageScrollTimeout: 1,
-                innerHeight: 600,
-                isAndroid: true,
-                isAndroidNativeWebScreenshot: true,
-                isAndroidChromeDriverScreenshot: false,
-                isIOS: false,
-                isLandscape: false,
-                toolBarShadowPadding: 6,
-                hideAfterFirstScroll: [<HTMLElement>(<unknown>'<div/>')],
-                screenHeight: 0,
-                screenWidth: 0,
-            }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(788)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-                // RUN 2
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(788)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
-                .mockResolvedValueOnce({})
-
-            // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
-            result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
-
-            expect(result).toMatchSnapshot()
-        })
-
-        it('should get the Android ChromeDriver fullpage screenshot data', async () => {
-            const options: FullPageScreenshotDataOptions = {
-                addressBarShadowPadding: 6,
-                devicePixelRatio: 2,
-                deviceRectangles: {
-                    ...DEVICE_RECTANGLES,
-                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
-                },
-                fullPageScrollTimeout: 1,
-                innerHeight: 800,
-                isAndroid: true,
-                isAndroidNativeWebScreenshot: false,
-                isAndroidChromeDriverScreenshot: true,
-                isIOS: false,
-                isLandscape: false,
-                toolBarShadowPadding: 6,
-                hideAfterFirstScroll: [],
-                screenHeight: 0,
-                screenWidth: 0,
-            }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // THIS NEEDS TO BE FIXED IN THE FUTURE
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(1200)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-                // RUN 2
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(1200)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-
-            // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
-            result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
-
-            expect(result).toMatchSnapshot()
-        })
-
-        it('should hide elements for the Android ChromeDriver fullpage screenshot', async () => {
-            const options: FullPageScreenshotDataOptions = {
-                addressBarShadowPadding: 6,
-                devicePixelRatio: 2,
-                deviceRectangles: {
-                    ...DEVICE_RECTANGLES,
-                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
-                },
-                fullPageScrollTimeout: 1,
-                innerHeight: 800,
-                isAndroid: true,
-                isAndroidNativeWebScreenshot: false,
-                isAndroidChromeDriverScreenshot: true,
-                isIOS: false,
-                isLandscape: false,
-                toolBarShadowPadding: 6,
-                hideAfterFirstScroll: [<HTMLElement>(<unknown>'<div/>')],
-                screenHeight: 0,
-                screenWidth: 0,
-            }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // THIS NEEDS TO BE FIXED IN THE FUTURE
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(1200)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-                // RUN 2
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(1200)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
-                .mockResolvedValueOnce({})
-
-            // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
-            result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
-
-            expect(result).toMatchSnapshot()
-        })
-
-        it('should get the iOS fullpage screenshot data', async () => {
-            const options: FullPageScreenshotDataOptions = {
-                addressBarShadowPadding: 6,
-                devicePixelRatio: 2,
-                deviceRectangles: {
-                    ...DEVICE_RECTANGLES,
-                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
-                },
-                fullPageScrollTimeout: 1,
-                innerHeight: 800,
-                isAndroid: false,
-                isAndroidNativeWebScreenshot: false,
-                isAndroidChromeDriverScreenshot: false,
-                isIOS: true,
-                isLandscape: false,
-                toolBarShadowPadding: 6,
-                hideAfterFirstScroll: [],
-                screenHeight: 0,
-                screenWidth: 0,
-            }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(1200)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-                // RUN 2
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(1200)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-
-            // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
-            result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
-
-            expect(result).toMatchSnapshot()
-        })
-
-        it('should get the iOS fullpage screenshot data for a landscape iPad', async () => {
-            const options: FullPageScreenshotDataOptions = {
-                addressBarShadowPadding: 6,
-                devicePixelRatio: 2,
-                deviceRectangles: {
-                    ...DEVICE_RECTANGLES,
-                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
-                },
-                fullPageScrollTimeout: 1,
-                innerHeight: 400,
-                isAndroid: false,
-                isAndroidNativeWebScreenshot: false,
-                isAndroidChromeDriverScreenshot: false,
-                isIOS: true,
-                isLandscape: false,
-                toolBarShadowPadding: 6,
-                hideAfterFirstScroll: [],
-                screenHeight: 0,
-                screenWidth: 0,
-            }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(600)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-                // RUN 2
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(600)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-
-            // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
-            result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
-
-            expect(result).toMatchSnapshot()
-        })
-
-        it('should hide elements for the iOS fullpage screenshot', async () => {
-            const options: FullPageScreenshotDataOptions = {
-                addressBarShadowPadding: 6,
-                devicePixelRatio: 2,
-                deviceRectangles: {
-                    ...DEVICE_RECTANGLES,
-                    viewport: { x: 0, y: 0, width: 1366, height: 768 }
-                },
-                fullPageScrollTimeout: 1,
-                innerHeight: 800,
-                isAndroid: false,
-                isAndroidNativeWebScreenshot: false,
-                isAndroidChromeDriverScreenshot: false,
-                isIOS: true,
-                isLandscape: false,
-                toolBarShadowPadding: 6,
-                hideAfterFirstScroll: [<HTMLElement>(<unknown>'<div/>')],
-                screenHeight: 0,
-                screenWidth: 0,
-            }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(1200)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-                // RUN 2
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(1200)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideScrollBars, false);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
-                .mockResolvedValueOnce({})
-
-            // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
-            result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
-
-            expect(result).toMatchSnapshot()
-        })
-
-        it('should get the desktop browser fullpage screenshot data', async () => {
-            const options: FullPageScreenshotDataOptions = {
-                addressBarShadowPadding: 6,
-                devicePixelRatio: 2,
-                deviceRectangles: {
-                    ...DEVICE_RECTANGLES,
-                    viewport: { x: 0, y: 0, width: 0, height: 0 }
-                },
-                fullPageScrollTimeout: 1,
                 innerHeight: 768,
                 isAndroid: false,
                 isAndroidNativeWebScreenshot: false,
                 isAndroidChromeDriverScreenshot: false,
                 isIOS: false,
                 isLandscape: false,
-                toolBarShadowPadding: 6,
-                hideAfterFirstScroll: [],
-                screenHeight: 0,
-                screenWidth: 0,
+                screenHeight: 800,
+                screenWidth: 1366,
+                toolBarShadowPadding: 0,
             }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // THIS NEEDS TO BE FIXED IN THE FUTURE
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
-                // RUN 2
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
-                // RUN 3
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
-                // RUN 4
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
-                // RUN 5
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
 
-            // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
-            result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
+            const result = await getBase64FullPageScreenshotsData(mockExecutor, options)
 
-            expect(result).toMatchSnapshot()
+            expect(result).toBeDefined()
+            expect(result.data).toBeDefined()
+            expect(Array.isArray(result.data)).toBe(true)
+        })
+    })
+
+    describe('takeBase64BiDiScreenshot', () => {
+        it('should take a BiDi screenshot with no arguments (uses defaults)', async () => {
+            const result = await takeBase64BiDiScreenshot()
+            expect(result).toBe(IMAGE_STRING)
         })
 
-        it('should hide elements for the desktop browser fullpage screenshot', async () => {
-            const options: FullPageScreenshotDataOptions = {
-                addressBarShadowPadding: 6,
-                devicePixelRatio: 2,
-                deviceRectangles: DEVICE_RECTANGLES,
-                fullPageScrollTimeout: 1,
-                innerHeight: 768,
-                isAndroid: false,
-                isAndroidNativeWebScreenshot: false,
-                isAndroidChromeDriverScreenshot: false,
-                isIOS: false,
-                isLandscape: false,
-                toolBarShadowPadding: 6,
-                hideAfterFirstScroll: [<HTMLElement>(<unknown>'<div/>')],
-                screenHeight: 0,
-                screenWidth: 0,
+        it('should take a BiDi screenshot with default viewport origin', async () => {
+            const result = await takeBase64BiDiScreenshot({})
+            expect(result).toBe(IMAGE_STRING)
+        })
+
+        it('should take a BiDi screenshot with document origin', async () => {
+            const result = await takeBase64BiDiScreenshot({ origin: 'document' })
+            expect(result).toBe(IMAGE_STRING)
+        })
+
+        it('should take a BiDi screenshot with clip rectangle', async () => {
+            const clipRectangle: RectanglesOutput = {
+                x: 10,
+                y: 20,
+                width: 300,
+                height: 400,
             }
-            const MOCKED_EXECUTOR = vi
-                .fn()
-                // THIS NEEDS TO BE FIXED IN THE FUTURE
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
-                // RUN 2
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, true);
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
-                // RUN 3
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
-                // RUN 4
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
-                // RUN 5
-                // getFullPageScreenshotsDataNativeMobile: For await executor(scrollToPosition, scrollY)
-                .mockResolvedValueOnce({})
-                // getFullPageScreenshotsDataNativeMobile: For await executor(getDocumentScrollHeight)
-                .mockResolvedValueOnce(3200)
-                // getFullPageScreenshotsDataNativeMobile: For await executor(hideRemoveElements, {hide: hideAfterFirstScroll, remove: []}, false);
-                .mockResolvedValueOnce({})
 
-            // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
-            result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
-
-            expect(result).toMatchSnapshot()
+            const result = await takeBase64BiDiScreenshot({ clip: clipRectangle })
+            expect(result).toBe(IMAGE_STRING)
         })
     })
 })

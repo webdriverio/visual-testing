@@ -1,6 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { existsSync, rmSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
+
+vi.mock('node:fs', async () => {
+    const actual = await vi.importActual('node:fs')
+    return {
+        ...actual,
+        existsSync: vi.fn(),
+        mkdirSync: vi.fn(),
+    }
+})
 import logger from '@wdio/logger'
 import {
     calculateDprData,
@@ -66,7 +75,9 @@ describe('utils', () => {
     describe('getAndCreatePath', () => {
         const folder = join(process.cwd(), '/.tmp/utils')
 
-        afterEach(() => rmSync(folder, { recursive: true, force: true }))
+        beforeEach(() => {
+            vi.mocked(existsSync).mockClear()
+        })
 
         it('should create the folder and return the folder name for a device that needs to have its own folder', () => {
             const options: GetAndCreatePathOptions = {
@@ -77,7 +88,12 @@ describe('utils', () => {
             }
             const expectedFolderName = join(folder, options.deviceName)
 
+            // Mock: folder doesn't exist initially
+            vi.mocked(existsSync).mockReturnValueOnce(false)
             expect(existsSync(expectedFolderName)).toMatchSnapshot()
+
+            // Mock: folder exists after creation
+            vi.mocked(existsSync).mockReturnValue(true)
             expect(getAndCreatePath(folder, options)).toEqual(expectedFolderName)
             expect(existsSync(expectedFolderName)).toMatchSnapshot()
         })
@@ -91,7 +107,12 @@ describe('utils', () => {
             }
             const expectedFolderName = join(folder, `desktop_${options.browserName}`)
 
+            // Mock: folder doesn't exist initially
+            vi.mocked(existsSync).mockReturnValueOnce(false)
             expect(existsSync(expectedFolderName)).toMatchSnapshot()
+
+            // Mock: folder exists after creation
+            vi.mocked(existsSync).mockReturnValue(true)
             expect(getAndCreatePath(folder, options)).toEqual(expectedFolderName)
             expect(existsSync(expectedFolderName)).toMatchSnapshot()
         })
@@ -104,7 +125,12 @@ describe('utils', () => {
                 savePerInstance: false,
             }
 
+            // Mock: folder doesn't exist initially
+            vi.mocked(existsSync).mockReturnValueOnce(false)
             expect(existsSync(folder)).toMatchSnapshot()
+
+            // Mock: folder exists after creation
+            vi.mocked(existsSync).mockReturnValue(true)
             expect(getAndCreatePath(folder, options)).toEqual(folder)
             expect(existsSync(folder)).toMatchSnapshot()
         })

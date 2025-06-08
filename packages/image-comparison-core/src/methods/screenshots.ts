@@ -3,7 +3,7 @@ import { browser } from '@wdio/globals'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
 import { calculateDprData, getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
-import type { BidiScreenshot, Executor, GetWindowHandle } from './methods.interfaces.js'
+import type { Executor } from './methods.interfaces.js'
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
@@ -403,16 +403,11 @@ export async function takeBase64Screenshot(): Promise<string> {
 /**
  * Take a bidi screenshot
  */
-export async function takeBase64BiDiScreenshot({ bidiScreenshot, getWindowHandle, origin = 'viewport', clip }:{
-    bidiScreenshot: BidiScreenshot,
-    getWindowHandle: GetWindowHandle,
-    origin?: 'viewport' | 'document',
-    clip?: RectanglesOutput
-}): Promise<string> {
+export async function takeBase64BiDiScreenshot({ origin = 'viewport', clip }: { origin?: 'viewport' | 'document', clip?: RectanglesOutput} = {}): Promise<string> {
     log.info('Taking a BiDi screenshot')
-    const contextID = await getWindowHandle()
+    const contextID = await browser.getWindowHandle()
 
-    return (await bidiScreenshot({
+    return (await browser.browsingContextCaptureScreenshot({
         context: contextID,
         origin,
         ...(clip ? { clip: { ...clip, type: 'box' } } : {})

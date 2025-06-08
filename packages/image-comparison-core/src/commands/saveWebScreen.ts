@@ -14,7 +14,6 @@ import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
  */
 export default async function saveWebScreen(
     {
-        methods,
         instanceData,
         folders,
         tag,
@@ -84,10 +83,7 @@ export default async function saveWebScreen(
 
     if (canUseBidiScreenshot() && !isMobile && !enableLegacyScreenshotMethod) {
         // 3a. Take the screenshot with the BiDi method
-        base64Image = await takeBase64BiDiScreenshot({
-            bidiScreenshot: methods.bidiScreenshot!,
-            getWindowHandle: methods.getWindowHandle!,
-        })
+        base64Image = await takeBase64BiDiScreenshot()
     } else {
         // 3b. Take the screenshot with the regular method
         base64Image = await takeBase64Screenshot()

@@ -92,11 +92,7 @@ export default async function saveFullPageScreen(
 
     if (canUseBidiScreenshot() && !isEmulated && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)) {
         // 3a.  Fullpage screenshots are taken in one go with the Bidi protocol
-        fullPageBase64Image = await takeBase64BiDiScreenshot({
-            bidiScreenshot: methods.bidiScreenshot!,
-            getWindowHandle: methods.getWindowHandle!,
-            origin: 'document',
-        })
+        fullPageBase64Image = await takeBase64BiDiScreenshot({ origin: 'document' })
     } else {
         // 3b.  Fullpage screenshots are taken per scrolled viewport
         const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
