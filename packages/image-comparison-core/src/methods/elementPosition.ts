@@ -1,14 +1,13 @@
 import getElementPositionTopDom from '../clientSideScripts/getElementPositionTopDom.js'
-import type { Executor } from './methods.interfaces.js'
 import type { ElementPosition } from '../clientSideScripts/elementPosition.interfaces.js'
 import { getBoundingClientRect } from '../clientSideScripts/getBoundingClientRect.js'
 import type { DeviceRectangles } from './rectangles.interfaces.js'
+import { browser } from '@wdio/globals'
 
 /**
  * Get the element position on a Android device
  */
 export async function getElementPositionAndroid(
-    executor: Executor,
     element: HTMLElement,
     { deviceRectangles, isAndroidNativeWebScreenshot }: {
         deviceRectangles: DeviceRectangles,
@@ -17,11 +16,11 @@ export async function getElementPositionAndroid(
 ): Promise<ElementPosition> {
     // This is the native web screenshot
     if (isAndroidNativeWebScreenshot) {
-        return getElementWebviewPosition(executor, element,  { deviceRectangles } )
+        return getElementWebviewPosition(element,  { deviceRectangles } )
     }
 
     // This is the ChromeDriver screenshot
-    return executor(getBoundingClientRect, element)
+    return browser.execute(getBoundingClientRect, element)
 }
 
 /**
@@ -40,26 +39,24 @@ export async function getElementPositionAndroid(
  * }>}
  */
 export async function getElementPositionDesktop(
-    executor: Executor,
     element: HTMLElement,
     { innerHeight, screenshotHeight }: { innerHeight: number; screenshotHeight: number },
 ): Promise<ElementPosition> {
     if (screenshotHeight > innerHeight) {
-        return executor(getElementPositionTopDom, element)
+        return browser.execute(getElementPositionTopDom, element)
     }
 
-    return executor(getBoundingClientRect, element)
+    return browser.execute(getBoundingClientRect, element)
 }
 
 /**
  * Get the element position calculated from the webview
  */
 export async function getElementWebviewPosition(
-    executor: Executor,
     element: HTMLElement,
     { deviceRectangles: { viewport:{ x, y } } }: { deviceRectangles: DeviceRectangles },
 ): Promise<ElementPosition> {
-    const { height, width, x:boundingClientX, y:boundingClientY } = (await executor(getBoundingClientRect, element)) as ElementPosition
+    const { height, width, x:boundingClientX, y:boundingClientY } = (await browser.execute(getBoundingClientRect, element)) as ElementPosition
 
     return {
         height,

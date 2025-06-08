@@ -11,7 +11,6 @@ import saveAppElement from './saveAppElement.js'
  */
 export default async function checkAppElement(
     {
-        methods,
         instanceData,
         folders,
         element,
@@ -26,7 +25,6 @@ export default async function checkAppElement(
 
     // 2. Save the element and return the data
     const { devicePixelRatio, fileName } = await saveAppElement({
-        methods,
         instanceData,
         folders,
         element: element as WicElement,

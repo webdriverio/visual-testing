@@ -10,13 +10,13 @@ import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js
 import { canUseBidiScreenshot, getBase64ScreenshotSize, getMethodOrWicOption, waitFor } from '../helpers/utils.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
+import { browser } from '@wdio/globals'
 
 /**
  * Saves an image of an element
  */
 export default async function saveWebElement(
     {
-        methods,
         instanceData,
         folders,
         element,
@@ -27,7 +27,6 @@ export default async function saveWebElement(
     // 1a. Set some variables
     const { addressBarShadowPadding, autoElementScroll, formatImageName, savePerInstance, toolBarShadowPadding } =
         saveElementOptions.wic
-    const { executor, screenShot, takeElementScreenshot } = methods
     // 1b. Set the method options to the right values
     const disableBlinkingCursor = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'disableBlinkingCursor')
     const disableCSSAnimation = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'disableCSSAnimation')
@@ -87,7 +86,7 @@ export default async function saveWebElement(
         // 3a. Take the screenshot with the BiDi method
         // We also need to clip the image to the element size, taking into account the DPR
         // and also clipt if from the document, not the viewport
-        const rect = await methods.getElementRect!((await element as WebdriverIO.Element).elementId)
+        const rect = await browser.getElementRect!((await element as WebdriverIO.Element).elementId)
         const clip = { x: Math.floor(rect.x), y: Math.floor(rect.y), width: Math.floor(rect.width), height: Math.floor(rect.height) }
         const takeBiDiElementScreenshot = (origin: 'document' | 'viewport') => takeBase64BiDiScreenshot({ origin, clip })
 
@@ -111,7 +110,7 @@ export default async function saveWebElement(
         // Scroll the element into top of the viewport and return the current scroll position
         let currentPosition: number | undefined
         if (autoElementScroll) {
-            currentPosition = await executor(scrollElementIntoView, element, addressBarShadowPadding)
+            currentPosition = await browser.execute(scrollElementIntoView, element, addressBarShadowPadding)
             // We need to wait for the scroll to finish before taking the screenshot
             await waitFor(100)
         }
@@ -121,7 +120,6 @@ export default async function saveWebElement(
             devicePixelRatio,
             deviceRectangles: instanceData.deviceRectangles,
             element,
-            executor,
             initialDevicePixelRatio,
             isEmulated,
             innerHeight,
@@ -132,8 +130,6 @@ export default async function saveWebElement(
             // When the element needs to be resized, we need to take a screenshot of the whole page
             // also when it's emulated
             fallback: (!!saveElementOptions.method.resizeDimensions || isEmulated) || false,
-            screenShot,
-            takeElementScreenshot,
         })
         base64Image = screenshotResult.base64Image
         const { rectangles, isWebDriverElementScreenshot } = screenshotResult
@@ -142,7 +138,7 @@ export default async function saveWebElement(
         // we can scroll back to the original position
         // We don't need to wait for the scroll here because we don't take a screenshot after this
         if (autoElementScroll && currentPosition) {
-            await executor(scrollToPosition, currentPosition)
+            await browser.execute(scrollToPosition, currentPosition)
         }
 
         // When the element has no height or width, we default to the viewport screen size

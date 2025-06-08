@@ -441,7 +441,6 @@ export async function takeWebElementScreenshot({
     devicePixelRatio,
     deviceRectangles,
     element,
-    executor,
     fallback = false,
     initialDevicePixelRatio,
     isEmulated,
@@ -450,8 +449,6 @@ export async function takeWebElementScreenshot({
     isAndroid,
     isIOS,
     isLandscape,
-    screenShot,
-    takeElementScreenshot,
 }:TakeWebElementScreenshot): Promise<TakeWebElementScreenshotData>{
     if (fallback) {
         const base64Image = await takeBase64Screenshot()
@@ -471,7 +468,6 @@ export async function takeWebElementScreenshot({
         const rectangles = await determineElementRectangles({
             base64Image,
             element,
-            executor,
             options: elementRectangleOptions,
         })
 
@@ -483,7 +479,7 @@ export async function takeWebElementScreenshot({
     }
 
     try {
-        const   base64Image = await takeElementScreenshot!((await element as WebdriverIO.Element).elementId)
+        const   base64Image = await browser.takeElementScreenshot!((await element as WebdriverIO.Element).elementId)
         const { height, width } = getBase64ScreenshotSize(base64Image)
         const rectangles = { x: 0, y: 0, width, height }
 
@@ -502,7 +498,6 @@ export async function takeWebElementScreenshot({
             devicePixelRatio,
             deviceRectangles,
             element,
-            executor,
             fallback: true,
             initialDevicePixelRatio,
             isEmulated,
@@ -511,8 +506,6 @@ export async function takeWebElementScreenshot({
             isAndroid,
             isIOS,
             isLandscape,
-            screenShot,
-            takeElementScreenshot,
         })
     }
 }

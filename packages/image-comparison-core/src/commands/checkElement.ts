@@ -8,7 +8,6 @@ import type { InternalCheckElementMethodOptions } from './check.interfaces.js'
  */
 export default async function checkElement(
     {
-        methods,
         instanceData,
         folders,
         element,
@@ -19,6 +18,6 @@ export default async function checkElement(
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
     return isNativeContext
-        ? checkAppElement({ methods, instanceData, folders, element, tag, checkElementOptions, isNativeContext, testContext })
-        : checkWebElement({ methods, instanceData, folders, element, tag, checkElementOptions, testContext })
+        ? checkAppElement({ instanceData, folders, element, tag, checkElementOptions, isNativeContext, testContext })
+        : checkWebElement({ instanceData, folders, element, tag, checkElementOptions, testContext })
 }

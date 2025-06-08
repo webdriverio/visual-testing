@@ -3,7 +3,6 @@ import afterScreenshot from '../helpers/afterScreenshot.js'
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import { takeBase64ElementScreenshot } from '../methods/images.js'
-import type { GetElementRect } from '../methods/methods.interfaces.js'
 import type { WicElement } from './element.interfaces.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 
@@ -12,7 +11,6 @@ import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
  */
 export default async function saveAppElement(
     {
-        methods,
         instanceData,
         folders,
         element,
@@ -26,7 +24,6 @@ export default async function saveAppElement(
         formatImageName,
         savePerInstance,
     } = saveElementOptions.wic
-    const { getElementRect, screenShot } = methods
     const resizeDimensions: ResizeDimensions = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
     const {
         browserName,
@@ -46,10 +43,6 @@ export default async function saveAppElement(
         element: element as WicElement,
         devicePixelRatio,
         isIOS,
-        methods: {
-            getElementRect: getElementRect as GetElementRect,
-            screenShot,
-        },
         resizeDimensions,
     })
 

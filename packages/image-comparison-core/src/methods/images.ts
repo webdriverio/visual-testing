@@ -24,12 +24,13 @@ import type {
     RotatedImage,
 } from './images.interfaces.js'
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
-import type { GetElementRect, TakeScreenShot } from './methods.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
 import type { WicElement } from '../commands/element.interfaces.js'
 import { processDiffPixels } from './processDiffPixels.js'
 import { createCompareReport } from './createCompareReport.js'
+import { browser } from '@wdio/globals'
+import { takeBase64Screenshot } from './screenshots.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
 
@@ -570,19 +571,11 @@ async function takeResizedBase64Screenshot({
     element,
     devicePixelRatio,
     isIOS,
-    methods:{
-        getElementRect,
-        screenShot,
-    },
     resizeDimensions,
 }:{
     element: WicElement,
     devicePixelRatio: number,
     isIOS: boolean,
-    methods:{
-        getElementRect: GetElementRect,
-        screenShot: TakeScreenShot,
-    }
     resizeDimensions: ResizeDimensions,
 }
 ): Promise<string> {
@@ -592,10 +585,10 @@ async function takeResizedBase64Screenshot({
     }
 
     // Get the element position
-    const elementRegion = await getElementRect(awaitedElement.elementId as string)
+    const elementRegion = await browser.getElementRect(awaitedElement.elementId as string)
 
     // Create a screenshot
-    const base64Image = await screenShot()
+    const base64Image = await takeBase64Screenshot()
     // Crop it out with the correct dimensions
 
     // Make the image smaller
@@ -626,19 +619,11 @@ export async function takeBase64ElementScreenshot({
     element,
     devicePixelRatio,
     isIOS,
-    methods:{
-        getElementRect,
-        screenShot,
-    },
     resizeDimensions,
 }:{
     element: WicElement,
     devicePixelRatio: number,
     isIOS: boolean,
-    methods:{
-        getElementRect: GetElementRect,
-        screenShot: TakeScreenShot,
-    }
     resizeDimensions: ResizeDimensions,
 }): Promise<string> {
     const shouldTakeResizedScreenshot = resizeDimensions !== DEFAULT_RESIZE_DIMENSIONS
@@ -659,10 +644,6 @@ export async function takeBase64ElementScreenshot({
         element,
         devicePixelRatio,
         isIOS,
-        methods: {
-            getElementRect,
-            screenShot,
-        },
         resizeDimensions,
     })
 }

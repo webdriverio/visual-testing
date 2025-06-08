@@ -17,7 +17,6 @@ import { browser } from '@wdio/globals'
  * Determine the element rectangles on the page / screenshot
  */
 export async function determineElementRectangles({
-    executor,
     base64Image,
     options,
     element,
@@ -39,11 +38,11 @@ export async function determineElementRectangles({
 
     // Determine the element position on the screenshot
     if (isIOS) {
-        elementPosition = await getElementWebviewPosition(executor, element, { deviceRectangles })
+        elementPosition = await getElementWebviewPosition(element, { deviceRectangles })
     } else if (isAndroid) {
-        elementPosition = await getElementPositionAndroid(executor, element, { deviceRectangles, isAndroidNativeWebScreenshot })
+        elementPosition = await getElementPositionAndroid(element, { deviceRectangles, isAndroidNativeWebScreenshot })
     } else {
-        elementPosition = await getElementPositionDesktop(executor, element, { innerHeight, screenshotHeight: height })
+        elementPosition = await getElementPositionDesktop(element, { innerHeight, screenshotHeight: height })
     }
     // Validate if the element is visible
     if (elementPosition.height === 0 || elementPosition.width === 0) {

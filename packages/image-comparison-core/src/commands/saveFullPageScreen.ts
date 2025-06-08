@@ -112,7 +112,7 @@ export default async function saveFullPageScreen(
             toolBarShadowPadding: toolBarShadowPadding,
         }
         const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(
-            methods.executor,
+            methods!.executor,
             fullPageScreenshotOptions,
         )
 

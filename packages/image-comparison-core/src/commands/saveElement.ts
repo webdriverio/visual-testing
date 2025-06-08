@@ -8,7 +8,6 @@ import saveWebElement from './saveWebElement.js'
  */
 export default async function saveElement(
     {
-        methods,
         instanceData,
         folders,
         element,
@@ -18,6 +17,6 @@ export default async function saveElement(
     }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
     return isNativeContext
-        ? saveAppElement({ methods, instanceData, folders, element, tag, saveElementOptions, isNativeContext })
-        : saveWebElement({ methods, instanceData, folders, element, tag, saveElementOptions })
+        ? saveAppElement({ instanceData, folders, element, tag, saveElementOptions, isNativeContext })
+        : saveWebElement({ instanceData, folders, element, tag, saveElementOptions })
 }

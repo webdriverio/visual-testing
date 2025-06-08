@@ -1,7 +1,5 @@
-import type { Executor } from './methods.interfaces.js'
-
 export interface RectanglesOptions {
-    /** The device pixel ration of the screen / device */
+    /** The device pixel ratio of the screen / device */
     devicePixelRatio: number;
     /** If this is an Android native screenshot */
     isAndroidNativeWebScreenshot: boolean;
@@ -25,7 +23,7 @@ export interface ElementRectanglesOptions extends RectanglesOptions {
 export interface ScreenRectanglesOptions extends RectanglesOptions {
     /** If the legacy screenshot method is enabled */
     enableLegacyScreenshotMethod: boolean;
-    /** The inner height */
+    /** The inner width of the screen */
     innerWidth: number;
     /** If this is an Android ChromeDriver screenshot */
     isAndroidChromeDriverScreenshot: boolean;
@@ -33,25 +31,37 @@ export interface ScreenRectanglesOptions extends RectanglesOptions {
     initialDevicePixelRatio: number;
     /** If the screen is emulated */
     isEmulated: boolean;
-    /** If it's landscape */
+    /** If the screen is in landscape mode */
     isLandscape: boolean;
 }
 
 export interface RectanglesOutput {
+    /** The height of the rectangle */
     height: number;
+    /** The width of the rectangle */
     width: number;
+    /** The x-coordinate of the rectangle */
     x: number;
+    /** The y-coordinate of the rectangle */
     y: number;
 }
 
 export type DeviceRectangles = {
+    /** The bottom bar rectangle */
     bottomBar: RectanglesOutput,
+    /** The home bar rectangle */
     homeBar: RectanglesOutput,
+    /** The left side padding rectangle */
     leftSidePadding: RectanglesOutput,
+    /** The right side padding rectangle */
     rightSidePadding: RectanglesOutput,
+    /** The screen size dimensions */
     screenSize: { height: number, width: number},
+    /** The status bar and address bar rectangle */
     statusBarAndAddressBar: RectanglesOutput,
+    /** The status bar rectangle */
     statusBar: RectanglesOutput,
+    /** The viewport rectangle */
     viewport: RectanglesOutput,
 }
 
@@ -75,8 +85,10 @@ export interface StatusAddressToolBarRectanglesOptions {
 export type StatusAddressToolBarRectangles = Array<RectanglesOutput>;
 
 export interface ElementRectangles {
-    executor: Executor;
+    /** The base64 encoded image */
     base64Image: string;
+    /** The options for element rectangles */
     options: ElementRectanglesOptions;
+    /** The element to be compared */
     element: any;
 }

@@ -3,6 +3,7 @@ import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 import checkFullPageScreen from './checkFullPageScreen.js'
 import type { ImageCompareResult } from 'src/index.js'
 import type { InternalCheckTabbablePageMethodOptions } from './check.interfaces.js'
+import { browser } from '@wdio/globals'
 
 /**
  * Compare an image with all tab executions
@@ -24,7 +25,7 @@ export default async function checkTabbablePage(
     }
 
     // 1b. Inject drawing the tabbables
-    await methods.executor(drawTabbableOnCanvas, checkTabbableOptions.wic.tabbableOptions)
+    await browser.execute(drawTabbableOnCanvas, checkTabbableOptions.wic.tabbableOptions)
 
     // 2. Create the screenshot
     const fullPageCompareData = await checkFullPageScreen({
@@ -39,7 +40,7 @@ export default async function checkTabbablePage(
     })
 
     // 3. Remove the canvas
-    await methods.executor(removeElementFromDom, 'wic-tabbable-canvas')
+    await browser.execute(removeElementFromDom, 'wic-tabbable-canvas')
 
     // 4. Return the data
     return fullPageCompareData
