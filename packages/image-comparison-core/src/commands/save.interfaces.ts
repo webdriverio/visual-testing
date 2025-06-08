@@ -7,7 +7,7 @@ import type { SaveTabbableOptions } from './tabbable.interfaces.js'
 import type { Folders } from 'src/base.interfaces.js'
 
 export interface InternalSaveMethodOptions {
-    methods: Methods;
+    methods?: Methods;
     instanceData: InstanceData;
     folders: Folders;
     tag: string;

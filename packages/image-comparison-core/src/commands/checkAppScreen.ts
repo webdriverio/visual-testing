@@ -2,7 +2,6 @@ import type { RectanglesOutput } from '../methods/rectangles.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
 import type {  ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
-import type { GetElementRect } from '../methods/methods.interfaces.js'
 import { determineDeviceBlockOuts, determineIgnoreRegions } from '../methods/rectangles.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 import saveAppScreen from './saveAppScreen.js'
@@ -13,7 +12,6 @@ import type { ChainablePromiseElement } from 'webdriverio'
  */
 export default async function checkAppScreen(
     {
-        methods,
         instanceData,
         folders,
         tag,
@@ -41,12 +39,10 @@ export default async function checkAppScreen(
         ]
 
     }
-    const { getElementRect } = methods
     const { isAndroid, isMobile } = instanceData
 
     // 2. Take the actual screenshot and retrieve the needed data
     const { devicePixelRatio, fileName } = await saveAppScreen({
-        methods,
         instanceData,
         folders,
         tag,
@@ -55,7 +51,7 @@ export default async function checkAppScreen(
     })
 
     // 3. Determine the ignore regions
-    const ignoreRegions = await determineIgnoreRegions(screenCompareOptions.ignore || [], getElementRect as GetElementRect)
+    const ignoreRegions = await determineIgnoreRegions(screenCompareOptions.ignore || [])
     const deviceIgnoreRegions = await determineDeviceBlockOuts({
         isAndroid,
         screenCompareOptions,

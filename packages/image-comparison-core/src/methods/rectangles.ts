@@ -9,9 +9,9 @@ import type {
     StatusAddressToolBarRectangles,
     StatusAddressToolBarRectanglesOptions,
 } from './rectangles.interfaces.js'
-import type { GetElementRect } from './methods.interfaces.js'
 import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
 import type { InstanceData } from './instanceData.interfaces.js'
+import { browser } from '@wdio/globals'
 
 /**
  * Determine the element rectangles on the page / screenshot
@@ -237,13 +237,10 @@ function splitIgnores(items:unknown[]): { elements: WebdriverIO.Element[], regio
 /**
  * Get the regions from the elements
  */
-async function getRegionsFromElements(
-    elements: WebdriverIO.Element[],
-    getElementRect: GetElementRect,
-): Promise<RectanglesOutput[]> {
+async function getRegionsFromElements(elements: WebdriverIO.Element[]): Promise<RectanglesOutput[]> {
     const regions = []
     for (const element of elements) {
-        const region = await getElementRect(element.elementId)
+        const region = await browser.getElementRect(element.elementId)
         regions.push(region)
     }
 
@@ -253,13 +250,10 @@ async function getRegionsFromElements(
 /**
  * Translate ignores to regions
  */
-export async function determineIgnoreRegions(
-    ignores: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[],
-    getElementRect: GetElementRect,
-): Promise<RectanglesOutput[]>{
+export async function determineIgnoreRegions(ignores: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[]): Promise<RectanglesOutput[]>{
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const regionsFromElements = await getRegionsFromElements(elements, getElementRect)
+    const regionsFromElements = await getRegionsFromElements(elements)
 
     return [...regions, ...regionsFromElements]
         .map((region:RectanglesOutput) => ({
