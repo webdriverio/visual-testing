@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach, vi } from 'vitest'
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import {
     getBrowserObject,
     getDevicePixelRatio, getFolders,
@@ -8,6 +8,9 @@ import {
     enrichTestContext,
     getLtOptions,
 } from '../src/utils.js'
+
+// Import the functions we need to spy on
+import * as imageComparisonCore from '@wdio/image-comparison-core'
 
 const DEVICE_RECTANGLES = {
     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -147,6 +150,42 @@ describe('utils', () => {
         const createDriverMock = (customProps: Partial<WebdriverIO.Browser>) => {
             return ({ ...DEFAULT_DESKTOP_BROWSER, ...customProps }) as WebdriverIO.Browser
         }
+
+        beforeEach(() => {
+            vi.clearAllMocks()
+            // Set up spies for the imported functions that return dynamic values based on the browser
+            vi.spyOn(imageComparisonCore, 'getMobileScreenSize').mockImplementation(async ({ currentBrowser }) => {
+                // Return screen size based on what the mocked browser.execute returns
+                if (currentBrowser.isAndroid) {
+                    const result = await currentBrowser.execute('mobile: deviceInfo') as any
+                    if (result?.realDisplaySize) {
+                        const [width, height] = result.realDisplaySize.split('x').map(Number)
+                        return { height, width }
+                    }
+                }
+                if (currentBrowser.isIOS) {
+                    const result = await currentBrowser.execute('mobile: deviceScreenInfo') as any
+                    if (result?.screenSize) {
+                        let { height, width } = result.screenSize
+
+                        // Check orientation and swap if needed for landscape
+                        const orientation = await currentBrowser.getOrientation()
+                        const isLandscapeByOrientation = orientation === 'LANDSCAPE'
+                        const isLandscapeByValue = width > height
+
+                        if (isLandscapeByOrientation !== isLandscapeByValue) {
+                            [height, width] = [width, height]
+                        }
+
+                        return { height, width }
+                    }
+                }
+                // Fallback
+                return { height: 800, width: 400 }
+            })
+
+            vi.spyOn(imageComparisonCore, 'getMobileViewPortPosition').mockImplementation(({ initialDeviceRectangles }) => Promise.resolve(initialDeviceRectangles))
+        })
 
         afterEach(() => {
             vi.restoreAllMocks()

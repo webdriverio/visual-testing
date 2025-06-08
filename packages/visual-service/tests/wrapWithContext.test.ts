@@ -1,4 +1,4 @@
-import { DEVICE_RECTANGLES } from 'webdriver-image-comparison'
+import { DEVICE_RECTANGLES } from '@wdio/image-comparison-core'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as utilsModule from '../src/utils.js'
 import { wrapWithContext } from '../src/wrapWithContext.js'

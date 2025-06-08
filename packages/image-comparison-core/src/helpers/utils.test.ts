@@ -816,8 +816,6 @@ describe('utils', () => {
 
     describe('getMobileViewPortPosition', () => {
         let mockBrowser: any
-        const mockUrl = vi.fn()
-        const mockGetUrl = vi.fn().mockResolvedValue('http://example.com')
 
         const baseOptions = {
             isAndroid: false,
@@ -826,16 +824,14 @@ describe('utils', () => {
             nativeWebScreenshot: true,
             screenHeight: 800,
             screenWidth: 400,
-            methods: {
-                url: mockUrl,
-                getUrl: mockGetUrl,
-            },
         }
 
         beforeEach(async () => {
             vi.clearAllMocks()
             const { browser } = await vi.importMock('@wdio/globals') as any
             mockBrowser = browser
+            mockBrowser.getUrl = vi.fn().mockResolvedValue('http://example.com')
+            mockBrowser.url = vi.fn()
         })
 
         it('should return correct device rectangles for iOS WebView flow', async () => {
@@ -851,8 +847,8 @@ describe('utils', () => {
                 initialDeviceRectangles: DEVICE_RECTANGLES,
             })
 
-            expect(mockGetUrl).toHaveBeenCalled()
-            expect(mockUrl).toHaveBeenCalledTimes(1)
+            expect(mockBrowser.getUrl).toHaveBeenCalled()
+            expect(mockBrowser.url).toHaveBeenCalledWith('http://example.com')
             expect(mockBrowser.execute).toHaveBeenCalledWith(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
 
             expect(result).toMatchSnapshot()
@@ -867,6 +863,8 @@ describe('utils', () => {
 
             expect(result).toEqual(DEVICE_RECTANGLES)
             expect(mockBrowser.execute).not.toHaveBeenCalled()
+            expect(mockBrowser.getUrl).not.toHaveBeenCalled()
+            expect(mockBrowser.url).not.toHaveBeenCalled()
         })
 
         it('should return initialDeviceRectangles if Android + not nativeWebScreenshot', async () => {
@@ -879,6 +877,8 @@ describe('utils', () => {
             })
 
             expect(result).toEqual(DEVICE_RECTANGLES)
+            expect(mockBrowser.getUrl).not.toHaveBeenCalled()
+            expect(mockBrowser.url).not.toHaveBeenCalled()
         })
     })
 

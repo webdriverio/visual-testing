@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import logger from '@wdio/logger'
 import type { ResultReport } from '@wdio/image-comparison-core'
 
-const log = logger('@wdio/visual-service:webdriver-image-comparison-reporter')
+const log = logger('@wdio/visual-service:reporter')
 
 interface TestDataGroup {
     test: string;
