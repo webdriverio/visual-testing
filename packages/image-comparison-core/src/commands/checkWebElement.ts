@@ -1,5 +1,4 @@
 import { executeImageCompare } from '../methods/images.js'
-import { checkIsAndroid, checkIsMobile } from '../helpers/utils.js'
 import saveWebElement from './saveWebElement.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveElementOptions } from './element.interfaces.js'
@@ -68,10 +67,10 @@ export default async function checkWebElement(
             diffFolder: folders.diffFolder,
             browserName: instanceData.browserName,
             deviceName: instanceData.deviceName,
-            isMobile: checkIsMobile(instanceData.platformName),
+            isMobile: browserInstance.isMobile,
             savePerInstance: checkElementOptions.wic.savePerInstance,
         },
-        isAndroid: checkIsAndroid(instanceData.platformName),
+        isAndroid: browserInstance.isAndroid,
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         platformName: instanceData.platformName,
     }

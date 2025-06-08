@@ -1,16 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`utils > calculateDprData > should multiple all number values by the dpr value 1`] = `
-{
-  "1": 6,
-  "a": 2,
-  "a1": 18,
-  "b": 4,
-  "bool": true,
-  "string": "string",
-}
-`;
-
 exports[`utils > calculateDprData > should multiply all number values by the dpr value 1`] = `
 {
   "1": 6,
@@ -28,17 +17,7 @@ exports[`utils > checkAndroidChromeDriverScreenshot > should return false for pl
 
 exports[`utils > checkAndroidChromeDriverScreenshot > should return false for platform:'ios' and nativeWeb:true 1`] = `false`;
 
-exports[`utils > checkAndroidChromeDriverScreenshot > should return false when Android and nativeWebscreenshot true is provided 1`] = `false`;
-
-exports[`utils > checkAndroidChromeDriverScreenshot > should return false when iOS and nativeWebscreenshot false is provided 1`] = `false`;
-
-exports[`utils > checkAndroidChromeDriverScreenshot > should return false when iOS and nativeWebscreenshot true is provided 1`] = `false`;
-
-exports[`utils > checkAndroidChromeDriverScreenshot > should return false when no platform name is provided 1`] = `false`;
-
 exports[`utils > checkAndroidChromeDriverScreenshot > should return true for platform:'android' and nativeWeb:false 1`] = `true`;
-
-exports[`utils > checkAndroidChromeDriverScreenshot > should return true when Android and nativeWebscreenshot false is provided  1`] = `true`;
 
 exports[`utils > checkAndroidNativeWebScreenshot > should return false for platform:'' and nativeWeb:false 1`] = `false`;
 
@@ -46,17 +25,7 @@ exports[`utils > checkAndroidNativeWebScreenshot > should return false for platf
 
 exports[`utils > checkAndroidNativeWebScreenshot > should return false for platform:'ios' and nativeWeb:true 1`] = `false`;
 
-exports[`utils > checkAndroidNativeWebScreenshot > should return false when Android and nativeWebscreenshot false is provided 1`] = `false`;
-
-exports[`utils > checkAndroidNativeWebScreenshot > should return false when iOS and nativeWebscreenshot false is provided 1`] = `false`;
-
-exports[`utils > checkAndroidNativeWebScreenshot > should return false when iOS and nativeWebscreenshot true is provided 1`] = `false`;
-
-exports[`utils > checkAndroidNativeWebScreenshot > should return false when no platform name is provided 1`] = `false`;
-
 exports[`utils > checkAndroidNativeWebScreenshot > should return true for platform:'android' and nativeWeb:true 1`] = `true`;
-
-exports[`utils > checkAndroidNativeWebScreenshot > should return true when Android and nativeWebscreenshot true is provided  1`] = `true`;
 
 exports[`utils > checkIsAndroid > should return false for '' 1`] = `false`;
 
@@ -64,15 +33,9 @@ exports[`utils > checkIsAndroid > should return false for 'chrome' 1`] = `false`
 
 exports[`utils > checkIsAndroid > should return false for 'ios' 1`] = `false`;
 
-exports[`utils > checkIsAndroid > should return false when a platform name is provided that is not accepted 1`] = `false`;
-
-exports[`utils > checkIsAndroid > should return false when no platform name is provided 1`] = `false`;
-
 exports[`utils > checkIsAndroid > should return true for 'Android' 1`] = `true`;
 
 exports[`utils > checkIsAndroid > should return true for 'android' 1`] = `true`;
-
-exports[`utils > checkIsAndroid > should return true when a valid platform name is provided 1`] = `true`;
 
 exports[`utils > checkIsIos > should return false for '' 1`] = `false`;
 
@@ -80,47 +43,27 @@ exports[`utils > checkIsIos > should return false for 'android' 1`] = `false`;
 
 exports[`utils > checkIsIos > should return false for 'chrome' 1`] = `false`;
 
-exports[`utils > checkIsIos > should return false when a platform name is provided that is not accepted 1`] = `false`;
-
-exports[`utils > checkIsIos > should return false when no platform name is provided 1`] = `false`;
-
 exports[`utils > checkIsIos > should return true for 'iOS' 1`] = `true`;
 
 exports[`utils > checkIsIos > should return true for 'ios' 1`] = `true`;
-
-exports[`utils > checkIsIos > should return true when a valid platform name is provided 1`] = `true`;
 
 exports[`utils > checkIsMobile > should return false for '' 1`] = `false`;
 
 exports[`utils > checkIsMobile > should return false for 'chrome' 1`] = `false`;
 
-exports[`utils > checkIsMobile > should return false when no platform name is provided 1`] = `false`;
-
 exports[`utils > checkIsMobile > should return true for 'android' 1`] = `true`;
 
 exports[`utils > checkIsMobile > should return true for 'ios' 1`] = `true`;
 
-exports[`utils > checkIsMobile > should return true when a platform name is provided 1`] = `true`;
-
 exports[`utils > checkTestInBrowser > should return false for '' 1`] = `false`;
 
-exports[`utils > checkTestInBrowser > should return false when no browser name is provided 1`] = `false`;
-
 exports[`utils > checkTestInBrowser > should return true for 'chrome' 1`] = `true`;
-
-exports[`utils > checkTestInBrowser > should return true when a browser name is provided 1`] = `true`;
 
 exports[`utils > checkTestInMobileBrowser > should return false for platform:'' and browser:'chrome' 1`] = `false`;
 
 exports[`utils > checkTestInMobileBrowser > should return false for platform:'ios' and browser:'' 1`] = `false`;
 
-exports[`utils > checkTestInMobileBrowser > should return false when a plaform but no browser name is provided 1`] = `false`;
-
-exports[`utils > checkTestInMobileBrowser > should return false when no platform name is provided 1`] = `false`;
-
 exports[`utils > checkTestInMobileBrowser > should return true for platform:'ios' and browser:'chrome' 1`] = `true`;
-
-exports[`utils > checkTestInMobileBrowser > should return true when a plaform and a browser name is provided 1`] = `true`;
 
 exports[`utils > formatFileName > should format a string for mobile app 1`] = `"theTag-app-2-1400x900.png"`;
 
@@ -136,23 +79,9 @@ exports[`utils > getAddressBarShadowPadding > should return 0 for desktop browse
 
 exports[`utils > getAddressBarShadowPadding > should return 0 for iOS app 1`] = `0`;
 
-exports[`utils > getAddressBarShadowPadding > should return 0 when this is a check for Android with a native screenshot but without adding a shadow padding 1`] = `0`;
-
-exports[`utils > getAddressBarShadowPadding > should return 0 when this is a check for a desktop browser 1`] = `0`;
-
-exports[`utils > getAddressBarShadowPadding > should return 0 when this is a check for an Android app 1`] = `0`;
-
-exports[`utils > getAddressBarShadowPadding > should return 0 when this is a check for an iOS app 1`] = `0`;
-
-exports[`utils > getAddressBarShadowPadding > should return 0 when this is a check for iOS but without adding a shadow padding 1`] = `0`;
-
 exports[`utils > getAddressBarShadowPadding > should return 6 for Android native web with shadow padding 1`] = `0`;
 
 exports[`utils > getAddressBarShadowPadding > should return 6 for iOS with shadow padding 1`] = `0`;
-
-exports[`utils > getAddressBarShadowPadding > should return 6 when this is a check for Android with a native screenshot and adding a shadow padding 1`] = `6`;
-
-exports[`utils > getAddressBarShadowPadding > should return 6 when this is a check for iOS and adding a shadow padding 1`] = `6`;
 
 exports[`utils > getAndCreatePath > should create the folder and return the folder name for a browser 1`] = `false`;
 
@@ -165,20 +94,6 @@ exports[`utils > getAndCreatePath > should create the folder and return the fold
 exports[`utils > getAndCreatePath > should create the folder and return the folder name for a device that needs to have its own folder 1`] = `false`;
 
 exports[`utils > getAndCreatePath > should create the folder and return the folder name for a device that needs to have its own folder 2`] = `true`;
-
-exports[`utils > getBase64ScreenshotSize > should get the screenshot size of a screenshot string with DRP 2 1`] = `
-{
-  "height": 768,
-  "width": 1366,
-}
-`;
-
-exports[`utils > getBase64ScreenshotSize > should get the screenshot size of a screenshot string with the default DPR 1`] = `
-{
-  "height": 1536,
-  "width": 2732,
-}
-`;
 
 exports[`utils > getBase64ScreenshotSize > should get the screenshot size with DPR 2 1`] = `
 {
@@ -194,17 +109,11 @@ exports[`utils > getBase64ScreenshotSize > should get the screenshot size with d
 }
 `;
 
-exports[`utils > getDevicePixelRatio > should return 1 when the screenshot width equals device screen width 1`] = `85`;
-
-exports[`utils > getDevicePixelRatio > should return 2 when the screenshot width is double the device screen width 1`] = `171`;
-
 exports[`utils > getDevicePixelRatio > should return correct ratio for double width 1`] = `171`;
 
 exports[`utils > getDevicePixelRatio > should return correct ratio for equal width 1`] = `85`;
 
 exports[`utils > getDevicePixelRatio > should return correct ratio for rounded result 1`] = `161`;
-
-exports[`utils > getDevicePixelRatio > should round the result to the nearest integer 1`] = `161`;
 
 exports[`utils > getIosBezelImageNames > should return bezel image names for "ipadair" 1`] = `
 {
@@ -435,23 +344,9 @@ exports[`utils > getToolBarShadowPadding > should return 0 for desktop browser 1
 
 exports[`utils > getToolBarShadowPadding > should return 0 for iOS app 1`] = `0`;
 
-exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for Android browser and adding a shadow padding 1`] = `6`;
-
-exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for a desktop browser 1`] = `0`;
-
-exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for an Android app 1`] = `0`;
-
-exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for an Android app with adding a shadow padding 1`] = `0`;
-
-exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for an iOS app 1`] = `0`;
-
-exports[`utils > getToolBarShadowPadding > should return 0 when this is a check for an iOS app with adding a shadow padding 1`] = `0`;
-
 exports[`utils > getToolBarShadowPadding > should return 6 for Android browser with shadow padding 1`] = `6`;
 
 exports[`utils > getToolBarShadowPadding > should return 15 for iOS browser with shadow padding 1`] = `15`;
-
-exports[`utils > getToolBarShadowPadding > should return 15 when this is a check for iOS browser and adding a shadow padding 1`] = `15`;
 
 exports[`utils > logAllDeprecatedCompareOptions > should log a deprecation warning for each deprecated key 1`] = `
 "The following root-level compare options are deprecated and should be moved under 'compareOptions':

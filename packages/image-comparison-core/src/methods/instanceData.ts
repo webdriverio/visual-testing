@@ -1,9 +1,6 @@
 import {
-    checkIsMobile,
     checkAndroidChromeDriverScreenshot,
     checkAndroidNativeWebScreenshot,
-    checkIsAndroid,
-    checkIsIos,
     checkTestInBrowser,
     checkTestInMobileBrowser,
     getAddressBarShadowPadding,
@@ -25,9 +22,9 @@ export default async function getEnrichedInstanceData(
     const { addressBarShadowPadding, toolBarShadowPadding, browserName, nativeWebScreenshot, platformName } = instanceOptions
 
     // Determine some constants
-    const isAndroid = checkIsAndroid(platformName)
-    const isIOS = checkIsIos(platformName)
-    const isMobile = checkIsMobile(platformName)
+    const isAndroid = browserInstance.isAndroid
+    const isIOS = browserInstance.isIOS
+    const isMobile = browserInstance.isMobile
     const isTestInBrowser = checkTestInBrowser(browserName)
     const isTestInMobileBrowser = checkTestInMobileBrowser(platformName, browserName)
     const isAndroidNativeWebScreenshot = checkAndroidNativeWebScreenshot(platformName, nativeWebScreenshot)

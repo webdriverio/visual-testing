@@ -2,7 +2,7 @@ import logger from '@wdio/logger'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import setCustomCss from '../clientSideScripts/setCustomCss.js'
 import { CUSTOM_CSS_ID } from './constants.js'
-import { checkIsMobile, getAddressBarShadowPadding, getToolBarShadowPadding, waitFor } from './utils.js'
+import { getAddressBarShadowPadding, getToolBarShadowPadding, waitFor } from './utils.js'
 import getEnrichedInstanceData from '../methods/instanceData.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeScreenshot.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
@@ -75,7 +75,7 @@ export default async function beforeScreenshot(
     }
 
     // Set some custom css
-    if (disableCSSAnimation || disableBlinkingCursor || checkIsMobile(platformName)) {
+    if (disableCSSAnimation || disableBlinkingCursor || browserInstance.isMobile) {
         await browserInstance.execute(setCustomCss, { addressBarPadding, disableBlinkingCursor, disableCSSAnimation, id: CUSTOM_CSS_ID, toolBarPadding })
         // Wait at least 500 milliseconds to make sure the css is applied
         // Not every device is fast enough to apply the css faster

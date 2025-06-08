@@ -18,9 +18,13 @@ describe('afterScreenshot', () => {
     afterEach(() => rmSync(folder, { recursive: true, force: true }))
 
     // Helper function to create mock browser instance with execute function
-    const createMockBrowserInstance = (mockExecuteFn = vi.fn().mockResolvedValue('')) => {
+    const createMockBrowserInstance = (
+        mockExecuteFn = vi.fn().mockResolvedValue(''),
+        customProperties: Partial<WebdriverIO.Browser> = {}
+    ) => {
         return {
-            execute: mockExecuteFn
+            execute: mockExecuteFn,
+            ...customProperties
         } as unknown as WebdriverIO.Browser
     }
 
@@ -126,7 +130,7 @@ describe('afterScreenshot', () => {
 
     it('should handle mobile platform and remove custom CSS', async () => {
         const mockExecute = vi.fn().mockResolvedValue('')
-        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute, { isMobile: true })
         const options = createBaseOptions({
             disableBlinkingCursor: false,
             disableCSSAnimation: false,

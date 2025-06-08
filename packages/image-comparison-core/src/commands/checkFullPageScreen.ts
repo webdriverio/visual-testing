@@ -1,5 +1,4 @@
 import { executeImageCompare } from '../methods/images.js'
-import { checkIsAndroid, checkIsMobile } from '../helpers/utils.js'
 import saveFullPageScreen from './saveFullPageScreen.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveFullPageOptions } from './fullPage.interfaces.js'
@@ -67,10 +66,10 @@ export default async function checkFullPageScreen(
             diffFolder: folders.diffFolder,
             browserName: instanceData.browserName,
             deviceName: instanceData.deviceName,
-            isMobile: checkIsMobile(instanceData.platformName),
+            isMobile: browserInstance.isMobile,
             savePerInstance: checkFullPageOptions.wic.savePerInstance,
         },
-        isAndroid: checkIsAndroid(instanceData.platformName),
+        isAndroid: browserInstance.isAndroid,
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: checkFullPageOptions.wic.isHybridApp,
         platformName: instanceData.platformName,

@@ -1,6 +1,5 @@
 import saveWebScreen from './saveWebScreen.js'
 import { executeImageCompare } from '../methods/images.js'
-import { checkIsAndroid, checkIsMobile } from '../helpers/utils.js'
 import type { ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveScreenOptions } from './screen.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
@@ -60,10 +59,10 @@ export default async function checkWebScreen(
             diffFolder: folders.diffFolder,
             browserName: instanceData.browserName,
             deviceName: instanceData.deviceName,
-            isMobile: checkIsMobile(instanceData.platformName),
+            isMobile: browserInstance.isMobile,
             savePerInstance: checkScreenOptions.wic.savePerInstance,
         },
-        isAndroid: checkIsAndroid(instanceData.platformName),
+        isAndroid: browserInstance.isAndroid,
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
     }
 

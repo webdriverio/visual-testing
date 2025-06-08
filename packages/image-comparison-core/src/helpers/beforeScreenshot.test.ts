@@ -27,17 +27,21 @@ vi.mock('../methods/instanceData.js', () => ({
 }))
 
 describe('beforeScreenshot', () => {
-    let mockBrowserInstance: WebdriverIO.Browser
-    let mockExecute: ReturnType<typeof vi.fn>
     let logDebugSpy: ReturnType<typeof vi.spyOn>
     let logWarnSpy: ReturnType<typeof vi.spyOn>
 
-    beforeEach(() => {
-        mockExecute = vi.fn().mockResolvedValue('')
-        mockBrowserInstance = {
-            execute: mockExecute
+    // Helper function to create mock browser instance with custom properties
+    const createMockBrowserInstance = (
+        mockExecuteFn = vi.fn().mockResolvedValue(''),
+        customProperties: Partial<WebdriverIO.Browser> = {}
+    ) => {
+        return {
+            execute: mockExecuteFn,
+            ...customProperties
         } as unknown as WebdriverIO.Browser
+    }
 
+    beforeEach(() => {
         // Set up log spies
         logDebugSpy = vi.spyOn(log, 'debug').mockImplementation(() => {})
         logWarnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
@@ -96,12 +100,14 @@ describe('beforeScreenshot', () => {
     })
 
     it('should be able to return the enriched instance data with default options', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createOptions()
 
         expect(await beforeScreenshot(mockBrowserInstance, options)).toMatchSnapshot()
     })
 
     it('should be able to return the enriched instance data with `addShadowPadding: true`', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createOptions({
             disableBlinkingCursor: true,
             disableCSSAnimation: true,
@@ -115,18 +121,20 @@ describe('beforeScreenshot', () => {
     })
 
     it('should handle waitForFontsLoaded functionality', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createOptions({
             waitForFontsLoaded: true,
         })
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        expect(mockExecute).toHaveBeenCalledWith(waitForFonts)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(waitForFonts)
     })
 
     it('should handle waitForFontsLoaded error gracefully and log debug message', async () => {
         const fontError = new Error('Font load error')
-        mockExecute.mockRejectedValueOnce(fontError)
+        const mockExecute = vi.fn().mockRejectedValue(fontError)
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
 
         const options = createOptions({
             waitForFontsLoaded: true,
@@ -134,21 +142,23 @@ describe('beforeScreenshot', () => {
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        expect(mockExecute).toHaveBeenCalledWith(waitForFonts)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(waitForFonts)
         expect(logDebugSpy).toHaveBeenCalledWith('Waiting for fonts to load threw an error:', fontError)
     })
 
     it('should handle noScrollBars option', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createOptions({
             noScrollBars: true,
         })
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        expect(mockExecute).toHaveBeenCalledWith(hideScrollBars, true)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(hideScrollBars, true)
     })
 
     it('should handle hide and remove elements', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const hideElements = [<HTMLElement>(<any>'<div></div>')]
         const removeElements = [<HTMLElement>(<any>'<span></span>')]
 
@@ -159,12 +169,13 @@ describe('beforeScreenshot', () => {
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: removeElements }, true)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: removeElements }, true)
     })
 
     it('should handle hide/remove elements error gracefully and log warning', async () => {
         const elementError = new Error('Element not found')
-        mockExecute.mockRejectedValueOnce(elementError)
+        const mockExecute = vi.fn().mockRejectedValue(elementError)
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
 
         const hideElements = [<HTMLElement>(<any>'<div></div>')]
         const options = createOptions({
@@ -173,7 +184,7 @@ describe('beforeScreenshot', () => {
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: [] }, true)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: [] }, true)
         expect(logWarnSpy).toHaveBeenCalledWith(
             '\x1b[33m%s\x1b[0m',
             `
@@ -189,6 +200,7 @@ describe('beforeScreenshot', () => {
     })
 
     it('should handle CSS customization for desktop', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createOptions({
             disableBlinkingCursor: true,
             disableCSSAnimation: true,
@@ -198,7 +210,7 @@ describe('beforeScreenshot', () => {
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        expect(mockExecute).toHaveBeenCalledWith(setCustomCss, {
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(setCustomCss, {
             addressBarPadding: 0, // Should be 0 for desktop with addShadowPadding false
             disableBlinkingCursor: true,
             disableCSSAnimation: true,
@@ -208,6 +220,7 @@ describe('beforeScreenshot', () => {
     })
 
     it('should handle CSS customization for mobile platform', async () => {
+        const mockBrowserInstance = createMockBrowserInstance(undefined, { isAndroid: true, isIOS: false, isMobile: true })
         const options = createOptions({
             instanceData: {
                 ...baseInstanceData,
@@ -219,7 +232,7 @@ describe('beforeScreenshot', () => {
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        expect(mockExecute).toHaveBeenCalledWith(setCustomCss, {
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(setCustomCss, {
             addressBarPadding: 0,
             disableBlinkingCursor: false,
             disableCSSAnimation: false,
@@ -229,16 +242,18 @@ describe('beforeScreenshot', () => {
     })
 
     it('should handle layout testing', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createOptions({
             enableLayoutTesting: true,
         })
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        expect(mockExecute).toHaveBeenCalledWith(toggleTextTransparency, true)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(toggleTextTransparency, true)
     })
 
     it('should handle layout testing with addShadowPadding', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createOptions({
             enableLayoutTesting: true,
             instanceData: {
@@ -252,21 +267,23 @@ describe('beforeScreenshot', () => {
 
         await beforeScreenshot(mockBrowserInstance, options, true)
 
-        expect(mockExecute).toHaveBeenCalledWith(toggleTextTransparency, true)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(toggleTextTransparency, true)
     })
 
     it('should not execute browser commands when no options are enabled', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createOptions()
 
         await beforeScreenshot(mockBrowserInstance, options)
 
         // Should only call the instanceData mock, no browser execute calls
-        expect(mockExecute).not.toHaveBeenCalled()
+        expect(mockBrowserInstance.execute).not.toHaveBeenCalled()
         expect(logDebugSpy).not.toHaveBeenCalled()
         expect(logWarnSpy).not.toHaveBeenCalled()
     })
 
     it('should handle multiple options simultaneously', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const hideElements = [<HTMLElement>(<any>'<div></div>')]
         const options = createOptions({
             waitForFontsLoaded: true,
@@ -278,20 +295,21 @@ describe('beforeScreenshot', () => {
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        expect(mockExecute).toHaveBeenCalledWith(waitForFonts)
-        expect(mockExecute).toHaveBeenCalledWith(hideScrollBars, true)
-        expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: [] }, true)
-        expect(mockExecute).toHaveBeenCalledWith(setCustomCss, expect.any(Object))
-        expect(mockExecute).toHaveBeenCalledWith(toggleTextTransparency, true)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(waitForFonts)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(hideScrollBars, true)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: [] }, true)
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(setCustomCss, expect.any(Object))
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(toggleTextTransparency, true)
     })
 
     it('should handle multiple errors and log both debug and warning messages', async () => {
         const fontError = new Error('Font load error')
         const elementError = new Error('Element not found')
 
-        mockExecute
+        const mockExecute = vi.fn()
             .mockRejectedValueOnce(fontError) // waitForFonts
             .mockRejectedValueOnce(elementError) // hideRemoveElements
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
 
         const options = createOptions({
             waitForFontsLoaded: true,
@@ -313,5 +331,20 @@ describe('beforeScreenshot', () => {
 #####################################################################################
 `
         )
+    })
+
+    it('should handle custom browser properties when needed', async () => {
+        const mockBrowserInstance = createMockBrowserInstance(undefined, {
+            getWindowSize: vi.fn().mockResolvedValue({ width: 1920, height: 1080 }),
+            getOrientation: vi.fn().mockResolvedValue('LANDSCAPE')
+        })
+
+        const options = createOptions()
+
+        await beforeScreenshot(mockBrowserInstance, options)
+
+        // This test demonstrates that custom properties are available if needed
+        expect(mockBrowserInstance.getWindowSize).toBeDefined()
+        expect(mockBrowserInstance.getOrientation).toBeDefined()
     })
 })

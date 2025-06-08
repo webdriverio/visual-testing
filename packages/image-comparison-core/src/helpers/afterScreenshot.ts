@@ -3,7 +3,7 @@ import logger from '@wdio/logger'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 import { CUSTOM_CSS_ID } from './constants.js'
-import { checkIsMobile, formatFileName, getAndCreatePath } from './utils.js'
+import { formatFileName, getAndCreatePath } from './utils.js'
 import { saveBase64Image } from '../methods/images.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
@@ -28,7 +28,6 @@ export default async function afterScreenshot(browserInstance: WebdriverIO.Brows
         hideScrollBars: noScrollBars,
         isLandscape,
         isNativeContext,
-        platformName,
         removeElements,
     } = options
 
@@ -68,7 +67,7 @@ export default async function afterScreenshot(browserInstance: WebdriverIO.Brows
         }
 
         // Remove the custom set css
-        if (disableCSSAnimation || disableBlinkingCursor || checkIsMobile(platformName)) {
+        if (disableCSSAnimation || disableBlinkingCursor || browserInstance.isMobile) {
             await browserInstance.execute(removeElementFromDom, CUSTOM_CSS_ID)
         }
 

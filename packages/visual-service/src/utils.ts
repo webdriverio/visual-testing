@@ -82,6 +82,7 @@ async function getMobileInstanceData({
         deviceRectangles.statusBarAndAddressBar.width = screenWidth
         deviceRectangles.statusBar.width = screenWidth
         deviceRectangles = await getMobileViewPortPosition({
+            browserInstance,
             initialDeviceRectangles,
             isAndroid,
             isIOS,
