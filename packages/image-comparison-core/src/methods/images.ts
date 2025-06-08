@@ -31,7 +31,7 @@ import { processDiffPixels } from './processDiffPixels.js'
 import { createCompareReport } from './createCompareReport.js'
 import { takeBase64Screenshot } from './screenshots.js'
 
-const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
+const log = logger('@wdio/visual-service:@wdio/image-comparison-core:images')
 
 /**
  * Check if an image exists and return a boolean

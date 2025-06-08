@@ -15,7 +15,7 @@ import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import type { ElementRectanglesOptions, RectanglesOutput } from './rectangles.interfaces.js'
 import { determineElementRectangles } from './rectangles.js'
 
-const log = logger('@wdio/visual-service:webdriver-image-comparison-screenshots')
+const log = logger('@wdio/visual-service:@wdio/image-comparison-core:screenshots')
 
 /**
  * Take a full page screenshots for desktop / iOS / Android

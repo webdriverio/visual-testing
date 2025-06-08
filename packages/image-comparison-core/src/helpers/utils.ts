@@ -18,7 +18,7 @@ import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 
-const log = logger('@wdio/visual-service:webdriver-image-comparison:utils')
+const log = logger('@wdio/visual-service:@wdio/image-comparison-core:utils')
 
 /**
  * Get and create a folder

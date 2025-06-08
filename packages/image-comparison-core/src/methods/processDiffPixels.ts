@@ -47,7 +47,7 @@
 import logger from '@wdio/logger'
 import type { BoundingBox, Pixel } from 'src/methods/images.interfaces.js'
 
-const log = logger('@wdio/visual-service:webdriver-image-comparison:pixelDiffProcessing')
+const log = logger('@wdio/visual-service:@wdio/image-comparison-core:pixelDiffProcessing')
 
 class DisjointSet {
     private parent: Map<string, string>
