@@ -82,7 +82,7 @@ export default async function saveWebScreen(
     // 3.  Take the screenshot
     let base64Image: string
 
-    if (canUseBidiScreenshot(methods) && !isMobile && !enableLegacyScreenshotMethod) {
+    if (canUseBidiScreenshot() && !isMobile && !enableLegacyScreenshotMethod) {
         // 3a. Take the screenshot with the BiDi method
         base64Image = await takeBase64BiDiScreenshot({
             bidiScreenshot: methods.bidiScreenshot!,
@@ -90,7 +90,7 @@ export default async function saveWebScreen(
         })
     } else {
         // 3b. Take the screenshot with the regular method
-        base64Image = await takeBase64Screenshot(methods.screenShot)
+        base64Image = await takeBase64Screenshot()
 
         // Determine the rectangles
         const screenRectangleOptions: ScreenRectanglesOptions = {

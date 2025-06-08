@@ -4,9 +4,14 @@ import type { FullPageScreenshotDataOptions } from './screenshots.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 
+vi.mock('@wdio/globals', () => ({
+    browser: {
+        takeScreenshot: () => Promise.resolve(IMAGE_STRING)
+    }
+}))
+
 describe('screenshots', () => {
     describe('getBase64FullPageScreenshotsData', () => {
-        const MOCKED_TAKESCREENSHOT = vi.fn().mockResolvedValue(IMAGE_STRING)
 
         it('should get the Android nativeWebScreenshot fullpage screenshot data', async () => {
             const options: FullPageScreenshotDataOptions = {
@@ -48,7 +53,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_TAKESCREENSHOT, MOCKED_EXECUTOR, options)
+            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
             result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
 
             expect(result).toMatchSnapshot()
@@ -99,7 +104,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_TAKESCREENSHOT, MOCKED_EXECUTOR, options)
+            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
             result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
 
             expect(result).toMatchSnapshot()
@@ -147,7 +152,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_TAKESCREENSHOT, MOCKED_EXECUTOR, options)
+            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
             result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
 
             expect(result).toMatchSnapshot()
@@ -199,7 +204,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_TAKESCREENSHOT, MOCKED_EXECUTOR, options)
+            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
             result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
 
             expect(result).toMatchSnapshot()
@@ -246,7 +251,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_TAKESCREENSHOT, MOCKED_EXECUTOR, options)
+            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
             result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
 
             expect(result).toMatchSnapshot()
@@ -293,7 +298,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_TAKESCREENSHOT, MOCKED_EXECUTOR, options)
+            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
             result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
 
             expect(result).toMatchSnapshot()
@@ -344,7 +349,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_TAKESCREENSHOT, MOCKED_EXECUTOR, options)
+            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
             result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
 
             expect(result).toMatchSnapshot()
@@ -399,7 +404,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce(3200)
 
             // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_TAKESCREENSHOT, MOCKED_EXECUTOR, options)
+            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
             result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
 
             expect(result).toMatchSnapshot()
@@ -455,7 +460,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce({})
 
             // Replace the screenshot with a `mocked-screenshot-string`;
-            const result = await getBase64FullPageScreenshotsData(MOCKED_TAKESCREENSHOT, MOCKED_EXECUTOR, options)
+            const result = await getBase64FullPageScreenshotsData(MOCKED_EXECUTOR, options)
             result.data.forEach((dataObject) => (dataObject.screenshot = 'mocked-screenshot-string'))
 
             expect(result).toMatchSnapshot()

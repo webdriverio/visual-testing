@@ -37,7 +37,7 @@ export default async function saveAppScreen(
     } = instanceData
 
     // 2.  Take the screenshot
-    let base64Image: string = await takeBase64Screenshot(methods.screenShot)
+    let base64Image: string = await takeBase64Screenshot()
 
     // 3.  We only need to use the `makeCroppedBase64Image` for iOS and when `addIOSBezelCorners` is true
     if (isIOS && addIOSBezelCorners) {

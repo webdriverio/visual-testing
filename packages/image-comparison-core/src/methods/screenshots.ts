@@ -1,8 +1,9 @@
 import logger from '@wdio/logger'
+import { browser } from '@wdio/globals'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
 import { calculateDprData, getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
-import type { BidiScreenshot, Executor, GetWindowHandle, TakeScreenShot } from './methods.interfaces.js'
+import type { BidiScreenshot, Executor, GetWindowHandle } from './methods.interfaces.js'
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
@@ -22,7 +23,6 @@ const log = logger('@wdio/visual-service:webdriver-image-comparison-screenshots'
  * Take a full page screenshots for desktop / iOS / Android
  */
 export async function getBase64FullPageScreenshotsData(
-    takeScreenshot: TakeScreenShot,
     executor: Executor,
     options: FullPageScreenshotDataOptions,
 ): Promise<FullPageScreenshotsData> {
@@ -59,23 +59,22 @@ export async function getBase64FullPageScreenshotsData(
 
     if ((isAndroid && isAndroidNativeWebScreenshot) || isIOS ) {
         // Create a fullpage screenshot for Android when a native web screenshot (so including status, address and toolbar) is created
-        return getMobileFullPageNativeWebScreenshotsData(takeScreenshot, executor, nativeWebScreenshotOptions)
+        return getMobileFullPageNativeWebScreenshotsData(executor, nativeWebScreenshotOptions)
     } else if (isAndroid && isAndroidChromeDriverScreenshot) {
         const chromeDriverOptions = { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight }
 
         // Create a fullpage screenshot for Android when the ChromeDriver provides the screenshots
-        return getAndroidChromeDriverFullPageScreenshotsData(takeScreenshot, executor, chromeDriverOptions)
+        return getAndroidChromeDriverFullPageScreenshotsData(executor, chromeDriverOptions)
     }
 
     // Create a fullpage screenshot for all desktops
-    return getDesktopFullPageScreenshotsData(takeScreenshot, executor, desktopOptions)
+    return getDesktopFullPageScreenshotsData(executor, desktopOptions)
 }
 
 /**
  * Take a full page screenshots for native mobile
  */
 export async function getMobileFullPageNativeWebScreenshotsData(
-    takeScreenshot: TakeScreenShot,
     executor: Executor,
     options: FullPageScreenshotNativeMobileOptions,
 ): Promise<FullPageScreenshotsData> {
@@ -124,7 +123,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(
         }
 
         // Take the screenshot and determine if it's rotated
-        const screenshot = await takeBase64Screenshot(takeScreenshot)
+        const screenshot = await takeBase64Screenshot()
         isRotated = Boolean(isLandscape && viewportHeight > viewportWidth)
 
         // Determine scroll height and check if we need to scroll again
@@ -192,7 +191,6 @@ export async function getMobileFullPageNativeWebScreenshotsData(
  * Take a full page screenshot for Android with Chromedriver
  */
 export async function getAndroidChromeDriverFullPageScreenshotsData(
-    takeScreenshot: TakeScreenShot,
     executor: Executor,
     options: FullPageScreenshotOptions,
 ): Promise<FullPageScreenshotsData> {
@@ -225,7 +223,7 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(
         }
 
         // Take the screenshot
-        const screenshot = await takeBase64Screenshot(takeScreenshot)
+        const screenshot = await takeBase64Screenshot()
         screenshotSize = getBase64ScreenshotSize(screenshot, devicePixelRatio)
 
         // Determine scroll height and check if we need to scroll again
@@ -292,7 +290,6 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(
  * Take a full page screenshots
  */
 export async function getDesktopFullPageScreenshotsData(
-    takeScreenshot: TakeScreenShot,
     executor: Executor,
     options: FullPageScreenshotOptions,
 ): Promise<FullPageScreenshotsData> {
@@ -323,7 +320,7 @@ export async function getDesktopFullPageScreenshotsData(
         }
 
         // Take the screenshot
-        const screenshot = await takeBase64Screenshot(takeScreenshot)
+        const screenshot = await takeBase64Screenshot()
         screenshotSize = getBase64ScreenshotSize(screenshot, devicePixelRatio)
 
         // The actual screenshot size might be slightly different than the inner height
@@ -399,8 +396,8 @@ export async function getDesktopFullPageScreenshotsData(
 /**
  * Take a screenshot
  */
-export async function takeBase64Screenshot(takeScreenshot: TakeScreenShot): Promise<string> {
-    return takeScreenshot()
+export async function takeBase64Screenshot(): Promise<string> {
+    return browser.takeScreenshot()
 }
 
 /**
@@ -462,7 +459,7 @@ export async function takeWebElementScreenshot({
     takeElementScreenshot,
 }:TakeWebElementScreenshot): Promise<TakeWebElementScreenshotData>{
     if (fallback) {
-        const base64Image = await takeBase64Screenshot(screenShot)
+        const base64Image = await takeBase64Screenshot()
         const elementRectangleOptions: ElementRectanglesOptions = {
             /**
              * ToDo: handle NaA case
