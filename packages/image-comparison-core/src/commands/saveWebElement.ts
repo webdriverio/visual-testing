@@ -84,7 +84,7 @@ export default async function saveWebElement(
 
     let base64Image: string
 
-    if (canUseBidiScreenshot(methods) && !isMobile && !enableLegacyScreenshotMethod) {
+    if (canUseBidiScreenshot() && !isMobile && !enableLegacyScreenshotMethod) {
         // 3a. Take the screenshot with the BiDi method
         // We also need to clip the image to the element size, taking into account the DPR
         // and also clipt if from the document, not the viewport
@@ -213,5 +213,5 @@ export default async function saveWebElement(
     }
 
     // 7.  Return the data
-    return afterScreenshot(executor, afterOptions)
+    return afterScreenshot(afterOptions)
 }

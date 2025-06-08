@@ -26,7 +26,7 @@ export default async function saveAppElement(
         formatImageName,
         savePerInstance,
     } = saveElementOptions.wic
-    const { executor, getElementRect, screenShot } = methods
+    const { getElementRect, screenShot } = methods
     const resizeDimensions: ResizeDimensions = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
     const {
         browserName,
@@ -85,5 +85,5 @@ export default async function saveAppElement(
     }
 
     // 4.  Return the data
-    return afterScreenshot(executor, afterOptions)
+    return afterScreenshot(afterOptions)
 }

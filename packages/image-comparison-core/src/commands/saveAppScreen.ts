@@ -9,7 +9,6 @@ import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
  */
 export default async function saveAppScreen(
     {
-        methods,
         instanceData,
         folders,
         tag,
@@ -91,5 +90,5 @@ export default async function saveAppScreen(
     }
 
     // 5.  Return the data
-    return afterScreenshot(methods.executor, afterOptions)
+    return afterScreenshot(afterOptions)
 }

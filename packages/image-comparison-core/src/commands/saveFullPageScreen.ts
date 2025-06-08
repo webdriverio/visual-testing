@@ -90,7 +90,7 @@ export default async function saveFullPageScreen(
     } = enrichedInstanceData
     let fullPageBase64Image: string
 
-    if (canUseBidiScreenshot(methods) && !isEmulated && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)) {
+    if (canUseBidiScreenshot() && !isEmulated && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)) {
         // 3a.  Fullpage screenshots are taken in one go with the Bidi protocol
         fullPageBase64Image = await takeBase64BiDiScreenshot({
             bidiScreenshot: methods.bidiScreenshot!,
@@ -116,7 +116,6 @@ export default async function saveFullPageScreen(
             toolBarShadowPadding: toolBarShadowPadding,
         }
         const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(
-            methods.screenShot,
             methods.executor,
             fullPageScreenshotOptions,
         )
@@ -168,6 +167,6 @@ export default async function saveFullPageScreen(
     }
 
     // 6.  Return the data
-    return afterScreenshot(methods.executor, afterOptions!)
+    return afterScreenshot(afterOptions!)
 }
 

@@ -158,5 +158,5 @@ export default async function saveWebScreen(
     }
 
     // 6.  Return the data
-    return afterScreenshot(methods.executor, afterOptions)
+    return afterScreenshot(afterOptions)
 }

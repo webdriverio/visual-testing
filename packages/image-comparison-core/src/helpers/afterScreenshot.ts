@@ -5,10 +5,10 @@ import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 import { CUSTOM_CSS_ID } from './constants.js'
 import { checkIsMobile, formatFileName, getAndCreatePath } from './utils.js'
 import { saveBase64Image } from '../methods/images.js'
-import type { Executor } from '../methods/methods.interfaces.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
+import { browser } from '@wdio/globals'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison')
 
@@ -16,7 +16,7 @@ const log = logger('@wdio/visual-service:webdriver-image-comparison')
  * Methods that need to be executed after a screenshot has been taken
  * to set all back to the original state
  */
-export default async function afterScreenshot(executor: Executor, options: AfterScreenshotOptions): Promise<ScreenshotOutput> {
+export default async function afterScreenshot(options: AfterScreenshotOptions): Promise<ScreenshotOutput> {
     const {
         actualFolder,
         base64Image,
@@ -45,13 +45,13 @@ export default async function afterScreenshot(executor: Executor, options: After
     if (!isNativeContext){
         // Show the scrollbars again
         if (noScrollBars) {
-            await executor(hideScrollBars, !noScrollBars)
+            await browser.execute(hideScrollBars, !noScrollBars)
         }
 
         // Show elements again
         if ((hideElements && hideElements.length > 0) || (removeElements && removeElements.length > 0)) {
             try {
-                await executor(hideRemoveElements, { hide: hideElements, remove: removeElements }, false)
+                await browser.execute(hideRemoveElements, { hide: hideElements, remove: removeElements }, false)
             } catch (e) {
                 log.warn(
                     '\x1b[33m%s\x1b[0m',
@@ -70,12 +70,12 @@ export default async function afterScreenshot(executor: Executor, options: After
 
         // Remove the custom set css
         if (disableCSSAnimation || disableBlinkingCursor || checkIsMobile(platformName)) {
-            await executor(removeElementFromDom, CUSTOM_CSS_ID)
+            await browser.execute(removeElementFromDom, CUSTOM_CSS_ID)
         }
 
         // Show the text again
         if (enableLayoutTesting){
-            await executor(toggleTextTransparency, !enableLayoutTesting)
+            await browser.execute(toggleTextTransparency, !enableLayoutTesting)
         }
 
     }
