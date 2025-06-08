@@ -25,18 +25,6 @@ export async function getElementPositionAndroid(
 
 /**
  * Get the element position on a desktop browser
- *
- * @param {function} executor         The function to execute JS in the browser
- * @param {number}   innerHeight      The inner height of the screen
- * @param {number}   screenshotHeight The screenshot height
- * @param {element}  element          The element
- *
- * @returns {Promise<{
- *    height: number,
- *    width: number,
- *    x: number,
- *    y: number
- * }>}
  */
 export async function getElementPositionDesktop(
     element: HTMLElement,
