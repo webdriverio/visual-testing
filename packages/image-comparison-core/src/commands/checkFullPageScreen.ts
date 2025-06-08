@@ -11,7 +11,6 @@ import type { InternalCheckFullPageMethodOptions } from './check.interfaces.js'
  */
 export default async function checkFullPageScreen(
     {
-        methods,
         instanceData,
         folders,
         tag,
@@ -42,7 +41,6 @@ export default async function checkFullPageScreen(
         },
     }
     const { devicePixelRatio, fileName } = await saveFullPageScreen({
-        methods,
         instanceData,
         folders,
         tag,

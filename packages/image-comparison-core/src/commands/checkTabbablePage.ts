@@ -10,7 +10,6 @@ import { browser } from '@wdio/globals'
  */
 export default async function checkTabbablePage(
     {
-        methods,
         instanceData,
         folders,
         tag,
@@ -29,7 +28,6 @@ export default async function checkTabbablePage(
 
     // 2. Create the screenshot
     const fullPageCompareData = await checkFullPageScreen({
-        methods,
         instanceData,
         folders,
         tag,

@@ -13,7 +13,6 @@ import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
  */
 export default async function saveFullPageScreen(
     {
-        methods,
         instanceData,
         folders,
         tag,
@@ -111,10 +110,7 @@ export default async function saveFullPageScreen(
             screenWidth: screenWidth || NaN,
             toolBarShadowPadding: toolBarShadowPadding,
         }
-        const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(
-            methods!.executor,
-            fullPageScreenshotOptions,
-        )
+        const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(fullPageScreenshotOptions)
 
         // 4.  Make a fullpage base64 image by scrolling and stitching the images together
         fullPageBase64Image = await makeFullPageBase64Image(screenshotsData, {

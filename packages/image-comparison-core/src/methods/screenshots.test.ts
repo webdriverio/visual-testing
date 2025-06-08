@@ -10,7 +10,8 @@ vi.mock('@wdio/globals', () => ({
     browser: {
         takeScreenshot: () => Promise.resolve(IMAGE_STRING),
         getWindowHandle: () => Promise.resolve('window-handle-123'),
-        browsingContextCaptureScreenshot: () => Promise.resolve({ data: IMAGE_STRING })
+        browsingContextCaptureScreenshot: () => Promise.resolve({ data: IMAGE_STRING }),
+        execute: () => Promise.resolve({})
     }
 }))
 
@@ -19,7 +20,6 @@ vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/log
 describe('screenshots', () => {
     describe('getBase64FullPageScreenshotsData', () => {
         it('should return base64 screenshot data', async () => {
-            const mockExecutor = vi.fn().mockResolvedValue({})
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 0,
                 devicePixelRatio: 1,
@@ -40,7 +40,7 @@ describe('screenshots', () => {
                 toolBarShadowPadding: 0,
             }
 
-            const result = await getBase64FullPageScreenshotsData(mockExecutor, options)
+            const result = await getBase64FullPageScreenshotsData(options)
 
             expect(result).toBeDefined()
             expect(result.data).toBeDefined()
