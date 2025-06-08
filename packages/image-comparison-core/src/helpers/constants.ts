@@ -21,10 +21,6 @@ export const DEFAULT_COMPARE_OPTIONS = {
 }
 export const DEFAULT_FORMAT_STRING = '{tag}-{browserName}-{width}x{height}-dpr-{dpr}'
 export const STORYBOOK_FORMAT_STRING = '{tag}-{logName}-{width}x{height}-dpr-{dpr}'
-export const PLATFORMS = {
-    ANDROID: 'android',
-    IOS: 'ios',
-}
 export const FOLDERS = {
     ACTUAL: 'actual',
     DIFF: 'diff',

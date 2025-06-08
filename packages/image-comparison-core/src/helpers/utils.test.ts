@@ -16,9 +16,6 @@ import {
     canUseBidiScreenshot,
     checkAndroidChromeDriverScreenshot,
     checkAndroidNativeWebScreenshot,
-    checkIsAndroid,
-    checkIsIos,
-    checkIsMobile,
     checkTestInBrowser,
     checkTestInMobileBrowser,
     createConditionalProperty,
@@ -202,80 +199,66 @@ describe('utils', () => {
         })
     })
 
-    // DRY helper for boolean check tests
-    const testBooleanChecks = (
-        functionName: string,
-        testFunction: (input: string) => boolean,
-        trueCases: string[],
-        falseCases: string[]
-    ) => {
-        describe(functionName, () => {
-            trueCases.forEach(testCase => {
-                it(`should return true for '${testCase}'`, () => {
-                    expect(testFunction(testCase)).toMatchSnapshot()
-                })
-            })
+    describe('checkTestInBrowser', () => {
+        const testCases = [
+            { browserName: 'chrome', expected: true },
+            { browserName: '', expected: false },
+        ]
 
-            falseCases.forEach(testCase => {
-                it(`should return false for '${testCase}'`, () => {
-                    expect(testFunction(testCase)).toMatchSnapshot()
-                })
+        testCases.forEach(({ browserName, expected }) => {
+            it(`should return ${expected} for browserName:'${browserName}'`, () => {
+                expect(checkTestInBrowser(browserName)).toMatchSnapshot()
             })
         })
-    }
-
-    testBooleanChecks('checkIsMobile', checkIsMobile, ['ios', 'android'], ['', 'chrome'])
-    testBooleanChecks('checkIsAndroid', checkIsAndroid, ['android', 'Android'], ['', 'chrome', 'ios'])
-    testBooleanChecks('checkIsIos', checkIsIos, ['ios', 'iOS'], ['', 'chrome', 'android'])
-    testBooleanChecks('checkTestInBrowser', checkTestInBrowser, ['chrome'], [''])
+    })
 
     describe('checkTestInMobileBrowser', () => {
         const testCases = [
-            { platform: '', browser: 'chrome', expected: false },
-            { platform: 'ios', browser: '', expected: false },
-            { platform: 'ios', browser: 'chrome', expected: true },
+            { isMobile: false, browserName: 'chrome', expected: false },
+            { isMobile: true, browserName: '', expected: false },
+            { isMobile: true, browserName: 'chrome', expected: true },
         ]
 
-        testCases.forEach(({ platform, browser, expected }) => {
-            it(`should return ${expected} for platform:'${platform}' and browser:'${browser}'`, () => {
-                expect(checkTestInMobileBrowser(platform, browser)).toMatchSnapshot()
+        testCases.forEach(({ isMobile, browserName, expected }) => {
+            it(`should return ${expected} for isMobile:'${isMobile}' and browserName:'${browserName}'`, () => {
+                expect(checkTestInMobileBrowser(isMobile, browserName)).toMatchSnapshot()
             })
         })
     })
 
     describe('checkAndroidNativeWebScreenshot', () => {
         const testCases = [
-            { platform: '', nativeWeb: false, expected: false },
-            { platform: 'ios', nativeWeb: true, expected: false },
-            { platform: 'android', nativeWeb: false, expected: false },
-            { platform: 'android', nativeWeb: true, expected: true },
+            { isAndroid: false, nativeWeb: false, expected: false },
+            { isAndroid: true, nativeWeb: true, expected: true },
+            { isAndroid: true, nativeWeb: false, expected: false },
         ]
 
-        testCases.forEach(({ platform, nativeWeb, expected }) => {
-            it(`should return ${expected} for platform:'${platform}' and nativeWeb:${nativeWeb}`, () => {
-                expect(checkAndroidNativeWebScreenshot(platform, nativeWeb)).toMatchSnapshot()
+        testCases.forEach(({ isAndroid, nativeWeb, expected }) => {
+            it(`should return ${expected} for isAndroid:'${isAndroid}' and nativeWeb:${nativeWeb}`, () => {
+                expect(checkAndroidNativeWebScreenshot(isAndroid, nativeWeb)).toMatchSnapshot()
             })
         })
     })
 
     describe('checkAndroidChromeDriverScreenshot', () => {
         const testCases = [
-            { platform: '', nativeWeb: false, expected: false },
-            { platform: 'ios', nativeWeb: true, expected: false },
-            { platform: 'android', nativeWeb: true, expected: false },
-            { platform: 'android', nativeWeb: false, expected: true },
+            { isAndroid: false, nativeWeb: false, expected: false },
+            { isAndroid: true, nativeWeb: true, expected: false },
+            { isAndroid: true, nativeWeb: false, expected: true },
         ]
 
-        testCases.forEach(({ platform, nativeWeb, expected }) => {
-            it(`should return ${expected} for platform:'${platform}' and nativeWeb:${nativeWeb}`, () => {
-                expect(checkAndroidChromeDriverScreenshot(platform, nativeWeb)).toMatchSnapshot()
+        testCases.forEach(({ isAndroid, nativeWeb, expected }) => {
+            it(`should return ${expected} for isAndroid:'${isAndroid}' and nativeWeb:${nativeWeb}`, () => {
+                expect(checkAndroidChromeDriverScreenshot(isAndroid, nativeWeb)).toMatchSnapshot()
             })
         })
     })
 
     describe('getAddressBarShadowPadding', () => {
         const baseOptions = {
-            platformName: '',
+            isAndroid: false,
+            isIOS: false,
+            isMobile: false,
             browserName: '',
             nativeWebScreenshot: false,
             addressBarShadowPadding: 6,
@@ -284,11 +267,11 @@ describe('utils', () => {
 
         const testCases = [
             { ...baseOptions, browserName: 'chrome', description: 'desktop browser', expected: 0 },
-            { ...baseOptions, platformName: 'android', description: 'Android app', expected: 0 },
-            { ...baseOptions, platformName: 'ios', description: 'iOS app', expected: 0 },
-            { ...baseOptions, platformName: 'android', nativeWebScreenshot: true, description: 'Android native web without shadow padding', expected: 0 },
-            { ...baseOptions, platformName: 'android', nativeWebScreenshot: true, addShadowPadding: true, description: 'Android native web with shadow padding', expected: 6 },
-            { ...baseOptions, platformName: 'iOS', addShadowPadding: true, description: 'iOS with shadow padding', expected: 6 },
+            { ...baseOptions, isAndroid: true, description: 'Android app', expected: 0 },
+            { ...baseOptions, isIOS: true, description: 'iOS app', expected: 0 },
+            { ...baseOptions, isAndroid: true, nativeWebScreenshot: true, description: 'Android native web without shadow padding', expected: 0 },
+            { ...baseOptions, isAndroid: true, nativeWebScreenshot: true, addShadowPadding: true, description: 'Android native web with shadow padding', expected: 6 },
+            { ...baseOptions, isIOS: true, addShadowPadding: true, description: 'iOS with shadow padding', expected: 6 },
         ]
 
         testCases.forEach(({ description, expected, ...options }) => {
@@ -300,19 +283,22 @@ describe('utils', () => {
 
     describe('getToolBarShadowPadding', () => {
         const baseOptions = {
-            platformName: '',
+            isAndroid: false,
+            isIOS: false,
+            isMobile: false,
             browserName: '',
+            nativeWebScreenshot: false,
             toolBarShadowPadding: 6,
             addShadowPadding: false,
         }
 
         const testCases = [
             { ...baseOptions, browserName: 'chrome', description: 'desktop browser', expected: 0 },
-            { ...baseOptions, platformName: 'Android', description: 'Android app', expected: 0 },
-            { ...baseOptions, platformName: 'iOS', description: 'iOS app', expected: 0 },
-            { ...baseOptions, platformName: 'android', addShadowPadding: true, description: 'Android app with shadow padding', expected: 0 },
-            { ...baseOptions, platformName: 'android', browserName: 'chrome', addShadowPadding: true, description: 'Android browser with shadow padding', expected: 6 },
-            { ...baseOptions, platformName: 'ios', browserName: 'safari', addShadowPadding: true, description: 'iOS browser with shadow padding', expected: 15 },
+            { ...baseOptions, isAndroid: true, isMobile: true, description: 'Android app', expected: 0 },
+            { ...baseOptions, isIOS: true, isMobile: true,  description: 'iOS app', expected: 0 },
+            { ...baseOptions, isAndroid: true, isMobile: true, addShadowPadding: true, description: 'Android app with shadow padding', expected: 0 },
+            { ...baseOptions, isAndroid: true, isMobile: true, browserName: 'chrome', addShadowPadding: true, description: 'Android browser with shadow padding', expected: 6 },
+            { ...baseOptions, isIOS: true, isMobile: true, browserName: 'safari', addShadowPadding: true, description: 'iOS with shadow padding', expected: 15 },
         ]
 
         testCases.forEach(({ description, expected, ...options }) => {

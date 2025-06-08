@@ -11,59 +11,27 @@ exports[`utils > calculateDprData > should multiply all number values by the dpr
 }
 `;
 
-exports[`utils > checkAndroidChromeDriverScreenshot > should return false for platform:'' and nativeWeb:false 1`] = `false`;
+exports[`utils > checkAndroidChromeDriverScreenshot > should return false for isAndroid:'false' and nativeWeb:false 1`] = `false`;
 
-exports[`utils > checkAndroidChromeDriverScreenshot > should return false for platform:'android' and nativeWeb:true 1`] = `false`;
+exports[`utils > checkAndroidChromeDriverScreenshot > should return false for isAndroid:'true' and nativeWeb:true 1`] = `false`;
 
-exports[`utils > checkAndroidChromeDriverScreenshot > should return false for platform:'ios' and nativeWeb:true 1`] = `false`;
+exports[`utils > checkAndroidChromeDriverScreenshot > should return true for isAndroid:'true' and nativeWeb:false 1`] = `true`;
 
-exports[`utils > checkAndroidChromeDriverScreenshot > should return true for platform:'android' and nativeWeb:false 1`] = `true`;
+exports[`utils > checkAndroidNativeWebScreenshot > should return false for isAndroid:'false' and nativeWeb:false 1`] = `false`;
 
-exports[`utils > checkAndroidNativeWebScreenshot > should return false for platform:'' and nativeWeb:false 1`] = `false`;
+exports[`utils > checkAndroidNativeWebScreenshot > should return false for isAndroid:'true' and nativeWeb:false 1`] = `false`;
 
-exports[`utils > checkAndroidNativeWebScreenshot > should return false for platform:'android' and nativeWeb:false 1`] = `false`;
+exports[`utils > checkAndroidNativeWebScreenshot > should return true for isAndroid:'true' and nativeWeb:true 1`] = `true`;
 
-exports[`utils > checkAndroidNativeWebScreenshot > should return false for platform:'ios' and nativeWeb:true 1`] = `false`;
+exports[`utils > checkTestInBrowser > should return false for browserName:'' 1`] = `false`;
 
-exports[`utils > checkAndroidNativeWebScreenshot > should return true for platform:'android' and nativeWeb:true 1`] = `true`;
+exports[`utils > checkTestInBrowser > should return true for browserName:'chrome' 1`] = `true`;
 
-exports[`utils > checkIsAndroid > should return false for '' 1`] = `false`;
+exports[`utils > checkTestInMobileBrowser > should return false for isMobile:'false' and browserName:'chrome' 1`] = `false`;
 
-exports[`utils > checkIsAndroid > should return false for 'chrome' 1`] = `false`;
+exports[`utils > checkTestInMobileBrowser > should return false for isMobile:'true' and browserName:'' 1`] = `false`;
 
-exports[`utils > checkIsAndroid > should return false for 'ios' 1`] = `false`;
-
-exports[`utils > checkIsAndroid > should return true for 'Android' 1`] = `true`;
-
-exports[`utils > checkIsAndroid > should return true for 'android' 1`] = `true`;
-
-exports[`utils > checkIsIos > should return false for '' 1`] = `false`;
-
-exports[`utils > checkIsIos > should return false for 'android' 1`] = `false`;
-
-exports[`utils > checkIsIos > should return false for 'chrome' 1`] = `false`;
-
-exports[`utils > checkIsIos > should return true for 'iOS' 1`] = `true`;
-
-exports[`utils > checkIsIos > should return true for 'ios' 1`] = `true`;
-
-exports[`utils > checkIsMobile > should return false for '' 1`] = `false`;
-
-exports[`utils > checkIsMobile > should return false for 'chrome' 1`] = `false`;
-
-exports[`utils > checkIsMobile > should return true for 'android' 1`] = `true`;
-
-exports[`utils > checkIsMobile > should return true for 'ios' 1`] = `true`;
-
-exports[`utils > checkTestInBrowser > should return false for '' 1`] = `false`;
-
-exports[`utils > checkTestInBrowser > should return true for 'chrome' 1`] = `true`;
-
-exports[`utils > checkTestInMobileBrowser > should return false for platform:'' and browser:'chrome' 1`] = `false`;
-
-exports[`utils > checkTestInMobileBrowser > should return false for platform:'ios' and browser:'' 1`] = `false`;
-
-exports[`utils > checkTestInMobileBrowser > should return true for platform:'ios' and browser:'chrome' 1`] = `true`;
+exports[`utils > checkTestInMobileBrowser > should return true for isMobile:'true' and browserName:'chrome' 1`] = `true`;
 
 exports[`utils > formatFileName > should format a string for mobile app 1`] = `"theTag-app-2-1400x900.png"`;
 
@@ -346,7 +314,7 @@ exports[`utils > getToolBarShadowPadding > should return 0 for iOS app 1`] = `0`
 
 exports[`utils > getToolBarShadowPadding > should return 6 for Android browser with shadow padding 1`] = `6`;
 
-exports[`utils > getToolBarShadowPadding > should return 15 for iOS browser with shadow padding 1`] = `15`;
+exports[`utils > getToolBarShadowPadding > should return 15 for iOS with shadow padding 1`] = `15`;
 
 exports[`utils > logAllDeprecatedCompareOptions > should log a deprecation warning for each deprecated key 1`] = `
 "The following root-level compare options are deprecated and should be moved under 'compareOptions':

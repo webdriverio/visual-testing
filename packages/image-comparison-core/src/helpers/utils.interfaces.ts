@@ -74,10 +74,14 @@ export interface FormatFileDefaults {
 }
 
 export interface GetAddressBarShadowPaddingOptions {
-    /** The name of the platform */
-    platformName: string;
     /** The browser name */
     browserName: string;
+    /** Is the instance a android */
+    isAndroid: boolean;
+    /** Is the instance a iOS */
+    isIOS: boolean;
+    /** Is the instance a mobile */
+    isMobile: boolean;
     /** Is this an instance that takes a native web screenshot */
     nativeWebScreenshot: boolean;
     /** The address bar shadow padding */
@@ -87,8 +91,12 @@ export interface GetAddressBarShadowPaddingOptions {
 }
 
 export interface GetToolBarShadowPaddingOptions {
-    /** The name of the platform */
-    platformName: string;
+    /** Is the instance a android */
+    isAndroid: boolean;
+    /** Is the instance a iOS */
+    isIOS: boolean;
+    /** Is the instance a mobile */
+    isMobile: boolean;
     /** The browser name */
     browserName: string;
     /** The tool bar shadow padding */

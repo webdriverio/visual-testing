@@ -19,24 +19,26 @@ export default async function getEnrichedInstanceData(
 ): Promise<EnrichedInstanceData> {
     // Get the current browser data
     const browserData = await browserInstance.execute(getScreenDimensions, instanceOptions.isMobile)
-    const { addressBarShadowPadding, toolBarShadowPadding, browserName, nativeWebScreenshot, platformName } = instanceOptions
+    const { addressBarShadowPadding, toolBarShadowPadding, browserName, nativeWebScreenshot } = instanceOptions
 
     // Determine some constants
     const isAndroid = browserInstance.isAndroid
     const isIOS = browserInstance.isIOS
     const isMobile = browserInstance.isMobile
     const isTestInBrowser = checkTestInBrowser(browserName)
-    const isTestInMobileBrowser = checkTestInMobileBrowser(platformName, browserName)
-    const isAndroidNativeWebScreenshot = checkAndroidNativeWebScreenshot(platformName, nativeWebScreenshot)
-    const isAndroidChromeDriverScreenshot = checkAndroidChromeDriverScreenshot(platformName, nativeWebScreenshot)
+    const isTestInMobileBrowser = checkTestInMobileBrowser(isMobile, browserName)
+    const isAndroidNativeWebScreenshot = checkAndroidNativeWebScreenshot(isAndroid, nativeWebScreenshot)
+    const isAndroidChromeDriverScreenshot = checkAndroidChromeDriverScreenshot(isAndroid, nativeWebScreenshot)
     const addressBarPadding = getAddressBarShadowPadding({
-        platformName,
         browserName,
+        isAndroid,
+        isIOS,
+        isMobile,
         nativeWebScreenshot,
         addressBarShadowPadding,
         addShadowPadding,
     })
-    const toolBarPadding = getToolBarShadowPadding({ platformName, browserName, toolBarShadowPadding, addShadowPadding })
+    const toolBarPadding = getToolBarShadowPadding({ isAndroid, isIOS, isMobile, browserName, toolBarShadowPadding, addShadowPadding })
 
     // Return the new instance data object
     return {

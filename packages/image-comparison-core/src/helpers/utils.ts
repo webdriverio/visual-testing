@@ -1,6 +1,6 @@
 import logger from '@wdio/logger'
 import { join } from 'node:path'
-import { DESKTOP, NOT_KNOWN, PLATFORMS } from './constants.js'
+import { DESKTOP, NOT_KNOWN } from './constants.js'
 import { mkdirSync } from 'node:fs'
 import type {
     FormatFileDefaults,
@@ -86,28 +86,9 @@ export function formatFileName(options: FormatFileNameOptions): string {
 }
 
 /**
- * Checks if it is mobile
- */
-export function checkIsMobile(platformName: string): boolean {
-    return checkIsAndroid(platformName) || checkIsIos(platformName)
-}
-
-/**
- * Checks if the os is Android
- */
-export function checkIsAndroid(platformName: string): boolean {
-    return platformName.toLowerCase() === PLATFORMS.ANDROID
-}
-
-/**
- * Checks if the os is IOS
- */
-export function checkIsIos(platformName: string): boolean {
-    return platformName.toLowerCase() === PLATFORMS.IOS
-}
-
-/**
  * Checks if the test is executed in a browser
+ * checking for app is not sufficient because different vendors have different
+ * custom names and or solutions for the app
  */
 export function checkTestInBrowser(browserName: string): boolean {
     return browserName !== ''
@@ -116,33 +97,31 @@ export function checkTestInBrowser(browserName: string): boolean {
 /**
  * Checks if the test is executed in a browser on a mobile phone
  */
-export function checkTestInMobileBrowser(platformName: string, browserName: string): boolean {
-    return checkIsMobile(platformName) && checkTestInBrowser(browserName)
+export function checkTestInMobileBrowser(isMobile: boolean, browserName: string): boolean {
+    return isMobile && checkTestInBrowser(browserName)
 }
 
 /**
  * Checks if this is a native webscreenshot on android
  */
-export function checkAndroidNativeWebScreenshot(platformName: string, nativeWebscreenshot: boolean): boolean {
-    return (checkIsAndroid(platformName) && nativeWebscreenshot) || false
+export function checkAndroidNativeWebScreenshot(isAndroid: boolean, nativeWebscreenshot: boolean): boolean {
+    return (isAndroid && nativeWebscreenshot) || false
 }
 
 /**
  * Checks if this is an Android chromedriver screenshot
  */
-export function checkAndroidChromeDriverScreenshot(platformName: string, nativeWebScreenshot: boolean): boolean {
-    return checkIsAndroid(platformName) && !checkAndroidNativeWebScreenshot(platformName, nativeWebScreenshot)
+export function checkAndroidChromeDriverScreenshot(isAndroid: boolean, nativeWebScreenshot: boolean): boolean {
+    return isAndroid && !checkAndroidNativeWebScreenshot(isAndroid, nativeWebScreenshot)
 }
 
 /**
  * Get the address bar shadow padding. This is only needed for Android native webscreenshot and iOS
  */
 export function getAddressBarShadowPadding(options: GetAddressBarShadowPaddingOptions): number {
-    const { platformName, browserName, nativeWebScreenshot, addressBarShadowPadding, addShadowPadding } = options
-    const isTestInMobileBrowser = checkTestInMobileBrowser(platformName, browserName)
-    const isAndroidNativeWebScreenshot = checkAndroidNativeWebScreenshot(platformName, nativeWebScreenshot)
-    const isAndroid = checkIsAndroid(platformName)
-    const isIOS = checkIsIos(platformName)
+    const { browserName, isAndroid, isIOS, isMobile, nativeWebScreenshot, addressBarShadowPadding, addShadowPadding } = options
+    const isTestInMobileBrowser = checkTestInMobileBrowser(isMobile, browserName)
+    const isAndroidNativeWebScreenshot = checkAndroidNativeWebScreenshot(isAndroid, nativeWebScreenshot)
 
     return isTestInMobileBrowser && ((isAndroidNativeWebScreenshot && isAndroid) || isIOS) && addShadowPadding
         ? addressBarShadowPadding
@@ -153,10 +132,10 @@ export function getAddressBarShadowPadding(options: GetAddressBarShadowPaddingOp
  * Get the tool bar shadow padding. Add some extra padding for iOS when we have a home bar
  */
 export function getToolBarShadowPadding(options: GetToolBarShadowPaddingOptions): number {
-    const { platformName, browserName, toolBarShadowPadding, addShadowPadding } = options
+    const { isMobile, browserName, isIOS, toolBarShadowPadding, addShadowPadding } = options
 
-    return checkTestInMobileBrowser(platformName, browserName) && addShadowPadding
-        ? checkIsIos(platformName)
+    return checkTestInMobileBrowser(isMobile, browserName) && addShadowPadding
+        ? isIOS
             ? // The 9 extra are for iOS home bar for iPhones with a notch or iPads with a home bar
             toolBarShadowPadding + 9
             : toolBarShadowPadding

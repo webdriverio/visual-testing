@@ -1,4 +1,3 @@
-import { checkIsAndroid } from '../helpers/utils.js'
 import { methodCompareOptions } from '../helpers/options.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
@@ -63,7 +62,7 @@ export default async function checkAppElement(
             isMobile,
             savePerInstance: checkElementOptions.wic.savePerInstance,
         },
-        isAndroid: checkIsAndroid(instanceData.platformName),
+        isAndroid: browserInstance.isAndroid,
         isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
         isHybridApp: checkElementOptions.wic.isHybridApp,
         platformName: instanceData.platformName,

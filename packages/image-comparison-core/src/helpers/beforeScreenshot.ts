@@ -19,7 +19,8 @@ export default async function beforeScreenshot(
     options: BeforeScreenshotOptions,
     addShadowPadding = false,
 ): Promise<BeforeScreenshotResult> {
-    const { browserName, nativeWebScreenshot, platformName } = options.instanceData
+    const { browserName, nativeWebScreenshot } = options.instanceData
+    const { isAndroid, isIOS, isMobile } = browserInstance
     const {
         addressBarShadowPadding,
         disableBlinkingCursor,
@@ -32,13 +33,15 @@ export default async function beforeScreenshot(
         waitForFontsLoaded,
     } = options
     const addressBarPadding = getAddressBarShadowPadding({
-        platformName,
         browserName,
+        isAndroid,
+        isIOS,
+        isMobile,
         nativeWebScreenshot,
         addressBarShadowPadding,
         addShadowPadding,
     })
-    const toolBarPadding = getToolBarShadowPadding({ platformName, browserName, toolBarShadowPadding, addShadowPadding })
+    const toolBarPadding = getToolBarShadowPadding({ isAndroid, isIOS, isMobile, browserName, toolBarShadowPadding, addShadowPadding })
 
     // Wait for the fonts to be loaded
     if (waitForFontsLoaded){
