@@ -507,17 +507,13 @@ export async function getMobileViewPortPosition({
     isAndroid,
     isIOS,
     isNativeContext,
-    methods: {
-        getUrl,
-        url,
-    },
     nativeWebScreenshot,
     screenHeight,
     screenWidth,
 }: GetMobileViewPortPositionOptions): Promise<DeviceRectangles> {
 
     if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
-        const currentUrl = await getUrl()
+        const currentUrl = await browser.getUrl()
         // 1. Load a base64 HTML page
         await loadBase64Html({ isIOS })
         // 2. Inject an overlay on top of the webview with an event listener that stores the click position in the webview
@@ -531,7 +527,7 @@ export async function getMobileViewPortPosition({
         // 4a. Get the data from the overlay and remove it
         const { y, x, width, height } = await browser.execute(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
         // 4.b reset the url
-        await url(currentUrl)
+        await browser.url(currentUrl)
         // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
         const viewportTop = Math.max(0, Math.round(nativeClickY - y))
         const viewportLeft = Math.max(0, Math.round(nativeClickX - x))

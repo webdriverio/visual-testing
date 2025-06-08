@@ -1,7 +1,7 @@
 import type { Capabilities } from '@wdio/types'
 import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
-import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from 'webdriver-image-comparison'
-import type { Folders, InstanceData, TestContext } from 'webdriver-image-comparison'
+import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from '@wdio/image-comparison-core'
+import type { Folders, InstanceData, TestContext } from '@wdio/image-comparison-core'
 import type {
     EnrichTestContextOptions,
     getFolderMethodOptions,
@@ -69,15 +69,9 @@ async function getMobileInstanceData({
     let deviceRectangles = initialDeviceRectangles
 
     if (isMobile) {
-        const executor = <ReturnValue, InnerArguments extends unknown[]>(
-            fn: string | ((...args: InnerArguments) => ReturnValue),
-            ...args: InnerArguments) => currentBrowser.execute(fn, ...args) as Promise<ReturnValue>
-        const getUrl = () => currentBrowser.getUrl()
-        const url = (arg:string) => currentBrowser.url(arg)
         const currentDriverCapabilities = currentBrowser.capabilities
         const { height: screenHeight, width: screenWidth } = await getMobileScreenSize({
             currentBrowser,
-            executor,
             isIOS,
             isNativeContext,
         })
@@ -92,11 +86,6 @@ async function getMobileInstanceData({
             isAndroid,
             isIOS,
             isNativeContext,
-            methods: {
-                executor,
-                getUrl,
-                url,
-            },
             nativeWebScreenshot,
             screenHeight,
             screenWidth,
@@ -357,15 +346,5 @@ export function enrichTestContext(
         tag,
         title,
     }
-}
-
-/**
- * Check if the current browser supports isBidi screenshots
- */
-export function isBiDiScreenshotSupported(driver: WebdriverIO.Browser): boolean {
-    const { isBidi } = driver
-    const isBiDiSupported = typeof driver.browsingContextCaptureScreenshot === 'function'
-
-    return isBidi && isBiDiSupported
 }
 

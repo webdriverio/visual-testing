@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
-import type { ResultReport } from 'webdriver-image-comparison'
+import type { ResultReport } from '@wdio/image-comparison-core'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison-reporter')
 

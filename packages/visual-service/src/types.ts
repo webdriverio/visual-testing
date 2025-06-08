@@ -11,7 +11,7 @@ import type {
     DeviceRectangles,
     TestContext,
     InstanceData,
-} from 'webdriver-image-comparison'
+} from '@wdio/image-comparison-core'
 import type { ChainablePromiseElement } from 'webdriverio'
 import type { ContextManager } from './contextManager.js'
 

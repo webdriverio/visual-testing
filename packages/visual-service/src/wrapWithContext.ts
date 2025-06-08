@@ -1,4 +1,4 @@
-import type { InstanceData } from 'webdriver-image-comparison'
+import type { InstanceData } from '@wdio/image-comparison-core'
 import type { WrapWithContextOptions } from './types.js'
 import { getInstanceData } from './utils.js'
 

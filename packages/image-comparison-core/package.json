@@ -1,6 +1,6 @@
 {
   "name": "@wdio/image-comparison-core",
-  "version": "0.01",
+  "version": "0.0.1",
   "author": "Wim Selles - wswebcreation",
   "description": "Image comparison core module for @wdio/visual-service - WebdriverIO visual testing framework",
   "keywords": [

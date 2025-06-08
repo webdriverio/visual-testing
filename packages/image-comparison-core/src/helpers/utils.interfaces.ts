@@ -107,10 +107,6 @@ export interface GetMobileViewPortPositionOptions {
     isNativeContext: boolean,
     isAndroid: boolean,
     isIOS: boolean,
-    methods: {
-        getUrl: () => Promise<string>,
-        url: (arg:string) => Promise<WebdriverIO.Request|void>,
-    }
     nativeWebScreenshot: boolean,
     screenHeight: number,
     screenWidth: number,

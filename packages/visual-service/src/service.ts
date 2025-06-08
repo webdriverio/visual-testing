@@ -14,15 +14,14 @@ import {
     checkTabbablePage,
     FOLDERS,
     DEFAULT_TEST_CONTEXT,
-} from 'webdriver-image-comparison'
-import type { InstanceData, TestContext } from 'webdriver-image-comparison'
+} from '@wdio/image-comparison-core'
+import type { InstanceData, TestContext } from '@wdio/image-comparison-core'
 import { SevereServiceError } from 'webdriverio'
 import {
     enrichTestContext,
     getFolders,
     getInstanceData,
     getNativeContext,
-    isBiDiScreenshotSupported,
 } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -231,19 +230,6 @@ export default class WdioImageComparisonService extends BaseClass {
                         const isCurrentContextNative = self.contextManager.isNativeContext
 
                         return [{
-                            methods: {
-                                bidiScreenshot: isBiDiScreenshotSupported(browser) ? this.browsingContextCaptureScreenshot.bind(browser) : undefined,
-                                executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                    fn: string | ((...args: InnerArguments) => ReturnValue),
-                                    ...args: InnerArguments
-                                ): Promise<ReturnValue> => {
-                                    return this.execute(fn, ...args) as Promise<ReturnValue>
-                                },
-                                getElementRect: this.getElementRect.bind(this),
-                                getWindowHandle: this.getWindowHandle.bind(browser),
-                                screenShot: this.takeScreenshot.bind(this),
-                                takeElementScreenshot: this.takeElementScreenshot.bind(this),
-                            },
                             instanceData: updatedInstanceData,
                             folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
                             element,
@@ -308,18 +294,6 @@ export default class WdioImageComparisonService extends BaseClass {
                         const isCurrentContextNative = self.contextManager.isNativeContext
 
                         return [{
-                            methods: {
-                                bidiScreenshot: isBiDiScreenshotSupported(browser) ? this.browsingContextCaptureScreenshot.bind(browser) : undefined,
-                                executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                    fn: string | ((...args: InnerArguments) => ReturnValue),
-                                    ...args: InnerArguments
-                                ): Promise<ReturnValue> => {
-                                    return this.execute(fn, ...args) as Promise<ReturnValue>
-                                },
-                                getElementRect: this.getElementRect.bind(browser),
-                                getWindowHandle: this.getWindowHandle.bind(browser),
-                                screenShot: this.takeScreenshot.bind(browser),
-                            },
                             instanceData: updatedInstanceData,
                             folders: getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
                             tag,
@@ -384,19 +358,6 @@ export default class WdioImageComparisonService extends BaseClass {
                             }
 
                             return [{
-                                methods: {
-                                    bidiScreenshot: isBiDiScreenshotSupported(browserInstance) ? browserInstance.browsingContextCaptureScreenshot.bind(browserInstance) : undefined,
-                                    executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                        fn: string | ((...args: InnerArguments) => ReturnValue),
-                                        ...args: InnerArguments
-                                    ): Promise<ReturnValue> => {
-                                        return browserInstance.execute(fn, ...args) as Promise<ReturnValue>
-                                    },
-                                    getElementRect: browserInstance.getElementRect.bind(browserInstance),
-                                    getWindowHandle: browserInstance.getWindowHandle.bind(browserInstance),
-                                    screenShot: browserInstance.takeScreenshot.bind(browserInstance),
-                                    takeElementScreenshot: browserInstance.takeElementScreenshot.bind(browserInstance),
-                                },
                                 instanceData: updatedInstanceData,
                                 folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
                                 tag,
@@ -477,18 +438,6 @@ export default class WdioImageComparisonService extends BaseClass {
                             const isCurrentContextNative = contextManager.isNativeContext
 
                             return [{
-                                methods: {
-                                    bidiScreenshot: isBiDiScreenshotSupported(browserInstance) ? browserInstance.browsingContextCaptureScreenshot.bind(browserInstance) : undefined,
-                                    executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                        fn: string | ((...args: InnerArguments) => ReturnValue),
-                                        ...args: InnerArguments
-                                    ): Promise<ReturnValue> => {
-                                        return browserInstance.execute(fn, ...args) as Promise<ReturnValue>
-                                    },
-                                    getElementRect: browserInstance.getElementRect.bind(browserInstance),
-                                    getWindowHandle: browserInstance.getWindowHandle.bind(browserInstance),
-                                    screenShot: browserInstance.takeScreenshot.bind(browserInstance),
-                                },
                                 instanceData: updatedInstanceData,
                                 folders: getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
                                 tag,

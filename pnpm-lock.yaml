@@ -7,16 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@wdio/ocr-service':
-        specifier: workspace:*
-        version: link:packages/ocr-service
-      '@wdio/visual-service':
-        specifier: workspace:*
-        version: link:packages/visual-service
-      webdriver-image-comparison:
-        specifier: workspace:*
-        version: link:packages/webdriver-image-comparison
     devDependencies:
       '@changesets/cli':
         specifier: ^2.29.4
@@ -288,6 +278,9 @@ importers:
       '@wdio/globals':
         specifier: ^9.13.0
         version: 9.15.0(@wdio/logger@9.15.0)
+      '@wdio/image-comparison-core':
+        specifier: workspace:*
+        version: link:../image-comparison-core
       '@wdio/logger':
         specifier: ^9.4.4
         version: 9.15.0
@@ -297,9 +290,6 @@ importers:
       expect-webdriverio:
         specifier: ^5.1.0
         version: 5.3.0(@wdio/globals@9.15.0(@wdio/logger@9.15.0))(@wdio/logger@9.15.0)(webdriverio@9.15.0)
-      webdriver-image-comparison:
-        specifier: workspace:*
-        version: link:../webdriver-image-comparison
 
   packages/webdriver-image-comparison:
     dependencies:
