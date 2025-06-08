@@ -378,12 +378,12 @@ export function logAllDeprecatedCompareOptions(options: ClassOptions) {
  * Get the mobile screen size, this is different for native and webview
  */
 export async function getMobileScreenSize({
-    currentBrowser,
+    browserInstance,
     isIOS,
     isNativeContext,
 }: GetMobileScreenSizeOptions): Promise<{ height: number; width: number }> {
     let height = 0, width = 0
-    const isLandscapeByOrientation = (await currentBrowser.getOrientation()).toUpperCase() === 'LANDSCAPE'
+    const isLandscapeByOrientation = (await browserInstance.getOrientation()).toUpperCase() === 'LANDSCAPE'
 
     try {
         if (isIOS) {
@@ -408,7 +408,7 @@ export async function getMobileScreenSize({
         )
 
         if (isNativeContext) {
-            ({ height, width } = await currentBrowser.getWindowSize())
+            ({ height, width } = await browserInstance.getWindowSize())
         } else {
             // This is a fallback and not 100% accurate, but we need to have something =)
             ({ height, width } = await browser.execute(() => {

@@ -11,11 +11,12 @@ import type { InternalCheckFullPageMethodOptions } from './check.interfaces.js'
  */
 export default async function checkFullPageScreen(
     {
-        instanceData,
-        folders,
-        tag,
+        browserInstance,
         checkFullPageOptions,
+        folders,
+        instanceData,
         isNativeContext = false,
+        tag,
         testContext,
     }: InternalCheckFullPageMethodOptions
 ): Promise<ImageCompareResult | number> {
@@ -41,11 +42,12 @@ export default async function checkFullPageScreen(
         },
     }
     const { devicePixelRatio, fileName } = await saveFullPageScreen({
-        instanceData,
+        browserInstance,
         folders,
-        tag,
-        saveFullPageOptions,
+        instanceData,
         isNativeContext,
+        saveFullPageOptions,
+        tag,
     })
 
     // 2a. Determine the options

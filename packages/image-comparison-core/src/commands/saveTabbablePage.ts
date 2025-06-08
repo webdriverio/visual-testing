@@ -10,11 +10,12 @@ import { browser } from '@wdio/globals'
  */
 export default async function saveTabbablePage(
     {
+        browserInstance,
         instanceData,
+        isNativeContext = false,
         folders,
         tag,
         saveTabbableOptions,
-        isNativeContext = false,
     }: InternalSaveTabbablePageMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1a. Check if the method is supported in native context
@@ -26,7 +27,7 @@ export default async function saveTabbablePage(
     await browser.execute(drawTabbableOnCanvas, saveTabbableOptions.wic.tabbableOptions)
 
     // 2. Create the screenshot
-    const fullPageData = await saveFullPageScreen({ instanceData, folders, tag, saveFullPageOptions: saveTabbableOptions, isNativeContext })
+    const fullPageData = await saveFullPageScreen({ browserInstance, folders, instanceData, isNativeContext, saveFullPageOptions: saveTabbableOptions, tag })
 
     // 3. Remove the canvas
     await browser.execute(removeElementFromDom, 'wic-tabbable-canvas')

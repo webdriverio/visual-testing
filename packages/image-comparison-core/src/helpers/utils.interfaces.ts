@@ -113,7 +113,7 @@ export interface GetMobileViewPortPositionOptions {
 }
 
 export interface GetMobileScreenSizeOptions {
-    currentBrowser: WebdriverIO.Browser,
+    browserInstance: WebdriverIO.Browser,
     isIOS: boolean,
     isNativeContext: boolean,
 }

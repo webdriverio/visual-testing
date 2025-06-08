@@ -31,7 +31,7 @@ import {
 } from './matcher.js'
 import { waitForStorybookComponentToBeLoaded } from './storybook/utils.js'
 import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
-import type { VisualServiceOptions } from './types.js'
+import type { CommandMap, VisualServiceOptions } from './types.js'
 import { PAGE_OPTIONS_MAP } from './constants.js'
 import { ContextManager } from './contextManager.js'
 import { wrapWithContext } from './wrapWithContext.js'
@@ -160,7 +160,7 @@ export default class WdioImageComparisonService extends BaseClass {
          * Start with the page commands
          */
         for (const [commandName, command] of Object.entries(pageCommands)) {
-            this.#addMultiremoteCommand(browser, browserNames, commandName, command)
+            this.#addMultiremoteCommand(browser, browserNames, commandName as keyof CommandMap, command)
         }
 
         /**
@@ -168,18 +168,18 @@ export default class WdioImageComparisonService extends BaseClass {
          * on each browser in the Multi Remote
          */
         for (const [commandName, command] of Object.entries(elementCommands)) {
-            this.#addMultiremoteElementCommand(browser, browserNames, commandName, command)
+            this.#addMultiremoteElementCommand(browser, browserNames, commandName as keyof CommandMap, command)
         }
     }
 
     /**
      * Add commands to the "normal" browser object
      */
-    async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
-        this._contextManager = new ContextManager(currentBrowser);
-        (currentBrowser as any).visualService = this
+    async #addCommandsToBrowser(browserInstance: WebdriverIO.Browser) {
+        this._contextManager = new ContextManager(browserInstance);
+        (browserInstance as any).visualService = this
         const instanceData = await getInstanceData({
-            currentBrowser,
+            browserInstance,
             initialDeviceRectangles: this._contextManager.getViewportContext(),
             isNativeContext: this._contextManager.isNativeContext,
         })
@@ -188,21 +188,21 @@ export default class WdioImageComparisonService extends BaseClass {
         this._contextManager.setViewPortContext(instanceData.deviceRectangles)
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
-            this.#addElementCommand(currentBrowser, commandName, command, instanceData)
+            this.#addElementCommand(browserInstance, commandName as keyof CommandMap, command, instanceData)
         }
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
-            this.#addPageCommand(currentBrowser, commandName, command, instanceData)
+            this.#addPageCommand(browserInstance, commandName as keyof CommandMap, command, instanceData)
         }
     }
 
     /**
      * Add new element commands to the browser object
      */
-    #addElementCommand(
-        browser: WebdriverIO.Browser,
-        commandName: string,
-        command: any,
+    #addElementCommand<K extends keyof CommandMap>(
+        browserInstance: WebdriverIO.Browser,
+        commandName: K,
+        command: CommandMap[K],
         initialInstanceData: InstanceData,
     ) {
         log.info(`Adding element command "${commandName}" to browser object`)
@@ -210,7 +210,7 @@ export default class WdioImageComparisonService extends BaseClass {
         const elementOptionsKey = commandName === 'saveElement' ? 'saveElementOptions' : 'checkElementOptions'
         const self = this
 
-        browser.addCommand(
+        browserInstance.addCommand(
             commandName,
             function (
                 this: WebdriverIO.Browser,
@@ -219,7 +219,7 @@ export default class WdioImageComparisonService extends BaseClass {
                 elementOptions = {}
             ) {
                 const wrapped = wrapWithContext({
-                    browser,
+                    browserInstance,
                     command,
                     contextManager: self.contextManager,
                     getArgs: () => {
@@ -230,22 +230,23 @@ export default class WdioImageComparisonService extends BaseClass {
                         const isCurrentContextNative = self.contextManager.isNativeContext
 
                         return [{
-                            instanceData: updatedInstanceData,
-                            folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
+                            browserInstance,
                             element,
+                            folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
+                            instanceData: updatedInstanceData,
+                            isNativeContext: isCurrentContextNative,
                             tag,
                             [elementOptionsKey]: {
                                 wic: self.defaultOptions,
                                 method: elementOptions,
                             },
-                            isNativeContext: isCurrentContextNative,
                             testContext: enrichTestContext({
                                 commandName,
                                 currentTestContext: self.#testContext,
                                 instanceData: updatedInstanceData,
                                 tag,
                             }),
-                        }]
+                        }] as unknown as Parameters<CommandMap[K]>
                     }
                 })
 
@@ -257,10 +258,10 @@ export default class WdioImageComparisonService extends BaseClass {
     /**
      * Add new page commands to the browser object
      */
-    #addPageCommand(
-        browser: WebdriverIO.Browser,
-        commandName: string,
-        command: any,
+    #addPageCommand<K extends keyof CommandMap>(
+        browserInstance: WebdriverIO.Browser,
+        commandName: K,
+        command: CommandMap[K],
         initialInstanceData: InstanceData,
     ) {
         log.info(`Adding browser command "${commandName}" to browser object`)
@@ -269,13 +270,13 @@ export default class WdioImageComparisonService extends BaseClass {
         const pageOptionsKey = PAGE_OPTIONS_MAP[commandName]
 
         if (commandName === 'waitForStorybookComponentToBeLoaded') {
-            browser.addCommand(commandName, (options: WaitForStorybookComponentToBeLoaded) =>
+            browserInstance.addCommand(commandName, (options: WaitForStorybookComponentToBeLoaded) =>
                 waitForStorybookComponentToBeLoaded(options)
             )
             return
         }
 
-        browser.addCommand(
+        browserInstance.addCommand(
             commandName,
             function (
                 this: WebdriverIO.Browser,
@@ -283,7 +284,7 @@ export default class WdioImageComparisonService extends BaseClass {
                 pageOptions = {}
             ) {
                 const wrapped = wrapWithContext({
-                    browser,
+                    browserInstance,
                     command,
                     contextManager: self.contextManager,
                     getArgs: () => {
@@ -294,21 +295,22 @@ export default class WdioImageComparisonService extends BaseClass {
                         const isCurrentContextNative = self.contextManager.isNativeContext
 
                         return [{
-                            instanceData: updatedInstanceData,
+                            browserInstance,
                             folders: getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                            instanceData: updatedInstanceData,
+                            isNativeContext: isCurrentContextNative,
                             tag,
                             [pageOptionsKey]: {
                                 wic: self.defaultOptions,
                                 method: pageOptions,
                             },
-                            isNativeContext: isCurrentContextNative,
                             testContext: enrichTestContext({
                                 commandName,
                                 currentTestContext: self.#testContext,
                                 instanceData: updatedInstanceData,
                                 tag,
                             }),
-                        }]
+                        }] as unknown as Parameters<CommandMap[K]>
                     }
                 })
 
@@ -317,7 +319,12 @@ export default class WdioImageComparisonService extends BaseClass {
         )
     }
 
-    #addMultiremoteElementCommand(browser: WebdriverIO.MultiRemoteBrowser, browserNames: string[], commandName: string, command: any) {
+    #addMultiremoteElementCommand<K extends keyof CommandMap>(
+        browser: WebdriverIO.MultiRemoteBrowser,
+        browserNames: string[],
+        commandName: K,
+        command: CommandMap[K],
+    ) {
         log.info(`Adding element command "${commandName}" to Multi browser object`)
         const self = this
 
@@ -342,13 +349,13 @@ export default class WdioImageComparisonService extends BaseClass {
 
                     const isNativeContext = contextManager.isNativeContext
                     const initialInstanceData = await getInstanceData({
-                        currentBrowser: browserInstance,
+                        browserInstance: browserInstance,
                         initialDeviceRectangles: contextManager.getViewportContext(),
                         isNativeContext
                     })
 
                     const wrapped = wrapWithContext({
-                        browser: browserInstance,
+                        browserInstance,
                         command,
                         contextManager,
                         getArgs: () => {
@@ -358,6 +365,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             }
 
                             return [{
+                                browserInstance,
                                 instanceData: updatedInstanceData,
                                 folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
                                 tag,
@@ -373,7 +381,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                     instanceData: updatedInstanceData,
                                     tag,
                                 }),
-                            }]
+                            }] as unknown as Parameters<CommandMap[K]>
                         }
                     })
 
@@ -384,11 +392,11 @@ export default class WdioImageComparisonService extends BaseClass {
             })
     }
 
-    #addMultiremoteCommand(
+    #addMultiremoteCommand<K extends keyof CommandMap>(
         browser: WebdriverIO.MultiRemoteBrowser,
         browserNames: string[],
-        commandName: string,
-        command: any
+        commandName: K,
+        command: CommandMap[K],
     ) {
         log.info(`Adding browser command "${commandName}" to Multi browser object`)
         const self = this
@@ -421,13 +429,13 @@ export default class WdioImageComparisonService extends BaseClass {
                         isMobile: browserInstance.isMobile,
                     })
                     const initialInstanceData = await getInstanceData({
-                        currentBrowser: browserInstance,
+                        browserInstance: browserInstance,
                         initialDeviceRectangles: contextManager.getViewportContext(),
                         isNativeContext
                     })
 
                     const wrapped = wrapWithContext({
-                        browser: browserInstance,
+                        browserInstance,
                         command,
                         contextManager,
                         getArgs: () => {
@@ -438,21 +446,22 @@ export default class WdioImageComparisonService extends BaseClass {
                             const isCurrentContextNative = contextManager.isNativeContext
 
                             return [{
-                                instanceData: updatedInstanceData,
+                                browserInstance,
                                 folders: getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
+                                instanceData: updatedInstanceData,
+                                isNativeContext: isCurrentContextNative,
                                 tag,
                                 [pageOptionsKey]: {
                                     wic: self.defaultOptions,
                                     method: pageOptions,
                                 },
-                                isNativeContext: isCurrentContextNative,
                                 testContext: enrichTestContext({
                                     commandName,
                                     currentTestContext: self.#testContext,
                                     instanceData: updatedInstanceData,
                                     tag,
                                 }),
-                            }]
+                            }] as unknown as Parameters<CommandMap[K]>
                         }
                     })
 

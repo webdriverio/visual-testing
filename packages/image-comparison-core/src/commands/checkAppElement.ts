@@ -11,12 +11,13 @@ import saveAppElement from './saveAppElement.js'
  */
 export default async function checkAppElement(
     {
-        instanceData,
-        folders,
-        element,
-        tag,
         checkElementOptions,
+        browserInstance,
+        element,
+        folders,
+        instanceData,
         isNativeContext = true,
+        tag,
         testContext,
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
@@ -25,12 +26,13 @@ export default async function checkAppElement(
 
     // 2. Save the element and return the data
     const { devicePixelRatio, fileName } = await saveAppElement({
-        instanceData,
-        folders,
+        browserInstance,
         element: element as WicElement,
-        tag,
-        saveElementOptions: checkElementOptions,
+        folders,
+        instanceData,
         isNativeContext,
+        saveElementOptions: checkElementOptions,
+        tag,
     })
     // @TODO: This is something for the future, to allow ignore regions on the element itself.
     // This will become a feature request

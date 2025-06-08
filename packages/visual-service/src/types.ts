@@ -11,9 +11,18 @@ import type {
     DeviceRectangles,
     TestContext,
     InstanceData,
+    InternalSaveScreenMethodOptions,
+    InternalCheckTabbablePageMethodOptions,
+    InternalSaveElementMethodOptions,
+    InternalSaveFullPageMethodOptions,
+    InternalSaveTabbablePageMethodOptions,
+    InternalCheckScreenMethodOptions,
+    InternalCheckElementMethodOptions,
+    InternalCheckFullPageMethodOptions,
 } from '@wdio/image-comparison-core'
 import type { ChainablePromiseElement } from 'webdriverio'
 import type { ContextManager } from './contextManager.js'
+import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;
@@ -35,7 +44,7 @@ export type getFolderMethodOptions =
     | SaveFullPageMethodOptions
     | SaveScreenMethodOptions;
 export type GetInstanceDataOptions = {
-    currentBrowser: WebdriverIO.Browser,
+    browserInstance: WebdriverIO.Browser,
     initialDeviceRectangles: DeviceRectangles,
     isNativeContext: boolean
 }
@@ -46,14 +55,14 @@ export type EnrichTestContextOptions = {
     tag: string;
 }
 export type GetMobileInstanceDataOptions = {
-    currentBrowser: WebdriverIO.Browser;
+    browserInstance: WebdriverIO.Browser;
     initialDeviceRectangles: DeviceRectangles;
     isNativeContext:boolean;
     nativeWebScreenshot:boolean;
 }
 
 export interface WrapWithContextOptions<T extends (...args: any[]) => any> {
-    browser: WebdriverIO.Browser
+    browserInstance: WebdriverIO.Browser
     command: T
     contextManager: ContextManager
     getArgs: () => Parameters<T>
@@ -73,23 +82,27 @@ export interface WdioIcsScrollOptions extends WdioIcsCommonOptions {
     hideAfterFirstScroll?: (WebdriverIO.Element | ChainablePromiseElement)[];
 }
 
-export interface WdioCheckFullPageMethodOptions
-    extends Omit<CheckFullPageMethodOptions, keyof WdioIcsScrollOptions>,
-        WdioIcsScrollOptions {}
-export interface WdioSaveFullPageMethodOptions
-    extends Omit<SaveFullPageMethodOptions, keyof WdioIcsScrollOptions>,
-        WdioIcsScrollOptions {}
-export interface WdioSaveElementMethodOptions
-    extends Omit<SaveElementMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-export interface WdioSaveScreenMethodOptions
-    extends Omit<SaveScreenMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-export interface WdioCheckElementMethodOptions
-    extends Omit<CheckElementMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
-export interface WdioCheckScreenMethodOptions
-    extends Omit<CheckScreenMethodOptions, keyof WdioIcsCommonOptions>,
-        WdioIcsCommonOptions {}
+// Save methods
+export interface WdioSaveScreenMethodOptions extends Omit<SaveScreenMethodOptions, keyof WdioIcsCommonOptions>, WdioIcsCommonOptions {}
+export interface WdioSaveElementMethodOptions extends Omit<SaveElementMethodOptions, keyof WdioIcsCommonOptions>, WdioIcsCommonOptions {}
+export interface WdioSaveFullPageMethodOptions extends Omit<SaveFullPageMethodOptions, keyof WdioIcsScrollOptions>, WdioIcsScrollOptions { }
 
-export interface VisualServiceOptions extends ClassOptions {}
+// Check methods
+export interface WdioCheckScreenMethodOptions extends Omit<CheckScreenMethodOptions, keyof WdioIcsCommonOptions>, WdioIcsCommonOptions {}
+export interface WdioCheckElementMethodOptions extends Omit<CheckElementMethodOptions, keyof WdioIcsCommonOptions>, WdioIcsCommonOptions {}
+export interface WdioCheckFullPageMethodOptions extends Omit<CheckFullPageMethodOptions, keyof WdioIcsScrollOptions>, WdioIcsScrollOptions {}
+
+export interface VisualServiceOptions extends ClassOptions { }
+
+export interface CommandMap {
+    saveScreen: (options: InternalSaveScreenMethodOptions) => Promise<Output>
+    saveElement: (options: InternalSaveElementMethodOptions) => Promise<Output>
+    saveFullPageScreen: (options: InternalSaveFullPageMethodOptions) => Promise<Output>
+    saveTabbablePage: (options: InternalSaveTabbablePageMethodOptions) => Promise<Output>
+    checkScreen: (options: InternalCheckScreenMethodOptions) => Promise<Result>
+    checkElement: (options: InternalCheckElementMethodOptions) => Promise<Result>
+    checkFullPageScreen: (options: InternalCheckFullPageMethodOptions) => Promise<Result>
+    checkTabbablePage: (options: InternalCheckTabbablePageMethodOptions) => Promise<Result>
+    // Storybook commands
+    waitForStorybookComponentToBeLoaded: (options: WaitForStorybookComponentToBeLoaded) => Promise<void>
+}

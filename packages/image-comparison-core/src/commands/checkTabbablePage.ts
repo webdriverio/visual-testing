@@ -10,11 +10,12 @@ import { browser } from '@wdio/globals'
  */
 export default async function checkTabbablePage(
     {
-        instanceData,
-        folders,
-        tag,
+        browserInstance,
         checkTabbableOptions,
+        folders,
+        instanceData,
         isNativeContext = false,
+        tag,
         testContext,
     }: InternalCheckTabbablePageMethodOptions
 ): Promise<ImageCompareResult | number> {
@@ -28,13 +29,13 @@ export default async function checkTabbablePage(
 
     // 2. Create the screenshot
     const fullPageCompareData = await checkFullPageScreen({
+        browserInstance,
+        checkFullPageOptions: checkTabbableOptions,
         instanceData,
         folders,
-        tag,
-        checkFullPageOptions:
-        checkTabbableOptions,
         isNativeContext,
         testContext,
+        tag,
     })
 
     // 3. Remove the canvas

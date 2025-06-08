@@ -8,15 +8,16 @@ import saveWebElement from './saveWebElement.js'
  */
 export default async function saveElement(
     {
-        instanceData,
-        folders,
+        browserInstance,
         element,
-        tag,
-        saveElementOptions,
+        folders,
+        instanceData,
         isNativeContext,
+        saveElementOptions,
+        tag,
     }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
     return isNativeContext
-        ? saveAppElement({ instanceData, folders, element, tag, saveElementOptions, isNativeContext })
-        : saveWebElement({ instanceData, folders, element, tag, saveElementOptions })
+        ? saveAppElement({ browserInstance, element, folders, instanceData, saveElementOptions, isNativeContext, tag })
+        : saveWebElement({ browserInstance, element, folders, instanceData, saveElementOptions, tag })
 }

@@ -7,14 +7,13 @@ import { getInstanceData } from './utils.js'
  * This will make sure that the context manager is updated when needed
  * and that the command is executed in the correct context
  */
-
 export function wrapWithContext<T extends (...args: any[]) => any>(opts: WrapWithContextOptions<T>): () => Promise<ReturnType<T>> {
-    const { browser, command, contextManager, getArgs } = opts
+    const { browserInstance, command, contextManager, getArgs } = opts
 
     return async function (this: WebdriverIO.Browser): Promise<ReturnType<T>> {
         if (contextManager.needsUpdate) {
             const instanceData: InstanceData = await getInstanceData({
-                currentBrowser: browser,
+                browserInstance,
                 initialDeviceRectangles: contextManager.getViewportContext(),
                 isNativeContext: contextManager.isNativeContext,
             })

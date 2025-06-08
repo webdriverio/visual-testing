@@ -104,6 +104,10 @@ export interface InternalCheckMethodOptions extends InternalSaveMethodOptions {
     testContext: TestContext;
 }
 
+export interface InternalCheckScreenMethodOptions extends InternalCheckMethodOptions {
+    checkScreenOptions: CheckScreenOptions;
+}
+
 export interface InternalCheckElementMethodOptions extends InternalCheckMethodOptions {
     element: WicElement | HTMLElement;
     checkElementOptions: CheckElementOptions;
@@ -115,8 +119,4 @@ export interface InternalCheckFullPageMethodOptions extends InternalCheckMethodO
 
 export interface InternalCheckTabbablePageMethodOptions extends InternalCheckMethodOptions {
     checkTabbableOptions: CheckTabbableOptions,
-}
-
-export interface InternalCheckScreenMethodOptions extends InternalCheckMethodOptions {
-    checkScreenOptions: CheckScreenOptions;
 }

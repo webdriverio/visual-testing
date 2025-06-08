@@ -630,9 +630,9 @@ describe('utils', () => {
             mockBrowser.execute = vi.fn().mockResolvedValue({
                 screenSize: { width: 390, height: 844 },
             })
-            const currentBrowser = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
+            const browserInstance = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
 
-            const result = await getMobileScreenSize({ currentBrowser, isIOS: true, isNativeContext: true })
+            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: true })
 
             expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
             expect(result).toEqual({ width: 390, height: 844 })
@@ -642,9 +642,9 @@ describe('utils', () => {
             mockBrowser.execute = vi.fn().mockResolvedValue({
                 screenSize: { width: 390, height: 844 },
             })
-            const currentBrowser = { getOrientation: vi.fn().mockResolvedValue('LANDSCAPE') } as any
+            const browserInstance = { getOrientation: vi.fn().mockResolvedValue('LANDSCAPE') } as any
 
-            const result = await getMobileScreenSize({ currentBrowser, isIOS: true, isNativeContext: true })
+            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: true })
 
             expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
             expect(result).toEqual({ width: 844, height: 390 })
@@ -652,9 +652,9 @@ describe('utils', () => {
 
         it('returns Android screen size in portrait', async () => {
             mockBrowser.execute = vi.fn().mockResolvedValue({ realDisplaySize: '1080x2400' })
-            const currentBrowser = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
+            const browserInstance = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
 
-            const result = await getMobileScreenSize({ currentBrowser, isIOS: false, isNativeContext: true })
+            const result = await getMobileScreenSize({ browserInstance, isIOS: false, isNativeContext: true })
 
             expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceInfo')
             expect(result).toEqual({ width: 1080, height: 2400 })
@@ -665,11 +665,11 @@ describe('utils', () => {
                 .mockRejectedValueOnce(new Error('Missing screenSize'))
                 .mockResolvedValueOnce({ width: 800, height: 1200 })
             const warnSpy = vi.spyOn(log, 'warn')
-            const currentBrowser = {
+            const browserInstance = {
                 getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
             } as any
 
-            const result = await getMobileScreenSize({ currentBrowser, isIOS: true, isNativeContext: false })
+            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: false })
 
             expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
             expect(mockBrowser.execute).toHaveBeenCalledWith(expect.any(Function))
@@ -682,11 +682,11 @@ describe('utils', () => {
                 .mockResolvedValueOnce({ realDisplaySize: 'invalid' })
                 .mockResolvedValueOnce({ width: 800, height: 1200 })
             const warnSpy = vi.spyOn(log, 'warn')
-            const currentBrowser = {
+            const browserInstance = {
                 getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
             } as any
 
-            const result = await getMobileScreenSize({ currentBrowser, isIOS: false, isNativeContext: false })
+            const result = await getMobileScreenSize({ browserInstance, isIOS: false, isNativeContext: false })
 
             expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceInfo')
             expect(mockBrowser.execute).toHaveBeenCalledWith(expect.any(Function))
@@ -697,15 +697,15 @@ describe('utils', () => {
         it('falls back to getWindowSize in native context', async () => {
             mockBrowser.execute = vi.fn().mockRejectedValueOnce(new Error('Boom'))
             const warnSpy = vi.spyOn(log, 'warn')
-            const currentBrowser = {
+            const browserInstance = {
                 getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
                 getWindowSize: vi.fn().mockResolvedValue({ width: 123, height: 456 })
             } as any
 
-            const result = await getMobileScreenSize({ currentBrowser, isIOS: true, isNativeContext: true })
+            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: true })
 
             expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
-            expect(currentBrowser.getWindowSize).toHaveBeenCalled()
+            expect(browserInstance.getWindowSize).toHaveBeenCalled()
             expect(result).toEqual({ width: 123, height: 456 })
             expect(warnSpy).toHaveBeenCalled()
         })
@@ -713,15 +713,15 @@ describe('utils', () => {
         it('returns dimensions in landscape fallback native context', async () => {
             mockBrowser.execute = vi.fn().mockRejectedValueOnce(new Error('Boom'))
             const warnSpy = vi.spyOn(log, 'warn')
-            const currentBrowser = {
+            const browserInstance = {
                 getOrientation: vi.fn().mockResolvedValue('LANDSCAPE'),
                 getWindowSize: vi.fn().mockResolvedValue({ width: 123, height: 456 })
             } as any
 
-            const result = await getMobileScreenSize({ currentBrowser, isIOS: true, isNativeContext: true })
+            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: true })
 
             expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
-            expect(currentBrowser.getWindowSize).toHaveBeenCalled()
+            expect(browserInstance.getWindowSize).toHaveBeenCalled()
             expect(result).toEqual({ width: 456, height: 123 })
             expect(warnSpy).toHaveBeenCalled()
         })

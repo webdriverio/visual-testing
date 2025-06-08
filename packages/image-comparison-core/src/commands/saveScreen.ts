@@ -8,14 +8,15 @@ import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
  */
 export default async function saveScreen(
     {
-        instanceData,
+        browserInstance,
         folders,
+        instanceData,
+        isNativeContext,
         tag,
         saveScreenOptions,
-        isNativeContext,
     }: InternalSaveScreenMethodOptions
 ): Promise<ScreenshotOutput> {
     return isNativeContext
-        ? saveAppScreen({ instanceData, folders, tag, saveScreenOptions, isNativeContext })
-        : saveWebScreen({ instanceData, folders, tag, saveScreenOptions, isNativeContext })
+        ? saveAppScreen({ browserInstance, folders, instanceData, isNativeContext, saveScreenOptions, tag })
+        : saveWebScreen({ browserInstance, folders, instanceData, isNativeContext, saveScreenOptions, tag })
 }

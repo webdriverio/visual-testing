@@ -8,15 +8,16 @@ import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
  */
 export default async function checkScreen(
     {
-        instanceData,
-        folders,
-        tag,
+        browserInstance,
         checkScreenOptions,
+        folders,
+        instanceData,
         isNativeContext,
+        tag,
         testContext,
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
     return isNativeContext
-        ? checkAppScreen({ instanceData, folders, tag, checkScreenOptions, isNativeContext, testContext })
-        : checkWebScreen({ instanceData, folders, tag, checkScreenOptions, isNativeContext, testContext })
+        ? checkAppScreen({ browserInstance, checkScreenOptions, folders, instanceData, isNativeContext, tag, testContext })
+        : checkWebScreen({ browserInstance, checkScreenOptions, folders, instanceData, isNativeContext, tag, testContext })
 }

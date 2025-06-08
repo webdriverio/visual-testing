@@ -12,11 +12,12 @@ import type { ChainablePromiseElement } from 'webdriverio'
  */
 export default async function checkAppScreen(
     {
-        instanceData,
-        folders,
-        tag,
+        browserInstance,
         checkScreenOptions,
+        folders,
+        instanceData,
         isNativeContext = true,
+        tag,
         testContext,
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
@@ -43,11 +44,12 @@ export default async function checkAppScreen(
 
     // 2. Take the actual screenshot and retrieve the needed data
     const { devicePixelRatio, fileName } = await saveAppScreen({
-        instanceData,
+        browserInstance,
         folders,
-        tag,
-        saveScreenOptions: saveAppScreenOptions,
+        instanceData,
         isNativeContext,
+        saveScreenOptions: saveAppScreenOptions,
+        tag,
     })
 
     // 3. Determine the ignore regions
