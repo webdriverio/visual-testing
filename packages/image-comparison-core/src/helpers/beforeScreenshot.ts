@@ -8,7 +8,6 @@ import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeSc
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
 import waitForFonts from '../clientSideScripts/waitForFonts.js'
-import { browser } from '@wdio/globals'
 
 const log = logger('@wdio/visual-service:beforeScreenshot')
 
@@ -16,6 +15,7 @@ const log = logger('@wdio/visual-service:beforeScreenshot')
  * Methods that need to be executed before a screenshot will be taken
  */
 export default async function beforeScreenshot(
+    browserInstance: WebdriverIO.Browser,
     options: BeforeScreenshotOptions,
     addShadowPadding = false,
 ): Promise<BeforeScreenshotResult> {
@@ -43,7 +43,7 @@ export default async function beforeScreenshot(
     // Wait for the fonts to be loaded
     if (waitForFontsLoaded){
         try {
-            await browser.execute(waitForFonts)
+            await browserInstance.execute(waitForFonts)
         } catch (e) {
             log.debug('Waiting for fonts to load threw an error:', e)
         }
@@ -51,13 +51,13 @@ export default async function beforeScreenshot(
 
     // Hide the scrollbars
     if (noScrollBars) {
-        await browser.execute(hideScrollBars, noScrollBars)
+        await browserInstance.execute(hideScrollBars, noScrollBars)
     }
 
     // Hide and or Remove elements
     if (hideElements.length > 0 || removeElements.length > 0) {
         try {
-            await browser.execute(hideRemoveElements, { hide: hideElements, remove: removeElements }, true)
+            await browserInstance.execute(hideRemoveElements, { hide: hideElements, remove: removeElements }, true)
         } catch (e) {
             log.warn(
                 '\x1b[33m%s\x1b[0m',
@@ -76,7 +76,7 @@ export default async function beforeScreenshot(
 
     // Set some custom css
     if (disableCSSAnimation || disableBlinkingCursor || checkIsMobile(platformName)) {
-        await browser.execute(setCustomCss, { addressBarPadding, disableBlinkingCursor, disableCSSAnimation, id: CUSTOM_CSS_ID, toolBarPadding })
+        await browserInstance.execute(setCustomCss, { addressBarPadding, disableBlinkingCursor, disableCSSAnimation, id: CUSTOM_CSS_ID, toolBarPadding })
         // Wait at least 500 milliseconds to make sure the css is applied
         // Not every device is fast enough to apply the css faster
         await waitFor(500)
@@ -84,7 +84,7 @@ export default async function beforeScreenshot(
 
     // Make all text transparent
     if (enableLayoutTesting){
-        await browser.execute(toggleTextTransparency, enableLayoutTesting)
+        await browserInstance.execute(toggleTextTransparency, enableLayoutTesting)
         // Wait at least 500 milliseconds to make sure the css is applied
         // Not every device is fast enough to apply the css faster
         await waitFor(500)
@@ -97,5 +97,5 @@ export default async function beforeScreenshot(
         ...options.instanceData,
     }
 
-    return getEnrichedInstanceData(instanceOptions, addShadowPadding)
+    return getEnrichedInstanceData(browserInstance, instanceOptions, addShadowPadding)
 }

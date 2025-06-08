@@ -35,14 +35,15 @@ export type { DeviceRectangles } from './methods/rectangles.interfaces.js'
 export type { ResultReport } from './methods/createCompareReport.js'
 
 export {
-    BaseClass,
-    ClassOptions,
-    ImageCompareResult,
+    // Constants
     DEFAULT_TEST_CONTEXT,
     DEVICE_RECTANGLES,
     IOS_OFFSETS,
     FOLDERS,
     NOT_KNOWN,
+    // Base class
+    BaseClass,
+    // Commands
     saveScreen,
     saveElement,
     saveFullPageScreen,
@@ -62,4 +63,6 @@ export {
     InternalCheckElementMethodOptions,
     InternalCheckFullPageMethodOptions,
     InternalCheckTabbablePageMethodOptions,
+    ImageCompareResult,
+    ClassOptions,
 }

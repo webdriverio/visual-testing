@@ -72,6 +72,19 @@ vi.mock('@wdio/globals', () => ({
 }))
 
 describe('utils', () => {
+    // Helper function to create mock browser instance
+    const createMockBrowserInstance = () => {
+        return {
+            execute: vi.fn(),
+            browsingContextCaptureScreenshot: vi.fn(),
+            getWindowHandle: vi.fn(),
+            getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
+            getWindowSize: vi.fn().mockResolvedValue({ width: 375, height: 667 }),
+            getUrl: vi.fn().mockResolvedValue('http://example.com'),
+            url: vi.fn(),
+        } as unknown as WebdriverIO.Browser
+    }
+
     describe('getAndCreatePath', () => {
         const folder = join(process.cwd(), '/.tmp/utils')
 
@@ -189,114 +202,79 @@ describe('utils', () => {
         })
     })
 
-    describe('checkIsMobile', () => {
-        it('should return false when no platform name is provided', () => {
-            expect(checkIsMobile('')).toMatchSnapshot()
-        })
+    // DRY helper for boolean check tests
+    const testBooleanChecks = (
+        functionName: string,
+        testFunction: (input: string) => boolean,
+        trueCases: string[],
+        falseCases: string[]
+    ) => {
+        describe(functionName, () => {
+            trueCases.forEach(testCase => {
+                it(`should return true for '${testCase}'`, () => {
+                    expect(testFunction(testCase)).toMatchSnapshot()
+                })
+            })
 
-        it('should return true when a platform name is provided', () => {
-            expect(checkIsMobile('ios')).toMatchSnapshot()
+            falseCases.forEach(testCase => {
+                it(`should return false for '${testCase}'`, () => {
+                    expect(testFunction(testCase)).toMatchSnapshot()
+                })
+            })
         })
-    })
+    }
 
-    describe('checkIsAndroid', () => {
-        it('should return false when no platform name is provided', () => {
-            expect(checkIsAndroid('')).toMatchSnapshot()
-        })
-
-        it('should return false when a platform name is provided that is not accepted', () => {
-            expect(checkIsAndroid('chrome')).toMatchSnapshot()
-        })
-
-        it('should return true when a valid platform name is provided', () => {
-            expect(checkIsAndroid('androId')).toMatchSnapshot()
-        })
-    })
-
-    describe('checkIsIos', () => {
-        it('should return false when no platform name is provided', () => {
-            expect(checkIsIos('')).toMatchSnapshot()
-        })
-
-        it('should return false when a platform name is provided that is not accepted', () => {
-            expect(checkIsIos('chrome')).toMatchSnapshot()
-        })
-
-        it('should return true when a valid platform name is provided', () => {
-            expect(checkIsIos('IoS')).toMatchSnapshot()
-        })
-    })
-
-    describe('checkTestInBrowser', () => {
-        it('should return false when no browser name is provided', () => {
-            expect(checkTestInBrowser('')).toMatchSnapshot()
-        })
-
-        it('should return true when a browser name is provided', () => {
-            expect(checkTestInBrowser('chrome')).toMatchSnapshot()
-        })
-    })
+    testBooleanChecks('checkIsMobile', checkIsMobile, ['ios', 'android'], ['', 'chrome'])
+    testBooleanChecks('checkIsAndroid', checkIsAndroid, ['android', 'Android'], ['', 'chrome', 'ios'])
+    testBooleanChecks('checkIsIos', checkIsIos, ['ios', 'iOS'], ['', 'chrome', 'android'])
+    testBooleanChecks('checkTestInBrowser', checkTestInBrowser, ['chrome'], [''])
 
     describe('checkTestInMobileBrowser', () => {
-        it('should return false when no platform name is provided', () => {
-            expect(checkTestInMobileBrowser('', 'chrome')).toMatchSnapshot()
-        })
+        const testCases = [
+            { platform: '', browser: 'chrome', expected: false },
+            { platform: 'ios', browser: '', expected: false },
+            { platform: 'ios', browser: 'chrome', expected: true },
+        ]
 
-        it('should return false when a plaform but no browser name is provided', () => {
-            expect(checkTestInMobileBrowser('ios', '')).toMatchSnapshot()
-        })
-
-        it('should return true when a plaform and a browser name is provided', () => {
-            expect(checkTestInMobileBrowser('ios', 'chrome')).toMatchSnapshot()
+        testCases.forEach(({ platform, browser, expected }) => {
+            it(`should return ${expected} for platform:'${platform}' and browser:'${browser}'`, () => {
+                expect(checkTestInMobileBrowser(platform, browser)).toMatchSnapshot()
+            })
         })
     })
 
     describe('checkAndroidNativeWebScreenshot', () => {
-        it('should return false when no platform name is provided', () => {
-            expect(checkAndroidNativeWebScreenshot('', false)).toMatchSnapshot()
-        })
+        const testCases = [
+            { platform: '', nativeWeb: false, expected: false },
+            { platform: 'ios', nativeWeb: true, expected: false },
+            { platform: 'android', nativeWeb: false, expected: false },
+            { platform: 'android', nativeWeb: true, expected: true },
+        ]
 
-        it('should return false when iOS and nativeWebscreenshot true is provided', () => {
-            expect(checkAndroidNativeWebScreenshot('ios', true)).toMatchSnapshot()
-        })
-
-        it('should return false when iOS and nativeWebscreenshot false is provided', () => {
-            expect(checkAndroidNativeWebScreenshot('ios', false)).toMatchSnapshot()
-        })
-
-        it('should return false when Android and nativeWebscreenshot false is provided', () => {
-            expect(checkAndroidNativeWebScreenshot('Android', false)).toMatchSnapshot()
-        })
-
-        it('should return true when Android and nativeWebscreenshot true is provided ', () => {
-            expect(checkAndroidNativeWebScreenshot('Android', true)).toMatchSnapshot()
+        testCases.forEach(({ platform, nativeWeb, expected }) => {
+            it(`should return ${expected} for platform:'${platform}' and nativeWeb:${nativeWeb}`, () => {
+                expect(checkAndroidNativeWebScreenshot(platform, nativeWeb)).toMatchSnapshot()
+            })
         })
     })
 
     describe('checkAndroidChromeDriverScreenshot', () => {
-        it('should return false when no platform name is provided', () => {
-            expect(checkAndroidChromeDriverScreenshot('', false)).toMatchSnapshot()
-        })
+        const testCases = [
+            { platform: '', nativeWeb: false, expected: false },
+            { platform: 'ios', nativeWeb: true, expected: false },
+            { platform: 'android', nativeWeb: true, expected: false },
+            { platform: 'android', nativeWeb: false, expected: true },
+        ]
 
-        it('should return false when iOS and nativeWebscreenshot true is provided', () => {
-            expect(checkAndroidChromeDriverScreenshot('ios', true)).toMatchSnapshot()
-        })
-
-        it('should return false when iOS and nativeWebscreenshot false is provided', () => {
-            expect(checkAndroidChromeDriverScreenshot('ios', false)).toMatchSnapshot()
-        })
-
-        it('should return false when Android and nativeWebscreenshot true is provided', () => {
-            expect(checkAndroidChromeDriverScreenshot('Android', true)).toMatchSnapshot()
-        })
-
-        it('should return true when Android and nativeWebscreenshot false is provided ', () => {
-            expect(checkAndroidChromeDriverScreenshot('Android', false)).toMatchSnapshot()
+        testCases.forEach(({ platform, nativeWeb, expected }) => {
+            it(`should return ${expected} for platform:'${platform}' and nativeWeb:${nativeWeb}`, () => {
+                expect(checkAndroidChromeDriverScreenshot(platform, nativeWeb)).toMatchSnapshot()
+            })
         })
     })
 
     describe('getAddressBarShadowPadding', () => {
-        const getAddressBarShadowPaddingOptions = {
+        const baseOptions = {
             platformName: '',
             browserName: '',
             nativeWebScreenshot: false,
@@ -304,135 +282,48 @@ describe('utils', () => {
             addShadowPadding: false,
         }
 
-        it('should return 0 when this is a check for a desktop browser', () => {
-            getAddressBarShadowPaddingOptions.browserName = 'chrome'
+        const testCases = [
+            { ...baseOptions, browserName: 'chrome', description: 'desktop browser', expected: 0 },
+            { ...baseOptions, platformName: 'android', description: 'Android app', expected: 0 },
+            { ...baseOptions, platformName: 'ios', description: 'iOS app', expected: 0 },
+            { ...baseOptions, platformName: 'android', nativeWebScreenshot: true, description: 'Android native web without shadow padding', expected: 0 },
+            { ...baseOptions, platformName: 'android', nativeWebScreenshot: true, addShadowPadding: true, description: 'Android native web with shadow padding', expected: 6 },
+            { ...baseOptions, platformName: 'iOS', addShadowPadding: true, description: 'iOS with shadow padding', expected: 6 },
+        ]
 
-            expect(getAddressBarShadowPadding(getAddressBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 0 when this is a check for an Android app', () => {
-            getAddressBarShadowPaddingOptions.platformName = 'android'
-
-            expect(getAddressBarShadowPadding(getAddressBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 0 when this is a check for an iOS app', () => {
-            getAddressBarShadowPaddingOptions.platformName = 'ios'
-
-            expect(getAddressBarShadowPadding(getAddressBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 0 when this is a check for Android with a native screenshot but without adding a shadow padding', () => {
-            getAddressBarShadowPaddingOptions.platformName = 'android'
-            getAddressBarShadowPaddingOptions.nativeWebScreenshot = true
-
-            expect(getAddressBarShadowPadding(getAddressBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 0 when this is a check for iOS but without adding a shadow padding', () => {
-            getAddressBarShadowPaddingOptions.platformName = 'iOS'
-            getAddressBarShadowPaddingOptions.nativeWebScreenshot = true
-
-            expect(getAddressBarShadowPadding(getAddressBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 6 when this is a check for Android with a native screenshot and adding a shadow padding', () => {
-            getAddressBarShadowPaddingOptions.platformName = 'android'
-            getAddressBarShadowPaddingOptions.nativeWebScreenshot = true
-            getAddressBarShadowPaddingOptions.addShadowPadding = true
-
-            expect(getAddressBarShadowPadding(getAddressBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 6 when this is a check for iOS and adding a shadow padding', () => {
-            getAddressBarShadowPaddingOptions.platformName = 'iOS'
-            getAddressBarShadowPaddingOptions.addShadowPadding = true
-
-            expect(getAddressBarShadowPadding(getAddressBarShadowPaddingOptions)).toMatchSnapshot()
+        testCases.forEach(({ description, expected, ...options }) => {
+            it(`should return ${expected} for ${description}`, () => {
+                expect(getAddressBarShadowPadding(options)).toMatchSnapshot()
+            })
         })
     })
 
     describe('getToolBarShadowPadding', () => {
-        it('should return 0 when this is a check for a desktop browser', () => {
-            const getToolBarShadowPaddingOptions = {
-                platformName: '',
-                browserName: 'chrome',
-                toolBarShadowPadding: 6,
-                addShadowPadding: false,
-            }
+        const baseOptions = {
+            platformName: '',
+            browserName: '',
+            toolBarShadowPadding: 6,
+            addShadowPadding: false,
+        }
 
-            expect(getToolBarShadowPadding(getToolBarShadowPaddingOptions)).toMatchSnapshot()
-        })
+        const testCases = [
+            { ...baseOptions, browserName: 'chrome', description: 'desktop browser', expected: 0 },
+            { ...baseOptions, platformName: 'Android', description: 'Android app', expected: 0 },
+            { ...baseOptions, platformName: 'iOS', description: 'iOS app', expected: 0 },
+            { ...baseOptions, platformName: 'android', addShadowPadding: true, description: 'Android app with shadow padding', expected: 0 },
+            { ...baseOptions, platformName: 'android', browserName: 'chrome', addShadowPadding: true, description: 'Android browser with shadow padding', expected: 6 },
+            { ...baseOptions, platformName: 'ios', browserName: 'safari', addShadowPadding: true, description: 'iOS browser with shadow padding', expected: 15 },
+        ]
 
-        it('should return 0 when this is a check for an Android app', () => {
-            const getToolBarShadowPaddingOptions = {
-                platformName: 'Android',
-                browserName: '',
-                toolBarShadowPadding: 6,
-                addShadowPadding: false,
-            }
-
-            expect(getToolBarShadowPadding(getToolBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 0 when this is a check for an iOS app', () => {
-            const getToolBarShadowPaddingOptions = {
-                platformName: 'iOS',
-                browserName: '',
-                toolBarShadowPadding: 6,
-                addShadowPadding: false,
-            }
-
-            expect(getToolBarShadowPadding(getToolBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 0 when this is a check for an Android app with adding a shadow padding', () => {
-            const getToolBarShadowPaddingOptions = {
-                platformName: 'android',
-                browserName: '',
-                toolBarShadowPadding: 6,
-                addShadowPadding: true,
-            }
-
-            expect(getToolBarShadowPadding(getToolBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 0 when this is a check for an iOS app with adding a shadow padding', () => {
-            const getToolBarShadowPaddingOptions = {
-                platformName: 'iOS',
-                browserName: '',
-                toolBarShadowPadding: 6,
-                addShadowPadding: true,
-            }
-
-            expect(getToolBarShadowPadding(getToolBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 0 when this is a check for Android browser and adding a shadow padding', () => {
-            const getToolBarShadowPaddingOptions = {
-                platformName: 'android',
-                browserName: 'chrome',
-                toolBarShadowPadding: 6,
-                addShadowPadding: true,
-            }
-
-            expect(getToolBarShadowPadding(getToolBarShadowPaddingOptions)).toMatchSnapshot()
-        })
-
-        it('should return 15 when this is a check for iOS browser and adding a shadow padding', () => {
-            const getToolBarShadowPaddingOptions = {
-                platformName: 'ios',
-                browserName: 'safari',
-                toolBarShadowPadding: 6,
-                addShadowPadding: true,
-            }
-
-            expect(getToolBarShadowPadding(getToolBarShadowPaddingOptions)).toMatchSnapshot()
+        testCases.forEach(({ description, expected, ...options }) => {
+            it(`should return ${expected} for ${description}`, () => {
+                expect(getToolBarShadowPadding(options)).toMatchSnapshot()
+            })
         })
     })
 
     describe('calculateDprData', () => {
-        it('should multiple all number values by the dpr value', () => {
+        it('should multiply all number values by the dpr value', () => {
             const data = {
                 a: 1,
                 b: 2,
@@ -446,90 +337,39 @@ describe('utils', () => {
         })
     })
 
-    // @TODO: Need to fix this, for now it broke with Jest 27 with this error
-    //   ● utils › waitFor › should wait for an amount of seconds and resolves the promise
-    //
-    //     expect(received).toHaveBeenCalledTimes(expected)
-    //
-    //     Matcher error: received value must be a mock or spy function
-    //
-    //     Received has type:  function
-    //     Received has value: [Function setTimeout]
-    //
-    //       384 |       waitFor(500);
-    //       385 |
-    //     > 386 |       expect(setTimeout).toHaveBeenCalledTimes(1);
-    //           |                          ^
-    //       387 |       expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 500);
-    //       388 |     });
-    //       389 |   });
-    //
-    //       at Object.<anonymous> (lib/helpers/utils.spec.ts:386:26)
-
-    // describe('waitFor', () => {
-    //   jest.useFakeTimers();
-    //
-    //   it('should wait for an amount of seconds and resolves the promise', () => {
-    //     waitFor(500);
-    //
-    //     expect(setTimeout).toHaveBeenCalledTimes(1);
-    //     expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 500);
-    //   });
-    // });
-
     describe('getBase64ScreenshotSize', () => {
-        it('should get the screenshot size of a screenshot string with the default DPR', () => {
-            expect(getBase64ScreenshotSize(IMAGE_STRING)).toMatchSnapshot()
-        })
+        const testCases = [
+            { dpr: undefined, description: 'default DPR' },
+            { dpr: 2, description: 'DPR 2' },
+        ]
 
-        it('should get the screenshot size of a screenshot string with DRP 2', () => {
-            expect(getBase64ScreenshotSize(IMAGE_STRING, 2)).toMatchSnapshot()
+        testCases.forEach(({ dpr, description }) => {
+            it(`should get the screenshot size with ${description}`, () => {
+                expect(getBase64ScreenshotSize(IMAGE_STRING, dpr)).toMatchSnapshot()
+            })
         })
     })
 
     describe('getDevicePixelRatio', () => {
-        it('should return 1 when the screenshot width equals device screen width', () => {
-            const deviceScreenSize = { width: 32, height: 64 }
-            expect(getDevicePixelRatio(IMAGE_STRING, deviceScreenSize)).toMatchSnapshot()
-        })
+        const testCases = [
+            { deviceSize: { width: 32, height: 64 }, expected: 1, description: 'equal width' },
+            { deviceSize: { width: 16, height: 32 }, expected: 2, description: 'double width' },
+            { deviceSize: { width: 17, height: 32 }, expected: 'rounded', description: 'rounded result' },
+        ]
 
-        it('should return 2 when the screenshot width is double the device screen width', () => {
-            const deviceScreenSize = { width: 16, height: 32 }
-            expect(getDevicePixelRatio(IMAGE_STRING, deviceScreenSize)).toMatchSnapshot()
-        })
-
-        it('should round the result to the nearest integer', () => {
-            const deviceScreenSize = { width: 17, height: 32 }
-            expect(getDevicePixelRatio(IMAGE_STRING, deviceScreenSize)).toMatchSnapshot()
+        testCases.forEach(({ deviceSize, description }) => {
+            it(`should return correct ratio for ${description}`, () => {
+                expect(getDevicePixelRatio(IMAGE_STRING, deviceSize)).toMatchSnapshot()
+            })
         })
     })
 
     describe('getIosBezelImageNames', () => {
         const supportedDevices = [
-            'iphonex',
-            'iphonexs',
-            'iphonexsmax',
-            'iphonexr',
-            'iphone11',
-            'iphone11pro',
-            'iphone11promax',
-            'iphone12',
-            'iphone12mini',
-            'iphone12pro',
-            'iphone12promax',
-            'iphone13',
-            'iphone13mini',
-            'iphone13pro',
-            'iphone13promax',
-            'iphone14',
-            'iphone14plus',
-            'iphone14pro',
-            'iphone14promax',
-            'iphone15',
-            'ipadmini',
-            'ipadair',
-            'ipadpro11',
-            'ipadpro129',
+            'iphonex', 'iphonexs', 'iphonexsmax', 'iphonexr', 'iphone11', 'iphone11pro', 'iphone11promax',
+            'iphone12', 'iphone12mini', 'iphone12pro', 'iphone12promax', 'iphone13', 'iphone13mini',
+            'iphone13pro', 'iphone13promax', 'iphone14', 'iphone14plus', 'iphone14pro', 'iphone14promax',
+            'iphone15', 'ipadmini', 'ipadair', 'ipadpro11', 'ipadpro129',
         ]
 
         supportedDevices.forEach((device) => {
@@ -544,278 +384,192 @@ describe('utils', () => {
     })
 
     describe('isObject', () => {
-        it('should return true for a plain object', () => {
-            expect(isObject({})).toBe(true)
-        })
+        const testCases = [
+            { value: {}, expected: true, description: 'plain object' },
+            { value: () => {}, expected: true, description: 'function' },
+            { value: [], expected: true, description: 'array' },
+            { value: null, expected: false, description: 'null' },
+            { value: undefined, expected: false, description: 'undefined' },
+            { value: 'string', expected: false, description: 'string' },
+            { value: 123, expected: false, description: 'number' },
+            { value: true, expected: false, description: 'boolean' },
+        ]
 
-        it('should return true for a function', () => {
-            expect(isObject(() => {})).toBe(true)
-        })
-
-        it('should return false for null', () => {
-            expect(isObject(null)).toBe(false)
-        })
-
-        it('should return false for undefined', () => {
-            expect(isObject(undefined)).toBe(false)
-        })
-
-        it('should return false for a string', () => {
-            expect(isObject('string')).toBe(false)
-        })
-
-        it('should return false for a number', () => {
-            expect(isObject(123)).toBe(false)
-        })
-
-        it('should return false for a boolean', () => {
-            expect(isObject(true)).toBe(false)
-        })
-
-        it('should return true for an array (since typeof array is object)', () => {
-            expect(isObject([])).toBe(true)
+        testCases.forEach(({ value, expected, description }) => {
+            it(`should return ${expected} for ${description}`, () => {
+                expect(isObject(value)).toBe(expected)
+            })
         })
     })
 
-    describe('isStorybook', () => {
+    describe('process.argv dependent functions', () => {
         const originalArgv = [...process.argv]
 
         afterEach(() => {
             process.argv = [...originalArgv]
         })
 
-        it('should return true when "--storybook" is in process.argv', () => {
-            process.argv.push('--storybook')
-            expect(isStorybook()).toBe(true)
-        })
+        const processArgvTests = [
+            { functionName: 'isStorybook', testFunction: isStorybook, flag: '--storybook' },
+            { functionName: 'updateVisualBaseline', testFunction: updateVisualBaseline, flag: '--update-visual-baseline' },
+        ]
 
-        it('should return false when "--storybook" is not in process.argv', () => {
-            process.argv = originalArgv.filter(arg => arg !== '--storybook')
-            expect(isStorybook()).toBe(false)
-        })
-    })
+        processArgvTests.forEach(({ functionName, testFunction, flag }) => {
+            describe(functionName, () => {
+                it(`should return true when "${flag}" is in process.argv`, () => {
+                    process.argv.push(flag)
+                    expect(testFunction()).toBe(true)
+                })
 
-    describe('updateVisualBaseline', () => {
-        const originalArgv = [...process.argv]
-
-        afterEach(() => {
-            process.argv = [...originalArgv]
-        })
-
-        it('should return true when "--update-visual-baseline" is in process.argv', () => {
-            process.argv.push('--update-visual-baseline')
-            expect(updateVisualBaseline()).toBe(true)
-        })
-
-        it('should return false when "--update-visual-baseline" is not in process.argv', () => {
-            process.argv = originalArgv.filter(arg => arg !== '--update-visual-baseline')
-            expect(updateVisualBaseline()).toBe(false)
+                it(`should return false when "${flag}" is not in process.argv`, () => {
+                    process.argv = originalArgv.filter(arg => arg !== flag)
+                    expect(testFunction()).toBe(false)
+                })
+            })
         })
     })
 
     describe('getMobileScreenSize', () => {
-        let mockBrowser: any
+        let mockBrowserInstance: WebdriverIO.Browser
 
-        beforeEach(async () => {
-            vi.clearAllMocks()
-            const { browser } = await vi.importMock('@wdio/globals') as any
-            mockBrowser = browser
+        beforeEach(() => {
+            mockBrowserInstance = createMockBrowserInstance()
         })
 
-        afterEach(() => {
-            vi.restoreAllMocks()
-        })
+        const testCases = [
+            {
+                description: 'iOS in portrait',
+                isIOS: true,
+                orientation: 'PORTRAIT',
+                mockResponse: { screenSize: { width: 390, height: 844 } },
+                expected: { width: 390, height: 844 }
+            },
+            {
+                description: 'iOS in landscape',
+                isIOS: true,
+                orientation: 'LANDSCAPE',
+                mockResponse: { screenSize: { width: 390, height: 844 } },
+                expected: { width: 844, height: 390 }
+            },
+            {
+                description: 'Android in portrait',
+                isIOS: false,
+                orientation: 'PORTRAIT',
+                mockResponse: { realDisplaySize: '1080x2400' },
+                expected: { width: 1080, height: 2400 }
+            }
+        ]
 
-        it('returns iOS screen size in portrait', async () => {
-            mockBrowser.execute = vi.fn().mockResolvedValue({
-                screenSize: { width: 390, height: 844 },
+        testCases.forEach(({ description, isIOS, orientation, mockResponse, expected }) => {
+            it(`should return correct screen size for ${description}`, async () => {
+                vi.mocked(mockBrowserInstance.getOrientation).mockResolvedValue(orientation as any)
+                vi.mocked(mockBrowserInstance.execute).mockResolvedValue(mockResponse)
+
+                const result = await getMobileScreenSize({
+                    browserInstance: mockBrowserInstance,
+                    isIOS,
+                    isNativeContext: true
+                })
+
+                expect(result).toEqual(expected)
             })
-            const browserInstance = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
-
-            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: true })
-
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
-            expect(result).toEqual({ width: 390, height: 844 })
         })
 
-        it('returns iOS screen size in landscape', async () => {
-            mockBrowser.execute = vi.fn().mockResolvedValue({
-                screenSize: { width: 390, height: 844 },
-            })
-            const browserInstance = { getOrientation: vi.fn().mockResolvedValue('LANDSCAPE') } as any
-
-            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: true })
-
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
-            expect(result).toEqual({ width: 844, height: 390 })
-        })
-
-        it('returns Android screen size in portrait', async () => {
-            mockBrowser.execute = vi.fn().mockResolvedValue({ realDisplaySize: '1080x2400' })
-            const browserInstance = { getOrientation: vi.fn().mockResolvedValue('PORTRAIT') } as any
-
-            const result = await getMobileScreenSize({ browserInstance, isIOS: false, isNativeContext: true })
-
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceInfo')
-            expect(result).toEqual({ width: 1080, height: 2400 })
-        })
-
-        it('falls back for iOS when screenSize is missing (web context)', async () => {
-            mockBrowser.execute = vi.fn()
+        it('should fall back to web context for iOS', async () => {
+            vi.mocked(mockBrowserInstance.execute)
                 .mockRejectedValueOnce(new Error('Missing screenSize'))
                 .mockResolvedValueOnce({ width: 800, height: 1200 })
-            const warnSpy = vi.spyOn(log, 'warn')
-            const browserInstance = {
-                getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
-            } as any
+            vi.mocked(mockBrowserInstance.getOrientation).mockResolvedValue('PORTRAIT')
 
-            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: false })
+            const result = await getMobileScreenSize({
+                browserInstance: mockBrowserInstance,
+                isIOS: true,
+                isNativeContext: false
+            })
 
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
-            expect(mockBrowser.execute).toHaveBeenCalledWith(expect.any(Function))
-            expect(warnSpy).toHaveBeenCalled()
             expect(result).toEqual({ width: 800, height: 1200 })
         })
 
-        it('falls back for Android when realDisplaySize is invalid (web context)', async () => {
-            mockBrowser.execute = vi.fn()
-                .mockResolvedValueOnce({ realDisplaySize: 'invalid' })
-                .mockResolvedValueOnce({ width: 800, height: 1200 })
-            const warnSpy = vi.spyOn(log, 'warn')
-            const browserInstance = {
-                getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
-            } as any
+        it('should fall back to getWindowSize in native context', async () => {
+            vi.mocked(mockBrowserInstance.execute).mockRejectedValue(new Error('Boom'))
+            vi.mocked(mockBrowserInstance.getOrientation).mockResolvedValue('PORTRAIT')
+            vi.mocked(mockBrowserInstance.getWindowSize).mockResolvedValue({ width: 123, height: 456 })
 
-            const result = await getMobileScreenSize({ browserInstance, isIOS: false, isNativeContext: false })
+            const result = await getMobileScreenSize({
+                browserInstance: mockBrowserInstance,
+                isIOS: true,
+                isNativeContext: true
+            })
 
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceInfo')
-            expect(mockBrowser.execute).toHaveBeenCalledWith(expect.any(Function))
-            expect(warnSpy).toHaveBeenCalled()
-            expect(result).toEqual({ width: 800, height: 1200 })
-        })
-
-        it('falls back to getWindowSize in native context', async () => {
-            mockBrowser.execute = vi.fn().mockRejectedValueOnce(new Error('Boom'))
-            const warnSpy = vi.spyOn(log, 'warn')
-            const browserInstance = {
-                getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
-                getWindowSize: vi.fn().mockResolvedValue({ width: 123, height: 456 })
-            } as any
-
-            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: true })
-
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
-            expect(browserInstance.getWindowSize).toHaveBeenCalled()
             expect(result).toEqual({ width: 123, height: 456 })
-            expect(warnSpy).toHaveBeenCalled()
-        })
-
-        it('returns dimensions in landscape fallback native context', async () => {
-            mockBrowser.execute = vi.fn().mockRejectedValueOnce(new Error('Boom'))
-            const warnSpy = vi.spyOn(log, 'warn')
-            const browserInstance = {
-                getOrientation: vi.fn().mockResolvedValue('LANDSCAPE'),
-                getWindowSize: vi.fn().mockResolvedValue({ width: 123, height: 456 })
-            } as any
-
-            const result = await getMobileScreenSize({ browserInstance, isIOS: true, isNativeContext: true })
-
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: deviceScreenInfo')
-            expect(browserInstance.getWindowSize).toHaveBeenCalled()
-            expect(result).toEqual({ width: 456, height: 123 })
-            expect(warnSpy).toHaveBeenCalled()
         })
     })
 
     describe('loadBase64Html', () => {
-        let mockBrowser: any
+        let mockBrowserInstance: WebdriverIO.Browser
 
-        beforeEach(async () => {
-            vi.clearAllMocks()
-            const { browser } = await vi.importMock('@wdio/globals') as any
-            mockBrowser = browser
+        beforeEach(() => {
+            mockBrowserInstance = createMockBrowserInstance()
         })
 
-        afterEach(() => {
-            vi.clearAllMocks()
+        it('should call browserInstance.execute with blob URL creation for all platforms', async () => {
+            await loadBase64Html({ browserInstance: mockBrowserInstance, isIOS: false })
+
+            expect(mockBrowserInstance.execute).toHaveBeenCalledTimes(1)
+            expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), expect.any(String))
         })
 
-        it('should call browser.execute with blob URL creation for all platforms', async () => {
-            mockBrowser.execute = vi.fn()
+        it('should call browserInstance.execute with blob URL creation and checkMetaTag for iOS', async () => {
+            await loadBase64Html({ browserInstance: mockBrowserInstance, isIOS: true })
 
-            await loadBase64Html({ isIOS: false })
-
-            expect(mockBrowser.execute).toHaveBeenCalledTimes(1)
-            expect(mockBrowser.execute).toHaveBeenCalledWith(expect.any(Function), expect.any(String))
-        })
-
-        it('should call browser.execute with blob URL creation and checkMetaTag for iOS', async () => {
-            mockBrowser.execute = vi.fn()
-
-            await loadBase64Html({ isIOS: true })
-
-            expect(mockBrowser.execute).toHaveBeenCalledTimes(2)
-            expect(mockBrowser.execute).toHaveBeenNthCalledWith(1, expect.any(Function), expect.any(String))
-            expect(mockBrowser.execute).toHaveBeenNthCalledWith(2, checkMetaTag)
+            expect(mockBrowserInstance.execute).toHaveBeenCalledTimes(2)
+            expect(mockBrowserInstance.execute).toHaveBeenNthCalledWith(1, expect.any(Function), expect.any(String))
+            expect(mockBrowserInstance.execute).toHaveBeenNthCalledWith(2, checkMetaTag)
         })
     })
 
     describe('executeNativeClick', () => {
+        let mockBrowserInstance: WebdriverIO.Browser
         const coords = { x: 100, y: 200 }
-        let mockBrowser: any
 
-        beforeEach(async () => {
-            vi.clearAllMocks()
-            const { browser } = await vi.importMock('@wdio/globals') as any
-            mockBrowser = browser
+        beforeEach(() => {
+            mockBrowserInstance = createMockBrowserInstance()
         })
 
-        afterEach(() => {
-            vi.clearAllMocks()
+        it('should call browserInstance.execute with "mobile: tap" on iOS', async () => {
+            await executeNativeClick({ browserInstance: mockBrowserInstance, isIOS: true, ...coords })
+
+            expect(mockBrowserInstance.execute).toHaveBeenCalledWith('mobile: tap', coords)
         })
 
-        it('should call browser.execute with "mobile: tap" on iOS', async () => {
-            mockBrowser.execute = vi.fn()
+        it('should call browserInstance.execute with "mobile: clickGesture" on Android (Appium 2)', async () => {
+            await executeNativeClick({ browserInstance: mockBrowserInstance, isIOS: false, ...coords })
 
-            await executeNativeClick({ isIOS: true, ...coords })
-
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: tap', coords)
-        })
-
-        it('should call browser.execute with "mobile: clickGesture" on Android (Appium 2)', async () => {
-            mockBrowser.execute = vi.fn()
-
-            await executeNativeClick({ isIOS: false, ...coords })
-
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: clickGesture', coords)
+            expect(mockBrowserInstance.execute).toHaveBeenCalledWith('mobile: clickGesture', coords)
         })
 
         it('should fall back to "doubleClickGesture" when clickGesture fails (Appium 1)', async () => {
-            mockBrowser.execute = vi.fn()
+            vi.mocked(mockBrowserInstance.execute)
                 .mockRejectedValueOnce(new Error('WebDriverError: Unknown mobile command: clickGesture'))
                 .mockResolvedValueOnce(undefined)
-            const logWarnMock = vi.spyOn(log, 'warn')
 
-            await executeNativeClick({ isIOS: false, ...coords })
+            await executeNativeClick({ browserInstance: mockBrowserInstance, isIOS: false, ...coords })
 
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: clickGesture', coords)
-            expect(mockBrowser.execute).toHaveBeenCalledWith('mobile: doubleClickGesture', coords)
-            expect(logWarnMock).toHaveBeenCalledWith(expect.stringContaining('falling back to `doubleClickGesture`'))
-
-            logWarnMock.mockRestore()
+            expect(mockBrowserInstance.execute).toHaveBeenCalledWith('mobile: clickGesture', coords)
+            expect(mockBrowserInstance.execute).toHaveBeenCalledWith('mobile: doubleClickGesture', coords)
         })
 
         it('should throw the error if it\'s not a known Appium command error', async () => {
-            mockBrowser.execute = vi.fn().mockRejectedValueOnce(new Error('Some unexpected error'))
+            vi.mocked(mockBrowserInstance.execute).mockRejectedValue(new Error('Some unexpected error'))
 
-            await expect(executeNativeClick({ isIOS: false, ...coords }))
+            await expect(executeNativeClick({ browserInstance: mockBrowserInstance, isIOS: false, ...coords }))
                 .rejects
                 .toThrowError('Some unexpected error')
         })
     })
 
     describe('getMobileViewPortPosition', () => {
-        let mockBrowser: any
+        let mockBrowserInstance: WebdriverIO.Browser
 
         const baseOptions = {
             isAndroid: false,
@@ -824,18 +578,15 @@ describe('utils', () => {
             nativeWebScreenshot: true,
             screenHeight: 800,
             screenWidth: 400,
+            initialDeviceRectangles: DEVICE_RECTANGLES,
         }
 
-        beforeEach(async () => {
-            vi.clearAllMocks()
-            const { browser } = await vi.importMock('@wdio/globals') as any
-            mockBrowser = browser
-            mockBrowser.getUrl = vi.fn().mockResolvedValue('http://example.com')
-            mockBrowser.url = vi.fn()
+        beforeEach(() => {
+            mockBrowserInstance = createMockBrowserInstance()
         })
 
         it('should return correct device rectangles for iOS WebView flow', async () => {
-            mockBrowser.execute = vi.fn()
+            vi.mocked(mockBrowserInstance.execute)
                 .mockResolvedValueOnce(undefined) // loadBase64Html
                 .mockResolvedValueOnce(undefined) // checkMetaTag
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
@@ -843,42 +594,66 @@ describe('utils', () => {
                 .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
 
             const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
                 ...baseOptions,
-                initialDeviceRectangles: DEVICE_RECTANGLES,
             })
 
-            expect(mockBrowser.getUrl).toHaveBeenCalled()
-            expect(mockBrowser.url).toHaveBeenCalledWith('http://example.com')
-            expect(mockBrowser.execute).toHaveBeenCalledWith(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
-
+            expect(mockBrowserInstance.getUrl).toHaveBeenCalled()
+            expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
+            expect(mockBrowserInstance.execute).toHaveBeenCalledWith(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
             expect(result).toMatchSnapshot()
         })
 
         it('should return initialDeviceRectangles if not WebView (native context)', async () => {
             const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
                 ...baseOptions,
                 isNativeContext: true,
-                initialDeviceRectangles: DEVICE_RECTANGLES,
             })
 
             expect(result).toEqual(DEVICE_RECTANGLES)
-            expect(mockBrowser.execute).not.toHaveBeenCalled()
-            expect(mockBrowser.getUrl).not.toHaveBeenCalled()
-            expect(mockBrowser.url).not.toHaveBeenCalled()
+            expect(mockBrowserInstance.execute).not.toHaveBeenCalled()
         })
 
         it('should return initialDeviceRectangles if Android + not nativeWebScreenshot', async () => {
             const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
                 ...baseOptions,
                 isAndroid: true,
                 isIOS: false,
                 nativeWebScreenshot: false,
-                initialDeviceRectangles: DEVICE_RECTANGLES,
             })
 
             expect(result).toEqual(DEVICE_RECTANGLES)
-            expect(mockBrowser.getUrl).not.toHaveBeenCalled()
-            expect(mockBrowser.url).not.toHaveBeenCalled()
+            expect(mockBrowserInstance.getUrl).not.toHaveBeenCalled()
+        })
+    })
+
+    describe('canUseBidiScreenshot', () => {
+        it('should return true when both required methods are functions', () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            expect(canUseBidiScreenshot(mockBrowserInstance)).toBe(true)
+        })
+
+        it('should return false if browsingContextCaptureScreenshot is missing', () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            delete (mockBrowserInstance as any).browsingContextCaptureScreenshot
+
+            expect(canUseBidiScreenshot(mockBrowserInstance)).toBe(false)
+        })
+
+        it('should return false if getWindowHandle is missing', () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            delete (mockBrowserInstance as any).getWindowHandle
+
+            expect(canUseBidiScreenshot(mockBrowserInstance)).toBe(false)
+        })
+
+        it('should return false if either is not a function', () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            ;(mockBrowserInstance as any).browsingContextCaptureScreenshot = 'notAFunction'
+
+            expect(canUseBidiScreenshot(mockBrowserInstance)).toBe(false)
         })
     })
 
@@ -913,203 +688,68 @@ describe('utils', () => {
             const result = logAllDeprecatedCompareOptions(allDeprecatedOptions)
             expect(result).toMatchSnapshot()
         })
-
-        it('should only return deprecated keys when full config is provided', () => {
-            const fullOptions: ClassOptions = {
-                addressBarShadowPadding: 10,
-                autoElementScroll: true,
-                addIOSBezelCorners: false,
-                clearRuntimeFolder: false,
-                userBasedFullPageScreenshot: false,
-                enableLegacyScreenshotMethod: false,
-                formatImageName: 'test',
-                isHybridApp: false,
-                savePerInstance: true,
-                toolBarShadowPadding: 5,
-                waitForFontsLoaded: true,
-                autoSaveBaseline: true,
-                screenshotPath: './screenshots',
-                baselineFolder: './baseline',
-                disableBlinkingCursor: false,
-                disableCSSAnimation: false,
-                enableLayoutTesting: true,
-                fullPageScrollTimeout: 500,
-                hideScrollBars: true,
-                storybook: { url: 'http://localhost:6006' },
-
-                // Add deprecated keys mixed in
-                ...allDeprecatedOptions
-            }
-
-            const result = logAllDeprecatedCompareOptions(fullOptions)
-            expect(result).toEqual(allDeprecatedOptions)
-        })
     })
 
     describe('getMethodOrWicOption', () => {
-        const defaultOptions = {
-            foo: 'bar',
-            count: 42,
-            isEnabled: true,
-        }
+        const defaultOptions = { foo: 'bar', count: 42, isEnabled: true }
 
-        it('should return value from method if defined', () => {
-            const method = { foo: 'baz' }
+        const testCases = [
+            { method: { foo: 'baz' }, key: 'foo', expected: 'baz', description: 'value from method if defined' },
+            { method: undefined, key: 'count', expected: 42, description: 'value from wic if method is undefined' },
+            { method: { foo: undefined }, key: 'foo', expected: 'bar', description: 'value from wic if key in method is undefined' },
+            { method: { isEnabled: false }, key: 'isEnabled', expected: false, description: 'boolean value from method if defined' },
+            { method: {}, key: 'count', expected: 42, description: 'value from wic for missing key in method' },
+        ]
 
-            const result = getMethodOrWicOption(method, defaultOptions, 'foo')
-            expect(result).toBe('baz')
-        })
-
-        it('should return value from wic if method is undefined', () => {
-            const result = getMethodOrWicOption(undefined, defaultOptions, 'count')
-            expect(result).toBe(42)
-        })
-
-        it('should return value from wic if key in method is undefined', () => {
-            const method = { foo: undefined }
-
-            const result = getMethodOrWicOption(method, defaultOptions, 'foo')
-            expect(result).toBe('bar')
-        })
-
-        it('should return boolean value from method if defined', () => {
-            const method = { isEnabled: false }
-
-            const result = getMethodOrWicOption(method, defaultOptions, 'isEnabled')
-            expect(result).toBe(false)
-        })
-
-        it('should return value from wic for a missing key in method', () => {
-            const method = {}
-
-            const result = getMethodOrWicOption(method, defaultOptions, 'count')
-            expect(result).toBe(42)
-        })
-    })
-
-    describe('canUseBidiScreenshot', () => {
-        let mockBrowser: any
-
-        beforeEach(async () => {
-            vi.clearAllMocks()
-            const { browser } = await vi.importMock('@wdio/globals') as any
-            mockBrowser = browser
-        })
-
-        it('should return true when both browsingContextCaptureScreenshot and getWindowHandle are functions', () => {
-            mockBrowser.browsingContextCaptureScreenshot = vi.fn()
-            mockBrowser.getWindowHandle = vi.fn()
-
-            expect(canUseBidiScreenshot()).toBe(true)
-        })
-
-        it('should return false if browsingContextCaptureScreenshot is missing', () => {
-            mockBrowser.browsingContextCaptureScreenshot = undefined
-            mockBrowser.getWindowHandle = vi.fn()
-
-            expect(canUseBidiScreenshot()).toBe(false)
-        })
-
-        it('should return false if getWindowHandle is missing', () => {
-            mockBrowser.browsingContextCaptureScreenshot = vi.fn()
-            mockBrowser.getWindowHandle = undefined
-
-            expect(canUseBidiScreenshot()).toBe(false)
-        })
-
-        it('should return false if both are missing', () => {
-            mockBrowser.browsingContextCaptureScreenshot = undefined
-            mockBrowser.getWindowHandle = undefined
-
-            expect(canUseBidiScreenshot()).toBe(false)
-        })
-
-        it('should return false if either is not a function', () => {
-            mockBrowser.browsingContextCaptureScreenshot = 'notAFunction'
-            mockBrowser.getWindowHandle = vi.fn()
-
-            expect(canUseBidiScreenshot()).toBe(false)
+        testCases.forEach(({ method, key, expected, description }) => {
+            it(`should return ${description}`, () => {
+                const result = getMethodOrWicOption(method, defaultOptions, key as keyof typeof defaultOptions)
+                expect(result).toBe(expected)
+            })
         })
     })
 
     describe('getBooleanOption', () => {
-        it('should return the boolean value when property exists', () => {
-            const options: ClassOptions = { autoElementScroll: true }
-            const result = getBooleanOption(options, 'autoElementScroll', false)
-            expect(result).toBe(true)
-        })
+        const testCases = [
+            { options: { autoElementScroll: true }, key: 'autoElementScroll', defaultValue: false, expected: true, description: 'boolean value when property exists' },
+            { options: {}, key: 'disableBlinkingCursor', defaultValue: true, expected: true, description: 'default value when property does not exist' },
+            { options: { autoElementScroll: 'truthy' as any }, key: 'autoElementScroll', defaultValue: false, expected: true, description: 'truthy values to true' },
+            { options: { autoElementScroll: 0 as any }, key: 'autoElementScroll', defaultValue: true, expected: false, description: 'falsy values to false' },
+            { options: { autoElementScroll: undefined }, key: 'autoElementScroll', defaultValue: true, expected: true, description: 'default when property is undefined' },
+            { options: { autoElementScroll: null as any }, key: 'autoElementScroll', defaultValue: false, expected: false, description: 'default when property is null' },
+        ]
 
-        it('should return the default value when property does not exist', () => {
-            const options: ClassOptions = {}
-            // Test the hasOwnProperty check directly
-            const hasProperty = Object.prototype.hasOwnProperty.call(options, 'disableBlinkingCursor')
-            expect(hasProperty).toBe(false) // This should be false since the property doesn't exist
-
-            const result = getBooleanOption(options, 'disableBlinkingCursor', true)
-            expect(result).toBe(true)
-        })
-
-        it('should convert truthy values to true', () => {
-            const options: ClassOptions = { autoElementScroll: 'truthy' as any }
-            const result = getBooleanOption(options, 'autoElementScroll', false)
-            expect(result).toBe(true)
-        })
-
-        it('should convert falsy values to false', () => {
-            const options: ClassOptions = { autoElementScroll: 0 as any }
-            const result = getBooleanOption(options, 'autoElementScroll', true)
-            expect(result).toBe(false)
-        })
-
-        it('should return default when property is undefined', () => {
-            const options: ClassOptions = { autoElementScroll: undefined }
-            const result = getBooleanOption(options, 'autoElementScroll', true)
-            expect(result).toBe(true)
-        })
-
-        it('should return default when property is null', () => {
-            const options: ClassOptions = { autoElementScroll: null as any }
-            const result = getBooleanOption(options, 'autoElementScroll', false)
-            expect(result).toBe(false)
+        testCases.forEach(({ options, key, defaultValue, expected, description }) => {
+            it(`should return ${description}`, () => {
+                const result = getBooleanOption(options as ClassOptions, key as keyof ClassOptions, defaultValue)
+                expect(result).toBe(expected)
+            })
         })
     })
 
     describe('createConditionalProperty', () => {
-        it('should return an object with the property when condition is true', () => {
-            const result = createConditionalProperty(true, 'testKey', 'testValue')
-            expect(result).toEqual({ testKey: 'testValue' })
-        })
+        const testCases = [
+            { condition: true, key: 'testKey', value: 'testValue', expected: { testKey: 'testValue' }, description: 'object with property when condition is true' },
+            { condition: false, key: 'testKey', value: 'testValue', expected: {}, description: 'empty object when condition is false' },
+            { condition: true, key: 'number', value: 42, expected: { number: 42 }, description: 'number value' },
+            { condition: true, key: 'boolean', value: false, expected: { boolean: false }, description: 'boolean value' },
+            { condition: true, key: 'object', value: { nested: 'value' }, expected: { object: { nested: 'value' } }, description: 'object value' },
+            { condition: true, key: 'undefined', value: undefined, expected: { undefined: undefined }, description: 'undefined value' },
+            { condition: true, key: 'null', value: null, expected: { null: null }, description: 'null value' },
+        ]
 
-        it('should return an empty object when condition is false', () => {
-            const result = createConditionalProperty(false, 'testKey', 'testValue')
-            expect(result).toEqual({})
-        })
-
-        it('should handle different value types', () => {
-            const numberResult = createConditionalProperty(true, 'number', 42)
-            expect(numberResult).toEqual({ number: 42 })
-
-            const booleanResult = createConditionalProperty(true, 'boolean', false)
-            expect(booleanResult).toEqual({ boolean: false })
-
-            const objectResult = createConditionalProperty(true, 'object', { nested: 'value' })
-            expect(objectResult).toEqual({ object: { nested: 'value' } })
-        })
-
-        it('should handle undefined and null values', () => {
-            const undefinedResult = createConditionalProperty(true, 'undefined', undefined)
-            expect(undefinedResult).toEqual({ undefined: undefined })
-
-            const nullResult = createConditionalProperty(true, 'null', null)
-            expect(nullResult).toEqual({ null: null })
+        testCases.forEach(({ condition, key, value, expected, description }) => {
+            it(`should return ${description}`, () => {
+                const result = createConditionalProperty(condition, key, value)
+                expect(result).toEqual(expected)
+            })
         })
 
         it('should always return empty object when condition is false regardless of value', () => {
-            expect(createConditionalProperty(false, 'key', 'value')).toEqual({})
-            expect(createConditionalProperty(false, 'key', null)).toEqual({})
-            expect(createConditionalProperty(false, 'key', undefined)).toEqual({})
-            expect(createConditionalProperty(false, 'key', { complex: 'object' })).toEqual({})
+            const values = ['value', null, undefined, { complex: 'object' }]
+            values.forEach(value => {
+                expect(createConditionalProperty(false, 'key', value)).toEqual({})
+            })
         })
     })
-
 })

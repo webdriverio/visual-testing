@@ -6,20 +6,22 @@ import type { RectanglesOutput } from './rectangles.interfaces.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 
-vi.mock('@wdio/globals', () => ({
-    browser: {
-        takeScreenshot: () => Promise.resolve(IMAGE_STRING),
-        getWindowHandle: () => Promise.resolve('window-handle-123'),
-        browsingContextCaptureScreenshot: () => Promise.resolve({ data: IMAGE_STRING }),
-        execute: () => Promise.resolve({})
-    }
-}))
-
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
 describe('screenshots', () => {
+    // Helper function to create mock browser instance with methods
+    const createMockBrowserInstance = () => {
+        return {
+            takeScreenshot: vi.fn().mockResolvedValue(IMAGE_STRING),
+            getWindowHandle: vi.fn().mockResolvedValue('window-handle-123'),
+            browsingContextCaptureScreenshot: vi.fn().mockResolvedValue({ data: IMAGE_STRING }),
+            execute: vi.fn().mockResolvedValue({})
+        } as unknown as WebdriverIO.Browser
+    }
+
     describe('getBase64FullPageScreenshotsData', () => {
         it('should return base64 screenshot data', async () => {
+            const mockBrowserInstance = createMockBrowserInstance()
             const options: FullPageScreenshotDataOptions = {
                 addressBarShadowPadding: 0,
                 devicePixelRatio: 1,
@@ -39,8 +41,7 @@ describe('screenshots', () => {
                 screenWidth: 1366,
                 toolBarShadowPadding: 0,
             }
-
-            const result = await getBase64FullPageScreenshotsData(options)
+            const result = await getBase64FullPageScreenshotsData(mockBrowserInstance, options)
 
             expect(result).toBeDefined()
             expect(result.data).toBeDefined()
@@ -50,29 +51,42 @@ describe('screenshots', () => {
 
     describe('takeBase64BiDiScreenshot', () => {
         it('should take a BiDi screenshot with no arguments (uses defaults)', async () => {
-            const result = await takeBase64BiDiScreenshot()
+            const mockBrowserInstance = createMockBrowserInstance()
+            const result = await takeBase64BiDiScreenshot({ browserInstance: mockBrowserInstance })
+
             expect(result).toBe(IMAGE_STRING)
         })
 
         it('should take a BiDi screenshot with default viewport origin', async () => {
-            const result = await takeBase64BiDiScreenshot({})
+            const mockBrowserInstance = createMockBrowserInstance()
+            const result = await takeBase64BiDiScreenshot({ browserInstance: mockBrowserInstance })
+
             expect(result).toBe(IMAGE_STRING)
         })
 
         it('should take a BiDi screenshot with document origin', async () => {
-            const result = await takeBase64BiDiScreenshot({ origin: 'document' })
+            const mockBrowserInstance = createMockBrowserInstance()
+            const result = await takeBase64BiDiScreenshot({
+                browserInstance: mockBrowserInstance,
+                origin: 'document'
+            })
+
             expect(result).toBe(IMAGE_STRING)
         })
 
         it('should take a BiDi screenshot with clip rectangle', async () => {
+            const mockBrowserInstance = createMockBrowserInstance()
             const clipRectangle: RectanglesOutput = {
                 x: 10,
                 y: 20,
                 width: 300,
                 height: 400,
             }
+            const result = await takeBase64BiDiScreenshot({
+                browserInstance: mockBrowserInstance,
+                clip: clipRectangle
+            })
 
-            const result = await takeBase64BiDiScreenshot({ clip: clipRectangle })
             expect(result).toBe(IMAGE_STRING)
         })
     })

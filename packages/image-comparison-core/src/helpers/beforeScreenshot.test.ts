@@ -1,4 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { join } from 'node:path'
+import logger from '@wdio/logger'
 import beforeScreenshot from './beforeScreenshot.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
@@ -6,12 +8,11 @@ import setCustomCss from '../clientSideScripts/setCustomCss.js'
 import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
 import waitForFonts from '../clientSideScripts/waitForFonts.js'
 import { CUSTOM_CSS_ID } from './constants.js'
+import type { BeforeScreenshotOptions } from './beforeScreenshot.interfaces.js'
 
-vi.mock('@wdio/globals', () => ({
-    browser: {
-        execute: () => Promise.resolve()
-    }
-}))
+const log = logger('test')
+
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
 vi.mock('../methods/instanceData.js', () => ({
     default: vi.fn().mockResolvedValue({
@@ -26,12 +27,27 @@ vi.mock('../methods/instanceData.js', () => ({
 }))
 
 describe('beforeScreenshot', () => {
-    // Helper function to create mock browser with execute function
-    const createMockBrowser = async (mockExecuteFn = vi.fn().mockResolvedValue('')) => {
-        const mockBrowser = await vi.importMock('@wdio/globals') as any
-        mockBrowser.browser.execute = mockExecuteFn
-        return mockExecuteFn
-    }
+    let mockBrowserInstance: WebdriverIO.Browser
+    let mockExecute: ReturnType<typeof vi.fn>
+    let logDebugSpy: ReturnType<typeof vi.spyOn>
+    let logWarnSpy: ReturnType<typeof vi.spyOn>
+
+    beforeEach(() => {
+        mockExecute = vi.fn().mockResolvedValue('')
+        mockBrowserInstance = {
+            execute: mockExecute
+        } as unknown as WebdriverIO.Browser
+
+        // Set up log spies
+        logDebugSpy = vi.spyOn(log, 'debug').mockImplementation(() => {})
+        logWarnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+        vi.clearAllMocks()
+        logDebugSpy.mockRestore()
+        logWarnSpy.mockRestore()
+    })
 
     // Base instance data that is common across tests
     const baseInstanceData = {
@@ -73,15 +89,16 @@ describe('beforeScreenshot', () => {
         waitForFontsLoaded: false,
     }
 
-    const createOptions = (overrides = {}) => ({
+    const createOptions = (overrides: Partial<BeforeScreenshotOptions> = {}): BeforeScreenshotOptions => ({
         instanceData: baseInstanceData,
         ...baseOptions,
         ...overrides,
     })
+
     it('should be able to return the enriched instance data with default options', async () => {
         const options = createOptions()
 
-        expect(await beforeScreenshot(options)).toMatchSnapshot()
+        expect(await beforeScreenshot(mockBrowserInstance, options)).toMatchSnapshot()
     })
 
     it('should be able to return the enriched instance data with `addShadowPadding: true`', async () => {
@@ -94,47 +111,44 @@ describe('beforeScreenshot', () => {
             waitForFontsLoaded: true,
         })
 
-        expect(await beforeScreenshot(options, true)).toMatchSnapshot()
+        expect(await beforeScreenshot(mockBrowserInstance, options, true)).toMatchSnapshot()
     })
 
     it('should handle waitForFontsLoaded functionality', async () => {
-        const mockExecute = await createMockBrowser()
         const options = createOptions({
             waitForFontsLoaded: true,
         })
 
-        await beforeScreenshot(options)
+        await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockExecute).toHaveBeenCalledWith(waitForFonts)
     })
 
-    it('should handle waitForFontsLoaded error gracefully', async () => {
-        const mockExecute = await createMockBrowser(vi.fn().mockRejectedValueOnce(new Error('Font load error')))
-        const consoleSpy = vi.spyOn(console, 'debug').mockImplementation(() => {})
+    it('should handle waitForFontsLoaded error gracefully and log debug message', async () => {
+        const fontError = new Error('Font load error')
+        mockExecute.mockRejectedValueOnce(fontError)
 
         const options = createOptions({
             waitForFontsLoaded: true,
         })
 
-        await beforeScreenshot(options)
+        await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockExecute).toHaveBeenCalledWith(waitForFonts)
-        consoleSpy.mockRestore()
+        expect(logDebugSpy).toHaveBeenCalledWith('Waiting for fonts to load threw an error:', fontError)
     })
 
     it('should handle noScrollBars option', async () => {
-        const mockExecute = await createMockBrowser()
         const options = createOptions({
             noScrollBars: true,
         })
 
-        await beforeScreenshot(options)
+        await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockExecute).toHaveBeenCalledWith(hideScrollBars, true)
     })
 
     it('should handle hide and remove elements', async () => {
-        const mockExecute = await createMockBrowser()
         const hideElements = [<HTMLElement>(<any>'<div></div>')]
         const removeElements = [<HTMLElement>(<any>'<span></span>')]
 
@@ -143,28 +157,38 @@ describe('beforeScreenshot', () => {
             removeElements,
         })
 
-        await beforeScreenshot(options)
+        await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: removeElements }, true)
     })
 
-    it('should handle hide/remove elements error gracefully', async () => {
-        const mockExecute = await createMockBrowser(vi.fn().mockRejectedValueOnce(new Error('Element not found')))
-        const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    it('should handle hide/remove elements error gracefully and log warning', async () => {
+        const elementError = new Error('Element not found')
+        mockExecute.mockRejectedValueOnce(elementError)
 
         const hideElements = [<HTMLElement>(<any>'<div></div>')]
         const options = createOptions({
             hideElements,
         })
 
-        await beforeScreenshot(options)
+        await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: [] }, true)
-        consoleSpy.mockRestore()
+        expect(logWarnSpy).toHaveBeenCalledWith(
+            '\x1b[33m%s\x1b[0m',
+            `
+#####################################################################################
+ WARNING:
+ (One of) the elements that needed to be hidden or removed could not be found on the
+ page and caused this error
+ Error: ${elementError}
+ We made sure the test didn't break.
+#####################################################################################
+`
+        )
     })
 
     it('should handle CSS customization for desktop', async () => {
-        const mockExecute = await createMockBrowser()
         const options = createOptions({
             disableBlinkingCursor: true,
             disableCSSAnimation: true,
@@ -172,7 +196,7 @@ describe('beforeScreenshot', () => {
             toolBarShadowPadding: 15,
         })
 
-        await beforeScreenshot(options)
+        await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockExecute).toHaveBeenCalledWith(setCustomCss, {
             addressBarPadding: 0, // Should be 0 for desktop with addShadowPadding false
@@ -184,7 +208,6 @@ describe('beforeScreenshot', () => {
     })
 
     it('should handle CSS customization for mobile platform', async () => {
-        const mockExecute = await createMockBrowser()
         const options = createOptions({
             instanceData: {
                 ...baseInstanceData,
@@ -194,7 +217,7 @@ describe('beforeScreenshot', () => {
             },
         })
 
-        await beforeScreenshot(options)
+        await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockExecute).toHaveBeenCalledWith(setCustomCss, {
             addressBarPadding: 0,
@@ -206,18 +229,16 @@ describe('beforeScreenshot', () => {
     })
 
     it('should handle layout testing', async () => {
-        const mockExecute = await createMockBrowser()
         const options = createOptions({
             enableLayoutTesting: true,
         })
 
-        await beforeScreenshot(options)
+        await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockExecute).toHaveBeenCalledWith(toggleTextTransparency, true)
     })
 
     it('should handle layout testing with addShadowPadding', async () => {
-        const mockExecute = await createMockBrowser()
         const options = createOptions({
             enableLayoutTesting: true,
             instanceData: {
@@ -229,8 +250,68 @@ describe('beforeScreenshot', () => {
             },
         })
 
-        await beforeScreenshot(options, true)
+        await beforeScreenshot(mockBrowserInstance, options, true)
 
         expect(mockExecute).toHaveBeenCalledWith(toggleTextTransparency, true)
+    })
+
+    it('should not execute browser commands when no options are enabled', async () => {
+        const options = createOptions()
+
+        await beforeScreenshot(mockBrowserInstance, options)
+
+        // Should only call the instanceData mock, no browser execute calls
+        expect(mockExecute).not.toHaveBeenCalled()
+        expect(logDebugSpy).not.toHaveBeenCalled()
+        expect(logWarnSpy).not.toHaveBeenCalled()
+    })
+
+    it('should handle multiple options simultaneously', async () => {
+        const hideElements = [<HTMLElement>(<any>'<div></div>')]
+        const options = createOptions({
+            waitForFontsLoaded: true,
+            noScrollBars: true,
+            hideElements,
+            disableBlinkingCursor: true,
+            enableLayoutTesting: true,
+        })
+
+        await beforeScreenshot(mockBrowserInstance, options)
+
+        expect(mockExecute).toHaveBeenCalledWith(waitForFonts)
+        expect(mockExecute).toHaveBeenCalledWith(hideScrollBars, true)
+        expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: [] }, true)
+        expect(mockExecute).toHaveBeenCalledWith(setCustomCss, expect.any(Object))
+        expect(mockExecute).toHaveBeenCalledWith(toggleTextTransparency, true)
+    })
+
+    it('should handle multiple errors and log both debug and warning messages', async () => {
+        const fontError = new Error('Font load error')
+        const elementError = new Error('Element not found')
+
+        mockExecute
+            .mockRejectedValueOnce(fontError) // waitForFonts
+            .mockRejectedValueOnce(elementError) // hideRemoveElements
+
+        const options = createOptions({
+            waitForFontsLoaded: true,
+            hideElements: [<HTMLElement>(<any>'<div></div>')],
+        })
+
+        await beforeScreenshot(mockBrowserInstance, options)
+
+        expect(logDebugSpy).toHaveBeenCalledWith('Waiting for fonts to load threw an error:', fontError)
+        expect(logWarnSpy).toHaveBeenCalledWith(
+            '\x1b[33m%s\x1b[0m',
+            `
+#####################################################################################
+ WARNING:
+ (One of) the elements that needed to be hidden or removed could not be found on the
+ page and caused this error
+ Error: ${elementError}
+ We made sure the test didn't break.
+#####################################################################################
+`
+        )
     })
 })

@@ -12,22 +12,16 @@ vi.mock('../methods/images.js', () => ({
     saveBase64Image: vi.fn()
 }))
 
-vi.mock('@wdio/globals', () => ({
-    browser: {
-        execute: () => Promise.resolve('')
-    }
-}))
-
 describe('afterScreenshot', () => {
     const folder = join(process.cwd(), '/.tmp/afterScreenshot')
 
     afterEach(() => rmSync(folder, { recursive: true, force: true }))
 
-    // Helper function to create mock browser with execute function
-    const createMockBrowser = async (mockExecuteFn = vi.fn().mockResolvedValue('')) => {
-        const mockBrowser = await vi.importMock('@wdio/globals') as any
-        mockBrowser.browser.execute = mockExecuteFn
-        return mockExecuteFn
+    // Helper function to create mock browser instance with execute function
+    const createMockBrowserInstance = (mockExecuteFn = vi.fn().mockResolvedValue('')) => {
+        return {
+            execute: mockExecuteFn
+        } as unknown as WebdriverIO.Browser
     }
 
     // Base options that are common across tests
@@ -70,6 +64,7 @@ describe('afterScreenshot', () => {
     })
 
     it('should be able to return the ScreenshotOutput with default options', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createBaseOptions({
             disableBlinkingCursor: false,
             disableCSSAnimation: false,
@@ -78,7 +73,7 @@ describe('afterScreenshot', () => {
             removeElements: [<HTMLElement>(<any>'<div></div>')],
         })
 
-        expect(await afterScreenshot(options)).toEqual({
+        expect(await afterScreenshot(mockBrowserInstance, options)).toEqual({
             devicePixelRatio: 2,
             fileName: 'tag-browserName-1400x850-dpr-2.png',
             isLandscape: false,
@@ -87,6 +82,7 @@ describe('afterScreenshot', () => {
     })
 
     it('should handle native context and skip browser operations', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
         const options = createBaseOptions({
             disableBlinkingCursor: true,
             disableCSSAnimation: true,
@@ -107,7 +103,7 @@ describe('afterScreenshot', () => {
             removeElements: [<HTMLElement>(<any>'<div></div>')],
         })
 
-        expect(await afterScreenshot(options)).toEqual({
+        expect(await afterScreenshot(mockBrowserInstance, options)).toEqual({
             devicePixelRatio: 1.5,
             fileName: 'tag-browserName-800x600-dpr-1.5.png',
             isLandscape: true,
@@ -116,19 +112,21 @@ describe('afterScreenshot', () => {
     })
 
     it('should handle layout testing with enableLayoutTesting', async () => {
-        const mockExecute = await createMockBrowser()
+        const mockExecute = vi.fn().mockResolvedValue('')
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
         const options = createBaseOptions({
             enableLayoutTesting: true,
         })
 
-        await afterScreenshot(options)
+        await afterScreenshot(mockBrowserInstance, options)
 
         // Should call toggleTextTransparency to show text again (enableLayoutTesting = true, so !enableLayoutTesting = false)
         expect(mockExecute).toHaveBeenCalledWith(toggleTextTransparency, false)
     })
 
     it('should handle mobile platform and remove custom CSS', async () => {
-        const mockExecute = await createMockBrowser()
+        const mockExecute = vi.fn().mockResolvedValue('')
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
         const options = createBaseOptions({
             disableBlinkingCursor: false,
             disableCSSAnimation: false,
@@ -141,17 +139,18 @@ describe('afterScreenshot', () => {
                 isMobile: true,
                 platformName: 'Android',
             },
-            platformName: 'Android', // This should trigger CSS removal for mobile
+            platformName: 'Android', // This should trigger CSS removal for mobile platform
         })
 
-        await afterScreenshot(options)
+        await afterScreenshot(mockBrowserInstance, options)
 
         // Should call removeElementFromDom with CUSTOM_CSS_ID for mobile platform
         expect(mockExecute).toHaveBeenCalledWith(removeElementFromDom, CUSTOM_CSS_ID)
     })
 
     it('should handle hide/remove elements with error handling', async () => {
-        const mockExecute = await createMockBrowser(vi.fn().mockRejectedValueOnce(new Error('Element not found')))
+        const mockExecute = vi.fn().mockRejectedValueOnce(new Error('Element not found'))
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
         const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
         const hideElements = [<HTMLElement>(<any>'<div></div>')]
@@ -162,7 +161,7 @@ describe('afterScreenshot', () => {
             removeElements,
         })
 
-        await afterScreenshot(options)
+        await afterScreenshot(mockBrowserInstance, options)
 
         // Should call hideRemoveElements with proper parameters and handle error gracefully
         expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: removeElements }, false)
@@ -171,12 +170,13 @@ describe('afterScreenshot', () => {
     })
 
     it('should handle hideScrollBars when hideScrollBars is true', async () => {
-        const mockExecute = await createMockBrowser()
+        const mockExecute = vi.fn().mockResolvedValue('')
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
         const options = createBaseOptions({
             hideScrollBars: true, // This should trigger hideScrollBars call
         })
 
-        await afterScreenshot(options)
+        await afterScreenshot(mockBrowserInstance, options)
 
         // Should call hideScrollBars with false to show scrollbars again (hideScrollBars = true, so !hideScrollBars = false)
         expect(mockExecute).toHaveBeenCalledWith(hideScrollBars, false)

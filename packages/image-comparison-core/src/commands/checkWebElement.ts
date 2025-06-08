@@ -11,6 +11,7 @@ import type { InternalCheckElementMethodOptions } from './check.interfaces.js'
  */
 export default async function checkWebElement(
     {
+        browserInstance,
         instanceData,
         folders,
         element,
@@ -36,6 +37,7 @@ export default async function checkWebElement(
         },
     }
     const { devicePixelRatio, fileName } = await saveWebElement({
+        browserInstance,
         instanceData,
         folders,
         element,

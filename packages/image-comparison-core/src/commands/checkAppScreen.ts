@@ -53,7 +53,7 @@ export default async function checkAppScreen(
     })
 
     // 3. Determine the ignore regions
-    const ignoreRegions = await determineIgnoreRegions(screenCompareOptions.ignore || [])
+    const ignoreRegions = await determineIgnoreRegions(browserInstance, screenCompareOptions.ignore || [])
     const deviceIgnoreRegions = await determineDeviceBlockOuts({
         isAndroid,
         screenCompareOptions,

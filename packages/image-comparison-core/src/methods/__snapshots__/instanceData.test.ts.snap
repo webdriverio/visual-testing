@@ -4,10 +4,6 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
 {
   "addressBarShadowPadding": 0,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -60,12 +56,28 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": true,
@@ -81,16 +93,6 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
   "platformName": "Android",
   "platformVersion": "8.0",
   "toolBarShadowPadding": 0,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;
 
@@ -98,10 +100,6 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
 {
   "addressBarShadowPadding": 0,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -154,12 +152,28 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": true,
@@ -175,16 +189,6 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
   "platformName": "Android",
   "platformVersion": "8.0",
   "toolBarShadowPadding": 0,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;
 
@@ -192,10 +196,6 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
 {
   "addressBarShadowPadding": 0,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -248,12 +248,28 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": false,
@@ -269,16 +285,6 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
   "platformName": "platformName",
   "platformVersion": "platformVersion",
   "toolBarShadowPadding": 0,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;
 
@@ -286,10 +292,6 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
 {
   "addressBarShadowPadding": 6,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -342,12 +344,28 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": false,
@@ -363,16 +381,6 @@ exports[`getEnrichedInstanceData > should be able to enrich the instance data wi
   "platformName": "iOS",
   "platformVersion": "12.4",
   "toolBarShadowPadding": 15,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;
 
@@ -380,10 +388,6 @@ exports[`getEnrichedInstanceData > should handle Android with shadow padding ena
 {
   "addressBarShadowPadding": 6,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "Chrome",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -436,12 +440,28 @@ exports[`getEnrichedInstanceData > should handle Android with shadow padding ena
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": true,
@@ -457,16 +477,6 @@ exports[`getEnrichedInstanceData > should handle Android with shadow padding ena
   "platformName": "Android",
   "platformVersion": "10.0",
   "toolBarShadowPadding": 6,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;
 
@@ -474,10 +484,6 @@ exports[`getEnrichedInstanceData > should handle case-insensitive platform names
 {
   "addressBarShadowPadding": 0,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -530,12 +536,28 @@ exports[`getEnrichedInstanceData > should handle case-insensitive platform names
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": true,
@@ -551,16 +573,6 @@ exports[`getEnrichedInstanceData > should handle case-insensitive platform names
   "platformName": "ANDROID",
   "platformVersion": "12.0",
   "toolBarShadowPadding": 6,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;
 
@@ -568,10 +580,6 @@ exports[`getEnrichedInstanceData > should handle iOS home bar padding calculatio
 {
   "addressBarShadowPadding": 6,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "Safari",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -624,12 +632,28 @@ exports[`getEnrichedInstanceData > should handle iOS home bar padding calculatio
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": false,
@@ -645,16 +669,6 @@ exports[`getEnrichedInstanceData > should handle iOS home bar padding calculatio
   "platformName": "iOS",
   "platformVersion": "16.0",
   "toolBarShadowPadding": 19,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;
 
@@ -662,10 +676,6 @@ exports[`getEnrichedInstanceData > should handle native context without browserN
 {
   "addressBarShadowPadding": 0,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -718,12 +728,28 @@ exports[`getEnrichedInstanceData > should handle native context without browserN
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": false,
@@ -739,16 +765,6 @@ exports[`getEnrichedInstanceData > should handle native context without browserN
   "platformName": "iOS",
   "platformVersion": "15.0",
   "toolBarShadowPadding": 0,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;
 
@@ -756,10 +772,6 @@ exports[`getEnrichedInstanceData > should handle test in mobile browser scenario
 {
   "addressBarShadowPadding": 0,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "Chrome",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -812,12 +824,28 @@ exports[`getEnrichedInstanceData > should handle test in mobile browser scenario
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": true,
@@ -833,16 +861,6 @@ exports[`getEnrichedInstanceData > should handle test in mobile browser scenario
   "platformName": "Android",
   "platformVersion": "11.0",
   "toolBarShadowPadding": 0,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;
 
@@ -850,10 +868,6 @@ exports[`getEnrichedInstanceData > should handle unknown platform name 1`] = `
 {
   "addressBarShadowPadding": 0,
   "appName": "not_known",
-  "body": {
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-  },
   "browserName": "browserName",
   "browserVersion": "browserVersion",
   "deviceName": "deviceName",
@@ -906,12 +920,28 @@ exports[`getEnrichedInstanceData > should handle unknown platform name 1`] = `
       "y": 0,
     },
   },
-  "html": {
-    "clientHeight": 0,
-    "clientWidth": 0,
-    "offsetHeight": 0,
-    "scrollHeight": 0,
-    "scrollWidth": 0,
+  "dimensions": {
+    "body": {
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+    },
+    "html": {
+      "clientHeight": 0,
+      "clientWidth": 0,
+      "offsetHeight": 0,
+      "scrollHeight": 0,
+      "scrollWidth": 0,
+    },
+    "window": {
+      "devicePixelRatio": 1,
+      "innerHeight": 768,
+      "innerWidth": 1024,
+      "isEmulated": false,
+      "outerHeight": 768,
+      "outerWidth": 1024,
+      "screenHeight": 0,
+      "screenWidth": 0,
+    },
   },
   "initialDevicePixelRatio": 1,
   "isAndroid": false,
@@ -927,15 +957,5 @@ exports[`getEnrichedInstanceData > should handle unknown platform name 1`] = `
   "platformName": "Windows",
   "platformVersion": "10",
   "toolBarShadowPadding": 0,
-  "window": {
-    "devicePixelRatio": 1,
-    "innerHeight": 768,
-    "innerWidth": 1024,
-    "isEmulated": false,
-    "outerHeight": 768,
-    "outerWidth": 1024,
-    "screenHeight": 0,
-    "screenWidth": 0,
-  },
 }
 `;

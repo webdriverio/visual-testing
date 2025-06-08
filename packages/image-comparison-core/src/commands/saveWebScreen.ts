@@ -14,6 +14,7 @@ import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
  */
 export default async function saveWebScreen(
     {
+        browserInstance,
         instanceData,
         folders,
         tag,
@@ -48,7 +49,7 @@ export default async function saveWebScreen(
         toolBarShadowPadding,
         waitForFontsLoaded,
     }
-    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(beforeOptions)
+    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions)
     const {
         browserName,
         browserVersion,
@@ -81,12 +82,12 @@ export default async function saveWebScreen(
     // 3.  Take the screenshot
     let base64Image: string
 
-    if (canUseBidiScreenshot() && !isMobile && !enableLegacyScreenshotMethod) {
+    if (canUseBidiScreenshot(browserInstance) && !isMobile && !enableLegacyScreenshotMethod) {
         // 3a. Take the screenshot with the BiDi method
-        base64Image = await takeBase64BiDiScreenshot()
+        base64Image = await takeBase64BiDiScreenshot({ browserInstance })
     } else {
         // 3b. Take the screenshot with the regular method
-        base64Image = await takeBase64Screenshot()
+        base64Image = await takeBase64Screenshot(browserInstance)
 
         // Determine the rectangles
         const screenRectangleOptions: ScreenRectanglesOptions = {
@@ -154,5 +155,5 @@ export default async function saveWebScreen(
     }
 
     // 6.  Return the data
-    return afterScreenshot(afterOptions)
+    return afterScreenshot(browserInstance, afterOptions)
 }

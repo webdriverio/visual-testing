@@ -85,6 +85,8 @@ export interface StatusAddressToolBarRectanglesOptions {
 export type StatusAddressToolBarRectangles = Array<RectanglesOutput>;
 
 export interface ElementRectangles {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
     /** The base64 encoded image */
     base64Image: string;
     /** The options for element rectangles */

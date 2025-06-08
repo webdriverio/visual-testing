@@ -1,119 +1,133 @@
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 
 export interface GetAndCreatePathOptions {
-    // The name of the browser
+    /** The name of the browser */
     browserName: string;
-    // The name of the device
+    /** The name of the device */
     deviceName: string;
-    // Is the instance a mobile
+    /** Is the instance a mobile */
     isMobile: boolean;
-    // If the folder needs to have the instance name in it
+    /** If the folder needs to have the instance name in it */
     savePerInstance: boolean;
 }
 
 export interface FormatFileNameOptions {
-    // The browser name
+    /** The browser name */
     browserName: string;
-    // The browser version
+    /** The browser version */
     browserVersion: string;
-    // The device name
+    /** The device name */
     deviceName: string;
-    // The device pixel ratio
+    /** The device pixel ratio */
     devicePixelRatio: number;
-    // The string that needs to be formatted
+    /** The string that needs to be formatted */
     formatImageName: string;
-    // Is this a mobile
+    /** Is this a mobile */
     isMobile: boolean;
-    // Is the test executed in a browser
+    /** Is the test executed in a browser */
     isTestInBrowser: boolean;
-    // The log name of the instance
+    /** The log name of the instance */
     logName: string;
-    // The the name of the instance
+    /** The the name of the instance */
     name: string;
-    // The outer height of the screen
+    /** The outer height of the screen */
     outerHeight?: number;
-    // The outer width of the screen
+    /** The outer width of the screen */
     outerWidth?: number;
-    // The platform name
+    /** The platform name */
     platformName: string;
-    // The platform version
+    /** The platform version */
     platformVersion: string;
-    // The height of the screen
+    /** The height of the screen */
     screenHeight: number;
-    // The width of the screen
+    /** The width of the screen */
     screenWidth: number;
-    // The tag of the image
+    /** The tag of the image */
     tag: string;
 }
 
 export interface FormatFileDefaults {
-    // The browser name
+    /** The browser name */
     browserName: string;
-    // The browser version
+    /** The browser version */
     browserVersion: string;
-    // The device name
+    /** The device name */
     deviceName: string;
-    // The device pixel ratio
+    /** The device pixel ratio */
     dpr: number;
-    // The height of the screen
+    /** The height of the screen */
     height: number;
-    // The log name of the instance
+    /** The log name of the instance */
     logName: string;
-    // Add `app` or nothing
+    /** Add `app` or nothing */
     mobile: string;
-    // The the name of the instance
+    /** The the name of the instance */
     name: string;
-    // The platform name
+    /** The platform name */
     platformName: string;
-    // The platform version
+    /** The platform version */
     platformVersion: string;
-    // The tag of the image
+    /** The tag of the image */
     tag: string;
-    // The width of the screen
+    /** The width of the screen */
     width: number;
 }
 
 export interface GetAddressBarShadowPaddingOptions {
-    // The name of the platform
+    /** The name of the platform */
     platformName: string;
-    // The browser name
+    /** The browser name */
     browserName: string;
-    // Is this an instance that takes a native web screenshot
+    /** Is this an instance that takes a native web screenshot */
     nativeWebScreenshot: boolean;
-    // The address bar shadow padding
+    /** The address bar shadow padding */
     addressBarShadowPadding: number;
-    // Add the padding
+    /** Add the padding */
     addShadowPadding: boolean;
 }
 
 export interface GetToolBarShadowPaddingOptions {
-    // The name of the platform
+    /** The name of the platform */
     platformName: string;
-    // The browser name
+    /** The browser name */
     browserName: string;
-    // The tool bar shadow padding
+    /** The tool bar shadow padding */
     toolBarShadowPadding: number;
-    // Add the padding
+    /** Add the padding */
     addShadowPadding: boolean;
 }
 
 export interface ScreenshotSize {
+    /** The height of the screenshot */
     height: number;
+    /** The width of the screenshot */
     width: number;
 }
 
 export interface GetMobileViewPortPositionOptions {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser,
+    /** The initial device rectangles */
     initialDeviceRectangles: DeviceRectangles,
+    /** Is the context native */
     isNativeContext: boolean,
+    /** Is the device Android */
     isAndroid: boolean,
+    /** Is the device iOS */
     isIOS: boolean,
+    /** Is this an instance that takes a native web screenshot */
     nativeWebScreenshot: boolean,
+    /** The height of the screen */
     screenHeight: number,
+    /** The width of the screen */
     screenWidth: number,
 }
 
 export interface GetMobileScreenSizeOptions {
+    /** The browser instance */
     browserInstance: WebdriverIO.Browser,
+    /** Is the device iOS */
     isIOS: boolean,
+    /** Is the context native */
     isNativeContext: boolean,
 }

@@ -1,5 +1,4 @@
 import logger from '@wdio/logger'
-import { browser } from '@wdio/globals'
 import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN, PLATFORMS } from './constants.js'
 import { mkdirSync } from 'node:fs'
@@ -387,14 +386,14 @@ export async function getMobileScreenSize({
 
     try {
         if (isIOS) {
-            ({ screenSize: { height, width } } = (await browser.execute('mobile: deviceScreenInfo')) as {
+            ({ screenSize: { height, width } } = (await browserInstance.execute('mobile: deviceScreenInfo')) as {
                 statusBarSize: { width: number, height: number },
                 scale: number,
                 screenSize: { width: number, height: number },
             })
             // It's Android
         } else {
-            const { realDisplaySize } = (await browser.execute('mobile: deviceInfo')) as { realDisplaySize: string }
+            const { realDisplaySize } = (await browserInstance.execute('mobile: deviceInfo')) as { realDisplaySize: string }
 
             if (!realDisplaySize || !/^\d+x\d+$/.test(realDisplaySize)) {
                 throw new Error(`Invalid realDisplaySize format. Expected 'widthxheight', got "${realDisplaySize}"`)
@@ -411,7 +410,7 @@ export async function getMobileScreenSize({
             ({ height, width } = await browserInstance.getWindowSize())
         } else {
             // This is a fallback and not 100% accurate, but we need to have something =)
-            ({ height, width } = await browser.execute(() => {
+            ({ height, width } = await browserInstance.execute(() => {
                 const { height, width } = window.screen
                 return { height, width }
             }))
@@ -431,7 +430,7 @@ export async function getMobileScreenSize({
 /**
  * Load a base64 HTML page in the browser
  */
-export async function loadBase64Html({ isIOS }: {isIOS: boolean}): Promise<void> {
+export async function loadBase64Html({ browserInstance, isIOS }: {browserInstance: WebdriverIO.Browser, isIOS: boolean}): Promise<void> {
     const htmlContent = `
         <html>
         <head>
@@ -456,28 +455,28 @@ export async function loadBase64Html({ isIOS }: {isIOS: boolean}): Promise<void>
         </body>
         </html>`
 
-    await browser.execute((htmlContent) => {
+    await browserInstance.execute((htmlContent: string) => {
         const blob = new Blob([htmlContent], { type: 'text/html' })
         const blobUrl = URL.createObjectURL(blob)
         window.location.href = blobUrl
     }, htmlContent)
 
     if (isIOS) {
-        await browser.execute(checkMetaTag)
+        await browserInstance.execute(checkMetaTag)
     }
 }
 
 /**
  * Execute a native click
  */
-export async function executeNativeClick({ isIOS, x, y }:{ isIOS:boolean, x: number, y: number}): Promise<void> {
+export async function executeNativeClick({ browserInstance, isIOS, x, y }:{ browserInstance: WebdriverIO.Browser, isIOS:boolean, x: number, y: number}): Promise<void> {
     if (isIOS) {
-        return browser.execute('mobile: tap', { x, y })
+        return browserInstance.execute('mobile: tap', { x, y })
     }
 
     try {
         // The `clickGesture` is not working on Appium 1, only on Appium 2
-        await browser.execute('mobile: clickGesture', { x, y })
+        await browserInstance.execute('mobile: clickGesture', { x, y })
     } catch (error: unknown) {
         if (
             error instanceof Error &&
@@ -486,7 +485,7 @@ export async function executeNativeClick({ isIOS, x, y }:{ isIOS:boolean, x: num
             log.warn(
                 'Error executing `clickGesture`, falling back to `doubleClickGesture`. This likely means you are using Appium 1. Is this intentional?'
             )
-            await browser.execute('mobile: doubleClickGesture', { x, y })
+            await browserInstance.execute('mobile: doubleClickGesture', { x, y })
         } else {
             throw error
         }
@@ -503,6 +502,7 @@ export async function executeNativeClick({ isIOS, x, y }:{ isIOS:boolean, x: num
  * 6. Returning the calculated values
  */
 export async function getMobileViewPortPosition({
+    browserInstance,
     initialDeviceRectangles,
     isAndroid,
     isIOS,
@@ -513,21 +513,21 @@ export async function getMobileViewPortPosition({
 }: GetMobileViewPortPositionOptions): Promise<DeviceRectangles> {
 
     if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
-        const currentUrl = await browser.getUrl()
+        const currentUrl = await browserInstance.getUrl()
         // 1. Load a base64 HTML page
-        await loadBase64Html({ isIOS })
+        await loadBase64Html({ browserInstance, isIOS })
         // 2. Inject an overlay on top of the webview with an event listener that stores the click position in the webview
-        await browser.execute(injectWebviewOverlay, isAndroid)
+        await browserInstance.execute(injectWebviewOverlay, isAndroid)
         // 3. Click on the overlay in the center of the screen with a native click
         const nativeClickX = screenWidth / 2
         const nativeClickY = screenHeight / 2
-        await executeNativeClick({ isIOS, x: nativeClickX, y: nativeClickY })
+        await executeNativeClick({ browserInstance, isIOS, x: nativeClickX, y: nativeClickY })
         // We need to wait a bit here, otherwise the click is not registered
         await waitFor(100)
         // 4a. Get the data from the overlay and remove it
-        const { y, x, width, height } = await browser.execute(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
+        const { y, x, width, height } = await browserInstance.execute(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
         // 4.b reset the url
-        await browser.url(currentUrl)
+        await browserInstance.url(currentUrl)
         // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
         const viewportTop = Math.max(0, Math.round(nativeClickY - y))
         const viewportLeft = Math.max(0, Math.round(nativeClickX - x))
@@ -566,8 +566,8 @@ export function getMethodOrWicOption<T, K extends keyof T>(
 /**
  * Determine if the Bidi screenshot can be used
  */
-export function canUseBidiScreenshot(): boolean {
-    return typeof browser.browsingContextCaptureScreenshot === 'function' && typeof browser.getWindowHandle === 'function'
+export function canUseBidiScreenshot(browserInstance: WebdriverIO.Browser): boolean {
+    return typeof browserInstance.browsingContextCaptureScreenshot === 'function' && typeof browserInstance.getWindowHandle === 'function'
 }
 
 /**

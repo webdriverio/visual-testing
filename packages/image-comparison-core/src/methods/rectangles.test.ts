@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { join } from 'node:path'
-import { determineElementRectangles, determineScreenRectangles, determineStatusAddressToolBarRectangles } from './rectangles.js'
+import { determineElementRectangles, determineScreenRectangles, determineStatusAddressToolBarRectangles, determineIgnoreRegions } from './rectangles.js'
 import { IMAGE_STRING } from '../mocks/mocks.js'
 import type { ElementRectanglesOptions, ScreenRectanglesOptions, StatusAddressToolBarRectanglesOptions, DeviceRectangles } from './rectangles.interfaces.js'
 
@@ -13,20 +13,22 @@ vi.mock('@wdio/globals', () => ({
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
 describe('rectangles', () => {
-    // Helper function to create mock browser and reset it
-    const createMockBrowser = async () => {
-        const { browser } = await import('@wdio/globals')
-        return vi.mocked(browser.execute)
-    }
+    let mockBrowserInstance: WebdriverIO.Browser
+    let mockExecute: ReturnType<typeof vi.fn>
+    let mockGetElementRect: ReturnType<typeof vi.fn>
 
-    // Helper function to reset mocks
-    const resetMocks = async () => {
-        const mockExecute = await createMockBrowser()
-        mockExecute.mockClear()
-    }
+    beforeEach(() => {
+        mockExecute = vi.fn()
+        mockGetElementRect = vi.fn()
 
-    beforeEach(async () => {
-        await resetMocks()
+        mockBrowserInstance = {
+            execute: mockExecute,
+            getElementRect: mockGetElementRect
+        } as unknown as WebdriverIO.Browser
+    })
+
+    afterEach(() => {
+        vi.clearAllMocks()
     })
 
     // Base device rectangles object
@@ -103,7 +105,6 @@ describe('rectangles', () => {
                 },
             })
 
-            const mockExecute = await createMockBrowser()
             mockExecute.mockResolvedValueOnce({
                 height: 120,
                 width: 120,
@@ -111,13 +112,15 @@ describe('rectangles', () => {
                 y: 10,
             })
 
-            expect(
-                await determineElementRectangles({
-                    base64Image: IMAGE_STRING,
-                    options,
-                    element: 'element',
-                }),
-            ).toMatchSnapshot()
+            const result = await determineElementRectangles({
+                browserInstance: mockBrowserInstance,
+                base64Image: IMAGE_STRING,
+                options,
+                element: 'element',
+            })
+
+            expect(result).toMatchSnapshot()
+            expect(mockExecute).toHaveBeenCalled()
         })
 
         it('should determine them for Android Native webscreenshot', async () => {
@@ -133,7 +136,6 @@ describe('rectangles', () => {
                 },
             })
 
-            const mockExecute = await createMockBrowser()
             mockExecute.mockResolvedValueOnce({
                 height: 300,
                 width: 200,
@@ -141,13 +143,15 @@ describe('rectangles', () => {
                 y: 10,
             })
 
-            expect(
-                await determineElementRectangles({
-                    base64Image: IMAGE_STRING,
-                    options,
-                    element: 'element',
-                }),
-            ).toMatchSnapshot()
+            const result = await determineElementRectangles({
+                browserInstance: mockBrowserInstance,
+                base64Image: IMAGE_STRING,
+                options,
+                element: 'element',
+            })
+
+            expect(result).toMatchSnapshot()
+            expect(mockExecute).toHaveBeenCalled()
         })
 
         it('should determine them for Android ChromeDriver', async () => {
@@ -162,7 +166,6 @@ describe('rectangles', () => {
                 },
             })
 
-            const mockExecute = await createMockBrowser()
             mockExecute.mockResolvedValueOnce({
                 height: 20,
                 width: 375,
@@ -170,13 +173,15 @@ describe('rectangles', () => {
                 y: 0,
             })
 
-            expect(
-                await determineElementRectangles({
-                    base64Image: IMAGE_STRING,
-                    options,
-                    element: 'element',
-                }),
-            ).toMatchSnapshot()
+            const result = await determineElementRectangles({
+                browserInstance: mockBrowserInstance,
+                base64Image: IMAGE_STRING,
+                options,
+                element: 'element',
+            })
+
+            expect(result).toMatchSnapshot()
+            expect(mockExecute).toHaveBeenCalled()
         })
 
         it('should determine them for a desktop browser', async () => {
@@ -184,7 +189,6 @@ describe('rectangles', () => {
                 innerHeight: 500,
             })
 
-            const mockExecute = await createMockBrowser()
             mockExecute.mockResolvedValueOnce({
                 height: 20,
                 width: 375,
@@ -192,13 +196,15 @@ describe('rectangles', () => {
                 y: 34,
             })
 
-            expect(
-                await determineElementRectangles({
-                    base64Image: IMAGE_STRING,
-                    options,
-                    element: 'element',
-                }),
-            ).toMatchSnapshot()
+            const result = await determineElementRectangles({
+                browserInstance: mockBrowserInstance,
+                base64Image: IMAGE_STRING,
+                options,
+                element: 'element',
+            })
+
+            expect(result).toMatchSnapshot()
+            expect(mockExecute).toHaveBeenCalled()
         })
 
         it('should determine them for emulated device', async () => {
@@ -208,7 +214,6 @@ describe('rectangles', () => {
                 devicePixelRatio: 3,
             })
 
-            const mockExecute = await createMockBrowser()
             mockExecute.mockResolvedValueOnce({
                 height: 50,
                 width: 200,
@@ -216,19 +221,20 @@ describe('rectangles', () => {
                 y: 25,
             })
 
-            expect(
-                await determineElementRectangles({
-                    base64Image: IMAGE_STRING,
-                    options,
-                    element: 'element',
-                }),
-            ).toMatchSnapshot()
+            const result = await determineElementRectangles({
+                browserInstance: mockBrowserInstance,
+                base64Image: IMAGE_STRING,
+                options,
+                element: 'element',
+            })
+
+            expect(result).toMatchSnapshot()
+            expect(mockExecute).toHaveBeenCalled()
         })
 
         it('should throw an error when the element height is 0', async () => {
             const options = createElementOptions()
 
-            const mockExecute = await createMockBrowser()
             mockExecute.mockResolvedValueOnce({
                 height: 0,
                 width: 375,
@@ -236,22 +242,17 @@ describe('rectangles', () => {
                 y: 34,
             })
 
-            try {
-                await determineElementRectangles({
-                    base64Image: IMAGE_STRING,
-                    options,
-                    element: { selector: '#elementID' },
-                })
-                expect(true).toBe(false)
-            } catch (e: unknown) {
-                expect((e as Error).message).toBe('The element, with selector "$(#elementID)",is not visible. The dimensions are 375x0')
-            }
+            await expect(determineElementRectangles({
+                browserInstance: mockBrowserInstance,
+                base64Image: IMAGE_STRING,
+                options,
+                element: { selector: '#elementID' },
+            })).rejects.toThrow('The element, with selector "$(#elementID)",is not visible. The dimensions are 375x0')
         })
 
         it('should throw an error when the element width is 0', async () => {
             const options = createElementOptions()
 
-            const mockExecute = await createMockBrowser()
             mockExecute.mockResolvedValueOnce({
                 height: 375,
                 width: 0,
@@ -259,22 +260,17 @@ describe('rectangles', () => {
                 y: 34,
             })
 
-            try {
-                await determineElementRectangles({
-                    base64Image: IMAGE_STRING,
-                    options,
-                    element: { selector: '#elementID' },
-                })
-                expect(true).toBe(false)
-            } catch (e: unknown) {
-                expect((e as Error).message).toBe('The element, with selector "$(#elementID)",is not visible. The dimensions are 0x375')
-            }
+            await expect(determineElementRectangles({
+                browserInstance: mockBrowserInstance,
+                base64Image: IMAGE_STRING,
+                options,
+                element: { selector: '#elementID' },
+            })).rejects.toThrow('The element, with selector "$(#elementID)",is not visible. The dimensions are 0x375')
         })
 
         it('should throw an error when the element width is 0 and no element selector is provided', async () => {
             const options = createElementOptions()
 
-            const mockExecute = await createMockBrowser()
             mockExecute.mockResolvedValueOnce({
                 height: 375,
                 width: 0,
@@ -282,16 +278,12 @@ describe('rectangles', () => {
                 y: 34,
             })
 
-            try {
-                await determineElementRectangles({
-                    base64Image: IMAGE_STRING,
-                    options,
-                    element: {},
-                })
-                expect(true).toBe(false)
-            } catch (e: unknown) {
-                expect((e as Error).message).toBe('The element is not visible. The dimensions are 0x375')
-            }
+            await expect(determineElementRectangles({
+                browserInstance: mockBrowserInstance,
+                base64Image: IMAGE_STRING,
+                options,
+                element: {},
+            })).rejects.toThrow('The element is not visible. The dimensions are 0x375')
         })
 
         it('should handle Android webview elements', async () => {
@@ -305,7 +297,6 @@ describe('rectangles', () => {
                 },
             })
 
-            const mockExecute = await createMockBrowser()
             mockExecute.mockResolvedValueOnce({
                 height: 100,
                 width: 200,
@@ -313,13 +304,15 @@ describe('rectangles', () => {
                 y: 75,
             })
 
-            expect(
-                await determineElementRectangles({
-                    base64Image: IMAGE_STRING,
-                    options,
-                    element: 'webview-element',
-                }),
-            ).toMatchSnapshot()
+            const result = await determineElementRectangles({
+                browserInstance: mockBrowserInstance,
+                base64Image: IMAGE_STRING,
+                options,
+                element: 'webview-element',
+            })
+
+            expect(result).toMatchSnapshot()
+            expect(mockExecute).toHaveBeenCalled()
         })
     })
 
@@ -329,7 +322,7 @@ describe('rectangles', () => {
                 isIOS: true,
             })
 
-            expect(await determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
+            expect(determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
         })
 
         it('should determine them for Android ChromeDriver', async () => {
@@ -337,7 +330,7 @@ describe('rectangles', () => {
                 isAndroidChromeDriverScreenshot: true,
             })
 
-            expect(await determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
+            expect(determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
         })
 
         it('should determine them for Android Native webscreenshot', async () => {
@@ -345,7 +338,7 @@ describe('rectangles', () => {
                 isAndroidNativeWebScreenshot: true,
             })
 
-            expect(await determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
+            expect(determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
         })
 
         it('should determine them for desktop browser', async () => {
@@ -355,7 +348,7 @@ describe('rectangles', () => {
                 devicePixelRatio: 1,
             })
 
-            expect(await determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
+            expect(determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
         })
 
         it('should determine them for emulated device', async () => {
@@ -365,7 +358,7 @@ describe('rectangles', () => {
                 isLandscape: true,
             })
 
-            expect(await determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
+            expect(determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
         })
 
         it('should determine them with legacy screenshot method', async () => {
@@ -374,7 +367,7 @@ describe('rectangles', () => {
                 isIOS: true,
             })
 
-            expect(await determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
+            expect(determineScreenRectangles(IMAGE_STRING, options)).toMatchSnapshot()
         })
     })
 
@@ -391,14 +384,14 @@ describe('rectangles', () => {
             })
             const deviceRectangles = createDeviceRectanglesWithData()
 
-            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+            expect(determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
         })
 
         it('should determine the rectangles with no blockouts', async () => {
             const options = createStatusAddressToolBarOptions()
             const deviceRectangles = createDeviceRectanglesWithData()
 
-            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+            expect(determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
         })
 
         it('should determine the rectangles with only status bar blockout', async () => {
@@ -410,7 +403,7 @@ describe('rectangles', () => {
             })
             const deviceRectangles = createDeviceRectanglesWithData()
 
-            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+            expect(determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
         })
 
         it('should determine the rectangles with only toolbar blockout', async () => {
@@ -422,7 +415,7 @@ describe('rectangles', () => {
             })
             const deviceRectangles = createDeviceRectanglesWithData()
 
-            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+            expect(determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
         })
 
         it('should determine the rectangles with only sidebar blockout', async () => {
@@ -434,7 +427,7 @@ describe('rectangles', () => {
             })
             const deviceRectangles = createDeviceRectanglesWithData()
 
-            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+            expect(determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
         })
 
         it('should determine the rectangles for iOS with blockouts', async () => {
@@ -449,7 +442,7 @@ describe('rectangles', () => {
             })
             const deviceRectangles = createDeviceRectanglesWithData()
 
-            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+            expect(determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
         })
 
         it('should determine the rectangles for non-mobile device', async () => {
@@ -460,7 +453,7 @@ describe('rectangles', () => {
             })
             const deviceRectangles = createDeviceRectanglesWithData()
 
-            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+            expect(determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
         })
 
         it('should determine the rectangles for Android without native web screenshot', async () => {
@@ -474,7 +467,7 @@ describe('rectangles', () => {
             })
             const deviceRectangles = createDeviceRectanglesWithData()
 
-            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+            expect(determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
         })
 
         it('should handle empty device rectangles', async () => {
@@ -487,7 +480,110 @@ describe('rectangles', () => {
             })
             const deviceRectangles = baseDeviceRectangles
 
-            expect(await determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+            expect(determineStatusAddressToolBarRectangles({ deviceRectangles, options })).toMatchSnapshot()
+        })
+    })
+
+    describe('determineIgnoreRegions', () => {
+        it('should handle mixed ignore regions and elements', async () => {
+            const mockElement1 = { elementId: 'element1', selector: '#test1' } as WebdriverIO.Element
+            const mockElement2 = { elementId: 'element2', selector: '#test2' } as WebdriverIO.Element
+            const mockRegion = { x: 10, y: 20, width: 100, height: 150 }
+
+            mockGetElementRect.mockResolvedValueOnce({ x: 50, y: 60, width: 200, height: 250 })
+                .mockResolvedValueOnce({ x: 70, y: 80, width: 300, height: 350 })
+
+            const ignores = [mockElement1, mockRegion, mockElement2]
+            const result = await determineIgnoreRegions(mockBrowserInstance, ignores)
+
+            expect(result).toEqual([
+                { x: 10, y: 20, width: 100, height: 150 },
+                { x: 50, y: 60, width: 200, height: 250 },
+                { x: 70, y: 80, width: 300, height: 350 }
+            ])
+            expect(mockGetElementRect).toHaveBeenCalledTimes(2)
+        })
+
+        it('should handle only regions', async () => {
+            const mockRegions = [
+                { x: 10, y: 20, width: 100, height: 150 },
+                { x: 30, y: 40, width: 200, height: 250 }
+            ]
+
+            const result = await determineIgnoreRegions(mockBrowserInstance, mockRegions)
+
+            expect(result).toEqual(mockRegions)
+            expect(mockGetElementRect).not.toHaveBeenCalled()
+        })
+
+        it('should handle only elements', async () => {
+            const mockElement1 = { elementId: 'element1', selector: '#test1' } as WebdriverIO.Element
+            const mockElement2 = { elementId: 'element2', selector: '#test2' } as WebdriverIO.Element
+
+            mockGetElementRect.mockResolvedValueOnce({ x: 50, y: 60, width: 200, height: 250 })
+                .mockResolvedValueOnce({ x: 70, y: 80, width: 300, height: 350 })
+
+            const result = await determineIgnoreRegions(mockBrowserInstance, [mockElement1, mockElement2])
+
+            expect(result).toEqual([
+                { x: 50, y: 60, width: 200, height: 250 },
+                { x: 70, y: 80, width: 300, height: 350 }
+            ])
+            expect(mockGetElementRect).toHaveBeenCalledTimes(2)
+        })
+
+        it('should throw error for invalid ignore regions', async () => {
+            const invalidIgnores = [
+                'invalid-string',
+                { invalid: 'object' },
+                123
+            ]
+
+            await expect(determineIgnoreRegions(mockBrowserInstance, invalidIgnores))
+                .rejects.toThrow('Invalid elements or regions')
+        })
+
+        it('should round coordinates', async () => {
+            const mockElement = { elementId: 'element1', selector: '#test1' } as WebdriverIO.Element
+            const mockRegion = { x: 10.7, y: 20.3, width: 100.9, height: 150.1 }
+
+            mockGetElementRect.mockResolvedValueOnce({ x: 50.4, y: 60.8, width: 200.2, height: 250.6 })
+
+            const result = await determineIgnoreRegions(mockBrowserInstance, [mockRegion, mockElement])
+
+            expect(result).toEqual([
+                { x: 11, y: 20, width: 101, height: 150 },
+                { x: 50, y: 61, width: 200, height: 251 }
+            ])
+        })
+
+        it('should handle nested element arrays', async () => {
+            const mockElement1 = { elementId: 'element1', selector: '#test1' } as WebdriverIO.Element
+            const mockElement2 = { elementId: 'element2', selector: '#test2' } as WebdriverIO.Element
+
+            mockGetElementRect.mockResolvedValueOnce({ x: 50, y: 60, width: 200, height: 250 })
+                .mockResolvedValueOnce({ x: 70, y: 80, width: 300, height: 350 })
+
+            const result = await determineIgnoreRegions(mockBrowserInstance, [[mockElement1, mockElement2]])
+
+            expect(result).toEqual([
+                { x: 50, y: 60, width: 200, height: 250 },
+                { x: 70, y: 80, width: 300, height: 350 }
+            ])
+            expect(mockGetElementRect).toHaveBeenCalledTimes(2)
+        })
+
+        it('should handle chainable promise elements', async () => {
+            const chainableElement = Promise.resolve({ elementId: 'element1', selector: '#test1' } as WebdriverIO.Element)
+
+            mockGetElementRect.mockResolvedValueOnce({ x: 50, y: 60, width: 200, height: 250 })
+
+            const result = await determineIgnoreRegions(mockBrowserInstance, [chainableElement])
+
+            expect(result).toEqual([
+                { x: 50, y: 60, width: 200, height: 250 }
+            ])
+            expect(mockGetElementRect).toHaveBeenCalledTimes(1)
         })
     })
 })

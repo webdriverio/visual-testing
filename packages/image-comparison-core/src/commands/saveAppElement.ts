@@ -11,6 +11,7 @@ import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
  */
 export default async function saveAppElement(
     {
+        browserInstance,
         instanceData,
         folders,
         element,
@@ -40,6 +41,7 @@ export default async function saveAppElement(
 
     // 2. Take the screenshot
     const base64Image: string = await takeBase64ElementScreenshot({
+        browserInstance,
         element: element as WicElement,
         devicePixelRatio,
         isIOS,
@@ -78,5 +80,5 @@ export default async function saveAppElement(
     }
 
     // 4.  Return the data
-    return afterScreenshot(afterOptions)
+    return afterScreenshot(browserInstance, afterOptions)
 }

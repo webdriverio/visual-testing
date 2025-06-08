@@ -13,6 +13,7 @@ import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
  */
 export default async function saveFullPageScreen(
     {
+        browserInstance,
         instanceData,
         folders,
         tag,
@@ -59,7 +60,7 @@ export default async function saveFullPageScreen(
         toolBarShadowPadding,
         waitForFontsLoaded,
     }
-    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(beforeOptions, true)
+    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions, true)
     const {
         browserName,
         browserVersion,
@@ -89,9 +90,9 @@ export default async function saveFullPageScreen(
     } = enrichedInstanceData
     let fullPageBase64Image: string
 
-    if (canUseBidiScreenshot() && !isEmulated && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)) {
+    if (canUseBidiScreenshot(browserInstance) && !isEmulated && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)) {
         // 3a.  Fullpage screenshots are taken in one go with the Bidi protocol
-        fullPageBase64Image = await takeBase64BiDiScreenshot({ origin: 'document' })
+        fullPageBase64Image = await takeBase64BiDiScreenshot({ browserInstance, origin: 'document' })
     } else {
         // 3b.  Fullpage screenshots are taken per scrolled viewport
         const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
@@ -110,7 +111,7 @@ export default async function saveFullPageScreen(
             screenWidth: screenWidth || NaN,
             toolBarShadowPadding: toolBarShadowPadding,
         }
-        const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(fullPageScreenshotOptions)
+        const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(browserInstance, fullPageScreenshotOptions)
 
         // 4.  Make a fullpage base64 image by scrolling and stitching the images together
         fullPageBase64Image = await makeFullPageBase64Image(screenshotsData, {
@@ -159,6 +160,6 @@ export default async function saveFullPageScreen(
     }
 
     // 6.  Return the data
-    return afterScreenshot(afterOptions!)
+    return afterScreenshot(browserInstance, afterOptions!)
 }
 

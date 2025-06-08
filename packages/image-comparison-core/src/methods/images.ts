@@ -29,7 +29,6 @@ import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../
 import type { WicElement } from '../commands/element.interfaces.js'
 import { processDiffPixels } from './processDiffPixels.js'
 import { createCompareReport } from './createCompareReport.js'
-import { browser } from '@wdio/globals'
 import { takeBase64Screenshot } from './screenshots.js'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison:images')
@@ -568,11 +567,13 @@ async function rotateBase64Image({ base64Image, degrees }: RotateBase64ImageOpti
  * Take a based64 screenshot of an element and resize it
  */
 async function takeResizedBase64Screenshot({
+    browserInstance,
     element,
     devicePixelRatio,
     isIOS,
     resizeDimensions,
 }:{
+    browserInstance: WebdriverIO.Browser,
     element: WicElement,
     devicePixelRatio: number,
     isIOS: boolean,
@@ -585,10 +586,10 @@ async function takeResizedBase64Screenshot({
     }
 
     // Get the element position
-    const elementRegion = await browser.getElementRect(awaitedElement.elementId as string)
+    const elementRegion = await browserInstance.getElementRect(awaitedElement.elementId as string)
 
     // Create a screenshot
-    const base64Image = await takeBase64Screenshot()
+    const base64Image = await takeBase64Screenshot(browserInstance)
     // Crop it out with the correct dimensions
 
     // Make the image smaller
@@ -616,11 +617,13 @@ async function takeResizedBase64Screenshot({
  * Take a base64 screenshot of an element
  */
 export async function takeBase64ElementScreenshot({
+    browserInstance,
     element,
     devicePixelRatio,
     isIOS,
     resizeDimensions,
 }:{
+    browserInstance: WebdriverIO.Browser,
     element: WicElement,
     devicePixelRatio: number,
     isIOS: boolean,
@@ -641,6 +644,7 @@ export async function takeBase64ElementScreenshot({
     }
 
     return await takeResizedBase64Screenshot({
+        browserInstance,
         element,
         devicePixelRatio,
         isIOS,

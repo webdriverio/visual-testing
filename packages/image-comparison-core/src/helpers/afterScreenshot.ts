@@ -8,7 +8,6 @@ import { saveBase64Image } from '../methods/images.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
-import { browser } from '@wdio/globals'
 
 const log = logger('@wdio/visual-service:webdriver-image-comparison')
 
@@ -16,7 +15,7 @@ const log = logger('@wdio/visual-service:webdriver-image-comparison')
  * Methods that need to be executed after a screenshot has been taken
  * to set all back to the original state
  */
-export default async function afterScreenshot(options: AfterScreenshotOptions): Promise<ScreenshotOutput> {
+export default async function afterScreenshot(browserInstance: WebdriverIO.Browser, options: AfterScreenshotOptions): Promise<ScreenshotOutput> {
     const {
         actualFolder,
         base64Image,
@@ -45,13 +44,13 @@ export default async function afterScreenshot(options: AfterScreenshotOptions): 
     if (!isNativeContext){
         // Show the scrollbars again
         if (noScrollBars) {
-            await browser.execute(hideScrollBars, !noScrollBars)
+            await browserInstance.execute(hideScrollBars, !noScrollBars)
         }
 
         // Show elements again
         if ((hideElements && hideElements.length > 0) || (removeElements && removeElements.length > 0)) {
             try {
-                await browser.execute(hideRemoveElements, { hide: hideElements, remove: removeElements }, false)
+                await browserInstance.execute(hideRemoveElements, { hide: hideElements, remove: removeElements }, false)
             } catch (e) {
                 log.warn(
                     '\x1b[33m%s\x1b[0m',
@@ -70,12 +69,12 @@ export default async function afterScreenshot(options: AfterScreenshotOptions): 
 
         // Remove the custom set css
         if (disableCSSAnimation || disableBlinkingCursor || checkIsMobile(platformName)) {
-            await browser.execute(removeElementFromDom, CUSTOM_CSS_ID)
+            await browserInstance.execute(removeElementFromDom, CUSTOM_CSS_ID)
         }
 
         // Show the text again
         if (enableLayoutTesting){
-            await browser.execute(toggleTextTransparency, !enableLayoutTesting)
+            await browserInstance.execute(toggleTextTransparency, !enableLayoutTesting)
         }
 
     }

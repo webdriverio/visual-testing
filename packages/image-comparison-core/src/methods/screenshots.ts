@@ -1,5 +1,4 @@
 import logger from '@wdio/logger'
-import { browser } from '@wdio/globals'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
 import { calculateDprData, getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
@@ -21,7 +20,7 @@ const log = logger('@wdio/visual-service:webdriver-image-comparison-screenshots'
 /**
  * Take a full page screenshots for desktop / iOS / Android
  */
-export async function getBase64FullPageScreenshotsData(options: FullPageScreenshotDataOptions): Promise<FullPageScreenshotsData> {
+export async function getBase64FullPageScreenshotsData(browserInstance: WebdriverIO.Browser, options: FullPageScreenshotDataOptions): Promise<FullPageScreenshotsData> {
     const {
         addressBarShadowPadding,
         devicePixelRatio,
@@ -55,22 +54,22 @@ export async function getBase64FullPageScreenshotsData(options: FullPageScreensh
 
     if ((isAndroid && isAndroidNativeWebScreenshot) || isIOS ) {
         // Create a fullpage screenshot for Android when a native web screenshot (so including status, address and toolbar) is created
-        return getMobileFullPageNativeWebScreenshotsData(nativeWebScreenshotOptions)
+        return getMobileFullPageNativeWebScreenshotsData(browserInstance, nativeWebScreenshotOptions)
     } else if (isAndroid && isAndroidChromeDriverScreenshot) {
         const chromeDriverOptions = { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight }
 
         // Create a fullpage screenshot for Android when the ChromeDriver provides the screenshots
-        return getAndroidChromeDriverFullPageScreenshotsData(chromeDriverOptions)
+        return getAndroidChromeDriverFullPageScreenshotsData(browserInstance, chromeDriverOptions)
     }
 
     // Create a fullpage screenshot for all desktops
-    return getDesktopFullPageScreenshotsData(desktopOptions)
+    return getDesktopFullPageScreenshotsData(browserInstance, desktopOptions)
 }
 
 /**
  * Take a full page screenshots for native mobile
  */
-export async function getMobileFullPageNativeWebScreenshotsData(options: FullPageScreenshotNativeMobileOptions): Promise<FullPageScreenshotsData> {
+export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:WebdriverIO.Browser, options: FullPageScreenshotNativeMobileOptions): Promise<FullPageScreenshotsData> {
     const viewportScreenshots = []
     // The addressBarShadowPadding and toolBarShadowPadding is used because the viewport might have a shadow on the address and the tool bar
     // so the cutout of the viewport needs to be a little bit smaller
@@ -98,10 +97,10 @@ export async function getMobileFullPageNativeWebScreenshotsData(options: FullPag
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
         const scrollY = viewportHeight * i
-        await browser.execute(scrollToPosition, scrollY)
+        await browserInstance.execute(scrollToPosition, scrollY)
 
         // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
-        await browser.execute(hideScrollBars, true)
+        await browserInstance.execute(hideScrollBars, true)
 
         // Simply wait the amount of time specified for lazy-loading
         await waitFor(fullPageScrollTimeout)
@@ -109,18 +108,18 @@ export async function getMobileFullPageNativeWebScreenshotsData(options: FullPag
         // Elements that need to be hidden after the first scroll for a fullpage scroll
         if (i === 1 && hideAfterFirstScroll.length > 0) {
             try {
-                await browser.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
+                await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
             } catch (e) {
                 logHiddenRemovedError(e)
             }
         }
 
         // Take the screenshot and determine if it's rotated
-        const screenshot = await takeBase64Screenshot()
+        const screenshot = await takeBase64Screenshot(browserInstance)
         isRotated = Boolean(isLandscape && viewportHeight > viewportWidth)
 
         // Determine scroll height and check if we need to scroll again
-        scrollHeight = await browser.execute(getDocumentScrollHeight)
+        scrollHeight = await browserInstance.execute(getDocumentScrollHeight)
         if (scrollHeight && (scrollY + viewportHeight < scrollHeight)) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
@@ -152,13 +151,13 @@ export async function getMobileFullPageNativeWebScreenshotsData(options: FullPag
         })
 
         // Show scrollbars again
-        await browser.execute(hideScrollBars, false)
+        await browserInstance.execute(hideScrollBars, false)
     }
 
     // Put back the hidden elements to visible
     if (hideAfterFirstScroll.length > 0) {
         try {
-            await browser.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
+            await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
         } catch (e) {
             logHiddenRemovedError(e)
         }
@@ -183,7 +182,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(options: FullPag
 /**
  * Take a full page screenshot for Android with Chromedriver
  */
-export async function getAndroidChromeDriverFullPageScreenshotsData(options: FullPageScreenshotOptions): Promise<FullPageScreenshotsData> {
+export async function getAndroidChromeDriverFullPageScreenshotsData(browserInstance:WebdriverIO.Browser, options: FullPageScreenshotOptions): Promise<FullPageScreenshotsData> {
     const viewportScreenshots = []
     const { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight } = options
 
@@ -195,10 +194,10 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(options: Ful
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
         const scrollY = innerHeight * i
-        await browser.execute(scrollToPosition, scrollY)
+        await browserInstance.execute(scrollToPosition, scrollY)
 
         // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
-        await browser.execute(hideScrollBars, true)
+        await browserInstance.execute(hideScrollBars, true)
 
         // Simply wait the amount of time specified for lazy-loading
         await waitFor(fullPageScrollTimeout)
@@ -206,18 +205,18 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(options: Ful
         // Elements that need to be hidden after the first scroll for a fullpage scroll
         if (i === 1 && hideAfterFirstScroll.length > 0) {
             try {
-                await browser.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
+                await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
             } catch (e) {
                 logHiddenRemovedError(e)
             }
         }
 
         // Take the screenshot
-        const screenshot = await takeBase64Screenshot()
+        const screenshot = await takeBase64Screenshot(browserInstance)
         screenshotSize = getBase64ScreenshotSize(screenshot, devicePixelRatio)
 
         // Determine scroll height and check if we need to scroll again
-        scrollHeight = await browser.execute(getDocumentScrollHeight)
+        scrollHeight = await browserInstance.execute(getDocumentScrollHeight)
         if (scrollHeight && (scrollY + innerHeight < scrollHeight)) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
@@ -248,13 +247,13 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(options: Ful
         })
 
         // Show the scrollbars again
-        await browser.execute(hideScrollBars, false)
+        await browserInstance.execute(hideScrollBars, false)
     }
 
     // Put back the hidden elements to visible
     if (hideAfterFirstScroll.length > 0) {
         try {
-            await browser.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
+            await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
         } catch (e) {
             logHiddenRemovedError(e)
         }
@@ -279,7 +278,7 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(options: Ful
 /**
  * Take a full page screenshots
  */
-export async function getDesktopFullPageScreenshotsData(options: FullPageScreenshotOptions): Promise<FullPageScreenshotsData> {
+export async function getDesktopFullPageScreenshotsData(browserInstance:WebdriverIO.Browser, options: FullPageScreenshotOptions): Promise<FullPageScreenshotsData> {
     const viewportScreenshots = []
     const { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight } = options
     let actualInnerHeight = innerHeight
@@ -292,7 +291,7 @@ export async function getDesktopFullPageScreenshotsData(options: FullPageScreens
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
         const scrollY = actualInnerHeight * i
-        await browser.execute(scrollToPosition, scrollY)
+        await browserInstance.execute(scrollToPosition, scrollY)
 
         // Simply wait the amount of time specified for lazy-loading
         await waitFor(fullPageScrollTimeout)
@@ -300,14 +299,14 @@ export async function getDesktopFullPageScreenshotsData(options: FullPageScreens
         // Elements that need to be hidden after the first scroll for a fullpage scroll
         if (i === 1 && hideAfterFirstScroll.length > 0) {
             try {
-                await browser.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
+                await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
             } catch (e) {
                 logHiddenRemovedError(e)
             }
         }
 
         // Take the screenshot
-        const screenshot = await takeBase64Screenshot()
+        const screenshot = await takeBase64Screenshot(browserInstance)
         screenshotSize = getBase64ScreenshotSize(screenshot, devicePixelRatio)
 
         // The actual screenshot size might be slightly different than the inner height
@@ -321,7 +320,7 @@ export async function getDesktopFullPageScreenshotsData(options: FullPageScreens
         }
 
         // Determine scroll height and check if we need to scroll again
-        scrollHeight = await browser.execute(getDocumentScrollHeight)
+        scrollHeight = await browserInstance.execute(getDocumentScrollHeight)
 
         if (scrollHeight && (scrollY + actualInnerHeight < scrollHeight) && screenshotSize.height === actualInnerHeight) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
@@ -358,7 +357,7 @@ export async function getDesktopFullPageScreenshotsData(options: FullPageScreens
     // Put back the hidden elements to visible
     if (hideAfterFirstScroll.length > 0) {
         try {
-            await browser.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
+            await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
         } catch (e) {
             logHiddenRemovedError(e)
         }
@@ -383,18 +382,26 @@ export async function getDesktopFullPageScreenshotsData(options: FullPageScreens
 /**
  * Take a screenshot
  */
-export async function takeBase64Screenshot(): Promise<string> {
-    return browser.takeScreenshot()
+export async function takeBase64Screenshot(browserInstance: WebdriverIO.Browser): Promise<string> {
+    return browserInstance.takeScreenshot()
 }
 
 /**
  * Take a bidi screenshot
  */
-export async function takeBase64BiDiScreenshot({ origin = 'viewport', clip }: { origin?: 'viewport' | 'document', clip?: RectanglesOutput} = {}): Promise<string> {
+export async function takeBase64BiDiScreenshot({
+    browserInstance,
+    origin = 'viewport',
+    clip,
+}: {
+    browserInstance: WebdriverIO.Browser,
+    origin?: 'viewport' | 'document',
+    clip?: RectanglesOutput,
+}): Promise<string> {
     log.info('Taking a BiDi screenshot')
-    const contextID = await browser.getWindowHandle()
+    const contextID = await browserInstance.getWindowHandle()
 
-    return (await browser.browsingContextCaptureScreenshot({
+    return (await browserInstance.browsingContextCaptureScreenshot({
         context: contextID,
         origin,
         ...(clip ? { clip: { ...clip, type: 'box' } } : {})
@@ -425,6 +432,7 @@ function logHiddenRemovedError(error: any) {
  * Take an element screenshot on the web
  */
 export async function takeWebElementScreenshot({
+    browserInstance,
     devicePixelRatio,
     deviceRectangles,
     element,
@@ -438,7 +446,7 @@ export async function takeWebElementScreenshot({
     isLandscape,
 }:TakeWebElementScreenshot): Promise<TakeWebElementScreenshotData>{
     if (fallback) {
-        const base64Image = await takeBase64Screenshot()
+        const base64Image = await takeBase64Screenshot(browserInstance)
         const elementRectangleOptions: ElementRectanglesOptions = {
             /**
              * ToDo: handle NaA case
@@ -453,6 +461,7 @@ export async function takeWebElementScreenshot({
             isIOS,
         }
         const rectangles = await determineElementRectangles({
+            browserInstance,
             base64Image,
             element,
             options: elementRectangleOptions,
@@ -466,7 +475,7 @@ export async function takeWebElementScreenshot({
     }
 
     try {
-        const   base64Image = await browser.takeElementScreenshot!((await element as WebdriverIO.Element).elementId)
+        const   base64Image = await browserInstance.takeElementScreenshot!((await element as WebdriverIO.Element).elementId)
         const { height, width } = getBase64ScreenshotSize(base64Image)
         const rectangles = { x: 0, y: 0, width, height }
 
@@ -482,6 +491,7 @@ export async function takeWebElementScreenshot({
     } catch (_e) {
         log.warn('The element screenshot failed, falling back to cutting the full device/viewport screenshot:', _e)
         return takeWebElementScreenshot({
+            browserInstance,
             devicePixelRatio,
             deviceRectangles,
             element,

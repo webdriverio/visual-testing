@@ -111,6 +111,8 @@ export interface FullPageScreenshotOptions {
  * Interface representing options for taking a web element screenshot.
  */
 export interface TakeWebElementScreenshot {
+    /** The browser instance. */
+    browserInstance: WebdriverIO.Browser;
     /** The device pixel ratio. */
     devicePixelRatio?: number;
     /** The rectangles of the device. */

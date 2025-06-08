@@ -11,6 +11,7 @@ import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
  */
 export default async function checkWebScreen(
     {
+        browserInstance,
         instanceData,
         folders,
         tag,
@@ -34,6 +35,7 @@ export default async function checkWebScreen(
         },
     }
     const { devicePixelRatio, fileName } = await saveWebScreen({
+        browserInstance,
         instanceData,
         folders,
         tag,

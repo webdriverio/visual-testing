@@ -11,12 +11,12 @@ import type {
 } from './rectangles.interfaces.js'
 import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
 import type { InstanceData } from './instanceData.interfaces.js'
-import { browser } from '@wdio/globals'
 
 /**
  * Determine the element rectangles on the page / screenshot
  */
 export async function determineElementRectangles({
+    browserInstance,
     base64Image,
     options,
     element,
@@ -38,11 +38,11 @@ export async function determineElementRectangles({
 
     // Determine the element position on the screenshot
     if (isIOS) {
-        elementPosition = await getElementWebviewPosition(element, { deviceRectangles })
+        elementPosition = await getElementWebviewPosition(browserInstance, element, { deviceRectangles })
     } else if (isAndroid) {
-        elementPosition = await getElementPositionAndroid(element, { deviceRectangles, isAndroidNativeWebScreenshot })
+        elementPosition = await getElementPositionAndroid(browserInstance, element, { deviceRectangles, isAndroidNativeWebScreenshot })
     } else {
-        elementPosition = await getElementPositionDesktop(element, { innerHeight, screenshotHeight: height })
+        elementPosition = await getElementPositionDesktop(browserInstance, element, { innerHeight, screenshotHeight: height })
     }
     // Validate if the element is visible
     if (elementPosition.height === 0 || elementPosition.width === 0) {
@@ -236,10 +236,10 @@ function splitIgnores(items:unknown[]): { elements: WebdriverIO.Element[], regio
 /**
  * Get the regions from the elements
  */
-async function getRegionsFromElements(elements: WebdriverIO.Element[]): Promise<RectanglesOutput[]> {
+async function getRegionsFromElements(browserInstance: WebdriverIO.Browser, elements: WebdriverIO.Element[]): Promise<RectanglesOutput[]> {
     const regions = []
     for (const element of elements) {
-        const region = await browser.getElementRect(element.elementId)
+        const region = await browserInstance.getElementRect(element.elementId)
         regions.push(region)
     }
 
@@ -249,10 +249,10 @@ async function getRegionsFromElements(elements: WebdriverIO.Element[]): Promise<
 /**
  * Translate ignores to regions
  */
-export async function determineIgnoreRegions(ignores: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[]): Promise<RectanglesOutput[]>{
+export async function determineIgnoreRegions(browserInstance: WebdriverIO.Browser, ignores: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[]): Promise<RectanglesOutput[]>{
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const regionsFromElements = await getRegionsFromElements(elements)
+    const regionsFromElements = await getRegionsFromElements(browserInstance, elements)
 
     return [...regions, ...regionsFromElements]
         .map((region:RectanglesOutput) => ({
