@@ -121,7 +121,7 @@ async function getMobileInstanceData({
             const offsetPortraitHeight = Object.keys(IOS_OFFSETS[deviceType]).indexOf(portraitHeight.toString()) > -1 ?
                 portraitHeight :
                 defaultPortraitHeight
-            const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight].PORTRAIT
+            const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight][screenWidth > screenHeight ? 'LANDSCAPE' : 'PORTRAIT']
             // NOTE: The values for iOS are based on CSS pixels, so we need to multiply them with the devicePixelRatio,
             // This will NOT be done here but in a central place
             deviceRectangles.statusBar = {

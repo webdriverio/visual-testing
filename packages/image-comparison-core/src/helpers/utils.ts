@@ -546,7 +546,11 @@ export function getMethodOrWicOption<T, K extends keyof T>(
  * Determine if the Bidi screenshot can be used
  */
 export function canUseBidiScreenshot(browserInstance: WebdriverIO.Browser): boolean {
-    return typeof browserInstance.browsingContextCaptureScreenshot === 'function' && typeof browserInstance.getWindowHandle === 'function'
+    const { isBidi } = browserInstance
+    const hasBrowsingContextCaptureScreenshot = typeof browserInstance.browsingContextCaptureScreenshot === 'function'
+    const hasGetWindowHandle = typeof browserInstance.getWindowHandle === 'function'
+
+    return isBidi && hasBrowsingContextCaptureScreenshot && hasGetWindowHandle
 }
 
 /**

@@ -75,6 +75,7 @@ describe('utils', () => {
             execute: vi.fn(),
             browsingContextCaptureScreenshot: vi.fn(),
             getWindowHandle: vi.fn(),
+            isBidi: true,
             getOrientation: vi.fn().mockResolvedValue('PORTRAIT'),
             getWindowSize: vi.fn().mockResolvedValue({ width: 375, height: 667 }),
             getUrl: vi.fn().mockResolvedValue('http://example.com'),

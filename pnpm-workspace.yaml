@@ -1,6 +1,5 @@
 # pnpm-workspace.yaml
 packages:
-    - "packages/webdriver-image-comparison"
     - "packages/image-comparison-core"
     - "packages/visual-service"
     - "packages/ocr-service"
