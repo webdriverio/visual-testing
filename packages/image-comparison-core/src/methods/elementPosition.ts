@@ -2,6 +2,7 @@ import getElementPositionTopDom from '../clientSideScripts/getElementPositionTop
 import type { ElementPosition } from '../clientSideScripts/elementPosition.interfaces.js'
 import { getBoundingClientRect } from '../clientSideScripts/getBoundingClientRect.js'
 import type { DeviceRectangles } from './rectangles.interfaces.js'
+import type { GetElementPositionAndroidOptions, GetElementPositionDesktopOptions } from './elementPosition.interfaces.js'
 
 /**
  * Get the element position on a Android device
@@ -9,10 +10,7 @@ import type { DeviceRectangles } from './rectangles.interfaces.js'
 export async function getElementPositionAndroid(
     browserInstance: WebdriverIO.Browser,
     element: HTMLElement,
-    { deviceRectangles, isAndroidNativeWebScreenshot }: {
-        deviceRectangles: DeviceRectangles,
-        isAndroidNativeWebScreenshot: boolean;
-    },
+    { deviceRectangles, isAndroidNativeWebScreenshot }: GetElementPositionAndroidOptions,
 ): Promise<ElementPosition> {
     // This is the native web screenshot
     if (isAndroidNativeWebScreenshot) {
@@ -29,7 +27,7 @@ export async function getElementPositionAndroid(
 export async function getElementPositionDesktop(
     browserInstance: WebdriverIO.Browser,
     element: HTMLElement,
-    { innerHeight, screenshotHeight }: { innerHeight: number; screenshotHeight: number },
+    { innerHeight, screenshotHeight }: GetElementPositionDesktopOptions,
 ): Promise<ElementPosition> {
     if (screenshotHeight > innerHeight) {
         return browserInstance.execute(getElementPositionTopDom, element)

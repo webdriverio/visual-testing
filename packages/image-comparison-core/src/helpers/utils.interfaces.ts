@@ -1,3 +1,4 @@
+import type { BaseCoordinates, BaseDimensions } from '../base.interfaces.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 
 export interface GetAndCreatePathOptions {
@@ -46,7 +47,7 @@ export interface FormatFileNameOptions {
     tag: string;
 }
 
-export interface FormatFileDefaults {
+export interface FormatFileDefaults extends BaseDimensions {
     /** The browser name */
     browserName: string;
     /** The browser version */
@@ -55,8 +56,6 @@ export interface FormatFileDefaults {
     deviceName: string;
     /** The device pixel ratio */
     dpr: number;
-    /** The height of the screen */
-    height: number;
     /** The log name of the instance */
     logName: string;
     /** Add `app` or nothing */
@@ -69,8 +68,6 @@ export interface FormatFileDefaults {
     platformVersion: string;
     /** The tag of the image */
     tag: string;
-    /** The width of the screen */
-    width: number;
 }
 
 export interface GetAddressBarShadowPaddingOptions {
@@ -105,12 +102,7 @@ export interface GetToolBarShadowPaddingOptions {
     addShadowPadding: boolean;
 }
 
-export interface ScreenshotSize {
-    /** The height of the screenshot */
-    height: number;
-    /** The width of the screenshot */
-    width: number;
-}
+export interface ScreenshotSize extends BaseDimensions {}
 
 export interface GetMobileViewPortPositionOptions {
     /** The browser instance */
@@ -138,4 +130,25 @@ export interface GetMobileScreenSizeOptions {
     isIOS: boolean,
     /** Is the context native */
     isNativeContext: boolean,
+}
+
+export interface GetIosBezelImageNames {
+    /** The name of the top image */
+    topImageName: string;
+    /** The name of the bottom image */
+    bottomImageName: string;
+}
+
+export interface LoadBase64HtmlOptions {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
+    /** Is the device iOS */
+    isIOS: boolean;
+}
+
+export interface ExecuteNativeClickOptions extends BaseCoordinates {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
+    /** Is the device iOS */
+    isIOS: boolean;
 }

@@ -1,11 +1,10 @@
-import type { RectanglesOutput } from '../methods/rectangles.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
 import type {  ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
 import { determineDeviceBlockOuts, determineIgnoreRegions } from '../methods/rectangles.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 import saveAppScreen from './saveAppScreen.js'
-import type { ChainablePromiseElement } from 'webdriverio'
+import type { ElementIgnore } from './element.interfaces.js'
 
 /**
  * Compare an image of the viewport of the screen
@@ -35,8 +34,8 @@ export default async function checkAppScreen(
         // Use the hide and remove elements from the checkScreenOptions and add them to the ignore array
         ignore: [
             ...checkScreenOptions.method.ignore || [],
-            ...checkScreenOptions.method.hideElements as unknown as (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[] || [],
-            ...checkScreenOptions.method.removeElements as unknown as (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[] || [],
+            ...checkScreenOptions.method.hideElements as unknown as ElementIgnore[] || [],
+            ...checkScreenOptions.method.removeElements as unknown as ElementIgnore[] || [],
         ]
 
     }

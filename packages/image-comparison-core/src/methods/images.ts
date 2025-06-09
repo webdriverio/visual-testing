@@ -19,14 +19,15 @@ import type {
     HandleIOSBezelCorners,
     IgnoreBoxes,
     ImageCompareResult,
-    ResizeDimensions,
+    MakeFullPageBase64ImageOptions,
     RotateBase64ImageOptions,
     RotatedImage,
+    TakeBase64ElementScreenshotOptions,
+    TakeResizedBase64ScreenshotOptions,
 } from './images.interfaces.js'
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
-import type { RectanglesOutput } from './rectangles.interfaces.js'
+import type { RectanglesOutput, StatusAddressToolBarRectanglesOptions } from './rectangles.interfaces.js'
 import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
-import type { WicElement } from '../commands/element.interfaces.js'
 import { processDiffPixels } from './processDiffPixels.js'
 import { createCompareReport } from './createCompareReport.js'
 import { takeBase64Screenshot } from './screenshots.js'
@@ -64,9 +65,12 @@ export async function removeDiffImageIfExists(diffFilePath: string): Promise<voi
 /**
  * Check if the image exists and create a new baseline image if needed
  */
-export async function checkBaselineImageExists(
-    { actualFilePath, baselineFilePath, autoSaveBaseline = false, updateBaseline = false }: CheckBaselineImageExists
-): Promise<void> {
+export async function checkBaselineImageExists({
+    actualFilePath,
+    baselineFilePath,
+    autoSaveBaseline = false,
+    updateBaseline = false
+}: CheckBaselineImageExists): Promise<void> {
     try {
         if (updateBaseline || !(await checkIfImageExists(baselineFilePath))) {
             throw new Error()
@@ -312,8 +316,7 @@ export async function makeCroppedBase64Image({
         sourceX: sourceXStart,
         sourceY: sourceYStart,
         width: sourceXEnd - sourceXStart,
-    }
-    )
+    } as CropAndConvertToDataURL)
 }
 
 /**
@@ -377,7 +380,7 @@ export async function executeImageCompare(
             isAndroidNativeWebScreenshot,
             isMobile,
             isViewPortScreenshot,
-        }
+        } as StatusAddressToolBarRectanglesOptions
         webStatusAddressToolBarOptions.push(
             ...(determineStatusAddressToolBarRectangles({ deviceRectangles, options: statusAddressToolBarOptions })) || []
         )
@@ -429,9 +432,10 @@ export async function executeImageCompare(
     const diffBoundingBoxes:BoundingBox[] = []
 
     // 6. Save the diff when there is a diff
-    const storeDiffs = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance || process.argv.includes('--store-diffs')
+    const saveAboveTolerance = imageCompareOptions.saveAboveTolerance ?? 0
+    const storeDiffs = rawMisMatchPercentage > saveAboveTolerance || process.argv.includes('--store-diffs')
     if (storeDiffs) {
-        const isDifference = rawMisMatchPercentage > imageCompareOptions.saveAboveTolerance
+        const isDifference = rawMisMatchPercentage > saveAboveTolerance
         const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
         const debugMessage = 'INFO:\n Debug mode is enabled. Saved the debug file to:'
 
@@ -498,7 +502,7 @@ export async function executeImageCompare(
  */
 export async function makeFullPageBase64Image(
     screenshotsData: FullPageScreenshotsData,
-    { devicePixelRatio, isLandscape }: { devicePixelRatio: number; isLandscape: boolean },
+    { devicePixelRatio, isLandscape }: MakeFullPageBase64ImageOptions,
 ): Promise<string> {
     const amountOfScreenshots = screenshotsData.data.length
     const { fullPageHeight: canvasHeight, fullPageWidth: canvasWidth } = screenshotsData
@@ -572,14 +576,7 @@ async function takeResizedBase64Screenshot({
     devicePixelRatio,
     isIOS,
     resizeDimensions,
-}:{
-    browserInstance: WebdriverIO.Browser,
-    element: WicElement,
-    devicePixelRatio: number,
-    isIOS: boolean,
-    resizeDimensions: ResizeDimensions,
-}
-): Promise<string> {
+}: TakeResizedBase64ScreenshotOptions): Promise<string> {
     const awaitedElement = await element
     if (!isWdioElement(awaitedElement)){
         log.info('awaitedElement = ', JSON.stringify(awaitedElement))
@@ -622,13 +619,7 @@ export async function takeBase64ElementScreenshot({
     devicePixelRatio,
     isIOS,
     resizeDimensions,
-}:{
-    browserInstance: WebdriverIO.Browser,
-    element: WicElement,
-    devicePixelRatio: number,
-    isIOS: boolean,
-    resizeDimensions: ResizeDimensions,
-}): Promise<string> {
+}: TakeBase64ElementScreenshotOptions): Promise<string> {
     const shouldTakeResizedScreenshot = resizeDimensions !== DEFAULT_RESIZE_DIMENSIONS
 
     if (!shouldTakeResizedScreenshot) {

@@ -1,16 +1,16 @@
-import type { ChainablePromiseElement } from 'webdriverio'
 import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import type {
+    DetermineDeviceBlockOutsOptions,
     DeviceRectangles,
     ElementRectangles,
     RectanglesOutput,
     ScreenRectanglesOptions,
+    SplitIgnores,
     StatusAddressToolBarRectangles,
     StatusAddressToolBarRectanglesOptions,
 } from './rectangles.interfaces.js'
-import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
-import type { InstanceData } from './instanceData.interfaces.js'
+import type { ElementIgnore } from 'src/commands/element.interfaces.js'
 
 /**
  * Determine the element rectangles on the page / screenshot
@@ -203,7 +203,7 @@ function formatErrorMessage(item:unknown, message:string) {
  * Split the ignores into elements and regions and throw an error if
  * an element is not a valid WebdriverIO element/region
  */
-function splitIgnores(items:unknown[]): { elements: WebdriverIO.Element[], regions: RectanglesOutput[] }{
+function splitIgnores(items:unknown[]): SplitIgnores{
     const elements = []
     const regions = []
     const errorMessages = []
@@ -249,7 +249,10 @@ async function getRegionsFromElements(browserInstance: WebdriverIO.Browser, elem
 /**
  * Translate ignores to regions
  */
-export async function determineIgnoreRegions(browserInstance: WebdriverIO.Browser, ignores: (RectanglesOutput | WebdriverIO.Element | ChainablePromiseElement)[]): Promise<RectanglesOutput[]>{
+export async function determineIgnoreRegions(
+    browserInstance: WebdriverIO.Browser,
+    ignores: ElementIgnore[],
+): Promise<RectanglesOutput[]>{
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
     const regionsFromElements = await getRegionsFromElements(browserInstance, elements)
@@ -266,11 +269,7 @@ export async function determineIgnoreRegions(browserInstance: WebdriverIO.Browse
 /**
  * Determine the device block outs
  */
-export async function determineDeviceBlockOuts({ isAndroid, screenCompareOptions, instanceData }: {
-    isAndroid: boolean,
-    screenCompareOptions: CheckScreenMethodOptions,
-    instanceData: InstanceData,
-}){
+export async function determineDeviceBlockOuts({ isAndroid, screenCompareOptions, instanceData }: DetermineDeviceBlockOutsOptions){
     const rectangles: RectanglesOutput[] = []
     const { blockOutStatusBar, blockOutToolBar } = screenCompareOptions
     const { deviceRectangles:{ homeBar, statusBar } } = instanceData

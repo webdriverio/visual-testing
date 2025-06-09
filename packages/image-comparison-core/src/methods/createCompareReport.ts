@@ -2,7 +2,8 @@ import { resolve as pathResolve } from 'node:path'
 import { writeFileSync } from 'node:fs'
 import type { BoundingBox, IgnoreBoxes } from './images.interfaces.js'
 import type { CompareData } from '../resemble/compare.interfaces.js'
-import type { TestContext } from '../commands/check.interfaces.js'
+import type { TestContext } from './compareReport.interfaces.js'
+import type { BaseDimensions } from '../base.interfaces.js'
 
 export type ResultReport = {
     description: string;
@@ -26,9 +27,9 @@ export type ResultReport = {
         diffFilePath?: string;
         fileName: string;
         size: {
-            actual: { width: number; height: number };
-            baseline: { width: number; height: number };
-            diff?: { width: number; height: number };
+            actual: BaseDimensions;
+            baseline: BaseDimensions;
+            diff?: BaseDimensions;
         };
     };
     misMatchPercentage: string;
@@ -69,9 +70,9 @@ export function createCompareReport({
         }
         fileName: string;
         size: {
-            actual: { width: number; height: number };
-            baseline: { width: number; height: number };
-            diff?: { width: number; height: number };
+            actual: BaseDimensions;
+            baseline: BaseDimensions;
+            diff?: BaseDimensions;
         };
         testContext: TestContext
 }) {

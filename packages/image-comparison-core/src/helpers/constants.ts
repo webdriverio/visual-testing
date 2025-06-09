@@ -1,6 +1,6 @@
 import type { IosOffsets } from './constants.interfaces.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
-import type { TestContext } from '../commands/check.interfaces.js'
+import type { TestContext } from 'src/methods/compareReport.interfaces.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 
 export const DEFAULT_COMPARE_OPTIONS = {

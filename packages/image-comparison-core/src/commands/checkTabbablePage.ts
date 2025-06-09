@@ -1,7 +1,7 @@
 import drawTabbableOnCanvas from '../clientSideScripts/drawTabbableOnCanvas.js'
 import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 import checkFullPageScreen from './checkFullPageScreen.js'
-import type { ImageCompareResult } from 'src/index.js'
+import type { ImageCompareResult } from '../index.js'
 import type { InternalCheckTabbablePageMethodOptions } from './check.interfaces.js'
 
 /**

@@ -1,7 +1,8 @@
 import type { RectanglesOutput } from './rectangles.interfaces.js'
-import type { Folders } from '../base.interfaces.js'
-import type { TestContext } from 'src/commands/check.interfaces.js'
+import type { BaseBoundingBox, BaseCoordinates, BaseDeviceInfo, BaseDimensions, BaseImageCompareOptions, BaseMobileBlockOutOptions, Folders } from '../base.interfaces.js'
+import type { TestContext } from './compareReport.interfaces.js'
 import type { DeviceRectangles } from './rectangles.interfaces.js'
+import type { WicElement } from 'src/index.js'
 
 export interface ResizeDimensions {
     /** The bottom margin */
@@ -47,35 +48,13 @@ export interface ImageCompareOptions {
     isAndroidNativeWebScreenshot: boolean;
 }
 
-export interface WicImageCompareOptions {
-    /** Block out the side bar yes or no */
-    blockOutSideBar: boolean;
-    /** Block out the status bar yes or no */
-    blockOutStatusBar: boolean;
-    /** Block out the tool bar yes or no */
-    blockOutToolBar: boolean;
+export interface WicImageCompareOptions extends BaseImageCompareOptions, BaseMobileBlockOutOptions {
     /** Create a json file with the diff data, this can be used to create a custom report. */
     createJsonReportFiles: boolean;
     /** The proximity of the diff pixels to determine if a diff pixel is part of a group,
      * the higher the number the more pixels will be grouped, the lower the number the less pixels will be grouped due to accuracy.
      * Default is 5 pixels */
     diffPixelBoundingBoxProximity: number;
-    /** Compare images and discard alpha */
-    ignoreAlpha: boolean;
-    /** Compare images an discard anti aliasing */
-    ignoreAntialiasing: boolean;
-    /** Even though the images are in colour, the comparison wil compare 2 black/white images */
-    ignoreColors: boolean;
-    /** Compare images and compare with red = 16, green = 16, blue = 16,alpha = 16, minBrightness=16, maxBrightness=240 */
-    ignoreLess: boolean;
-    /** Compare images and compare with red = 0, green = 0, blue = 0, alpha = 0, minBrightness=0, maxBrightness=255 */
-    ignoreNothing: boolean;
-    /** Default false. If true, return percentage will be like 0.12345678, default is 0.12 */
-    rawMisMatchPercentage: boolean;
-    /** Return all the compare data object */
-    returnAllCompareData: boolean;
-    /** Allowable value of misMatchPercentage that prevents saving image with differences */
-    saveAboveTolerance: number;
 }
 
 export interface DefaultImageCompareCompareOptions extends MethodImageCompareCompareOptions {
@@ -94,27 +73,12 @@ export interface ScreenMethodImageCompareCompareOptions
     blockOutToolBar?: boolean;
 }
 
-export interface MethodImageCompareCompareOptions {
+export interface MethodImageCompareCompareOptions extends BaseImageCompareOptions {
     /** Block out array with x, y, width and height values */
     blockOut?: RectanglesOutput[];
-    /** Compare images and discard alpha */
-    ignoreAlpha?: boolean;
-    /** Compare images an discard anti aliasing */
-    ignoreAntialiasing?: boolean;
-    /** Even though the images are in colour, the comparison wil compare 2 black/white images */
-    ignoreColors?: boolean;
-    /** Compare images and compare with red = 16, green = 16, blue = 16,alpha = 16, minBrightness=16, maxBrightness=240 */
-    ignoreLess?: boolean;
-    /** Compare images and compare with red = 0, green = 0, blue = 0, alpha = 0, minBrightness=0, maxBrightness=255 */
-    ignoreNothing?: boolean;
     /** Default false. If true, return percentage will be like 0.12345678, default is 0.12 */
     rawMisMatchPercentage?: boolean;
-    /** Return all the compare data object */
-    returnAllCompareData?: boolean;
-    /** Allowable value of misMatchPercentage that prevents saving image with differences */
-    saveAboveTolerance?: number;
-    /** Scale images to same size before comparison */
-    scaleImagesToSameSize?: boolean;
+
 }
 
 export interface ImageCompareFolderOptions extends Folders {
@@ -146,39 +110,19 @@ export interface ImageCompareResult {
     misMatchPercentage: number;
 }
 
-export interface BoundingBox {
-    /** The bottom coordinate */
-    bottom: number;
-    /** The right coordinate */
-    right: number;
-    /** The left coordinate */
-    left: number;
-    /** The top coordinate */
-    top: number;
-}
+export interface BoundingBox extends BaseBoundingBox {}
 
-export interface Pixel {
-    /** The x coordinate */
-    x: number;
-    /** The y coordinate */
-    y: number;
-}
+export interface Pixel extends BaseCoordinates {}
 
 export interface IgnoreBoxes extends BoundingBox { }
 
-export interface CroppedBase64Image {
+export interface CroppedBase64Image extends Partial<BaseDeviceInfo>{
     /** Whether to add iOS bezel corners */
     addIOSBezelCorners: boolean;
     /** The base64 image */
     base64Image: string;
-    /** The name of the device */
-    deviceName: string;
-    /** The device pixel ratio */
-    devicePixelRatio: number;
     /** Whether this is a webdriver element screenshot */
     isWebDriverElementScreenshot?: boolean;
-    /** Whether this is an iOS device */
-    isIOS: boolean;
     /** Whether the image is in landscape mode */
     isLandscape: boolean;
     /** The rectangles */
@@ -194,7 +138,7 @@ export interface RotateBase64ImageOptions {
     degrees: number;
 }
 
-export interface CropAndConvertToDataURL {
+export interface CropAndConvertToDataURL extends BaseDimensions {
     /** Whether to add iOS bezel corners */
     addIOSBezelCorners: boolean,
     /** The base64 image */
@@ -203,8 +147,6 @@ export interface CropAndConvertToDataURL {
     deviceName: string,
     /** The device pixel ratio */
     devicePixelRatio: number,
-    /** The height of the image */
-    height: number,
     /** Whether this is an iOS device */
     isIOS: boolean,
     /** Whether the image is in landscape mode */
@@ -213,8 +155,6 @@ export interface CropAndConvertToDataURL {
     sourceX: number,
     /** The source y coordinate */
     sourceY: number,
-    /** The width of the image */
-    width: number,
 }
 
 export interface AdjustedAxis {
@@ -263,20 +203,37 @@ export interface RotatedImage {
     base64Image:string,
 }
 
-export interface HandleIOSBezelCorners {
+export interface HandleIOSBezelCorners extends BaseDimensions {
     /** Whether to add iOS bezel corners */
     addIOSBezelCorners: boolean,
     /** The name of the device */
     deviceName: string,
     /** The device pixel ratio */
     devicePixelRatio: number,
-    /** The height of the image */
-    height: number,
     /** The image */
     image: any, // There is no type for Jimp image
     /** Whether the image is in landscape mode */
     isLandscape: boolean,
-    /** The width of the image */
-    width: number,
 }
 
+export interface MakeFullPageBase64ImageOptions {
+    /** The device pixel ratio */
+    devicePixelRatio: number;
+    /** Whether the image is in landscape mode */
+    isLandscape: boolean;
+}
+
+export interface TakeResizedBase64ScreenshotOptions {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
+    /** The element to take the screenshot of */
+    element: WicElement;
+    /** The device pixel ratio */
+    devicePixelRatio: number;
+    /** Whether the image is in landscape mode */
+    isIOS: boolean;
+    /** The resize dimensions */
+    resizeDimensions: ResizeDimensions;
+}
+
+export interface TakeBase64ElementScreenshotOptions extends TakeResizedBase64ScreenshotOptions {}

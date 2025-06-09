@@ -3,13 +3,16 @@ import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN } from './constants.js'
 import { mkdirSync } from 'node:fs'
 import type {
+    ExecuteNativeClickOptions,
     FormatFileDefaults,
     FormatFileNameOptions,
     GetAddressBarShadowPaddingOptions,
     GetAndCreatePathOptions,
+    GetIosBezelImageNames,
     GetMobileScreenSizeOptions,
     GetMobileViewPortPositionOptions,
     GetToolBarShadowPaddingOptions,
+    LoadBase64HtmlOptions,
     ScreenshotSize,
 } from './utils.interfaces.js'
 import type { ClassOptions, CompareOptions } from './options.interfaces.js'
@@ -17,6 +20,7 @@ import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
+import type { BaseDimensions } from '../base.interfaces.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:utils')
 
@@ -174,7 +178,7 @@ export function getBase64ScreenshotSize(screenshot: string, devicePixelRation = 
 /**
  * Get the device pixel ratio
  */
-export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {height:number, width: number}): number {
+export function getDevicePixelRatio(screenshot: string, deviceScreenSize: BaseDimensions): number {
     const screenshotSize = getBase64ScreenshotSize(screenshot)
     const devicePixelRatio = screenshotSize.width / deviceScreenSize.width
 
@@ -184,7 +188,7 @@ export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {heigh
 /**
  * Get the iOS bezel image names
  */
-export function getIosBezelImageNames(normalizedDeviceName: string): { topImageName: string; bottomImageName: string } {
+export function getIosBezelImageNames(normalizedDeviceName: string): GetIosBezelImageNames {
     let topImageName, bottomImageName
 
     switch (normalizedDeviceName) {
@@ -311,7 +315,7 @@ export function isStorybook(){
 /**
  * Check if we want to update baseline images
  */
-export function updateVisualBaseline(): boolean {
+export function updateVisualBaseline() {
     return process.argv.includes('--update-visual-baseline')
 }
 /**
@@ -359,16 +363,16 @@ export async function getMobileScreenSize({
     browserInstance,
     isIOS,
     isNativeContext,
-}: GetMobileScreenSizeOptions): Promise<{ height: number; width: number }> {
+}: GetMobileScreenSizeOptions): Promise<BaseDimensions> {
     let height = 0, width = 0
     const isLandscapeByOrientation = (await browserInstance.getOrientation()).toUpperCase() === 'LANDSCAPE'
 
     try {
         if (isIOS) {
             ({ screenSize: { height, width } } = (await browserInstance.execute('mobile: deviceScreenInfo')) as {
-                statusBarSize: { width: number, height: number },
+                statusBarSize: BaseDimensions,
                 scale: number,
-                screenSize: { width: number, height: number },
+                screenSize: BaseDimensions,
             })
             // It's Android
         } else {
@@ -409,7 +413,7 @@ export async function getMobileScreenSize({
 /**
  * Load a base64 HTML page in the browser
  */
-export async function loadBase64Html({ browserInstance, isIOS }: {browserInstance: WebdriverIO.Browser, isIOS: boolean}): Promise<void> {
+export async function loadBase64Html({ browserInstance, isIOS }: LoadBase64HtmlOptions): Promise<void> {
     const htmlContent = `
         <html>
         <head>
@@ -448,7 +452,7 @@ export async function loadBase64Html({ browserInstance, isIOS }: {browserInstanc
 /**
  * Execute a native click
  */
-export async function executeNativeClick({ browserInstance, isIOS, x, y }:{ browserInstance: WebdriverIO.Browser, isIOS:boolean, x: number, y: number}): Promise<void> {
+export async function executeNativeClick({ browserInstance, isIOS, x, y }: ExecuteNativeClickOptions): Promise<void> {
     if (isIOS) {
         return browserInstance.execute('mobile: tap', { x, y })
     }

@@ -1,3 +1,7 @@
+import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
+import type { BaseDimensions, BaseRectangle } from '../base.interfaces.js'
+import type { InstanceData } from './instanceData.interfaces.js'
+
 export interface RectanglesOptions {
     /** The device pixel ratio of the screen / device */
     devicePixelRatio: number;
@@ -35,16 +39,7 @@ export interface ScreenRectanglesOptions extends RectanglesOptions {
     isLandscape: boolean;
 }
 
-export interface RectanglesOutput {
-    /** The height of the rectangle */
-    height: number;
-    /** The width of the rectangle */
-    width: number;
-    /** The x-coordinate of the rectangle */
-    x: number;
-    /** The y-coordinate of the rectangle */
-    y: number;
-}
+export interface RectanglesOutput extends BaseRectangle {}
 
 export type DeviceRectangles = {
     /** The bottom bar rectangle */
@@ -56,7 +51,7 @@ export type DeviceRectangles = {
     /** The right side padding rectangle */
     rightSidePadding: RectanglesOutput,
     /** The screen size dimensions */
-    screenSize: { height: number, width: number},
+    screenSize: BaseDimensions,
     /** The status bar and address bar rectangle */
     statusBarAndAddressBar: RectanglesOutput,
     /** The status bar rectangle */
@@ -93,4 +88,17 @@ export interface ElementRectangles {
     options: ElementRectanglesOptions;
     /** The element to be compared */
     element: any;
+}
+
+export interface SplitIgnores {
+    /** The elements to be ignored */
+    elements: WebdriverIO.Element[];
+    /** The regions to be ignored */
+    regions: RectanglesOutput[];
+}
+
+export interface DetermineDeviceBlockOutsOptions {
+    isAndroid: boolean,
+    screenCompareOptions: CheckScreenMethodOptions,
+    instanceData: InstanceData,
 }

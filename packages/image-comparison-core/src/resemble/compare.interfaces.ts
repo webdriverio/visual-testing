@@ -1,3 +1,5 @@
+import type { BaseBoundingBox, BaseCoordinates, BaseDimensions } from '../base.interfaces.js'
+
 export interface CompareData {
     /** The mismatch percentage like 0.12345567 */
     rawMisMatchPercentage: number;
@@ -6,25 +8,11 @@ export interface CompareData {
     /** The image buffer */
     getBuffer: () => Buffer;
     /** The bounds of the diff area */
-    diffBounds: {
-        /** Top boundary of the diff area */
-        top: number;
-        /** Left boundary of the diff area */
-        left: number;
-        /** Bottom boundary of the diff area */
-        bottom: number;
-        /** Right boundary of the diff area */
-        right: number;
-    };
+    diffBounds: BaseBoundingBox;
     /** The analysis time in milliseconds */
     analysisTime: number;
     /** The diff pixels location(s) and color(s) */
-    diffPixels: {
-            /** X coordinate of the diff pixel */
-            x: number;
-            /** Y coordinate of the diff pixel */
-            y: number;
-        }[];
+        diffPixels: BaseCoordinates[];
 
 }
 
@@ -138,10 +126,7 @@ export interface ComparisonResult {
     /**
      * The difference in width and height between the dimensions of the two compared images
      */
-    dimensionDifference: {
-        width: number;
-        height: number;
-    };
+    dimensionDifference: BaseDimensions;
 
     /**
      * The percentage of pixels which do not match between the images

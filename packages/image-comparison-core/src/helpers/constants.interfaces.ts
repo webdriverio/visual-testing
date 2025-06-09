@@ -1,3 +1,5 @@
+import type { BaseRectangle } from '../base.interfaces.js'
+
 export interface AndroidOffsets {
     [key: number]: {
         // The height of the status bar
@@ -25,12 +27,7 @@ export type IosOffsets = {
         [key: number]: {
             [key in OrientationEnum]: {
                 ADDRESS_BAR: number;
-                HOME_BAR: {
-                    x: number;
-                    y: number;
-                    height: number;
-                    width: number;
-                };
+                HOME_BAR: BaseRectangle;
                 SAFE_AREA: number;
                 STATUS_BAR: number;
             };

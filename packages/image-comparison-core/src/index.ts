@@ -28,7 +28,7 @@ export type {
     CheckFullPageMethodOptions,
     SaveFullPageMethodOptions,
 } from './commands/fullPage.interfaces.js'
-export type { TestContext } from './commands/check.interfaces.js'
+export type { TestContext } from './methods/compareReport.interfaces.js'
 export type { Folders } from './base.interfaces.js'
 export type { InstanceData } from './methods/instanceData.interfaces.js'
 export type { DeviceRectangles } from './methods/rectangles.interfaces.js'
