@@ -42,5 +42,8 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "webdriverio": "^9.15.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
