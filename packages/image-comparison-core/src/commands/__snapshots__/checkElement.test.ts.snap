@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`checkElement > should call checkAppElement when isNativeContext is true 1`] = `
+{
+  "fileName": "test-app-element.png",
+  "isAboveTolerance": false,
+  "isExactSameImage": true,
+  "isNewBaseline": false,
+  "misMatchPercentage": 0,
+}
+`;
+
+exports[`checkElement > should call checkWebElement 1`] = `
+{
+  "fileName": "test-web-element.png",
+  "isAboveTolerance": false,
+  "isExactSameImage": true,
+  "isNewBaseline": false,
+  "misMatchPercentage": 0,
+}
+`;

@@ -295,4 +295,206 @@ describe('checkAppScreen', () => {
             isNativeContext: true,
         })
     })
+
+    it('should merge compare options correctly', async () => {
+        const options = {
+            ...baseOptions,
+            checkScreenOptions: {
+                ...baseOptions.checkScreenOptions,
+                wic: {
+                    ...baseOptions.checkScreenOptions.wic,
+                    compareOptions: {
+                        ...baseOptions.checkScreenOptions.wic.compareOptions,
+                        ignoreAlpha: true,
+                        ignoreAntialiasing: true,
+                        ignoreColors: true,
+                    }
+                },
+                method: {
+                    ...baseOptions.checkScreenOptions.method,
+                    ignoreAlpha: false,
+                    ignoreAntialiasing: false,
+                    ignoreColors: false,
+                }
+            }
+        }
+
+        await checkAppScreen(options)
+
+        expect(executeImageCompareSpy).toHaveBeenCalledWith({
+            options: expect.objectContaining({
+                compareOptions: {
+                    wic: expect.objectContaining({
+                        ignoreAlpha: true,
+                        ignoreAntialiasing: true,
+                        ignoreColors: true,
+                    }),
+                    method: expect.objectContaining({
+                        ignoreAlpha: false,
+                        ignoreAntialiasing: false,
+                        ignoreColors: false,
+                    })
+                }
+            }),
+            testContext: expect.any(Object),
+            isViewPortScreenshot: true,
+            isNativeContext: true,
+        })
+    })
+
+    it('should spread hideElements and removeElements into ignore array', async () => {
+        const mockElement1 = { elementId: 'hide-element', selector: '#hide' } as any
+        const mockElement2 = { elementId: 'remove-element', selector: '#remove' } as any
+        const mockElement3 = { elementId: 'ignore-element', selector: '#ignore' } as any
+
+        const options = {
+            ...baseOptions,
+            checkScreenOptions: {
+                ...baseOptions.checkScreenOptions,
+                method: {
+                    ...baseOptions.checkScreenOptions.method,
+                    hideElements: [mockElement1],
+                    removeElements: [mockElement2],
+                    ignore: [mockElement3]
+                }
+            }
+        }
+
+        await checkAppScreen(options)
+
+        expect(determineIgnoreRegionsSpy).toHaveBeenCalledWith(
+            options.browserInstance,
+            [mockElement3, mockElement1, mockElement2]
+        )
+
+        expect(executeImageCompareSpy).toHaveBeenCalledWith({
+            options: expect.objectContaining({
+                ignoreRegions: [
+                    { x: 0, y: 0, width: 100, height: 100 },
+                    { x: 0, y: 0, width: 50, height: 50 }
+                ]
+            }),
+            testContext: expect.any(Object),
+            isViewPortScreenshot: true,
+            isNativeContext: true,
+        })
+    })
+
+    it('should create screenCompareOptions with correct structure', async () => {
+        const mockElement1 = { elementId: 'hide-element', selector: '#hide' } as any
+        const mockElement2 = { elementId: 'remove-element', selector: '#remove' } as any
+        const mockElement3 = { elementId: 'ignore-element', selector: '#ignore' } as any
+
+        const options = {
+            ...baseOptions,
+            checkScreenOptions: {
+                ...baseOptions.checkScreenOptions,
+                wic: {
+                    ...baseOptions.checkScreenOptions.wic,
+                    compareOptions: {
+                        ...baseOptions.checkScreenOptions.wic.compareOptions,
+                        ignoreAlpha: true,
+                        ignoreAntialiasing: true,
+                        ignoreColors: true,
+                    }
+                },
+                method: {
+                    hideElements: [mockElement1],
+                    removeElements: [mockElement2],
+                    ignore: [mockElement3],
+                    ignoreAlpha: false,
+                    ignoreAntialiasing: false,
+                    ignoreColors: false,
+                }
+            }
+        }
+
+        await checkAppScreen(options)
+
+        expect(determineIgnoreRegionsSpy).toHaveBeenCalledWith(
+            options.browserInstance,
+            [mockElement3, mockElement1, mockElement2]
+        )
+
+        expect(determineDeviceBlockOutsSpy).toHaveBeenCalledWith({
+            isAndroid: false,
+            screenCompareOptions: expect.objectContaining({
+                hideElements: [mockElement1],
+                removeElements: [mockElement2],
+                ignore: [mockElement3, mockElement1, mockElement2],
+                ignoreAlpha: false,
+                ignoreAntialiasing: false,
+                ignoreColors: false,
+            }),
+            instanceData: options.instanceData
+        })
+    })
+
+    it('should spread wic.compareOptions and method options into screenCompareOptions', async () => {
+        const options = {
+            ...baseOptions,
+            checkScreenOptions: {
+                ...baseOptions.checkScreenOptions,
+                wic: {
+                    ...baseOptions.checkScreenOptions.wic,
+                    compareOptions: {
+                        ignoreAlpha: true,
+                        ignoreAntialiasing: true,
+                        ignoreColors: true,
+                        blockOutSideBar: true,
+                        blockOutStatusBar: true,
+                        blockOutToolBar: true,
+                        createJsonReportFiles: true,
+                        diffPixelBoundingBoxProximity: 10,
+                        ignoreLess: true,
+                        ignoreNothing: true,
+                        rawMisMatchPercentage: true,
+                        returnAllCompareData: true,
+                        saveAboveTolerance: 1,
+                        scaleImagesToSameSize: true,
+                    }
+                },
+                method: {
+                    ignoreAlpha: false,
+                    ignoreAntialiasing: false,
+                    ignoreColors: false,
+                    blockOutSideBar: false,
+                    blockOutStatusBar: false,
+                    blockOutToolBar: false,
+                    createJsonReportFiles: false,
+                    diffPixelBoundingBoxProximity: 5,
+                    ignoreLess: false,
+                    ignoreNothing: false,
+                    rawMisMatchPercentage: false,
+                    returnAllCompareData: false,
+                    saveAboveTolerance: 0,
+                    scaleImagesToSameSize: false,
+                }
+            }
+        }
+
+        await checkAppScreen(options)
+
+        expect(determineDeviceBlockOutsSpy).toHaveBeenCalledWith({
+            isAndroid: false,
+            screenCompareOptions: expect.objectContaining({
+                // Method options should override wic options
+                ignoreAlpha: false,
+                ignoreAntialiasing: false,
+                ignoreColors: false,
+                blockOutSideBar: false,
+                blockOutStatusBar: false,
+                blockOutToolBar: false,
+                createJsonReportFiles: false,
+                diffPixelBoundingBoxProximity: 5,
+                ignoreLess: false,
+                ignoreNothing: false,
+                rawMisMatchPercentage: false,
+                returnAllCompareData: false,
+                saveAboveTolerance: 0,
+                scaleImagesToSameSize: false,
+            }),
+            instanceData: options.instanceData
+        })
+    })
 })
