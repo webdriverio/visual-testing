@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`checkAppScreen > should execute checkAppScreen with basic options 1`] = `
+{
+  "fileName": "test-result.png",
+  "isAboveTolerance": false,
+  "isExactSameImage": true,
+  "isNewBaseline": false,
+  "misMatchPercentage": 0,
+}
+`;

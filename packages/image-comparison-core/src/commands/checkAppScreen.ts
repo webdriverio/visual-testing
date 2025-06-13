@@ -39,7 +39,9 @@ export default async function checkAppScreen(
         ]
 
     }
-    const { isAndroid, isMobile } = instanceData
+    const { isAndroid, isMobile, deviceRectangles, browserName, deviceName, nativeWebScreenshot: isAndroidNativeWebScreenshot } = instanceData
+    const { actualFolder, baselineFolder, diffFolder } = folders
+    const { autoSaveBaseline, savePerInstance, compareOptions } = checkScreenOptions.wic
 
     // 2. Take the actual screenshot and retrieve the needed data
     const { devicePixelRatio, fileName } = await saveAppScreen({
@@ -64,25 +66,25 @@ export default async function checkAppScreen(
 
     const executeCompareOptions: ImageCompareOptions = {
         compareOptions: {
-            wic: checkScreenOptions.wic.compareOptions,
+            wic: compareOptions,
             method: methodCompareOptions,
         },
         devicePixelRatio,
-        deviceRectangles: instanceData.deviceRectangles,
+        deviceRectangles,
         fileName,
         folderOptions: {
-            autoSaveBaseline: checkScreenOptions.wic.autoSaveBaseline,
-            actualFolder: folders.actualFolder,
-            baselineFolder: folders.baselineFolder,
-            diffFolder: folders.diffFolder,
-            browserName: instanceData.browserName,
-            deviceName: instanceData.deviceName,
+            autoSaveBaseline,
+            actualFolder,
+            baselineFolder,
+            diffFolder,
+            browserName,
+            deviceName,
             isMobile,
-            savePerInstance: checkScreenOptions.wic.savePerInstance,
+            savePerInstance,
         },
         ignoreRegions: [...ignoreRegions, ...deviceIgnoreRegions],
         isAndroid,
-        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
+        isAndroidNativeWebScreenshot,
     }
 
     // 4b Now execute the compare and return the data
