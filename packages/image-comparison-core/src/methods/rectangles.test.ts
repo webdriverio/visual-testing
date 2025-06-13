@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { join } from 'node:path'
 import type { ChainablePromiseElement } from 'webdriverio'
 import { determineElementRectangles, determineScreenRectangles, determineStatusAddressToolBarRectangles, determineIgnoreRegions } from './rectangles.js'
-import { IMAGE_STRING } from '../mocks/mocks.js'
+import { IMAGE_STRING } from '../mocks/image.js'
 import type { ElementRectanglesOptions, ScreenRectanglesOptions, StatusAddressToolBarRectanglesOptions, DeviceRectangles } from './rectangles.interfaces.js'
 
 vi.mock('@wdio/globals', () => ({

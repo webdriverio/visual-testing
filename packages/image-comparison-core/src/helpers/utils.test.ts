@@ -38,7 +38,7 @@ import {
     updateVisualBaseline,
 } from './utils.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
-import { IMAGE_STRING } from '../mocks/mocks.js'
+import { IMAGE_STRING } from '../mocks/image.js'
 import { DEVICE_RECTANGLES } from './constants.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'

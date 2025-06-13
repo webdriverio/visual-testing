@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { getBase64FullPageScreenshotsData, takeBase64BiDiScreenshot } from './screenshots.js'
 import type { FullPageScreenshotDataOptions } from './screenshots.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
-import { IMAGE_STRING } from '../mocks/mocks.js'
+import { IMAGE_STRING } from '../mocks/image.js'
 import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
