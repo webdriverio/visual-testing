@@ -161,15 +161,7 @@ describe('checkAppElement', () => {
         const result = await checkAppElement(baseOptions)
 
         expect(result).toMatchSnapshot()
-        expect(saveAppElementSpy).toHaveBeenCalledWith({
-            browserInstance: baseOptions.browserInstance,
-            element: baseOptions.element,
-            folders: baseOptions.folders,
-            instanceData: baseOptions.instanceData,
-            isNativeContext: true,
-            saveElementOptions: baseOptions.checkElementOptions,
-            tag: 'test-element',
-        })
+        expect(saveAppElementSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should handle Android device correctly', async () => {
@@ -198,12 +190,7 @@ describe('checkAppElement', () => {
 
         await checkAppElement(options)
 
-        expect(executeImageCompareSpy).toHaveBeenCalledWith({
-            options: expect.objectContaining({ isAndroid: true }),
-            testContext: expect.any(Object),
-            isViewPortScreenshot: false,
-            isNativeContext: true,
-        })
+        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should always disable block out options for element screenshots', async () => {
@@ -225,20 +212,6 @@ describe('checkAppElement', () => {
 
         await checkAppElement(options)
 
-        expect(executeImageCompareSpy).toHaveBeenCalledWith({
-            options: expect.objectContaining({
-                compareOptions: {
-                    wic: expect.objectContaining({
-                        blockOutSideBar: false,
-                        blockOutStatusBar: false,
-                        blockOutToolBar: false,
-                    }),
-                    method: expect.any(Object),
-                },
-            }),
-            testContext: expect.any(Object),
-            isViewPortScreenshot: false,
-            isNativeContext: true,
-        })
+        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 })

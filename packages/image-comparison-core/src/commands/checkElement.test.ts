@@ -62,7 +62,7 @@ describe('checkElement', () => {
         const result = await checkElement(baseOptions)
 
         expect(result).toMatchSnapshot()
-        expect(checkAppElementSpy).toHaveBeenCalledWith(baseOptions)
+        expect(checkAppElementSpy.mock.calls[0]).toMatchSnapshot()
         expect(checkWebElementSpy).not.toHaveBeenCalled()
     })
 
@@ -75,10 +75,7 @@ describe('checkElement', () => {
         const result = await checkElement(options)
 
         expect(result).toMatchSnapshot()
-        expect(checkWebElementSpy).toHaveBeenCalledWith({
-            ...options,
-            isNativeContext: undefined
-        })
+        expect(checkWebElementSpy.mock.calls[0]).toMatchSnapshot()
         expect(checkAppElementSpy).not.toHaveBeenCalled()
     })
 })

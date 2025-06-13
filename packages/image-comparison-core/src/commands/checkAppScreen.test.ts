@@ -99,20 +99,7 @@ describe('checkAppScreen', () => {
         const result = await checkAppScreen(baseOptions)
 
         expect(result).toMatchSnapshot()
-        expect(saveAppScreenSpy).toHaveBeenCalledWith({
-            browserInstance: baseOptions.browserInstance,
-            folders: baseOptions.folders,
-            instanceData: baseOptions.instanceData,
-            isNativeContext: true,
-            saveScreenOptions: {
-                wic: baseOptions.checkScreenOptions.wic,
-                method: {
-                    hideElements: [],
-                    removeElements: []
-                }
-            },
-            tag: 'test-screen',
-        })
+        expect(saveAppScreenSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should handle ignore regions and device blockouts', async () => {
@@ -132,30 +119,9 @@ describe('checkAppScreen', () => {
 
         await checkAppScreen(options)
 
-        expect(determineIgnoreRegionsSpy).toHaveBeenCalledWith(
-            options.browserInstance,
-            [mockElement, mockElement, mockElement]
-        )
-
-        expect(determineDeviceBlockOutsSpy).toHaveBeenCalledWith({
-            isAndroid: false,
-            screenCompareOptions: expect.objectContaining({
-                ignore: [mockElement, mockElement, mockElement]
-            }),
-            instanceData: options.instanceData
-        })
-
-        expect(executeImageCompareSpy).toHaveBeenCalledWith({
-            options: expect.objectContaining({
-                ignoreRegions: [
-                    { x: 0, y: 0, width: 100, height: 100 },
-                    { x: 0, y: 0, width: 50, height: 50 }
-                ]
-            }),
-            testContext: expect.any(Object),
-            isViewPortScreenshot: true,
-            isNativeContext: true,
-        })
+        expect(determineIgnoreRegionsSpy.mock.calls[0]).toMatchSnapshot()
+        expect(determineDeviceBlockOutsSpy.mock.calls[0]).toMatchSnapshot()
+        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should handle Android device correctly', async () => {
@@ -184,24 +150,8 @@ describe('checkAppScreen', () => {
 
         await checkAppScreen(options)
 
-        expect(determineDeviceBlockOutsSpy).toHaveBeenCalledWith({
-            isAndroid: true,
-            screenCompareOptions: expect.any(Object),
-            instanceData: expect.objectContaining({
-                isAndroid: true,
-                platformName: 'Android'
-            })
-        })
-
-        expect(executeImageCompareSpy).toHaveBeenCalledWith({
-            options: expect.objectContaining({
-                isAndroid: true,
-                isAndroidNativeWebScreenshot: false
-            }),
-            testContext: expect.any(Object),
-            isViewPortScreenshot: true,
-            isNativeContext: true,
-        })
+        expect(determineDeviceBlockOutsSpy.mock.calls[0]).toMatchSnapshot()
+        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should merge compare options correctly', async () => {
@@ -229,25 +179,7 @@ describe('checkAppScreen', () => {
 
         await checkAppScreen(options)
 
-        expect(executeImageCompareSpy).toHaveBeenCalledWith({
-            options: expect.objectContaining({
-                compareOptions: {
-                    wic: expect.objectContaining({
-                        ignoreAlpha: true,
-                        ignoreAntialiasing: true,
-                        ignoreColors: true,
-                    }),
-                    method: expect.objectContaining({
-                        ignoreAlpha: false,
-                        ignoreAntialiasing: false,
-                        ignoreColors: false,
-                    })
-                }
-            }),
-            testContext: expect.any(Object),
-            isViewPortScreenshot: true,
-            isNativeContext: true,
-        })
+        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should spread hideElements and removeElements into ignore array', async () => {
@@ -270,22 +202,8 @@ describe('checkAppScreen', () => {
 
         await checkAppScreen(options)
 
-        expect(determineIgnoreRegionsSpy).toHaveBeenCalledWith(
-            options.browserInstance,
-            [mockElement3, mockElement1, mockElement2]
-        )
-
-        expect(executeImageCompareSpy).toHaveBeenCalledWith({
-            options: expect.objectContaining({
-                ignoreRegions: [
-                    { x: 0, y: 0, width: 100, height: 100 },
-                    { x: 0, y: 0, width: 50, height: 50 }
-                ]
-            }),
-            testContext: expect.any(Object),
-            isViewPortScreenshot: true,
-            isNativeContext: true,
-        })
+        expect(determineIgnoreRegionsSpy.mock.calls[0]).toMatchSnapshot()
+        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should create screenCompareOptions with correct structure', async () => {
@@ -319,23 +237,8 @@ describe('checkAppScreen', () => {
 
         await checkAppScreen(options)
 
-        expect(determineIgnoreRegionsSpy).toHaveBeenCalledWith(
-            options.browserInstance,
-            [mockElement3, mockElement1, mockElement2]
-        )
-
-        expect(determineDeviceBlockOutsSpy).toHaveBeenCalledWith({
-            isAndroid: false,
-            screenCompareOptions: expect.objectContaining({
-                hideElements: [mockElement1],
-                removeElements: [mockElement2],
-                ignore: [mockElement3, mockElement1, mockElement2],
-                ignoreAlpha: false,
-                ignoreAntialiasing: false,
-                ignoreColors: false,
-            }),
-            instanceData: options.instanceData
-        })
+        expect(determineIgnoreRegionsSpy.mock.calls[0]).toMatchSnapshot()
+        expect(determineDeviceBlockOutsSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should spread wic.compareOptions and method options into screenCompareOptions', async () => {
@@ -383,26 +286,6 @@ describe('checkAppScreen', () => {
 
         await checkAppScreen(options)
 
-        expect(determineDeviceBlockOutsSpy).toHaveBeenCalledWith({
-            isAndroid: false,
-            screenCompareOptions: expect.objectContaining({
-                // Method options should override wic options
-                ignoreAlpha: false,
-                ignoreAntialiasing: false,
-                ignoreColors: false,
-                blockOutSideBar: false,
-                blockOutStatusBar: false,
-                blockOutToolBar: false,
-                createJsonReportFiles: false,
-                diffPixelBoundingBoxProximity: 5,
-                ignoreLess: false,
-                ignoreNothing: false,
-                rawMisMatchPercentage: false,
-                returnAllCompareData: false,
-                saveAboveTolerance: 0,
-                scaleImagesToSameSize: false,
-            }),
-            instanceData: options.instanceData
-        })
+        expect(determineDeviceBlockOutsSpy.mock.calls[0]).toMatchSnapshot()
     })
 })
