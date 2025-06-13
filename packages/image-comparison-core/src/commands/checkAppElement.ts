@@ -21,7 +21,17 @@ export default async function checkAppElement(
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1. Set some vars
-    const { isMobile } = instanceData
+    const {
+        browserName,
+        deviceName,
+        deviceRectangles,
+        isAndroid,
+        isMobile,
+        nativeWebScreenshot: isAndroidNativeWebScreenshot,
+        platformName,
+    } = instanceData
+    const { autoSaveBaseline, savePerInstance, isHybridApp } = checkElementOptions.wic
+    const { actualFolder, baselineFolder, diffFolder } = folders
 
     // 2. Save the element and return the data
     const { devicePixelRatio, fileName } = await saveAppElement({
@@ -50,22 +60,22 @@ export default async function checkAppElement(
             method: compareOptions,
         },
         devicePixelRatio,
-        deviceRectangles: instanceData.deviceRectangles,
+        deviceRectangles,
         fileName,
         folderOptions: {
-            autoSaveBaseline: checkElementOptions.wic.autoSaveBaseline,
-            actualFolder: folders.actualFolder,
-            baselineFolder: folders.baselineFolder,
-            diffFolder: folders.diffFolder,
-            browserName: instanceData.browserName,
-            deviceName: instanceData.deviceName,
+            autoSaveBaseline,
+            actualFolder,
+            baselineFolder,
+            diffFolder,
+            browserName,
+            deviceName,
             isMobile,
-            savePerInstance: checkElementOptions.wic.savePerInstance,
+            savePerInstance,
         },
-        isAndroid: browserInstance.isAndroid,
-        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        isHybridApp: checkElementOptions.wic.isHybridApp,
-        platformName: instanceData.platformName,
+        isAndroid,
+        isAndroidNativeWebScreenshot,
+        isHybridApp,
+        platformName,
     }
 
     // 3b Now execute the compare and return the data
