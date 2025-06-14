@@ -4,7 +4,7 @@ import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
 
 vi.mock('../methods/images.js', () => ({
-    takeBase64ElementScreenshot: vi.fn().mockResolvedValue('base64-image-data')
+    takeBase64ElementScreenshot: vi.fn().mockResolvedValue('base64-screenshot-data')
 }))
 vi.mock('../helpers/afterScreenshot.js', () => ({
     default: vi.fn().mockResolvedValue({
@@ -18,17 +18,30 @@ describe('saveAppElement', () => {
     let afterScreenshotSpy: ReturnType<typeof vi.fn>
 
     const baseOptions: InternalSaveElementMethodOptions = {
-        browserInstance: { isAndroid: false, isMobile: false } as any,
-        element: { elementId: 'test-element' } as any,
-        folders: BASE_CHECK_OPTIONS.folders,
-        instanceData: BASE_CHECK_OPTIONS.instanceData,
-        isNativeContext: true,
+        element: {
+            elementId: 'test-element',
+            selector: '#test-element',
+            isDisplayed: vi.fn().mockResolvedValue(true),
+            getSize: vi.fn().mockResolvedValue({ width: 100, height: 100 }),
+            getLocation: vi.fn().mockResolvedValue({ x: 0, y: 0 })
+        } as any,
         saveElementOptions: {
             wic: BASE_CHECK_OPTIONS.wic,
             method: {
-                resizeDimensions: undefined
+                disableBlinkingCursor: false,
+                disableCSSAnimation: false,
+                enableLayoutTesting: false,
+                enableLegacyScreenshotMethod: false,
+                hideScrollBars: true,
+                hideElements: [],
+                removeElements: [],
+                waitForFontsLoaded: true,
             }
         },
+        browserInstance: { isAndroid: false, isMobile: false } as any,
+        folders: BASE_CHECK_OPTIONS.folders,
+        instanceData: BASE_CHECK_OPTIONS.instanceData,
+        isNativeContext: true,
         tag: 'test-element'
     }
 
@@ -57,14 +70,13 @@ describe('saveAppElement', () => {
             ...baseOptions,
             saveElementOptions: {
                 ...baseOptions.saveElementOptions,
-                method: {
+                wic: {
+                    ...baseOptions.saveElementOptions.wic,
                     resizeDimensions: {
-                        width: 100,
-                        height: 100,
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0
+                        top: 10,
+                        right: 20,
+                        bottom: 30,
+                        left: 40
                     }
                 }
             }
@@ -73,18 +85,21 @@ describe('saveAppElement', () => {
         await saveAppElement(options)
 
         expect(takeBase64ElementScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should handle iOS device correctly', async () => {
         const options = {
             ...baseOptions,
+            browserInstance: { isAndroid: false, isMobile: true } as any,
             instanceData: {
                 ...baseOptions.instanceData,
-                deviceName: 'iPhone 14',
+                deviceName: 'iPhone 12',
                 isAndroid: false,
                 isIOS: true,
                 platformName: 'iOS',
-                platformVersion: '17.0'
+                platformVersion: '14.0',
+                nativeWebScreenshot: true
             }
         }
 
@@ -97,13 +112,15 @@ describe('saveAppElement', () => {
     it('should handle Android device correctly', async () => {
         const options = {
             ...baseOptions,
+            browserInstance: { isAndroid: true, isMobile: true } as any,
             instanceData: {
                 ...baseOptions.instanceData,
                 deviceName: 'Pixel 4',
                 isAndroid: true,
                 isIOS: false,
                 platformName: 'Android',
-                platformVersion: '11.0'
+                platformVersion: '11.0',
+                nativeWebScreenshot: true
             }
         }
 
@@ -121,17 +138,29 @@ describe('saveAppElement', () => {
 
         await saveAppElement(options)
 
+        expect(takeBase64ElementScreenshotSpy.mock.calls[0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 
-    it('should handle custom format image name', async () => {
+    it('should handle custom image naming', async () => {
+        const options = {
+            ...baseOptions,
+            tag: 'custom-element-name'
+        }
+
+        await saveAppElement(options)
+
+        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+    })
+
+    it('should handle save per instance', async () => {
         const options = {
             ...baseOptions,
             saveElementOptions: {
                 ...baseOptions.saveElementOptions,
                 wic: {
                     ...baseOptions.saveElementOptions.wic,
-                    formatImageName: '{tag}-{browserName}-{deviceName}'
+                    savePerInstance: true
                 }
             }
         }
@@ -141,33 +170,16 @@ describe('saveAppElement', () => {
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 
-    it('should handle savePerInstance option', async () => {
+    it('should handle custom screen sizes', async () => {
         const options = {
             ...baseOptions,
             saveElementOptions: {
                 ...baseOptions.saveElementOptions,
                 wic: {
                     ...baseOptions.saveElementOptions.wic,
-                    savePerInstance: false
-                }
-            }
-        }
-
-        await saveAppElement(options)
-
-        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
-    })
-
-    it('should handle custom screen size', async () => {
-        const options = {
-            ...baseOptions,
-            instanceData: {
-                ...baseOptions.instanceData,
-                deviceRectangles: {
-                    ...baseOptions.instanceData.deviceRectangles,
                     screenSize: {
-                        width: 1920,
-                        height: 1080
+                        width: 375,
+                        height: 812
                     }
                 }
             }
@@ -175,6 +187,7 @@ describe('saveAppElement', () => {
 
         await saveAppElement(options)
 
+        expect(takeBase64ElementScreenshotSpy.mock.calls[0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 })

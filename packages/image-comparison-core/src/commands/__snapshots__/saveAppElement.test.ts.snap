@@ -17,6 +17,10 @@ exports[`saveAppElement > should execute saveAppElement with basic options 2`] =
     "devicePixelRatio": 2,
     "element": {
       "elementId": "test-element",
+      "getLocation": [MockFunction spy],
+      "getSize": [MockFunction spy],
+      "isDisplayed": [MockFunction spy],
+      "selector": "#test-element",
     },
     "isIOS": true,
     "resizeDimensions": {
@@ -37,7 +41,7 @@ exports[`saveAppElement > should execute saveAppElement with basic options 3`] =
   },
   {
     "actualFolder": "/test/actual",
-    "base64Image": "base64-image-data",
+    "base64Image": "base64-screenshot-data",
     "fileName": {
       "browserName": "Chrome",
       "browserVersion": "118.0.0.0",
@@ -71,12 +75,16 @@ exports[`saveAppElement > should handle Android device correctly 1`] = `
 [
   {
     "browserInstance": {
-      "isAndroid": false,
-      "isMobile": false,
+      "isAndroid": true,
+      "isMobile": true,
     },
     "devicePixelRatio": 2,
     "element": {
       "elementId": "test-element",
+      "getLocation": [MockFunction spy],
+      "getSize": [MockFunction spy],
+      "isDisplayed": [MockFunction spy],
+      "selector": "#test-element",
     },
     "isIOS": false,
     "resizeDimensions": {
@@ -92,12 +100,12 @@ exports[`saveAppElement > should handle Android device correctly 1`] = `
 exports[`saveAppElement > should handle Android device correctly 2`] = `
 [
   {
-    "isAndroid": false,
-    "isMobile": false,
+    "isAndroid": true,
+    "isMobile": true,
   },
   {
     "actualFolder": "/test/actual",
-    "base64Image": "base64-image-data",
+    "base64Image": "base64-screenshot-data",
     "fileName": {
       "browserName": "Chrome",
       "browserVersion": "118.0.0.0",
@@ -127,7 +135,7 @@ exports[`saveAppElement > should handle Android device correctly 2`] = `
 ]
 `;
 
-exports[`saveAppElement > should handle custom format image name 1`] = `
+exports[`saveAppElement > should handle custom image naming 1`] = `
 [
   {
     "isAndroid": false,
@@ -135,13 +143,13 @@ exports[`saveAppElement > should handle custom format image name 1`] = `
   },
   {
     "actualFolder": "/test/actual",
-    "base64Image": "base64-image-data",
+    "base64Image": "base64-screenshot-data",
     "fileName": {
       "browserName": "Chrome",
       "browserVersion": "118.0.0.0",
       "deviceName": "iPhone 14",
       "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{browserName}-{deviceName}",
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
       "isMobile": true,
       "isTestInBrowser": false,
       "logName": "test-log",
@@ -150,7 +158,7 @@ exports[`saveAppElement > should handle custom format image name 1`] = `
       "platformVersion": "17.0",
       "screenHeight": 844,
       "screenWidth": 390,
-      "tag": "test-element",
+      "tag": "custom-element-name",
     },
     "filePath": {
       "browserName": "Chrome",
@@ -175,68 +183,10 @@ exports[`saveAppElement > should handle custom resize dimensions 1`] = `
     "devicePixelRatio": 2,
     "element": {
       "elementId": "test-element",
-    },
-    "isIOS": true,
-    "resizeDimensions": {
-      "bottom": 0,
-      "height": 100,
-      "left": 0,
-      "right": 0,
-      "top": 0,
-      "width": 100,
-    },
-  },
-]
-`;
-
-exports[`saveAppElement > should handle custom screen size 1`] = `
-[
-  {
-    "isAndroid": false,
-    "isMobile": false,
-  },
-  {
-    "actualFolder": "/test/actual",
-    "base64Image": "base64-image-data",
-    "fileName": {
-      "browserName": "Chrome",
-      "browserVersion": "118.0.0.0",
-      "deviceName": "iPhone 14",
-      "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": true,
-      "isTestInBrowser": false,
-      "logName": "test-log",
-      "name": "",
-      "platformName": "iOS",
-      "platformVersion": "17.0",
-      "screenHeight": 1080,
-      "screenWidth": 1920,
-      "tag": "test-element",
-    },
-    "filePath": {
-      "browserName": "Chrome",
-      "deviceName": "iPhone 14",
-      "isMobile": true,
-      "savePerInstance": true,
-    },
-    "isLandscape": false,
-    "isNativeContext": true,
-    "platformName": "iOS",
-  },
-]
-`;
-
-exports[`saveAppElement > should handle iOS device correctly 1`] = `
-[
-  {
-    "browserInstance": {
-      "isAndroid": false,
-      "isMobile": false,
-    },
-    "devicePixelRatio": 2,
-    "element": {
-      "elementId": "test-element",
+      "getLocation": [MockFunction spy],
+      "getSize": [MockFunction spy],
+      "isDisplayed": [MockFunction spy],
+      "selector": "#test-element",
     },
     "isIOS": true,
     "resizeDimensions": {
@@ -249,7 +199,7 @@ exports[`saveAppElement > should handle iOS device correctly 1`] = `
 ]
 `;
 
-exports[`saveAppElement > should handle iOS device correctly 2`] = `
+exports[`saveAppElement > should handle custom resize dimensions 2`] = `
 [
   {
     "isAndroid": false,
@@ -257,7 +207,7 @@ exports[`saveAppElement > should handle iOS device correctly 2`] = `
   },
   {
     "actualFolder": "/test/actual",
-    "base64Image": "base64-image-data",
+    "base64Image": "base64-screenshot-data",
     "fileName": {
       "browserName": "Chrome",
       "browserVersion": "118.0.0.0",
@@ -287,7 +237,33 @@ exports[`saveAppElement > should handle iOS device correctly 2`] = `
 ]
 `;
 
-exports[`saveAppElement > should handle non-native context correctly 1`] = `
+exports[`saveAppElement > should handle custom screen sizes 1`] = `
+[
+  {
+    "browserInstance": {
+      "isAndroid": false,
+      "isMobile": false,
+    },
+    "devicePixelRatio": 2,
+    "element": {
+      "elementId": "test-element",
+      "getLocation": [MockFunction spy],
+      "getSize": [MockFunction spy],
+      "isDisplayed": [MockFunction spy],
+      "selector": "#test-element",
+    },
+    "isIOS": true,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+  },
+]
+`;
+
+exports[`saveAppElement > should handle custom screen sizes 2`] = `
 [
   {
     "isAndroid": false,
@@ -295,7 +271,135 @@ exports[`saveAppElement > should handle non-native context correctly 1`] = `
   },
   {
     "actualFolder": "/test/actual",
-    "base64Image": "base64-image-data",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 844,
+      "screenWidth": 390,
+      "tag": "test-element",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppElement > should handle iOS device correctly 1`] = `
+[
+  {
+    "browserInstance": {
+      "isAndroid": false,
+      "isMobile": true,
+    },
+    "devicePixelRatio": 2,
+    "element": {
+      "elementId": "test-element",
+      "getLocation": [MockFunction spy],
+      "getSize": [MockFunction spy],
+      "isDisplayed": [MockFunction spy],
+      "selector": "#test-element",
+    },
+    "isIOS": true,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+  },
+]
+`;
+
+exports[`saveAppElement > should handle iOS device correctly 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": true,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 12",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "14.0",
+      "screenHeight": 844,
+      "screenWidth": 390,
+      "tag": "test-element",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 12",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppElement > should handle non-native context correctly 1`] = `
+[
+  {
+    "browserInstance": {
+      "isAndroid": false,
+      "isMobile": false,
+    },
+    "devicePixelRatio": 2,
+    "element": {
+      "elementId": "test-element",
+      "getLocation": [MockFunction spy],
+      "getSize": [MockFunction spy],
+      "isDisplayed": [MockFunction spy],
+      "selector": "#test-element",
+    },
+    "isIOS": true,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+  },
+]
+`;
+
+exports[`saveAppElement > should handle non-native context correctly 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
     "fileName": {
       "browserName": "Chrome",
       "browserVersion": "118.0.0.0",
@@ -325,7 +429,7 @@ exports[`saveAppElement > should handle non-native context correctly 1`] = `
 ]
 `;
 
-exports[`saveAppElement > should handle savePerInstance option 1`] = `
+exports[`saveAppElement > should handle save per instance 1`] = `
 [
   {
     "isAndroid": false,
@@ -333,7 +437,7 @@ exports[`saveAppElement > should handle savePerInstance option 1`] = `
   },
   {
     "actualFolder": "/test/actual",
-    "base64Image": "base64-image-data",
+    "base64Image": "base64-screenshot-data",
     "fileName": {
       "browserName": "Chrome",
       "browserVersion": "118.0.0.0",
@@ -354,7 +458,7 @@ exports[`saveAppElement > should handle savePerInstance option 1`] = `
       "browserName": "Chrome",
       "deviceName": "iPhone 14",
       "isMobile": true,
-      "savePerInstance": false,
+      "savePerInstance": true,
     },
     "isLandscape": false,
     "isNativeContext": true,
