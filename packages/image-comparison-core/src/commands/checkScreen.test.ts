@@ -3,7 +3,6 @@ import checkScreen from './checkScreen.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
 
-// Mock the dependencies
 vi.mock('./checkAppScreen.js', () => ({
     default: vi.fn().mockResolvedValue({
         fileName: 'test-app-screen.png',
@@ -13,7 +12,6 @@ vi.mock('./checkAppScreen.js', () => ({
         isAboveTolerance: false,
     })
 }))
-
 vi.mock('./checkWebScreen.js', () => ({
     default: vi.fn().mockResolvedValue({
         fileName: 'test-web-screen.png',

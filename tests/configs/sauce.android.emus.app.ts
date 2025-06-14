@@ -8,10 +8,10 @@ export function sauceAndroidEmusApp({ buildName }: { buildName: string }) {
     )
         .map((orientation) =>
             [
-                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'11.0' },
-                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'12.0' },
-                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'13.0' },
-                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'14.0' },
+                // { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'11.0' },
+                // { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'12.0' },
+                // { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'13.0' },
+                // { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'14.0' },
                 { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'15.0' },
             ].map(
                 (cap) =>

@@ -3,15 +3,12 @@ import checkTabbablePage from './checkTabbablePage.js'
 import type { InternalCheckTabbablePageMethodOptions } from './check.interfaces.js'
 import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
 
-// Mock the dependencies
 vi.mock('../clientSideScripts/drawTabbableOnCanvas.js', () => ({
     default: vi.fn()
 }))
-
 vi.mock('../clientSideScripts/removeElementFromDom.js', () => ({
     default: vi.fn()
 }))
-
 vi.mock('./checkFullPageScreen.js', () => ({
     default: vi.fn().mockResolvedValue({
         fileName: 'test-tabbable.png',

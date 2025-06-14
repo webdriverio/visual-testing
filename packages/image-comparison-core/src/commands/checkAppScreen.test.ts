@@ -3,7 +3,6 @@ import checkAppScreen from './checkAppScreen.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
 
-// Mock the dependencies
 vi.mock('../helpers/options.js', () => ({
     screenMethodCompareOptions: vi.fn().mockReturnValue({
         ignoreAlpha: false,
@@ -17,7 +16,6 @@ vi.mock('../helpers/options.js', () => ({
         scaleImagesToSameSize: false,
     })
 }))
-
 vi.mock('../methods/images.js', () => ({
     executeImageCompare: vi.fn().mockResolvedValue({
         fileName: 'test-result.png',
@@ -27,7 +25,6 @@ vi.mock('../methods/images.js', () => ({
         isAboveTolerance: false,
     })
 }))
-
 vi.mock('../methods/rectangles.js', () => ({
     determineIgnoreRegions: vi.fn().mockResolvedValue([
         { x: 0, y: 0, width: 100, height: 100 }
@@ -36,7 +33,6 @@ vi.mock('../methods/rectangles.js', () => ({
         { x: 0, y: 0, width: 50, height: 50 }
     ])
 }))
-
 vi.mock('./saveAppScreen.js', () => ({
     default: vi.fn().mockResolvedValue({
         devicePixelRatio: 2,
@@ -186,7 +182,6 @@ describe('checkAppScreen', () => {
         const mockElement1 = { elementId: 'hide-element', selector: '#hide' } as any
         const mockElement2 = { elementId: 'remove-element', selector: '#remove' } as any
         const mockElement3 = { elementId: 'ignore-element', selector: '#ignore' } as any
-
         const options = {
             ...baseOptions,
             checkScreenOptions: {
@@ -210,7 +205,6 @@ describe('checkAppScreen', () => {
         const mockElement1 = { elementId: 'hide-element', selector: '#hide' } as any
         const mockElement2 = { elementId: 'remove-element', selector: '#remove' } as any
         const mockElement3 = { elementId: 'ignore-element', selector: '#ignore' } as any
-
         const options = {
             ...baseOptions,
             checkScreenOptions: {

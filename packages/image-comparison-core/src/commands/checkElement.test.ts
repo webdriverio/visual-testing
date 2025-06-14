@@ -4,7 +4,6 @@ import type { InternalCheckElementMethodOptions } from './check.interfaces.js'
 import type { WicElement } from './element.interfaces.js'
 import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
 
-// Mock the dependencies
 vi.mock('./checkAppElement.js', () => ({
     default: vi.fn().mockResolvedValue({
         fileName: 'test-app-element.png',
@@ -14,7 +13,6 @@ vi.mock('./checkAppElement.js', () => ({
         isAboveTolerance: false,
     })
 }))
-
 vi.mock('./checkWebElement.js', () => ({
     default: vi.fn().mockResolvedValue({
         fileName: 'test-web-element.png',
@@ -71,7 +69,6 @@ describe('checkElement', () => {
             ...baseOptions,
             isNativeContext: false
         }
-
         const result = await checkElement(options)
 
         expect(result).toMatchSnapshot()

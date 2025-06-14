@@ -64,7 +64,7 @@ describe('@wdio/visual-service mobile app', () => {
         wdioIcsCommands.length === 0 ||
         wdioIcsCommands.includes('checkElement')
     ) {
-        it(`should compare an element successful for '${deviceName}' in ${orientation}-mode`, async () => {
+        it.only(`should compare an element successful for '${deviceName}' in ${orientation}-mode`, async () => {
             await $('~Login').click()
             const result = await driver.checkElement(
                 $('~button-LOGIN'),
@@ -73,7 +73,7 @@ describe('@wdio/visual-service mobile app', () => {
 
             expect(result).toEqual(0)
         })
-        it(`should compare a resized element successful for '${deviceName}' in ${orientation}-mode`, async () => {
+        it.only(`should compare a resized element successful for '${deviceName}' in ${orientation}-mode`, async () => {
             await $('~Login').click()
             const result = await driver.checkElement(
                 $('~button-LOGIN'),

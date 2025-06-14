@@ -3,7 +3,6 @@ import checkFullPageScreen from './checkFullPageScreen.js'
 import type { InternalCheckFullPageMethodOptions } from './check.interfaces.js'
 import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
 
-// Mock the dependencies
 vi.mock('../helpers/options.js', () => ({
     methodCompareOptions: vi.fn().mockReturnValue({
         ignoreAlpha: false,
@@ -153,7 +152,6 @@ describe('checkFullPageScreen', () => {
     it('should handle hideElements and removeElements correctly', async () => {
         const mockElement1 = { elementId: 'hide-element', selector: '#hide' } as any
         const mockElement2 = { elementId: 'remove-element', selector: '#remove' } as any
-
         const options = {
             ...baseOptions,
             checkFullPageOptions: {
@@ -173,7 +171,6 @@ describe('checkFullPageScreen', () => {
 
     it('should handle hideAfterFirstScroll correctly', async () => {
         const mockElement = { elementId: 'hide-element', selector: '#hide' } as any
-
         const options = {
             ...baseOptions,
             checkFullPageOptions: {

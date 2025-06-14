@@ -20,19 +20,43 @@ export default async function checkWebElement(
         isNativeContext = false,
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
+    // Set some vars
+    const { actualFolder, baselineFolder, diffFolder } = folders
+    const {
+        browserName,
+        deviceName,
+        deviceRectangles,
+        isAndroid,
+        isMobile,
+        nativeWebScreenshot: isAndroidNativeWebScreenshot,
+        platformName,
+    } = instanceData
+    const { autoSaveBaseline, savePerInstance } = checkElementOptions.wic
+    const {
+        disableBlinkingCursor,
+        disableCSSAnimation,
+        enableLayoutTesting,
+        enableLegacyScreenshotMethod,
+        hideScrollBars,
+        resizeDimensions,
+        hideElements = [],
+        removeElements = [],
+        waitForFontsLoaded = false,
+    } = checkElementOptions.method
+
     // 1. Take the actual element screenshot and retrieve the needed data
     const saveElementOptions: SaveElementOptions = {
         wic: checkElementOptions.wic,
         method: {
-            disableBlinkingCursor: checkElementOptions.method.disableBlinkingCursor,
-            disableCSSAnimation: checkElementOptions.method.disableCSSAnimation,
-            enableLayoutTesting: checkElementOptions.method.enableLayoutTesting,
-            enableLegacyScreenshotMethod: checkElementOptions.method.enableLegacyScreenshotMethod,
-            hideScrollBars: checkElementOptions.method.hideScrollBars,
-            resizeDimensions: checkElementOptions.method.resizeDimensions,
-            hideElements: checkElementOptions.method.hideElements || [],
-            removeElements: checkElementOptions.method.removeElements || [],
-            waitForFontsLoaded: checkElementOptions.method.waitForFontsLoaded,
+            disableBlinkingCursor,
+            disableCSSAnimation,
+            enableLayoutTesting,
+            enableLegacyScreenshotMethod,
+            hideScrollBars,
+            resizeDimensions,
+            hideElements,
+            removeElements,
+            waitForFontsLoaded,
         },
     }
     const { devicePixelRatio, fileName } = await saveWebElement({
@@ -58,21 +82,21 @@ export default async function checkWebElement(
             method: compareOptions,
         },
         devicePixelRatio,
-        deviceRectangles: instanceData.deviceRectangles,
+        deviceRectangles,
         fileName,
         folderOptions: {
-            autoSaveBaseline: checkElementOptions.wic.autoSaveBaseline,
-            actualFolder: folders.actualFolder,
-            baselineFolder: folders.baselineFolder,
-            diffFolder: folders.diffFolder,
-            browserName: instanceData.browserName,
-            deviceName: instanceData.deviceName,
-            isMobile: browserInstance.isMobile,
-            savePerInstance: checkElementOptions.wic.savePerInstance,
+            autoSaveBaseline,
+            actualFolder,
+            baselineFolder,
+            diffFolder,
+            browserName,
+            deviceName,
+            isMobile,
+            savePerInstance,
         },
-        isAndroid: browserInstance.isAndroid,
-        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        platformName: instanceData.platformName,
+        isAndroid,
+        isAndroidNativeWebScreenshot,
+        platformName,
     }
 
     // 2b Now execute the compare and return the data

@@ -16,7 +16,6 @@ vi.mock('../helpers/options.js', () => ({
         scaleImagesToSameSize: false,
     })
 }))
-
 vi.mock('../methods/images.js', () => ({
     executeImageCompare: vi.fn().mockResolvedValue({
         fileName: 'test-result.png',
@@ -26,7 +25,6 @@ vi.mock('../methods/images.js', () => ({
         isAboveTolerance: false,
     })
 }))
-
 vi.mock('./saveAppElement.js', () => ({
     default: vi.fn().mockResolvedValue({
         devicePixelRatio: 2,
