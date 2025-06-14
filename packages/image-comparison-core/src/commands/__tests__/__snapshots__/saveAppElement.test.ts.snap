@@ -1,0 +1,364 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`saveAppElement > should execute saveAppElement with basic options 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveAppElement > should execute saveAppElement with basic options 2`] = `
+[
+  {
+    "browserInstance": {
+      "isAndroid": false,
+      "isMobile": false,
+    },
+    "devicePixelRatio": 2,
+    "element": {
+      "elementId": "test-element",
+    },
+    "isIOS": true,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+  },
+]
+`;
+
+exports[`saveAppElement > should execute saveAppElement with basic options 3`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-image-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 844,
+      "screenWidth": 390,
+      "tag": "test-element",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppElement > should handle Android device correctly 1`] = `
+[
+  {
+    "browserInstance": {
+      "isAndroid": false,
+      "isMobile": false,
+    },
+    "devicePixelRatio": 2,
+    "element": {
+      "elementId": "test-element",
+    },
+    "isIOS": false,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+  },
+]
+`;
+
+exports[`saveAppElement > should handle Android device correctly 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-image-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "Pixel 4",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "Android",
+      "platformVersion": "11.0",
+      "screenHeight": 844,
+      "screenWidth": 390,
+      "tag": "test-element",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "Pixel 4",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "Android",
+  },
+]
+`;
+
+exports[`saveAppElement > should handle custom format image name 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-image-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{browserName}-{deviceName}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 844,
+      "screenWidth": 390,
+      "tag": "test-element",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppElement > should handle custom resize dimensions 1`] = `
+[
+  {
+    "browserInstance": {
+      "isAndroid": false,
+      "isMobile": false,
+    },
+    "devicePixelRatio": 2,
+    "element": {
+      "elementId": "test-element",
+    },
+    "isIOS": true,
+    "resizeDimensions": {
+      "bottom": 0,
+      "height": 100,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "width": 100,
+    },
+  },
+]
+`;
+
+exports[`saveAppElement > should handle custom screen size 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-image-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 1080,
+      "screenWidth": 1920,
+      "tag": "test-element",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppElement > should handle iOS device correctly 1`] = `
+[
+  {
+    "browserInstance": {
+      "isAndroid": false,
+      "isMobile": false,
+    },
+    "devicePixelRatio": 2,
+    "element": {
+      "elementId": "test-element",
+    },
+    "isIOS": true,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+  },
+]
+`;
+
+exports[`saveAppElement > should handle iOS device correctly 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-image-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 844,
+      "screenWidth": 390,
+      "tag": "test-element",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppElement > should handle non-native context correctly 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-image-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": true,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 844,
+      "screenWidth": 390,
+      "tag": "test-element",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": false,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppElement > should handle savePerInstance option 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-image-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 844,
+      "screenWidth": 390,
+      "tag": "test-element",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": false,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
