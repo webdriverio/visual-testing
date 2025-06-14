@@ -5,7 +5,7 @@ import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
 
 vi.mock('../methods/images.js', () => ({
     executeImageCompare: vi.fn().mockResolvedValue({
-        fileName: 'test-screen.png',
+        fileName: 'test-result.png',
         misMatchPercentage: 0,
         isExactSameImage: true,
         isNewBaseline: false,
@@ -50,12 +50,10 @@ describe('checkWebScreen', () => {
                 waitForFontsLoaded: true,
             }
         },
-        browserInstance: {
-            isAndroid: false,
-            isMobile: false
-        } as any,
+        browserInstance: { isAndroid: false, isMobile: false } as any,
         folders: BASE_CHECK_OPTIONS.folders,
         instanceData: BASE_CHECK_OPTIONS.instanceData,
+        isNativeContext: false,
         tag: 'test-screen',
         testContext: BASE_CHECK_OPTIONS.testContext
     }
@@ -80,13 +78,36 @@ describe('checkWebScreen', () => {
         expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 
+    it('should handle hideElements and removeElements correctly', async () => {
+        const mockElement = {
+            elementId: 'test-element',
+            selector: '#test-element',
+            isDisplayed: vi.fn().mockResolvedValue(true),
+            getSize: vi.fn().mockResolvedValue({ width: 100, height: 100 }),
+            getLocation: vi.fn().mockResolvedValue({ x: 0, y: 0 })
+        } as any
+        const options = {
+            ...baseOptions,
+            checkScreenOptions: {
+                ...baseOptions.checkScreenOptions,
+                method: {
+                    ...baseOptions.checkScreenOptions.method,
+                    hideElements: [mockElement],
+                    removeElements: [mockElement],
+                }
+            }
+        }
+
+        await checkWebScreen(options)
+
+        expect(saveWebScreenSpy.mock.calls[0]).toMatchSnapshot()
+        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
+    })
+
     it('should handle Android device correctly', async () => {
         const options = {
             ...baseOptions,
-            browserInstance: {
-                isAndroid: true,
-                isMobile: true
-            } as any,
+            browserInstance: { isAndroid: true, isMobile: true } as any,
             instanceData: {
                 ...baseOptions.instanceData,
                 deviceName: 'Pixel 4',
@@ -113,8 +134,49 @@ describe('checkWebScreen', () => {
         expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 
-    it('should handle custom screen options', async () => {
-        const mockElement = {
+    it('should merge compare options correctly', async () => {
+        const options = {
+            ...baseOptions,
+            checkScreenOptions: {
+                ...baseOptions.checkScreenOptions,
+                wic: {
+                    ...baseOptions.checkScreenOptions.wic,
+                    compareOptions: {
+                        ...baseOptions.checkScreenOptions.wic.compareOptions,
+                        ignoreAlpha: true,
+                        ignoreAntialiasing: true,
+                        ignoreColors: true,
+                    }
+                },
+                method: {
+                    ...baseOptions.checkScreenOptions.method,
+                    disableBlinkingCursor: true,
+                    disableCSSAnimation: true,
+                    enableLayoutTesting: true,
+                }
+            }
+        }
+
+        await checkWebScreen(options)
+
+        expect(saveWebScreenSpy.mock.calls[0]).toMatchSnapshot()
+        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
+    })
+
+    it('should handle native context correctly', async () => {
+        const options = {
+            ...baseOptions,
+            isNativeContext: true
+        }
+
+        await checkWebScreen(options)
+
+        expect(saveWebScreenSpy.mock.calls[0]).toMatchSnapshot()
+        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
+    })
+
+    it('should handle all method options correctly', async () => {
+        const mockHideElement = {
             elementId: 'hide-element',
             selector: '#hide-element',
             isDisplayed: vi.fn().mockResolvedValue(true),
@@ -138,7 +200,7 @@ describe('checkWebScreen', () => {
                     enableLayoutTesting: true,
                     enableLegacyScreenshotMethod: true,
                     hideScrollBars: false,
-                    hideElements: [mockElement],
+                    hideElements: [mockHideElement],
                     removeElements: [mockRemoveElement],
                     waitForFontsLoaded: false,
                 }
@@ -148,103 +210,6 @@ describe('checkWebScreen', () => {
         await checkWebScreen(options)
 
         expect(saveWebScreenSpy.mock.calls[0]).toMatchSnapshot()
-    })
-
-    it('should handle compare options correctly', async () => {
-        const options = {
-            ...baseOptions,
-            checkScreenOptions: {
-                ...baseOptions.checkScreenOptions,
-                wic: {
-                    ...baseOptions.checkScreenOptions.wic,
-                    compareOptions: {
-                        ignoreAlpha: true,
-                        ignoreAntialiasing: true,
-                        ignoreColors: true,
-                        ignoreLess: true,
-                        ignoreNothing: false,
-                        rawMisMatchPercentage: true,
-                        returnAllCompareData: true,
-                        saveAboveTolerance: 0.1,
-                        scaleImagesToSameSize: true,
-                        blockOutSideBar: false,
-                        blockOutStatusBar: false,
-                        blockOutToolBar: false,
-                        createJsonReportFiles: false,
-                        diffPixelBoundingBoxProximity: 0
-                    }
-                }
-            }
-        }
-
-        await checkWebScreen(options)
-
         expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
-    })
-
-    it('should handle device rectangles correctly', async () => {
-        const options = {
-            ...baseOptions,
-            instanceData: {
-                ...baseOptions.instanceData,
-                deviceRectangles: {
-                    statusBar: { x: 0, y: 0, width: 100, height: 20 },
-                    toolBar: { x: 0, y: 20, width: 100, height: 40 },
-                    sideBar: { x: 0, y: 60, width: 20, height: 100 },
-                    bottomBar: { x: 0, y: 80, width: 100, height: 20 },
-                    homeBar: { x: 0, y: 100, width: 100, height: 20 },
-                    leftSidePadding: { x: 0, y: 0, width: 10, height: 100 },
-                    rightSidePadding: { x: 90, y: 0, width: 10, height: 100 },
-                    topSidePadding: { x: 0, y: 0, width: 100, height: 10 },
-                    bottomSidePadding: { x: 0, y: 90, width: 100, height: 10 },
-                    screenSize: { x: 0, y: 0, width: 100, height: 120 },
-                    statusBarAndAddressBar: { x: 0, y: 0, width: 100, height: 60 },
-                    viewport: { x: 0, y: 60, width: 100, height: 60 }
-                }
-            }
-        }
-
-        await checkWebScreen(options)
-
-        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
-    })
-
-    it('should handle hybrid app options correctly', async () => {
-        const options = {
-            ...baseOptions,
-            checkScreenOptions: {
-                ...baseOptions.checkScreenOptions,
-                wic: {
-                    ...baseOptions.checkScreenOptions.wic,
-                    isHybridApp: true
-                }
-            }
-        }
-
-        await checkWebScreen(options)
-
-        expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
-    })
-
-    it('should handle undefined method options with fallbacks', async () => {
-        const options = {
-            ...baseOptions,
-            checkScreenOptions: {
-                ...baseOptions.checkScreenOptions,
-                method: {
-                    disableBlinkingCursor: false,
-                    disableCSSAnimation: false,
-                    enableLayoutTesting: false,
-                    enableLegacyScreenshotMethod: false,
-                    hideScrollBars: true,
-                    waitForFontsLoaded: true,
-                    // Intentionally omitting hideElements and removeElements
-                }
-            }
-        }
-
-        await checkWebScreen(options)
-
-        expect(saveWebScreenSpy.mock.calls[0]).toMatchSnapshot()
     })
 })

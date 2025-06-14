@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import saveAppElement from '../saveAppElement.js'
-import type { InternalSaveElementMethodOptions } from '../save.interfaces.js'
-import { BASE_CHECK_OPTIONS } from '../../mocks/mocks.js'
+import saveAppElement from './saveAppElement.js'
+import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
+import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
 
-vi.mock('../../methods/images.js', () => ({
+vi.mock('../methods/images.js', () => ({
     takeBase64ElementScreenshot: vi.fn().mockResolvedValue('base64-image-data')
 }))
-vi.mock('../../helpers/afterScreenshot.js', () => ({
+vi.mock('../helpers/afterScreenshot.js', () => ({
     default: vi.fn().mockResolvedValue({
         devicePixelRatio: 2,
         fileName: 'test-element.png'
@@ -33,8 +33,8 @@ describe('saveAppElement', () => {
     }
 
     beforeEach(async () => {
-        const { takeBase64ElementScreenshot } = await import('../../methods/images.js')
-        const afterScreenshot = (await import('../../helpers/afterScreenshot.js')).default
+        const { takeBase64ElementScreenshot } = await import('../methods/images.js')
+        const afterScreenshot = (await import('../helpers/afterScreenshot.js')).default
 
         takeBase64ElementScreenshotSpy = vi.mocked(takeBase64ElementScreenshot)
         afterScreenshotSpy = vi.mocked(afterScreenshot)
