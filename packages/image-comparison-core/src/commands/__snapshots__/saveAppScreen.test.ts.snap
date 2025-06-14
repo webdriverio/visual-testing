@@ -1,0 +1,338 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`saveAppScreen > should execute saveAppScreen with basic options 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-screen.png",
+}
+`;
+
+exports[`saveAppScreen > should execute saveAppScreen with basic options 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+]
+`;
+
+exports[`saveAppScreen > should execute saveAppScreen with basic options 3`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle Android device correctly 1`] = `
+[
+  {
+    "isAndroid": true,
+    "isMobile": true,
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle Android device correctly 2`] = `
+[
+  {
+    "isAndroid": true,
+    "isMobile": true,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "Pixel 4",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "Android",
+      "platformVersion": "11.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "Pixel 4",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "Android",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle custom image naming 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{browserName}-{deviceName}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle custom screen sizes 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle custom screen sizes 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 1080,
+      "screenWidth": 1920,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle iOS device with bezel corners 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": true,
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle iOS device with bezel corners 2`] = `
+[
+  {
+    "addIOSBezelCorners": true,
+    "base64Image": "base64-screenshot-data",
+    "deviceName": "iPhone 12",
+    "devicePixelRatio": 2,
+    "isIOS": true,
+    "isLandscape": false,
+    "rectangles": {
+      "height": 1624,
+      "width": 750,
+      "x": 0,
+      "y": 0,
+    },
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle iOS device with bezel corners 3`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": true,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "cropped-base64-screenshot-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 12",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "14.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 12",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle non-native context correctly 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle non-native context correctly 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": true,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": false,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle save per instance 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "Chrome",
+      "browserVersion": "118.0.0.0",
+      "deviceName": "iPhone 14",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "",
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "Chrome",
+      "deviceName": "iPhone 14",
+      "isMobile": true,
+      "savePerInstance": true,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
