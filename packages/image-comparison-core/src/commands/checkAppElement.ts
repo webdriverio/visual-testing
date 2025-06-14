@@ -1,0 +1,88 @@
+import { methodCompareOptions } from '../helpers/options.js'
+import type { ImageCompareResult } from '../methods/images.interfaces.js'
+import { executeImageCompare } from '../methods/images.js'
+import type { InternalCheckElementMethodOptions } from './check.interfaces.js'
+import type { WicElement } from './element.interfaces.js'
+import saveAppElement from './saveAppElement.js'
+
+/**
+ * Compare  an image of the element
+ */
+export default async function checkAppElement(
+    {
+        checkElementOptions,
+        browserInstance,
+        element,
+        folders,
+        instanceData,
+        isNativeContext = true,
+        tag,
+        testContext,
+    }: InternalCheckElementMethodOptions
+): Promise<ImageCompareResult | number> {
+    // 1. Set some vars
+    const {
+        browserName,
+        deviceName,
+        deviceRectangles,
+        isAndroid,
+        isMobile,
+        nativeWebScreenshot: isAndroidNativeWebScreenshot,
+        platformName,
+    } = instanceData
+    const { autoSaveBaseline, savePerInstance, isHybridApp } = checkElementOptions.wic
+    const { actualFolder, baselineFolder, diffFolder } = folders
+
+    // 2. Save the element and return the data
+    const { devicePixelRatio, fileName } = await saveAppElement({
+        browserInstance,
+        element: element as WicElement,
+        folders,
+        instanceData,
+        isNativeContext,
+        saveElementOptions: checkElementOptions,
+        tag,
+    })
+    // @TODO: This is something for the future, to allow ignore regions on the element itself.
+    // This will become a feature request
+
+    // 3a. Determine the options
+    const compareOptions = methodCompareOptions(checkElementOptions.method)
+    const executeCompareOptions = {
+        compareOptions: {
+            wic: {
+                ...checkElementOptions.wic.compareOptions,
+                // No need to block out anything on the app for element screenshots
+                blockOutSideBar: false,
+                blockOutStatusBar: false,
+                blockOutToolBar: false,
+            },
+            method: compareOptions,
+        },
+        devicePixelRatio,
+        deviceRectangles,
+        fileName,
+        folderOptions: {
+            autoSaveBaseline,
+            actualFolder,
+            baselineFolder,
+            diffFolder,
+            browserName,
+            deviceName,
+            isMobile,
+            savePerInstance,
+        },
+        isAndroid,
+        isAndroidNativeWebScreenshot,
+        isHybridApp,
+        platformName,
+    }
+
+    // 3b Now execute the compare and return the data
+    return executeImageCompare({
+        options: executeCompareOptions,
+        testContext,
+        isViewPortScreenshot: false,
+        isNativeContext,
+    })
+}

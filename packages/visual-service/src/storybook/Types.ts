@@ -1,4 +1,4 @@
-import type { CheckElementMethodOptions, ClassOptions, Folders } from 'webdriver-image-comparison'
+import type { CheckElementMethodOptions, ClassOptions, Folders } from '@wdio/image-comparison-core'
 
 export interface StorybookData {
     id: string;

@@ -6,7 +6,7 @@ import VisualService from '../src/index.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
-vi.mock('webdriver-image-comparison', () => ({
+vi.mock('@wdio/image-comparison-core', () => ({
     BaseClass: class {},
     checkElement: vi.fn(),
     checkFullPageScreen: vi.fn(),

@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`beforeScreenshot > should be able to return the enriched instance data with \`addShadowPadding: true\` 1`] = `
+{
+  "appName": "mocked-app",
+  "browserName": "mocked-browser",
+  "devicePixelRatio": 1,
+  "isAndroid": false,
+  "isIOS": false,
+  "isMobile": false,
+  "platformName": "mocked-platform",
+}
+`;
+
+exports[`beforeScreenshot > should be able to return the enriched instance data with default options 1`] = `
+{
+  "appName": "mocked-app",
+  "browserName": "mocked-browser",
+  "devicePixelRatio": 1,
+  "isAndroid": false,
+  "isIOS": false,
+  "isMobile": false,
+  "platformName": "mocked-platform",
+}
+`;

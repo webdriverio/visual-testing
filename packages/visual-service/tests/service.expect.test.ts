@@ -3,7 +3,7 @@ import logger from '@wdio/logger'
 import { describe, expect, it, vi } from 'vitest'
 import VisualService from '../src/index.js'
 
-vi.mock('webdriver-image-comparison', () => ({
+vi.mock('@wdio/image-comparison-core', () => ({
     BaseClass: class {},
     checkElement: vi.fn(),
     checkFullPageScreen: vi.fn(),

@@ -1,0 +1,181 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`rectangles > determineElementRectangles > should determine them for Android ChromeDriver 1`] = `
+{
+  "height": 20,
+  "width": 375,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for Android Native webscreenshot 1`] = `
+{
+  "height": 900,
+  "width": 600,
+  "x": 1200,
+  "y": 630,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for a desktop browser 1`] = `
+{
+  "height": 40,
+  "width": 750,
+  "x": 24,
+  "y": 68,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for emulated device 1`] = `
+{
+  "height": 100,
+  "width": 400,
+  "x": 30,
+  "y": 50,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should determine them for iOS 1`] = `
+{
+  "height": 240,
+  "width": 240,
+  "x": 260,
+  "y": 60,
+}
+`;
+
+exports[`rectangles > determineElementRectangles > should handle Android webview elements 1`] = `
+{
+  "height": 200,
+  "width": 400,
+  "x": 200,
+  "y": 350,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for Android ChromeDriver 1`] = `
+{
+  "height": 1106,
+  "width": 2732,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for Android Native webscreenshot 1`] = `
+{
+  "height": 1536,
+  "width": 750,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for desktop browser 1`] = `
+{
+  "height": 768,
+  "width": 1024,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for emulated device 1`] = `
+{
+  "height": 1659,
+  "width": 1125,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them for iOS 1`] = `
+{
+  "height": 1536,
+  "width": 2732,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should determine them with legacy screenshot method 1`] = `
+{
+  "height": 1536,
+  "width": 2732,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for Android without native web screenshot 1`] = `[]`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for iOS with blockouts 1`] = `
+[
+  {
+    "height": 320,
+    "width": 1344,
+    "x": 0,
+    "y": 0,
+  },
+  {
+    "height": 71,
+    "width": 1344,
+    "x": 0,
+    "y": 2921,
+  },
+  {
+    "height": 2601,
+    "width": 0,
+    "x": 0,
+    "y": 320,
+  },
+  {
+    "height": 2601,
+    "width": 0,
+    "x": 1344,
+    "y": 320,
+  },
+]
+`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for non-mobile device 1`] = `[]`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles with all blockouts enabled 1`] = `
+[
+  {
+    "height": 320,
+    "width": 1344,
+    "x": 0,
+    "y": 0,
+  },
+  {
+    "height": 71,
+    "width": 1344,
+    "x": 0,
+    "y": 2921,
+  },
+  {
+    "height": 2601,
+    "width": 0,
+    "x": 0,
+    "y": 320,
+  },
+  {
+    "height": 2601,
+    "width": 0,
+    "x": 1344,
+    "y": 320,
+  },
+]
+`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles with no blockouts 1`] = `[]`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles with only sidebar blockout 1`] = `[]`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles with only status bar blockout 1`] = `[]`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles with only toolbar blockout 1`] = `[]`;
+
+exports[`rectangles > determineStatusAddressToolBarRectangles > should handle empty device rectangles 1`] = `[]`;

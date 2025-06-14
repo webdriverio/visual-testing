@@ -1,4 +1,4 @@
-import type { ImageCompareResult } from 'webdriver-image-comparison'
+import type { ImageCompareResult } from '@wdio/image-comparison-core'
 
 import { getBrowserObject } from './utils.js'
 import type {

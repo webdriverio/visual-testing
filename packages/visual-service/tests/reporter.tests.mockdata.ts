@@ -1,4 +1,4 @@
-import type { ResultReport } from 'webdriver-image-comparison'
+import type { ResultReport } from '@wdio/image-comparison-core'
 
 export const jsonFileContent: ResultReport[] = [
     // To cover platform.name differences
