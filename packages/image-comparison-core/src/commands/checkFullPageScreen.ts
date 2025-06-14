@@ -19,6 +19,32 @@ export default async function checkFullPageScreen(
         testContext,
     }: InternalCheckFullPageMethodOptions
 ): Promise<ImageCompareResult | number> {
+    // Set some variables
+    const { actualFolder, baselineFolder, diffFolder } = folders
+    const {
+        browserName,
+        deviceName,
+        deviceRectangles,
+        isAndroid,
+        isIOS,
+        isMobile,
+        nativeWebScreenshot: isAndroidNativeWebScreenshot,
+        platformName,
+    } = instanceData
+    const { autoSaveBaseline, isHybridApp, savePerInstance } = checkFullPageOptions.wic
+    const {
+        disableBlinkingCursor,
+        disableCSSAnimation,
+        enableLayoutTesting,
+        enableLegacyScreenshotMethod,
+        fullPageScrollTimeout,
+        hideAfterFirstScroll = [],
+        hideScrollBars,
+        hideElements = [],
+        removeElements = [],
+        waitForFontsLoaded,
+    } = checkFullPageOptions.method
+
     // 1a. Check if the method is supported in native context
     if (isNativeContext) {
         throw new Error('The method checkFullPageScreen is not supported in native context for native mobile apps!')
@@ -28,16 +54,16 @@ export default async function checkFullPageScreen(
     const saveFullPageOptions: SaveFullPageOptions = {
         wic: checkFullPageOptions.wic,
         method: {
-            disableBlinkingCursor: checkFullPageOptions.method.disableBlinkingCursor,
-            disableCSSAnimation: checkFullPageOptions.method.disableCSSAnimation,
-            enableLayoutTesting: checkFullPageOptions.method.enableLayoutTesting,
-            enableLegacyScreenshotMethod: checkFullPageOptions.method.enableLegacyScreenshotMethod,
-            fullPageScrollTimeout: checkFullPageOptions.method.fullPageScrollTimeout,
-            hideAfterFirstScroll: checkFullPageOptions.method.hideAfterFirstScroll || [],
-            hideScrollBars: checkFullPageOptions.method.hideScrollBars,
-            hideElements: checkFullPageOptions.method.hideElements || [],
-            removeElements: checkFullPageOptions.method.removeElements || [],
-            waitForFontsLoaded: checkFullPageOptions.method.waitForFontsLoaded,
+            disableBlinkingCursor,
+            disableCSSAnimation,
+            enableLayoutTesting,
+            enableLegacyScreenshotMethod,
+            fullPageScrollTimeout,
+            hideAfterFirstScroll,
+            hideScrollBars,
+            hideElements,
+            removeElements,
+            waitForFontsLoaded,
         },
     }
     const { devicePixelRatio, fileName } = await saveFullPageScreen({
@@ -57,22 +83,23 @@ export default async function checkFullPageScreen(
             method: compareOptions,
         },
         devicePixelRatio,
-        deviceRectangles: instanceData.deviceRectangles,
+        deviceRectangles,
         fileName,
         folderOptions: {
-            autoSaveBaseline: checkFullPageOptions.wic.autoSaveBaseline,
-            actualFolder: folders.actualFolder,
-            baselineFolder: folders.baselineFolder,
-            diffFolder: folders.diffFolder,
-            browserName: instanceData.browserName,
-            deviceName: instanceData.deviceName,
-            isMobile: browserInstance.isMobile,
-            savePerInstance: checkFullPageOptions.wic.savePerInstance,
+            autoSaveBaseline,
+            actualFolder,
+            baselineFolder,
+            diffFolder,
+            browserName,
+            deviceName,
+            isMobile,
+            savePerInstance,
         },
-        isAndroid: browserInstance.isAndroid,
-        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
-        isHybridApp: checkFullPageOptions.wic.isHybridApp,
-        platformName: instanceData.platformName,
+        isAndroid,
+        isAndroidNativeWebScreenshot,
+        isIOS,
+        isHybridApp,
+        platformName,
     }
 
     // 2b Now execute the compare and return the data

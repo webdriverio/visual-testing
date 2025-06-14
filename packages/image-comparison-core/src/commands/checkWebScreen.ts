@@ -19,18 +19,32 @@ export default async function checkWebScreen(
         testContext,
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
+    // Set some variables
+    const { browserName, deviceName, deviceRectangles, isAndroid, isMobile, nativeWebScreenshot: isAndroidNativeWebScreenshot } = instanceData
+    const { autoSaveBaseline, savePerInstance } = checkScreenOptions.wic
+    const {
+        disableBlinkingCursor,
+        disableCSSAnimation,
+        enableLayoutTesting,
+        enableLegacyScreenshotMethod,
+        hideScrollBars,
+        hideElements = [],
+        removeElements = [],
+        waitForFontsLoaded,
+    } = checkScreenOptions.method
+    const { actualFolder, baselineFolder, diffFolder } = folders
     // 1.  Take the actual screenshot and retrieve the needed data
     const saveScreenOptions: SaveScreenOptions = {
         wic: checkScreenOptions.wic,
         method: {
-            disableBlinkingCursor: checkScreenOptions.method.disableBlinkingCursor,
-            disableCSSAnimation: checkScreenOptions.method.disableCSSAnimation,
-            enableLayoutTesting: checkScreenOptions.method.enableLayoutTesting,
-            enableLegacyScreenshotMethod: checkScreenOptions.method.enableLegacyScreenshotMethod,
-            hideScrollBars: checkScreenOptions.method.hideScrollBars,
-            hideElements: checkScreenOptions.method.hideElements || [],
-            removeElements: checkScreenOptions.method.removeElements || [],
-            waitForFontsLoaded: checkScreenOptions.method.waitForFontsLoaded,
+            disableBlinkingCursor,
+            disableCSSAnimation,
+            enableLayoutTesting,
+            enableLegacyScreenshotMethod,
+            hideScrollBars,
+            hideElements,
+            removeElements,
+            waitForFontsLoaded,
         },
     }
     const { devicePixelRatio, fileName } = await saveWebScreen({
@@ -50,20 +64,20 @@ export default async function checkWebScreen(
             method: methodCompareOptions,
         },
         devicePixelRatio,
-        deviceRectangles: instanceData.deviceRectangles,
+        deviceRectangles,
         fileName,
         folderOptions: {
-            autoSaveBaseline: checkScreenOptions.wic.autoSaveBaseline,
-            actualFolder: folders.actualFolder,
-            baselineFolder: folders.baselineFolder,
-            diffFolder: folders.diffFolder,
-            browserName: instanceData.browserName,
-            deviceName: instanceData.deviceName,
-            isMobile: browserInstance.isMobile,
-            savePerInstance: checkScreenOptions.wic.savePerInstance,
+            autoSaveBaseline,
+            actualFolder,
+            baselineFolder,
+            diffFolder,
+            browserName,
+            deviceName,
+            isMobile,
+            savePerInstance,
         },
-        isAndroid: browserInstance.isAndroid,
-        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
+        isAndroid,
+        isAndroidNativeWebScreenshot,
     }
 
     // 2b Now execute the compare and return the data
