@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import saveWebScreen from './saveWebScreen.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
-import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
+import {
+    createBaseOptions,
+    createBeforeScreenshotMock,
+    createMethodOptions
+} from '../mocks/mocks.js'
 
 vi.mock('../methods/screenshots.js', () => ({
     takeBase64BiDiScreenshot: vi.fn().mockResolvedValue('bidi-screenshot-data'),
@@ -90,37 +94,13 @@ describe('saveWebScreen', () => {
     let canUseBidiScreenshotSpy: ReturnType<typeof vi.fn>
     let determineScreenRectanglesSpy: ReturnType<typeof vi.fn>
 
-    const baseOptions: InternalSaveScreenMethodOptions = {
-        browserInstance: {
-            isAndroid: false,
-            isMobile: false
-        } as any,
-        folders: BASE_CHECK_OPTIONS.folders,
-        instanceData: BASE_CHECK_OPTIONS.instanceData,
-        saveScreenOptions: {
-            wic: BASE_CHECK_OPTIONS.wic,
-            method: {
-                disableBlinkingCursor: false,
-                disableCSSAnimation: false,
-                enableLayoutTesting: false,
-                enableLegacyScreenshotMethod: false,
-                hideScrollBars: true,
-                hideElements: [],
-                removeElements: [],
-                waitForFontsLoaded: true,
-            }
-        },
-        tag: 'test-screen'
-    }
+    const baseOptions = createBaseOptions('screen') as InternalSaveScreenMethodOptions
 
     const createTestOptions = (methodOptions = {}) => ({
         ...baseOptions,
         saveScreenOptions: {
             ...baseOptions.saveScreenOptions,
-            method: {
-                ...baseOptions.saveScreenOptions.method,
-                ...methodOptions
-            }
+            method: createMethodOptions(methodOptions)
         }
     })
 
@@ -181,10 +161,7 @@ describe('saveWebScreen', () => {
     })
 
     it('should handle NaN dimension values', async () => {
-        vi.mocked((await import('../helpers/beforeScreenshot.js')).default).mockResolvedValueOnce({
-            browserName: 'chrome',
-            browserVersion: '120.0.0',
-            deviceName: 'desktop',
+        const nanDimensions = createBeforeScreenshotMock({
             dimensions: {
                 body: {
                     scrollHeight: NaN,
@@ -209,34 +186,10 @@ describe('saveWebScreen', () => {
                     screenWidth: NaN,
                 },
             },
-            isAndroid: false,
-            isAndroidChromeDriverScreenshot: false,
-            isAndroidNativeWebScreenshot: false,
-            isIOS: false,
-            isMobile: false,
-            isTestInBrowser: true,
-            isTestInMobileBrowser: false,
-            addressBarShadowPadding: 0,
-            toolBarShadowPadding: 0,
-            appName: '',
-            logName: 'chrome',
-            name: 'chrome',
-            platformName: 'desktop',
-            platformVersion: '120.0.0',
             devicePixelRatio: NaN,
-            deviceRectangles: {
-                bottomBar: { height: 0, width: 0, x: 0, y: 0 },
-                homeBar: { height: 0, width: 0, x: 0, y: 0 },
-                leftSidePadding: { height: 0, width: 0, x: 0, y: 0 },
-                rightSidePadding: { height: 0, width: 0, x: 0, y: 0 },
-                screenSize: { height: 0, width: 0 },
-                statusBar: { height: 0, width: 0, x: 0, y: 0 },
-                statusBarAndAddressBar: { height: 0, width: 0, x: 0, y: 0 },
-                viewport: { height: 0, width: 0, x: 0, y: 0 }
-            },
-            initialDevicePixelRatio: NaN,
-            nativeWebScreenshot: false
+            initialDevicePixelRatio: NaN
         })
+        vi.mocked((await import('../helpers/beforeScreenshot.js')).default).mockResolvedValueOnce(nanDimensions)
         const result = await saveWebScreen(baseOptions)
 
         expect(result).toMatchSnapshot()

@@ -149,7 +149,6 @@ export const IOS_DEVICES = {
         sideBar: 320,
     },
 }
-
 export const BASE_CHECK_OPTIONS = {
     wic: {
         addressBarShadowPadding: 6,
@@ -247,5 +246,118 @@ export const BASE_CHECK_OPTIONS = {
             isAndroid: false,
             isIOS: true
         }
+    }
+}
+export const BEFORE_SCREENSHOT_MOCK = {
+    browserName: 'chrome',
+    browserVersion: '120.0.0',
+    deviceName: 'desktop',
+    dimensions: {
+        body: {
+            scrollHeight: 1000,
+            offsetHeight: 1000
+        },
+        html: {
+            clientWidth: 1200,
+            scrollWidth: 1200,
+            clientHeight: 900,
+            scrollHeight: 1000,
+            offsetHeight: 1000
+        },
+        window: {
+            devicePixelRatio: 2,
+            innerHeight: 900,
+            innerWidth: 1200,
+            isEmulated: false,
+            isLandscape: false,
+            outerHeight: 1000,
+            outerWidth: 1200,
+            screenHeight: 1080,
+            screenWidth: 1920,
+        },
+    },
+    isAndroid: false,
+    isAndroidChromeDriverScreenshot: false,
+    isAndroidNativeWebScreenshot: false,
+    isIOS: false,
+    isMobile: false,
+    isTestInBrowser: true,
+    isTestInMobileBrowser: false,
+    addressBarShadowPadding: 0,
+    toolBarShadowPadding: 0,
+    appName: '',
+    logName: 'chrome',
+    name: 'chrome',
+    platformName: 'desktop',
+    platformVersion: '120.0.0',
+    devicePixelRatio: 2,
+    deviceRectangles: {
+        bottomBar: { height: 0, width: 0, x: 0, y: 0 },
+        homeBar: { height: 0, width: 0, x: 0, y: 0 },
+        leftSidePadding: { height: 0, width: 0, x: 0, y: 0 },
+        rightSidePadding: { height: 0, width: 0, x: 0, y: 0 },
+        screenSize: { height: 0, width: 0 },
+        statusBar: { height: 0, width: 0, x: 0, y: 0 },
+        statusBarAndAddressBar: { height: 0, width: 0, x: 0, y: 0 },
+        viewport: { height: 0, width: 0, x: 0, y: 0 }
+    },
+    initialDevicePixelRatio: 2,
+    nativeWebScreenshot: false
+}
+export const AFTER_SCREENSHOT_MOCK = {
+    devicePixelRatio: 2,
+    fileName: 'test-screen.png'
+}
+export const COMMON_METHOD_OPTIONS = {
+    disableBlinkingCursor: false,
+    disableCSSAnimation: false,
+    enableLayoutTesting: false,
+    enableLegacyScreenshotMethod: false,
+    hideScrollBars: true,
+    hideElements: [],
+    removeElements: [],
+    waitForFontsLoaded: true,
+}
+export const createBeforeScreenshotMock = (overrides = {}) => ({
+    ...BEFORE_SCREENSHOT_MOCK,
+    ...overrides
+})
+export const createAfterScreenshotMock = (overrides = {}) => ({
+    ...AFTER_SCREENSHOT_MOCK,
+    ...overrides
+})
+export const createMethodOptions = (overrides = {}) => ({
+    ...COMMON_METHOD_OPTIONS,
+    ...overrides
+})
+export const createBaseOptions = (type: 'screen' | 'element', overrides = {}) => {
+    const baseOptions = {
+        browserInstance: {
+            isAndroid: false,
+            isMobile: false
+        } as any,
+        folders: BASE_CHECK_OPTIONS.folders,
+        instanceData: BASE_CHECK_OPTIONS.instanceData,
+        tag: `test-${type}`
+    }
+
+    if (type === 'screen') {
+        return {
+            ...baseOptions,
+            saveScreenOptions: {
+                wic: BASE_CHECK_OPTIONS.wic,
+                method: COMMON_METHOD_OPTIONS
+            },
+            ...overrides
+        }
+    }
+
+    return {
+        ...baseOptions,
+        saveElementOptions: {
+            wic: BASE_CHECK_OPTIONS.wic,
+            method: COMMON_METHOD_OPTIONS
+        },
+        ...overrides
     }
 }
