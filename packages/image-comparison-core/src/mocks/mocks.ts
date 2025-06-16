@@ -1,4 +1,5 @@
 import type { BeforeScreenshotOptions } from '../helpers/beforeScreenshot.interfaces.js'
+import type { InternalSaveMethodOptions } from '../commands/save.interfaces.js'
 
 export const BEFORE_SCREENSHOT_OPTIONS: BeforeScreenshotOptions = {
     instanceData: {
@@ -360,4 +361,44 @@ export const createBaseOptions = (type: 'screen' | 'element', overrides = {}) =>
         },
         ...overrides
     }
+}
+
+export function createTestOptions<T extends InternalSaveMethodOptions>(
+    baseOptions: T,
+    overrides: Partial<T> = {}
+): T {
+    const result = {
+        ...baseOptions,
+        ...overrides
+    } as T
+
+    if ('saveScreenOptions' in baseOptions && 'saveScreenOptions' in result) {
+        const baseScreenOptions = baseOptions.saveScreenOptions as any
+        const overrideScreenOptions = (overrides as any).saveScreenOptions || {}
+        result.saveScreenOptions = {
+            ...baseScreenOptions,
+            ...overrideScreenOptions,
+            wic: {
+                ...BASE_CHECK_OPTIONS.wic,
+                ...(baseScreenOptions?.wic || {}),
+                ...(overrideScreenOptions?.wic || {})
+            }
+        } as any
+    }
+
+    if ('saveElementOptions' in baseOptions && 'saveElementOptions' in result) {
+        const baseElementOptions = baseOptions.saveElementOptions as any
+        const overrideElementOptions = (overrides as any).saveElementOptions || {}
+        result.saveElementOptions = {
+            ...baseElementOptions,
+            ...overrideElementOptions,
+            wic: {
+                ...BASE_CHECK_OPTIONS.wic,
+                ...(baseElementOptions?.wic || {}),
+                ...(overrideElementOptions?.wic || {})
+            }
+        } as any
+    }
+
+    return result
 }

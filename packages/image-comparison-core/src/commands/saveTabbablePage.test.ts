@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import saveTabbablePage from './saveTabbablePage.js'
 import type { InternalSaveTabbablePageMethodOptions } from './save.interfaces.js'
-import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
+import {
+    BASE_CHECK_OPTIONS,
+    createMethodOptions
+} from '../mocks/mocks.js'
 
 vi.mock('./saveFullPageScreen.js', () => ({
     default: vi.fn().mockResolvedValue({
@@ -49,16 +52,7 @@ describe('saveTabbablePage', () => {
                     }
                 }
             },
-            method: {
-                disableBlinkingCursor: false,
-                disableCSSAnimation: false,
-                enableLayoutTesting: false,
-                enableLegacyScreenshotMethod: false,
-                hideScrollBars: true,
-                hideElements: [],
-                removeElements: [],
-                waitForFontsLoaded: true,
-            }
+            method: createMethodOptions()
         },
         tag: 'test-tabbable-page'
     }

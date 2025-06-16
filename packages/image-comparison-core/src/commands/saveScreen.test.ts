@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import saveScreen from './saveScreen.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
-import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
+import { createBaseOptions } from '../mocks/mocks.js'
 
 vi.mock('./saveAppScreen.js', () => ({
     default: vi.fn().mockResolvedValue({
@@ -20,26 +20,7 @@ describe('saveScreen', () => {
     let saveAppScreen: any
     let saveWebScreen: any
 
-    const baseOptions: InternalSaveScreenMethodOptions = {
-        browserInstance: { isAndroid: false, isMobile: false } as any,
-        folders: BASE_CHECK_OPTIONS.folders,
-        instanceData: BASE_CHECK_OPTIONS.instanceData,
-        isNativeContext: false,
-        saveScreenOptions: {
-            wic: BASE_CHECK_OPTIONS.wic,
-            method: {
-                disableBlinkingCursor: false,
-                disableCSSAnimation: false,
-                enableLayoutTesting: false,
-                enableLegacyScreenshotMethod: false,
-                hideScrollBars: true,
-                hideElements: [],
-                removeElements: [],
-                waitForFontsLoaded: true,
-            }
-        },
-        tag: 'test-screen'
-    }
+    const baseOptions = createBaseOptions('screen') as InternalSaveScreenMethodOptions
 
     beforeEach(async () => {
         saveAppScreen = (await import('./saveAppScreen.js')).default

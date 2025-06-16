@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import saveFullPageScreen from './saveFullPageScreen.js'
 import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
-import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
+import {
+    BASE_CHECK_OPTIONS,
+    createMethodOptions,
+    createBeforeScreenshotMock
+} from '../mocks/mocks.js'
 
 vi.mock('../helpers/beforeScreenshot.js', () => ({
     default: vi.fn().mockResolvedValue({
@@ -65,14 +69,14 @@ describe('saveFullPageScreen', () => {
     let afterScreenshotSpy: ReturnType<typeof vi.fn>
     let canUseBidiScreenshotSpy: ReturnType<typeof vi.fn>
 
-    const baseOptions: InternalSaveFullPageMethodOptions = {
+    const baseOptions = {
         browserInstance: { isAndroid: false, isMobile: false } as any,
         folders: BASE_CHECK_OPTIONS.folders,
         instanceData: BASE_CHECK_OPTIONS.instanceData,
         isNativeContext: false,
         saveFullPageOptions: {
             wic: BASE_CHECK_OPTIONS.wic,
-            method: {
+            method: createMethodOptions({
                 disableBlinkingCursor: false,
                 disableCSSAnimation: false,
                 enableLayoutTesting: false,
@@ -81,10 +85,21 @@ describe('saveFullPageScreen', () => {
                 hideElements: [],
                 removeElements: [],
                 waitForFontsLoaded: true,
-            }
+            })
         },
         tag: 'test-fullpage'
-    }
+    } as InternalSaveFullPageMethodOptions
+
+    const createTestOptions = (methodOptions = {}) => ({
+        ...baseOptions,
+        saveFullPageOptions: {
+            ...baseOptions.saveFullPageOptions,
+            method: createMethodOptions({
+                ...baseOptions.saveFullPageOptions.method,
+                ...methodOptions
+            })
+        }
+    })
 
     beforeEach(async () => {
         const { takeBase64BiDiScreenshot, getBase64FullPageScreenshotsData } = await import('../methods/screenshots.js')
@@ -116,16 +131,9 @@ describe('saveFullPageScreen', () => {
 
     it('should use Bidi screenshot when available and userBasedFullPageScreenshot is false', async () => {
         canUseBidiScreenshotSpy.mockReturnValueOnce(true)
-        const options = {
-            ...baseOptions,
-            saveFullPageOptions: {
-                ...baseOptions.saveFullPageOptions,
-                method: {
-                    ...baseOptions.saveFullPageOptions.method,
-                    userBasedFullPageScreenshot: false
-                }
-            }
-        }
+        const options = createTestOptions({
+            userBasedFullPageScreenshot: false
+        })
         const result = await saveFullPageScreen(options)
 
         expect(result).toMatchSnapshot()
@@ -137,16 +145,9 @@ describe('saveFullPageScreen', () => {
 
     it('should use Bidi screenshot when available and enableLegacyScreenshotMethod is false', async () => {
         canUseBidiScreenshotSpy.mockReturnValueOnce(true)
-        const options = {
-            ...baseOptions,
-            saveFullPageOptions: {
-                ...baseOptions.saveFullPageOptions,
-                method: {
-                    ...baseOptions.saveFullPageOptions.method,
-                    enableLegacyScreenshotMethod: false
-                }
-            }
-        }
+        const options = createTestOptions({
+            enableLegacyScreenshotMethod: false
+        })
         const result = await saveFullPageScreen(options)
 
         expect(result).toMatchSnapshot()
@@ -158,17 +159,10 @@ describe('saveFullPageScreen', () => {
 
     it('should use legacy method when Bidi is available but both userBasedFullPageScreenshot and enableLegacyScreenshotMethod are true', async () => {
         canUseBidiScreenshotSpy.mockReturnValueOnce(true)
-        const options = {
-            ...baseOptions,
-            saveFullPageOptions: {
-                ...baseOptions.saveFullPageOptions,
-                method: {
-                    ...baseOptions.saveFullPageOptions.method,
-                    userBasedFullPageScreenshot: true,
-                    enableLegacyScreenshotMethod: true
-                }
-            }
-        }
+        const options = createTestOptions({
+            userBasedFullPageScreenshot: true,
+            enableLegacyScreenshotMethod: true
+        })
         const result = await saveFullPageScreen(options)
 
         expect(result).toMatchSnapshot()
@@ -179,18 +173,11 @@ describe('saveFullPageScreen', () => {
     })
 
     it('should handle undefined hideAfterFirstScroll, hideElements, and removeElements', async () => {
-        const options = {
-            ...baseOptions,
-            saveFullPageOptions: {
-                ...baseOptions.saveFullPageOptions,
-                method: {
-                    ...baseOptions.saveFullPageOptions.method,
-                    hideAfterFirstScroll: undefined,
-                    hideElements: undefined,
-                    removeElements: undefined
-                }
-            }
-        }
+        const options = createTestOptions({
+            hideAfterFirstScroll: undefined,
+            hideElements: undefined,
+            removeElements: undefined
+        })
 
         await saveFullPageScreen(options)
 
@@ -198,10 +185,7 @@ describe('saveFullPageScreen', () => {
     })
 
     it('should handle NaN dimension values', async () => {
-        vi.mocked((await import('../helpers/beforeScreenshot.js')).default).mockResolvedValueOnce({
-            browserName: 'chrome',
-            browserVersion: '120.0.0',
-            deviceName: 'desktop',
+        const nanDimensions = createBeforeScreenshotMock({
             dimensions: {
                 body: {
                     scrollHeight: NaN,
@@ -225,34 +209,10 @@ describe('saveFullPageScreen', () => {
                     screenWidth: NaN,
                 },
             },
-            isAndroid: false,
-            isAndroidChromeDriverScreenshot: false,
-            isAndroidNativeWebScreenshot: false,
-            isIOS: false,
-            isMobile: false,
-            isTestInBrowser: true,
-            isTestInMobileBrowser: false,
-            addressBarShadowPadding: 0,
-            toolBarShadowPadding: 0,
-            appName: '',
-            logName: 'chrome',
-            name: 'chrome',
-            platformName: 'desktop',
-            platformVersion: '120.0.0',
             devicePixelRatio: NaN,
-            deviceRectangles: {
-                bottomBar: { height: 0, width: 0, x: 0, y: 0 },
-                homeBar: { height: 0, width: 0, x: 0, y: 0 },
-                leftSidePadding: { height: 0, width: 0, x: 0, y: 0 },
-                rightSidePadding: { height: 0, width: 0, x: 0, y: 0 },
-                screenSize: { height: 0, width: 0 },
-                statusBar: { height: 0, width: 0, x: 0, y: 0 },
-                statusBarAndAddressBar: { height: 0, width: 0, x: 0, y: 0 },
-                viewport: { height: 0, width: 0, x: 0, y: 0 }
-            },
-            initialDevicePixelRatio: NaN,
-            nativeWebScreenshot: false
+            initialDevicePixelRatio: NaN
         })
+        vi.mocked((await import('../helpers/beforeScreenshot.js')).default).mockResolvedValueOnce(nanDimensions)
         const result = await saveFullPageScreen(baseOptions)
 
         expect(result).toMatchSnapshot()

@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import saveElement from './saveElement.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
-import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
+import {
+    BASE_CHECK_OPTIONS,
+    createMethodOptions
+} from '../mocks/mocks.js'
 
 vi.mock('./saveAppElement.js', () => ({
     default: vi.fn().mockResolvedValue({
@@ -34,16 +37,7 @@ describe('saveElement', () => {
         isNativeContext: true,
         saveElementOptions: {
             wic: BASE_CHECK_OPTIONS.wic,
-            method: {
-                disableBlinkingCursor: false,
-                disableCSSAnimation: false,
-                enableLayoutTesting: false,
-                enableLegacyScreenshotMethod: false,
-                hideScrollBars: true,
-                hideElements: [],
-                removeElements: [],
-                waitForFontsLoaded: true,
-            }
+            method: createMethodOptions()
         },
         tag: 'test-element'
     }

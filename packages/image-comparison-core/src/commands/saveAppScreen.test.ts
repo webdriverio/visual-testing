@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import saveAppScreen from './saveAppScreen.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
-import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
+import {
+    BASE_CHECK_OPTIONS,
+    createMethodOptions,
+    createTestOptions
+} from '../mocks/mocks.js'
+import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 
 vi.mock('../methods/screenshots.js', () => ({
     takeBase64Screenshot: vi.fn().mockResolvedValue('base64-screenshot-data')
@@ -21,14 +26,14 @@ describe('saveAppScreen', () => {
     let makeCroppedBase64ImageSpy: ReturnType<typeof vi.fn>
     let afterScreenshotSpy: ReturnType<typeof vi.fn>
 
-    const baseOptions: InternalSaveScreenMethodOptions = {
+    const baseOptions = {
         browserInstance: { isAndroid: false, isMobile: false } as any,
         folders: BASE_CHECK_OPTIONS.folders,
         instanceData: {
             ...BASE_CHECK_OPTIONS.instanceData,
             devicePixelRatio: 2,
             deviceRectangles: {
-                ...BASE_CHECK_OPTIONS.instanceData.deviceRectangles,
+                ...DEVICE_RECTANGLES,
                 screenSize: {
                     width: 375,
                     height: 812
@@ -38,7 +43,7 @@ describe('saveAppScreen', () => {
         isNativeContext: true,
         saveScreenOptions: {
             wic: BASE_CHECK_OPTIONS.wic,
-            method: {
+            method: createMethodOptions({
                 disableBlinkingCursor: false,
                 disableCSSAnimation: false,
                 enableLayoutTesting: false,
@@ -47,10 +52,10 @@ describe('saveAppScreen', () => {
                 hideElements: [],
                 removeElements: [],
                 waitForFontsLoaded: true,
-            }
+            })
         },
         tag: 'test-screen'
-    }
+    } as InternalSaveScreenMethodOptions
 
     beforeEach(async () => {
         const { takeBase64Screenshot } = await import('../methods/screenshots.js')
@@ -76,26 +81,32 @@ describe('saveAppScreen', () => {
     })
 
     it('should handle iOS device with bezel corners', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             browserInstance: { isAndroid: false, isMobile: true } as any,
             instanceData: {
-                ...baseOptions.instanceData,
+                ...BASE_CHECK_OPTIONS.instanceData,
                 deviceName: 'iPhone 12',
                 isAndroid: false,
                 isIOS: true,
+                isMobile: true,
                 platformName: 'iOS',
                 platformVersion: '14.0',
-                nativeWebScreenshot: true
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    screenSize: {
+                        width: 390,
+                        height: 844
+                    }
+                }
             },
             saveScreenOptions: {
-                ...baseOptions.saveScreenOptions,
                 wic: {
-                    ...baseOptions.saveScreenOptions.wic,
+                    ...BASE_CHECK_OPTIONS.wic,
                     addIOSBezelCorners: true
-                }
+                },
+                method: createMethodOptions()
             }
-        }
+        })
 
         await saveAppScreen(options)
 
@@ -105,19 +116,25 @@ describe('saveAppScreen', () => {
     })
 
     it('should handle Android device correctly', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             browserInstance: { isAndroid: true, isMobile: true } as any,
             instanceData: {
-                ...baseOptions.instanceData,
+                ...BASE_CHECK_OPTIONS.instanceData,
                 deviceName: 'Pixel 4',
                 isAndroid: true,
                 isIOS: false,
+                isMobile: true,
                 platformName: 'Android',
                 platformVersion: '11.0',
-                nativeWebScreenshot: true
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    screenSize: {
+                        width: 412,
+                        height: 915
+                    }
+                }
             }
-        }
+        })
 
         await saveAppScreen(options)
 
@@ -127,10 +144,9 @@ describe('saveAppScreen', () => {
     })
 
     it('should handle non-native context correctly', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             isNativeContext: false
-        }
+        })
 
         await saveAppScreen(options)
 
@@ -140,16 +156,15 @@ describe('saveAppScreen', () => {
     })
 
     it('should handle custom image naming', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             saveScreenOptions: {
-                ...baseOptions.saveScreenOptions,
                 wic: {
-                    ...baseOptions.saveScreenOptions.wic,
+                    ...BASE_CHECK_OPTIONS.wic,
                     formatImageName: '{tag}-{browserName}-{deviceName}'
-                }
+                },
+                method: createMethodOptions()
             }
-        }
+        })
 
         await saveAppScreen(options)
 
@@ -157,16 +172,15 @@ describe('saveAppScreen', () => {
     })
 
     it('should handle save per instance', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             saveScreenOptions: {
-                ...baseOptions.saveScreenOptions,
                 wic: {
-                    ...baseOptions.saveScreenOptions.wic,
+                    ...BASE_CHECK_OPTIONS.wic,
                     savePerInstance: true
-                }
+                },
+                method: createMethodOptions()
             }
-        }
+        })
 
         await saveAppScreen(options)
 
@@ -174,23 +188,22 @@ describe('saveAppScreen', () => {
     })
 
     it('should handle custom screen sizes', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             instanceData: {
-                ...baseOptions.instanceData,
+                ...BASE_CHECK_OPTIONS.instanceData,
                 deviceRectangles: {
-                    ...BASE_CHECK_OPTIONS.instanceData.deviceRectangles,
+                    ...DEVICE_RECTANGLES,
                     screenSize: {
                         width: 1920,
                         height: 1080
                     }
                 }
             }
-        }
+        })
 
         await saveAppScreen(options)
 
-        expect(takeBase64ScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(takeBase64ScreenshotSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 })

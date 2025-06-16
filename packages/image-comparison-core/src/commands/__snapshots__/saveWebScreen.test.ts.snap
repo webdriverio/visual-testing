@@ -93,7 +93,115 @@ exports[`saveWebScreen > should handle NaN dimension values 5`] = `
     "hideScrollBars": true,
     "isLandscape": false,
     "isNativeContext": false,
-    "platformName": "iOS",
+    "platformName": "Windows 10",
+    "removeElements": [],
+  },
+]
+`;
+
+exports[`saveWebScreen > should handle custom screen sizes 1`] = `
+{
+  "isAndroid": false,
+  "isMobile": false,
+}
+`;
+
+exports[`saveWebScreen > should handle custom screen sizes 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "cropped-screenshot-data",
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "fileName": {
+      "browserName": "chrome",
+      "browserVersion": "120.0.0",
+      "deviceName": "desktop",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": false,
+      "isTestInBrowser": true,
+      "logName": "chrome",
+      "name": "chrome",
+      "outerHeight": 1000,
+      "outerWidth": 1200,
+      "platformName": "desktop",
+      "platformVersion": "120.0.0",
+      "screenHeight": 1080,
+      "screenWidth": 1920,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "chrome",
+      "deviceName": "desktop",
+      "isMobile": false,
+      "savePerInstance": true,
+    },
+    "hideElements": [],
+    "hideScrollBars": true,
+    "isLandscape": false,
+    "isNativeContext": false,
+    "platformName": "Windows 10",
+    "removeElements": [],
+  },
+]
+`;
+
+exports[`saveWebScreen > should handle mobile device correctly 1`] = `
+[
+  {
+    "isAndroid": true,
+    "isMobile": true,
+  },
+]
+`;
+
+exports[`saveWebScreen > should handle mobile device correctly 2`] = `
+[
+  {
+    "isAndroid": true,
+    "isMobile": true,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "cropped-screenshot-data",
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "fileName": {
+      "browserName": "chrome",
+      "browserVersion": "120.0.0",
+      "deviceName": "desktop",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": false,
+      "isTestInBrowser": true,
+      "logName": "chrome",
+      "name": "chrome",
+      "outerHeight": 1000,
+      "outerWidth": 1200,
+      "platformName": "desktop",
+      "platformVersion": "120.0.0",
+      "screenHeight": 1080,
+      "screenWidth": 1920,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "chrome",
+      "deviceName": "desktop",
+      "isMobile": false,
+      "savePerInstance": true,
+    },
+    "hideElements": [],
+    "hideScrollBars": true,
+    "isLandscape": false,
+    "isNativeContext": false,
+    "platformName": "Android",
     "removeElements": [],
   },
 ]
@@ -157,7 +265,7 @@ exports[`saveWebScreen > should use Bidi screenshot when available and not mobil
     "hideScrollBars": true,
     "isLandscape": false,
     "isNativeContext": false,
-    "platformName": "iOS",
+    "platformName": "Windows 10",
     "removeElements": [],
   },
 ]
@@ -256,7 +364,7 @@ exports[`saveWebScreen > should use default values when hideElements and removeE
     "hideScrollBars": true,
     "isLandscape": false,
     "isNativeContext": false,
-    "platformName": "iOS",
+    "platformName": "Windows 10",
     "removeElements": [],
   },
 ]
@@ -355,7 +463,7 @@ exports[`saveWebScreen > should use legacy method when Bidi is not available 5`]
     "hideScrollBars": true,
     "isLandscape": false,
     "isNativeContext": false,
-    "platformName": "iOS",
+    "platformName": "Windows 10",
     "removeElements": [],
   },
 ]

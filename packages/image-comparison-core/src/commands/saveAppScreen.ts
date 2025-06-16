@@ -51,8 +51,8 @@ export default async function saveAppScreen(
             isLandscape: false,
             rectangles :{
                 // For iOS the screen size is always in css pixels, the screenshot is in device pixels
-                height: isIOS ? screenSize.height * devicePixelRatio : screenSize.height,
-                width: isIOS ? screenSize.width * devicePixelRatio : screenSize.width,
+                height: screenSize.height * devicePixelRatio,
+                width: screenSize.width * devicePixelRatio,
                 x: 0,
                 y: 0,
             },

@@ -118,8 +118,8 @@ exports[`saveAppElement > should handle Android device correctly 2`] = `
       "name": "",
       "platformName": "Android",
       "platformVersion": "11.0",
-      "screenHeight": 844,
-      "screenWidth": 390,
+      "screenHeight": 915,
+      "screenWidth": 412,
       "tag": "test-element",
     },
     "filePath": {
@@ -190,10 +190,10 @@ exports[`saveAppElement > should handle custom resize dimensions 1`] = `
     },
     "isIOS": true,
     "resizeDimensions": {
-      "bottom": 0,
-      "left": 0,
-      "right": 0,
-      "top": 0,
+      "bottom": 30,
+      "left": 40,
+      "right": 20,
+      "top": 10,
     },
   },
 ]
@@ -284,8 +284,8 @@ exports[`saveAppElement > should handle custom screen sizes 2`] = `
       "name": "",
       "platformName": "iOS",
       "platformVersion": "17.0",
-      "screenHeight": 844,
-      "screenWidth": 390,
+      "screenHeight": 812,
+      "screenWidth": 375,
       "tag": "test-element",
     },
     "filePath": {

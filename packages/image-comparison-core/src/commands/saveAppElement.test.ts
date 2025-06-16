@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import saveAppElement from './saveAppElement.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
-import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
+import {
+    BASE_CHECK_OPTIONS,
+    createMethodOptions,
+    createTestOptions
+} from '../mocks/mocks.js'
+import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 
 vi.mock('../methods/images.js', () => ({
     takeBase64ElementScreenshot: vi.fn().mockResolvedValue('base64-screenshot-data')
@@ -27,16 +32,7 @@ describe('saveAppElement', () => {
         } as any,
         saveElementOptions: {
             wic: BASE_CHECK_OPTIONS.wic,
-            method: {
-                disableBlinkingCursor: false,
-                disableCSSAnimation: false,
-                enableLayoutTesting: false,
-                enableLegacyScreenshotMethod: false,
-                hideScrollBars: true,
-                hideElements: [],
-                removeElements: [],
-                waitForFontsLoaded: true,
-            }
+            method: createMethodOptions()
         },
         browserInstance: { isAndroid: false, isMobile: false } as any,
         folders: BASE_CHECK_OPTIONS.folders,
@@ -66,12 +62,12 @@ describe('saveAppElement', () => {
     })
 
     it('should handle custom resize dimensions', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             saveElementOptions: {
-                ...baseOptions.saveElementOptions,
                 wic: {
-                    ...baseOptions.saveElementOptions.wic,
+                    ...BASE_CHECK_OPTIONS.wic
+                },
+                method: {
                     resizeDimensions: {
                         top: 10,
                         right: 20,
@@ -80,7 +76,7 @@ describe('saveAppElement', () => {
                     }
                 }
             }
-        }
+        })
 
         await saveAppElement(options)
 
@@ -89,19 +85,22 @@ describe('saveAppElement', () => {
     })
 
     it('should handle iOS device correctly', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             browserInstance: { isAndroid: false, isMobile: true } as any,
             instanceData: {
-                ...baseOptions.instanceData,
+                ...BASE_CHECK_OPTIONS.instanceData,
                 deviceName: 'iPhone 12',
                 isAndroid: false,
                 isIOS: true,
+                isMobile: true,
                 platformName: 'iOS',
                 platformVersion: '14.0',
-                nativeWebScreenshot: true
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    screenSize: { height: 844, width: 390 },
+                }
             }
-        }
+        })
 
         await saveAppElement(options)
 
@@ -110,19 +109,22 @@ describe('saveAppElement', () => {
     })
 
     it('should handle Android device correctly', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             browserInstance: { isAndroid: true, isMobile: true } as any,
             instanceData: {
-                ...baseOptions.instanceData,
+                ...BASE_CHECK_OPTIONS.instanceData,
                 deviceName: 'Pixel 4',
                 isAndroid: true,
                 isIOS: false,
+                isMobile: true,
                 platformName: 'Android',
                 platformVersion: '11.0',
-                nativeWebScreenshot: true
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    screenSize: { height: 915, width: 412 },
+                }
             }
-        }
+        })
 
         await saveAppElement(options)
 
@@ -131,10 +133,9 @@ describe('saveAppElement', () => {
     })
 
     it('should handle non-native context correctly', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             isNativeContext: false
-        }
+        })
 
         await saveAppElement(options)
 
@@ -143,10 +144,9 @@ describe('saveAppElement', () => {
     })
 
     it('should handle custom image naming', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             tag: 'custom-element-name'
-        }
+        })
 
         await saveAppElement(options)
 
@@ -154,16 +154,15 @@ describe('saveAppElement', () => {
     })
 
     it('should handle save per instance', async () => {
-        const options = {
-            ...baseOptions,
+        const options = createTestOptions(baseOptions, {
             saveElementOptions: {
-                ...baseOptions.saveElementOptions,
                 wic: {
-                    ...baseOptions.saveElementOptions.wic,
+                    ...BASE_CHECK_OPTIONS.wic,
                     savePerInstance: true
-                }
+                },
+                method: {}
             }
-        }
+        })
 
         await saveAppElement(options)
 
@@ -171,19 +170,18 @@ describe('saveAppElement', () => {
     })
 
     it('should handle custom screen sizes', async () => {
-        const options = {
-            ...baseOptions,
-            saveElementOptions: {
-                ...baseOptions.saveElementOptions,
-                wic: {
-                    ...baseOptions.saveElementOptions.wic,
+        const options = createTestOptions(baseOptions, {
+            instanceData: {
+                ...BASE_CHECK_OPTIONS.instanceData,
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
                     screenSize: {
                         width: 375,
                         height: 812
                     }
                 }
             }
-        }
+        })
 
         await saveAppElement(options)
 

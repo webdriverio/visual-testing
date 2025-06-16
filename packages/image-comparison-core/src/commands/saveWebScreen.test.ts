@@ -2,10 +2,13 @@ import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import saveWebScreen from './saveWebScreen.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
 import {
-    createBaseOptions,
-    createBeforeScreenshotMock,
-    createMethodOptions
+    BASE_CHECK_OPTIONS,
+    BEFORE_SCREENSHOT_OPTIONS,
+    createMethodOptions,
+    createTestOptions,
+    createBeforeScreenshotMock
 } from '../mocks/mocks.js'
+import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 
 vi.mock('../methods/screenshots.js', () => ({
     takeBase64BiDiScreenshot: vi.fn().mockResolvedValue('bidi-screenshot-data'),
@@ -94,15 +97,35 @@ describe('saveWebScreen', () => {
     let canUseBidiScreenshotSpy: ReturnType<typeof vi.fn>
     let determineScreenRectanglesSpy: ReturnType<typeof vi.fn>
 
-    const baseOptions = createBaseOptions('screen') as InternalSaveScreenMethodOptions
-
-    const createTestOptions = (methodOptions = {}) => ({
-        ...baseOptions,
+    const baseOptions = {
+        browserInstance: { isAndroid: false, isMobile: false } as any,
+        folders: BASE_CHECK_OPTIONS.folders,
+        instanceData: {
+            ...BEFORE_SCREENSHOT_OPTIONS.instanceData,
+            deviceRectangles: {
+                ...DEVICE_RECTANGLES,
+                screenSize: {
+                    width: 1920,
+                    height: 1080
+                }
+            }
+        },
+        isNativeContext: false,
         saveScreenOptions: {
-            ...baseOptions.saveScreenOptions,
-            method: createMethodOptions(methodOptions)
-        }
-    })
+            wic: BASE_CHECK_OPTIONS.wic,
+            method: createMethodOptions({
+                disableBlinkingCursor: false,
+                disableCSSAnimation: false,
+                enableLayoutTesting: false,
+                enableLegacyScreenshotMethod: false,
+                hideScrollBars: true,
+                hideElements: [],
+                removeElements: [],
+                waitForFontsLoaded: true,
+            })
+        },
+        tag: 'test-screen'
+    } as InternalSaveScreenMethodOptions
 
     beforeEach(async () => {
         const { takeBase64BiDiScreenshot, takeBase64Screenshot } = await import('../methods/screenshots.js')
@@ -147,9 +170,14 @@ describe('saveWebScreen', () => {
     })
 
     it('should use default values when hideElements and removeElements are not provided', async () => {
-        const options = createTestOptions({
-            hideElements: undefined,
-            removeElements: undefined
+        const options = createTestOptions(baseOptions, {
+            saveScreenOptions: {
+                wic: BASE_CHECK_OPTIONS.wic,
+                method: {
+                    hideElements: undefined,
+                    removeElements: undefined
+                }
+            }
         })
         const result = await saveWebScreen(options)
 
@@ -196,6 +224,53 @@ describe('saveWebScreen', () => {
         expect(takeBase64ScreenshotSpy.mock.calls[0]).toMatchSnapshot()
         expect(determineScreenRectanglesSpy.mock.calls[0]).toMatchSnapshot()
         expect(makeCroppedBase64ImageSpy.mock.calls[0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+    })
+
+    it('should handle mobile device correctly', async () => {
+        const options = createTestOptions(baseOptions, {
+            browserInstance: { isAndroid: true, isMobile: true } as any,
+            instanceData: {
+                ...BEFORE_SCREENSHOT_OPTIONS.instanceData,
+                deviceName: 'Pixel 4',
+                isAndroid: true,
+                isIOS: false,
+                isMobile: true,
+                platformName: 'Android',
+                platformVersion: '11.0',
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    screenSize: {
+                        width: 412,
+                        height: 915
+                    }
+                }
+            }
+        })
+
+        await saveWebScreen(options)
+
+        expect(takeBase64ScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+    })
+
+    it('should handle custom screen sizes', async () => {
+        const options = createTestOptions(baseOptions, {
+            instanceData: {
+                ...BEFORE_SCREENSHOT_OPTIONS.instanceData,
+                deviceRectangles: {
+                    ...DEVICE_RECTANGLES,
+                    screenSize: {
+                        width: 2560,
+                        height: 1440
+                    }
+                }
+            }
+        })
+
+        await saveWebScreen(options)
+
+        expect(takeBase64ScreenshotSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 })
