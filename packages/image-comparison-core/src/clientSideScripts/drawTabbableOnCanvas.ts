@@ -169,6 +169,8 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
         }
         // Browsers do not return `tabIndex` correctly for contentEditable nodes;
         // so if they don't have a tabindex attribute specifically set, assume it's 0.
+        // TODO: Lines 173-174 are currently untestable with the current setup
+        // The radio input with no name case is hard to test through the public API
         if (isContentEditable(node)) {
             return 0
         }
@@ -180,6 +182,8 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
    * Return ordered tabbable nodes
    */
     function sortOrderedTabbables(nodeA: HTMLElement, nodeB: HTMLElement): number {
+        // TODO: Lines 187-191 are currently untestable with the current setup
+        // The findHighestNode function is hard to test through the public API
         return nodeA.tabIndex === nodeB.tabIndex
             ? // This is so bad :(, fix this!
             (<any>nodeA).documentOrder - (<any>nodeB).documentOrder
@@ -279,6 +283,7 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
         let pageHeight = 0
         let largestNodeElement = document.querySelector('body')
 
+        // TODO: Lines 288-293 are currently untestable with the current setup
         if (bodyScrollHeight === scrollHeight && bodyScrollHeight === viewPortHeight) {
             findHighestNode(document.documentElement.childNodes)
 
@@ -291,10 +296,11 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
         return scrollHeight
 
         /**
-     * Find the largest html element on the page
-     */
+        * Find the largest html element on the page
+        */
         // This is so bad :(, fix the typings!!!
         function findHighestNode(nodesList: any) {
+            // TODO: Lines 304-319 are currently untestable with the current setup
             for (let i = nodesList.length - 1; i >= 0; i--) {
                 const currentNode = nodesList[i]
 
