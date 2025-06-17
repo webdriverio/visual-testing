@@ -167,4 +167,19 @@ describe('getScreenDimensions', () => {
         expect(dimensions.dimensions.window.screenWidth).toBe(2880)
         expect(dimensions.dimensions.window.screenHeight).toBe(1800)
     })
+
+    it('should handle zero devicePixelRatio', () => {
+        Object.defineProperty(window, 'devicePixelRatio', { value: 0, configurable: true })
+        Object.defineProperty(window, 'innerWidth', { value: 1920, configurable: true })
+        Object.defineProperty(window, 'innerHeight', { value: 1080, configurable: true })
+        Object.defineProperty(window, 'matchMedia', {
+            value: vi.fn().mockImplementation(() => ({
+                matches: true,
+            })),
+            ...CONFIGURABLE,
+        })
+
+        const dimensions = getScreenDimensions(false)
+        expect(dimensions.dimensions.window.devicePixelRatio).toBe(1)
+    })
 })

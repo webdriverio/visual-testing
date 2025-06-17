@@ -79,7 +79,7 @@ export default function getScreenDimensions(isMobile: boolean): ScreenDimensions
          * Mobile: Physical pixel ratio (typically >1 for high DPI)
          * Desktop: Usually 1, or 2 for high DPI displays
          */
-        devicePixelRatio: window.devicePixelRatio,
+        devicePixelRatio: dpr,
         /**
          * Mobile: Always false
          * Desktop: Always false
