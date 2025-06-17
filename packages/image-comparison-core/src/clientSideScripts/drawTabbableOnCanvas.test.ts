@@ -269,4 +269,43 @@ describe('drawTabbableOnCanvas', () => {
 
         expect(canvas.height).toBeGreaterThanOrEqual(100)
     })
+
+    it('should not throw or attempt to draw if getContext returns null (drawLine)', () => {
+        // Mock getContext to return null
+        const originalGetContext = HTMLCanvasElement.prototype.getContext
+        HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue(null)
+        // Add two tabbable elements to trigger drawLine
+        const btn1 = document.createElement('button')
+        btn1.tabIndex = 0
+        Object.defineProperty(btn1, 'offsetParent', { value: document.body, configurable: true })
+        btn1.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
+        document.body.appendChild(btn1)
+        const btn2 = document.createElement('button')
+        btn2.tabIndex = 0
+        Object.defineProperty(btn2, 'offsetParent', { value: document.body, configurable: true })
+        btn2.getBoundingClientRect = vi.fn().mockReturnValue({ left: 20, top: 20, width: 10, height: 10, right: 30, bottom: 30 })
+        document.body.appendChild(btn2)
+        // Should not throw or call any drawing methods
+        expect(() => drawTabbableOnCanvas(defaultOptions)).not.toThrow()
+        expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
+        // Restore
+        HTMLCanvasElement.prototype.getContext = originalGetContext
+    })
+
+    it('should not throw or attempt to draw if getContext returns null (drawCircleAndNumber)', () => {
+        // Mock getContext to return null
+        const originalGetContext = HTMLCanvasElement.prototype.getContext
+        HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue(null)
+        // Add one tabbable element to trigger drawCircleAndNumber
+        const btn = document.createElement('button')
+        btn.tabIndex = 0
+        Object.defineProperty(btn, 'offsetParent', { value: document.body, configurable: true })
+        btn.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
+        document.body.appendChild(btn)
+        // Should not throw or call any drawing methods
+        expect(() => drawTabbableOnCanvas(defaultOptions)).not.toThrow()
+        expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
+        // Restore
+        HTMLCanvasElement.prototype.getContext = originalGetContext
+    })
 })
