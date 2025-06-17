@@ -169,4 +169,104 @@ describe('drawTabbableOnCanvas', () => {
 
         expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
     })
+
+    it('should not include elements with negative tabindex', () => {
+        const div = document.createElement('div')
+        div.tabIndex = -1
+        document.body.appendChild(div)
+        drawTabbableOnCanvas(defaultOptions)
+        expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
+    })
+
+    it('should not include disabled elements', () => {
+        const input = document.createElement('input')
+        input.disabled = true
+        document.body.appendChild(input)
+        drawTabbableOnCanvas(defaultOptions)
+        expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
+    })
+
+    it('should not include hidden elements (visibility: hidden)', () => {
+        const input = document.createElement('input')
+        input.style.visibility = 'hidden'
+        document.body.appendChild(input)
+        drawTabbableOnCanvas(defaultOptions)
+        expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
+    })
+
+    it('should only include checked radio in group as tabbable', () => {
+        const radio1 = document.createElement('input')
+        radio1.type = 'radio'
+        radio1.name = 'group1'
+        document.body.appendChild(radio1)
+        const radio2 = document.createElement('input')
+        radio2.type = 'radio'
+        radio2.name = 'group1'
+        radio2.checked = true
+        document.body.appendChild(radio2)
+        // Make radios visible
+        Object.defineProperty(radio1, 'offsetParent', { value: document.body, configurable: true })
+        Object.defineProperty(radio2, 'offsetParent', { value: document.body, configurable: true })
+        // Mock getBoundingClientRect
+        radio2.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
+        drawTabbableOnCanvas(defaultOptions)
+        expect(mockCanvasContext.beginPath).toHaveBeenCalled()
+    })
+
+    it('should treat radio with no name as tabbable', () => {
+        const radio = document.createElement('input')
+        radio.type = 'radio'
+        document.body.appendChild(radio)
+        Object.defineProperty(radio, 'offsetParent', { value: document.body, configurable: true })
+        radio.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
+        drawTabbableOnCanvas(defaultOptions)
+        expect(mockCanvasContext.beginPath).toHaveBeenCalled()
+    })
+
+    it('should treat contentEditable as tabbable', () => {
+        const div = document.createElement('div')
+        div.contentEditable = 'true'
+        div.tabIndex = 0
+        document.body.appendChild(div)
+        Object.defineProperty(div, 'offsetParent', { value: document.body, configurable: true })
+        div.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
+        drawTabbableOnCanvas(defaultOptions)
+        expect(mockCanvasContext.beginPath).toHaveBeenCalled()
+    })
+
+    it('should use body scrollHeight if it is greater than document scrollHeight', () => {
+        Object.defineProperty(document.documentElement, 'clientHeight', { value: 100, configurable: true })
+        Object.defineProperty(document.documentElement, 'scrollHeight', { value: 100, configurable: true })
+        Object.defineProperty(document.body, 'scrollHeight', { value: 200, configurable: true })
+        // Set window.innerHeight to match the others
+        Object.defineProperty(window, 'innerHeight', { value: 100, configurable: true })
+        // Add a tabbable element to trigger canvas drawing
+        const btn = document.createElement('button')
+        btn.tabIndex = 0
+        Object.defineProperty(btn, 'offsetParent', { value: document.body, configurable: true })
+        btn.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
+        document.body.appendChild(btn)
+        drawTabbableOnCanvas(defaultOptions)
+
+        const canvas = document.getElementById('wic-tabbable-canvas') as HTMLCanvasElement
+
+        expect(canvas.height).toBe(200)
+    })
+
+    it('should walk DOM to find highest node if scrollHeight and bodyScrollHeight equal clientHeight', () => {
+        Object.defineProperty(document.documentElement, 'clientHeight', { value: 100, configurable: true })
+        Object.defineProperty(document.documentElement, 'scrollHeight', { value: 100, configurable: true })
+        Object.defineProperty(document.body, 'scrollHeight', { value: 100, configurable: true })
+
+        const tallDiv = document.createElement('div')
+
+        tallDiv.style.height = '300px'
+        document.body.appendChild(tallDiv)
+        tallDiv.getBoundingClientRect = vi.fn().mockReturnValue({ top: 0 })
+        drawTabbableOnCanvas(defaultOptions)
+
+        const canvas = document.getElementById('wic-tabbable-canvas') as HTMLCanvasElement
+
+        expect(canvas.height).toBeGreaterThanOrEqual(100)
+    })
 })
