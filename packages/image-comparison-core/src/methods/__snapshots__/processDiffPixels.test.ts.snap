@@ -1,0 +1,410 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`processDiffPixels > should create separate bounding boxes for distant pixels 1`] = `
+[
+  {
+    "bottom": 20,
+    "left": 20,
+    "right": 23,
+    "top": 20,
+  },
+  {
+    "bottom": 0,
+    "left": 0,
+    "right": 3,
+    "top": 0,
+  },
+]
+`;
+
+exports[`processDiffPixels > should create separate bounding boxes for distant pixels 2`] = `
+[
+  [
+    "Processing diff pixels started",
+  ],
+  [
+    "Processing 8 diff pixels",
+  ],
+  [
+    "Total pixels in image: 504",
+  ],
+  [
+    "Number of diff pixels: 8",
+  ],
+  [
+    "Diff percentage: 1.59%",
+  ],
+  [
+    "Union operations started",
+  ],
+  [
+    "Union time: XXXms",
+  ],
+  [
+    "Grouping pixels into bounding boxes",
+  ],
+  [
+    "Grouping time: XXXms",
+  ],
+  [
+    "Total analysis time: XXXms",
+  ],
+  [
+    "Post-processing bounding boxes",
+  ],
+  [
+    "Merging bounding boxes started with a proximity of 5 pixels",
+  ],
+  [
+    "Post-processing time: XXXms",
+  ],
+  [
+    "Number merged: 2",
+  ],
+]
+`;
+
+exports[`processDiffPixels > should handle a large number of pixels 1`] = `
+[
+  {
+    "bottom": 99,
+    "left": 0,
+    "right": 9,
+    "top": 0,
+  },
+]
+`;
+
+exports[`processDiffPixels > should handle a large number of pixels 2`] = `
+[
+  [
+    "Processing diff pixels started",
+  ],
+  [
+    "Processing 1000 diff pixels",
+  ],
+  [
+    "Total pixels in image: 1,000",
+  ],
+  [
+    "Number of diff pixels: 1,000",
+  ],
+  [
+    "Diff percentage: 100.00%",
+  ],
+]
+`;
+
+exports[`processDiffPixels > should handle empty pixel array 1`] = `[]`;
+
+exports[`processDiffPixels > should handle empty pixel array 2`] = `
+[
+  [
+    "Processing diff pixels started",
+  ],
+  [
+    "Processing 0 diff pixels",
+  ],
+  [
+    "Total pixels in image: 0",
+  ],
+  [
+    "Number of diff pixels: 0",
+  ],
+  [
+    "Diff percentage: 0.00%",
+  ],
+  [
+    "Union operations started",
+  ],
+  [
+    "Union time: XXXms",
+  ],
+  [
+    "Grouping pixels into bounding boxes",
+  ],
+  [
+    "Grouping time: XXXms",
+  ],
+  [
+    "Total analysis time: XXXms",
+  ],
+  [
+    "Post-processing bounding boxes",
+  ],
+  [
+    "Merging bounding boxes started with a proximity of 5 pixels",
+  ],
+  [
+    "Post-processing time: XXXms",
+  ],
+  [
+    "Number merged: 0",
+  ],
+]
+`;
+
+exports[`processDiffPixels > should handle maximum diff percentage threshold 1`] = `
+[
+  {
+    "bottom": 99999,
+    "left": 0,
+    "right": 9,
+    "top": 0,
+  },
+]
+`;
+
+exports[`processDiffPixels > should handle maximum diff percentage threshold 2`] = `
+[
+  [
+    "Too many differences detected! Diff percentage: 100.00%, Diff pixels: 1,000,000",
+  ],
+  [
+    "This likely indicates a major visual difference or an issue with the comparison.",
+  ],
+  [
+    "Consider checking if the baseline image is correct or if there are major UI changes.",
+  ],
+]
+`;
+
+exports[`processDiffPixels > should handle maximum diff pixels threshold 1`] = `
+[
+  {
+    "bottom": 599999,
+    "left": 0,
+    "right": 9,
+    "top": 0,
+  },
+]
+`;
+
+exports[`processDiffPixels > should handle maximum diff pixels threshold 2`] = `
+[
+  [
+    "Too many differences detected! Diff percentage: 100.00%, Diff pixels: 6,000,000",
+  ],
+  [
+    "This likely indicates a major visual difference or an issue with the comparison.",
+  ],
+  [
+    "Consider checking if the baseline image is correct or if there are major UI changes.",
+  ],
+]
+`;
+
+exports[`processDiffPixels > should handle pixels in a complex pattern 1`] = `
+[
+  {
+    "bottom": 25,
+    "left": 0,
+    "right": 25,
+    "top": 0,
+  },
+]
+`;
+
+exports[`processDiffPixels > should handle pixels in a complex pattern 2`] = `
+[
+  [
+    "Processing diff pixels started",
+  ],
+  [
+    "Processing 108 diff pixels",
+  ],
+  [
+    "Total pixels in image: 676",
+  ],
+  [
+    "Number of diff pixels: 108",
+  ],
+  [
+    "Diff percentage: 15.98%",
+  ],
+  [
+    "Union operations started",
+  ],
+  [
+    "Union time: XXXms",
+  ],
+  [
+    "Grouping pixels into bounding boxes",
+  ],
+  [
+    "Grouping time: XXXms",
+  ],
+  [
+    "Total analysis time: XXXms",
+  ],
+  [
+    "Post-processing bounding boxes",
+  ],
+  [
+    "Merging bounding boxes started with a proximity of 5 pixels",
+  ],
+  [
+    "Post-processing time: XXXms",
+  ],
+  [
+    "Number merged: 1",
+  ],
+]
+`;
+
+exports[`processDiffPixels > should handle two adjacent pixels to trigger equal rank union 1`] = `
+[
+  {
+    "bottom": 0,
+    "left": 0,
+    "right": 1,
+    "top": 0,
+  },
+]
+`;
+
+exports[`processDiffPixels > should handle two adjacent pixels to trigger equal rank union 2`] = `
+[
+  [
+    "Processing diff pixels started",
+  ],
+  [
+    "Processing 2 diff pixels",
+  ],
+  [
+    "Total pixels in image: 2",
+  ],
+  [
+    "Number of diff pixels: 2",
+  ],
+  [
+    "Diff percentage: 100.00%",
+  ],
+]
+`;
+
+exports[`processDiffPixels > should merge nearby pixels into a single bounding box 1`] = `
+[
+  {
+    "bottom": 0,
+    "left": 0,
+    "right": 3,
+    "top": 0,
+  },
+]
+`;
+
+exports[`processDiffPixels > should merge nearby pixels into a single bounding box 2`] = `
+[
+  [
+    "Processing diff pixels started",
+  ],
+  [
+    "Processing 4 diff pixels",
+  ],
+  [
+    "Total pixels in image: 4",
+  ],
+  [
+    "Number of diff pixels: 4",
+  ],
+  [
+    "Diff percentage: 100.00%",
+  ],
+]
+`;
+
+exports[`processDiffPixels > should process a single pixel 1`] = `
+[
+  {
+    "bottom": 0,
+    "left": 0,
+    "right": 0,
+    "top": 0,
+  },
+]
+`;
+
+exports[`processDiffPixels > should process a single pixel 2`] = `
+[
+  [
+    "Processing diff pixels started",
+  ],
+  [
+    "Processing 1 diff pixels",
+  ],
+  [
+    "Total pixels in image: 1",
+  ],
+  [
+    "Number of diff pixels: 1",
+  ],
+  [
+    "Diff percentage: 100.00%",
+  ],
+]
+`;
+
+exports[`processDiffPixels > should respect proximity parameter when merging boxes 1`] = `
+[
+  {
+    "bottom": 6,
+    "left": 6,
+    "right": 9,
+    "top": 6,
+  },
+  {
+    "bottom": 0,
+    "left": 0,
+    "right": 3,
+    "top": 0,
+  },
+]
+`;
+
+exports[`processDiffPixels > should respect proximity parameter when merging boxes 2`] = `
+[
+  [
+    "Processing diff pixels started",
+  ],
+  [
+    "Processing 8 diff pixels",
+  ],
+  [
+    "Total pixels in image: 70",
+  ],
+  [
+    "Number of diff pixels: 8",
+  ],
+  [
+    "Diff percentage: 11.43%",
+  ],
+  [
+    "Union operations started",
+  ],
+  [
+    "Union time: XXXms",
+  ],
+  [
+    "Grouping pixels into bounding boxes",
+  ],
+  [
+    "Grouping time: XXXms",
+  ],
+  [
+    "Total analysis time: XXXms",
+  ],
+  [
+    "Post-processing bounding boxes",
+  ],
+  [
+    "Merging bounding boxes started with a proximity of 5 pixels",
+  ],
+  [
+    "Post-processing time: XXXms",
+  ],
+  [
+    "Number merged: 2",
+  ],
+]
+`;
