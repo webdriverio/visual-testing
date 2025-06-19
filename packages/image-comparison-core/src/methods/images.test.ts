@@ -7,10 +7,16 @@ const log = logger('test')
 
 // Mock Jimp BEFORE importing the module under test
 vi.mock('jimp', () => ({
-    Jimp: {
+    Jimp: Object.assign(vi.fn().mockImplementation(() => ({
+        composite: vi.fn().mockReturnThis(),
+        getBase64: vi.fn().mockResolvedValue('data:image/png;base64,mockImageData'),
+        opacity: vi.fn().mockReturnThis(),
+        rotate: vi.fn().mockReturnThis(),
+        crop: vi.fn().mockReturnThis(),
+    })), {
         read: vi.fn(),
         MIME_PNG: 'image/png',
-    },
+    }),
     JimpMime: {
         png: 'image/png',
     },
@@ -66,7 +72,7 @@ vi.mock('./screenshots.js', () => ({
 }))
 
 // Now import the functions after all mocks are set up
-import { checkIfImageExists, removeDiffImageIfExists, checkBaselineImageExists, getRotatedImageIfNeeded, rotateBase64Image, getAdjustedAxis, logDimensionWarning, handleIOSBezelCorners, cropAndConvertToDataURL, makeCroppedBase64Image } from './images.js'
+import { checkIfImageExists, removeDiffImageIfExists, checkBaselineImageExists, getRotatedImageIfNeeded, rotateBase64Image, getAdjustedAxis, logDimensionWarning, handleIOSBezelCorners, cropAndConvertToDataURL, makeCroppedBase64Image, makeFullPageBase64Image } from './images.js'
 
 describe('checkIfImageExists', () => {
     let accessSpy: ReturnType<typeof vi.spyOn>
@@ -1302,6 +1308,301 @@ describe('makeCroppedBase64Image', () => {
             h: 150, // height + top + bottom, but clamped to image height
         })
         expect(result).toBe('finalCroppedImageData')
+    })
+})
+
+describe('makeFullPageBase64Image', () => {
+    let getBase64ScreenshotSizeMock: ReturnType<typeof vi.spyOn>
+    let mockCanvas: any
+    let mockImage: any
+
+    // Default test data
+    const defaultScreenshotsData = {
+        fullPageHeight: 2000,
+        fullPageWidth: 1000,
+        data: [
+            {
+                canvasWidth: 1000,
+                canvasYPosition: 0,
+                imageHeight: 800,
+                imageWidth: 1000,
+                imageXPosition: 0,
+                imageYPosition: 0,
+                screenshot: 'screenshot1-data'
+            },
+            {
+                canvasWidth: 1000,
+                canvasYPosition: 800,
+                imageHeight: 800,
+                imageWidth: 1000,
+                imageXPosition: 0,
+                imageYPosition: 0,
+                screenshot: 'screenshot2-data'
+            },
+            {
+                canvasWidth: 1000,
+                canvasYPosition: 1600,
+                imageHeight: 400,
+                imageWidth: 1000,
+                imageXPosition: 0,
+                imageYPosition: 0,
+                screenshot: 'screenshot3-data'
+            }
+        ]
+    }
+
+    const defaultOptions = {
+        devicePixelRatio: 2,
+        isLandscape: false
+    }
+
+    beforeEach(async () => {
+        // Mock the utils function
+        const utilsModule = vi.mocked(await import('../helpers/utils.js'))
+        getBase64ScreenshotSizeMock = vi.spyOn(utilsModule, 'getBase64ScreenshotSize')
+
+        // Mock canvas
+        mockCanvas = {
+            composite: vi.fn().mockReturnThis(),
+            getBase64: vi.fn().mockResolvedValue('data:image/png;base64,fullPageImageData'),
+        }
+
+        // Mock image
+        mockImage = {
+            crop: vi.fn().mockReturnThis(),
+            composite: vi.fn().mockReturnThis(),
+            getBase64: vi.fn().mockResolvedValue('data:image/png;base64,mockImageData'),
+            opacity: vi.fn().mockReturnThis(),
+            rotate: vi.fn().mockReturnThis(),
+        }
+
+        // Mock Jimp.read to return our mock image
+        const jimpModule = vi.mocked(await import('jimp'))
+        vi.spyOn(jimpModule.Jimp, 'read').mockResolvedValue(mockImage)
+
+        // Mock the constructor to return our mock canvas
+        vi.mocked(jimpModule.Jimp).mockImplementation((options: any) => {
+            if (options && (options.width || options.height)) {
+                return mockCanvas
+            }
+            return mockImage
+        })
+
+        // Set up default mock returns
+        getBase64ScreenshotSizeMock.mockReturnValue({ width: 1000, height: 800 })
+    })
+
+    afterEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('should create full page base64 image with multiple screenshots', async () => {
+        const result = await makeFullPageBase64Image(defaultScreenshotsData, defaultOptions)
+
+        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(3)
+        expect(mockImage.crop).toHaveBeenCalledTimes(3)
+        expect(mockCanvas.composite).toHaveBeenCalledTimes(3)
+        expect(mockCanvas.getBase64).toHaveBeenCalledWith('image/png')
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle landscape mode with rotation', async () => {
+        getBase64ScreenshotSizeMock.mockReturnValue({ width: 800, height: 1000 }) // height > width for rotation
+
+        const result = await makeFullPageBase64Image(defaultScreenshotsData, {
+            ...defaultOptions,
+            isLandscape: true
+        })
+
+        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(3)
+        expect(mockImage.crop).toHaveBeenCalledTimes(3)
+        expect(mockCanvas.composite).toHaveBeenCalledTimes(3)
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle single screenshot', async () => {
+        const singleScreenshotData = {
+            fullPageHeight: 800,
+            fullPageWidth: 1000,
+            data: [
+                {
+                    canvasWidth: 1000,
+                    canvasYPosition: 0,
+                    imageHeight: 800,
+                    imageWidth: 1000,
+                    imageXPosition: 0,
+                    imageYPosition: 0,
+                    screenshot: 'single-screenshot-data'
+                }
+            ]
+        }
+
+        const result = await makeFullPageBase64Image(singleScreenshotData, defaultOptions)
+
+        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(1)
+        expect(mockImage.crop).toHaveBeenCalledTimes(1)
+        expect(mockCanvas.composite).toHaveBeenCalledTimes(1)
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle different device pixel ratios', async () => {
+        const result = await makeFullPageBase64Image(defaultScreenshotsData, {
+            ...defaultOptions,
+            devicePixelRatio: 3
+        })
+
+        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(3)
+        expect(mockImage.crop).toHaveBeenCalledTimes(3)
+        expect(mockCanvas.composite).toHaveBeenCalledTimes(3)
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle screenshots with different dimensions', async () => {
+        const mixedScreenshotsData = {
+            fullPageHeight: 1500,
+            fullPageWidth: 1200,
+            data: [
+                {
+                    canvasWidth: 1200,
+                    canvasYPosition: 0,
+                    imageHeight: 600,
+                    imageWidth: 1200,
+                    imageXPosition: 0,
+                    imageYPosition: 0,
+                    screenshot: 'wide-screenshot-data'
+                },
+                {
+                    canvasWidth: 1200,
+                    canvasYPosition: 600,
+                    imageHeight: 900,
+                    imageWidth: 1200,
+                    imageXPosition: 0,
+                    imageYPosition: 0,
+                    screenshot: 'tall-screenshot-data'
+                }
+            ]
+        }
+
+        getBase64ScreenshotSizeMock
+            .mockReturnValueOnce({ width: 1200, height: 600 })
+            .mockReturnValueOnce({ width: 1200, height: 900 })
+
+        const result = await makeFullPageBase64Image(mixedScreenshotsData, defaultOptions)
+
+        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(2)
+        expect(mockImage.crop).toHaveBeenCalledTimes(2)
+        expect(mockCanvas.composite).toHaveBeenCalledTimes(2)
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle screenshots with cropping positions', async () => {
+        const croppedScreenshotsData = {
+            fullPageHeight: 1000,
+            fullPageWidth: 1000,
+            data: [
+                {
+                    canvasWidth: 1000,
+                    canvasYPosition: 0,
+                    imageHeight: 500,
+                    imageWidth: 500,
+                    imageXPosition: 100,
+                    imageYPosition: 50,
+                    screenshot: 'cropped-screenshot-data'
+                }
+            ]
+        }
+
+        const result = await makeFullPageBase64Image(croppedScreenshotsData, defaultOptions)
+
+        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('cropped-screenshot-data', 2)
+        expect(mockImage.crop).toHaveBeenCalledWith({
+            x: 100,
+            y: 50,
+            w: 500,
+            h: 500
+        })
+        expect(mockCanvas.composite).toHaveBeenCalledWith(mockImage.crop(), 0, 0)
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle landscape mode without rotation when width >= height', async () => {
+        getBase64ScreenshotSizeMock.mockReturnValue({ width: 1000, height: 800 }) // width > height, no rotation needed
+
+        const result = await makeFullPageBase64Image(defaultScreenshotsData, {
+            ...defaultOptions,
+            isLandscape: true
+        })
+
+        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(3)
+        expect(mockImage.crop).toHaveBeenCalledTimes(3)
+        expect(mockCanvas.composite).toHaveBeenCalledTimes(3)
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle empty screenshots array', async () => {
+        const emptyScreenshotsData = {
+            fullPageHeight: 0,
+            fullPageWidth: 1000,
+            data: []
+        }
+
+        const result = await makeFullPageBase64Image(emptyScreenshotsData, defaultOptions)
+
+        expect(getBase64ScreenshotSizeMock).not.toHaveBeenCalled()
+        expect(mockImage.crop).not.toHaveBeenCalled()
+        expect(mockCanvas.composite).not.toHaveBeenCalled()
+        expect(mockCanvas.getBase64).toHaveBeenCalledWith('image/png')
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle large canvas dimensions', async () => {
+        const largeScreenshotsData = {
+            fullPageHeight: 5000,
+            fullPageWidth: 3000,
+            data: [
+                {
+                    canvasWidth: 3000,
+                    canvasYPosition: 0,
+                    imageHeight: 2000,
+                    imageWidth: 3000,
+                    imageXPosition: 0,
+                    imageYPosition: 0,
+                    screenshot: 'large-screenshot-data'
+                }
+            ]
+        }
+
+        getBase64ScreenshotSizeMock.mockReturnValue({ width: 3000, height: 2000 })
+
+        const result = await makeFullPageBase64Image(largeScreenshotsData, defaultOptions)
+
+        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('large-screenshot-data', 2)
+        expect(mockImage.crop).toHaveBeenCalledWith({
+            x: 0,
+            y: 0,
+            w: 3000,
+            h: 2000
+        })
+        expect(mockCanvas.composite).toHaveBeenCalledWith(mockImage.crop(), 0, 0)
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle different screenshot data for each iteration', async () => {
+        const result = await makeFullPageBase64Image(defaultScreenshotsData, defaultOptions)
+
+        expect(getBase64ScreenshotSizeMock).toHaveBeenNthCalledWith(1, 'screenshot1-data', 2)
+        expect(getBase64ScreenshotSizeMock).toHaveBeenNthCalledWith(2, 'screenshot2-data', 2)
+        expect(getBase64ScreenshotSizeMock).toHaveBeenNthCalledWith(3, 'screenshot3-data', 2)
+        expect(result).toBe('fullPageImageData')
+    })
+
+    it('should handle canvas Y positions correctly', async () => {
+        const result = await makeFullPageBase64Image(defaultScreenshotsData, defaultOptions)
+
+        expect(mockCanvas.composite).toHaveBeenNthCalledWith(1, mockImage.crop(), 0, 0)
+        expect(mockCanvas.composite).toHaveBeenNthCalledWith(2, mockImage.crop(), 0, 800)
+        expect(mockCanvas.composite).toHaveBeenNthCalledWith(3, mockImage.crop(), 0, 1600)
+        expect(result).toBe('fullPageImageData')
     })
 })
 
