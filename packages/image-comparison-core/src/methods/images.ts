@@ -115,7 +115,7 @@ export async function checkBaselineImageExists({
 /**
  * Get the rotated image if needed
  */
-async function getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandscape, base64Image }: RotatedImage): Promise<string> {
+export async function getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandscape, base64Image }: RotatedImage): Promise<string> {
     const { height: screenshotHeight, width: screenshotWidth } = getBase64ScreenshotSize(base64Image)
     const isRotated = !isWebDriverElementScreenshot && isLandscape && screenshotHeight > screenshotWidth
 
@@ -125,7 +125,7 @@ async function getRotatedImageIfNeeded({ isWebDriverElementScreenshot, isLandsca
 /**
  * Log a warning when the crop goes out of the screen
  */
-function logDimensionWarning({
+export function logDimensionWarning({
     dimension,
     maxDimension,
     position,
@@ -146,7 +146,7 @@ function logDimensionWarning({
 /**
  * Get the adjusted axis
  */
-function getAdjustedAxis({
+export function getAdjustedAxis({
     length,
     maxDimension,
     paddingEnd,
@@ -182,7 +182,7 @@ function getAdjustedAxis({
 /**
  * Handle the iOS bezel corners
  */
-async function handleIOSBezelCorners({
+export async function handleIOSBezelCorners({
     addIOSBezelCorners,
     image,
     deviceName,
@@ -244,7 +244,7 @@ ${supportedIosBezelDevices.join(', ')}
 /**
  * Crop the image and convert it to a base64 image
  */
-async function cropAndConvertToDataURL({
+export async function cropAndConvertToDataURL({
     addIOSBezelCorners,
     base64Image,
     deviceName,
@@ -559,7 +559,7 @@ export async function addBlockOuts(screenshot: string, ignoredBoxes: IgnoreBoxes
  * Rotate a base64 image
  * Tnx to https://gist.github.com/Zyndoras/6897abdf53adbedf02564808aaab94db
  */
-async function rotateBase64Image({ base64Image, degrees }: RotateBase64ImageOptions): Promise<string> {
+export async function rotateBase64Image({ base64Image, degrees }: RotateBase64ImageOptions): Promise<string> {
     const image = await Jimp.read(Buffer.from(base64Image, 'base64'))
     const rotatedImage = image.rotate(degrees)
     const base64RotatedImage = await rotatedImage.getBase64(JimpMime.png)
@@ -570,7 +570,7 @@ async function rotateBase64Image({ base64Image, degrees }: RotateBase64ImageOpti
 /**
  * Take a based64 screenshot of an element and resize it
  */
-async function takeResizedBase64Screenshot({
+export async function takeResizedBase64Screenshot({
     browserInstance,
     element,
     devicePixelRatio,
