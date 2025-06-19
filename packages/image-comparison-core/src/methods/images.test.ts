@@ -2,6 +2,21 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { join } from 'node:path'
 import { promises as fsPromises, readFileSync, writeFileSync } from 'node:fs'
 import logger from '@wdio/logger'
+import {
+    checkIfImageExists,
+    removeDiffImageIfExists,
+    checkBaselineImageExists,
+    getRotatedImageIfNeeded,
+    logDimensionWarning,
+    getAdjustedAxis,
+    handleIOSBezelCorners,
+    cropAndConvertToDataURL,
+    makeCroppedBase64Image,
+    makeFullPageBase64Image,
+    rotateBase64Image,
+    takeResizedBase64Screenshot,
+} from './images.js'
+import type { WicElement } from '../commands/element.interfaces.js'
 
 const log = logger('test')
 
@@ -70,9 +85,6 @@ vi.mock('./rectangles.js', () => ({
 vi.mock('./screenshots.js', () => ({
     takeBase64Screenshot: vi.fn(),
 }))
-
-// Now import the functions after all mocks are set up
-import { checkIfImageExists, removeDiffImageIfExists, checkBaselineImageExists, getRotatedImageIfNeeded, rotateBase64Image, getAdjustedAxis, logDimensionWarning, handleIOSBezelCorners, cropAndConvertToDataURL, makeCroppedBase64Image, makeFullPageBase64Image } from './images.js'
 
 describe('checkIfImageExists', () => {
     let accessSpy: ReturnType<typeof vi.spyOn>
@@ -1603,6 +1615,310 @@ describe('makeFullPageBase64Image', () => {
         expect(mockCanvas.composite).toHaveBeenNthCalledWith(2, mockImage.crop(), 0, 800)
         expect(mockCanvas.composite).toHaveBeenNthCalledWith(3, mockImage.crop(), 0, 1600)
         expect(result).toBe('fullPageImageData')
+    })
+})
+
+describe('takeResizedBase64Screenshot', () => {
+    let mockBrowserInstance: any
+    let mockElement: any
+    let mockElementRegion: any
+    let takeBase64ScreenshotMock: any
+    let calculateDprDataMock: any
+    let isWdioElementMock: any
+
+    // Default test options
+    const defaultOptions = {
+        browserInstance: {} as any,
+        element: {} as any,
+        devicePixelRatio: 2,
+        isIOS: false,
+        resizeDimensions: { top: 0, right: 0, bottom: 0, left: 0 }
+    }
+
+    beforeEach(async () => {
+        // Mock element region
+        mockElementRegion = {
+            height: 100,
+            width: 200,
+            x: 50,
+            y: 25
+        }
+
+        // Mock element
+        mockElement = {
+            elementId: 'test-element-id'
+        } as WicElement
+
+        // Mock browser instance
+        mockBrowserInstance = {
+            getElementRect: vi.fn().mockResolvedValue(mockElementRegion)
+        }
+
+        // Mock the utils function
+        const utilsModule = vi.mocked(await import('../helpers/utils.js'))
+        calculateDprDataMock = vi.spyOn(utilsModule, 'calculateDprData')
+
+        // Mock the screenshots function
+        const screenshotsModule = vi.mocked(await import('./screenshots.js'))
+        takeBase64ScreenshotMock = vi.spyOn(screenshotsModule, 'takeBase64Screenshot')
+
+        // Mock the rectangles function
+        const rectanglesModule = vi.mocked(await import('./rectangles.js'))
+        isWdioElementMock = vi.spyOn(rectanglesModule, 'isWdioElement')
+
+        // Set up default mock returns
+        takeBase64ScreenshotMock.mockResolvedValue('base64ScreenshotData')
+        calculateDprDataMock.mockReturnValue({
+            height: 100,
+            width: 200,
+            x: 50,
+            y: 25
+        })
+        isWdioElementMock.mockReturnValue(true)
+    })
+
+    afterEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('should take resized base64 screenshot with default settings', async () => {
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: mockElement
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(calculateDprDataMock).toHaveBeenCalledWith({
+            height: 100,
+            width: 200,
+            x: 50,
+            y: 25
+        }, 1) // devicePixelRatio for non-iOS
+        expect(result).toBeDefined()
+    })
+
+    it('should handle iOS device with device pixel ratio', async () => {
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: mockElement,
+            devicePixelRatio: 3,
+            isIOS: true
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(calculateDprDataMock).toHaveBeenCalledWith({
+            height: 100,
+            width: 200,
+            x: 50,
+            y: 25
+        }, 3) // devicePixelRatio for iOS
+        expect(result).toBeDefined()
+    })
+
+    it('should handle custom resize dimensions', async () => {
+        const customResizeDimensions = {
+            top: 10,
+            right: 20,
+            bottom: 15,
+            left: 5
+        }
+
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: mockElement,
+            resizeDimensions: customResizeDimensions
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(calculateDprDataMock).toHaveBeenCalledWith({
+            height: 100,
+            width: 200,
+            x: 50,
+            y: 25
+        }, 1)
+        expect(result).toBeDefined()
+    })
+
+    it('should handle different element regions', async () => {
+        const differentElementRegion = {
+            height: 300,
+            width: 400,
+            x: 100,
+            y: 75
+        }
+
+        mockBrowserInstance.getElementRect.mockResolvedValue(differentElementRegion)
+
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: mockElement
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(calculateDprDataMock).toHaveBeenCalledWith({
+            height: 300,
+            width: 400,
+            x: 100,
+            y: 75
+        }, 1)
+        expect(result).toBeDefined()
+    })
+
+    it('should handle non-WDIO element with logging', async () => {
+        const nonWdioElement = { someProperty: 'not-a-wdio-element' } as unknown as WicElement
+        isWdioElementMock.mockReturnValue(false)
+
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: nonWdioElement
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(nonWdioElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith(undefined)
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(result).toBeDefined()
+    })
+
+    it('should handle different device pixel ratios', async () => {
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: mockElement,
+            devicePixelRatio: 1.5
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(calculateDprDataMock).toHaveBeenCalledWith({
+            height: 100,
+            width: 200,
+            x: 50,
+            y: 25
+        }, 1) // For non-iOS, devicePixelRatio is always 1
+        expect(result).toBeDefined()
+    })
+
+    it('should handle zero element dimensions', async () => {
+        const zeroElementRegion = {
+            height: 0,
+            width: 0,
+            x: 0,
+            y: 0
+        }
+
+        mockBrowserInstance.getElementRect.mockResolvedValue(zeroElementRegion)
+
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: mockElement
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(calculateDprDataMock).toHaveBeenCalledWith({
+            height: 0,
+            width: 0,
+            x: 0,
+            y: 0
+        }, 1)
+        expect(result).toBeDefined()
+    })
+
+    it('should handle large element dimensions', async () => {
+        const largeElementRegion = {
+            height: 2000,
+            width: 3000,
+            x: 1000,
+            y: 500
+        }
+
+        mockBrowserInstance.getElementRect.mockResolvedValue(largeElementRegion)
+
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: mockElement
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(calculateDprDataMock).toHaveBeenCalledWith({
+            height: 2000,
+            width: 3000,
+            x: 1000,
+            y: 500
+        }, 1)
+        expect(result).toBeDefined()
+    })
+
+    it('should handle different screenshot data', async () => {
+        takeBase64ScreenshotMock.mockResolvedValue('differentScreenshotData')
+
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: mockElement
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(result).toBeDefined()
+    })
+
+    it('should handle element with different elementId', async () => {
+        const elementWithDifferentId = {
+            elementId: 'different-element-id'
+        } as WicElement
+
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: elementWithDifferentId
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(elementWithDifferentId)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('different-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(result).toBeDefined()
+    })
+
+    it('should handle Android device (non-iOS)', async () => {
+        const result = await takeResizedBase64Screenshot({
+            ...defaultOptions,
+            browserInstance: mockBrowserInstance,
+            element: mockElement,
+            devicePixelRatio: 2.5,
+            isIOS: false
+        })
+
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
+        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(calculateDprDataMock).toHaveBeenCalledWith({
+            height: 100,
+            width: 200,
+            x: 50,
+            y: 25
+        }, 1) // For non-iOS, devicePixelRatio is always 1
+        expect(result).toBeDefined()
     })
 })
 
