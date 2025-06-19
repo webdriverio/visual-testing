@@ -27,3 +27,22 @@ exports[`checkBaselineImageExists > should update baseline when updateBaseline i
   ],
 ]
 `;
+
+exports[`takeBase64ElementScreenshot > should fallback to takeResizedBase64Screenshot when takeElementScreenshot throws an error 1`] = `
+[
+  [
+    "Error taking an element screenshot with the default \`element.takeElementScreenshot(elementId)\` method:",
+    [Error: Screenshot failed],
+    " We will retry with a resized screenshot",
+  ],
+]
+`;
+
+exports[`takeBase64ElementScreenshot > should log error and still call takeElementScreenshot if element is not WDIO element 1`] = `
+[
+  [
+    " takeBase64ElementScreenshot element is not a valid element because of ",
+    "{"elementId":"test-element-id"}",
+  ],
+]
+`;

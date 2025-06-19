@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { join } from 'node:path'
 import { promises as fsPromises, readFileSync, writeFileSync } from 'node:fs'
 import logger from '@wdio/logger'
+import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import {
     checkIfImageExists,
     removeDiffImageIfExists,
@@ -1924,7 +1925,6 @@ describe('takeResizedBase64Screenshot', () => {
 })
 
 describe('takeBase64ElementScreenshot', () => {
-    const DEFAULT_RESIZE_DIMENSIONS = { top: 0, right: 0, bottom: 0, left: 0 }
     let mockElement: any
     let mockBrowserInstance: any
     let isWdioElementMock: any
@@ -1978,12 +1978,36 @@ describe('takeBase64ElementScreenshot', () => {
             resizeDimensions: DEFAULT_RESIZE_DIMENSIONS
         })
         expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(errorSpy).toHaveBeenCalledWith(
-            ' takeBase64ElementScreenshot element is not a valid element because of ',
-            JSON.stringify(mockElement)
-        )
+        expect(errorSpy.mock.calls).toMatchSnapshot()
         expect(mockElement.takeElementScreenshot).toHaveBeenCalledWith('test-element-id')
         expect(result).toBe('nativeScreenshotData')
+        errorSpy.mockRestore()
+    })
+
+    it('should fallback to takeResizedBase64Screenshot when takeElementScreenshot throws an error', async () => {
+        const { takeBase64ElementScreenshot } = await import('./images.js')
+        const errorSpy = vi.spyOn(log, 'error').mockImplementation(() => {})
+
+        // Create a fresh mock element that throws an error
+        const mockElementWithError = {
+            elementId: 'test-element-id',
+            takeElementScreenshot: vi.fn().mockRejectedValue(new Error('Screenshot failed'))
+        }
+
+        const result = await takeBase64ElementScreenshot({
+            browserInstance: mockBrowserInstance,
+            element: Promise.resolve(mockElementWithError) as any,
+            devicePixelRatio: 2,
+            isIOS: false,
+            resizeDimensions: DEFAULT_RESIZE_DIMENSIONS
+        })
+
+        expect(mockElementWithError.takeElementScreenshot).toHaveBeenCalledWith('test-element-id')
+        expect(errorSpy.mock.calls).toMatchSnapshot()
+        // Verify that the function completed successfully (meaning fallback worked)
+        expect(result).toBeDefined()
+        expect(typeof result).toBe('string')
+
         errorSpy.mockRestore()
     })
 })
