@@ -620,17 +620,22 @@ export async function takeBase64ElementScreenshot({
     isIOS,
     resizeDimensions,
 }: TakeBase64ElementScreenshotOptions): Promise<string> {
-    const shouldTakeResizedScreenshot = resizeDimensions !== DEFAULT_RESIZE_DIMENSIONS
+    const shouldTakeResizedScreenshot = (
+        resizeDimensions.top !== DEFAULT_RESIZE_DIMENSIONS.top ||
+        resizeDimensions.right !== DEFAULT_RESIZE_DIMENSIONS.right ||
+        resizeDimensions.bottom !== DEFAULT_RESIZE_DIMENSIONS.bottom ||
+        resizeDimensions.left !== DEFAULT_RESIZE_DIMENSIONS.left
+    )
 
     if (!shouldTakeResizedScreenshot) {
         try {
             const awaitedElement = await element
             if (!isWdioElement(awaitedElement)) {
-                console.error(' takeBase64ElementScreenshot element is not a valid element because of ', JSON.stringify(awaitedElement))
+                log.error(' takeBase64ElementScreenshot element is not a valid element because of ', JSON.stringify(awaitedElement))
             }
             return await awaitedElement.takeElementScreenshot(awaitedElement.elementId as string)
         } catch (error) {
-            console.error('Error taking an element screenshot with the default `element.takeElementScreenshot(elementId)` method:', error, ' We will retry with a resized screenshot')
+            log.error('Error taking an element screenshot with the default `element.takeElementScreenshot(elementId)` method:', error, ' We will retry with a resized screenshot')
         }
     }
 

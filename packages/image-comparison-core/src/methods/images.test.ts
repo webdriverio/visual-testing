@@ -1646,8 +1646,9 @@ describe('takeResizedBase64Screenshot', () => {
 
         // Mock element
         mockElement = {
-            elementId: 'test-element-id'
-        } as WicElement
+            elementId: 'test-element-id',
+            takeElementScreenshot: vi.fn().mockResolvedValue('nativeScreenshotData')
+        }
 
         // Mock browser instance
         mockBrowserInstance = {
@@ -1919,6 +1920,71 @@ describe('takeResizedBase64Screenshot', () => {
             y: 25
         }, 1) // For non-iOS, devicePixelRatio is always 1
         expect(result).toBeDefined()
+    })
+})
+
+describe('takeBase64ElementScreenshot', () => {
+    const DEFAULT_RESIZE_DIMENSIONS = { top: 0, right: 0, bottom: 0, left: 0 }
+    let mockElement: any
+    let mockBrowserInstance: any
+    let isWdioElementMock: any
+
+    beforeEach(async () => {
+        mockElement = {
+            elementId: 'test-element-id',
+            takeElementScreenshot: vi.fn().mockResolvedValue('nativeScreenshotData')
+        }
+        mockBrowserInstance = {
+            getElementRect: vi.fn().mockResolvedValue({
+                height: 100,
+                width: 200,
+                x: 50,
+                y: 25
+            })
+        }
+        // Mock isWdioElement
+        const rectanglesModule = await import('./rectangles.js')
+        isWdioElementMock = vi.spyOn(rectanglesModule, 'isWdioElement')
+        isWdioElementMock.mockReturnValue(true)
+    })
+
+    afterEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('should use native element screenshot when resizeDimensions equals DEFAULT_RESIZE_DIMENSIONS', async () => {
+        const { takeBase64ElementScreenshot } = await import('./images.js')
+        const result = await takeBase64ElementScreenshot({
+            browserInstance: mockBrowserInstance,
+            element: Promise.resolve(mockElement) as any,
+            devicePixelRatio: 2,
+            isIOS: false,
+            resizeDimensions: DEFAULT_RESIZE_DIMENSIONS
+        })
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(mockElement.takeElementScreenshot).toHaveBeenCalledWith('test-element-id')
+        expect(result).toBe('nativeScreenshotData')
+    })
+
+    it('should log error and still call takeElementScreenshot if element is not WDIO element', async () => {
+        isWdioElementMock.mockReturnValue(false)
+        const { takeBase64ElementScreenshot } = await import('./images.js')
+        const errorSpy = vi.spyOn(log, 'error').mockImplementation(() => {})
+        const result = await takeBase64ElementScreenshot({
+            browserInstance: mockBrowserInstance,
+            element: Promise.resolve(mockElement) as any,
+            devicePixelRatio: 2,
+            isIOS: false,
+            resizeDimensions: DEFAULT_RESIZE_DIMENSIONS
+        })
+        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(errorSpy).toHaveBeenCalledWith(
+            ' takeBase64ElementScreenshot element is not a valid element because of ',
+            JSON.stringify(mockElement)
+        )
+        expect(mockElement.takeElementScreenshot).toHaveBeenCalledWith('test-element-id')
+        expect(result).toBe('nativeScreenshotData')
+        errorSpy.mockRestore()
     })
 })
 
