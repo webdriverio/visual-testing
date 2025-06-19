@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import { join } from 'node:path'
+import logger from '@wdio/logger'
 import { promises as fsPromises } from 'node:fs'
 import { readFileSync, writeFileSync } from 'node:fs'
-import logger from '@wdio/logger'
 import * as utils from '../helpers/utils.js'
 import * as rectangles from './rectangles.js'
 import * as processDiffPixels from './processDiffPixels.js'
@@ -9,6 +10,8 @@ import * as createCompareReport from './createCompareReport.js'
 import * as compareImages from '../resemble/compareImages.js'
 
 const log = logger('test')
+
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
 // Mock Jimp BEFORE importing the module under test
 vi.mock('jimp', () => {
@@ -62,14 +65,6 @@ vi.mock('node:fs', async () => {
     }
 })
 
-vi.mock('@wdio/logger', () => ({
-    default: vi.fn(() => ({
-        info: vi.fn(),
-        warn: vi.fn(),
-        error: vi.fn()
-    }))
-}))
-
 vi.mock('../helpers/utils.js', () => ({
     getAndCreatePath: vi.fn(),
     getBase64ScreenshotSize: vi.fn(),
@@ -102,12 +97,6 @@ vi.mock('../helpers/constants.js', () => ({
 // Mock process.argv
 vi.mock('process', () => ({
     argv: ['node', 'test.js']
-}))
-
-// Mock path.join
-vi.mock('node:path', () => ({
-    join: vi.fn((...args) => args.join('/')),
-    dirname: vi.fn()
 }))
 
 // Mock the internal functions from the same module
@@ -185,6 +174,8 @@ describe('executeImageCompare', () => {
         }
     }
 
+    let logWarnSpy: ReturnType<typeof vi.spyOn>
+
     beforeEach(async () => {
         vi.clearAllMocks()
 
@@ -222,10 +213,6 @@ describe('executeImageCompare', () => {
         vi.mocked(readFileSync).mockReturnValue(Buffer.from('mock-image-data'))
         vi.mocked(writeFileSync).mockReturnValue(undefined)
 
-        // Mock logger
-        vi.mocked(log.info).mockReturnValue(undefined)
-        vi.mocked(log.warn).mockReturnValue(undefined)
-
         // Mock utils
         vi.mocked(utils.getAndCreatePath).mockReturnValue('/mock/path')
         vi.mocked(utils.getBase64ScreenshotSize).mockReturnValue({ width: 100, height: 200 })
@@ -233,7 +220,7 @@ describe('executeImageCompare', () => {
         vi.mocked(utils.calculateDprData).mockImplementation((rectangles) => rectangles)
 
         // Mock rectangles
-        vi.mocked(rectangles.determineStatusAddressToolBarRectangles).mockReturnValue([])
+        vi.mocked(rectangles.determineStatusAddressToolBarRectangles).mockReturnValue(null as any)
 
         // Mock processDiffPixels
         vi.mocked(processDiffPixels.processDiffPixels).mockReturnValue([])
@@ -256,6 +243,14 @@ describe('executeImageCompare', () => {
         vi.mocked(images.removeDiffImageIfExists).mockResolvedValue(undefined)
         vi.mocked(images.saveBase64Image).mockResolvedValue(undefined)
         vi.mocked(images.addBlockOuts).mockResolvedValue('mock-blockout-image')
+
+        // Set up log spies
+        logWarnSpy = vi.spyOn(log, 'warn')
+    })
+
+    afterEach(() => {
+        vi.clearAllMocks()
+        logWarnSpy.mockRestore()
     })
 
     it('should execute image comparison successfully with default options', async () => {
@@ -339,6 +334,44 @@ describe('executeImageCompare', () => {
             { bottom: 60, right: 60, left: 10, top: 10 },
             2
         )
+    })
+
+    it('should handle when determineStatusAddressToolBarRectangles returns null', async () => {
+        const mobileOptions = {
+            ...mockOptions,
+            folderOptions: { ...mockOptions.folderOptions, isMobile: true },
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                method: {
+                    blockOutSideBar: true,
+                    blockOutStatusBar: true,
+                    blockOutToolBar: true
+                }
+            }
+        }
+
+        // Mock to return null to cover the || [] branch on line 385
+        vi.mocked(rectangles.determineStatusAddressToolBarRectangles).mockReturnValue(null as any)
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: mobileOptions,
+            testContext: mockTestContext
+        })
+
+        expect(rectangles.determineStatusAddressToolBarRectangles).toHaveBeenCalledWith({
+            deviceRectangles: mockOptions.deviceRectangles,
+            options: {
+                blockOutSideBar: true,
+                blockOutStatusBar: true,
+                blockOutToolBar: true,
+                isAndroid: false,
+                isAndroidNativeWebScreenshot: false,
+                isMobile: true,
+                isViewPortScreenshot: true
+            }
+        })
     })
 
     it('should handle ignore regions and blockOut rectangles', async () => {
@@ -439,6 +472,27 @@ describe('executeImageCompare', () => {
                 actual: '/mock/path/test.png',
                 baseline: '/mock/path/test.png',
                 diff: '/mock/path/test.png'
+            },
+            misMatchPercentage: 0.5
+        })
+
+        vi.mocked(utils.getAndCreatePath).mockReturnValueOnce('/mock/path/actual') // actual
+        vi.mocked(utils.getAndCreatePath).mockReturnValueOnce('/mock/path/baseline') // baseline
+        vi.mocked(utils.getAndCreatePath).mockReturnValueOnce('/mock/path/diff') // diff
+
+        const resultWithoutDiff = await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithReturnAll,
+            testContext: mockTestContext
+        })
+
+        expect(resultWithoutDiff).toEqual({
+            fileName: 'test.png',
+            folders: {
+                actual: '/mock/path/actual/test.png',
+                baseline: '/mock/path/baseline/test.png',
+                diff: '/mock/path/diff/test.png',
             },
             misMatchPercentage: 0.5
         })
@@ -602,5 +656,138 @@ describe('executeImageCompare', () => {
                 scaleToSameSize: true
             }
         )
+    })
+
+    it('should handle undefined saveAboveTolerance (nullish coalescing)', async () => {
+        const optionsWithUndefinedTolerance = {
+            ...mockOptions,
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    saveAboveTolerance: undefined
+                }
+            }
+        }
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithUndefinedTolerance,
+            testContext: mockTestContext
+        })
+
+        // The test passes if it doesn't throw, confirming nullish coalescing works
+        expect(utils.getAndCreatePath).toHaveBeenCalledTimes(3)
+    })
+
+    it('should store diffs when rawMisMatchPercentage exceeds saveAboveTolerance', async () => {
+        const optionsWithHighTolerance = {
+            ...mockOptions,
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    saveAboveTolerance: 0.1
+                }
+            }
+        }
+
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0.5, // This is > 0.1, so storeDiffs should be true
+            misMatchPercentage: 0.5,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
+            analysisTime: 100,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithHighTolerance,
+            testContext: mockTestContext
+        })
+
+        // Test the side effect - the warning log when diff is saved
+        expect(logWarnSpy).toHaveBeenCalledWith(
+            '\x1b[33m%s\x1b[0m',
+            expect.stringContaining('WARNING:\n There was a difference. Saved the difference to')
+        )
+    })
+
+    it('should store diffs when process.argv includes --store-diffs flag', async () => {
+        // Mock process.argv to include --store-diffs
+        const originalArgv = process.argv
+        process.argv = [...originalArgv, '--store-diffs']
+
+        const optionsWithLowTolerance = {
+            ...mockOptions,
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    saveAboveTolerance: 1.0 // High tolerance, so rawMisMatchPercentage won't exceed it
+                }
+            }
+        }
+
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0.5, // This is < 1.0, but --store-diffs flag should trigger storage
+            misMatchPercentage: 0.5,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
+            analysisTime: 100,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithLowTolerance,
+            testContext: mockTestContext
+        })
+
+        // Test the side effect - the info log when debug mode saves diff
+        expect(logWarnSpy).toHaveBeenCalledWith(
+            '\x1b[33m%s\x1b[0m',
+            expect.stringContaining('INFO:\n Debug mode is enabled. Saved the debug file to:')
+        )
+
+        // Restore original process.argv
+        process.argv = originalArgv
+    })
+
+    it('should not store diffs when rawMisMatchPercentage is below tolerance and no --store-diffs flag', async () => {
+        const optionsWithHighTolerance = {
+            ...mockOptions,
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    saveAboveTolerance: 1.0 // High tolerance
+                }
+            }
+        }
+
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0.5, // This is < 1.0
+            misMatchPercentage: 0.5,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
+            analysisTime: 100,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithHighTolerance,
+            testContext: mockTestContext
+        })
+
+        // Should not save diff image when rawMisMatchPercentage < saveAboveTolerance and no --store-diffs
+        expect(images.saveBase64Image).not.toHaveBeenCalled()
+        expect(log.warn).not.toHaveBeenCalled()
     })
 })

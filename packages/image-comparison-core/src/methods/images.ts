@@ -368,7 +368,7 @@ export async function executeImageCompare(
     ) as ComparisonIgnoreOption[]
 
     // 4b. Determine the ignore rectangles for the block outs
-    const blockOut = 'blockOut' in imageCompareOptions ? imageCompareOptions.blockOut || [] : []
+    const blockOut = imageCompareOptions.blockOut ?? []
     let webStatusAddressToolBarOptions: RectanglesOutput[] = []
 
     if (isMobile && !isNativeContext){
