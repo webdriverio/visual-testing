@@ -28,7 +28,2368 @@ exports[`checkBaselineImageExists > should update baseline when updateBaseline i
 ]
 `;
 
+exports[`checkIfImageExists > should return false when file does not exist 1`] = `false`;
+
+exports[`checkIfImageExists > should return true when file exists 1`] = `true`;
+
+exports[`cropAndConvertToDataURL > should crop image and add iOS bezel corners when isIOS is true 1`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should crop image and add iOS bezel corners when isIOS is true 2`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should crop image and add iOS bezel corners when isIOS is true 3`] = `"croppedImageData"`;
+
+exports[`cropAndConvertToDataURL > should crop image and return base64 data without iOS bezel corners 1`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should crop image and return base64 data without iOS bezel corners 2`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should crop image and return base64 data without iOS bezel corners 3`] = `"croppedImageData"`;
+
+exports[`cropAndConvertToDataURL > should handle Android device (isIOS false) without bezel corners 1`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle Android device (isIOS false) without bezel corners 2`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle Android device (isIOS false) without bezel corners 3`] = `"croppedImageData"`;
+
+exports[`cropAndConvertToDataURL > should handle different base64 input data 1`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle different base64 input data 2`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle different base64 input data 3`] = `"croppedImageData"`;
+
+exports[`cropAndConvertToDataURL > should handle different device pixel ratios 1`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle different device pixel ratios 2`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle different device pixel ratios 3`] = `"croppedImageData"`;
+
+exports[`cropAndConvertToDataURL > should handle landscape orientation with iOS bezel corners 1`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle landscape orientation with iOS bezel corners 2`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle landscape orientation with iOS bezel corners 3`] = `"croppedImageData"`;
+
+exports[`cropAndConvertToDataURL > should handle large crop dimensions 1`] = `
+[
+  [
+    {
+      "h": 2000,
+      "w": 3000,
+      "x": 1000,
+      "y": 500,
+    },
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle large crop dimensions 2`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle large crop dimensions 3`] = `"croppedImageData"`;
+
+exports[`cropAndConvertToDataURL > should handle zero dimensions 1`] = `
+[
+  [
+    {
+      "h": 0,
+      "w": 0,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle zero dimensions 2`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`cropAndConvertToDataURL > should handle zero dimensions 3`] = `"croppedImageData"`;
+
+exports[`getAdjustedAxis > should clamp end position to maxDimension when it exceeds maxDimension 1`] = `
+[
+  940,
+  1000,
+]
+`;
+
+exports[`getAdjustedAxis > should clamp start position to 0 when it goes below 0 1`] = `
+[
+  0,
+  160,
+]
+`;
+
+exports[`getAdjustedAxis > should handle HEIGHT warning type correctly 1`] = `
+[
+  0,
+  200,
+]
+`;
+
+exports[`getAdjustedAxis > should handle both start and end clamping 1`] = `
+[
+  0,
+  200,
+]
+`;
+
+exports[`getAdjustedAxis > should handle edge case where start is 0 1`] = `
+[
+  0,
+  110,
+]
+`;
+
+exports[`getAdjustedAxis > should handle edge case where start is exactly at maxDimension 1`] = `
+[
+  1000,
+  1000,
+]
+`;
+
+exports[`getAdjustedAxis > should handle large padding values 1`] = `
+[
+  0,
+  100,
+]
+`;
+
+exports[`getAdjustedAxis > should handle negative start position 1`] = `
+[
+  0,
+  100,
+]
+`;
+
+exports[`getAdjustedAxis > should handle zero length 1`] = `
+[
+  45,
+  60,
+]
+`;
+
+exports[`getAdjustedAxis > should handle zero padding 1`] = `
+[
+  50,
+  150,
+]
+`;
+
+exports[`getAdjustedAxis > should return adjusted coordinates within bounds 1`] = `
+[
+  45,
+  160,
+]
+`;
+
+exports[`getRotatedImageIfNeeded > should call rotateBase64Image when landscape and height > width 1`] = `"differentRotatedData"`;
+
+exports[`getRotatedImageIfNeeded > should call rotateBase64Image when landscape and height > width 2`] = `
+[
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`getRotatedImageIfNeeded > should not rotate when isWebDriverElementScreenshot is true 1`] = `"originalImageData"`;
+
+exports[`getRotatedImageIfNeeded > should not rotate when isWebDriverElementScreenshot is true 2`] = `
+[
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`getRotatedImageIfNeeded > should not rotate when not landscape 1`] = `"originalImageData"`;
+
+exports[`getRotatedImageIfNeeded > should not rotate when not landscape 2`] = `
+[
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`getRotatedImageIfNeeded > should not rotate when width >= height 1`] = `"originalImageData"`;
+
+exports[`getRotatedImageIfNeeded > should not rotate when width >= height 2`] = `
+[
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`getRotatedImageIfNeeded > should return original image when no rotation is needed 1`] = `"originalImageData"`;
+
+exports[`getRotatedImageIfNeeded > should return original image when no rotation is needed 2`] = `
+[
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle Android device (not iOS) 1`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+WARNING:
+We could not find the bezel corners for the device 'Samsung Galaxy S21'.
+The normalized device name is 'samsunggalaxys21'
+and couldn't be found in the supported devices:
+iphonex, iphonexs, iphonexsmax, iphonexr, iphone11, iphone11pro, iphone11promax, iphone12, iphone12mini, iphone12pro, iphone12promax, iphone13, iphone13mini, iphone13pro, iphone13promax, iphone14, iphone14plus, iphone14pro, iphone14promax, iphone15, ipadmini, ipadair, ipadpro11, ipadpro129
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle device name normalization 1`] = `
+[
+  [
+    "iphone14pro",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle missing bezel image names 1`] = `
+[
+  [
+    "iphone14pro",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle missing bezel image names 2`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+WARNING:
+We could not find the bezel corners for the device 'iPhone 14 Pro'.
+The normalized device name is 'iphone14pro'
+and couldn't be found in the supported devices:
+iphonex, iphonexs, iphonexsmax, iphonexr, iphone11, iphone11pro, iphone11promax, iphone12, iphone12mini, iphone12pro, iphone12promax, iphone13, iphone13mini, iphone13pro, iphone13promax, iphone14, iphone14plus, iphone14pro, iphone14promax, iphone15, ipadmini, ipadair, ipadpro11, ipadpro129
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle partial bezel image names 1`] = `
+[
+  [
+    "iphone14pro",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle partial bezel image names 2`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+WARNING:
+We could not find the bezel corners for the device 'iPhone 14 Pro'.
+The normalized device name is 'iphone14pro'
+and couldn't be found in the supported devices:
+iphonex, iphonexs, iphonexsmax, iphonexr, iphone11, iphone11pro, iphone11promax, iphone12, iphone12mini, iphone12pro, iphone12promax, iphone13, iphone13mini, iphone13pro, iphone13promax, iphone14, iphone14plus, iphone14pro, iphone14promax, iphone15, ipadmini, ipadair, ipadpro11, ipadpro129
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle supported iPad device with sufficient dimensions 1`] = `
+[
+  [
+    "ipadair",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle supported iPhone device 1`] = `
+[
+  [
+    "iphone14pro",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle supported iPhone device in landscape mode 1`] = `
+[
+  [
+    "iphone14pro",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should handle unsupported device 1`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+WARNING:
+We could not find the bezel corners for the device 'iPhone 6'.
+The normalized device name is 'iphone6'
+and couldn't be found in the supported devices:
+iphonex, iphonexs, iphonexsmax, iphonexr, iphone11, iphone11pro, iphone11promax, iphone12, iphone12mini, iphone12pro, iphone12promax, iphone13, iphone13mini, iphone13pro, iphone13promax, iphone14, iphone14plus, iphone14pro, iphone14promax, iphone15, ipadmini, ipadair, ipadpro11, ipadpro129
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`handleIOSBezelCorners > should not handle iPad device with insufficient dimensions 1`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+WARNING:
+We could not find the bezel corners for the device 'iPad Air'.
+The normalized device name is 'ipadair'
+and couldn't be found in the supported devices:
+iphonex, iphonexs, iphonexsmax, iphonexr, iphone11, iphone11pro, iphone11promax, iphone12, iphone12mini, iphone12pro, iphone12promax, iphone13, iphone13mini, iphone13pro, iphone13promax, iphone14, iphone14plus, iphone14pro, iphone14promax, iphone15, ipadmini, ipadair, ipadpro11, ipadpro129
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`logDimensionWarning > should log warning for BOTTOM type 1`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+ THE RESIZE DIMENSION BOTTOM=40 MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ RESULTING IN A BOTTOM CROP POSITION=850.
+ THIS HAS BEEN DEFAULTED TO '800'
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`logDimensionWarning > should log warning for LEFT type 1`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+ THE RESIZE DIMENSION LEFT=60 MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ RESULTING IN A LEFT CROP POSITION=-10.
+ THIS HAS BEEN DEFAULTED TO '0'
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`logDimensionWarning > should log warning for RIGHT type 1`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+ THE RESIZE DIMENSION RIGHT=50 MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ RESULTING IN A RIGHT CROP POSITION=1100.
+ THIS HAS BEEN DEFAULTED TO '1000'
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`logDimensionWarning > should log warning for TOP type 1`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+ THE RESIZE DIMENSION TOP=30 MADE THE CROPPING GO OUT OF THE SCREEN SIZE
+ RESULTING IN A TOP CROP POSITION=-5.
+ THIS HAS BEEN DEFAULTED TO '0'
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should create cropped base64 image with default settings 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should create cropped base64 image with default settings 2`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should create cropped base64 image with default settings 3`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should create cropped base64 image with default settings 4`] = `"finalCroppedImageData"`;
+
+exports[`makeCroppedBase64Image > should handle custom resize dimensions 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle custom resize dimensions 2`] = `
+[
+  [
+    {
+      "h": 125,
+      "w": 225,
+      "x": 45,
+      "y": 15,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle custom resize dimensions 3`] = `"finalCroppedImageData"`;
+
+exports[`makeCroppedBase64Image > should handle different device pixel ratios 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle different device pixel ratios 2`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle different device pixel ratios 3`] = `"finalCroppedImageData"`;
+
+exports[`makeCroppedBase64Image > should handle different rectangle dimensions 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle different rectangle dimensions 2`] = `
+[
+  [
+    {
+      "h": 300,
+      "w": 400,
+      "x": 100,
+      "y": 75,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle different rectangle dimensions 3`] = `"finalCroppedImageData"`;
+
+exports[`makeCroppedBase64Image > should handle different screenshot sizes 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle different screenshot sizes 2`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle different screenshot sizes 3`] = `"finalCroppedImageData"`;
+
+exports[`makeCroppedBase64Image > should handle edge case with padding that exceeds image bounds 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle edge case with padding that exceeds image bounds 2`] = `
+[
+  [
+    {
+      "h": 150,
+      "w": 100,
+      "x": 900,
+      "y": 1850,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle edge case with padding that exceeds image bounds 3`] = `"finalCroppedImageData"`;
+
+exports[`makeCroppedBase64Image > should handle iOS devices with bezel corners 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle iOS devices with bezel corners 2`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle iOS devices with bezel corners 3`] = `"finalCroppedImageData"`;
+
+exports[`makeCroppedBase64Image > should handle landscape orientation with rotation 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle landscape orientation with rotation 2`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle landscape orientation with rotation 3`] = `"finalCroppedImageData"`;
+
+exports[`makeCroppedBase64Image > should handle web driver element screenshots 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle web driver element screenshots 2`] = `
+[
+  [
+    {
+      "h": 100,
+      "w": 200,
+      "x": 50,
+      "y": 25,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle web driver element screenshots 3`] = `"finalCroppedImageData"`;
+
+exports[`makeCroppedBase64Image > should handle zero rectangle dimensions 1`] = `
+[
+  [
+    "originalImageData",
+  ],
+  [
+    "originalImageData",
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle zero rectangle dimensions 2`] = `
+[
+  [
+    {
+      "h": 0,
+      "w": 0,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+]
+`;
+
+exports[`makeCroppedBase64Image > should handle zero rectangle dimensions 3`] = `"finalCroppedImageData"`;
+
+exports[`makeFullPageBase64Image > should create full page base64 image with multiple screenshots 1`] = `
+[
+  [
+    "screenshot1-data",
+    2,
+  ],
+  [
+    "screenshot2-data",
+    2,
+  ],
+  [
+    "screenshot3-data",
+    2,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should create full page base64 image with multiple screenshots 2`] = `
+[
+  [
+    {
+      "h": 800,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  [
+    {
+      "h": 800,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  [
+    {
+      "h": 400,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should create full page base64 image with multiple screenshots 3`] = `
+[
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    0,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    800,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    1600,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should create full page base64 image with multiple screenshots 4`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should create full page base64 image with multiple screenshots 5`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle canvas Y positions correctly 1`] = `
+[
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    0,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    800,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    1600,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle canvas Y positions correctly 2`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle different device pixel ratios 1`] = `
+[
+  [
+    "screenshot1-data",
+    3,
+  ],
+  [
+    "screenshot2-data",
+    3,
+  ],
+  [
+    "screenshot3-data",
+    3,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle different device pixel ratios 2`] = `
+[
+  [
+    {
+      "h": 800,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  [
+    {
+      "h": 800,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  [
+    {
+      "h": 400,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle different device pixel ratios 3`] = `
+[
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    0,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    800,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    1600,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle different device pixel ratios 4`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle different screenshot data for each iteration 1`] = `
+[
+  [
+    "screenshot1-data",
+    2,
+  ],
+  [
+    "screenshot2-data",
+    2,
+  ],
+  [
+    "screenshot3-data",
+    2,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle different screenshot data for each iteration 2`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle empty screenshots array 1`] = `[]`;
+
+exports[`makeFullPageBase64Image > should handle empty screenshots array 2`] = `[]`;
+
+exports[`makeFullPageBase64Image > should handle empty screenshots array 3`] = `[]`;
+
+exports[`makeFullPageBase64Image > should handle empty screenshots array 4`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle empty screenshots array 5`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle landscape mode with rotation 1`] = `
+[
+  [
+    "screenshot1-data",
+    2,
+  ],
+  [
+    "screenshot2-data",
+    2,
+  ],
+  [
+    "screenshot3-data",
+    2,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle landscape mode with rotation 2`] = `
+[
+  [
+    {
+      "h": 800,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  [
+    {
+      "h": 800,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  [
+    {
+      "h": 400,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle landscape mode with rotation 3`] = `
+[
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy] {
+        "calls": [
+          [
+            "image/png",
+          ],
+          [
+            "image/png",
+          ],
+          [
+            "image/png",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy] {
+        "calls": [
+          [
+            90,
+          ],
+          [
+            90,
+          ],
+          [
+            90,
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+    },
+    0,
+    0,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy] {
+        "calls": [
+          [
+            "image/png",
+          ],
+          [
+            "image/png",
+          ],
+          [
+            "image/png",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy] {
+        "calls": [
+          [
+            90,
+          ],
+          [
+            90,
+          ],
+          [
+            90,
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+    },
+    0,
+    800,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy] {
+        "calls": [
+          [
+            "image/png",
+          ],
+          [
+            "image/png",
+          ],
+          [
+            "image/png",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy] {
+        "calls": [
+          [
+            90,
+          ],
+          [
+            90,
+          ],
+          [
+            90,
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+    },
+    0,
+    1600,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle landscape mode with rotation 4`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle landscape mode without rotation when width >= height 1`] = `
+[
+  [
+    "screenshot1-data",
+    2,
+  ],
+  [
+    "screenshot2-data",
+    2,
+  ],
+  [
+    "screenshot3-data",
+    2,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle landscape mode without rotation when width >= height 2`] = `
+[
+  [
+    {
+      "h": 800,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  [
+    {
+      "h": 800,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  [
+    {
+      "h": 400,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle landscape mode without rotation when width >= height 3`] = `
+[
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    0,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    800,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 400,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    1600,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle landscape mode without rotation when width >= height 4`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle large canvas dimensions 1`] = `
+[
+  [
+    "large-screenshot-data",
+    2,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle large canvas dimensions 2`] = `
+[
+  [
+    {
+      "h": 2000,
+      "w": 3000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle large canvas dimensions 3`] = `
+[
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 2000,
+              "w": 3000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    0,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle large canvas dimensions 4`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle screenshots with cropping positions 1`] = `
+[
+  [
+    "cropped-screenshot-data",
+    2,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle screenshots with cropping positions 2`] = `
+[
+  [
+    {
+      "h": 500,
+      "w": 500,
+      "x": 100,
+      "y": 50,
+    },
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle screenshots with cropping positions 3`] = `
+[
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 500,
+              "w": 500,
+              "x": 100,
+              "y": 50,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    0,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle screenshots with cropping positions 4`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle screenshots with different dimensions 1`] = `
+[
+  [
+    "wide-screenshot-data",
+    2,
+  ],
+  [
+    "tall-screenshot-data",
+    2,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle screenshots with different dimensions 2`] = `
+[
+  [
+    {
+      "h": 600,
+      "w": 1200,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  [
+    {
+      "h": 900,
+      "w": 1200,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle screenshots with different dimensions 3`] = `
+[
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 600,
+              "w": 1200,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 900,
+              "w": 1200,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    0,
+  ],
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 600,
+              "w": 1200,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+          [
+            {
+              "h": 900,
+              "w": 1200,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    600,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle screenshots with different dimensions 4`] = `"fullPageImageData"`;
+
+exports[`makeFullPageBase64Image > should handle single screenshot 1`] = `
+[
+  [
+    "single-screenshot-data",
+    2,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle single screenshot 2`] = `
+[
+  [
+    {
+      "h": 800,
+      "w": 1000,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle single screenshot 3`] = `
+[
+  [
+    {
+      "composite": [MockFunction spy],
+      "crop": [MockFunction spy] {
+        "calls": [
+          [
+            {
+              "h": 800,
+              "w": 1000,
+              "x": 0,
+              "y": 0,
+            },
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": [Circular],
+          },
+        ],
+      },
+      "getBase64": [MockFunction spy],
+      "opacity": [MockFunction spy],
+      "rotate": [MockFunction spy],
+    },
+    0,
+    0,
+  ],
+]
+`;
+
+exports[`makeFullPageBase64Image > should handle single screenshot 4`] = `"fullPageImageData"`;
+
+exports[`rotateBase64Image > should handle different base64 input 1`] = `"differentRotatedData"`;
+
+exports[`rotateBase64Image > should handle different base64 input 2`] = `
+[
+  [
+    {
+      "data": [
+        118,
+        39,
+        223,
+        122,
+        183,
+        167,
+        180,
+        137,
+        154,
+        129,
+        224,
+        218,
+        181,
+      ],
+      "type": "Buffer",
+    },
+  ],
+]
+`;
+
+exports[`rotateBase64Image > should handle different base64 input 3`] = `
+[
+  [
+    270,
+  ],
+]
+`;
+
+exports[`rotateBase64Image > should rotate image by 180 degrees 1`] = `"rotatedImageData"`;
+
+exports[`rotateBase64Image > should rotate image by 180 degrees 2`] = `
+[
+  [
+    180,
+  ],
+]
+`;
+
+exports[`rotateBase64Image > should rotate image by specified degrees 1`] = `"rotatedImageData"`;
+
+exports[`rotateBase64Image > should rotate image by specified degrees 2`] = `
+[
+  [
+    {
+      "data": [
+        162,
+        184,
+        160,
+        138,
+        118,
+        165,
+        34,
+        102,
+        160,
+        120,
+        54,
+        173,
+      ],
+      "type": "Buffer",
+    },
+  ],
+]
+`;
+
+exports[`rotateBase64Image > should rotate image by specified degrees 3`] = `
+[
+  [
+    90,
+  ],
+]
+`;
+
+exports[`rotateBase64Image > should rotate image by specified degrees 4`] = `
+[
+  [
+    "image/png",
+  ],
+]
+`;
+
 exports[`takeBase64ElementScreenshot > should fallback to takeResizedBase64Screenshot when takeElementScreenshot throws an error 1`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeBase64ElementScreenshot > should fallback to takeResizedBase64Screenshot when takeElementScreenshot throws an error 2`] = `
 [
   [
     "Error taking an element screenshot with the default \`element.takeElementScreenshot(elementId)\` method:",
@@ -41,8 +2402,631 @@ exports[`takeBase64ElementScreenshot > should fallback to takeResizedBase64Scree
 exports[`takeBase64ElementScreenshot > should log error and still call takeElementScreenshot if element is not WDIO element 1`] = `
 [
   [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeBase64ElementScreenshot > should log error and still call takeElementScreenshot if element is not WDIO element 2`] = `
+[
+  [
     " takeBase64ElementScreenshot element is not a valid element because of ",
     "{"elementId":"test-element-id"}",
+  ],
+]
+`;
+
+exports[`takeBase64ElementScreenshot > should log error and still call takeElementScreenshot if element is not WDIO element 3`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeBase64ElementScreenshot > should use native element screenshot when resizeDimensions equals DEFAULT_RESIZE_DIMENSIONS 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeBase64ElementScreenshot > should use native element screenshot when resizeDimensions equals DEFAULT_RESIZE_DIMENSIONS 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle Android device (non-iOS) 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy],
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle Android device (non-iOS) 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle Android device (non-iOS) 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle Android device (non-iOS) 4`] = `
+[
+  [
+    {
+      "height": 100,
+      "width": 200,
+      "x": 50,
+      "y": 25,
+    },
+    1,
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle custom resize dimensions 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy],
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle custom resize dimensions 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle custom resize dimensions 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle custom resize dimensions 4`] = `
+[
+  [
+    {
+      "height": 100,
+      "width": 200,
+      "x": 50,
+      "y": 25,
+    },
+    1,
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different device pixel ratios 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy],
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different device pixel ratios 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different device pixel ratios 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different device pixel ratios 4`] = `
+[
+  [
+    {
+      "height": 100,
+      "width": 200,
+      "x": 50,
+      "y": 25,
+    },
+    1,
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different element regions 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy],
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different element regions 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different element regions 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different element regions 4`] = `
+[
+  [
+    {
+      "height": 300,
+      "width": 400,
+      "x": 100,
+      "y": 75,
+    },
+    1,
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different screenshot data 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy],
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different screenshot data 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle different screenshot data 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle element with different elementId 1`] = `
+[
+  [
+    {
+      "elementId": "different-element-id",
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle element with different elementId 2`] = `
+[
+  [
+    "different-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle element with different elementId 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "different-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle iOS device with device pixel ratio 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy],
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle iOS device with device pixel ratio 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle iOS device with device pixel ratio 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle iOS device with device pixel ratio 4`] = `
+[
+  [
+    {
+      "height": 100,
+      "width": 200,
+      "x": 50,
+      "y": 25,
+    },
+    3,
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle large element dimensions 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy],
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle large element dimensions 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle large element dimensions 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle large element dimensions 4`] = `
+[
+  [
+    {
+      "height": 2000,
+      "width": 3000,
+      "x": 1000,
+      "y": 500,
+    },
+    1,
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle non-WDIO element with logging 1`] = `
+[
+  [
+    {
+      "someProperty": "not-a-wdio-element",
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle non-WDIO element with logging 2`] = `
+[
+  [
+    undefined,
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle non-WDIO element with logging 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            undefined,
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle zero element dimensions 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy],
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle zero element dimensions 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle zero element dimensions 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should handle zero element dimensions 4`] = `
+[
+  [
+    {
+      "height": 0,
+      "width": 0,
+      "x": 0,
+      "y": 0,
+    },
+    1,
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should take resized base64 screenshot with default settings 1`] = `
+[
+  [
+    {
+      "elementId": "test-element-id",
+      "takeElementScreenshot": [MockFunction spy],
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should take resized base64 screenshot with default settings 2`] = `
+[
+  [
+    "test-element-id",
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should take resized base64 screenshot with default settings 3`] = `
+[
+  [
+    {
+      "getElementRect": [MockFunction spy] {
+        "calls": [
+          [
+            "test-element-id",
+          ],
+        ],
+        "results": [
+          {
+            "type": "return",
+            "value": Promise {},
+          },
+        ],
+      },
+    },
+  ],
+]
+`;
+
+exports[`takeResizedBase64Screenshot > should take resized base64 screenshot with default settings 4`] = `
+[
+  [
+    {
+      "height": 100,
+      "width": 200,
+      "x": 50,
+      "y": 25,
+    },
+    1,
   ],
 ]
 `;

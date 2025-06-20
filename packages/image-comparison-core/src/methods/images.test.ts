@@ -104,7 +104,7 @@ describe('checkIfImageExists', () => {
 
         const result = await checkIfImageExists('/path/to/image.png')
 
-        expect(result).toBe(true)
+        expect(result).toMatchSnapshot()
     })
 
     it('should return false when file does not exist', async () => {
@@ -112,7 +112,7 @@ describe('checkIfImageExists', () => {
 
         const result = await checkIfImageExists('/path/to/image.png')
 
-        expect(result).toBe(false)
+        expect(result).toMatchSnapshot()
     })
 })
 
@@ -290,10 +290,10 @@ describe('rotateBase64Image', () => {
             degrees: 90
         })
 
-        expect(result).toBe('rotatedImageData')
-        expect(jimpReadMock).toHaveBeenCalledWith(Buffer.from('originalImageData', 'base64'))
-        expect(mockImage.rotate).toHaveBeenCalledWith(90)
-        expect(mockImage.getBase64).toHaveBeenCalledWith('image/png')
+        expect(result).toMatchSnapshot()
+        expect(jimpReadMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.rotate.mock.calls).toMatchSnapshot()
+        expect(mockImage.getBase64.mock.calls).toMatchSnapshot()
     })
 
     it('should rotate image by 180 degrees', async () => {
@@ -308,8 +308,8 @@ describe('rotateBase64Image', () => {
             degrees: 180
         })
 
-        expect(result).toBe('rotatedImageData')
-        expect(mockImage.rotate).toHaveBeenCalledWith(180)
+        expect(result).toMatchSnapshot()
+        expect(mockImage.rotate.mock.calls).toMatchSnapshot()
     })
 
     it('should handle different base64 input', async () => {
@@ -324,9 +324,9 @@ describe('rotateBase64Image', () => {
             degrees: 270
         })
 
-        expect(result).toBe('differentRotatedData')
-        expect(jimpReadMock).toHaveBeenCalledWith(Buffer.from('differentImageData', 'base64'))
-        expect(mockImage.rotate).toHaveBeenCalledWith(270)
+        expect(result).toMatchSnapshot()
+        expect(jimpReadMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.rotate.mock.calls).toMatchSnapshot()
     })
 })
 
@@ -356,8 +356,8 @@ describe('getRotatedImageIfNeeded', () => {
             base64Image: 'originalImageData'
         })
 
-        expect(result).toBe('originalImageData')
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
+        expect(result).toMatchSnapshot()
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
     })
 
     it('should call rotateBase64Image when landscape and height > width', async () => {
@@ -372,8 +372,8 @@ describe('getRotatedImageIfNeeded', () => {
         })
 
         // The result should be different from the input when rotation occurs
-        expect(result).not.toBe('originalImageData')
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
+        expect(result).toMatchSnapshot()
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
     })
 
     it('should not rotate when isWebDriverElementScreenshot is true', async () => {
@@ -385,8 +385,8 @@ describe('getRotatedImageIfNeeded', () => {
             base64Image: 'originalImageData'
         })
 
-        expect(result).toBe('originalImageData')
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
+        expect(result).toMatchSnapshot()
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
     })
 
     it('should not rotate when width >= height', async () => {
@@ -398,8 +398,8 @@ describe('getRotatedImageIfNeeded', () => {
             base64Image: 'originalImageData'
         })
 
-        expect(result).toBe('originalImageData')
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
+        expect(result).toMatchSnapshot()
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
     })
 
     it('should not rotate when not landscape', async () => {
@@ -411,8 +411,8 @@ describe('getRotatedImageIfNeeded', () => {
             base64Image: 'originalImageData'
         })
 
-        expect(result).toBe('originalImageData')
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
+        expect(result).toMatchSnapshot()
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
     })
 })
 
@@ -436,18 +436,7 @@ describe('logDimensionWarning', () => {
             type: 'LEFT'
         })
 
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('THE RESIZE DIMENSION LEFT=60 MADE THE CROPPING GO OUT OF THE SCREEN SIZE')
-        )
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('RESULTING IN A LEFT CROP POSITION=-10')
-        )
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining("THIS HAS BEEN DEFAULTED TO '0'")
-        )
+        expect(logWarnSpy.mock.calls).toMatchSnapshot()
     })
 
     it('should log warning for RIGHT type', () => {
@@ -458,18 +447,7 @@ describe('logDimensionWarning', () => {
             type: 'RIGHT'
         })
 
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('THE RESIZE DIMENSION RIGHT=50 MADE THE CROPPING GO OUT OF THE SCREEN SIZE')
-        )
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('RESULTING IN A RIGHT CROP POSITION=1100')
-        )
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining("THIS HAS BEEN DEFAULTED TO '1000'")
-        )
+        expect(logWarnSpy.mock.calls).toMatchSnapshot()
     })
 
     it('should log warning for TOP type', () => {
@@ -480,18 +458,7 @@ describe('logDimensionWarning', () => {
             type: 'TOP'
         })
 
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('THE RESIZE DIMENSION TOP=30 MADE THE CROPPING GO OUT OF THE SCREEN SIZE')
-        )
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('RESULTING IN A TOP CROP POSITION=-5')
-        )
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining("THIS HAS BEEN DEFAULTED TO '0'")
-        )
+        expect(logWarnSpy.mock.calls).toMatchSnapshot()
     })
 
     it('should log warning for BOTTOM type', () => {
@@ -502,18 +469,7 @@ describe('logDimensionWarning', () => {
             type: 'BOTTOM'
         })
 
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('THE RESIZE DIMENSION BOTTOM=40 MADE THE CROPPING GO OUT OF THE SCREEN SIZE')
-        )
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('RESULTING IN A BOTTOM CROP POSITION=850')
-        )
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining("THIS HAS BEEN DEFAULTED TO '800'")
-        )
+        expect(logWarnSpy.mock.calls).toMatchSnapshot()
     })
 })
 
@@ -528,7 +484,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([45, 160]) // start - paddingStart, start + length + paddingEnd
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle zero padding', () => {
@@ -541,7 +497,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([50, 150]) // start, start + length
+        expect(result).toMatchSnapshot()
     })
 
     it('should clamp start position to 0 when it goes below 0', () => {
@@ -554,7 +510,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([0, 160]) // adjustedStart clamped to 0, adjustedEnd unchanged
+        expect(result).toMatchSnapshot()
     })
 
     it('should clamp end position to maxDimension when it exceeds maxDimension', () => {
@@ -567,7 +523,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([940, 1000]) // adjustedStart unchanged, adjustedEnd clamped to maxDimension
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle both start and end clamping', () => {
@@ -580,7 +536,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([0, 200]) // Both start and end are clamped: [0, 50+100+50=200]
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle HEIGHT warning type correctly', () => {
@@ -593,7 +549,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'HEIGHT'
         })
 
-        expect(result).toEqual([0, 200]) // Both start and end are clamped: [0, 50+100+50=200]
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle edge case where start is exactly at maxDimension', () => {
@@ -606,7 +562,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([1000, 1000]) // Both start and end are at maxDimension
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle edge case where start is 0', () => {
@@ -619,7 +575,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([0, 110]) // start remains 0, end is 0 + 100 + 10
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle large padding values', () => {
@@ -632,7 +588,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([0, 100]) // Both start and end are clamped
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle zero length', () => {
@@ -645,7 +601,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([45, 60]) // start - paddingStart, start + 0 + paddingEnd
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle negative start position', () => {
@@ -658,7 +614,7 @@ describe('getAdjustedAxis', () => {
             warningType: 'WIDTH'
         })
 
-        expect(result).toEqual([0, 100]) // start clamped to 0, end is 0 + 100 + 10
+        expect(result).toMatchSnapshot()
     })
 })
 
@@ -729,7 +685,7 @@ describe('handleIOSBezelCorners', () => {
             width: 390,
         })
 
-        expect(getIosBezelImageNamesMock).toHaveBeenCalledWith('iphone14pro')
+        expect(getIosBezelImageNamesMock.mock.calls).toMatchSnapshot()
         expect(readFileSyncMock).toHaveBeenCalledTimes(2)
         expect(mockImage.composite).toHaveBeenCalledTimes(2)
         expect(logWarnSpy).not.toHaveBeenCalled()
@@ -753,7 +709,7 @@ describe('handleIOSBezelCorners', () => {
             width: 844,
         })
 
-        expect(getIosBezelImageNamesMock).toHaveBeenCalledWith('iphone14pro')
+        expect(getIosBezelImageNamesMock.mock.calls).toMatchSnapshot()
         expect(readFileSyncMock).toHaveBeenCalledTimes(2)
         expect(mockImage.composite).toHaveBeenCalledTimes(2)
         expect(logWarnSpy).not.toHaveBeenCalled()
@@ -777,7 +733,7 @@ describe('handleIOSBezelCorners', () => {
             width: 1600, // 1600 / 2 = 800 < 1133, but height meets requirement
         })
 
-        expect(getIosBezelImageNamesMock).toHaveBeenCalledWith('ipadair')
+        expect(getIosBezelImageNamesMock.mock.calls).toMatchSnapshot()
         expect(readFileSyncMock).toHaveBeenCalledTimes(2)
         expect(mockImage.composite).toHaveBeenCalledTimes(2)
         expect(logWarnSpy).not.toHaveBeenCalled()
@@ -796,10 +752,7 @@ describe('handleIOSBezelCorners', () => {
 
         expect(getIosBezelImageNamesMock).not.toHaveBeenCalled()
         expect(readFileSyncMock).not.toHaveBeenCalled()
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining("We could not find the bezel corners for the device 'iPad Air'")
-        )
+        expect(logWarnSpy.mock.calls).toMatchSnapshot()
     })
 
     it('should handle device name normalization', async () => {
@@ -820,7 +773,7 @@ describe('handleIOSBezelCorners', () => {
             width: 390,
         })
 
-        expect(getIosBezelImageNamesMock).toHaveBeenCalledWith('iphone14pro')
+        expect(getIosBezelImageNamesMock.mock.calls).toMatchSnapshot()
         expect(readFileSyncMock).toHaveBeenCalledTimes(2)
         expect(mockImage.composite).toHaveBeenCalledTimes(2)
         expect(logWarnSpy).not.toHaveBeenCalled()
@@ -839,10 +792,7 @@ describe('handleIOSBezelCorners', () => {
 
         expect(getIosBezelImageNamesMock).not.toHaveBeenCalled()
         expect(readFileSyncMock).not.toHaveBeenCalled()
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining("We could not find the bezel corners for the device 'iPhone 6'")
-        )
+        expect(logWarnSpy.mock.calls).toMatchSnapshot()
     })
 
     it('should handle missing bezel image names', async () => {
@@ -861,13 +811,10 @@ describe('handleIOSBezelCorners', () => {
             width: 390,
         })
 
-        expect(getIosBezelImageNamesMock).toHaveBeenCalledWith('iphone14pro')
+        expect(getIosBezelImageNamesMock.mock.calls).toMatchSnapshot()
         expect(readFileSyncMock).not.toHaveBeenCalled()
         expect(mockImage.composite).not.toHaveBeenCalled()
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining("We could not find the bezel corners for the device 'iPhone 14 Pro'")
-        )
+        expect(logWarnSpy.mock.calls).toMatchSnapshot()
     })
 
     it('should handle partial bezel image names', async () => {
@@ -886,13 +833,10 @@ describe('handleIOSBezelCorners', () => {
             width: 390,
         })
 
-        expect(getIosBezelImageNamesMock).toHaveBeenCalledWith('iphone14pro')
+        expect(getIosBezelImageNamesMock.mock.calls).toMatchSnapshot()
         expect(readFileSyncMock).not.toHaveBeenCalled()
         expect(mockImage.composite).not.toHaveBeenCalled()
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining("We could not find the bezel corners for the device 'iPhone 14 Pro'")
-        )
+        expect(logWarnSpy.mock.calls).toMatchSnapshot()
     })
 
     it('should handle Android device (not iOS)', async () => {
@@ -908,10 +852,7 @@ describe('handleIOSBezelCorners', () => {
 
         expect(getIosBezelImageNamesMock).not.toHaveBeenCalled()
         expect(readFileSyncMock).not.toHaveBeenCalled()
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining("We could not find the bezel corners for the device 'Samsung Galaxy S21'")
-        )
+        expect(logWarnSpy.mock.calls).toMatchSnapshot()
     })
 })
 
@@ -956,14 +897,9 @@ describe('cropAndConvertToDataURL', () => {
     it('should crop image and return base64 data without iOS bezel corners', async () => {
         const result = await cropAndConvertToDataURL(defaultCropOptions)
 
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(mockCroppedImage.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('croppedImageData')
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCroppedImage.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should crop image and add iOS bezel corners when isIOS is true', async () => {
@@ -973,14 +909,9 @@ describe('cropAndConvertToDataURL', () => {
             isIOS: true,
         })
 
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(mockCroppedImage.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('croppedImageData')
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCroppedImage.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle landscape orientation with iOS bezel corners', async () => {
@@ -991,14 +922,9 @@ describe('cropAndConvertToDataURL', () => {
             isLandscape: true,
         })
 
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(mockCroppedImage.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('croppedImageData')
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCroppedImage.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle Android device (isIOS false) without bezel corners', async () => {
@@ -1009,14 +935,9 @@ describe('cropAndConvertToDataURL', () => {
             isIOS: false,
         })
 
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(mockCroppedImage.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('croppedImageData')
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCroppedImage.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle zero dimensions', async () => {
@@ -1028,14 +949,9 @@ describe('cropAndConvertToDataURL', () => {
             width: 0,
         })
 
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 0,
-            y: 0,
-            w: 0,
-            h: 0,
-        })
-        expect(mockCroppedImage.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('croppedImageData')
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCroppedImage.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle large crop dimensions', async () => {
@@ -1047,14 +963,9 @@ describe('cropAndConvertToDataURL', () => {
             width: 3000,
         })
 
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 1000,
-            y: 500,
-            w: 3000,
-            h: 2000,
-        })
-        expect(mockCroppedImage.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('croppedImageData')
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCroppedImage.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle different base64 input data', async () => {
@@ -1063,14 +974,9 @@ describe('cropAndConvertToDataURL', () => {
             base64Image: 'differentImageData123',
         })
 
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(mockCroppedImage.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('croppedImageData')
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCroppedImage.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle different device pixel ratios', async () => {
@@ -1081,14 +987,9 @@ describe('cropAndConvertToDataURL', () => {
             isIOS: true,
         })
 
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(mockCroppedImage.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('croppedImageData')
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCroppedImage.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 })
 
@@ -1151,15 +1052,10 @@ describe('makeCroppedBase64Image', () => {
     it('should create cropped base64 image with default settings', async () => {
         const result = await makeCroppedBase64Image(defaultCropOptions)
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(mockCroppedImage.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCroppedImage.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle landscape orientation with rotation', async () => {
@@ -1168,14 +1064,9 @@ describe('makeCroppedBase64Image', () => {
             isLandscape: true,
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle web driver element screenshots', async () => {
@@ -1184,14 +1075,9 @@ describe('makeCroppedBase64Image', () => {
             isWebDriverElementScreenshot: true,
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle iOS devices with bezel corners', async () => {
@@ -1201,14 +1087,9 @@ describe('makeCroppedBase64Image', () => {
             isIOS: true,
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle custom resize dimensions', async () => {
@@ -1217,14 +1098,9 @@ describe('makeCroppedBase64Image', () => {
             resizeDimensions: { top: 10, right: 20, bottom: 15, left: 5 },
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 45, // x - left = 50 - 5
-            y: 15, // y - top = 25 - 10
-            w: 225, // width + left + right = 200 + 5 + 20
-            h: 125, // height + top + bottom = 100 + 10 + 15
-        })
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle different rectangle dimensions', async () => {
@@ -1238,14 +1114,9 @@ describe('makeCroppedBase64Image', () => {
             },
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 100,
-            y: 75,
-            w: 400,
-            h: 300,
-        })
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle different screenshot sizes', async () => {
@@ -1253,14 +1124,9 @@ describe('makeCroppedBase64Image', () => {
 
         const result = await makeCroppedBase64Image(defaultCropOptions)
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle different device pixel ratios', async () => {
@@ -1269,14 +1135,9 @@ describe('makeCroppedBase64Image', () => {
             devicePixelRatio: 2,
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 50,
-            y: 25,
-            w: 200,
-            h: 100,
-        })
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle zero rectangle dimensions', async () => {
@@ -1290,14 +1151,9 @@ describe('makeCroppedBase64Image', () => {
             },
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 0,
-            y: 0,
-            w: 0,
-            h: 0,
-        })
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle edge case with padding that exceeds image bounds', async () => {
@@ -1312,15 +1168,9 @@ describe('makeCroppedBase64Image', () => {
             resizeDimensions: { top: 50, right: 100, bottom: 50, left: 50 },
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('originalImageData')
-        // The crop should be adjusted to stay within bounds
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 900, // x - left, but clamped to 0
-            y: 1850, // y - top, but clamped to 0
-            w: 100, // width + left + right, but clamped to image width
-            h: 150, // height + top + bottom, but clamped to image height
-        })
-        expect(result).toBe('finalCroppedImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 })
 
@@ -1412,11 +1262,11 @@ describe('makeFullPageBase64Image', () => {
     it('should create full page base64 image with multiple screenshots', async () => {
         const result = await makeFullPageBase64Image(defaultScreenshotsData, defaultOptions)
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(3)
-        expect(mockImage.crop).toHaveBeenCalledTimes(3)
-        expect(mockCanvas.composite).toHaveBeenCalledTimes(3)
-        expect(mockCanvas.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle landscape mode with rotation', async () => {
@@ -1427,10 +1277,10 @@ describe('makeFullPageBase64Image', () => {
             isLandscape: true
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(3)
-        expect(mockImage.crop).toHaveBeenCalledTimes(3)
-        expect(mockCanvas.composite).toHaveBeenCalledTimes(3)
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle single screenshot', async () => {
@@ -1452,10 +1302,10 @@ describe('makeFullPageBase64Image', () => {
 
         const result = await makeFullPageBase64Image(singleScreenshotData, defaultOptions)
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(1)
-        expect(mockImage.crop).toHaveBeenCalledTimes(1)
-        expect(mockCanvas.composite).toHaveBeenCalledTimes(1)
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle different device pixel ratios', async () => {
@@ -1464,10 +1314,10 @@ describe('makeFullPageBase64Image', () => {
             devicePixelRatio: 3
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(3)
-        expect(mockImage.crop).toHaveBeenCalledTimes(3)
-        expect(mockCanvas.composite).toHaveBeenCalledTimes(3)
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle screenshots with different dimensions', async () => {
@@ -1502,10 +1352,10 @@ describe('makeFullPageBase64Image', () => {
 
         const result = await makeFullPageBase64Image(mixedScreenshotsData, defaultOptions)
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(2)
-        expect(mockImage.crop).toHaveBeenCalledTimes(2)
-        expect(mockCanvas.composite).toHaveBeenCalledTimes(2)
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle screenshots with cropping positions', async () => {
@@ -1527,15 +1377,10 @@ describe('makeFullPageBase64Image', () => {
 
         const result = await makeFullPageBase64Image(croppedScreenshotsData, defaultOptions)
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('cropped-screenshot-data', 2)
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 100,
-            y: 50,
-            w: 500,
-            h: 500
-        })
-        expect(mockCanvas.composite).toHaveBeenCalledWith(mockImage.crop(), 0, 0)
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle landscape mode without rotation when width >= height', async () => {
@@ -1546,10 +1391,10 @@ describe('makeFullPageBase64Image', () => {
             isLandscape: true
         })
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledTimes(3)
-        expect(mockImage.crop).toHaveBeenCalledTimes(3)
-        expect(mockCanvas.composite).toHaveBeenCalledTimes(3)
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle empty screenshots array', async () => {
@@ -1561,11 +1406,11 @@ describe('makeFullPageBase64Image', () => {
 
         const result = await makeFullPageBase64Image(emptyScreenshotsData, defaultOptions)
 
-        expect(getBase64ScreenshotSizeMock).not.toHaveBeenCalled()
-        expect(mockImage.crop).not.toHaveBeenCalled()
-        expect(mockCanvas.composite).not.toHaveBeenCalled()
-        expect(mockCanvas.getBase64).toHaveBeenCalledWith('image/png')
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.getBase64.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle large canvas dimensions', async () => {
@@ -1589,33 +1434,24 @@ describe('makeFullPageBase64Image', () => {
 
         const result = await makeFullPageBase64Image(largeScreenshotsData, defaultOptions)
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenCalledWith('large-screenshot-data', 2)
-        expect(mockImage.crop).toHaveBeenCalledWith({
-            x: 0,
-            y: 0,
-            w: 3000,
-            h: 2000
-        })
-        expect(mockCanvas.composite).toHaveBeenCalledWith(mockImage.crop(), 0, 0)
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(mockImage.crop.mock.calls).toMatchSnapshot()
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle different screenshot data for each iteration', async () => {
         const result = await makeFullPageBase64Image(defaultScreenshotsData, defaultOptions)
 
-        expect(getBase64ScreenshotSizeMock).toHaveBeenNthCalledWith(1, 'screenshot1-data', 2)
-        expect(getBase64ScreenshotSizeMock).toHaveBeenNthCalledWith(2, 'screenshot2-data', 2)
-        expect(getBase64ScreenshotSizeMock).toHaveBeenNthCalledWith(3, 'screenshot3-data', 2)
-        expect(result).toBe('fullPageImageData')
+        expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle canvas Y positions correctly', async () => {
         const result = await makeFullPageBase64Image(defaultScreenshotsData, defaultOptions)
 
-        expect(mockCanvas.composite).toHaveBeenNthCalledWith(1, mockImage.crop(), 0, 0)
-        expect(mockCanvas.composite).toHaveBeenNthCalledWith(2, mockImage.crop(), 0, 800)
-        expect(mockCanvas.composite).toHaveBeenNthCalledWith(3, mockImage.crop(), 0, 1600)
-        expect(result).toBe('fullPageImageData')
+        expect(mockCanvas.composite.mock.calls).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 })
 
@@ -1690,15 +1526,10 @@ describe('takeResizedBase64Screenshot', () => {
             element: mockElement
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
-        expect(calculateDprDataMock).toHaveBeenCalledWith({
-            height: 100,
-            width: 200,
-            x: 50,
-            y: 25
-        }, 1) // devicePixelRatio for non-iOS
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
+        expect(calculateDprDataMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1711,15 +1542,10 @@ describe('takeResizedBase64Screenshot', () => {
             isIOS: true
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
-        expect(calculateDprDataMock).toHaveBeenCalledWith({
-            height: 100,
-            width: 200,
-            x: 50,
-            y: 25
-        }, 3) // devicePixelRatio for iOS
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
+        expect(calculateDprDataMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1738,15 +1564,10 @@ describe('takeResizedBase64Screenshot', () => {
             resizeDimensions: customResizeDimensions
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
-        expect(calculateDprDataMock).toHaveBeenCalledWith({
-            height: 100,
-            width: 200,
-            x: 50,
-            y: 25
-        }, 1)
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
+        expect(calculateDprDataMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1766,15 +1587,10 @@ describe('takeResizedBase64Screenshot', () => {
             element: mockElement
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
-        expect(calculateDprDataMock).toHaveBeenCalledWith({
-            height: 300,
-            width: 400,
-            x: 100,
-            y: 75
-        }, 1)
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
+        expect(calculateDprDataMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1788,9 +1604,9 @@ describe('takeResizedBase64Screenshot', () => {
             element: nonWdioElement
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(nonWdioElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith(undefined)
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1802,15 +1618,10 @@ describe('takeResizedBase64Screenshot', () => {
             devicePixelRatio: 1.5
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
-        expect(calculateDprDataMock).toHaveBeenCalledWith({
-            height: 100,
-            width: 200,
-            x: 50,
-            y: 25
-        }, 1) // For non-iOS, devicePixelRatio is always 1
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
+        expect(calculateDprDataMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1830,15 +1641,10 @@ describe('takeResizedBase64Screenshot', () => {
             element: mockElement
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
-        expect(calculateDprDataMock).toHaveBeenCalledWith({
-            height: 0,
-            width: 0,
-            x: 0,
-            y: 0
-        }, 1)
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
+        expect(calculateDprDataMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1858,15 +1664,10 @@ describe('takeResizedBase64Screenshot', () => {
             element: mockElement
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
-        expect(calculateDprDataMock).toHaveBeenCalledWith({
-            height: 2000,
-            width: 3000,
-            x: 1000,
-            y: 500
-        }, 1)
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
+        expect(calculateDprDataMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1879,9 +1680,9 @@ describe('takeResizedBase64Screenshot', () => {
             element: mockElement
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1896,9 +1697,9 @@ describe('takeResizedBase64Screenshot', () => {
             element: elementWithDifferentId
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(elementWithDifferentId)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('different-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 
@@ -1911,15 +1712,10 @@ describe('takeResizedBase64Screenshot', () => {
             isIOS: false
         })
 
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockBrowserInstance.getElementRect).toHaveBeenCalledWith('test-element-id')
-        expect(takeBase64ScreenshotMock).toHaveBeenCalledWith(mockBrowserInstance)
-        expect(calculateDprDataMock).toHaveBeenCalledWith({
-            height: 100,
-            width: 200,
-            x: 50,
-            y: 25
-        }, 1) // For non-iOS, devicePixelRatio is always 1
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockBrowserInstance.getElementRect.mock.calls).toMatchSnapshot()
+        expect(takeBase64ScreenshotMock.mock.calls).toMatchSnapshot()
+        expect(calculateDprDataMock.mock.calls).toMatchSnapshot()
         expect(result).toBeDefined()
     })
 })
@@ -1961,8 +1757,8 @@ describe('takeBase64ElementScreenshot', () => {
             isIOS: false,
             resizeDimensions: DEFAULT_RESIZE_DIMENSIONS
         })
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
-        expect(mockElement.takeElementScreenshot).toHaveBeenCalledWith('test-element-id')
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
+        expect(mockElement.takeElementScreenshot.mock.calls).toMatchSnapshot()
         expect(result).toBe('nativeScreenshotData')
     })
 
@@ -1977,9 +1773,9 @@ describe('takeBase64ElementScreenshot', () => {
             isIOS: false,
             resizeDimensions: DEFAULT_RESIZE_DIMENSIONS
         })
-        expect(isWdioElementMock).toHaveBeenCalledWith(mockElement)
+        expect(isWdioElementMock.mock.calls).toMatchSnapshot()
         expect(errorSpy.mock.calls).toMatchSnapshot()
-        expect(mockElement.takeElementScreenshot).toHaveBeenCalledWith('test-element-id')
+        expect(mockElement.takeElementScreenshot.mock.calls).toMatchSnapshot()
         expect(result).toBe('nativeScreenshotData')
         errorSpy.mockRestore()
     })
@@ -2002,7 +1798,7 @@ describe('takeBase64ElementScreenshot', () => {
             resizeDimensions: DEFAULT_RESIZE_DIMENSIONS
         })
 
-        expect(mockElementWithError.takeElementScreenshot).toHaveBeenCalledWith('test-element-id')
+        expect(mockElementWithError.takeElementScreenshot.mock.calls).toMatchSnapshot()
         expect(errorSpy.mock.calls).toMatchSnapshot()
         // Verify that the function completed successfully (meaning fallback worked)
         expect(result).toBeDefined()
