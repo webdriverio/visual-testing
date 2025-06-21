@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`saveScreen > should call saveAppScreen when in native context 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-app-screen.png",
+}
+`;
+
+exports[`saveScreen > should call saveWebScreen when not in native context 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-web-screen.png",
+}
+`;

@@ -1,6 +1,6 @@
 import logger from '@wdio/logger'
-import type { DeviceRectangles } from 'webdriver-image-comparison'
-import { DEVICE_RECTANGLES } from 'webdriver-image-comparison'
+import type { DeviceRectangles } from '@wdio/image-comparison-core'
+import { DEVICE_RECTANGLES } from '@wdio/image-comparison-core'
 import { getNativeContext } from './utils.js'
 
 const log = logger('@wdio/visual-service:ContextManager')

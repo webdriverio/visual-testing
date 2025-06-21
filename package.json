@@ -51,11 +51,6 @@
     "prepare": "husky",
     "watch": "pnpm run -r --parallel watch"
   },
-  "dependencies": {
-    "@wdio/ocr-service": "workspace:*",
-    "@wdio/visual-service": "workspace:*",
-    "webdriver-image-comparison": "workspace:*"
-  },
   "devDependencies": {
     "@changesets/cli": "^2.29.4",
     "@tsconfig/node20": "^20.1.5",

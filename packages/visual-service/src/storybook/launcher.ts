@@ -2,8 +2,8 @@ import { rmdirSync } from 'node:fs'
 import logger from '@wdio/logger'
 import { SevereServiceError } from 'webdriverio'
 import type { Capabilities } from '@wdio/types'
-import type { ClassOptions, CheckElementMethodOptions  } from 'webdriver-image-comparison'
-import { BaseClass } from 'webdriver-image-comparison'
+import type { ClassOptions, CheckElementMethodOptions  } from '@wdio/image-comparison-core'
+import { BaseClass } from '@wdio/image-comparison-core'
 import {
     createStorybookCapabilities,
     createTestFiles,
