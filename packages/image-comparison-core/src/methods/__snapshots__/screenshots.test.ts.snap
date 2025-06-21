@@ -1,0 +1,67 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`screenshots > takeWebElementScreenshot > fallback mode (fallback = true) > should take full screenshot and determine element rectangles 1`] = `
+{
+  "base64Image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAyCAYAAACM/XaiAAABH0lEQVR4nO2TsQnCQBBF36EOQYbOEbsA7iBsYA7gBygTuYQ5QBuZQZ1F6tEftIu/vf1kJMAzDMMy9FxgBrwf0JHDG9uD7Qiy0eAE3ArTVFFMuAi6zbqpxRQk0sUgGnEtENNEQaYUUU00RBppRRRRTTJGmlFFFNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFNP8C+C8AAtLf59gAAAAASUVORK5CYII=",
+  "isWebDriverElementScreenshot": false,
+  "rectangles": {
+    "height": 150,
+    "width": 250,
+    "x": 50,
+    "y": 100,
+  },
+}
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should fallback when takeElementScreenshot throws an error 1`] = `
+[
+  [
+    "The element screenshot failed, falling back to cutting the full device/viewport screenshot:",
+    [Error: Element screenshot failed],
+  ],
+]
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should fallback when takeElementScreenshot throws an error 2`] = `
+{
+  "base64Image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAyCAYAAACM/XaiAAABH0lEQVR4nO2TsQnCQBBF36EOQYbOEbsA7iBsYA7gBygTuYQ5QBuZQZ1F6tEftIu/vf1kJMAzDMMy9FxgBrwf0JHDG9uD7Qiy0eAE3ArTVFFMuAi6zbqpxRQk0sUgGnEtENNEQaYUUU00RBppRRRRTTJGmlFFFNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFNP8C+C8AAtLf59gAAAAASUVORK5CYII=",
+  "isWebDriverElementScreenshot": false,
+  "rectangles": {
+    "height": 200,
+    "width": 300,
+    "x": 10,
+    "y": 20,
+  },
+}
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should successfully take element screenshot using webdriver element screenshot 1`] = `
+{
+  "base64Image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+  "isWebDriverElementScreenshot": true,
+  "rectangles": {
+    "height": 200,
+    "width": 300,
+    "x": 0,
+    "y": 0,
+  },
+}
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should throw error when element has zero height 1`] = `
+[
+  [
+    "The element screenshot failed, falling back to cutting the full device/viewport screenshot:",
+    [Error: The element has no width or height.],
+  ],
+]
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should throw error when element has zero width 1`] = `
+[
+  [
+    "The element screenshot failed, falling back to cutting the full device/viewport screenshot:",
+    [Error: The element has no width or height.],
+  ],
+]
+`;
