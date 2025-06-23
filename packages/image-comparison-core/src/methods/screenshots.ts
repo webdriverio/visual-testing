@@ -459,7 +459,7 @@ export async function takeBase64BiDiScreenshot({
  *
  * @TODO: remove the any
  */
-function logHiddenRemovedError(error: any) {
+export function logHiddenRemovedError(error: any) {
     log.warn(
         '\x1b[33m%s\x1b[0m',
         `

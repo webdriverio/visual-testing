@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
-import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
+import { logHiddenRemovedError, takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import type { TakeWebElementScreenshot } from './screenshots.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 import { IMAGE_STRING, MEDIUM_IMAGE_STRING, SMALL_IMAGE_STRING } from '../mocks/image.js'
@@ -116,6 +116,22 @@ describe('screenshots', () => {
             })
 
             expect(result).toBe(IMAGE_STRING)
+        })
+    })
+
+    describe('logHiddenRemovedError', () => {
+        beforeEach(() => {
+            logWarnSpy = vi.spyOn(log, 'warn')
+        })
+
+        afterEach(() => {
+            vi.clearAllMocks()
+            logWarnSpy.mockRestore()
+        })
+
+        it('should log a warning when the elements are not found', () => {
+            logHiddenRemovedError(new Error('Element not found'))
+            expect(logWarnSpy.mock.calls).toMatchSnapshot()
         })
     })
 
