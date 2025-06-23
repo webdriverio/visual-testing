@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
-import { getDesktopFullPageScreenshotsData, logHiddenRemovedError, takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
+import { getDesktopFullPageScreenshotsData, getAndroidChromeDriverFullPageScreenshotsData, logHiddenRemovedError, takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import type { TakeWebElementScreenshot, FullPageScreenshotOptions } from './screenshots.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
 import { IMAGE_STRING, MEDIUM_IMAGE_STRING, SMALL_IMAGE_STRING } from '../mocks/image.js'
@@ -64,6 +64,170 @@ describe('screenshots', () => {
     }
 
     let logWarnSpy: ReturnType<typeof vi.spyOn>
+
+    describe('getAndroidChromeDriverFullPageScreenshotsData', () => {
+        // Helper function to create base options
+        const createBaseOptions = (overrides: Partial<FullPageScreenshotOptions> = {}): FullPageScreenshotOptions => ({
+            devicePixelRatio: 1,
+            fullPageScrollTimeout: 1000,
+            innerHeight: 768,
+            hideAfterFirstScroll: [],
+            ...overrides
+        })
+
+        beforeEach(() => {
+            logWarnSpy = vi.spyOn(log, 'warn')
+            // Reset all mocks with default values
+            vi.mocked(utilsModule.waitFor).mockResolvedValue(undefined)
+            vi.mocked(utilsModule.calculateDprData).mockImplementation((data) => data)
+        })
+
+        afterEach(() => {
+            vi.clearAllMocks()
+            logWarnSpy.mockRestore()
+        })
+
+        it('should take single screenshot when content fits in viewport', async () => {
+            const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: SMALL_IMAGE_STRING })
+
+            vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({
+                width: 1366,
+                height: 768
+            })
+
+            // Mock scroll height equal to inner height (no scrolling needed)
+            mockBrowserInstance.execute = vi.fn()
+                .mockResolvedValueOnce(undefined) // scrollToPosition
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(768) // getDocumentScrollHeight
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+
+            const options = createBaseOptions()
+            const result = await getAndroidChromeDriverFullPageScreenshotsData(mockBrowserInstance, options)
+
+            expect(result).toMatchSnapshot()
+            expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(1)
+            expect(result.data).toHaveLength(1)
+        })
+
+        it('should take multiple screenshots when content exceeds viewport', async () => {
+            const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: SMALL_IMAGE_STRING })
+
+            vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({
+                width: 1366,
+                height: 768
+            })
+
+            // Mock scroll height larger than viewport to trigger multiple screenshots
+            mockBrowserInstance.execute = vi.fn()
+                .mockResolvedValueOnce(undefined) // scrollToPosition 0
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(1536) // getDocumentScrollHeight (2x viewport)
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(undefined) // scrollToPosition 768
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(1536) // getDocumentScrollHeight
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+
+            const options = createBaseOptions()
+            const result = await getAndroidChromeDriverFullPageScreenshotsData(mockBrowserInstance, options)
+
+            expect(result).toMatchSnapshot()
+            expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(2)
+            expect(result.data).toHaveLength(2)
+        })
+
+        it('should hide elements after first scroll when hideAfterFirstScroll is provided', async () => {
+            const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: SMALL_IMAGE_STRING })
+
+            vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({
+                width: 1366,
+                height: 768
+            })
+
+            // Mock scroll height to trigger multiple screenshots
+            mockBrowserInstance.execute = vi.fn()
+                .mockResolvedValueOnce(undefined) // scrollToPosition 0
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(1536) // getDocumentScrollHeight
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(undefined) // scrollToPosition 768
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(undefined) // hideRemoveElements
+                .mockResolvedValueOnce(1536) // getDocumentScrollHeight
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(undefined) // hideRemoveElements (restore)
+
+            const mockElements = [{ tagName: 'div' } as HTMLElement]
+            const options = createBaseOptions({ hideAfterFirstScroll: [mockElements] })
+            const result = await getAndroidChromeDriverFullPageScreenshotsData(mockBrowserInstance, options)
+
+            expect(result).toMatchSnapshot()
+            expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
+                expect.any(Function), // hideRemoveElements
+                { hide: [mockElements], remove: [] },
+                true
+            )
+            expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
+                expect.any(Function), // hideRemoveElements
+                { hide: [mockElements], remove: [] },
+                false
+            )
+        })
+
+        it('should handle error when hiding elements fails', async () => {
+            const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: SMALL_IMAGE_STRING })
+
+            vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({
+                width: 1366,
+                height: 768
+            })
+
+            const executeError = new Error('Element not found')
+            mockBrowserInstance.execute = vi.fn()
+                .mockResolvedValueOnce(undefined) // scrollToPosition 0
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(1536) // getDocumentScrollHeight
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(undefined) // scrollToPosition 768
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockRejectedValueOnce(executeError) // hideRemoveElements fails
+                .mockResolvedValueOnce(1536) // getDocumentScrollHeight
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockRejectedValueOnce(executeError) // hideRemoveElements restore fails
+
+            const mockElements = [{ tagName: 'div' } as HTMLElement]
+            const options = createBaseOptions({ hideAfterFirstScroll: [mockElements] })
+
+            const result = await getAndroidChromeDriverFullPageScreenshotsData(mockBrowserInstance, options)
+
+            expect(result).toBeDefined()
+            expect(result.data).toHaveLength(2) // Should have 2 screenshots
+            // Verify that logHiddenRemovedError was called twice (once for hide, once for restore)
+            expect(logWarnSpy).toHaveBeenCalledTimes(2)
+        })
+
+        it('should throw error when scroll height cannot be determined', async () => {
+            const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: SMALL_IMAGE_STRING })
+
+            vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({
+                width: 1366,
+                height: 768
+            })
+
+            // Mock getDocumentScrollHeight to return undefined
+            mockBrowserInstance.execute = vi.fn()
+                .mockResolvedValueOnce(undefined) // scrollToPosition
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+                .mockResolvedValueOnce(undefined) // getDocumentScrollHeight returns undefined
+                .mockResolvedValueOnce(undefined) // hideScrollBars
+
+            const options = createBaseOptions()
+
+            await expect(getAndroidChromeDriverFullPageScreenshotsData(mockBrowserInstance, options))
+                .rejects.toThrow('Couldn\'t determine scroll height or screenshot size')
+        })
+    })
 
     describe('getDesktopFullPageScreenshotsData', () => {
         // Helper function to create base options
