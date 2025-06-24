@@ -5,7 +5,6 @@ import { calculateDprData, getBase64ScreenshotSize, waitFor } from '../helpers/u
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
-    FullPageScreenshotDataOptions,
     FullPageScreenshotsData,
     TakeWebElementScreenshot,
     TakeWebElementScreenshotData,
@@ -20,58 +19,7 @@ const log = logger('@wdio/visual-service:@wdio/image-comparison-core:screenshots
 /**
  * Take a full page screenshots for desktop / iOS / Android
  */
-export async function getBase64FullPageScreenshotsData(browserInstance: WebdriverIO.Browser, options: FullPageScreenshotDataOptions): Promise<FullPageScreenshotsData> {
-    const {
-        addressBarShadowPadding,
-        devicePixelRatio,
-        deviceRectangles,
-        fullPageScrollTimeout,
-        hideAfterFirstScroll,
-        innerHeight,
-        isAndroid,
-        isAndroidNativeWebScreenshot,
-        isAndroidChromeDriverScreenshot,
-        isIOS,
-        isLandscape,
-        screenHeight,
-        screenWidth,
-        toolBarShadowPadding,
-    } = options
-    const desktopOptions = {
-        devicePixelRatio,
-        fullPageScrollTimeout,
-        hideAfterFirstScroll,
-        innerHeight,
-    }
-    const nativeWebScreenshotOptions = {
-        ...desktopOptions,
-        addressBarShadowPadding,
-        deviceRectangles,
-        isAndroid,
-        isLandscape,
-        screenHeight,
-        screenWidth,
-        toolBarShadowPadding,
-    }
-
-    if ((isAndroid && isAndroidNativeWebScreenshot) || isIOS ) {
-        // Create a fullpage screenshot for Android when a native web screenshot (so including status, address and toolbar) is created
-        return getMobileFullPageNativeWebScreenshotsData(browserInstance, nativeWebScreenshotOptions)
-    } else if (isAndroid && isAndroidChromeDriverScreenshot) {
-        const chromeDriverOptions = { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight }
-
-        // Create a fullpage screenshot for Android when the ChromeDriver provides the screenshots
-        return getAndroidChromeDriverFullPageScreenshotsData(browserInstance, chromeDriverOptions)
-    }
-
-    // Create a fullpage screenshot for all desktops
-    return getDesktopFullPageScreenshotsData(browserInstance, desktopOptions)
-}
-
-/**
- * Take a full page screenshots for native mobile
- */
-export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:WebdriverIO.Browser, options: FullPageScreenshotNativeMobileOptions): Promise<FullPageScreenshotsData> {
+export async function getMobileFullPageNativeWebScreenshotsData(browserInstance: WebdriverIO.Browser, options: FullPageScreenshotNativeMobileOptions): Promise<FullPageScreenshotsData> {
     const viewportScreenshots = []
     // The addressBarShadowPadding and toolBarShadowPadding is used because the viewport might have a shadow on the address and the tool bar
     // so the cutout of the viewport needs to be a little bit smaller

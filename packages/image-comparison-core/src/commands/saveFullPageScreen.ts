@@ -1,12 +1,12 @@
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
-import { getBase64FullPageScreenshotsData, takeBase64BiDiScreenshot } from '../methods/screenshots.js'
+import { takeFullPageScreenshots } from '../methods/fullPageScreenshots.js'
 import { makeFullPageBase64Image } from '../methods/images.js'
 import type { ScreenshotOutput, AfterScreenshotOptions } from '../helpers/afterScreenshot.interfaces.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
-import type { FullPageScreenshotDataOptions, FullPageScreenshotsData } from '../methods/screenshots.interfaces.js'
+import type { FullPageScreenshotDataOptions } from '../methods/screenshots.interfaces.js'
 import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
-import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
+import { getMethodOrWicOption, canUseBidiScreenshot } from '../helpers/utils.js'
 
 /**
  * Saves an image of the full page
@@ -69,7 +69,7 @@ export default async function saveFullPageScreen(
             window: {
                 devicePixelRatio,
                 innerHeight,
-                isEmulated,
+                isEmulated: _isEmulated,
                 isLandscape,
                 outerHeight,
                 outerWidth,
@@ -88,37 +88,39 @@ export default async function saveFullPageScreen(
         platformName,
         platformVersion,
     } = enrichedInstanceData
-    let fullPageBase64Image: string
 
-    if (canUseBidiScreenshot(browserInstance) && !isEmulated && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)) {
-        // 3a.  Fullpage screenshots are taken in one go with the Bidi protocol
-        fullPageBase64Image = await takeBase64BiDiScreenshot({ browserInstance, origin: 'document' })
-    } else {
-        // 3b.  Fullpage screenshots are taken per scrolled viewport
-        const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
-            addressBarShadowPadding,
-            devicePixelRatio: devicePixelRatio || NaN,
-            deviceRectangles: instanceData.deviceRectangles,
-            fullPageScrollTimeout,
-            hideAfterFirstScroll,
-            innerHeight: innerHeight || NaN,
-            isAndroid,
-            isAndroidChromeDriverScreenshot,
-            isAndroidNativeWebScreenshot,
-            isIOS,
-            isLandscape,
-            screenHeight: screenHeight || NaN,
-            screenWidth: screenWidth || NaN,
-            toolBarShadowPadding: toolBarShadowPadding,
-        }
-        const screenshotsData: FullPageScreenshotsData = await getBase64FullPageScreenshotsData(browserInstance, fullPageScreenshotOptions)
+    // 3.  Take fullpage screenshots with clean routing
+    const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
+        addressBarShadowPadding,
+        devicePixelRatio: devicePixelRatio || NaN,
+        deviceRectangles: instanceData.deviceRectangles,
+        fullPageScrollTimeout,
+        hideAfterFirstScroll,
+        innerHeight: innerHeight || NaN,
+        isAndroid,
+        isAndroidChromeDriverScreenshot,
+        isAndroidNativeWebScreenshot,
+        isIOS,
+        isLandscape,
+        screenHeight: screenHeight || NaN,
+        screenWidth: screenWidth || NaN,
+        toolBarShadowPadding: toolBarShadowPadding,
+    }
+    const shouldUseBidi = canUseBidiScreenshot(browserInstance) &&
+                         (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
+    const screenshotsData = await takeFullPageScreenshots(
+        browserInstance,
+        fullPageScreenshotOptions,
+        shouldUseBidi
+    )
 
-        // 4.  Make a fullpage base64 image by scrolling and stitching the images together
-        fullPageBase64Image = await makeFullPageBase64Image(screenshotsData, {
+    // 4.  Get the final image - either direct BiDi or stitched from multiple screenshots
+    const fullPageBase64Image = (screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
+        ? screenshotsData.data[0].screenshot // BiDi screenshot - use directly
+        : await makeFullPageBase64Image(screenshotsData, { // Regular screenshots - stitch them together
             devicePixelRatio: devicePixelRatio || NaN,
             isLandscape,
         })
-    }
 
     // 5.  The after the screenshot methods
     const afterOptions: AfterScreenshotOptions = {
