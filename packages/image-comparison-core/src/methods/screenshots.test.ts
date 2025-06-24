@@ -11,7 +11,7 @@ import {
 } from './screenshots.js'
 import type { TakeWebElementScreenshot, FullPageScreenshotOptions, FullPageScreenshotNativeMobileOptions } from './screenshots.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
-import { IMAGE_STRING, MEDIUM_IMAGE_STRING, SMALL_IMAGE_STRING } from '../mocks/image.js'
+import { MEDIUM_IMAGE_STRING, SMALL_IMAGE_STRING } from '../mocks/image.js'
 import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 import * as rectanglesModule from './rectangles.js'
 import * as utilsModule from '../helpers/utils.js'
@@ -42,7 +42,7 @@ vi.mock('../clientSideScripts/hideRemoveElements.js', () => ({
 
 describe('screenshots', () => {
     const createMockBrowserInstance = (
-        { takeScreenshot = IMAGE_STRING, takeElementScreenshot = IMAGE_STRING }:
+        { takeScreenshot = SMALL_IMAGE_STRING, takeElementScreenshot = SMALL_IMAGE_STRING }:
             { takeScreenshot?: string, takeElementScreenshot?: string } = {}
     ) => {
         return {
@@ -597,14 +597,14 @@ describe('screenshots', () => {
             const mockBrowserInstance = createMockBrowserInstance()
             const result = await takeBase64BiDiScreenshot({ browserInstance: mockBrowserInstance })
 
-            expect(result).toBe(IMAGE_STRING)
+            expect(result).toBe(SMALL_IMAGE_STRING)
         })
 
         it('should take a BiDi screenshot with default viewport origin', async () => {
             const mockBrowserInstance = createMockBrowserInstance()
             const result = await takeBase64BiDiScreenshot({ browserInstance: mockBrowserInstance })
 
-            expect(result).toBe(IMAGE_STRING)
+            expect(result).toBe(SMALL_IMAGE_STRING)
         })
 
         it('should take a BiDi screenshot with document origin', async () => {
@@ -614,7 +614,7 @@ describe('screenshots', () => {
                 origin: 'document'
             })
 
-            expect(result).toBe(IMAGE_STRING)
+            expect(result).toBe(SMALL_IMAGE_STRING)
         })
 
         it('should take a BiDi screenshot with clip rectangle', async () => {
@@ -630,7 +630,7 @@ describe('screenshots', () => {
                 clip: clipRectangle
             })
 
-            expect(result).toBe(IMAGE_STRING)
+            expect(result).toBe(SMALL_IMAGE_STRING)
         })
     })
 
