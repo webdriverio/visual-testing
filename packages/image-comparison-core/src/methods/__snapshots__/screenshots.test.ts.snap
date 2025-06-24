@@ -162,6 +162,96 @@ exports[`screenshots > getDesktopFullPageScreenshotsData > should take single sc
 }
 `;
 
+exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should handle landscape mode with rotation detection 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 1334,
+      "canvasYPosition": 0,
+      "imageHeight": 652,
+      "imageWidth": 1334,
+      "imageXPosition": 0,
+      "imageYPosition": 193,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 637,
+  "fullPageWidth": 1334,
+}
+`;
+
+exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should hide elements after first scroll when hideAfterFirstScroll is provided 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 750,
+      "canvasYPosition": 0,
+      "imageHeight": 1319,
+      "imageWidth": 750,
+      "imageXPosition": 0,
+      "imageYPosition": 110,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+    {
+      "canvasWidth": 750,
+      "canvasYPosition": 1319,
+      "imageHeight": 1319,
+      "imageWidth": 750,
+      "imageXPosition": 0,
+      "imageYPosition": 110,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 2623,
+  "fullPageWidth": 750,
+}
+`;
+
+exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should take multiple screenshots when content exceeds viewport (Android) 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 375,
+      "canvasYPosition": 0,
+      "imageHeight": 652,
+      "imageWidth": 375,
+      "imageXPosition": 0,
+      "imageYPosition": 60,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+    {
+      "canvasWidth": 375,
+      "canvasYPosition": 652,
+      "imageHeight": 652,
+      "imageWidth": 375,
+      "imageXPosition": 0,
+      "imageYPosition": 60,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 1289,
+  "fullPageWidth": 375,
+}
+`;
+
+exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should take single screenshot when content fits in viewport (iOS) 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 750,
+      "canvasYPosition": 0,
+      "imageHeight": 652,
+      "imageWidth": 750,
+      "imageXPosition": 0,
+      "imageYPosition": 777,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 637,
+  "fullPageWidth": 750,
+}
+`;
+
 exports[`screenshots > logHiddenRemovedError > should log a warning when the elements are not found 1`] = `
 [
   [
