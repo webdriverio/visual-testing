@@ -12,7 +12,7 @@ import {
     logAllDeprecatedCompareOptions,
     isStorybook,
     getBooleanOption,
-    createConditionalProperty
+    createConditionalProperty,
 } from './utils.js'
 
 /**
@@ -117,3 +117,4 @@ export function methodCompareOptions(options: MethodImageCompareCompareOptions):
         return result
     }, {} as MethodImageCompareCompareOptions)
 }
+

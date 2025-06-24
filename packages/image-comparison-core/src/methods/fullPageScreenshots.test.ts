@@ -2,21 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { takeFullPageScreenshots } from './fullPageScreenshots.js'
 import type { FullPageScreenshotDataOptions } from './screenshots.interfaces.js'
 
-// Mock the individual screenshot functions
 vi.mock('./screenshots.js', () => ({
     getMobileFullPageNativeWebScreenshotsData: vi.fn().mockResolvedValue({ data: ['mobile'] }),
     getAndroidChromeDriverFullPageScreenshotsData: vi.fn().mockResolvedValue({ data: ['chromedriver'] }),
     getDesktopFullPageScreenshotsData: vi.fn().mockResolvedValue({ data: ['desktop'] }),
     takeBase64BiDiScreenshot: vi.fn().mockResolvedValue('bidi-screenshot')
 }))
-
 vi.mock('../helpers/utils.js', () => ({
     canUseBidiScreenshot: vi.fn()
 }))
 
 describe('takeFullPageScreenshots', () => {
     const mockBrowser = {} as WebdriverIO.Browser
-
     const createOptions = (overrides: Partial<FullPageScreenshotDataOptions> = {}): FullPageScreenshotDataOptions => ({
         addressBarShadowPadding: 0,
         devicePixelRatio: 1,
@@ -51,7 +48,6 @@ describe('takeFullPageScreenshots', () => {
 
     it('should route to mobile native web for Android native web screenshots', async () => {
         const { getMobileFullPageNativeWebScreenshotsData } = await import('./screenshots.js')
-
         const options = createOptions({
             isAndroid: true,
             isAndroidNativeWebScreenshot: true
@@ -65,7 +61,6 @@ describe('takeFullPageScreenshots', () => {
 
     it('should route to mobile native web for iOS devices', async () => {
         const { getMobileFullPageNativeWebScreenshotsData } = await import('./screenshots.js')
-
         const options = createOptions({ isIOS: true })
 
         await takeFullPageScreenshots(mockBrowser, options, false)
@@ -75,7 +70,6 @@ describe('takeFullPageScreenshots', () => {
 
     it('should route to Android ChromeDriver for Android ChromeDriver screenshots', async () => {
         const { getAndroidChromeDriverFullPageScreenshotsData } = await import('./screenshots.js')
-
         const options = createOptions({
             isAndroid: true,
             isAndroidChromeDriverScreenshot: true
@@ -88,7 +82,6 @@ describe('takeFullPageScreenshots', () => {
 
     it('should default to desktop for other cases', async () => {
         const { getDesktopFullPageScreenshotsData } = await import('./screenshots.js')
-
         const options = createOptions() // Basic desktop options
 
         await takeFullPageScreenshots(mockBrowser, options, false)

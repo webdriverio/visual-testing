@@ -6,24 +6,17 @@ import {
     takeBase64BiDiScreenshot
 } from './screenshots.js'
 
-/**
- * Determines which screenshot method to use and executes it
- * This replaces the complex getBase64FullPageScreenshotsData router
- */
 export async function takeFullPageScreenshots(
     browserInstance: WebdriverIO.Browser,
     options: FullPageScreenshotDataOptions,
     shouldUseBidi: boolean = false
 ): Promise<FullPageScreenshotsData> {
-
-    // BiDi screenshots return the image directly, no stitching needed
     if (shouldUseBidi) {
         const screenshot = await takeBase64BiDiScreenshot({ browserInstance, origin: 'document' })
 
-        // Return the screenshot directly for BiDi - indicate this is a direct image
         return {
-            fullPageHeight: -1, // Special marker for BiDi direct image
-            fullPageWidth: -1,  // Special marker for BiDi direct image
+            fullPageHeight: -1,
+            fullPageWidth: -1,
             data: [{
                 canvasWidth: 0,
                 canvasYPosition: 0,
@@ -36,7 +29,6 @@ export async function takeFullPageScreenshots(
         }
     }
 
-    // Route to the appropriate scrolling screenshot method
     if (isAndroidNativeWeb(options) || options.isIOS) {
         return getMobileFullPageNativeWebScreenshotsData(browserInstance, createMobileOptions(options))
     }
@@ -49,23 +41,14 @@ export async function takeFullPageScreenshots(
     return getDesktopFullPageScreenshotsData(browserInstance, createDesktopOptions(options))
 }
 
-/**
- * Simple check for Android native web screenshots
- */
 function isAndroidNativeWeb(options: FullPageScreenshotDataOptions): boolean {
     return options.isAndroid && options.isAndroidNativeWebScreenshot
 }
 
-/**
- * Simple check for Android ChromeDriver screenshots
- */
 function isAndroidChromeDriver(options: FullPageScreenshotDataOptions): boolean {
     return options.isAndroid && options.isAndroidChromeDriverScreenshot
 }
 
-/**
- * Create mobile-specific options from the full options
- */
 function createMobileOptions(options: FullPageScreenshotDataOptions) {
     return {
         addressBarShadowPadding: options.addressBarShadowPadding,
@@ -82,9 +65,6 @@ function createMobileOptions(options: FullPageScreenshotDataOptions) {
     }
 }
 
-/**
- * Create desktop-specific options from the full options
- */
 function createDesktopOptions(options: FullPageScreenshotDataOptions) {
     return {
         devicePixelRatio: options.devicePixelRatio,

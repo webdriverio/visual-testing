@@ -106,8 +106,7 @@ export default async function saveFullPageScreen(
         screenWidth: screenWidth || NaN,
         toolBarShadowPadding: toolBarShadowPadding,
     }
-    const shouldUseBidi = canUseBidiScreenshot(browserInstance) &&
-                         (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
+    const shouldUseBidi = canUseBidiScreenshot(browserInstance) && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
     const screenshotsData = await takeFullPageScreenshots(
         browserInstance,
         fullPageScreenshotOptions,
