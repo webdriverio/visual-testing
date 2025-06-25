@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { defaultOptions, methodCompareOptions, screenMethodCompareOptions } from './options.js'
+import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions } from './options.js'
 import type { ClassOptions } from './options.interfaces.js'
 import type { ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 
@@ -102,6 +102,106 @@ describe('options', () => {
             }
 
             expect(screenMethodCompareOptions(options)).toMatchSnapshot()
+        })
+    })
+
+    describe('createBeforeScreenshotOptions', () => {
+        const mockElement = { tagName: 'DIV' } as HTMLElement
+        const baseWicOptions = {
+            addressBarShadowPadding: 10,
+            toolBarShadowPadding: 20,
+        }
+
+        it('should create options with defaults when minimal options are provided', () => {
+            const result = createBeforeScreenshotOptions('testInstance', {}, baseWicOptions)
+
+            expect(result).toEqual({
+                instanceData: 'testInstance',
+                addressBarShadowPadding: 10,
+                toolBarShadowPadding: 20,
+                disableBlinkingCursor: false,
+                disableCSSAnimation: false,
+                enableLayoutTesting: false,
+                hideElements: [],
+                noScrollBars: false,
+                removeElements: [],
+                waitForFontsLoaded: false,
+            })
+        })
+
+        it('should prioritize methodOptions over wicOptions for overlapping properties', () => {
+            const methodOptions = {
+                disableBlinkingCursor: true,
+                disableCSSAnimation: true,
+                hideScrollBars: true,
+            }
+            const wicOptions = {
+                ...baseWicOptions,
+                disableBlinkingCursor: false,
+                disableCSSAnimation: false,
+                hideScrollBars: false,
+            }
+
+            const result = createBeforeScreenshotOptions('testInstance', methodOptions, wicOptions)
+
+            expect(result.disableBlinkingCursor).toBe(true)
+            expect(result.disableCSSAnimation).toBe(true)
+            expect(result.noScrollBars).toBe(true)
+        })
+
+        it('should use wicOptions when methodOptions are undefined', () => {
+            const wicOptions = {
+                ...baseWicOptions,
+                disableBlinkingCursor: true,
+                enableLayoutTesting: true,
+                waitForFontsLoaded: true,
+            }
+
+            const result = createBeforeScreenshotOptions('testInstance', {}, wicOptions)
+
+            expect(result.disableBlinkingCursor).toBe(true)
+            expect(result.enableLayoutTesting).toBe(true)
+            expect(result.waitForFontsLoaded).toBe(true)
+        })
+
+        it('should handle element arrays from methodOptions', () => {
+            const hideElements = [mockElement]
+            const removeElements = [mockElement, mockElement]
+            const methodOptions = {
+                hideElements,
+                removeElements,
+            }
+
+            const result = createBeforeScreenshotOptions('testInstance', methodOptions, baseWicOptions)
+
+            expect(result.hideElements).toBe(hideElements)
+            expect(result.removeElements).toBe(removeElements)
+        })
+
+        it('should handle all boolean options set to true in methodOptions', () => {
+            const methodOptions = {
+                disableBlinkingCursor: true,
+                disableCSSAnimation: true,
+                enableLayoutTesting: true,
+                hideScrollBars: true,
+                waitForFontsLoaded: true,
+            }
+
+            const result = createBeforeScreenshotOptions('testInstance', methodOptions, baseWicOptions)
+
+            expect(result.disableBlinkingCursor).toBe(true)
+            expect(result.disableCSSAnimation).toBe(true)
+            expect(result.enableLayoutTesting).toBe(true)
+            expect(result.noScrollBars).toBe(true)
+            expect(result.waitForFontsLoaded).toBe(true)
+        })
+
+        it('should preserve instanceData exactly as passed', () => {
+            const complexInstanceData = { browser: 'chrome', version: '120', viewport: { width: 1920, height: 1080 } }
+
+            const result = createBeforeScreenshotOptions(complexInstanceData, {}, baseWicOptions)
+
+            expect(result.instanceData).toBe(complexInstanceData)
         })
     })
 })

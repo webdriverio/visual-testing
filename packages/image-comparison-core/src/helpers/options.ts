@@ -8,11 +8,13 @@ import {
 } from './constants.js'
 import type { ClassOptions, DefaultOptions } from './options.interfaces.js'
 import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
+import type { BeforeScreenshotOptions } from './beforeScreenshot.interfaces.js'
 import {
     logAllDeprecatedCompareOptions,
     isStorybook,
     getBooleanOption,
     createConditionalProperty,
+    getMethodOrWicOption,
 } from './utils.js'
 
 /**
@@ -116,5 +118,43 @@ export function methodCompareOptions(options: MethodImageCompareCompareOptions):
         }
         return result
     }, {} as MethodImageCompareCompareOptions)
+}
+
+/**
+ * Creates BeforeScreenshotOptions by extracting common options from method and wic configurations
+ */
+export function createBeforeScreenshotOptions(
+    instanceData: any,
+    methodOptions: {
+        hideElements?: HTMLElement[]
+        removeElements?: HTMLElement[]
+        disableBlinkingCursor?: boolean
+        disableCSSAnimation?: boolean
+        enableLayoutTesting?: boolean
+        hideScrollBars?: boolean
+        waitForFontsLoaded?: boolean
+    },
+    wicOptions: {
+        addressBarShadowPadding: number
+        toolBarShadowPadding: number
+        disableBlinkingCursor?: boolean
+        disableCSSAnimation?: boolean
+        enableLayoutTesting?: boolean
+        hideScrollBars?: boolean
+        waitForFontsLoaded?: boolean
+    }
+): BeforeScreenshotOptions {
+    return {
+        instanceData,
+        addressBarShadowPadding: wicOptions.addressBarShadowPadding,
+        disableBlinkingCursor: getMethodOrWicOption(methodOptions, wicOptions, 'disableBlinkingCursor') || false,
+        disableCSSAnimation: getMethodOrWicOption(methodOptions, wicOptions, 'disableCSSAnimation') || false,
+        enableLayoutTesting: getMethodOrWicOption(methodOptions, wicOptions, 'enableLayoutTesting') || false,
+        hideElements: methodOptions.hideElements || [],
+        noScrollBars: getMethodOrWicOption(methodOptions, wicOptions, 'hideScrollBars') || false,
+        removeElements: methodOptions.removeElements || [],
+        toolBarShadowPadding: wicOptions.toolBarShadowPadding,
+        waitForFontsLoaded: getMethodOrWicOption(methodOptions, wicOptions, 'waitForFontsLoaded') || false,
+    }
 }
 
