@@ -148,3 +148,39 @@ export interface TakeWebElementScreenshotData {
     /** The rectangles output. */
     rectangles: RectanglesOutput;
 }
+
+/**
+ * Interface representing options for element screenshot data.
+ */
+export interface ElementScreenshotDataOptions {
+    /** The address bar padding for iOS or Android. */
+    addressBarShadowPadding: number;
+    /** Whether to automatically scroll the element into view. */
+    autoElementScroll: boolean;
+    /** The device name. */
+    deviceName: string;
+    /** The device pixel ratio. */
+    devicePixelRatio?: number;
+    /** The rectangles of the device. */
+    deviceRectangles: DeviceRectangles;
+    /** The element to take a screenshot of. */
+    element: any;
+    /** Whether the device is emulated. */
+    isEmulated: boolean;
+    /** The initial device pixel ratio. */
+    initialDevicePixelRatio: number;
+    /** The inner height. */
+    innerHeight?: number;
+    /** Whether this is an Android native web screenshot. */
+    isAndroidNativeWebScreenshot: boolean;
+    /** Whether the instance is an Android device. */
+    isAndroid: boolean;
+    /** Whether the instance is an iOS device. */
+    isIOS: boolean;
+    /** Whether it's landscape or not. */
+    isLandscape: boolean;
+    /** Whether this is a mobile device. */
+    isMobile: boolean;
+    /** Resize dimensions for the screenshot. */
+    resizeDimensions: any;
+}

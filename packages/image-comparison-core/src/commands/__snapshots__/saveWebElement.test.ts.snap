@@ -1,5 +1,33 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when legacy method enabled 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when mobile device 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when not available 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with correct options when BiDi is available 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
 exports[`saveWebElement > should handle NaN dimension values 1`] = `
 {
   "devicePixelRatio": 2,
@@ -184,6 +212,13 @@ exports[`saveWebElement > should handle NaN dimension values 4`] = `
     "removeElements": [],
   },
 ]
+`;
+
+exports[`saveWebElement > should handle NaN dimension values correctly 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
 `;
 
 exports[`saveWebElement > should handle auto scroll 1`] = `
@@ -393,6 +428,20 @@ exports[`saveWebElement > should handle zero dimensions 4`] = `
     "removeElements": [],
   },
 ]
+`;
+
+exports[`saveWebElement > should pass autoElementScroll option correctly 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveWebElement > should pass resizeDimensions option correctly 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
 `;
 
 exports[`saveWebElement > should use Bidi screenshot from document when viewport fails 1`] = `
