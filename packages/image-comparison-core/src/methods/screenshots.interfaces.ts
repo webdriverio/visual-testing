@@ -150,6 +150,16 @@ export interface TakeWebElementScreenshotData {
 }
 
 /**
+ * Interface representing data for element screenshot result.
+ */
+export interface ElementScreenshotData {
+    /** The base64 encoded image. */
+    base64Image: string;
+    /** Whether this is a web driver element screenshot. */
+    isWebDriverElementScreenshot?: boolean;
+}
+
+/**
  * Interface representing options for element screenshot data.
  */
 export interface ElementScreenshotDataOptions {

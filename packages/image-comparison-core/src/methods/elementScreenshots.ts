@@ -3,17 +3,7 @@ import { makeCroppedBase64Image } from './images.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import { getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
-import type { ElementScreenshotDataOptions } from './screenshots.interfaces.js'
-
-/**
- * Interface representing data for element screenshot result.
- */
-export interface ElementScreenshotData {
-    /** The base64 encoded image. */
-    base64Image: string;
-    /** Whether this is a web driver element screenshot. */
-    isWebDriverElementScreenshot?: boolean;
-}
+import type { ElementScreenshotDataOptions, ElementScreenshotData } from './screenshots.interfaces.js'
 
 export async function takeElementScreenshot(
     browserInstance: WebdriverIO.Browser,
