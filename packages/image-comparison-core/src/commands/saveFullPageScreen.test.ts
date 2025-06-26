@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import saveFullPageScreen from './saveFullPageScreen.js'
-import { createBeforeScreenshotOptions } from '../helpers/options.js'
+import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
 import { takeFullPageScreenshots } from '../methods/fullPageScreenshots.js'
 import { makeFullPageBase64Image } from '../methods/images.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
@@ -80,11 +80,49 @@ vi.mock('../helpers/options.js', () => ({
         noScrollBars: false,
         removeElements: [],
         waitForFontsLoaded: false,
+    }),
+    buildAfterScreenshotOptions: vi.fn().mockReturnValue({
+        actualFolder: '/test/actual',
+        base64Image: 'fullpage-screenshot-data',
+        disableBlinkingCursor: false,
+        disableCSSAnimation: false,
+        enableLayoutTesting: false,
+        filePath: {
+            browserName: 'chrome',
+            deviceName: 'desktop',
+            isMobile: false,
+            savePerInstance: false,
+        },
+        fileName: {
+            browserName: 'chrome',
+            browserVersion: '120.0.0',
+            deviceName: 'desktop',
+            devicePixelRatio: 2,
+            formatImageName: '{tag}-{browserName}-{width}x{height}',
+            isMobile: false,
+            isTestInBrowser: true,
+            logName: 'chrome',
+            name: 'chrome',
+            outerHeight: 1000,
+            outerWidth: 1200,
+            platformName: 'desktop',
+            platformVersion: '120.0.0',
+            screenHeight: 1080,
+            screenWidth: 1920,
+            tag: 'test-fullpage'
+        },
+        hideElements: [],
+        hideScrollBars: false,
+        isLandscape: false,
+        isNativeContext: false,
+        platformName: 'desktop',
+        removeElements: [],
     })
 }))
 
 describe('saveFullPageScreen', () => {
     let createBeforeScreenshotOptionsSpy: ReturnType<typeof vi.fn>
+    let buildAfterScreenshotOptionsSpy: ReturnType<typeof vi.fn>
     let takeFullPageScreenshotsSpy: ReturnType<typeof vi.fn>
     let makeFullPageBase64ImageSpy: ReturnType<typeof vi.fn>
     let afterScreenshotSpy: ReturnType<typeof vi.fn>
@@ -128,6 +166,7 @@ describe('saveFullPageScreen', () => {
 
     beforeEach(async () => {
         createBeforeScreenshotOptionsSpy = vi.mocked(createBeforeScreenshotOptions)
+        buildAfterScreenshotOptionsSpy = vi.mocked(buildAfterScreenshotOptions)
         takeFullPageScreenshotsSpy = vi.mocked(takeFullPageScreenshots)
         makeFullPageBase64ImageSpy = vi.mocked(makeFullPageBase64Image)
         afterScreenshotSpy = vi.mocked(afterScreenshot)
@@ -167,11 +206,7 @@ describe('saveFullPageScreen', () => {
 
         await saveFullPageScreen(options)
 
-        expect(takeFullPageScreenshotsSpy).toHaveBeenCalledWith(
-            baseOptions.browserInstance,
-            expect.any(Object),
-            true // shouldUseBidi
-        )
+        expect(takeFullPageScreenshotsSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should use BiDi when canUseBidiScreenshot=true, userBasedFullPageScreenshot=true, enableLegacyScreenshotMethod=false', async () => {
@@ -191,11 +226,7 @@ describe('saveFullPageScreen', () => {
 
         await saveFullPageScreen(options)
 
-        expect(takeFullPageScreenshotsSpy).toHaveBeenCalledWith(
-            baseOptions.browserInstance,
-            expect.any(Object),
-            true
-        )
+        expect(takeFullPageScreenshotsSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should not use BiDi when canUseBidiScreenshot=true, userBasedFullPageScreenshot=false, enableLegacyScreenshotMethod=true', async () => {
@@ -214,34 +245,17 @@ describe('saveFullPageScreen', () => {
 
         await saveFullPageScreen(options)
 
-        expect(takeFullPageScreenshotsSpy).toHaveBeenCalledWith(
-            baseOptions.browserInstance,
-            expect.any(Object),
-            true
-        )
+        expect(takeFullPageScreenshotsSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should take full page screenshots and return result', async () => {
         const result = await saveFullPageScreen(baseOptions)
 
-        expect(createBeforeScreenshotOptionsSpy).toHaveBeenCalledWith(
-            baseOptions.instanceData,
-            baseOptions.saveFullPageOptions.method,
-            baseOptions.saveFullPageOptions.wic
-        )
-        expect(takeFullPageScreenshotsSpy).toHaveBeenCalledWith(
-            baseOptions.browserInstance,
-            expect.any(Object),
-            false // shouldUseBidi
-        )
-        expect(makeFullPageBase64ImageSpy).toHaveBeenCalledWith(
-            expect.any(Object),
-            expect.objectContaining({
-                devicePixelRatio: 2,
-                isLandscape: false
-            })
-        )
-        expect(afterScreenshotSpy).toHaveBeenCalled()
+        expect(createBeforeScreenshotOptionsSpy.mock.calls[0]).toMatchSnapshot()
+        expect(takeFullPageScreenshotsSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(makeFullPageBase64ImageSpy.mock.calls[0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
         expect(result).toEqual({
             devicePixelRatio: 2,
             fileName: 'test-fullpage.png'
@@ -298,13 +312,8 @@ describe('saveFullPageScreen', () => {
 
         const result = await saveFullPageScreen(baseOptions)
 
-        expect(makeFullPageBase64ImageSpy).toHaveBeenCalledWith(
-            expect.any(Object),
-            expect.objectContaining({
-                devicePixelRatio: NaN,
-                isLandscape: false
-            })
-        )
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(makeFullPageBase64ImageSpy.mock.calls[0]).toMatchSnapshot()
         expect(result).toEqual({
             devicePixelRatio: 2,
             fileName: 'test-fullpage.png'
