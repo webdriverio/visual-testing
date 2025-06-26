@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import saveAppScreen from './saveAppScreen.js'
+import { buildAfterScreenshotOptions } from '../helpers/options.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
 import {
     BASE_CHECK_OPTIONS,
@@ -20,11 +21,45 @@ vi.mock('../helpers/afterScreenshot.js', () => ({
         fileName: 'test-screen.png'
     })
 }))
+vi.mock('../helpers/options.js', () => ({
+    buildAfterScreenshotOptions: vi.fn().mockReturnValue({
+        actualFolder: '/test/actual',
+        base64Image: 'base64-screenshot-data',
+        filePath: {
+            browserName: 'test-browser',
+            deviceName: 'test-device',
+            isMobile: true,
+            savePerInstance: false,
+        },
+        fileName: {
+            browserName: 'test-browser',
+            browserVersion: '17.0',
+            deviceName: 'test-device',
+            devicePixelRatio: 2,
+            formatImageName: '{tag}-{logName}-{width}x{height}-dpr-{dpr}',
+            isMobile: true,
+            isTestInBrowser: false,
+            logName: 'test-log',
+            name: 'test-device',
+            outerHeight: NaN,
+            outerWidth: NaN,
+            platformName: 'iOS',
+            platformVersion: '17.0',
+            screenHeight: 812,
+            screenWidth: 375,
+            tag: 'test-screen',
+        },
+        isNativeContext: true,
+        isLandscape: false,
+        platformName: 'iOS',
+    })
+}))
 
 describe('saveAppScreen', () => {
     let takeBase64ScreenshotSpy: ReturnType<typeof vi.fn>
     let makeCroppedBase64ImageSpy: ReturnType<typeof vi.fn>
     let afterScreenshotSpy: ReturnType<typeof vi.fn>
+    let buildAfterScreenshotOptionsSpy: ReturnType<typeof vi.fn>
 
     const baseOptions = {
         browserInstance: { isAndroid: false, isMobile: false } as any,
@@ -65,6 +100,7 @@ describe('saveAppScreen', () => {
         takeBase64ScreenshotSpy = vi.mocked(takeBase64Screenshot)
         makeCroppedBase64ImageSpy = vi.mocked(makeCroppedBase64Image)
         afterScreenshotSpy = vi.mocked(afterScreenshot)
+        buildAfterScreenshotOptionsSpy = vi.mocked(buildAfterScreenshotOptions)
     })
 
     afterEach(() => {
@@ -76,6 +112,7 @@ describe('saveAppScreen', () => {
 
         expect(result).toMatchSnapshot()
         expect(takeBase64ScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
         expect(makeCroppedBase64ImageSpy).not.toHaveBeenCalled()
     })
@@ -111,6 +148,7 @@ describe('saveAppScreen', () => {
         await saveAppScreen(options)
 
         expect(takeBase64ScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(makeCroppedBase64ImageSpy.mock.calls[0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
@@ -139,6 +177,7 @@ describe('saveAppScreen', () => {
         await saveAppScreen(options)
 
         expect(takeBase64ScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(makeCroppedBase64ImageSpy).not.toHaveBeenCalled()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
@@ -151,6 +190,7 @@ describe('saveAppScreen', () => {
         await saveAppScreen(options)
 
         expect(takeBase64ScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(makeCroppedBase64ImageSpy).not.toHaveBeenCalled()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
@@ -168,6 +208,7 @@ describe('saveAppScreen', () => {
 
         await saveAppScreen(options)
 
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 
@@ -184,6 +225,7 @@ describe('saveAppScreen', () => {
 
         await saveAppScreen(options)
 
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 
@@ -204,6 +246,7 @@ describe('saveAppScreen', () => {
         await saveAppScreen(options)
 
         expect(takeBase64ScreenshotSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 })

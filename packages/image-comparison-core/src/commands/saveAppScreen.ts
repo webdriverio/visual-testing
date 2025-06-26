@@ -1,7 +1,8 @@
-import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
+import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { makeCroppedBase64Image } from '../methods/images.js'
 import { takeBase64Screenshot } from '../methods/screenshots.js'
+import { buildAfterScreenshotOptions } from '../helpers/options.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
 
 /**
@@ -20,20 +21,12 @@ export default async function saveAppScreen(
     // 1. Set some variables
     const {
         addIOSBezelCorners,
-        formatImageName,
-        savePerInstance,
     } = saveScreenOptions.wic
     const {
-        browserName,
-        browserVersion,
         deviceName,
         devicePixelRatio,
         deviceRectangles: { screenSize },
         isIOS,
-        isMobile,
-        logName,
-        platformName,
-        platformVersion,
     } = instanceData
 
     // 2.  Take the screenshot
@@ -60,35 +53,15 @@ export default async function saveAppScreen(
     }
 
     // 4.  The after the screenshot methods
-    const afterOptions: AfterScreenshotOptions = {
-        actualFolder: folders.actualFolder,
+    const afterOptions = buildAfterScreenshotOptions({
         base64Image,
-        filePath: {
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
-        fileName: {
-            browserName,
-            browserVersion,
-            deviceName,
-            devicePixelRatio: devicePixelRatio,
-            formatImageName,
-            isMobile,
-            isTestInBrowser: !isNativeContext,
-            logName,
-            name: '',
-            platformName,
-            platformVersion,
-            screenHeight: screenSize.height,
-            screenWidth: screenSize.width,
-            tag,
-        },
+        folders,
+        tag,
         isNativeContext,
-        isLandscape:false,
-        platformName,
-    }
+        instanceData,
+        enrichedInstanceData: instanceData as any,
+        wicOptions: saveScreenOptions.wic
+    })
 
     // 5.  Return the data
     return afterScreenshot(browserInstance, afterOptions)
