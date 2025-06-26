@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import saveWebElement from './saveWebElement.js'
+import { createBeforeScreenshotOptions } from '../helpers/options.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 import {
     createBaseOptions,
@@ -69,6 +70,20 @@ vi.mock('../clientSideScripts/scrollElementIntoView.js', () => ({
 vi.mock('../clientSideScripts/scrollToPosition.js', () => ({
     default: vi.fn()
 }))
+vi.mock('../helpers/options.js', () => ({
+    createBeforeScreenshotOptions: vi.fn().mockReturnValue({
+        instanceData: { test: 'data' },
+        addressBarShadowPadding: 6,
+        toolBarShadowPadding: 6,
+        disableBlinkingCursor: false,
+        disableCSSAnimation: false,
+        enableLayoutTesting: false,
+        hideElements: [],
+        noScrollBars: true,
+        removeElements: [],
+        waitForFontsLoaded: false,
+    })
+}))
 
 describe('saveWebElement', () => {
     let takeBase64BiDiScreenshotSpy: ReturnType<typeof vi.fn>
@@ -78,6 +93,7 @@ describe('saveWebElement', () => {
     let canUseBidiScreenshotSpy: ReturnType<typeof vi.fn>
     let waitForSpy: ReturnType<typeof vi.fn>
     let getBase64ScreenshotSizeSpy: ReturnType<typeof vi.fn>
+    let createBeforeScreenshotOptionsSpy: ReturnType<typeof vi.fn>
     const executeMock = vi.fn().mockResolvedValue(undefined)
 
     const baseOptions = {
@@ -112,6 +128,7 @@ describe('saveWebElement', () => {
         canUseBidiScreenshotSpy = vi.mocked(canUseBidiScreenshot)
         waitForSpy = vi.mocked(waitFor)
         getBase64ScreenshotSizeSpy = vi.mocked(getBase64ScreenshotSize)
+        createBeforeScreenshotOptionsSpy = vi.mocked(createBeforeScreenshotOptions)
     })
 
     afterEach(() => {
@@ -123,6 +140,11 @@ describe('saveWebElement', () => {
         const result = await saveWebElement(baseOptions)
 
         expect(result).toMatchSnapshot()
+        expect(createBeforeScreenshotOptionsSpy).toHaveBeenCalledWith(
+            baseOptions.instanceData,
+            baseOptions.saveElementOptions.method,
+            baseOptions.saveElementOptions.wic
+        )
         expect(takeBase64BiDiScreenshotSpy.mock.calls[0]).toMatchSnapshot()
         expect(takeWebElementScreenshotSpy).not.toHaveBeenCalled()
         expect(makeCroppedBase64ImageSpy).not.toHaveBeenCalled()

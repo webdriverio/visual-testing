@@ -3,11 +3,12 @@ import { makeCroppedBase64Image } from '../methods/images.js'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
-import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
+import type { BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
 import { canUseBidiScreenshot, getBase64ScreenshotSize, getMethodOrWicOption, waitFor } from '../helpers/utils.js'
+import { createBeforeScreenshotOptions } from '../helpers/options.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 
@@ -25,32 +26,13 @@ export default async function saveWebElement(
     }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
-    const { addressBarShadowPadding, autoElementScroll, formatImageName, savePerInstance, toolBarShadowPadding } =
-        saveElementOptions.wic
+    const { addressBarShadowPadding, autoElementScroll, formatImageName, savePerInstance } = saveElementOptions.wic
     // 1b. Set the method options to the right values
-    const disableBlinkingCursor = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'disableBlinkingCursor')
-    const disableCSSAnimation = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'disableCSSAnimation')
-    const enableLayoutTesting = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'enableLayoutTesting')
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'enableLegacyScreenshotMethod')
-    const hideElements: HTMLElement[] = saveElementOptions.method.hideElements || []
-    const hideScrollBars = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'hideScrollBars')
-    const removeElements: HTMLElement[] = saveElementOptions.method.removeElements || []
     const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
-    const waitForFontsLoaded = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'waitForFontsLoaded')
 
     // 2.  Prepare the beforeScreenshot
-    const beforeOptions: BeforeScreenshotOptions = {
-        instanceData,
-        addressBarShadowPadding,
-        disableBlinkingCursor,
-        disableCSSAnimation,
-        enableLayoutTesting,
-        hideElements,
-        noScrollBars: hideScrollBars,
-        removeElements,
-        toolBarShadowPadding,
-        waitForFontsLoaded,
-    }
+    const beforeOptions = createBeforeScreenshotOptions(instanceData, saveElementOptions.method, saveElementOptions.wic)
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions, true)
     const {
         browserName,
@@ -171,9 +153,9 @@ export default async function saveWebElement(
     const afterOptions: AfterScreenshotOptions = {
         actualFolder: folders.actualFolder,
         base64Image,
-        disableBlinkingCursor,
-        disableCSSAnimation,
-        enableLayoutTesting,
+        disableBlinkingCursor: beforeOptions.disableBlinkingCursor,
+        disableCSSAnimation: beforeOptions.disableCSSAnimation,
+        enableLayoutTesting: beforeOptions.enableLayoutTesting,
         filePath: {
             browserName,
             deviceName,
@@ -198,12 +180,12 @@ export default async function saveWebElement(
             screenWidth: screenWidth || NaN,
             tag,
         },
-        hideElements,
-        hideScrollBars,
+        hideElements: beforeOptions.hideElements,
+        hideScrollBars: beforeOptions.noScrollBars,
         isLandscape,
         isNativeContext: false,
         platformName: instanceData.platformName,
-        removeElements,
+        removeElements: beforeOptions.removeElements,
     }
 
     // 7.  Return the data
