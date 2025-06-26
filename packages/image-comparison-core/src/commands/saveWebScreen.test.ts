@@ -89,20 +89,25 @@ vi.mock('../helpers/utils.js', () => ({
     canUseBidiScreenshot: vi.fn().mockReturnValue(false),
     getMethodOrWicOption: vi.fn().mockImplementation((method, wic, option) => method[option] ?? wic[option])
 }))
-vi.mock('../helpers/options.js', () => ({
-    createBeforeScreenshotOptions: vi.fn().mockReturnValue({
-        instanceData: { test: 'data' },
-        addressBarShadowPadding: 6,
-        toolBarShadowPadding: 6,
-        disableBlinkingCursor: false,
-        disableCSSAnimation: false,
-        enableLayoutTesting: false,
-        hideElements: [],
-        noScrollBars: true,
-        removeElements: [],
-        waitForFontsLoaded: false,
-    })
-}))
+vi.mock('../helpers/options.js', async (importOriginal) => {
+    const actual = await importOriginal() as any
+    return {
+        ...actual,
+        createBeforeScreenshotOptions: vi.fn().mockReturnValue({
+            instanceData: { test: 'data' },
+            addressBarShadowPadding: 6,
+            toolBarShadowPadding: 6,
+            disableBlinkingCursor: false,
+            disableCSSAnimation: false,
+            enableLayoutTesting: false,
+            hideElements: [],
+            noScrollBars: true,
+            removeElements: [],
+            waitForFontsLoaded: false,
+        }),
+        // Let buildAfterScreenshotOptions use the real implementation
+    }
+})
 
 describe('saveWebScreen', () => {
     let takeBase64BiDiScreenshotSpy: ReturnType<typeof vi.fn>

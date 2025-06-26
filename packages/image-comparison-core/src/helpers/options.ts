@@ -9,6 +9,9 @@ import {
 import type { ClassOptions, DefaultOptions } from './options.interfaces.js'
 import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 import type { BeforeScreenshotOptions } from './beforeScreenshot.interfaces.js'
+import type { AfterScreenshotOptions } from './afterScreenshot.interfaces.js'
+import type { BeforeScreenshotResult } from './beforeScreenshot.interfaces.js'
+import type { InstanceData } from '../methods/instanceData.interfaces.js'
 import {
     logAllDeprecatedCompareOptions,
     isStorybook,
@@ -156,5 +159,110 @@ export function createBeforeScreenshotOptions(
         toolBarShadowPadding: wicOptions.toolBarShadowPadding,
         waitForFontsLoaded: getMethodOrWicOption(methodOptions, wicOptions, 'waitForFontsLoaded') || false,
     }
+}
+
+export interface BuildAfterScreenshotOptionsInput {
+    // Required inputs
+    base64Image: string
+    folders: { actualFolder: string }
+    tag: string
+    isNativeContext: boolean
+    instanceData: InstanceData
+    wicOptions: {
+        formatImageName: string
+        savePerInstance: boolean
+    }
+
+    // Optional inputs (for web commands)
+    enrichedInstanceData?: BeforeScreenshotResult
+    beforeOptions?: BeforeScreenshotOptions
+}
+
+/**
+ * Builds AfterScreenshotOptions consistently across all commands
+ * Handles differences between native and web commands automatically
+ */
+export function buildAfterScreenshotOptions({
+    base64Image,
+    folders,
+    tag,
+    isNativeContext,
+    instanceData,
+    enrichedInstanceData,
+    beforeOptions,
+    wicOptions
+}: BuildAfterScreenshotOptionsInput): AfterScreenshotOptions {
+    // Use enriched data when available (web commands), fallback to instance data (native commands)
+    const dataSource = enrichedInstanceData || instanceData
+
+    // Extract common properties with smart fallbacks
+    const {
+        browserName,
+        browserVersion,
+        deviceName,
+        platformName,
+        platformVersion,
+    } = dataSource
+
+    // Handle dimension data - enriched data has nested structure, instance data is flat
+    const dimensions = enrichedInstanceData?.dimensions?.window
+    const devicePixelRatio = dimensions?.devicePixelRatio ?? instanceData.devicePixelRatio
+    const isLandscape = dimensions?.isLandscape ?? false
+    const outerHeight = dimensions?.outerHeight
+    const outerWidth = dimensions?.outerWidth
+    const screenHeight = dimensions?.screenHeight ?? instanceData.deviceRectangles?.screenSize?.height
+    const screenWidth = dimensions?.screenWidth ?? instanceData.deviceRectangles?.screenSize?.width
+
+    // Handle metadata with smart defaults
+    const isMobile = enrichedInstanceData?.isMobile ?? instanceData.isMobile
+    const isTestInBrowser = enrichedInstanceData?.isTestInBrowser ?? !isNativeContext
+    const logName = enrichedInstanceData?.logName ?? instanceData.logName
+    const name = enrichedInstanceData?.name ?? instanceData.name
+
+    const { formatImageName, savePerInstance } = wicOptions
+
+    const afterOptions: AfterScreenshotOptions = {
+        actualFolder: folders.actualFolder,
+        base64Image,
+        filePath: {
+            browserName,
+            deviceName,
+            isMobile,
+            savePerInstance,
+        },
+        fileName: {
+            browserName,
+            browserVersion,
+            deviceName,
+            devicePixelRatio: devicePixelRatio || NaN,
+            formatImageName,
+            isMobile,
+            isTestInBrowser,
+            logName,
+            name,
+            outerHeight: outerHeight || NaN,
+            outerWidth: outerWidth || NaN,
+            platformName,
+            platformVersion,
+            screenHeight: screenHeight || NaN,
+            screenWidth: screenWidth || NaN,
+            tag,
+        },
+        isLandscape,
+        isNativeContext,
+        platformName: instanceData.platformName,
+    }
+
+    // Add browser state options only for web commands (when beforeOptions is provided)
+    if (beforeOptions) {
+        afterOptions.disableBlinkingCursor = beforeOptions.disableBlinkingCursor
+        afterOptions.disableCSSAnimation = beforeOptions.disableCSSAnimation
+        afterOptions.enableLayoutTesting = beforeOptions.enableLayoutTesting
+        afterOptions.hideElements = beforeOptions.hideElements
+        afterOptions.hideScrollBars = beforeOptions.noScrollBars
+        afterOptions.removeElements = beforeOptions.removeElements
+    }
+
+    return afterOptions
 }
 

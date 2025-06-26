@@ -1,5 +1,79 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`options > buildAfterScreenshotOptions > should build options for native commands (no enriched data) 1`] = `
+{
+  "actualFolder": "/test/actual",
+  "base64Image": "test-screenshot-data",
+  "fileName": {
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "formatImageName": "{tag}-{browserName}-{width}x{height}",
+    "isMobile": false,
+    "isTestInBrowser": false,
+    "logName": "chrome",
+    "name": "chrome",
+    "outerHeight": NaN,
+    "outerWidth": NaN,
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "screenHeight": 1080,
+    "screenWidth": 1920,
+    "tag": "test-element",
+  },
+  "filePath": {
+    "browserName": "chrome",
+    "deviceName": "desktop",
+    "isMobile": false,
+    "savePerInstance": false,
+  },
+  "isLandscape": false,
+  "isNativeContext": true,
+  "platformName": "desktop",
+}
+`;
+
+exports[`options > buildAfterScreenshotOptions > should build options for web commands with enriched data 1`] = `
+{
+  "actualFolder": "/test/actual",
+  "base64Image": "test-screenshot-data",
+  "disableBlinkingCursor": true,
+  "disableCSSAnimation": false,
+  "enableLayoutTesting": true,
+  "fileName": {
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "devicePixelRatio": 3,
+    "formatImageName": "{tag}-{browserName}-{width}x{height}",
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "logName": "chrome",
+    "name": "chrome",
+    "outerHeight": 1000,
+    "outerWidth": 1200,
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "screenHeight": 1440,
+    "screenWidth": 2560,
+    "tag": "test-element",
+  },
+  "filePath": {
+    "browserName": "chrome",
+    "deviceName": "desktop",
+    "isMobile": false,
+    "savePerInstance": false,
+  },
+  "hideElements": [],
+  "hideScrollBars": true,
+  "isLandscape": true,
+  "isNativeContext": false,
+  "platformName": "desktop",
+  "removeElements": [],
+}
+`;
+
 exports[`options > defaultOptions > should return the default options when no options are provided 1`] = `
 {
   "addIOSBezelCorners": false,

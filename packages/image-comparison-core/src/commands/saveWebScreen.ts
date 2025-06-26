@@ -4,11 +4,11 @@ import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { determineScreenRectangles } from '../methods/rectangles.js'
 import type { BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
-import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
+import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import type { RectanglesOutput, ScreenRectanglesOptions } from '../methods/rectangles.interfaces.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
 import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
-import { createBeforeScreenshotOptions } from '../helpers/options.js'
+import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
 
 /**
  * Saves an image of the viewport of the screen
@@ -33,8 +33,6 @@ export default async function saveWebScreen(
     const beforeOptions = createBeforeScreenshotOptions(instanceData, saveScreenOptions.method, saveScreenOptions.wic)
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions)
     const {
-        browserName,
-        browserVersion,
         deviceName,
         dimensions: {
             window: {
@@ -43,10 +41,6 @@ export default async function saveWebScreen(
                 innerWidth,
                 isEmulated,
                 isLandscape,
-                outerHeight,
-                outerWidth,
-                screenHeight,
-                screenWidth,
             },
         },
         initialDevicePixelRatio,
@@ -54,11 +48,6 @@ export default async function saveWebScreen(
         isAndroidNativeWebScreenshot,
         isIOS,
         isMobile,
-        isTestInBrowser,
-        logName,
-        name,
-        platformName,
-        platformVersion,
     } = enrichedInstanceData
 
     // 3.  Take the screenshot
@@ -98,43 +87,16 @@ export default async function saveWebScreen(
     }
 
     // 5.  The after the screenshot methods
-    const afterOptions: AfterScreenshotOptions = {
-        actualFolder: folders.actualFolder,
+    const afterOptions = buildAfterScreenshotOptions({
         base64Image,
-        disableBlinkingCursor: beforeOptions.disableBlinkingCursor,
-        disableCSSAnimation: beforeOptions.disableCSSAnimation,
-        enableLayoutTesting: beforeOptions.enableLayoutTesting,
-        filePath: {
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
-        fileName: {
-            browserName,
-            browserVersion,
-            deviceName,
-            devicePixelRatio: devicePixelRatio || NaN,
-            formatImageName,
-            isMobile,
-            isTestInBrowser,
-            logName,
-            name,
-            outerHeight: outerHeight || NaN,
-            outerWidth: outerWidth || NaN,
-            platformName,
-            platformVersion,
-            screenHeight: screenHeight || NaN,
-            screenWidth: screenWidth || NaN,
-            tag,
-        },
-        hideElements: beforeOptions.hideElements,
-        hideScrollBars: beforeOptions.noScrollBars,
-        isLandscape,
+        folders,
+        tag,
         isNativeContext,
-        platformName: instanceData.platformName,
-        removeElements: beforeOptions.removeElements,
-    }
+        instanceData,
+        enrichedInstanceData,
+        beforeOptions,
+        wicOptions: { formatImageName, savePerInstance }
+    })
 
     // 6.  Return the data
     return afterScreenshot(browserInstance, afterOptions)
