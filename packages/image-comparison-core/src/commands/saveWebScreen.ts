@@ -3,11 +3,12 @@ import { makeCroppedBase64Image } from '../methods/images.js'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { determineScreenRectangles } from '../methods/rectangles.js'
-import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
+import type { BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
 import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import type { RectanglesOutput, ScreenRectanglesOptions } from '../methods/rectangles.interfaces.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
 import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
+import { createBeforeScreenshotOptions } from '../helpers/options.js'
 
 /**
  * Saves an image of the viewport of the screen
@@ -23,32 +24,13 @@ export default async function saveWebScreen(
     }: InternalSaveScreenMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1a. Set some variables
-    const { addressBarShadowPadding, addIOSBezelCorners, formatImageName, savePerInstance, toolBarShadowPadding } =
-        saveScreenOptions.wic
+    const { addIOSBezelCorners, formatImageName, savePerInstance } = saveScreenOptions.wic
 
     // 1b. Set the method options to the right values
-    const disableBlinkingCursor = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'disableBlinkingCursor')
-    const disableCSSAnimation = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'disableCSSAnimation')
-    const enableLayoutTesting = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'enableLayoutTesting')
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'enableLegacyScreenshotMethod')
-    const hideScrollBars = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'hideScrollBars')
-    const hideElements: HTMLElement[] = saveScreenOptions.method.hideElements || []
-    const removeElements: HTMLElement[] = saveScreenOptions.method.removeElements || []
-    const waitForFontsLoaded = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'waitForFontsLoaded')
 
     // 2.  Prepare the beforeScreenshot
-    const beforeOptions: BeforeScreenshotOptions = {
-        instanceData,
-        addressBarShadowPadding,
-        disableBlinkingCursor,
-        disableCSSAnimation,
-        enableLayoutTesting,
-        hideElements,
-        noScrollBars: hideScrollBars,
-        removeElements,
-        toolBarShadowPadding,
-        waitForFontsLoaded,
-    }
+    const beforeOptions = createBeforeScreenshotOptions(instanceData, saveScreenOptions.method, saveScreenOptions.wic)
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions)
     const {
         browserName,
@@ -119,9 +101,9 @@ export default async function saveWebScreen(
     const afterOptions: AfterScreenshotOptions = {
         actualFolder: folders.actualFolder,
         base64Image,
-        disableBlinkingCursor,
-        disableCSSAnimation,
-        enableLayoutTesting,
+        disableBlinkingCursor: beforeOptions.disableBlinkingCursor,
+        disableCSSAnimation: beforeOptions.disableCSSAnimation,
+        enableLayoutTesting: beforeOptions.enableLayoutTesting,
         filePath: {
             browserName,
             deviceName,
@@ -146,12 +128,12 @@ export default async function saveWebScreen(
             screenWidth: screenWidth || NaN,
             tag,
         },
-        hideElements,
-        hideScrollBars,
+        hideElements: beforeOptions.hideElements,
+        hideScrollBars: beforeOptions.noScrollBars,
         isLandscape,
         isNativeContext,
         platformName: instanceData.platformName,
-        removeElements,
+        removeElements: beforeOptions.removeElements,
     }
 
     // 6.  Return the data

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import saveWebScreen from './saveWebScreen.js'
+import { createBeforeScreenshotOptions } from '../helpers/options.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
 import {
     BASE_CHECK_OPTIONS,
@@ -88,6 +89,20 @@ vi.mock('../helpers/utils.js', () => ({
     canUseBidiScreenshot: vi.fn().mockReturnValue(false),
     getMethodOrWicOption: vi.fn().mockImplementation((method, wic, option) => method[option] ?? wic[option])
 }))
+vi.mock('../helpers/options.js', () => ({
+    createBeforeScreenshotOptions: vi.fn().mockReturnValue({
+        instanceData: { test: 'data' },
+        addressBarShadowPadding: 6,
+        toolBarShadowPadding: 6,
+        disableBlinkingCursor: false,
+        disableCSSAnimation: false,
+        enableLayoutTesting: false,
+        hideElements: [],
+        noScrollBars: true,
+        removeElements: [],
+        waitForFontsLoaded: false,
+    })
+}))
 
 describe('saveWebScreen', () => {
     let takeBase64BiDiScreenshotSpy: ReturnType<typeof vi.fn>
@@ -96,6 +111,7 @@ describe('saveWebScreen', () => {
     let afterScreenshotSpy: ReturnType<typeof vi.fn>
     let canUseBidiScreenshotSpy: ReturnType<typeof vi.fn>
     let determineScreenRectanglesSpy: ReturnType<typeof vi.fn>
+    let createBeforeScreenshotOptionsSpy: ReturnType<typeof vi.fn>
 
     const baseOptions = {
         browserInstance: { isAndroid: false, isMobile: false } as any,
@@ -140,6 +156,7 @@ describe('saveWebScreen', () => {
         determineScreenRectanglesSpy = vi.mocked(determineScreenRectangles)
         afterScreenshotSpy = vi.mocked(afterScreenshot)
         canUseBidiScreenshotSpy = vi.mocked(canUseBidiScreenshot)
+        createBeforeScreenshotOptionsSpy = vi.mocked(createBeforeScreenshotOptions)
     })
 
     afterEach(() => {
@@ -150,6 +167,11 @@ describe('saveWebScreen', () => {
         canUseBidiScreenshotSpy.mockReturnValueOnce(true)
         const result = await saveWebScreen(baseOptions)
 
+        expect(createBeforeScreenshotOptionsSpy).toHaveBeenCalledWith(
+            baseOptions.instanceData,
+            baseOptions.saveScreenOptions.method,
+            baseOptions.saveScreenOptions.wic
+        )
         expect(result).toMatchSnapshot()
         expect(takeBase64BiDiScreenshotSpy.mock.calls[0]).toMatchSnapshot()
         expect(takeBase64ScreenshotSpy).not.toHaveBeenCalled()
