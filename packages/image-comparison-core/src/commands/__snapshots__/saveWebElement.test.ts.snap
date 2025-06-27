@@ -72,6 +72,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
@@ -83,6 +84,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
       "right": 0,
       "top": 0,
     },
+    "toolBarShadowPadding": 6,
   },
   false,
 ]
@@ -160,6 +162,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
@@ -171,6 +174,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
       "right": 0,
       "top": 0,
     },
+    "toolBarShadowPadding": 6,
   },
   false,
 ]
@@ -437,6 +441,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
@@ -448,6 +453,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
       "right": 0,
       "top": 0,
     },
+    "toolBarShadowPadding": 6,
   },
   false,
 ]
@@ -821,6 +827,7 @@ exports[`saveWebElement > should call takeElementScreenshot with correct options
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
@@ -832,6 +839,7 @@ exports[`saveWebElement > should call takeElementScreenshot with correct options
       "right": 0,
       "top": 0,
     },
+    "toolBarShadowPadding": 6,
   },
   true,
 ]
@@ -1021,7 +1029,7 @@ exports[`saveWebElement > should handle NaN dimension values correctly 2`] = `
     "addressBarShadowPadding": 6,
     "autoElementScroll": true,
     "deviceName": "desktop",
-    "devicePixelRatio": NaN,
+    "devicePixelRatio": 1,
     "deviceRectangles": {
       "bottomBar": {
         "height": 0,
@@ -1073,9 +1081,10 @@ exports[`saveWebElement > should handle NaN dimension values correctly 2`] = `
     "element": {
       "elementId": "test-element",
     },
-    "initialDevicePixelRatio": NaN,
+    "initialDevicePixelRatio": 1,
     "innerHeight": NaN,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
@@ -1087,6 +1096,7 @@ exports[`saveWebElement > should handle NaN dimension values correctly 2`] = `
       "right": 0,
       "top": 0,
     },
+    "toolBarShadowPadding": 6,
   },
   false,
 ]
@@ -1381,6 +1391,7 @@ exports[`saveWebElement > should pass autoElementScroll option correctly 2`] = `
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
@@ -1392,6 +1403,7 @@ exports[`saveWebElement > should pass autoElementScroll option correctly 2`] = `
       "right": 0,
       "top": 0,
     },
+    "toolBarShadowPadding": 6,
   },
   false,
 ]
@@ -1469,6 +1481,7 @@ exports[`saveWebElement > should pass resizeDimensions option correctly 2`] = `
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
@@ -1480,6 +1493,7 @@ exports[`saveWebElement > should pass resizeDimensions option correctly 2`] = `
       "right": 15,
       "top": 10,
     },
+    "toolBarShadowPadding": 6,
   },
   false,
 ]

@@ -78,6 +78,49 @@ exports[`takeWebScreenshot > Legacy screenshots > should handle NaN dimension va
 ]
 `;
 
+exports[`takeWebScreenshot > Legacy screenshots > should handle default dimension values in screen rectangles 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+}
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle default dimension values in screen rectangles 2`] = `
+[
+  "screenshot-data",
+  {
+    "devicePixelRatio": 1,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 1,
+    "innerHeight": NaN,
+    "innerWidth": NaN,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle default dimension values in screen rectangles 3`] = `
+[
+  {
+    "addIOSBezelCorners": false,
+    "base64Image": "screenshot-data",
+    "deviceName": "desktop",
+    "devicePixelRatio": 1,
+    "isIOS": false,
+    "isLandscape": false,
+    "rectangles": {
+      "height": 100,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+  },
+]
+`;
+
 exports[`takeWebScreenshot > Legacy screenshots > should handle emulated device configuration 1`] = `
 {
   "base64Image": "cropped-screenshot-data",
@@ -122,49 +165,6 @@ exports[`takeWebScreenshot > Legacy screenshots > should handle native web scree
     "isEmulated": false,
     "isIOS": false,
     "isLandscape": false,
-  },
-]
-`;
-
-exports[`takeWebScreenshot > Legacy screenshots > should handle undefined dimension values in screen rectangles 1`] = `
-{
-  "base64Image": "cropped-screenshot-data",
-}
-`;
-
-exports[`takeWebScreenshot > Legacy screenshots > should handle undefined dimension values in screen rectangles 2`] = `
-[
-  "screenshot-data",
-  {
-    "devicePixelRatio": NaN,
-    "enableLegacyScreenshotMethod": false,
-    "initialDevicePixelRatio": NaN,
-    "innerHeight": NaN,
-    "innerWidth": NaN,
-    "isAndroidChromeDriverScreenshot": false,
-    "isAndroidNativeWebScreenshot": false,
-    "isEmulated": false,
-    "isIOS": false,
-    "isLandscape": false,
-  },
-]
-`;
-
-exports[`takeWebScreenshot > Legacy screenshots > should handle undefined dimension values in screen rectangles 3`] = `
-[
-  {
-    "addIOSBezelCorners": false,
-    "base64Image": "screenshot-data",
-    "deviceName": "desktop",
-    "devicePixelRatio": NaN,
-    "isIOS": false,
-    "isLandscape": false,
-    "rectangles": {
-      "height": 100,
-      "width": 100,
-      "x": 0,
-      "y": 0,
-    },
   },
 ]
 `;
