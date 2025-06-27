@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`afterScreenshot > should be able to return the ScreenshotOutput with default options 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "tag-browserName-1400x850-dpr-2.png",
+  "isLandscape": false,
+  "path": "/Users/wimselles/Git/wdio/visual-testing/.tmp/afterScreenshot/desktop_browserName",
+}
+`;
+
+exports[`afterScreenshot > should handle native context and skip browser operations 1`] = `
+{
+  "devicePixelRatio": 1.5,
+  "fileName": "tag-browserName-800x600-dpr-1.5.png",
+  "isLandscape": true,
+  "path": "/Users/wimselles/Git/wdio/visual-testing/.tmp/afterScreenshot/desktop_browserName",
+}
+`;

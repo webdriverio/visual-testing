@@ -185,18 +185,7 @@ describe('beforeScreenshot', () => {
         await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockBrowserInstance.execute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: [] }, true)
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            `
-#####################################################################################
- WARNING:
- (One of) the elements that needed to be hidden or removed could not be found on the
- page and caused this error
- Error: ${elementError}
- We made sure the test didn't break.
-#####################################################################################
-`
-        )
+        expect(logWarnSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should handle CSS customization for desktop', async () => {
@@ -319,18 +308,7 @@ describe('beforeScreenshot', () => {
         await beforeScreenshot(mockBrowserInstance, options)
 
         expect(logDebugSpy).toHaveBeenCalledWith('Waiting for fonts to load threw an error:', fontError)
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            `
-#####################################################################################
- WARNING:
- (One of) the elements that needed to be hidden or removed could not be found on the
- page and caused this error
- Error: ${elementError}
- We made sure the test didn't break.
-#####################################################################################
-`
-        )
+        expect(logWarnSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should handle custom browser properties when needed', async () => {

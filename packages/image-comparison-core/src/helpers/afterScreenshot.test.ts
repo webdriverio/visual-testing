@@ -77,12 +77,7 @@ describe('afterScreenshot', () => {
             removeElements: [<HTMLElement>(<any>'<div></div>')],
         })
 
-        expect(await afterScreenshot(mockBrowserInstance, options)).toEqual({
-            devicePixelRatio: 2,
-            fileName: 'tag-browserName-1400x850-dpr-2.png',
-            isLandscape: false,
-            path: `${process.cwd()}/.tmp/afterScreenshot/desktop_browserName`,
-        })
+        expect(await afterScreenshot(mockBrowserInstance, options)).toMatchSnapshot()
     })
 
     it('should handle native context and skip browser operations', async () => {
@@ -107,12 +102,7 @@ describe('afterScreenshot', () => {
             removeElements: [<HTMLElement>(<any>'<div></div>')],
         })
 
-        expect(await afterScreenshot(mockBrowserInstance, options)).toEqual({
-            devicePixelRatio: 1.5,
-            fileName: 'tag-browserName-800x600-dpr-1.5.png',
-            isLandscape: true,
-            path: `${process.cwd()}/.tmp/afterScreenshot/desktop_browserName`,
-        })
+        expect(await afterScreenshot(mockBrowserInstance, options)).toMatchSnapshot()
     })
 
     it('should handle layout testing with enableLayoutTesting', async () => {
