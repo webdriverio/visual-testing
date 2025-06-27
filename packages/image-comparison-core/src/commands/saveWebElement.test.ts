@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import saveWebElement from './saveWebElement.js'
-import { takeElementScreenshot } from '../methods/elementScreenshots.js'
+import { takeElementScreenshot } from '../methods/takeElementScreenshots.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { canUseBidiScreenshot } from '../helpers/utils.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
@@ -11,7 +11,7 @@ import {
     createBeforeScreenshotMock
 } from '../mocks/mocks.js'
 
-vi.mock('../methods/elementScreenshots.js', () => ({
+vi.mock('../methods/takeElementScreenshots.js', () => ({
     takeElementScreenshot: vi.fn().mockResolvedValue({
         base64Image: 'element-screenshot-data',
         isWebDriverElementScreenshot: false

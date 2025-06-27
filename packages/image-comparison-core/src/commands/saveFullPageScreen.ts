@@ -1,6 +1,6 @@
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
-import { takeFullPageScreenshots } from '../methods/fullPageScreenshots.js'
+import { takeFullPageScreenshots } from '../methods/takeFullPageScreenshots.js'
 import { makeFullPageBase64Image } from '../methods/images.js'
 import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import type { BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'

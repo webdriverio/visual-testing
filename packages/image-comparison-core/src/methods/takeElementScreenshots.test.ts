@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { takeElementScreenshot } from './elementScreenshots.js'
+import { takeElementScreenshot } from './takeElementScreenshots.js'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
 import { getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'

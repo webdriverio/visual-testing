@@ -1,5 +1,225 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`saveWebScreen > should call takeWebScreenshot with BiDi disabled when legacy method enabled 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-screen.png",
+}
+`;
+
+exports[`saveWebScreen > should call takeWebScreenshot with BiDi disabled when legacy method enabled 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addIOSBezelCorners": false,
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "enableLegacyScreenshotMethod": true,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "innerWidth": 1200,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "isMobile": false,
+  },
+  false,
+]
+`;
+
+exports[`saveWebScreen > should call takeWebScreenshot with BiDi disabled when mobile device 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-screen.png",
+}
+`;
+
+exports[`saveWebScreen > should call takeWebScreenshot with BiDi disabled when mobile device 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addIOSBezelCorners": false,
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "innerWidth": 1200,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "isMobile": true,
+  },
+  false,
+]
+`;
+
+exports[`saveWebScreen > should call takeWebScreenshot with BiDi disabled when not available 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-screen.png",
+}
+`;
+
+exports[`saveWebScreen > should call takeWebScreenshot with BiDi disabled when not available 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addIOSBezelCorners": false,
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "innerWidth": 1200,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "isMobile": false,
+  },
+  false,
+]
+`;
+
+exports[`saveWebScreen > should call takeWebScreenshot with BiDi disabled when not available 3`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "web-screenshot-data",
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "fileName": {
+      "browserName": "chrome",
+      "browserVersion": "120.0.0",
+      "deviceName": "desktop",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": false,
+      "isTestInBrowser": true,
+      "logName": "chrome",
+      "name": "chrome",
+      "outerHeight": 1000,
+      "outerWidth": 1200,
+      "platformName": "desktop",
+      "platformVersion": "120.0.0",
+      "screenHeight": 1080,
+      "screenWidth": 1920,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "chrome",
+      "deviceName": "desktop",
+      "isMobile": false,
+      "savePerInstance": true,
+    },
+    "hideElements": [],
+    "hideScrollBars": true,
+    "isLandscape": false,
+    "isNativeContext": false,
+    "platformName": "Windows 10",
+    "removeElements": [],
+  },
+]
+`;
+
+exports[`saveWebScreen > should call takeWebScreenshot with correct options when BiDi is available 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-screen.png",
+}
+`;
+
+exports[`saveWebScreen > should call takeWebScreenshot with correct options when BiDi is available 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addIOSBezelCorners": false,
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "innerWidth": 1200,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "isMobile": false,
+  },
+  true,
+]
+`;
+
+exports[`saveWebScreen > should call takeWebScreenshot with correct options when BiDi is available 3`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "web-screenshot-data",
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "fileName": {
+      "browserName": "chrome",
+      "browserVersion": "120.0.0",
+      "deviceName": "desktop",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": false,
+      "isTestInBrowser": true,
+      "logName": "chrome",
+      "name": "chrome",
+      "outerHeight": 1000,
+      "outerWidth": 1200,
+      "platformName": "desktop",
+      "platformVersion": "120.0.0",
+      "screenHeight": 1080,
+      "screenWidth": 1920,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "chrome",
+      "deviceName": "desktop",
+      "isMobile": false,
+      "savePerInstance": true,
+    },
+    "hideElements": [],
+    "hideScrollBars": true,
+    "isLandscape": false,
+    "isNativeContext": false,
+    "platformName": "Windows 10",
+    "removeElements": [],
+  },
+]
+`;
+
 exports[`saveWebScreen > should handle NaN dimension values 1`] = `
 {
   "devicePixelRatio": 2,
@@ -62,6 +282,84 @@ exports[`saveWebScreen > should handle NaN dimension values 5`] = `
   {
     "actualFolder": "/test/actual",
     "base64Image": "cropped-screenshot-data",
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "fileName": {
+      "browserName": "chrome",
+      "browserVersion": "120.0.0",
+      "deviceName": "desktop",
+      "devicePixelRatio": NaN,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": false,
+      "isTestInBrowser": true,
+      "logName": "chrome",
+      "name": "chrome",
+      "outerHeight": NaN,
+      "outerWidth": NaN,
+      "platformName": "desktop",
+      "platformVersion": "120.0.0",
+      "screenHeight": NaN,
+      "screenWidth": NaN,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "chrome",
+      "deviceName": "desktop",
+      "isMobile": false,
+      "savePerInstance": true,
+    },
+    "hideElements": [],
+    "hideScrollBars": true,
+    "isLandscape": false,
+    "isNativeContext": false,
+    "platformName": "Windows 10",
+    "removeElements": [],
+  },
+]
+`;
+
+exports[`saveWebScreen > should handle NaN dimension values correctly 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-screen.png",
+}
+`;
+
+exports[`saveWebScreen > should handle NaN dimension values correctly 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addIOSBezelCorners": false,
+    "deviceName": "desktop",
+    "devicePixelRatio": NaN,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": NaN,
+    "innerHeight": NaN,
+    "innerWidth": NaN,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "isMobile": false,
+  },
+  false,
+]
+`;
+
+exports[`saveWebScreen > should handle NaN dimension values correctly 3`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "web-screenshot-data",
     "disableBlinkingCursor": false,
     "disableCSSAnimation": false,
     "enableLayoutTesting": false,
@@ -204,6 +502,38 @@ exports[`saveWebScreen > should handle mobile device correctly 2`] = `
     "platformName": "Android",
     "removeElements": [],
   },
+]
+`;
+
+exports[`saveWebScreen > should pass iOS configuration correctly 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-screen.png",
+}
+`;
+
+exports[`saveWebScreen > should pass iOS configuration correctly 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addIOSBezelCorners": true,
+    "deviceName": "iPhone 14 Pro",
+    "devicePixelRatio": undefined,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": undefined,
+    "innerWidth": undefined,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": undefined,
+    "isIOS": true,
+    "isLandscape": true,
+    "isMobile": false,
+  },
+  false,
 ]
 `;
 

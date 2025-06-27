@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import saveFullPageScreen from './saveFullPageScreen.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
-import { takeFullPageScreenshots } from '../methods/fullPageScreenshots.js'
+import { takeFullPageScreenshots } from '../methods/takeFullPageScreenshots.js'
 import { makeFullPageBase64Image } from '../methods/images.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
@@ -38,7 +38,7 @@ vi.mock('../helpers/beforeScreenshot.js', () => ({
         platformVersion: '120.0.0',
     })
 }))
-vi.mock('../methods/fullPageScreenshots.js', () => ({
+vi.mock('../methods/takeFullPageScreenshots.js', () => ({
     takeFullPageScreenshots: vi.fn().mockResolvedValue({
         fullPageHeight: 2000,
         fullPageWidth: 1200,

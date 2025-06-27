@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { takeFullPageScreenshots } from './fullPageScreenshots.js'
+import { takeFullPageScreenshots } from './takeFullPageScreenshots.js'
 import type { FullPageScreenshotDataOptions } from './screenshots.interfaces.js'
 
 vi.mock('./screenshots.js', () => ({

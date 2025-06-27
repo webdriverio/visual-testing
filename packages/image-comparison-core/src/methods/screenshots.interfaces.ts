@@ -150,6 +150,14 @@ export interface TakeWebElementScreenshotData {
 }
 
 /**
+ * Interface representing data for web screen screenshot result.
+ */
+export interface WebScreenshotData {
+    /** The base64 encoded image. */
+    base64Image: string;
+}
+
+/**
  * Interface representing data for element screenshot result.
  */
 export interface ElementScreenshotData {
@@ -157,6 +165,38 @@ export interface ElementScreenshotData {
     base64Image: string;
     /** Whether this is a web driver element screenshot. */
     isWebDriverElementScreenshot?: boolean;
+}
+
+/**
+ * Interface representing options for web screen screenshot data.
+ */
+export interface WebScreenshotDataOptions {
+    /** Whether to add iOS bezel corners. */
+    addIOSBezelCorners: boolean;
+    /** The device name. */
+    deviceName: string;
+    /** The device pixel ratio. */
+    devicePixelRatio?: number;
+    /** Whether to enable legacy screenshot method. */
+    enableLegacyScreenshotMethod: boolean;
+    /** The inner height. */
+    innerHeight?: number;
+    /** The inner width. */
+    innerWidth?: number;
+    /** The initial device pixel ratio. */
+    initialDevicePixelRatio?: number;
+    /** Whether the device is an Android ChromeDriver screenshot. */
+    isAndroidChromeDriverScreenshot: boolean;
+    /** Whether this is an Android native web screenshot. */
+    isAndroidNativeWebScreenshot: boolean;
+    /** Whether the device is emulated. */
+    isEmulated?: boolean;
+    /** Whether the instance is an iOS device. */
+    isIOS: boolean;
+    /** Whether it's landscape or not. */
+    isLandscape: boolean;
+    /** Whether this is a mobile device. */
+    isMobile: boolean;
 }
 
 /**

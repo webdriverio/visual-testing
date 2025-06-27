@@ -1,4 +1,4 @@
-import { takeElementScreenshot } from '../methods/elementScreenshots.js'
+import { takeElementScreenshot } from '../methods/takeElementScreenshots.js'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
