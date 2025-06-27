@@ -426,6 +426,7 @@ export function logHiddenRemovedError(error: any) {
  * Take an element screenshot on the web
  */
 export async function takeWebElementScreenshot({
+    addressBarShadowPadding,
     browserInstance,
     devicePixelRatio,
     deviceRectangles,
@@ -434,10 +435,12 @@ export async function takeWebElementScreenshot({
     initialDevicePixelRatio,
     isEmulated,
     innerHeight,
-    isAndroidNativeWebScreenshot,
     isAndroid,
+    isAndroidChromeDriverScreenshot,
+    isAndroidNativeWebScreenshot,
     isIOS,
     isLandscape,
+    toolBarShadowPadding,
 }:TakeWebElementScreenshot): Promise<TakeWebElementScreenshotData>{
     if (fallback) {
         const base64Image = await takeBase64Screenshot(browserInstance)
@@ -445,9 +448,9 @@ export async function takeWebElementScreenshot({
             /**
              * ToDo: handle NaA case
              */
-            devicePixelRatio: devicePixelRatio || NaN,
+            devicePixelRatio: devicePixelRatio,
             deviceRectangles,
-            initialDevicePixelRatio,
+            initialDevicePixelRatio: initialDevicePixelRatio || 1,
             innerHeight: innerHeight || NaN,
             isEmulated,
             isAndroidNativeWebScreenshot,
@@ -485,6 +488,7 @@ export async function takeWebElementScreenshot({
     } catch (_e) {
         log.warn('The element screenshot failed, falling back to cutting the full device/viewport screenshot:', _e)
         return takeWebElementScreenshot({
+            addressBarShadowPadding,
             browserInstance,
             devicePixelRatio,
             deviceRectangles,
@@ -493,10 +497,12 @@ export async function takeWebElementScreenshot({
             initialDevicePixelRatio,
             isEmulated,
             innerHeight,
-            isAndroidNativeWebScreenshot,
             isAndroid,
+            isAndroidChromeDriverScreenshot,
+            isAndroidNativeWebScreenshot,
             isIOS,
             isLandscape,
+            toolBarShadowPadding,
         })
     }
 }

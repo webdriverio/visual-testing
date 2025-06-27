@@ -78,6 +78,7 @@ describe('screenshots', () => {
             fullPageScrollTimeout: 1000,
             hideAfterFirstScroll: [],
             isAndroid: false,
+            isIOS: true,
             isLandscape: false,
             innerHeight: 667,
             toolBarShadowPadding: 5,
@@ -652,6 +653,7 @@ describe('screenshots', () => {
 
     describe('takeWebElementScreenshot', () => {
         const createBaseTakeWebElementScreenshotOptions = (overrides: Partial<TakeWebElementScreenshot> = {}): TakeWebElementScreenshot => ({
+            addressBarShadowPadding: 10,
             browserInstance: createMockBrowserInstance(),
             devicePixelRatio: 1,
             deviceRectangles: DEVICE_RECTANGLES,
@@ -660,10 +662,12 @@ describe('screenshots', () => {
             initialDevicePixelRatio: 1,
             isEmulated: false,
             innerHeight: 768,
-            isAndroidNativeWebScreenshot: false,
             isAndroid: false,
+            isAndroidChromeDriverScreenshot: false,
+            isAndroidNativeWebScreenshot: false,
             isIOS: false,
             isLandscape: false,
+            toolBarShadowPadding: 5,
             ...overrides
         })
 

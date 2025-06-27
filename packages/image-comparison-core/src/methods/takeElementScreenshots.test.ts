@@ -60,12 +60,14 @@ describe('takeElementScreenshot', () => {
         isEmulated: false,
         initialDevicePixelRatio: 2,
         innerHeight: 900,
-        isAndroidNativeWebScreenshot: false,
         isAndroid: false,
+        isAndroidChromeDriverScreenshot: false,
+        isAndroidNativeWebScreenshot: false,
         isIOS: false,
         isLandscape: false,
         isMobile: false,
-        resizeDimensions: { top: 0, right: 0, bottom: 0, left: 0 }
+        resizeDimensions: { top: 0, right: 0, bottom: 0, left: 0 },
+        toolBarShadowPadding: 5
     }
 
     afterEach(() => {
@@ -133,6 +135,7 @@ describe('takeElementScreenshot', () => {
                 isWebDriverElementScreenshot: false
             })
             expect(takeWebElementScreenshotSpy).toHaveBeenCalledWith({
+                addressBarShadowPadding: 6,
                 browserInstance,
                 devicePixelRatio: 2,
                 deviceRectangles: baseOptions.deviceRectangles,
@@ -140,10 +143,12 @@ describe('takeElementScreenshot', () => {
                 initialDevicePixelRatio: 2,
                 isEmulated: false,
                 innerHeight: 900,
-                isAndroidNativeWebScreenshot: false,
                 isAndroid: false,
+                isAndroidChromeDriverScreenshot: false,
+                isAndroidNativeWebScreenshot: false,
                 isIOS: false,
                 isLandscape: false,
+                toolBarShadowPadding: 5,
                 fallback: true // Because resizeDimensions is truthy (even if all values are 0)
             })
             expect(makeCroppedBase64ImageSpy).toHaveBeenCalledWith({
@@ -319,20 +324,20 @@ describe('takeElementScreenshot', () => {
     })
 
     describe('Edge cases', () => {
-        it('should handle undefined devicePixelRatio', async () => {
-            const optionsWithUndefinedDPR = { ...baseOptions, devicePixelRatio: undefined }
+        it('should handle default devicePixelRatio when not provided', async () => {
+            const optionsWithDefaultDPR = { ...baseOptions, devicePixelRatio: 1 }
 
-            const result = await takeElementScreenshot(browserInstance, optionsWithUndefinedDPR, false)
+            const result = await takeElementScreenshot(browserInstance, optionsWithDefaultDPR, false)
 
             expect(result).toMatchSnapshot()
             expect(takeWebElementScreenshotSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    devicePixelRatio: undefined
+                    devicePixelRatio: 1
                 })
             )
             expect(makeCroppedBase64ImageSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    devicePixelRatio: NaN
+                    devicePixelRatio: 1
                 })
             )
         })

@@ -48,6 +48,7 @@ export async function takeElementScreenshot(
 
         // Take the screenshot and determine the rectangles
         const screenshotResult = await takeWebElementScreenshot({
+            addressBarShadowPadding: options.addressBarShadowPadding,
             browserInstance,
             devicePixelRatio: options.devicePixelRatio,
             deviceRectangles: options.deviceRectangles,
@@ -55,10 +56,12 @@ export async function takeElementScreenshot(
             initialDevicePixelRatio: options.initialDevicePixelRatio,
             isEmulated: options.isEmulated,
             innerHeight: options.innerHeight,
-            isAndroidNativeWebScreenshot: options.isAndroidNativeWebScreenshot,
             isAndroid: options.isAndroid,
+            isAndroidChromeDriverScreenshot: options.isAndroidChromeDriverScreenshot,
+            isAndroidNativeWebScreenshot: options.isAndroidNativeWebScreenshot,
             isIOS: options.isIOS,
             isLandscape: options.isLandscape,
+            toolBarShadowPadding: options.toolBarShadowPadding,
             // When the element needs to be resized, we need to take a screenshot of the whole page
             // also when it's emulated
             fallback: (!!options.resizeDimensions || options.isEmulated) || false,

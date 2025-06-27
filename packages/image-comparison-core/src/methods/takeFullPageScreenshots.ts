@@ -58,8 +58,8 @@ function createMobileOptions(options: FullPageScreenshotDataOptions) {
         hideAfterFirstScroll: options.hideAfterFirstScroll,
         innerHeight: options.innerHeight,
         isAndroid: options.isAndroid,
+        isIOS: options.isIOS,
         isLandscape: options.isLandscape,
-        screenHeight: options.screenHeight,
         screenWidth: options.screenWidth,
         toolBarShadowPadding: options.toolBarShadowPadding,
     }

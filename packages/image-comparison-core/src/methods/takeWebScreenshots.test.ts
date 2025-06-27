@@ -35,6 +35,7 @@ describe('takeWebScreenshot', () => {
         innerHeight: 900,
         innerWidth: 1200,
         initialDevicePixelRatio: 2,
+        isAndroid: false,
         isAndroidChromeDriverScreenshot: false,
         isAndroidNativeWebScreenshot: false,
         isEmulated: false,
@@ -100,16 +101,16 @@ describe('takeWebScreenshot', () => {
             expect(makeCroppedBase64ImageSpy.mock.calls[0]).toMatchSnapshot()
         })
 
-        it('should handle undefined dimension values in screen rectangles', async () => {
-            const optionsWithUndefined = {
+        it('should handle default dimension values in screen rectangles', async () => {
+            const optionsWithDefaults = {
                 ...baseOptions,
-                devicePixelRatio: undefined,
+                devicePixelRatio: 1,
                 innerHeight: undefined,
                 innerWidth: undefined,
-                initialDevicePixelRatio: undefined
+                initialDevicePixelRatio: 1
             }
 
-            const result = await takeWebScreenshot(browserInstance, optionsWithUndefined, false)
+            const result = await takeWebScreenshot(browserInstance, optionsWithDefaults, false)
 
             expect(result).toMatchSnapshot()
             expect(determineScreenRectanglesSpy.mock.calls[0]).toMatchSnapshot()
@@ -136,6 +137,7 @@ describe('takeWebScreenshot', () => {
             const androidOptions = {
                 ...baseOptions,
                 deviceName: 'Pixel 4',
+                isAndroid: true,
                 isAndroidChromeDriverScreenshot: true,
                 isAndroidNativeWebScreenshot: false,
                 isMobile: true
@@ -163,6 +165,7 @@ describe('takeWebScreenshot', () => {
         it('should handle native web screenshot configuration', async () => {
             const nativeWebOptions = {
                 ...baseOptions,
+                isAndroid: true,
                 isAndroidNativeWebScreenshot: true,
                 isAndroidChromeDriverScreenshot: false
             }
