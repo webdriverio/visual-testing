@@ -23,13 +23,12 @@ export default async function saveWebElement(
         saveElementOptions,
     }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
-    // 1a. Set some variables
+    // 1. Set some variables
     const { addressBarShadowPadding, autoElementScroll, formatImageName, savePerInstance } = saveElementOptions.wic
-    // 1b. Set the method options to the right values
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'enableLegacyScreenshotMethod')
     const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
 
-    // 2.  Prepare the beforeScreenshot
+    // 2.  Prepare the screenshot
     const beforeOptions = createBeforeScreenshotOptions(instanceData, saveElementOptions.method, saveElementOptions.wic)
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions, true)
     const {
@@ -50,7 +49,7 @@ export default async function saveWebElement(
         isMobile,
     } = enrichedInstanceData
 
-    // 3. Take element screenshots with clean routing
+    // 3. Take the screenshot
     const elementScreenshotOptions: ElementScreenshotDataOptions = {
         addressBarShadowPadding,
         autoElementScroll,
@@ -73,7 +72,7 @@ export default async function saveWebElement(
     const shouldUseBidi = canUseBidiScreenshot(browserInstance) && !isMobile && !enableLegacyScreenshotMethod
     const screenshotData = await takeElementScreenshot(browserInstance, elementScreenshotOptions, shouldUseBidi)
 
-    // 4. The after the screenshot methods
+    // 4. Return the data
     const afterOptions = buildAfterScreenshotOptions({
         base64Image: screenshotData.base64Image,
         folders,
@@ -85,6 +84,5 @@ export default async function saveWebElement(
         wicOptions: { formatImageName, savePerInstance }
     })
 
-    // 5. Return the data
     return afterScreenshot(browserInstance, afterOptions)
 }

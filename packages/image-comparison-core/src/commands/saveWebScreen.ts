@@ -21,13 +21,11 @@ export default async function saveWebScreen(
         isNativeContext = false,
     }: InternalSaveScreenMethodOptions
 ): Promise<ScreenshotOutput> {
-    // 1a. Set some variables
+    // 1. Set some variables
     const { addIOSBezelCorners, formatImageName, savePerInstance } = saveScreenOptions.wic
-
-    // 1b. Set the method options to the right values
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'enableLegacyScreenshotMethod')
 
-    // 2.  Prepare the beforeScreenshot
+    // 2.  Prepare the screenshot
     const beforeOptions = createBeforeScreenshotOptions(instanceData, saveScreenOptions.method, saveScreenOptions.wic)
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions)
     const {
@@ -67,10 +65,9 @@ export default async function saveWebScreen(
         isLandscape,
         isMobile,
     }
-
     const { base64Image } = await takeWebScreenshot(browserInstance, webScreenshotOptions, shouldUseBidi)
 
-    // 4. The after the screenshot methods
+    // 4. Return the data
     const afterOptions = buildAfterScreenshotOptions({
         base64Image,
         folders,
@@ -82,6 +79,5 @@ export default async function saveWebScreen(
         wicOptions: { formatImageName, savePerInstance }
     })
 
-    // 5. Return the data
     return afterScreenshot(browserInstance, afterOptions)
 }

@@ -22,21 +22,19 @@ export default async function saveFullPageScreen(
         isNativeContext,
     }: InternalSaveFullPageMethodOptions
 ): Promise<ScreenshotOutput> {
-    // 1a. Check if the method is supported in native context
+    // 1. Check if the method is supported in native context
     if (isNativeContext) {
         throw new Error('The method saveFullPageScreen is not supported in native context for native mobile apps!')
     }
 
-    // 1b. Set some variables
+    // 2. Set some variables
     const { formatImageName, savePerInstance } = saveFullPageOptions.wic
-
-    // 1c. Set the method options to the right values
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'enableLegacyScreenshotMethod')
     const fullPageScrollTimeout = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'fullPageScrollTimeout')
     const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
     const userBasedFullPageScreenshot = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'userBasedFullPageScreenshot')
 
-    // 2.  Prepare the beforeScreenshot
+    // 3.  Prepare the screenshot
     const beforeOptions = createBeforeScreenshotOptions(instanceData, saveFullPageOptions.method, saveFullPageOptions.wic)
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions, true)
     const {
@@ -56,7 +54,7 @@ export default async function saveFullPageScreen(
         isIOS,
     } = enrichedInstanceData
 
-    // 3.  Take fullpage screenshots with clean routing
+    // 4.  Take the screenshot
     const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
         addressBarShadowPadding: beforeOptions.addressBarShadowPadding,
         devicePixelRatio: devicePixelRatio || NaN,
@@ -76,12 +74,12 @@ export default async function saveFullPageScreen(
     const shouldUseBidi = canUseBidiScreenshot(browserInstance) && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
     const screenshotsData = await takeFullPageScreenshots(browserInstance, fullPageScreenshotOptions, shouldUseBidi)
 
-    // 4.  Get the final image - either direct BiDi or stitched from multiple screenshots
+    // 5.  Get the final image - either direct BiDi or stitched from multiple screenshots
     const fullPageBase64Image = (screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
         ? screenshotsData.data[0].screenshot // BiDi screenshot - use directly
         : await makeFullPageBase64Image(screenshotsData, { devicePixelRatio: devicePixelRatio || NaN, isLandscape })
 
-    // 5.  The after the screenshot methods
+    // 6.  Return the data
     const afterOptions = buildAfterScreenshotOptions({
         base64Image: fullPageBase64Image,
         folders,
@@ -93,7 +91,6 @@ export default async function saveFullPageScreen(
         wicOptions: { formatImageName, savePerInstance }
     })
 
-    // 6.  Return the data
     return afterScreenshot(browserInstance, afterOptions!)
 }
 
