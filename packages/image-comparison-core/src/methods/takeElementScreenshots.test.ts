@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { takeElementScreenshot } from './takeElementScreenshots.js'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
-import { getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
+import { getBase64ScreenshotSize, waitFor, hasResizeDimensions } from '../helpers/utils.js'
 import type { ElementScreenshotDataOptions } from './screenshots.interfaces.js'
 
 vi.mock('./screenshots.js', () => ({
@@ -24,7 +24,8 @@ vi.mock('../clientSideScripts/scrollToPosition.js', () => ({
 }))
 vi.mock('../helpers/utils.js', () => ({
     getBase64ScreenshotSize: vi.fn().mockReturnValue({ width: 100, height: 100 }),
-    waitFor: vi.fn().mockResolvedValue(undefined)
+    waitFor: vi.fn().mockResolvedValue(undefined),
+    hasResizeDimensions: vi.fn().mockReturnValue(false)
 }))
 
 describe('takeElementScreenshot', () => {
@@ -33,6 +34,8 @@ describe('takeElementScreenshot', () => {
     const makeCroppedBase64ImageSpy = vi.mocked(makeCroppedBase64Image)
     const getBase64ScreenshotSizeSpy = vi.mocked(getBase64ScreenshotSize)
     const waitForSpy = vi.mocked(waitFor)
+    const hasResizeDimensionsSpy = vi.mocked(hasResizeDimensions)
+
     const executeMock = vi.fn().mockResolvedValue(undefined)
     const getElementRectMock = vi.fn().mockResolvedValue({ x: 10, y: 20, width: 100, height: 200 })
 
@@ -149,7 +152,7 @@ describe('takeElementScreenshot', () => {
                 isIOS: false,
                 isLandscape: false,
                 toolBarShadowPadding: 5,
-                fallback: true // Because resizeDimensions is truthy (even if all values are 0)
+                fallback: false
             })
             expect(makeCroppedBase64ImageSpy).toHaveBeenCalledWith({
                 addIOSBezelCorners: false,
@@ -199,10 +202,12 @@ describe('takeElementScreenshot', () => {
                 ...baseOptions,
                 resizeDimensions: { top: 10, right: 10, bottom: 10, left: 10 }
             }
+            hasResizeDimensionsSpy.mockReturnValueOnce(true)
 
             const result = await takeElementScreenshot(browserInstance, optionsWithResize, false)
 
             expect(result).toMatchSnapshot()
+            expect(hasResizeDimensionsSpy).toHaveBeenCalledWith(optionsWithResize.resizeDimensions)
             expect(takeWebElementScreenshotSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     fallback: true
@@ -230,9 +235,12 @@ describe('takeElementScreenshot', () => {
                 isEmulated: false
             }
 
+            hasResizeDimensionsSpy.mockReturnValueOnce(false)
+
             const result = await takeElementScreenshot(browserInstance, optionsNoResize, false)
 
             expect(result).toMatchSnapshot()
+            expect(hasResizeDimensionsSpy).toHaveBeenCalledWith(undefined)
             expect(takeWebElementScreenshotSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     fallback: false
@@ -324,12 +332,12 @@ describe('takeElementScreenshot', () => {
     })
 
     describe('Edge cases', () => {
-        it('should handle default devicePixelRatio when not provided', async () => {
-            const optionsWithDefaultDPR = { ...baseOptions, devicePixelRatio: 1 }
+        it('should handle devicePixelRatio values and fallback to NaN when falsy', async () => {
+            // Test with valid devicePixelRatio
+            const optionsWithValidDPR = { ...baseOptions, devicePixelRatio: 1 }
+            const result1 = await takeElementScreenshot(browserInstance, optionsWithValidDPR, false)
 
-            const result = await takeElementScreenshot(browserInstance, optionsWithDefaultDPR, false)
-
-            expect(result).toMatchSnapshot()
+            expect(result1).toMatchSnapshot()
             expect(takeWebElementScreenshotSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     devicePixelRatio: 1
@@ -338,6 +346,25 @@ describe('takeElementScreenshot', () => {
             expect(makeCroppedBase64ImageSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     devicePixelRatio: 1
+                })
+            )
+
+            // Clear mocks for second test
+            vi.clearAllMocks()
+
+            // Test with falsy devicePixelRatio (should fallback to NaN)
+            const optionsWithZeroDPR = { ...baseOptions, devicePixelRatio: 0 }
+            const result2 = await takeElementScreenshot(browserInstance, optionsWithZeroDPR, false)
+
+            expect(result2).toMatchSnapshot()
+            expect(takeWebElementScreenshotSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    devicePixelRatio: 0
+                })
+            )
+            expect(makeCroppedBase64ImageSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    devicePixelRatio: NaN
                 })
             )
         })

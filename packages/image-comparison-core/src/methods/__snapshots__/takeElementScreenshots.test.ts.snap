@@ -1,6 +1,13 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`takeElementScreenshot > Edge cases > should handle default devicePixelRatio when not provided 1`] = `
+exports[`takeElementScreenshot > Edge cases > should handle devicePixelRatio values and fallback to NaN when falsy 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": false,
+}
+`;
+
+exports[`takeElementScreenshot > Edge cases > should handle devicePixelRatio values and fallback to NaN when falsy 2`] = `
 {
   "base64Image": "cropped-screenshot-data",
   "isWebDriverElementScreenshot": false,

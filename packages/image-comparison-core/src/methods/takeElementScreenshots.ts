@@ -2,7 +2,7 @@ import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshot
 import { makeCroppedBase64Image } from './images.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
-import { getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
+import { getBase64ScreenshotSize, hasResizeDimensions, waitFor } from '../helpers/utils.js'
 import type { ElementScreenshotDataOptions, ElementScreenshotData } from './screenshots.interfaces.js'
 
 export async function takeElementScreenshot(
@@ -64,10 +64,12 @@ export async function takeElementScreenshot(
             toolBarShadowPadding: options.toolBarShadowPadding,
             // When the element needs to be resized, we need to take a screenshot of the whole page
             // also when it's emulated
-            fallback: (!!options.resizeDimensions || options.isEmulated) || false,
+            fallback: (hasResizeDimensions(options.resizeDimensions) || options.isEmulated) || false,
         })
         base64Image = screenshotResult.base64Image
+
         const { rectangles } = screenshotResult
+
         isWebDriverElementScreenshot = screenshotResult.isWebDriverElementScreenshot
 
         // When the screenshot has been taken and the element position has been determined,

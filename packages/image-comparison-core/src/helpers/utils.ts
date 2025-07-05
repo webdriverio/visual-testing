@@ -494,7 +494,6 @@ export async function getMobileViewPortPosition({
     screenHeight,
     screenWidth,
 }: GetMobileViewPortPositionOptions): Promise<DeviceRectangles> {
-
     if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
         const currentUrl = await browserInstance.getUrl()
         // 1. Load a base64 HTML page
@@ -569,4 +568,11 @@ export function getBooleanOption(options: ClassOptions, key: keyof ClassOptions,
  */
 export function createConditionalProperty<T>(condition: boolean, key: string, value: T): Record<string, T> | {} {
     return condition ? { [key]: value } : {}
+}
+
+/**
+ * Check if resizeDimensions has any non-zero values (indicating it's been changed from default)
+ */
+export function hasResizeDimensions(resizeDimensions: any): boolean {
+    return resizeDimensions && Object.values(resizeDimensions).some(value => value !== 0)
 }

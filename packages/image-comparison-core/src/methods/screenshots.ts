@@ -441,7 +441,7 @@ export async function takeWebElementScreenshot({
     isIOS,
     isLandscape,
     toolBarShadowPadding,
-}:TakeWebElementScreenshot): Promise<TakeWebElementScreenshotData>{
+}: TakeWebElementScreenshot): Promise<TakeWebElementScreenshotData>{
     if (fallback) {
         const base64Image = await takeBase64Screenshot(browserInstance)
         const elementRectangleOptions: ElementRectanglesOptions = {

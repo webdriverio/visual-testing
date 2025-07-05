@@ -31,6 +31,7 @@ import {
     getMobileScreenSize,
     getMobileViewPortPosition,
     getToolBarShadowPadding,
+    hasResizeDimensions,
     isObject,
     isStorybook,
     loadBase64Html,
@@ -737,6 +738,27 @@ describe('utils', () => {
             values.forEach(value => {
                 expect(createConditionalProperty(false, 'key', value)).toEqual({})
             })
+        })
+    })
+
+    describe('hasResizeDimensions', () => {
+        it('should return true when any value is non-zero', () => {
+            expect(hasResizeDimensions({ top: 10, right: 0, bottom: 0, left: 0 })).toBe(true)
+            expect(hasResizeDimensions({ top: 0, right: 0, bottom: 0, left: -5 })).toBe(true)
+        })
+
+        it('should return false when all values are zero', () => {
+            expect(hasResizeDimensions({ top: 0, right: 0, bottom: 0, left: 0 })).toBe(false)
+        })
+
+        it('should return falsy when input is falsy', () => {
+            expect(hasResizeDimensions(null)).toBe(null)
+            expect(hasResizeDimensions(undefined)).toBe(undefined)
+            expect(hasResizeDimensions(false)).toBe(false)
+        })
+
+        it('should return false for empty object', () => {
+            expect(hasResizeDimensions({})).toBe(false)
         })
     })
 })
