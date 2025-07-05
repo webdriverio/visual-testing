@@ -181,10 +181,34 @@ export interface CommonCheckVariables {
 }
 
 export interface ExtractCommonCheckVariablesOptions {
-    /** The folder paths for storing screenshots */
+    /** The folders object */
     folders: Folders;
-    /** Instance data containing device and browser information */
+    /** The instance data object */
     instanceData: any;
-    /** WIC options containing settings and compare options */
+    /** The wic options object */
     wicOptions: any;
+}
+
+export interface FolderOptions {
+    /** Whether to auto-save baseline images */
+    autoSaveBaseline: boolean;
+    /** The actual folder path */
+    actualFolder: string;
+    /** The baseline folder path */
+    baselineFolder: string;
+    /** The diff folder path */
+    diffFolder: string;
+    /** The browser name */
+    browserName: string;
+    /** The device name */
+    deviceName: string;
+    /** Whether this is a mobile device */
+    isMobile: boolean;
+    /** Whether to save per instance */
+    savePerInstance: boolean;
+}
+
+export interface BuildFolderOptionsOptions {
+    /** Common check variables that include all the needed folder options properties */
+    commonCheckVariables: CommonCheckVariables;
 }

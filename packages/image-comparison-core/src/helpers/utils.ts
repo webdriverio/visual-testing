@@ -3,9 +3,11 @@ import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN } from './constants.js'
 import { mkdirSync } from 'node:fs'
 import type {
+    BuildFolderOptionsOptions,
     CommonCheckVariables,
     ExecuteNativeClickOptions,
     ExtractCommonCheckVariablesOptions,
+    FolderOptions,
     FormatFileDefaults,
     FormatFileNameOptions,
     GetAddressBarShadowPaddingOptions,
@@ -611,5 +613,25 @@ export function extractCommonCheckVariables(
 
         // Optional WIC options
         ...(wicOptions.isHybridApp !== undefined && { isHybridApp: wicOptions.isHybridApp }),
+    }
+}
+
+/**
+ * Builds folder options object used across all check methods to reduce duplication
+ */
+export function buildFolderOptions(
+    options: BuildFolderOptionsOptions
+): FolderOptions {
+    const { commonCheckVariables } = options
+
+    return {
+        autoSaveBaseline: commonCheckVariables.autoSaveBaseline,
+        actualFolder: commonCheckVariables.actualFolder,
+        baselineFolder: commonCheckVariables.baselineFolder,
+        diffFolder: commonCheckVariables.diffFolder,
+        browserName: commonCheckVariables.browserName,
+        deviceName: commonCheckVariables.deviceName,
+        isMobile: commonCheckVariables.isMobile,
+        savePerInstance: commonCheckVariables.savePerInstance,
     }
 }

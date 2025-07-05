@@ -3,7 +3,7 @@ import { executeImageCompare } from '../methods/images.js'
 import type { ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveScreenOptions } from './screen.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
-import { extractCommonCheckVariables } from '../helpers/utils.js'
+import { extractCommonCheckVariables, buildFolderOptions } from '../helpers/utils.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 
 /**
@@ -21,19 +21,12 @@ export default async function checkWebScreen(
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1. Extract common variables
+    const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkScreenOptions.wic })
     const {
-        browserName,
-        deviceName,
         deviceRectangles,
         isAndroid,
-        isMobile,
-        isAndroidNativeWebScreenshot,
-        autoSaveBaseline,
-        savePerInstance,
-        actualFolder,
-        baselineFolder,
-        diffFolder
-    } = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkScreenOptions.wic })
+        isAndroidNativeWebScreenshot
+    } = commonCheckVariables
     const {
         disableBlinkingCursor,
         disableCSSAnimation,
@@ -78,16 +71,7 @@ export default async function checkWebScreen(
         devicePixelRatio,
         deviceRectangles,
         fileName,
-        folderOptions: {
-            autoSaveBaseline,
-            actualFolder,
-            baselineFolder,
-            diffFolder,
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
+        folderOptions: buildFolderOptions({ commonCheckVariables }),
         isAndroid,
         isAndroidNativeWebScreenshot,
     }

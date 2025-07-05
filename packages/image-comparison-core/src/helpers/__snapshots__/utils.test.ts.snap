@@ -1,5 +1,31 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`utils > buildFolderOptions > should build folder options from common check variables 1`] = `
+{
+  "actualFolder": "/path/to/actual",
+  "autoSaveBaseline": true,
+  "baselineFolder": "/path/to/baseline",
+  "browserName": "chrome",
+  "deviceName": "iPhone 12",
+  "diffFolder": "/path/to/diff",
+  "isMobile": true,
+  "savePerInstance": false,
+}
+`;
+
+exports[`utils > buildFolderOptions > should handle all properties correctly 1`] = `
+{
+  "actualFolder": "/test/actual",
+  "autoSaveBaseline": false,
+  "baselineFolder": "/test/baseline",
+  "browserName": "firefox",
+  "deviceName": "Desktop",
+  "diffFolder": "/test/diff",
+  "isMobile": false,
+  "savePerInstance": true,
+}
+`;
+
 exports[`utils > calculateDprData > should multiply all number values by the dpr value 1`] = `
 {
   "1": 6,

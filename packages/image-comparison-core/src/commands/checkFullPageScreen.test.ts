@@ -32,7 +32,17 @@ vi.mock('../helpers/utils.js', () => ({
         autoSaveBaseline: false,
         savePerInstance: false,
         isHybridApp: false,
-    })
+    }),
+    buildFolderOptions: vi.fn().mockReturnValue({
+        autoSaveBaseline: false,
+        actualFolder: '/mock/actual',
+        baselineFolder: '/mock/baseline',
+        diffFolder: '/mock/diff',
+        browserName: 'chrome',
+        deviceName: 'Desktop',
+        isMobile: false,
+        savePerInstance: false,
+    }),
 }))
 
 vi.mock('../methods/images.js', () => ({

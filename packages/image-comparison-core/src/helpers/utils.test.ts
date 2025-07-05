@@ -12,6 +12,7 @@ vi.mock('node:fs', async () => {
 })
 import logger from '@wdio/logger'
 import {
+    buildFolderOptions,
     calculateDprData,
     canUseBidiScreenshot,
     checkAndroidChromeDriverScreenshot,
@@ -923,6 +924,51 @@ describe('utils', () => {
             expect(result.isAndroidNativeWebScreenshot).toBe(false)
             expect(result.browserName).toBe('chromium')
             expect(result.deviceName).toBe('Pixel 4')
+        })
+    })
+
+    describe('buildFolderOptions', () => {
+        it('should build folder options from common check variables', () => {
+            const commonCheckVariables = {
+                actualFolder: '/path/to/actual',
+                baselineFolder: '/path/to/baseline',
+                diffFolder: '/path/to/diff',
+                browserName: 'chrome',
+                deviceName: 'iPhone 12',
+                deviceRectangles: { screenSize: { width: 390, height: 844 } },
+                isAndroid: false,
+                isMobile: true,
+                isAndroidNativeWebScreenshot: true,
+                autoSaveBaseline: true,
+                savePerInstance: false,
+            }
+
+            const result = buildFolderOptions({ commonCheckVariables })
+
+            expect(result).toMatchSnapshot()
+        })
+
+        it('should handle all properties correctly', () => {
+            const commonCheckVariables = {
+                actualFolder: '/test/actual',
+                baselineFolder: '/test/baseline',
+                diffFolder: '/test/diff',
+                browserName: 'firefox',
+                deviceName: 'Desktop',
+                deviceRectangles: { screenSize: { width: 1920, height: 1080 } },
+                isAndroid: true,
+                isMobile: false,
+                isAndroidNativeWebScreenshot: false,
+                autoSaveBaseline: false,
+                savePerInstance: true,
+                platformName: 'Android',
+                isIOS: false,
+                isHybridApp: true,
+            }
+
+            const result = buildFolderOptions({ commonCheckVariables })
+
+            expect(result).toMatchSnapshot()
         })
     })
 })

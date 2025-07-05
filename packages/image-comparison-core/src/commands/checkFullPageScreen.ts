@@ -3,7 +3,7 @@ import saveFullPageScreen from './saveFullPageScreen.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveFullPageOptions } from './fullPage.interfaces.js'
 import { methodCompareOptions } from '../helpers/options.js'
-import { extractCommonCheckVariables } from '../helpers/utils.js'
+import { extractCommonCheckVariables, buildFolderOptions } from '../helpers/utils.js'
 import type { InternalCheckFullPageMethodOptions } from './check.interfaces.js'
 
 /**
@@ -21,22 +21,15 @@ export default async function checkFullPageScreen(
     }: InternalCheckFullPageMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1. Extract common variables
+    const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkFullPageOptions.wic })
     const {
-        browserName,
-        deviceName,
         deviceRectangles,
         isAndroid,
         isIOS,
-        isMobile,
         isAndroidNativeWebScreenshot,
         platformName,
-        autoSaveBaseline,
-        isHybridApp,
-        savePerInstance,
-        actualFolder,
-        baselineFolder,
-        diffFolder
-    } = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkFullPageOptions.wic })
+        isHybridApp
+    } = commonCheckVariables
     const {
         disableBlinkingCursor,
         disableCSSAnimation,
@@ -90,16 +83,7 @@ export default async function checkFullPageScreen(
         devicePixelRatio,
         deviceRectangles,
         fileName,
-        folderOptions: {
-            autoSaveBaseline,
-            actualFolder,
-            baselineFolder,
-            diffFolder,
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
+        folderOptions: buildFolderOptions({ commonCheckVariables }),
         isAndroid,
         isAndroidNativeWebScreenshot,
         isIOS,

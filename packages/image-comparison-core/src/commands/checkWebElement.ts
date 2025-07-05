@@ -3,7 +3,7 @@ import saveWebElement from './saveWebElement.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveElementOptions } from './element.interfaces.js'
 import { methodCompareOptions } from '../helpers/options.js'
-import { extractCommonCheckVariables } from '../helpers/utils.js'
+import { extractCommonCheckVariables, buildFolderOptions } from '../helpers/utils.js'
 import type { InternalCheckElementMethodOptions } from './check.interfaces.js'
 
 /**
@@ -22,20 +22,13 @@ export default async function checkWebElement(
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
     // 1. Extract common variables
+    const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkElementOptions.wic })
     const {
-        browserName,
-        deviceName,
         deviceRectangles,
         isAndroid,
-        isMobile,
         isAndroidNativeWebScreenshot,
-        platformName,
-        autoSaveBaseline,
-        savePerInstance,
-        actualFolder,
-        baselineFolder,
-        diffFolder
-    } = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkElementOptions.wic })
+        platformName
+    } = commonCheckVariables
     const {
         disableBlinkingCursor,
         disableCSSAnimation,
@@ -88,16 +81,7 @@ export default async function checkWebElement(
         devicePixelRatio,
         deviceRectangles,
         fileName,
-        folderOptions: {
-            autoSaveBaseline,
-            actualFolder,
-            baselineFolder,
-            diffFolder,
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
+        folderOptions: buildFolderOptions({ commonCheckVariables }),
         isAndroid,
         isAndroidNativeWebScreenshot,
         platformName,

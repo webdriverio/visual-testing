@@ -45,7 +45,17 @@ vi.mock('../helpers/utils.js', () => ({
         platformName: 'Windows',
         autoSaveBaseline: false,
         savePerInstance: false,
-    })
+    }),
+    buildFolderOptions: vi.fn().mockReturnValue({
+        autoSaveBaseline: false,
+        actualFolder: '/mock/actual',
+        baselineFolder: '/mock/baseline',
+        diffFolder: '/mock/diff',
+        browserName: 'chrome',
+        deviceName: 'Desktop',
+        isMobile: false,
+        savePerInstance: false,
+    }),
 }))
 
 describe('checkWebElement', () => {
