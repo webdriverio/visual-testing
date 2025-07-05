@@ -23,10 +23,7 @@ export default async function saveAppElement(
 ): Promise<ScreenshotOutput> {
     // 1. Set some variables
     const resizeDimensions: ResizeDimensions = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
-    const {
-        devicePixelRatio,
-        isIOS,
-    } = instanceData
+    const { devicePixelRatio, isIOS } = instanceData
 
     // 2. Take the screenshot
     const base64Image: string = await takeBase64ElementScreenshot({
@@ -37,17 +34,15 @@ export default async function saveAppElement(
         resizeDimensions,
     })
 
-    // 3. The after the screenshot methods
+    // 3. Return the data
     const afterOptions = buildAfterScreenshotOptions({
         base64Image,
         folders,
         tag,
         isNativeContext,
-        instanceData: instanceData as any, // Use instanceData as enrichedInstanceData for app commands
-        enrichedInstanceData: instanceData as any,
+        instanceData: instanceData,
         wicOptions: saveElementOptions.wic
     })
 
-    // 4. Return the data
     return afterScreenshot(browserInstance, afterOptions)
 }

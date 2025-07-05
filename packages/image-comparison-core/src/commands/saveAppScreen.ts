@@ -19,20 +19,13 @@ export default async function saveAppScreen(
     }: InternalSaveScreenMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1. Set some variables
-    const {
-        addIOSBezelCorners,
-    } = saveScreenOptions.wic
-    const {
-        deviceName,
-        devicePixelRatio,
-        deviceRectangles: { screenSize },
-        isIOS,
-    } = instanceData
+    const { addIOSBezelCorners } = saveScreenOptions.wic
+    const { deviceName, devicePixelRatio, deviceRectangles: { screenSize }, isIOS } = instanceData
 
-    // 2.  Take the screenshot
+    // 2a.  Take the screenshot
     let base64Image: string = await takeBase64Screenshot(browserInstance)
 
-    // 3.  We only need to use the `makeCroppedBase64Image` for iOS and when `addIOSBezelCorners` is true
+    // 2b.  We only need to use the `makeCroppedBase64Image` for iOS and when `addIOSBezelCorners` is true
     if (isIOS && addIOSBezelCorners) {
         base64Image = await makeCroppedBase64Image({
             addIOSBezelCorners,
@@ -52,17 +45,15 @@ export default async function saveAppScreen(
         })
     }
 
-    // 4.  The after the screenshot methods
+    // 3.  Return the data
     const afterOptions = buildAfterScreenshotOptions({
         base64Image,
         folders,
         tag,
         isNativeContext,
         instanceData,
-        enrichedInstanceData: instanceData as any,
         wicOptions: saveScreenOptions.wic
     })
 
-    // 5.  Return the data
     return afterScreenshot(browserInstance, afterOptions)
 }
