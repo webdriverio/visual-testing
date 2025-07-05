@@ -1,9 +1,9 @@
 import saveWebScreen from './saveWebScreen.js'
 import { executeImageCompare } from '../methods/images.js'
-import type { ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
+import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveScreenOptions } from './screen.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
-import { extractCommonCheckVariables, buildFolderOptions } from '../helpers/utils.js'
+import { extractCommonCheckVariables, buildBaseExecuteCompareOptions } from '../helpers/utils.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 
 /**
@@ -22,11 +22,6 @@ export default async function checkWebScreen(
 ): Promise<ImageCompareResult | number> {
     // 1. Extract common variables
     const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkScreenOptions.wic })
-    const {
-        deviceRectangles,
-        isAndroid,
-        isAndroidNativeWebScreenshot
-    } = commonCheckVariables
     const {
         disableBlinkingCursor,
         disableCSSAnimation,
@@ -63,18 +58,13 @@ export default async function checkWebScreen(
 
     // 3. Determine the compare options
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)
-    const executeCompareOptions: ImageCompareOptions = {
-        compareOptions: {
-            wic: checkScreenOptions.wic.compareOptions,
-            method: methodCompareOptions,
-        },
+    const executeCompareOptions = buildBaseExecuteCompareOptions({
+        commonCheckVariables,
+        wicCompareOptions: checkScreenOptions.wic.compareOptions,
+        methodCompareOptions,
         devicePixelRatio,
-        deviceRectangles,
         fileName,
-        folderOptions: buildFolderOptions({ commonCheckVariables }),
-        isAndroid,
-        isAndroidNativeWebScreenshot,
-    }
+    })
 
     // 4. Now execute the compare and return the data
     return executeImageCompare({

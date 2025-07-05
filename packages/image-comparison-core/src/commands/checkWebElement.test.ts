@@ -46,15 +46,37 @@ vi.mock('../helpers/utils.js', () => ({
         autoSaveBaseline: false,
         savePerInstance: false,
     }),
-    buildFolderOptions: vi.fn().mockReturnValue({
-        autoSaveBaseline: false,
-        actualFolder: '/mock/actual',
-        baselineFolder: '/mock/baseline',
-        diffFolder: '/mock/diff',
-        browserName: 'chrome',
-        deviceName: 'Desktop',
-        isMobile: false,
-        savePerInstance: false,
+    buildBaseExecuteCompareOptions: vi.fn().mockImplementation((params) => {
+        // For element screenshots, blockOut options should be set to false
+        const wicOptions = params.isElementScreenshot ? {
+            ...params.wicCompareOptions,
+            blockOutSideBar: false,
+            blockOutStatusBar: false,
+            blockOutToolBar: false,
+        } : params.wicCompareOptions
+
+        return {
+            compareOptions: {
+                wic: wicOptions,
+                method: params.methodCompareOptions,
+            },
+            devicePixelRatio: params.devicePixelRatio,
+            deviceRectangles: { screenSize: { width: 1280, height: 720 } },
+            fileName: params.fileName,
+            folderOptions: {
+                autoSaveBaseline: false,
+                actualFolder: '/mock/actual',
+                baselineFolder: '/mock/baseline',
+                diffFolder: '/mock/diff',
+                browserName: 'chrome',
+                deviceName: 'Desktop',
+                isMobile: false,
+                savePerInstance: false,
+            },
+            isAndroid: false,
+            isAndroidNativeWebScreenshot: false,
+            platformName: 'Windows',
+        }
     }),
 }))
 

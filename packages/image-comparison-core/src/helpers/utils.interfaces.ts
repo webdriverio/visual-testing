@@ -212,3 +212,48 @@ export interface BuildFolderOptionsOptions {
     /** Common check variables that include all the needed folder options properties */
     commonCheckVariables: CommonCheckVariables;
 }
+
+export interface BaseExecuteCompareOptions {
+    /** Compare options for both wic and method */
+    compareOptions: {
+        wic: any;
+        method: any;
+    };
+    /** Device pixel ratio */
+    devicePixelRatio: number;
+    /** Device rectangles */
+    deviceRectangles: any;
+    /** File name */
+    fileName: string;
+    /** Folder options */
+    folderOptions: FolderOptions;
+    /** Whether this is Android */
+    isAndroid: boolean;
+    /** Whether this is Android native web screenshot */
+    isAndroidNativeWebScreenshot: boolean;
+    /** Optional: platform name */
+    platformName?: string;
+    /** Optional: whether this is iOS */
+    isIOS?: boolean;
+    /** Optional: whether this is hybrid app */
+    isHybridApp?: boolean;
+    /** Optional: ignore regions for special cases */
+    ignoreRegions?: any[];
+}
+
+export interface BuildBaseExecuteCompareOptionsOptions {
+    /** Common check variables that include device and folder info */
+    commonCheckVariables: CommonCheckVariables;
+    /** WIC compare options */
+    wicCompareOptions: any;
+    /** Method compare options */
+    methodCompareOptions: any;
+    /** Device pixel ratio from screenshot */
+    devicePixelRatio: number;
+    /** File name from screenshot */
+    fileName: string;
+    /** Whether to override wic options for element screenshots (sets blockOut* to false) */
+    isElementScreenshot?: boolean;
+    /** Additional properties to add to the options */
+    additionalProperties?: Record<string, any>;
+}

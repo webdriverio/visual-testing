@@ -12,6 +12,7 @@ vi.mock('node:fs', async () => {
 })
 import logger from '@wdio/logger'
 import {
+    buildBaseExecuteCompareOptions,
     buildFolderOptions,
     calculateDprData,
     canUseBidiScreenshot,
@@ -968,6 +969,128 @@ describe('utils', () => {
 
             const result = buildFolderOptions({ commonCheckVariables })
 
+            expect(result).toMatchSnapshot()
+        })
+    })
+
+    describe('buildBaseExecuteCompareOptions', () => {
+        const baseCommonCheckVariables = {
+            actualFolder: '/path/to/actual',
+            baselineFolder: '/path/to/baseline',
+            diffFolder: '/path/to/diff',
+            browserName: 'chrome',
+            deviceName: 'iPhone 12',
+            deviceRectangles: { screenSize: { width: 390, height: 844 } },
+            isAndroid: false,
+            isMobile: true,
+            isAndroidNativeWebScreenshot: true,
+            autoSaveBaseline: true,
+            savePerInstance: false,
+        }
+
+        const baseWicCompareOptions = {
+            ignoreAlpha: false,
+            ignoreAntialiasing: false,
+            blockOutSideBar: true,
+            blockOutStatusBar: true,
+            blockOutToolBar: true,
+        }
+
+        const baseMethodCompareOptions = {
+            ignoreColors: false,
+            scaleImagesToSameSize: false,
+        }
+
+        it('should build base execute compare options', () => {
+            const result = buildBaseExecuteCompareOptions({
+                commonCheckVariables: baseCommonCheckVariables,
+                wicCompareOptions: baseWicCompareOptions,
+                methodCompareOptions: baseMethodCompareOptions,
+                devicePixelRatio: 2,
+                fileName: 'test-screenshot.png',
+            })
+
+            expect(result).toMatchSnapshot()
+        })
+
+        it('should handle element screenshot correctly (blockOut options set to false)', () => {
+            const result = buildBaseExecuteCompareOptions({
+                commonCheckVariables: baseCommonCheckVariables,
+                wicCompareOptions: baseWicCompareOptions,
+                methodCompareOptions: baseMethodCompareOptions,
+                devicePixelRatio: 2,
+                fileName: 'test-element.png',
+                isElementScreenshot: true,
+            })
+
+            expect(result.compareOptions.wic.blockOutSideBar).toBe(false)
+            expect(result.compareOptions.wic.blockOutStatusBar).toBe(false)
+            expect(result.compareOptions.wic.blockOutToolBar).toBe(false)
+            expect(result).toMatchSnapshot()
+        })
+
+        it('should include optional properties from commonCheckVariables', () => {
+            const commonCheckVariablesWithOptional = {
+                ...baseCommonCheckVariables,
+                platformName: 'iOS',
+                isIOS: true,
+                isHybridApp: true,
+            }
+
+            const result = buildBaseExecuteCompareOptions({
+                commonCheckVariables: commonCheckVariablesWithOptional,
+                wicCompareOptions: baseWicCompareOptions,
+                methodCompareOptions: baseMethodCompareOptions,
+                devicePixelRatio: 2,
+                fileName: 'test-screenshot.png',
+            })
+
+            expect(result.platformName).toBe('iOS')
+            expect(result.isIOS).toBe(true)
+            expect(result.isHybridApp).toBe(true)
+            expect(result).toMatchSnapshot()
+        })
+
+        it('should add additional properties correctly', () => {
+            const additionalProperties = {
+                ignoreRegions: [{ x: 0, y: 0, width: 100, height: 100 }],
+                customProperty: 'test-value',
+            }
+
+            const result = buildBaseExecuteCompareOptions({
+                commonCheckVariables: baseCommonCheckVariables,
+                wicCompareOptions: baseWicCompareOptions,
+                methodCompareOptions: baseMethodCompareOptions,
+                devicePixelRatio: 2,
+                fileName: 'test-screenshot.png',
+                additionalProperties,
+            })
+
+            expect(result.ignoreRegions).toEqual([{ x: 0, y: 0, width: 100, height: 100 }])
+            expect((result as any).customProperty).toBe('test-value')
+            expect(result).toMatchSnapshot()
+        })
+
+        it('should handle Android device correctly', () => {
+            const androidCommonCheckVariables = {
+                ...baseCommonCheckVariables,
+                isAndroid: true,
+                isMobile: true,
+                isAndroidNativeWebScreenshot: false,
+                platformName: 'Android',
+            }
+
+            const result = buildBaseExecuteCompareOptions({
+                commonCheckVariables: androidCommonCheckVariables,
+                wicCompareOptions: baseWicCompareOptions,
+                methodCompareOptions: baseMethodCompareOptions,
+                devicePixelRatio: 1.5,
+                fileName: 'test-android.png',
+            })
+
+            expect(result.isAndroid).toBe(true)
+            expect(result.isAndroidNativeWebScreenshot).toBe(false)
+            expect(result.platformName).toBe('Android')
             expect(result).toMatchSnapshot()
         })
     })

@@ -3,7 +3,7 @@ import saveFullPageScreen from './saveFullPageScreen.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveFullPageOptions } from './fullPage.interfaces.js'
 import { methodCompareOptions } from '../helpers/options.js'
-import { extractCommonCheckVariables, buildFolderOptions } from '../helpers/utils.js'
+import { extractCommonCheckVariables, buildBaseExecuteCompareOptions } from '../helpers/utils.js'
 import type { InternalCheckFullPageMethodOptions } from './check.interfaces.js'
 
 /**
@@ -22,14 +22,6 @@ export default async function checkFullPageScreen(
 ): Promise<ImageCompareResult | number> {
     // 1. Extract common variables
     const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkFullPageOptions.wic })
-    const {
-        deviceRectangles,
-        isAndroid,
-        isIOS,
-        isAndroidNativeWebScreenshot,
-        platformName,
-        isHybridApp
-    } = commonCheckVariables
     const {
         disableBlinkingCursor,
         disableCSSAnimation,
@@ -75,21 +67,13 @@ export default async function checkFullPageScreen(
 
     // 4. Determine the options
     const compareOptions = methodCompareOptions(checkFullPageOptions.method)
-    const executeCompareOptions = {
-        compareOptions: {
-            wic: checkFullPageOptions.wic.compareOptions,
-            method: compareOptions,
-        },
+    const executeCompareOptions = buildBaseExecuteCompareOptions({
+        commonCheckVariables,
+        wicCompareOptions: checkFullPageOptions.wic.compareOptions,
+        methodCompareOptions: compareOptions,
         devicePixelRatio,
-        deviceRectangles,
         fileName,
-        folderOptions: buildFolderOptions({ commonCheckVariables }),
-        isAndroid,
-        isAndroidNativeWebScreenshot,
-        isIOS,
-        isHybridApp,
-        platformName,
-    }
+    })
 
     // 5. Now execute the compare and return the data
     return executeImageCompare({

@@ -33,16 +33,30 @@ vi.mock('../helpers/utils.js', () => ({
         savePerInstance: false,
         isHybridApp: false,
     }),
-    buildFolderOptions: vi.fn().mockReturnValue({
-        autoSaveBaseline: false,
-        actualFolder: '/mock/actual',
-        baselineFolder: '/mock/baseline',
-        diffFolder: '/mock/diff',
-        browserName: 'chrome',
-        deviceName: 'Desktop',
-        isMobile: false,
-        savePerInstance: false,
-    }),
+    buildBaseExecuteCompareOptions: vi.fn().mockImplementation((params) => ({
+        compareOptions: {
+            wic: params.wicCompareOptions,
+            method: params.methodCompareOptions,
+        },
+        devicePixelRatio: params.devicePixelRatio,
+        deviceRectangles: { screenSize: { width: 1280, height: 720 } },
+        fileName: params.fileName,
+        folderOptions: {
+            autoSaveBaseline: false,
+            actualFolder: '/mock/actual',
+            baselineFolder: '/mock/baseline',
+            diffFolder: '/mock/diff',
+            browserName: 'chrome',
+            deviceName: 'Desktop',
+            isMobile: false,
+            savePerInstance: false,
+        },
+        isAndroid: false,
+        isAndroidNativeWebScreenshot: false,
+        isIOS: false,
+        isHybridApp: false,
+        platformName: 'Windows',
+    })),
 }))
 
 vi.mock('../methods/images.js', () => ({

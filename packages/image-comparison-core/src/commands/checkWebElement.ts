@@ -3,7 +3,7 @@ import saveWebElement from './saveWebElement.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveElementOptions } from './element.interfaces.js'
 import { methodCompareOptions } from '../helpers/options.js'
-import { extractCommonCheckVariables, buildFolderOptions } from '../helpers/utils.js'
+import { extractCommonCheckVariables, buildBaseExecuteCompareOptions } from '../helpers/utils.js'
 import type { InternalCheckElementMethodOptions } from './check.interfaces.js'
 
 /**
@@ -23,12 +23,6 @@ export default async function checkWebElement(
 ): Promise<ImageCompareResult | number> {
     // 1. Extract common variables
     const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkElementOptions.wic })
-    const {
-        deviceRectangles,
-        isAndroid,
-        isAndroidNativeWebScreenshot,
-        platformName
-    } = commonCheckVariables
     const {
         disableBlinkingCursor,
         disableCSSAnimation,
@@ -67,25 +61,14 @@ export default async function checkWebElement(
 
     // 3. Determine the options
     const compareOptions = methodCompareOptions(checkElementOptions.method)
-    const executeCompareOptions = {
-        compareOptions: {
-            wic: {
-                ...checkElementOptions.wic.compareOptions,
-                // No need to block out anything on the app for element screenshots
-                blockOutSideBar: false,
-                blockOutStatusBar: false,
-                blockOutToolBar: false,
-            },
-            method: compareOptions,
-        },
+    const executeCompareOptions = buildBaseExecuteCompareOptions({
+        commonCheckVariables,
+        wicCompareOptions: checkElementOptions.wic.compareOptions,
+        methodCompareOptions: compareOptions,
         devicePixelRatio,
-        deviceRectangles,
         fileName,
-        folderOptions: buildFolderOptions({ commonCheckVariables }),
-        isAndroid,
-        isAndroidNativeWebScreenshot,
-        platformName,
-    }
+        isElementScreenshot: true,
+    })
 
     // 4. Now execute the compare and return the data
     return executeImageCompare({

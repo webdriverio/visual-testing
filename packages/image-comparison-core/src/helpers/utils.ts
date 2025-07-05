@@ -3,6 +3,8 @@ import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN } from './constants.js'
 import { mkdirSync } from 'node:fs'
 import type {
+    BaseExecuteCompareOptions,
+    BuildBaseExecuteCompareOptionsOptions,
     BuildFolderOptionsOptions,
     CommonCheckVariables,
     ExecuteNativeClickOptions,
@@ -633,5 +635,53 @@ export function buildFolderOptions(
         deviceName: commonCheckVariables.deviceName,
         isMobile: commonCheckVariables.isMobile,
         savePerInstance: commonCheckVariables.savePerInstance,
+    }
+}
+
+/**
+ * Builds base execute compare options object used across all check methods to reduce duplication
+ */
+export function buildBaseExecuteCompareOptions(
+    options: BuildBaseExecuteCompareOptionsOptions
+): BaseExecuteCompareOptions {
+    const {
+        commonCheckVariables,
+        wicCompareOptions,
+        methodCompareOptions,
+        devicePixelRatio,
+        fileName,
+        isElementScreenshot = false,
+        additionalProperties = {}
+    } = options
+
+    // For element screenshots, override blockOut options to false
+    const processedWicOptions = isElementScreenshot ? {
+        ...wicCompareOptions,
+        blockOutSideBar: false,
+        blockOutStatusBar: false,
+        blockOutToolBar: false,
+    } : wicCompareOptions
+
+    const baseOptions: BaseExecuteCompareOptions = {
+        compareOptions: {
+            wic: processedWicOptions,
+            method: methodCompareOptions,
+        },
+        devicePixelRatio,
+        deviceRectangles: commonCheckVariables.deviceRectangles,
+        fileName,
+        folderOptions: buildFolderOptions({ commonCheckVariables }),
+        isAndroid: commonCheckVariables.isAndroid,
+        isAndroidNativeWebScreenshot: commonCheckVariables.isAndroidNativeWebScreenshot,
+        // Add optional properties from commonCheckVariables if they exist
+        ...(commonCheckVariables.platformName && { platformName: commonCheckVariables.platformName }),
+        ...(commonCheckVariables.isIOS !== undefined && { isIOS: commonCheckVariables.isIOS }),
+        ...(commonCheckVariables.isHybridApp !== undefined && { isHybridApp: commonCheckVariables.isHybridApp }),
+    }
+
+    // Add any additional properties
+    return {
+        ...baseOptions,
+        ...additionalProperties,
     }
 }
