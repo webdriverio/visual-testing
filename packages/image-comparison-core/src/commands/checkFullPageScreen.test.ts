@@ -16,6 +16,24 @@ vi.mock('../helpers/options.js', () => ({
         scaleImagesToSameSize: false,
     })
 }))
+vi.mock('../helpers/utils.js', () => ({
+    extractCommonCheckVariables: vi.fn().mockReturnValue({
+        actualFolder: '/mock/actual',
+        baselineFolder: '/mock/baseline',
+        diffFolder: '/mock/diff',
+        browserName: 'chrome',
+        deviceName: 'Desktop',
+        deviceRectangles: { screenSize: { width: 1280, height: 720 } },
+        isAndroid: false,
+        isMobile: false,
+        isAndroidNativeWebScreenshot: false,
+        platformName: 'Windows',
+        isIOS: false,
+        autoSaveBaseline: false,
+        savePerInstance: false,
+        isHybridApp: false,
+    })
+}))
 
 vi.mock('../methods/images.js', () => ({
     executeImageCompare: vi.fn().mockResolvedValue({

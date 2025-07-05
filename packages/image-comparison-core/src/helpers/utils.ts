@@ -3,7 +3,9 @@ import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN } from './constants.js'
 import { mkdirSync } from 'node:fs'
 import type {
+    CommonCheckVariables,
     ExecuteNativeClickOptions,
+    ExtractCommonCheckVariablesOptions,
     FormatFileDefaults,
     FormatFileNameOptions,
     GetAddressBarShadowPaddingOptions,
@@ -575,4 +577,39 @@ export function createConditionalProperty<T>(condition: boolean, key: string, va
  */
 export function hasResizeDimensions(resizeDimensions: any): boolean {
     return resizeDimensions && Object.values(resizeDimensions).some(value => value !== 0)
+}
+
+/**
+ * Extracts common variables used across all check methods to reduce duplication
+ */
+export function extractCommonCheckVariables(
+    options: ExtractCommonCheckVariablesOptions
+): CommonCheckVariables {
+    const { folders, instanceData, wicOptions } = options
+
+    return {
+    // Folders
+        actualFolder: folders.actualFolder,
+        baselineFolder: folders.baselineFolder,
+        diffFolder: folders.diffFolder,
+
+        // Instance data
+        browserName: instanceData.browserName,
+        deviceName: instanceData.deviceName,
+        deviceRectangles: instanceData.deviceRectangles,
+        isAndroid: instanceData.isAndroid,
+        isMobile: instanceData.isMobile,
+        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
+
+        // Optional instance data
+        ...(instanceData.platformName && { platformName: instanceData.platformName }),
+        ...(instanceData.isIOS !== undefined && { isIOS: instanceData.isIOS }),
+
+        // WIC options
+        autoSaveBaseline: wicOptions.autoSaveBaseline,
+        savePerInstance: wicOptions.savePerInstance,
+
+        // Optional WIC options
+        ...(wicOptions.isHybridApp !== undefined && { isHybridApp: wicOptions.isHybridApp }),
+    }
 }

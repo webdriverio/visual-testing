@@ -20,6 +20,7 @@ import {
     checkTestInMobileBrowser,
     createConditionalProperty,
     executeNativeClick,
+    extractCommonCheckVariables,
     formatFileName,
     getAddressBarShadowPadding,
     getAndCreatePath,
@@ -38,7 +39,7 @@ import {
     logAllDeprecatedCompareOptions,
     updateVisualBaseline,
 } from './utils.js'
-import type { FormatFileNameOptions, GetAndCreatePathOptions } from './utils.interfaces.js'
+import type { FormatFileNameOptions, GetAndCreatePathOptions, ExtractCommonCheckVariablesOptions } from './utils.interfaces.js'
 import { IMAGE_STRING } from '../mocks/image.js'
 import { DEVICE_RECTANGLES } from './constants.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
@@ -759,6 +760,169 @@ describe('utils', () => {
 
         it('should return false for empty object', () => {
             expect(hasResizeDimensions({})).toBe(false)
+        })
+    })
+
+    describe('extractCommonCheckVariables', () => {
+        const baseFolders = {
+            actualFolder: '/path/to/actual',
+            baselineFolder: '/path/to/baseline',
+            diffFolder: '/path/to/diff',
+        }
+
+        const baseInstanceData = {
+            browserName: 'chrome',
+            deviceName: 'iPhone 12',
+            deviceRectangles: { screenSize: { width: 390, height: 844 } },
+            isAndroid: false,
+            isMobile: true,
+            nativeWebScreenshot: true,
+        }
+
+        const baseWicOptions = {
+            autoSaveBaseline: true,
+            savePerInstance: false,
+        }
+
+        it('should extract all required common variables', () => {
+            const options: ExtractCommonCheckVariablesOptions = {
+                folders: baseFolders,
+                instanceData: baseInstanceData,
+                wicOptions: baseWicOptions,
+            }
+
+            const result = extractCommonCheckVariables(options)
+
+            expect(result).toEqual({
+                actualFolder: '/path/to/actual',
+                baselineFolder: '/path/to/baseline',
+                diffFolder: '/path/to/diff',
+                browserName: 'chrome',
+                deviceName: 'iPhone 12',
+                deviceRectangles: { screenSize: { width: 390, height: 844 } },
+                isAndroid: false,
+                isMobile: true,
+                isAndroidNativeWebScreenshot: true,
+                autoSaveBaseline: true,
+                savePerInstance: false,
+            })
+        })
+
+        it('should include optional fields when they exist', () => {
+            const options: ExtractCommonCheckVariablesOptions = {
+                folders: baseFolders,
+                instanceData: {
+                    ...baseInstanceData,
+                    platformName: 'iOS',
+                    isIOS: true,
+                },
+                wicOptions: {
+                    ...baseWicOptions,
+                    isHybridApp: true,
+                },
+            }
+
+            const result = extractCommonCheckVariables(options)
+
+            expect(result).toEqual({
+                actualFolder: '/path/to/actual',
+                baselineFolder: '/path/to/baseline',
+                diffFolder: '/path/to/diff',
+                browserName: 'chrome',
+                deviceName: 'iPhone 12',
+                deviceRectangles: { screenSize: { width: 390, height: 844 } },
+                isAndroid: false,
+                isMobile: true,
+                isAndroidNativeWebScreenshot: true,
+                platformName: 'iOS',
+                isIOS: true,
+                autoSaveBaseline: true,
+                savePerInstance: false,
+                isHybridApp: true,
+            })
+        })
+
+        it('should exclude optional fields when they are falsy or undefined', () => {
+            const options: ExtractCommonCheckVariablesOptions = {
+                folders: baseFolders,
+                instanceData: {
+                    ...baseInstanceData,
+                    platformName: null,
+                    isIOS: undefined,
+                },
+                wicOptions: {
+                    ...baseWicOptions,
+                    isHybridApp: undefined,
+                },
+            }
+
+            const result = extractCommonCheckVariables(options)
+
+            expect(result).toEqual({
+                actualFolder: '/path/to/actual',
+                baselineFolder: '/path/to/baseline',
+                diffFolder: '/path/to/diff',
+                browserName: 'chrome',
+                deviceName: 'iPhone 12',
+                deviceRectangles: { screenSize: { width: 390, height: 844 } },
+                isAndroid: false,
+                isMobile: true,
+                isAndroidNativeWebScreenshot: true,
+                autoSaveBaseline: true,
+                savePerInstance: false,
+            })
+        })
+
+        it('should handle partial optional fields correctly', () => {
+            const options: ExtractCommonCheckVariablesOptions = {
+                folders: baseFolders,
+                instanceData: {
+                    ...baseInstanceData,
+                    platformName: 'Android',
+                    isIOS: false,
+                },
+                wicOptions: baseWicOptions,
+            }
+
+            const result = extractCommonCheckVariables(options)
+
+            expect(result).toEqual({
+                actualFolder: '/path/to/actual',
+                baselineFolder: '/path/to/baseline',
+                diffFolder: '/path/to/diff',
+                browserName: 'chrome',
+                deviceName: 'iPhone 12',
+                deviceRectangles: { screenSize: { width: 390, height: 844 } },
+                isAndroid: false,
+                isMobile: true,
+                isAndroidNativeWebScreenshot: true,
+                platformName: 'Android',
+                isIOS: false,
+                autoSaveBaseline: true,
+                savePerInstance: false,
+            })
+        })
+
+        it('should handle Android device correctly', () => {
+            const options: ExtractCommonCheckVariablesOptions = {
+                folders: baseFolders,
+                instanceData: {
+                    browserName: 'chromium',
+                    deviceName: 'Pixel 4',
+                    deviceRectangles: { screenSize: { width: 412, height: 869 } },
+                    isAndroid: true,
+                    isMobile: true,
+                    nativeWebScreenshot: false,
+                },
+                wicOptions: baseWicOptions,
+            }
+
+            const result = extractCommonCheckVariables(options)
+
+            expect(result.isAndroid).toBe(true)
+            expect(result.isAndroidNativeWebScreenshot).toBe(false)
+            expect(result.browserName).toBe('chromium')
+            expect(result.deviceName).toBe('Pixel 4')
         })
     })
 })

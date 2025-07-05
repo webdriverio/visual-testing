@@ -3,6 +3,7 @@ import { executeImageCompare } from '../methods/images.js'
 import type { ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveScreenOptions } from './screen.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
+import { extractCommonCheckVariables } from '../helpers/utils.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 
 /**
@@ -19,9 +20,20 @@ export default async function checkWebScreen(
         testContext,
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
-    // Set some variables
-    const { browserName, deviceName, deviceRectangles, isAndroid, isMobile, nativeWebScreenshot: isAndroidNativeWebScreenshot } = instanceData
-    const { autoSaveBaseline, savePerInstance } = checkScreenOptions.wic
+    // 1. Extract common variables
+    const {
+        browserName,
+        deviceName,
+        deviceRectangles,
+        isAndroid,
+        isMobile,
+        isAndroidNativeWebScreenshot,
+        autoSaveBaseline,
+        savePerInstance,
+        actualFolder,
+        baselineFolder,
+        diffFolder
+    } = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkScreenOptions.wic })
     const {
         disableBlinkingCursor,
         disableCSSAnimation,
@@ -32,8 +44,8 @@ export default async function checkWebScreen(
         removeElements = [],
         waitForFontsLoaded,
     } = checkScreenOptions.method
-    const { actualFolder, baselineFolder, diffFolder } = folders
-    // 1.  Take the actual screenshot and retrieve the needed data
+
+    // 2. Take the actual screenshot and retrieve the needed data
     const saveScreenOptions: SaveScreenOptions = {
         wic: checkScreenOptions.wic,
         method: {
@@ -56,7 +68,7 @@ export default async function checkWebScreen(
         isNativeContext,
     })
 
-    // 2a. Determine the compare options
+    // 3. Determine the compare options
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)
     const executeCompareOptions: ImageCompareOptions = {
         compareOptions: {
@@ -80,7 +92,7 @@ export default async function checkWebScreen(
         isAndroidNativeWebScreenshot,
     }
 
-    // 2b Now execute the compare and return the data
+    // 4. Now execute the compare and return the data
     return executeImageCompare({
         isViewPortScreenshot: true,
         isNativeContext,

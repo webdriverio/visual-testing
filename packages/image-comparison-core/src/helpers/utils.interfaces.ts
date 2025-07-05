@@ -1,5 +1,6 @@
 import type { BaseCoordinates, BaseDimensions } from '../base.interfaces.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
+import type { Folders } from '../base.interfaces.js'
 
 export interface GetAndCreatePathOptions {
     /** The name of the browser */
@@ -151,4 +152,39 @@ export interface ExecuteNativeClickOptions extends BaseCoordinates {
     browserInstance: WebdriverIO.Browser;
     /** Is the device iOS */
     isIOS: boolean;
+}
+
+export interface CommonCheckVariables {
+    /** Folder paths */
+    actualFolder: string;
+    baselineFolder: string;
+    diffFolder: string;
+
+    /** Instance data properties */
+    browserName: string;
+    deviceName: string;
+    deviceRectangles: any;
+    isAndroid: boolean;
+    isMobile: boolean;
+    isAndroidNativeWebScreenshot: boolean;
+
+    /** Optional instance data (not all methods need these) */
+    platformName?: string;
+    isIOS?: boolean;
+
+    /** WIC options */
+    autoSaveBaseline: boolean;
+    savePerInstance: boolean;
+
+    /** Optional WIC options (not all methods need these) */
+    isHybridApp?: boolean;
+}
+
+export interface ExtractCommonCheckVariablesOptions {
+    /** The folder paths for storing screenshots */
+    folders: Folders;
+    /** Instance data containing device and browser information */
+    instanceData: any;
+    /** WIC options containing settings and compare options */
+    wicOptions: any;
 }
