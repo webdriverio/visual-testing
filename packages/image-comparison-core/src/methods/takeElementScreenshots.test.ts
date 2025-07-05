@@ -1,9 +1,13 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
+import { beforeEach, describe, it, expect, vi, afterEach } from 'vitest'
+import { join } from 'node:path'
+import logger from '@wdio/logger'
 import { takeElementScreenshot } from './takeElementScreenshots.js'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
 import { getBase64ScreenshotSize, waitFor, hasResizeDimensions } from '../helpers/utils.js'
 import type { ElementScreenshotDataOptions } from './screenshots.interfaces.js'
+
+const log = logger('test')
 
 vi.mock('./screenshots.js', () => ({
     takeBase64BiDiScreenshot: vi.fn().mockResolvedValue('bidi-screenshot-data'),
@@ -27,6 +31,7 @@ vi.mock('../helpers/utils.js', () => ({
     waitFor: vi.fn().mockResolvedValue(undefined),
     hasResizeDimensions: vi.fn().mockReturnValue(false)
 }))
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
 describe('takeElementScreenshot', () => {
     const takeBase64BiDiScreenshotSpy = vi.mocked(takeBase64BiDiScreenshot)
@@ -130,6 +135,17 @@ describe('takeElementScreenshot', () => {
     })
 
     describe('Legacy screenshots', () => {
+        let logErrorSpy: ReturnType<typeof vi.spyOn>
+
+        beforeEach(() => {
+            logErrorSpy = vi.spyOn(log, 'error').mockImplementation(() => {})
+        })
+
+        afterEach(() => {
+            vi.clearAllMocks()
+            logErrorSpy.mockRestore()
+        })
+
         it('should take legacy screenshot when shouldUseBidi is false', async () => {
             const result = await takeElementScreenshot(browserInstance, baseOptions, false)
 
@@ -254,22 +270,17 @@ describe('takeElementScreenshot', () => {
                 rectangles: { x: 0, y: 0, width: 0, height: 0 },
                 isWebDriverElementScreenshot: false
             })
-            const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
             const result = await takeElementScreenshot(browserInstance, baseOptions, false)
 
             expect(result).toMatchSnapshot()
             expect(getBase64ScreenshotSizeSpy).toHaveBeenCalledWith('web-element-screenshot-data')
-            expect(consoleSpy).toHaveBeenCalledWith(
-                expect.stringContaining('The element has no width or height')
-            )
+            expect(logErrorSpy.mock.calls).toMatchSnapshot()
             expect(makeCroppedBase64ImageSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     rectangles: { x: 0, y: 0, width: 100, height: 100 }
                 })
             )
-
-            consoleSpy.mockRestore()
         })
 
         it('should handle zero width only', async () => {
@@ -278,17 +289,12 @@ describe('takeElementScreenshot', () => {
                 rectangles: { x: 50, y: 100, width: 0, height: 150 },
                 isWebDriverElementScreenshot: true
             })
-            const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
             const result = await takeElementScreenshot(browserInstance, baseOptions, false)
 
             expect(result).toMatchSnapshot()
             expect(getBase64ScreenshotSizeSpy).toHaveBeenCalledWith('web-element-screenshot-data')
-            expect(consoleSpy).toHaveBeenCalledWith(
-                expect.stringContaining('The element has no width or height')
-            )
-
-            consoleSpy.mockRestore()
+            expect(logErrorSpy.mock.calls).toMatchSnapshot()
         })
 
         it('should handle zero height only', async () => {
@@ -297,17 +303,12 @@ describe('takeElementScreenshot', () => {
                 rectangles: { x: 50, y: 100, width: 150, height: 0 },
                 isWebDriverElementScreenshot: true
             })
-            const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
             const result = await takeElementScreenshot(browserInstance, baseOptions, false)
 
             expect(result).toMatchSnapshot()
             expect(getBase64ScreenshotSizeSpy).toHaveBeenCalledWith('web-element-screenshot-data')
-            expect(consoleSpy).toHaveBeenCalledWith(
-                expect.stringContaining('The element has no width or height')
-            )
-
-            consoleSpy.mockRestore()
+            expect(logErrorSpy.mock.calls).toMatchSnapshot()
         })
 
         it('should pass correct WebDriver element screenshot flag', async () => {

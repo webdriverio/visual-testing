@@ -66,6 +66,14 @@ exports[`takeElementScreenshot > Legacy screenshots > should handle zero dimensi
 }
 `;
 
+exports[`takeElementScreenshot > Legacy screenshots > should handle zero dimensions by falling back to viewport size 2`] = `
+[
+  [
+    "The element has no width or height. We defaulted to the viewport screen size of width: 100 and height: 100.",
+  ],
+]
+`;
+
 exports[`takeElementScreenshot > Legacy screenshots > should handle zero height only 1`] = `
 {
   "base64Image": "cropped-screenshot-data",
@@ -73,11 +81,27 @@ exports[`takeElementScreenshot > Legacy screenshots > should handle zero height 
 }
 `;
 
+exports[`takeElementScreenshot > Legacy screenshots > should handle zero height only 2`] = `
+[
+  [
+    "The element has no width or height. We defaulted to the viewport screen size of width: 100 and height: 100.",
+  ],
+]
+`;
+
 exports[`takeElementScreenshot > Legacy screenshots > should handle zero width only 1`] = `
 {
   "base64Image": "cropped-screenshot-data",
   "isWebDriverElementScreenshot": true,
 }
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should handle zero width only 2`] = `
+[
+  [
+    "The element has no width or height. We defaulted to the viewport screen size of width: 100 and height: 100.",
+  ],
+]
 `;
 
 exports[`takeElementScreenshot > Legacy screenshots > should not scroll back when autoElementScroll is enabled but no current position 1`] = `

@@ -1,9 +1,12 @@
+import logger from '@wdio/logger'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import { getBase64ScreenshotSize, hasResizeDimensions, waitFor } from '../helpers/utils.js'
 import type { ElementScreenshotDataOptions, ElementScreenshotData } from './screenshots.interfaces.js'
+
+const log = logger('@wdio/visual-service:@wdio/image-comparison-core:takeElementScreenshot')
 
 export async function takeElementScreenshot(
     browserInstance: WebdriverIO.Browser,
@@ -86,7 +89,8 @@ export async function takeElementScreenshot(
             rectangles.height = height
             rectangles.x = 0
             rectangles.y = 0
-            console.error(`\x1b[31m\nThe element has no width or height. We defaulted to the viewport screen size of width: ${width} and height: ${height}.\x1b[0m\n`)
+
+            log.error(`The element has no width or height. We defaulted to the viewport screen size of width: ${width} and height: ${height}.`)
         }
 
         // Make a cropped base64 image with resizeDimensions
