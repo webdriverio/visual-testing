@@ -9,7 +9,7 @@ import type { AfterScreenshotOptions, ScreenshotOutput } from './afterScreenshot
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
 
-const log = logger('@wdio/visual-service:@wdio/image-comparison-core')
+const log = logger('@wdio/visual-service:@wdio/image-comparison-core:afterScreenshot')
 
 /**
  * Methods that need to be executed after a screenshot has been taken
