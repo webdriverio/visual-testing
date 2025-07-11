@@ -4,7 +4,7 @@ import type { OcrClickOnTextOptions } from '../types.js'
 import { drawTarget } from '../utils/imageProcessing.js'
 
 export default async function ocrClickOnText(this: WebdriverIO.Browser, options: OcrClickOnTextOptions): Promise<void> {
-    const element = await ocrGetElementPositionByText.bind(this)(options)
+    const element = await ocrGetElementPositionByText.call(this, options)
     let { x, y } = determineClickPoint({ rectangles: element.dprPosition })
     const { relativePosition } = options
 

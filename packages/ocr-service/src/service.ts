@@ -1,5 +1,4 @@
 import logger from '@wdio/logger'
-import type { Capabilities } from '@wdio/types'
 import { isSystemTesseractAvailable } from './utils/tesseract.js'
 import { CONTRAST, DEFAULT_IMAGES_FOLDER, SUPPORTED_LANGUAGES } from './utils/constants.js'
 import { createOcrDir } from './utils/index.js'
@@ -10,25 +9,29 @@ import ocrWaitForTextDisplayed from './commands/ocrWaitForTextDisplayed.js'
 import ocrClickOnText from './commands/ocrClickOnText.js'
 import ocrSetValue from './commands/ocrSetValue.js'
 
-const log = logger('@wdio/ocr-service')
-const ocrCommands = {
-    ocrGetText,
-    ocrGetElementPositionByText,
-    ocrWaitForTextDisplayed,
-    ocrClickOnText,
-    ocrSetValue,
+const ocrCommands: {
+    [key: string]: (options: any) => Promise<any>
+} = {
+    'ocrGetText': ocrGetText,
+    'ocrGetElementPositionByText': ocrGetElementPositionByText,
+    'ocrWaitForTextDisplayed': ocrWaitForTextDisplayed,
+    'ocrClickOnText': ocrClickOnText,
+    'ocrSetValue': ocrSetValue,
 }
 
+const log = logger('@wdio/ocr-service')
+
 export default class WdioOcrService {
-    private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     private _ocrDir: string
     private _ocrLanguage: string
     private _ocrContrast: number
+    private _isTesseractAvailable: boolean
 
     constructor(options: OcrOptions) {
         this._ocrDir = createOcrDir(options?.imagesFolder || DEFAULT_IMAGES_FOLDER)
-        this._ocrLanguage = options?.language || SUPPORTED_LANGUAGES.ENGLISH
         this._ocrContrast = options?.contrast || CONTRAST
+        this._ocrLanguage = options?.language || SUPPORTED_LANGUAGES.ENGLISH
+        this._isTesseractAvailable = isSystemTesseractAvailable()
     }
 
     /**
@@ -43,76 +46,51 @@ export default class WdioOcrService {
         _specs: string[],
         browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     ) {
-        this._browser = browser
-
-        if (!this._browser.isMultiremote) {
-            log.info('Adding commands to global browser')
-            await this.#addCommandsToBrowser(this._browser)
-        } else {
-            await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiremoteCapabilities)
-        }
-    }
-
-    async #extendMultiremoteBrowser (capabilities: Capabilities.RequestedMultiremoteCapabilities) {
-        const browser = this._browser as WebdriverIO.MultiRemoteBrowser
-        const browserNames = Object.keys(capabilities)
         const self = this
-        log.info(`Adding commands to Multi Browser: ${browserNames.join(', ')}`)
-
-        for (const browserName of browserNames) {
-            const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-            const browserInstance = multiremoteBrowser.getInstance(browserName)
-            await this.#addCommandsToBrowser(browserInstance)
-        }
-
+        const browserNames = Object.keys(capabilities)
         /**
-         * Add all OCR commands to the global browser object that will execute
-         * on each browser in the Multi Remote.
+         * Add all OCR commands to the browser object and instances
          */
-        for (const command of Object.keys(ocrCommands)) {
-            browser.addCommand(command, async function (...args: unknown[]) {
-                const returnData: Record<string, any> = {}
-
+        for (const commandName of Object.keys(ocrCommands)) {
+            log.info(`Adding browser command "${commandName}" to browser object`)
+            browser.addCommand(commandName, async function (
+                this: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
+                ...args: unknown[]
+            ) {
                 if (typeof args[0] === 'object' && args[0] !== null) {
                     const options = args[0] as Record<string, any>
+                    options.ocrImagesPath = options?.imagesFolder || self._ocrDir
                     options.contrast = options?.contrast || self._ocrContrast
+                    options.language = options?.language || self._ocrLanguage
+                    options.isTesseractAvailable = self._isTesseractAvailable
                     args[0] = options
                 }
 
-                for (const browserName of browserNames) {
-                    const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-                    const browserInstance = multiremoteBrowser.getInstance(browserName) as WebdriverIO.Browser & Record<string, any>
+                const instancesToLoop: { 'browserName': string; 'browserInstance': WebdriverIO.Browser & Record<string, any> }[] = this.isMultiremote
+                    ? Object.values(browserNames).map(browserName => ({
+                        'browserName': browserName,
+                        'browserInstance': this.getInstance(browserName),
+                    }))
+                    : [
+                        {
+                            'browserName': this.capabilities.browserName || 'browser',
+                            'browserInstance': this as WebdriverIO.Browser & Record<string, any>,
+                        },
+                    ]
 
-                    if (typeof browserInstance[command] === 'function') {
-                        returnData[browserName] = await browserInstance[command].apply(browserInstance, args)
+                const returnData: Record<string, any> = {}
+                for (const { browserName, browserInstance } of instancesToLoop) {
+                    if (typeof browserInstance[commandName] === 'function') {
+                        returnData[browserName] = await ocrCommands[commandName].call(browserInstance, args[0])
                     } else {
-                        throw new Error(`Command ${command} is not a function on the browser instance ${browserName}`)
+                        throw new Error(`Command ${commandName} is not a function on the browser instance ${browserName}`)
                     }
                 }
-
-                return returnData
-            })
-        }
-    }
-
-    async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
-        const isTesseractAvailable = isSystemTesseractAvailable()
-        const self = this
-
-        for (const [commandName, command] of Object.entries(ocrCommands)) {
-            log.info(`Adding browser command "${commandName}" to browser object`)
-            currentBrowser.addCommand(
-                commandName,
-                function (this: typeof currentBrowser, options) {
-                    return command.bind(this)({
-                        ...options,
-                        contrast: options?.contrast || self._ocrContrast,
-                        isTesseractAvailable,
-                        language: options?.language || self._ocrLanguage,
-                        ocrImagesPath: self._ocrDir,
-                    })
+                if (this.isMultiremote) {
+                    return returnData
                 }
-            )
+                return Object.values(returnData)[0]
+            })
         }
     }
 }
