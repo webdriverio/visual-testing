@@ -2,6 +2,7 @@ import type { Capabilities } from '@wdio/types'
 import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
 import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from 'webdriver-image-comparison'
 import type { Folders, InstanceData, TestContext } from 'webdriver-image-comparison'
+import type { TransformElement, TransformReturn } from 'webdriverio'
 import type {
     EnrichTestContextOptions,
     getFolderMethodOptions,
@@ -70,8 +71,8 @@ async function getMobileInstanceData({
 
     if (isMobile) {
         const executor = <ReturnValue, InnerArguments extends unknown[]>(
-            fn: string | ((...args: InnerArguments) => ReturnValue),
-            ...args: InnerArguments) => currentBrowser.execute(fn, ...args) as Promise<ReturnValue>
+            fn: string | ((...innerArgs: TransformElement<InnerArguments>) => ReturnValue),
+            ...args: InnerArguments) => currentBrowser.execute(fn, ...args) as Promise<TransformReturn<ReturnValue>>
         const getUrl = () => currentBrowser.getUrl()
         const url = (arg:string) => currentBrowser.url(arg)
         const currentDriverCapabilities = currentBrowser.capabilities

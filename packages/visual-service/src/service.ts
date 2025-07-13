@@ -2,6 +2,7 @@ import logger from '@wdio/logger'
 import { expect } from '@wdio/globals'
 import { dirname, normalize, resolve } from 'node:path'
 import type { Capabilities, Frameworks } from '@wdio/types'
+import type { TransformElement } from 'webdriverio'
 import {
     BaseClass,
     checkElement,
@@ -142,7 +143,14 @@ export default class WdioImageComparisonService extends BaseClass {
         const browserNames = Object.keys(capabilities)
 
         /**
-         * Add all the commands to each browser in the Multi Remote
+         * Add all commands to the global browser object that will execute on each browser in the Multi Remote.
+         */
+        for (const [commandName, command] of Object.entries(pageCommands)) {
+            this.#addMultiremoteCommand(browser, browserNames, commandName, command)
+        }
+
+        /**
+         * Add all commands to each instance (but Single Remote version)
          */
         for (const browserName of browserNames) {
             log.info(`Adding commands to Multi Browser: ${browserName}`)
@@ -153,15 +161,6 @@ export default class WdioImageComparisonService extends BaseClass {
             this._contextManagers?.set(browserName, contextManager)
 
             await this.#addCommandsToBrowser(browserInstance)
-        }
-
-        /**
-         * Add all the commands to the global browser object that will execute
-         * on each browser in the Multi Remote
-         * Start with the page commands
-         */
-        for (const [commandName, command] of Object.entries(pageCommands)) {
-            this.#addMultiremoteCommand(browser, browserNames, commandName, command)
         }
 
         /**
@@ -234,7 +233,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             methods: {
                                 bidiScreenshot: isBiDiScreenshotSupported(browser) ? this.browsingContextCaptureScreenshot.bind(browser) : undefined,
                                 executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                    fn: string | ((...args: InnerArguments) => ReturnValue),
+                                    fn: string | ((...innerArgs: TransformElement<InnerArguments>) => ReturnValue),
                                     ...args: InnerArguments
                                 ): Promise<ReturnValue> => {
                                     return this.execute(fn, ...args) as Promise<ReturnValue>
@@ -311,7 +310,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             methods: {
                                 bidiScreenshot: isBiDiScreenshotSupported(browser) ? this.browsingContextCaptureScreenshot.bind(browser) : undefined,
                                 executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                    fn: string | ((...args: InnerArguments) => ReturnValue),
+                                    fn: string | ((...innerArgs: TransformElement<InnerArguments>) => ReturnValue),
                                     ...args: InnerArguments
                                 ): Promise<ReturnValue> => {
                                     return this.execute(fn, ...args) as Promise<ReturnValue>
@@ -387,7 +386,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 methods: {
                                     bidiScreenshot: isBiDiScreenshotSupported(browserInstance) ? browserInstance.browsingContextCaptureScreenshot.bind(browserInstance) : undefined,
                                     executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                        fn: string | ((...args: InnerArguments) => ReturnValue),
+                                        fn: string | ((...innerArgs: TransformElement<InnerArguments>) => ReturnValue),
                                         ...args: InnerArguments
                                     ): Promise<ReturnValue> => {
                                         return browserInstance.execute(fn, ...args) as Promise<ReturnValue>
@@ -480,7 +479,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 methods: {
                                     bidiScreenshot: isBiDiScreenshotSupported(browserInstance) ? browserInstance.browsingContextCaptureScreenshot.bind(browserInstance) : undefined,
                                     executor: <ReturnValue, InnerArguments extends unknown[]>(
-                                        fn: string | ((...args: InnerArguments) => ReturnValue),
+                                        fn: string | ((...innerArgs: TransformElement<InnerArguments>) => ReturnValue),
                                         ...args: InnerArguments
                                     ): Promise<ReturnValue> => {
                                         return browserInstance.execute(fn, ...args) as Promise<ReturnValue>

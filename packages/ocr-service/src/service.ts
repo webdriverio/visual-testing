@@ -24,11 +24,14 @@ export default class WdioOcrService {
     private _ocrDir: string
     private _ocrLanguage: string
     private _ocrContrast: number
+    private _isTesseractAvailable: boolean
 
     constructor(options: OcrOptions) {
         this._ocrDir = createOcrDir(options?.imagesFolder || DEFAULT_IMAGES_FOLDER)
         this._ocrLanguage = options?.language || SUPPORTED_LANGUAGES.ENGLISH
         this._ocrContrast = options?.contrast || CONTRAST
+        this._ocrLanguage = options?.language || SUPPORTED_LANGUAGES.ENGLISH
+        this._isTesseractAvailable = isSystemTesseractAvailable()
     }
 
     /**
@@ -58,24 +61,19 @@ export default class WdioOcrService {
         const browserNames = Object.keys(capabilities)
         const self = this
         log.info(`Adding commands to Multi Browser: ${browserNames.join(', ')}`)
-
-        for (const browserName of browserNames) {
-            const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-            const browserInstance = multiremoteBrowser.getInstance(browserName)
-            await this.#addCommandsToBrowser(browserInstance)
-        }
-
         /**
-         * Add all OCR commands to the global browser object that will execute
-         * on each browser in the Multi Remote.
+         * Add all commands to the global browser object that will execute on each browser in the Multi Remote.
          */
-        for (const command of Object.keys(ocrCommands)) {
-            browser.addCommand(command, async function (...args: unknown[]) {
+        for (const commandName of Object.keys(ocrCommands)) {
+            browser.addCommand(commandName, async function (...args: unknown[]) {
                 const returnData: Record<string, any> = {}
 
                 if (typeof args[0] === 'object' && args[0] !== null) {
                     const options = args[0] as Record<string, any>
+                    options.ocrImagesPath = options?.imagesFolder || self._ocrDir
                     options.contrast = options?.contrast || self._ocrContrast
+                    options.language = options?.language || self._ocrLanguage
+                    options.isTesseractAvailable = self._isTesseractAvailable
                     args[0] = options
                 }
 
@@ -83,20 +81,27 @@ export default class WdioOcrService {
                     const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
                     const browserInstance = multiremoteBrowser.getInstance(browserName) as WebdriverIO.Browser & Record<string, any>
 
-                    if (typeof browserInstance[command] === 'function') {
-                        returnData[browserName] = await browserInstance[command].apply(browserInstance, args)
+                    if (typeof browserInstance[commandName] === 'function') {
+                        returnData[browserName] = await browserInstance[commandName].apply(browserInstance, args)
                     } else {
-                        throw new Error(`Command ${command} is not a function on the browser instance ${browserName}`)
+                        throw new Error(`Command ${commandName} is not a function on the browser instance ${browserName}`)
                     }
                 }
 
                 return returnData
             })
         }
+        /**
+         * Add all commands to each instance (but Single Remote version)
+         */
+        for (const browserName of browserNames) {
+            const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
+            const browserInstance = multiremoteBrowser.getInstance(browserName)
+            await this.#addCommandsToBrowser(browserInstance)
+        }
     }
 
     async #addCommandsToBrowser(currentBrowser: WebdriverIO.Browser) {
-        const isTesseractAvailable = isSystemTesseractAvailable()
         const self = this
 
         for (const [commandName, command] of Object.entries(ocrCommands)) {
@@ -106,10 +111,10 @@ export default class WdioOcrService {
                 function (this: typeof currentBrowser, options) {
                     return command.bind(this)({
                         ...options,
-                        contrast: options?.contrast || self._ocrContrast,
-                        isTesseractAvailable,
-                        language: options?.language || self._ocrLanguage,
                         ocrImagesPath: self._ocrDir,
+                        contrast: options?.contrast || self._ocrContrast,
+                        language: options?.language || self._ocrLanguage,
+                        isTesseractAvailable: self._isTesseractAvailable
                     })
                 }
             )

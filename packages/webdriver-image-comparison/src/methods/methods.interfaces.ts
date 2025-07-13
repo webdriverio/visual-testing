@@ -1,15 +1,15 @@
 import type { RectanglesOutput } from './rectangles.interfaces.js'
-
+import type { TransformReturn, TransformElement } from 'webdriverio'
 // There a multiple ways to call the executor method, for mobile and web
-type ExecuteScript = <ReturnValue, Args extends unknown[]>(
-    fn: (...args: Args) => ReturnValue,
-    ...args: Args
-  ) => Promise<ReturnValue>;
+type ExecuteScript = <ReturnValue, InnerArguments extends unknown[]>(
+    fn: (...innerArgs: TransformElement<InnerArguments>) => ReturnValue,
+    ...args: InnerArguments
+  ) => Promise<TransformReturn<ReturnValue>>;
 
 type ExecuteMobile = <ReturnValue>(
     fn: string,
     args?: Record<string, any>
-) => Promise<ReturnValue>;
+) => Promise<TransformReturn<ReturnValue>>;
 interface BrowsingContextCaptureScreenshotParameters {
     context: string;
     origin?: 'viewport' | 'document';
