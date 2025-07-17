@@ -1,5 +1,5 @@
 import type { RectanglesOutput } from './rectangles.interfaces.js'
-import type { BaseBoundingBox, BaseCoordinates, BaseDeviceInfo, BaseDimensions, BaseImageCompareOptions, BaseMobileBlockOutOptions, Folders } from '../base.interfaces.js'
+import type { BaseCoordinates, BaseDeviceInfo, BaseDimensions, BaseImageCompareOptions, BaseMobileBlockOutOptions, Folders } from '../base.interfaces.js'
 import type { TestContext } from './compareReport.interfaces.js'
 import type { DeviceRectangles } from './rectangles.interfaces.js'
 import type { WicElement } from 'src/index.js'
@@ -110,11 +110,7 @@ export interface ImageCompareResult {
     misMatchPercentage: number;
 }
 
-export interface BoundingBox extends BaseBoundingBox {}
-
 export interface Pixel extends BaseCoordinates {}
-
-export interface IgnoreBoxes extends BoundingBox { }
 
 export interface CroppedBase64Image extends Partial<BaseDeviceInfo>{
     /** Whether to add iOS bezel corners */

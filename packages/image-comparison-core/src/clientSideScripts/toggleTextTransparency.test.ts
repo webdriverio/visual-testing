@@ -27,17 +27,19 @@ describe('toggleTextTransparency', () => {
         toggleTextTransparency(true)
 
         const testDiv = document.getElementById('testDiv')
+
         expect(testDiv).toMatchSnapshot()
     })
 
     it('should remove transparent style when disabled', () => {
         toggleTextTransparency(true)
         const transparentDiv = document.getElementById('testDiv')
+
         expect(transparentDiv).toMatchSnapshot()
 
-        // Now remove it
         toggleTextTransparency(false)
         const testDiv = document.getElementById('testDiv')
+
         expect(testDiv).toMatchSnapshot()
     })
 })

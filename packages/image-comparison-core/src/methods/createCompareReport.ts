@@ -1,40 +1,7 @@
 import { resolve as pathResolve } from 'node:path'
-import { writeFileSync } from 'node:fs'
-import type { BoundingBox, IgnoreBoxes } from './images.interfaces.js'
-import type { CompareData } from '../resemble/compare.interfaces.js'
-import type { TestContext } from './compareReport.interfaces.js'
-import type { BaseDimensions } from '../base.interfaces.js'
-
-export type ResultReport = {
-    description: string;
-    test: string;
-    tag: string;
-    instanceData: {
-        app?: string;
-        browser?: { name: string; version: string };
-        deviceName?: string;
-        platform: { name: string; version: string };
-    };
-    commandName: string;
-    framework: string;
-    boundingBoxes: {
-        diffBoundingBoxes: BoundingBox[];
-        ignoredBoxes: IgnoreBoxes[];
-    };
-    fileData: {
-        actualFilePath: string;
-        baselineFilePath: string;
-        diffFilePath?: string;
-        fileName: string;
-        size: {
-            actual: BaseDimensions;
-            baseline: BaseDimensions;
-            diff?: BaseDimensions;
-        };
-    };
-    misMatchPercentage: string;
-    rawMisMatchPercentage: number;
-}
+import { writeFileSync, readFileSync } from 'node:fs'
+import type { CreateCompareReportOptions, CreateJsonReportIfNeededOptions, ResultReport } from './compareReport.interfaces.js'
+import { getBase64ScreenshotSize } from '../helpers/utils.js'
 
 export function createCompareReport({
     boundingBoxes,
@@ -57,25 +24,7 @@ export function createCompareReport({
         tag,
         title
     },
-}: {
-        boundingBoxes: {
-            diffBoundingBoxes: BoundingBox[];
-            ignoredBoxes: IgnoreBoxes[],
-        }
-        data: CompareData;
-        folders: {
-            actualFolderPath: string;
-            baselineFolderPath: string;
-            diffFolderPath?: string;
-        }
-        fileName: string;
-        size: {
-            actual: BaseDimensions;
-            baseline: BaseDimensions;
-            diff?: BaseDimensions;
-        };
-        testContext: TestContext
-}) {
+}: CreateCompareReportOptions) {
     const { misMatchPercentage, rawMisMatchPercentage } = data
     const jsonFileName = fileName.split('.').slice(0, -1).join('.')
     const jsonFilePath = pathResolve(folders.actualFolderPath, `${jsonFileName}-report.json`)
@@ -101,7 +50,7 @@ export function createCompareReport({
         fileData: {
             actualFilePath: pathResolve(folders.actualFolderPath, fileName),
             baselineFilePath: pathResolve(folders.baselineFolderPath, fileName),
-            ...(folders.diffFolderPath && { diffFilePath: pathResolve(folders.diffFolderPath, fileName) }),
+            diffFilePath: pathResolve(folders.diffFolderPath, fileName),
             fileName,
             size,
         },
@@ -110,5 +59,38 @@ export function createCompareReport({
     }
 
     writeFileSync(jsonFilePath, JSON.stringify(jsonData), 'utf8')
+}
+
+/**
+ * Create JSON report if requested
+ */
+export async function createJsonReportIfNeeded({
+    boundingBoxes,
+    data,
+    fileName,
+    filePaths,
+    devicePixelRatio,
+    imageCompareOptions,
+    testContext,
+    storeDiffs,
+}: CreateJsonReportIfNeededOptions): Promise<void> {
+    if (imageCompareOptions.createJsonReportFiles) {
+        createCompareReport({
+            boundingBoxes,
+            data,
+            fileName,
+            folders: {
+                actualFolderPath: filePaths.actualFolderPath,
+                baselineFolderPath: filePaths.baselineFolderPath,
+                diffFolderPath: filePaths.diffFolderPath,
+            },
+            size: {
+                actual: getBase64ScreenshotSize(readFileSync(filePaths.actualFilePath).toString('base64'), devicePixelRatio),
+                baseline: getBase64ScreenshotSize(readFileSync(filePaths.baselineFilePath).toString('base64'), devicePixelRatio),
+                ...(storeDiffs && filePaths.diffFilePath && { diff: getBase64ScreenshotSize(readFileSync(filePaths.diffFilePath).toString('base64'), devicePixelRatio) }),
+            },
+            testContext,
+        })
+    }
 }
 

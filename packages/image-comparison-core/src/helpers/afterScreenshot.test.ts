@@ -1,23 +1,42 @@
 import { join } from 'node:path'
-import { describe, it, expect, afterEach, vi } from 'vitest'
+import logger from '@wdio/logger'
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import afterScreenshot from './afterScreenshot.js'
-import { rmSync } from 'node:fs'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 import toggleTextTransparency from '../clientSideScripts/toggleTextTransparency.js'
 import { CUSTOM_CSS_ID } from './constants.js'
 
+const log = logger('test')
+
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
+
 vi.mock('../methods/images.js', () => ({
     saveBase64Image: vi.fn()
 }))
 
+vi.mock('./utils.js', () => ({
+    getAndCreatePath: vi.fn(),
+    formatFileName: vi.fn()
+}))
+
+import { saveBase64Image } from '../methods/images.js'
+import { getAndCreatePath, formatFileName } from './utils.js'
+
 describe('afterScreenshot', () => {
-    const folder = join(process.cwd(), '/.tmp/afterScreenshot')
+    const mockPath = '/mocked/path'
+    const mockFileName = 'mocked-file-name.png'
 
-    afterEach(() => rmSync(folder, { recursive: true, force: true }))
+    afterEach(() => {
+        vi.clearAllMocks()
+    })
 
-    // Helper function to create mock browser instance with execute function
+    beforeEach(() => {
+        vi.mocked(getAndCreatePath).mockReturnValue(mockPath)
+        vi.mocked(formatFileName).mockReturnValue(mockFileName)
+    })
+
     const createMockBrowserInstance = (
         mockExecuteFn = vi.fn().mockResolvedValue(''),
         customProperties: Partial<WebdriverIO.Browser> = {}
@@ -27,15 +46,12 @@ describe('afterScreenshot', () => {
             ...customProperties
         } as unknown as WebdriverIO.Browser
     }
-
-    // Base options that are common across tests
     const baseFilePath = {
         browserName: 'browserName',
         deviceName: 'deviceName',
         isMobile: false,
         savePerInstance: true,
     }
-
     const baseFileName = {
         browserName: 'browserName',
         browserVersion: 'browserVersion',
@@ -54,9 +70,8 @@ describe('afterScreenshot', () => {
         screenWidth: 1440,
         tag: 'tag',
     }
-
     const createBaseOptions = (overrides = {}) => ({
-        actualFolder: folder,
+        actualFolder: mockPath,
         base64Image: 'string',
         filePath: baseFilePath,
         fileName: baseFileName,
@@ -77,12 +92,13 @@ describe('afterScreenshot', () => {
             removeElements: [<HTMLElement>(<any>'<div></div>')],
         })
 
-        expect(await afterScreenshot(mockBrowserInstance, options)).toEqual({
-            devicePixelRatio: 2,
-            fileName: 'tag-browserName-1400x850-dpr-2.png',
-            isLandscape: false,
-            path: `${process.cwd()}/.tmp/afterScreenshot/desktop_browserName`,
-        })
+        const result = await afterScreenshot(mockBrowserInstance, options)
+
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
+
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle native context and skip browser operations', async () => {
@@ -101,18 +117,19 @@ describe('afterScreenshot', () => {
             },
             hideScrollBars: true,
             isLandscape: true,
-            isNativeContext: true, // This should skip all browser operations
+            isNativeContext: true,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
             platformName: 'iOS',
             removeElements: [<HTMLElement>(<any>'<div></div>')],
         })
 
-        expect(await afterScreenshot(mockBrowserInstance, options)).toEqual({
-            devicePixelRatio: 1.5,
-            fileName: 'tag-browserName-800x600-dpr-1.5.png',
-            isLandscape: true,
-            path: `${process.cwd()}/.tmp/afterScreenshot/desktop_browserName`,
-        })
+        const result = await afterScreenshot(mockBrowserInstance, options)
+
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
+        expect(mockBrowserInstance.execute).not.toHaveBeenCalled()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle layout testing with enableLayoutTesting', async () => {
@@ -121,11 +138,13 @@ describe('afterScreenshot', () => {
         const options = createBaseOptions({
             enableLayoutTesting: true,
         })
+        const result = await afterScreenshot(mockBrowserInstance, options)
 
-        await afterScreenshot(mockBrowserInstance, options)
-
-        // Should call toggleTextTransparency to show text again (enableLayoutTesting = true, so !enableLayoutTesting = false)
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
         expect(mockExecute).toHaveBeenCalledWith(toggleTextTransparency, false)
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle mobile platform and remove custom CSS', async () => {
@@ -143,46 +162,114 @@ describe('afterScreenshot', () => {
                 isMobile: true,
                 platformName: 'Android',
             },
-            platformName: 'Android', // This should trigger CSS removal for mobile platform
+            platformName: 'Android',
         })
+        const result = await afterScreenshot(mockBrowserInstance, options)
 
-        await afterScreenshot(mockBrowserInstance, options)
-
-        // Should call removeElementFromDom with CUSTOM_CSS_ID for mobile platform
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
         expect(mockExecute).toHaveBeenCalledWith(removeElementFromDom, CUSTOM_CSS_ID)
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle hide/remove elements with error handling', async () => {
         const mockExecute = vi.fn().mockRejectedValueOnce(new Error('Element not found'))
         const mockBrowserInstance = createMockBrowserInstance(mockExecute)
-        const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-
         const hideElements = [<HTMLElement>(<any>'<div></div>')]
         const removeElements = [<HTMLElement>(<any>'<div></div>')]
-
         const options = createBaseOptions({
             hideElements,
             removeElements,
         })
+        const result = await afterScreenshot(mockBrowserInstance, options)
 
-        await afterScreenshot(mockBrowserInstance, options)
-
-        // Should call hideRemoveElements with proper parameters and handle error gracefully
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
         expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: removeElements }, false)
-
-        consoleSpy.mockRestore()
+        expect(log.warn).toHaveBeenCalledTimes(1)
+        expect(vi.mocked(log.warn).mock.calls[0]).toMatchSnapshot()
+        expect(result).toMatchSnapshot()
     })
 
     it('should handle hideScrollBars when hideScrollBars is true', async () => {
         const mockExecute = vi.fn().mockResolvedValue('')
         const mockBrowserInstance = createMockBrowserInstance(mockExecute)
         const options = createBaseOptions({
-            hideScrollBars: true, // This should trigger hideScrollBars call
+            hideScrollBars: true,
         })
-
-        await afterScreenshot(mockBrowserInstance, options)
-
-        // Should call hideScrollBars with false to show scrollbars again (hideScrollBars = true, so !hideScrollBars = false)
+        const result = await afterScreenshot(mockBrowserInstance, options)
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
         expect(mockExecute).toHaveBeenCalledWith(hideScrollBars, false)
+        expect(result).toMatchSnapshot()
+    })
+
+    it('should skip hide/remove elements when both are empty arrays', async () => {
+        const mockExecute = vi.fn().mockResolvedValue('')
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
+        const options = createBaseOptions({
+            hideElements: [],
+            removeElements: [],
+        })
+        const result = await afterScreenshot(mockBrowserInstance, options)
+
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
+        expect(mockExecute).not.toHaveBeenCalledWith(hideRemoveElements, expect.any(Object), false)
+        expect(result).toMatchSnapshot()
+    })
+
+    it('should skip hide/remove elements when both are falsy', async () => {
+        const mockExecute = vi.fn().mockResolvedValue('')
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
+        const options = createBaseOptions({
+            hideElements: undefined,
+            removeElements: null,
+        })
+        const result = await afterScreenshot(mockBrowserInstance, options)
+
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
+        expect(mockExecute).not.toHaveBeenCalledWith(hideRemoveElements, expect.any(Object), false)
+        expect(result).toMatchSnapshot()
+    })
+
+    it('should handle only hideElements with length > 0', async () => {
+        const mockExecute = vi.fn().mockResolvedValue('')
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
+        const hideElements = [<HTMLElement>(<any>'<div></div>')]
+        const options = createBaseOptions({
+            hideElements,
+            removeElements: [],
+        })
+        const result = await afterScreenshot(mockBrowserInstance, options)
+
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
+        expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: [] }, false)
+        expect(result).toMatchSnapshot()
+    })
+
+    it('should handle only removeElements with length > 0', async () => {
+        const mockExecute = vi.fn().mockResolvedValue('')
+        const mockBrowserInstance = createMockBrowserInstance(mockExecute)
+        const removeElements = [<HTMLElement>(<any>'<div></div>')]
+        const options = createBaseOptions({
+            hideElements: null,
+            removeElements,
+        })
+        const result = await afterScreenshot(mockBrowserInstance, options)
+
+        expect(vi.mocked(getAndCreatePath)).toHaveBeenCalledWith(mockPath, options.filePath)
+        expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
+        expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
+        expect(mockExecute).toHaveBeenCalledWith(hideRemoveElements, { hide: null, remove: removeElements }, false)
+        expect(result).toMatchSnapshot()
     })
 })

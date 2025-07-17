@@ -4,6 +4,8 @@ import type {
     DetermineDeviceBlockOutsOptions,
     DeviceRectangles,
     ElementRectangles,
+    PrepareIgnoreRectanglesOptions,
+    PreparedIgnoreRectangles,
     RectanglesOutput,
     ScreenRectanglesOptions,
     SplitIgnores,
@@ -180,7 +182,7 @@ export function isWdioElement(x: unknown) {
 /**
  * Validate that the object is a valid ignore region
  */
-function validateIgnoreRegion(x: unknown) {
+export function validateIgnoreRegion(x: unknown) {
     if (!isObject(x)) {
         return false
     }
@@ -194,7 +196,7 @@ function validateIgnoreRegion(x: unknown) {
 /**
  * Format the error message
  */
-function formatErrorMessage(item:unknown, message:string) {
+export function formatErrorMessage(item:unknown, message:string) {
     const formattedItem = isObject(item) ? JSON.stringify(item) : item
     return `${formattedItem} ${message}`
 }
@@ -203,7 +205,7 @@ function formatErrorMessage(item:unknown, message:string) {
  * Split the ignores into elements and regions and throw an error if
  * an element is not a valid WebdriverIO element/region
  */
-function splitIgnores(items:unknown[]): SplitIgnores{
+export function splitIgnores(items:unknown[]): SplitIgnores{
     const elements = []
     const regions = []
     const errorMessages = []
@@ -236,7 +238,7 @@ function splitIgnores(items:unknown[]): SplitIgnores{
 /**
  * Get the regions from the elements
  */
-async function getRegionsFromElements(browserInstance: WebdriverIO.Browser, elements: WebdriverIO.Element[]): Promise<RectanglesOutput[]> {
+export async function getRegionsFromElements(browserInstance: WebdriverIO.Browser, elements: WebdriverIO.Element[]): Promise<RectanglesOutput[]> {
     const regions = []
     for (const element of elements) {
         const region = await browserInstance.getElementRect(element.elementId)
@@ -293,4 +295,81 @@ export async function determineDeviceBlockOuts({ isAndroid, screenCompareOptions
     // }
 
     return rectangles
+}
+
+/**
+ * Prepare all ignore rectangles for image comparison
+ */
+export function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOptions): PreparedIgnoreRectangles {
+    const {
+        blockOut,
+        ignoreRegions,
+        deviceRectangles,
+        devicePixelRatio,
+        isMobile,
+        isNativeContext,
+        isAndroid,
+        isAndroidNativeWebScreenshot,
+        isViewPortScreenshot,
+        imageCompareOptions
+    } = options
+
+    // Get blockOut rectangles
+    let webStatusAddressToolBarOptions: RectanglesOutput[] = []
+
+    // Handle mobile web status/address/toolbar rectangles
+    if (isMobile && !isNativeContext) {
+        const statusAddressToolBarOptions = {
+            blockOutSideBar: imageCompareOptions.blockOutSideBar,
+            blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
+            blockOutToolBar: imageCompareOptions.blockOutToolBar,
+            isAndroid,
+            isAndroidNativeWebScreenshot,
+            isMobile,
+            isViewPortScreenshot,
+        } as StatusAddressToolBarRectanglesOptions
+
+        webStatusAddressToolBarOptions.push(
+            ...(determineStatusAddressToolBarRectangles({ deviceRectangles, options: statusAddressToolBarOptions })) || []
+        )
+
+        if (webStatusAddressToolBarOptions.length > 0) {
+            // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full
+            // blockout of the image and the comparison will succeed with 0 % difference
+            webStatusAddressToolBarOptions = webStatusAddressToolBarOptions
+                .filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
+        }
+    }
+
+    // Combine all ignore regions
+    const ignoredBoxes = [
+        // These come from the method
+        ...blockOut,
+        // @TODO: I'm defaulting ignore regions for devices
+        // Need to check if this is the right thing to do for web and mobile browser tests
+        ...ignoreRegions,
+        // Only get info about the status bars when we are in the web context
+        ...webStatusAddressToolBarOptions
+    ]
+        .map(
+            // Make sure all the rectangles are equal to the dpr for the screenshot
+            (rectangles) => {
+                return calculateDprData(
+                    {
+                        // Adjust for the ResembleJS API
+                        bottom: rectangles.y + rectangles.height,
+                        right: rectangles.x + rectangles.width,
+                        left: rectangles.x,
+                        top: rectangles.y,
+                    },
+                    // For Android we don't need to do it times the pixel ratio, for all others we need to
+                    isAndroid ? 1 : devicePixelRatio,
+                )
+            },
+        )
+
+    return {
+        ignoredBoxes,
+        hasIgnoreRectangles: ignoredBoxes.length > 0
+    }
 }

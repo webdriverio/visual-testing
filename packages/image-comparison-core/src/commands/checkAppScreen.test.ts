@@ -39,6 +39,43 @@ vi.mock('./saveAppScreen.js', () => ({
         fileName: 'test-screen.png'
     })
 }))
+vi.mock('../helpers/utils.js', () => ({
+    extractCommonCheckVariables: vi.fn().mockImplementation((params) => ({
+        actualFolder: params.folders.actualFolder,
+        baselineFolder: params.folders.baselineFolder,
+        diffFolder: params.folders.diffFolder,
+        browserName: params.instanceData.browserName,
+        deviceName: params.instanceData.deviceName,
+        deviceRectangles: params.instanceData.deviceRectangles,
+        isAndroid: params.instanceData.isAndroid,
+        isMobile: params.instanceData.isMobile,
+        isAndroidNativeWebScreenshot: params.instanceData.nativeWebScreenshot,
+        autoSaveBaseline: params.wicOptions.autoSaveBaseline,
+        savePerInstance: params.wicOptions.savePerInstance,
+    })),
+    buildBaseExecuteCompareOptions: vi.fn().mockImplementation((params) => ({
+        compareOptions: {
+            wic: params.wicCompareOptions,
+            method: params.methodCompareOptions,
+        },
+        devicePixelRatio: params.devicePixelRatio,
+        deviceRectangles: params.commonCheckVariables.deviceRectangles,
+        fileName: params.fileName,
+        folderOptions: {
+            autoSaveBaseline: params.commonCheckVariables.autoSaveBaseline,
+            actualFolder: params.commonCheckVariables.actualFolder,
+            baselineFolder: params.commonCheckVariables.baselineFolder,
+            diffFolder: params.commonCheckVariables.diffFolder,
+            browserName: params.commonCheckVariables.browserName,
+            deviceName: params.commonCheckVariables.deviceName,
+            isMobile: params.commonCheckVariables.isMobile,
+            savePerInstance: params.commonCheckVariables.savePerInstance,
+        },
+        isAndroid: params.commonCheckVariables.isAndroid,
+        isAndroidNativeWebScreenshot: params.commonCheckVariables.isAndroidNativeWebScreenshot,
+        ignoreRegions: params.additionalProperties?.ignoreRegions || [],
+    })),
+}))
 
 describe('checkAppScreen', () => {
     let executeImageCompareSpy: ReturnType<typeof vi.fn>

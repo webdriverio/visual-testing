@@ -16,6 +16,48 @@ vi.mock('../helpers/options.js', () => ({
         scaleImagesToSameSize: false,
     })
 }))
+vi.mock('../helpers/utils.js', () => ({
+    extractCommonCheckVariables: vi.fn().mockReturnValue({
+        actualFolder: '/mock/actual',
+        baselineFolder: '/mock/baseline',
+        diffFolder: '/mock/diff',
+        browserName: 'chrome',
+        deviceName: 'Desktop',
+        deviceRectangles: { screenSize: { width: 1280, height: 720 } },
+        isAndroid: false,
+        isMobile: false,
+        isAndroidNativeWebScreenshot: false,
+        platformName: 'Windows',
+        isIOS: false,
+        autoSaveBaseline: false,
+        savePerInstance: false,
+        isHybridApp: false,
+    }),
+    buildBaseExecuteCompareOptions: vi.fn().mockImplementation((params) => ({
+        compareOptions: {
+            wic: params.wicCompareOptions,
+            method: params.methodCompareOptions,
+        },
+        devicePixelRatio: params.devicePixelRatio,
+        deviceRectangles: { screenSize: { width: 1280, height: 720 } },
+        fileName: params.fileName,
+        folderOptions: {
+            autoSaveBaseline: false,
+            actualFolder: '/mock/actual',
+            baselineFolder: '/mock/baseline',
+            diffFolder: '/mock/diff',
+            browserName: 'chrome',
+            deviceName: 'Desktop',
+            isMobile: false,
+            savePerInstance: false,
+        },
+        isAndroid: false,
+        isAndroidNativeWebScreenshot: false,
+        isIOS: false,
+        isHybridApp: false,
+        platformName: 'Windows',
+    })),
+}))
 
 vi.mock('../methods/images.js', () => ({
     executeImageCompare: vi.fn().mockResolvedValue({
@@ -242,7 +284,6 @@ describe('checkFullPageScreen', () => {
                     fullPageScrollTimeout: 1500,
                     hideScrollBars: true,
                     waitForFontsLoaded: true,
-                    // Intentionally omitting hideAfterFirstScroll, hideElements, and removeElements
                 }
             }
         }

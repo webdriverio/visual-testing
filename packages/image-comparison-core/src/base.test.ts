@@ -3,8 +3,8 @@ import { rmSync } from 'node:fs'
 import BaseClass from './base.js'
 
 vi.mock('node:fs', () => ({
-    ...vi.importActual('node:fs'),  // This includes the actual implementations of other 'fs' methods
-    rmSync: vi.fn(),  // Mock implementation for rmSync
+    ...vi.importActual('node:fs'),
+    rmSync: vi.fn(),
 }))
 
 describe('BaseClass', () => {

@@ -5,19 +5,18 @@ import { dirname, join } from 'node:path'
 import { Jimp, JimpMime } from 'jimp'
 import logger from '@wdio/logger'
 import compareImages from '../resemble/compareImages.js'
-import { calculateDprData, getAndCreatePath, getIosBezelImageNames, getBase64ScreenshotSize, updateVisualBaseline } from '../helpers/utils.js'
+import { calculateDprData, getIosBezelImageNames, getBase64ScreenshotSize, prepareComparisonFilePaths, updateVisualBaseline } from '../helpers/utils.js'
+import { prepareIgnoreOptions } from '../helpers/options.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
-import { determineStatusAddressToolBarRectangles, isWdioElement } from './rectangles.js'
+import { isWdioElement, prepareIgnoreRectangles } from './rectangles.js'
 import type {
     AdjustedAxis,
-    BoundingBox,
     CheckBaselineImageExists,
     CropAndConvertToDataURL,
     CroppedBase64Image,
     DimensionsWarning,
     ExecuteImageCompare,
     HandleIOSBezelCorners,
-    IgnoreBoxes,
     ImageCompareResult,
     MakeFullPageBase64ImageOptions,
     RotateBase64ImageOptions,
@@ -25,11 +24,11 @@ import type {
     TakeBase64ElementScreenshotOptions,
     TakeResizedBase64ScreenshotOptions,
 } from './images.interfaces.js'
+import type { IgnoreBoxes } from './rectangles.interfaces.js'
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
-import type { RectanglesOutput, StatusAddressToolBarRectanglesOptions } from './rectangles.interfaces.js'
-import type { CompareData, ComparisonIgnoreOption, ComparisonOptions } from '../resemble/compare.interfaces.js'
-import { processDiffPixels } from './processDiffPixels.js'
-import { createCompareReport } from './createCompareReport.js'
+import type { CompareData, ComparisonOptions } from '../resemble/compare.interfaces.js'
+import { generateAndSaveDiff } from './processDiffPixels.js'
+import { createJsonReportIfNeeded } from './createCompareReport.js'
 import { takeBase64Screenshot } from './screenshots.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:images')
@@ -343,14 +342,18 @@ export async function executeImageCompare(
         options.folderOptions
     const imageCompareOptions = { ...options.compareOptions.wic, ...options.compareOptions.method }
 
-    // 2. Create all needed folders
-    const createFolderOptions = { browserName, deviceName, isMobile, savePerInstance }
-    const actualFolderPath = getAndCreatePath(actualFolder, createFolderOptions)
-    const baselineFolderPath = getAndCreatePath(baselineFolder, createFolderOptions)
-    const actualFilePath = join(actualFolderPath, fileName)
-    const baselineFilePath = join(baselineFolderPath, fileName)
-    const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
-    const diffFilePath = join(diffFolderPath, fileName)
+    // 2. Create all needed folders and file paths
+    const filePaths = prepareComparisonFilePaths({
+        actualFolder,
+        baselineFolder,
+        diffFolder,
+        browserName,
+        deviceName,
+        isMobile,
+        savePerInstance,
+        fileName
+    })
+    const { actualFilePath, baselineFilePath, diffFilePath } = filePaths
 
     // 3a. Check if there is a baseline image, and determine if it needs to be auto saved or not
     await checkBaselineImageExists({ actualFilePath, baselineFilePath, autoSaveBaseline })
@@ -360,62 +363,25 @@ export async function executeImageCompare(
 
     // 4. Prepare the compare
     // 4a.Determine the ignore options
-    const resembleIgnoreDefaults = ['alpha', 'antialiasing', 'colors', 'less', 'nothing']
-    const ignore = resembleIgnoreDefaults.filter((option) =>
-        Object.keys(imageCompareOptions).find(
-            (key: keyof typeof imageCompareOptions) => key.toLowerCase().includes(option) && imageCompareOptions[key],
-        ),
-    ) as ComparisonIgnoreOption[]
+    const ignore = prepareIgnoreOptions(imageCompareOptions)
 
     // 4b. Determine the ignore rectangles for the block outs
-    const blockOut = imageCompareOptions.blockOut ?? []
-    let webStatusAddressToolBarOptions: RectanglesOutput[] = []
-
-    if (isMobile && !isNativeContext){
-        const statusAddressToolBarOptions = {
+    const { ignoredBoxes } = prepareIgnoreRectangles({
+        blockOut: imageCompareOptions.blockOut ?? [],
+        ignoreRegions,
+        deviceRectangles,
+        devicePixelRatio,
+        isMobile,
+        isNativeContext,
+        isAndroid,
+        isAndroidNativeWebScreenshot,
+        isViewPortScreenshot,
+        imageCompareOptions: {
             blockOutSideBar: imageCompareOptions.blockOutSideBar,
             blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
             blockOutToolBar: imageCompareOptions.blockOutToolBar,
-            isAndroid,
-            isAndroidNativeWebScreenshot,
-            isMobile,
-            isViewPortScreenshot,
-        } as StatusAddressToolBarRectanglesOptions
-        webStatusAddressToolBarOptions.push(
-            ...(determineStatusAddressToolBarRectangles({ deviceRectangles, options: statusAddressToolBarOptions })) || []
-        )
-        if (webStatusAddressToolBarOptions.length > 0) {
-            // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full
-            // blockout of the image and the comparison will succeed with 0 % difference
-            webStatusAddressToolBarOptions = webStatusAddressToolBarOptions
-                .filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
         }
-    }
-    const ignoredBoxes = [
-        // These come from the method
-        ...blockOut,
-        // @TODO: I'm defaulting ignore regions for devices
-        // Need to check if this is the right thing to do for web and mobile browser tests
-        ...ignoreRegions,
-        // Only get info about the status bars when we are in the web context
-        ...webStatusAddressToolBarOptions
-    ]
-        .map(
-            // 4d. Make sure all the rectangles are equal to the dpr for the screenshot
-            (rectangles) => {
-                return calculateDprData(
-                    {
-                        // Adjust for the ResembleJS API
-                        bottom: rectangles.y + rectangles.height,
-                        right: rectangles.x + rectangles.width,
-                        left: rectangles.x,
-                        top: rectangles.y,
-                    },
-                    // For Android we don't need to do it times the pixel ratio, for all others we need to
-                    isAndroid ? 1 : devicePixelRatio,
-                )
-            },
-        )
+    })
 
     const compareOptions: ComparisonOptions = {
         ignore,
@@ -425,65 +391,47 @@ export async function executeImageCompare(
 
     // 5. Execute the compare and retrieve the data
     const data: CompareData = await compareImages(readFileSync(baselineFilePath), readFileSync(actualFilePath), compareOptions)
-    let rawMisMatchPercentage = data.rawMisMatchPercentage
-    let reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
+    const rawMisMatchPercentage = data.rawMisMatchPercentage
+    const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage
         : Number(data.rawMisMatchPercentage.toFixed(3))
-    const diffBoundingBoxes:BoundingBox[] = []
 
-    // 6. Save the diff when there is a diff
-    const saveAboveTolerance = imageCompareOptions.saveAboveTolerance ?? 0
-    const storeDiffs = rawMisMatchPercentage > saveAboveTolerance || process.argv.includes('--store-diffs')
-    if (storeDiffs) {
-        const isDifference = rawMisMatchPercentage > saveAboveTolerance
-        const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
-        const debugMessage = 'INFO:\n Debug mode is enabled. Saved the debug file to:'
+    // 6. Generate and save the diff when there is a diff
+    const { diffBoundingBoxes, storeDiffs } = await generateAndSaveDiff(
+        data,
+        imageCompareOptions,
+        ignoredBoxes,
+        diffFilePath,
+        rawMisMatchPercentage
+    )
 
-        if (imageCompareOptions.createJsonReportFiles) {
-            diffBoundingBoxes.push(...processDiffPixels(data.diffPixels, imageCompareOptions.diffPixelBoundingBoxProximity))
-        }
+    // 7. Create JSON report if requested
+    await createJsonReportIfNeeded({
+        boundingBoxes: {
+            diffBoundingBoxes,
+            ignoredBoxes,
+        },
+        data,
+        fileName,
+        filePaths,
+        devicePixelRatio,
+        imageCompareOptions,
+        testContext,
+        storeDiffs,
+    })
 
-        await saveBase64Image(await addBlockOuts(Buffer.from(await data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
-
-        log.warn(
-            '\x1b[33m%s\x1b[0m',
-            `
-#####################################################################################
- ${isDifference ? isDifferenceMessage : debugMessage}
- ${diffFilePath}
-#####################################################################################`,
-        )
-    }
-
-    if (imageCompareOptions.createJsonReportFiles) {
-        createCompareReport({
-            boundingBoxes: {
-                diffBoundingBoxes,
-                ignoredBoxes,
-            },
-            data,
-            fileName,
-            folders: {
-                actualFolderPath,
-                baselineFolderPath,
-                ...(storeDiffs && { diffFolderPath: diffFolderPath }),
-            },
-            size: {
-                actual: getBase64ScreenshotSize(readFileSync(actualFilePath).toString('base64'), devicePixelRatio),
-                baseline: getBase64ScreenshotSize(readFileSync(baselineFilePath).toString('base64'), devicePixelRatio),
-                ...(storeDiffs && { diff: getBase64ScreenshotSize(readFileSync(diffFilePath).toString('base64'), devicePixelRatio) }),
-            },
-            testContext,
-        })
-    }
-
+    // 8. Handle visual baseline update
+    let finalReportMisMatchPercentage = reportMisMatchPercentage
     if (updateVisualBaseline()) {
-        await checkBaselineImageExists({ actualFilePath, baselineFilePath, updateBaseline: true })
-        reportMisMatchPercentage = 0
-        rawMisMatchPercentage = 0
+        await checkBaselineImageExists({
+            actualFilePath,
+            baselineFilePath,
+            updateBaseline: true
+        })
+        finalReportMisMatchPercentage = 0
     }
 
-    // 7. Return the comparison data
+    // 9. Return the comparison data
     return imageCompareOptions.returnAllCompareData
         ? {
             fileName,
@@ -492,9 +440,9 @@ export async function executeImageCompare(
                 baseline: baselineFilePath,
                 ...(diffFilePath ? { diff: diffFilePath } : {}),
             },
-            misMatchPercentage: reportMisMatchPercentage,
+            misMatchPercentage: finalReportMisMatchPercentage,
         }
-        : reportMisMatchPercentage
+        : finalReportMisMatchPercentage
 }
 
 /**

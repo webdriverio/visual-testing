@@ -1,5 +1,5 @@
 import type { CheckScreenMethodOptions } from '../commands/screen.interfaces.js'
-import type { BaseDimensions, BaseRectangle } from '../base.interfaces.js'
+import type { BaseBoundingBox, BaseDimensions, BaseRectangle } from '../base.interfaces.js'
 import type { InstanceData } from './instanceData.interfaces.js'
 
 export interface RectanglesOptions {
@@ -101,4 +101,57 @@ export interface DetermineDeviceBlockOutsOptions {
     isAndroid: boolean,
     screenCompareOptions: CheckScreenMethodOptions,
     instanceData: InstanceData,
+}
+
+export interface PrepareIgnoreRectanglesOptions {
+    /** The blockOut rectangles from imageCompareOptions */
+    blockOut: RectanglesOutput[];
+    /** The ignore regions */
+    ignoreRegions: RectanglesOutput[];
+    /** The device rectangles */
+    deviceRectangles: DeviceRectangles;
+    /** The device pixel ratio */
+    devicePixelRatio: number;
+    /** Whether this is mobile */
+    isMobile: boolean;
+    /** Whether this is native context */
+    isNativeContext: boolean;
+    /** Whether this is Android */
+    isAndroid: boolean;
+    /** Whether this is Android native web screenshot */
+    isAndroidNativeWebScreenshot: boolean;
+    /** Whether this is viewport screenshot */
+    isViewPortScreenshot: boolean;
+    /** Image compare options for status/address/toolbar blocking */
+    imageCompareOptions: {
+        blockOutSideBar?: boolean;
+        blockOutStatusBar?: boolean;
+        blockOutToolBar?: boolean;
+    };
+}
+
+export interface PreparedIgnoreRectangles {
+    /** The final ignored boxes ready for resemble comparison */
+    ignoredBoxes: any[];
+    /** Whether any ignore rectangles were found */
+    hasIgnoreRectangles: boolean;
+}
+
+export interface BoundingBox extends BaseBoundingBox { }
+export interface IgnoreBoxes extends BoundingBox { }
+
+export interface BoundingBoxes {
+    /** Areas where visual differences were detected */
+    diffBoundingBoxes: BoundingBox[];
+    /** Areas to exclude from comparison analysis */
+    ignoredBoxes: IgnoreBoxes[],
+}
+
+export interface ReportFileSizes {
+    /** Dimensions of the actual screenshot */
+    actual: BaseDimensions;
+    /** Dimensions of the baseline image */
+    baseline: BaseDimensions;
+    /** Dimensions of the diff image (if generated) */
+    diff?: BaseDimensions;
 }

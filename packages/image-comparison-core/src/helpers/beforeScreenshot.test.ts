@@ -30,7 +30,6 @@ describe('beforeScreenshot', () => {
     let logDebugSpy: ReturnType<typeof vi.spyOn>
     let logWarnSpy: ReturnType<typeof vi.spyOn>
 
-    // Helper function to create mock browser instance with custom properties
     const createMockBrowserInstance = (
         mockExecuteFn = vi.fn().mockResolvedValue(''),
         customProperties: Partial<WebdriverIO.Browser> = {}
@@ -42,7 +41,6 @@ describe('beforeScreenshot', () => {
     }
 
     beforeEach(() => {
-        // Set up log spies
         logDebugSpy = vi.spyOn(log, 'debug').mockImplementation(() => {})
         logWarnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
     })
@@ -53,7 +51,6 @@ describe('beforeScreenshot', () => {
         logWarnSpy.mockRestore()
     })
 
-    // Base instance data that is common across tests
     const baseInstanceData = {
         appName: 'appName',
         browserName: 'browserName',
@@ -80,7 +77,6 @@ describe('beforeScreenshot', () => {
         platformVersion: 'platformVersion',
         initialDevicePixelRatio: 1,
     }
-
     const baseOptions = {
         addressBarShadowPadding: 6,
         disableBlinkingCursor: false,
@@ -92,7 +88,6 @@ describe('beforeScreenshot', () => {
         removeElements: [],
         waitForFontsLoaded: false,
     }
-
     const createOptions = (overrides: Partial<BeforeScreenshotOptions> = {}): BeforeScreenshotOptions => ({
         instanceData: baseInstanceData,
         ...baseOptions,
@@ -135,7 +130,6 @@ describe('beforeScreenshot', () => {
         const fontError = new Error('Font load error')
         const mockExecute = vi.fn().mockRejectedValue(fontError)
         const mockBrowserInstance = createMockBrowserInstance(mockExecute)
-
         const options = createOptions({
             waitForFontsLoaded: true,
         })
@@ -161,7 +155,6 @@ describe('beforeScreenshot', () => {
         const mockBrowserInstance = createMockBrowserInstance()
         const hideElements = [<HTMLElement>(<any>'<div></div>')]
         const removeElements = [<HTMLElement>(<any>'<span></span>')]
-
         const options = createOptions({
             hideElements,
             removeElements,
@@ -176,7 +169,6 @@ describe('beforeScreenshot', () => {
         const elementError = new Error('Element not found')
         const mockExecute = vi.fn().mockRejectedValue(elementError)
         const mockBrowserInstance = createMockBrowserInstance(mockExecute)
-
         const hideElements = [<HTMLElement>(<any>'<div></div>')]
         const options = createOptions({
             hideElements,
@@ -185,18 +177,7 @@ describe('beforeScreenshot', () => {
         await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockBrowserInstance.execute).toHaveBeenCalledWith(hideRemoveElements, { hide: hideElements, remove: [] }, true)
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            `
-#####################################################################################
- WARNING:
- (One of) the elements that needed to be hidden or removed could not be found on the
- page and caused this error
- Error: ${elementError}
- We made sure the test didn't break.
-#####################################################################################
-`
-        )
+        expect(logWarnSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should handle CSS customization for desktop', async () => {
@@ -211,11 +192,11 @@ describe('beforeScreenshot', () => {
         await beforeScreenshot(mockBrowserInstance, options)
 
         expect(mockBrowserInstance.execute).toHaveBeenCalledWith(setCustomCss, {
-            addressBarPadding: 0, // Should be 0 for desktop with addShadowPadding false
+            addressBarPadding: 0,
             disableBlinkingCursor: true,
             disableCSSAnimation: true,
             id: CUSTOM_CSS_ID,
-            toolBarPadding: 0, // Should be 0 for desktop with addShadowPadding false
+            toolBarPadding: 0,
         })
     })
 
@@ -305,12 +286,10 @@ describe('beforeScreenshot', () => {
     it('should handle multiple errors and log both debug and warning messages', async () => {
         const fontError = new Error('Font load error')
         const elementError = new Error('Element not found')
-
         const mockExecute = vi.fn()
             .mockRejectedValueOnce(fontError) // waitForFonts
             .mockRejectedValueOnce(elementError) // hideRemoveElements
         const mockBrowserInstance = createMockBrowserInstance(mockExecute)
-
         const options = createOptions({
             waitForFontsLoaded: true,
             hideElements: [<HTMLElement>(<any>'<div></div>')],
@@ -319,18 +298,7 @@ describe('beforeScreenshot', () => {
         await beforeScreenshot(mockBrowserInstance, options)
 
         expect(logDebugSpy).toHaveBeenCalledWith('Waiting for fonts to load threw an error:', fontError)
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            `
-#####################################################################################
- WARNING:
- (One of) the elements that needed to be hidden or removed could not be found on the
- page and caused this error
- Error: ${elementError}
- We made sure the test didn't break.
-#####################################################################################
-`
-        )
+        expect(logWarnSpy.mock.calls[0]).toMatchSnapshot()
     })
 
     it('should handle custom browser properties when needed', async () => {
@@ -338,12 +306,10 @@ describe('beforeScreenshot', () => {
             getWindowSize: vi.fn().mockResolvedValue({ width: 1920, height: 1080 }),
             getOrientation: vi.fn().mockResolvedValue('LANDSCAPE')
         })
-
         const options = createOptions()
 
         await beforeScreenshot(mockBrowserInstance, options)
 
-        // This test demonstrates that custom properties are available if needed
         expect(mockBrowserInstance.getWindowSize).toBeDefined()
         expect(mockBrowserInstance.getOrientation).toBeDefined()
     })

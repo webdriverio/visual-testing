@@ -50,7 +50,7 @@ describe('screenshots', () => {
             takeElementScreenshot: vi.fn().mockResolvedValue(takeElementScreenshot),
             getWindowHandle: vi.fn().mockResolvedValue('window-handle-123'),
             browsingContextCaptureScreenshot: vi.fn().mockResolvedValue({ data: takeScreenshot }),
-            execute: vi.fn().mockResolvedValue(1000) // Default mock for getDocumentScrollHeight
+            execute: vi.fn().mockResolvedValue(1000)
         } as unknown as WebdriverIO.Browser
     }
     const createMockElement = () => {
@@ -78,6 +78,7 @@ describe('screenshots', () => {
             fullPageScrollTimeout: 1000,
             hideAfterFirstScroll: [],
             isAndroid: false,
+            isIOS: true,
             isLandscape: false,
             innerHeight: 667,
             toolBarShadowPadding: 5,
@@ -367,12 +368,12 @@ describe('screenshots', () => {
 
             expect(result).toMatchSnapshot()
             expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
-                expect.any(Function), // hideRemoveElements
+                expect.any(Function),
                 { hide: [mockElements], remove: [] },
                 true
             )
             expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
-                expect.any(Function), // hideRemoveElements
+                expect.any(Function),
                 { hide: [mockElements], remove: [] },
                 false
             )
@@ -535,12 +536,12 @@ describe('screenshots', () => {
 
             expect(result).toMatchSnapshot()
             expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
-                expect.any(Function), // hideRemoveElements
+                expect.any(Function),
                 { hide: [mockElements], remove: [] },
                 true
             )
             expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
-                expect.any(Function), // hideRemoveElements
+                expect.any(Function),
                 { hide: [mockElements], remove: [] },
                 false
             )
@@ -652,6 +653,7 @@ describe('screenshots', () => {
 
     describe('takeWebElementScreenshot', () => {
         const createBaseTakeWebElementScreenshotOptions = (overrides: Partial<TakeWebElementScreenshot> = {}): TakeWebElementScreenshot => ({
+            addressBarShadowPadding: 10,
             browserInstance: createMockBrowserInstance(),
             devicePixelRatio: 1,
             deviceRectangles: DEVICE_RECTANGLES,
@@ -660,10 +662,12 @@ describe('screenshots', () => {
             initialDevicePixelRatio: 1,
             isEmulated: false,
             innerHeight: 768,
-            isAndroidNativeWebScreenshot: false,
             isAndroid: false,
+            isAndroidChromeDriverScreenshot: false,
+            isAndroidNativeWebScreenshot: false,
             isIOS: false,
             isLandscape: false,
+            toolBarShadowPadding: 5,
             ...overrides
         })
 
@@ -690,7 +694,6 @@ describe('screenshots', () => {
                     browserInstance: mockBrowserInstance,
                     element: Promise.resolve(mockElement)
                 })
-
                 const result = await takeWebElementScreenshot(options)
 
                 expect(result).toMatchSnapshot()
@@ -773,7 +776,6 @@ describe('screenshots', () => {
                     browserInstance: mockBrowserInstance,
                     element: Promise.resolve(mockElement)
                 })
-
                 const result = await takeWebElementScreenshot(options)
 
                 expect(logWarnSpy.mock.calls).toMatchSnapshot()
@@ -789,8 +791,8 @@ describe('screenshots', () => {
             it('should take full screenshot and determine element rectangles', async () => {
                 const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: MEDIUM_IMAGE_STRING })
                 const mockElement = createMockElement()
-
                 const mockRectangles = { x: 50, y: 100, width: 250, height: 150 }
+
                 vi.mocked(rectanglesModule.determineElementRectangles).mockResolvedValue(mockRectangles)
 
                 const options = createBaseTakeWebElementScreenshotOptions({
@@ -798,7 +800,6 @@ describe('screenshots', () => {
                     element: Promise.resolve(mockElement),
                     fallback: true
                 })
-
                 const result = await takeWebElementScreenshot(options)
 
                 expect(result).toMatchSnapshot()

@@ -1,21 +1,78 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`saveFullPageScreen > should handle NaN dimension values 1`] = `
+exports[`saveFullPageScreen > should handle missing dimension values with NaN fallbacks 1`] = `
 {
-  "devicePixelRatio": 2,
-  "fileName": "test-fullpage.png",
-}
-`;
-
-exports[`saveFullPageScreen > should handle NaN dimension values 2`] = `
-[
-  {
-    "isAndroid": false,
-    "isMobile": false,
-  },
-  {
+  "base64Image": "fullpage-screenshot-data",
+  "beforeOptions": {
     "addressBarShadowPadding": 6,
-    "devicePixelRatio": NaN,
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "hideElements": [],
+    "instanceData": {
+      "test": "data",
+    },
+    "noScrollBars": false,
+    "removeElements": [],
+    "toolBarShadowPadding": 6,
+    "waitForFontsLoaded": false,
+  },
+  "enrichedInstanceData": {
+    "addressBarShadowPadding": 6,
+    "appName": "test-app",
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "dimensions": {
+      "body": {
+        "offsetHeight": 1000,
+        "scrollHeight": 2000,
+      },
+      "html": {
+        "clientHeight": 1000,
+        "clientWidth": 1200,
+        "offsetHeight": 1000,
+        "scrollHeight": 2000,
+        "scrollWidth": 1200,
+      },
+      "window": {
+        "devicePixelRatio": undefined,
+        "innerHeight": undefined,
+        "isEmulated": false,
+        "isLandscape": false,
+        "outerHeight": undefined,
+        "outerWidth": undefined,
+        "screenHeight": undefined,
+        "screenWidth": undefined,
+      },
+    },
+    "elementAddressBarPadding": 0,
+    "elementToolBarPadding": 0,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isIOS": false,
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "isTestInMobileBrowser": false,
+    "logName": "chrome",
+    "name": "chrome",
+    "pixelDensity": 1,
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "toolBarShadowPadding": 6,
+  },
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
     "deviceRectangles": {
       "bottomBar": {
         "height": 0,
@@ -64,27 +121,38 @@ exports[`saveFullPageScreen > should handle NaN dimension values 2`] = `
         "y": 47,
       },
     },
-    "fullPageScrollTimeout": 1500,
-    "hideAfterFirstScroll": [],
-    "innerHeight": NaN,
+    "initialDevicePixelRatio": 2,
     "isAndroid": false,
-    "isAndroidChromeDriverScreenshot": false,
-    "isAndroidNativeWebScreenshot": false,
-    "isIOS": false,
-    "isLandscape": false,
-    "screenHeight": NaN,
-    "screenWidth": NaN,
-    "toolBarShadowPadding": 6,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
   },
-]
+  "isNativeContext": false,
+  "tag": "test-fullpage",
+  "wicOptions": {
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "savePerInstance": true,
+  },
+}
 `;
 
-exports[`saveFullPageScreen > should handle NaN dimension values 3`] = `
+exports[`saveFullPageScreen > should handle missing dimension values with NaN fallbacks 2`] = `
 [
   {
     "data": [
-      "screenshot-1",
-      "screenshot-2",
+      {
+        "canvasWidth": 1200,
+        "canvasYPosition": 0,
+        "imageHeight": 2000,
+        "imageWidth": 1200,
+        "imageXPosition": 0,
+        "imageYPosition": 0,
+        "screenshot": "test-screenshot-data",
+      },
     ],
     "fullPageHeight": 2000,
     "fullPageWidth": 1200,
@@ -96,53 +164,7 @@ exports[`saveFullPageScreen > should handle NaN dimension values 3`] = `
 ]
 `;
 
-exports[`saveFullPageScreen > should handle NaN dimension values 4`] = `
-[
-  {
-    "isAndroid": false,
-    "isMobile": false,
-  },
-  {
-    "actualFolder": "/test/actual",
-    "base64Image": "fullpage-screenshot-data",
-    "disableBlinkingCursor": false,
-    "disableCSSAnimation": false,
-    "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": NaN,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": NaN,
-      "outerWidth": NaN,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": NaN,
-      "screenWidth": NaN,
-      "tag": "test-fullpage",
-    },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
-    "hideElements": [],
-    "hideScrollBars": true,
-    "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "desktop",
-    "removeElements": [],
-  },
-]
-`;
-
-exports[`saveFullPageScreen > should handle undefined hideAfterFirstScroll, hideElements, and removeElements 1`] = `
+exports[`saveFullPageScreen > should not use BiDi when canUseBidiScreenshot=true, userBasedFullPageScreenshot=false, enableLegacyScreenshotMethod=true 1`] = `
 [
   {
     "isAndroid": false,
@@ -211,147 +233,140 @@ exports[`saveFullPageScreen > should handle undefined hideAfterFirstScroll, hide
     "screenWidth": 1920,
     "toolBarShadowPadding": 6,
   },
+  true,
 ]
 `;
 
-exports[`saveFullPageScreen > should use Bidi screenshot when available and enableLegacyScreenshotMethod is false 1`] = `
-{
-  "devicePixelRatio": 2,
-  "fileName": "test-fullpage.png",
-}
-`;
-
-exports[`saveFullPageScreen > should use Bidi screenshot when available and enableLegacyScreenshotMethod is false 2`] = `
+exports[`saveFullPageScreen > should take full page screenshots and return result 1`] = `
 [
   {
-    "browserInstance": {
-      "isAndroid": false,
-      "isMobile": false,
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
     },
-    "origin": "document",
-  },
-]
-`;
-
-exports[`saveFullPageScreen > should use Bidi screenshot when available and enableLegacyScreenshotMethod is false 3`] = `
-[
-  {
+    "initialDevicePixelRatio": 2,
     "isAndroid": false,
-    "isMobile": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
   },
   {
-    "actualFolder": "/test/actual",
-    "base64Image": "bidi-screenshot-data",
     "disableBlinkingCursor": false,
     "disableCSSAnimation": false,
     "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": 1000,
-      "outerWidth": 1200,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": 1080,
-      "screenWidth": 1920,
-      "tag": "test-fullpage",
-    },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
+    "enableLegacyScreenshotMethod": false,
     "hideElements": [],
     "hideScrollBars": true,
-    "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "desktop",
     "removeElements": [],
+    "waitForFontsLoaded": true,
   },
-]
-`;
-
-exports[`saveFullPageScreen > should use Bidi screenshot when available and userBasedFullPageScreenshot is false 1`] = `
-{
-  "devicePixelRatio": 2,
-  "fileName": "test-fullpage.png",
-}
-`;
-
-exports[`saveFullPageScreen > should use Bidi screenshot when available and userBasedFullPageScreenshot is false 2`] = `
-[
   {
-    "browserInstance": {
-      "isAndroid": false,
-      "isMobile": false,
+    "addIOSBezelCorners": false,
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "autoSaveBaseline": false,
+    "clearFolder": false,
+    "compareOptions": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "createJsonReportFiles": false,
+      "diffPixelBoundingBoxProximity": 5,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+      "ignoreColors": false,
+      "ignoreLess": false,
+      "ignoreNothing": false,
+      "rawMisMatchPercentage": false,
+      "returnAllCompareData": false,
+      "saveAboveTolerance": 0,
+      "scaleImagesToSameSize": false,
     },
-    "origin": "document",
-  },
-]
-`;
-
-exports[`saveFullPageScreen > should use Bidi screenshot when available and userBasedFullPageScreenshot is false 3`] = `
-[
-  {
-    "isAndroid": false,
-    "isMobile": false,
-  },
-  {
-    "actualFolder": "/test/actual",
-    "base64Image": "bidi-screenshot-data",
     "disableBlinkingCursor": false,
     "disableCSSAnimation": false,
     "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": 1000,
-      "outerWidth": 1200,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": 1080,
-      "screenWidth": 1920,
-      "tag": "test-fullpage",
-    },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
-    "hideElements": [],
+    "enableLegacyScreenshotMethod": false,
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "fullPageScrollTimeout": 1500,
     "hideScrollBars": true,
-    "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "desktop",
-    "removeElements": [],
+    "isHybridApp": false,
+    "savePerInstance": true,
+    "tabbableOptions": {
+      "circle": {
+        "backgroundColor": "rgba(255, 0, 0, 0.4)",
+        "borderColor": "rgba(255, 0, 0, 1)",
+        "borderWidth": 1,
+        "fontColor": "rgba(0, 0, 0, 1)",
+        "fontFamily": "Arial",
+        "fontSize": 10,
+        "size": 10,
+      },
+      "line": {
+        "color": "rgba(255, 0, 0, 1)",
+        "width": 1,
+      },
+    },
+    "toolBarShadowPadding": 6,
+    "userBasedFullPageScreenshot": false,
+    "waitForFontsLoaded": true,
   },
 ]
 `;
 
-exports[`saveFullPageScreen > should use legacy method when Bidi is available but both userBasedFullPageScreenshot and enableLegacyScreenshotMethod are true 1`] = `
-{
-  "devicePixelRatio": 2,
-  "fileName": "test-fullpage.png",
-}
-`;
-
-exports[`saveFullPageScreen > should use legacy method when Bidi is available but both userBasedFullPageScreenshot and enableLegacyScreenshotMethod are true 2`] = `
+exports[`saveFullPageScreen > should take full page screenshots and return result 2`] = `
 [
   {
     "isAndroid": false,
@@ -420,15 +435,145 @@ exports[`saveFullPageScreen > should use legacy method when Bidi is available bu
     "screenWidth": 1920,
     "toolBarShadowPadding": 6,
   },
+  false,
 ]
 `;
 
-exports[`saveFullPageScreen > should use legacy method when Bidi is available but both userBasedFullPageScreenshot and enableLegacyScreenshotMethod are true 3`] = `
+exports[`saveFullPageScreen > should take full page screenshots and return result 3`] = `
+{
+  "base64Image": "fullpage-screenshot-data",
+  "beforeOptions": {
+    "addressBarShadowPadding": 6,
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "hideElements": [],
+    "instanceData": {
+      "test": "data",
+    },
+    "noScrollBars": false,
+    "removeElements": [],
+    "toolBarShadowPadding": 6,
+    "waitForFontsLoaded": false,
+  },
+  "enrichedInstanceData": {
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "dimensions": {
+      "window": {
+        "devicePixelRatio": 2,
+        "innerHeight": 900,
+        "isEmulated": false,
+        "isLandscape": false,
+        "outerHeight": 1000,
+        "outerWidth": 1200,
+        "screenHeight": 1080,
+        "screenWidth": 1920,
+      },
+    },
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isIOS": false,
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "logName": "chrome",
+    "name": "chrome",
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+  },
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": false,
+  "tag": "test-fullpage",
+  "wicOptions": {
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "savePerInstance": true,
+  },
+}
+`;
+
+exports[`saveFullPageScreen > should take full page screenshots and return result 4`] = `
 [
   {
     "data": [
-      "screenshot-1",
-      "screenshot-2",
+      {
+        "canvasWidth": 1200,
+        "canvasYPosition": 0,
+        "imageHeight": 2000,
+        "imageWidth": 1200,
+        "imageXPosition": 0,
+        "imageYPosition": 0,
+        "screenshot": "test-screenshot-data",
+      },
     ],
     "fullPageHeight": 2000,
     "fullPageWidth": 1200,
@@ -440,48 +585,188 @@ exports[`saveFullPageScreen > should use legacy method when Bidi is available bu
 ]
 `;
 
-exports[`saveFullPageScreen > should use legacy method when Bidi is available but both userBasedFullPageScreenshot and enableLegacyScreenshotMethod are true 4`] = `
+exports[`saveFullPageScreen > should take full page screenshots and return result 5`] = `
+{
+  "actualFolder": "/test/actual",
+  "base64Image": "fullpage-screenshot-data",
+  "disableBlinkingCursor": false,
+  "disableCSSAnimation": false,
+  "enableLayoutTesting": false,
+  "fileName": {
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "formatImageName": "{tag}-{browserName}-{width}x{height}",
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "logName": "chrome",
+    "name": "chrome",
+    "outerHeight": 1000,
+    "outerWidth": 1200,
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "screenHeight": 1080,
+    "screenWidth": 1920,
+    "tag": "test-fullpage",
+  },
+  "filePath": {
+    "browserName": "chrome",
+    "deviceName": "desktop",
+    "isMobile": false,
+    "savePerInstance": false,
+  },
+  "hideElements": [],
+  "hideScrollBars": false,
+  "isLandscape": false,
+  "isNativeContext": false,
+  "platformName": "desktop",
+  "removeElements": [],
+}
+`;
+
+exports[`saveFullPageScreen > should use BiDi when canUseBidiScreenshot=true, userBasedFullPageScreenshot=true, enableLegacyScreenshotMethod=false 1`] = `
 [
   {
     "isAndroid": false,
     "isMobile": false,
   },
   {
-    "actualFolder": "/test/actual",
-    "base64Image": "fullpage-screenshot-data",
-    "disableBlinkingCursor": false,
-    "disableCSSAnimation": false,
-    "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": 1000,
-      "outerWidth": 1200,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": 1080,
-      "screenWidth": 1920,
-      "tag": "test-fullpage",
+    "addressBarShadowPadding": 6,
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
     },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
-    "hideElements": [],
-    "hideScrollBars": true,
+    "fullPageScrollTimeout": 1500,
+    "hideAfterFirstScroll": [],
+    "innerHeight": 900,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isIOS": false,
     "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "desktop",
-    "removeElements": [],
+    "screenHeight": 1080,
+    "screenWidth": 1920,
+    "toolBarShadowPadding": 6,
   },
+  true,
+]
+`;
+
+exports[`saveFullPageScreen > should use BiDi when conditions are met 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addressBarShadowPadding": 6,
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "fullPageScrollTimeout": 1500,
+    "hideAfterFirstScroll": [],
+    "innerHeight": 900,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "screenHeight": 1080,
+    "screenWidth": 1920,
+    "toolBarShadowPadding": 6,
+  },
+  true,
 ]
 `;

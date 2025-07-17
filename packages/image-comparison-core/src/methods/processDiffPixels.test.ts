@@ -36,7 +36,7 @@ describe('processDiffPixels', () => {
     const normalizeTimingValues = (calls: any[]) => {
         return calls.map(call => {
             const message = call[0]
-            // Replace timing values with placeholders
+
             return [
                 message
                     .replace(/Union time: \d+ms/, 'Union time: XXXms')
@@ -48,7 +48,6 @@ describe('processDiffPixels', () => {
     }
 
     beforeEach(() => {
-        // Set up log spies
         logInfoSpy = vi.spyOn(log, 'info').mockImplementation(() => {})
         logErrorSpy = vi.spyOn(log, 'error').mockImplementation(() => {})
     })
@@ -118,7 +117,6 @@ describe('processDiffPixels', () => {
     })
 
     it('should handle maximum diff percentage threshold', () => {
-        // Create enough pixels to exceed the 20% threshold
         const pixels = createMockPixels(1000000)
         const result = processDiffPixels(pixels, 5)
         expect(result).toMatchSnapshot()
@@ -126,7 +124,6 @@ describe('processDiffPixels', () => {
     })
 
     it('should handle maximum diff pixels threshold', () => {
-        // Create more than 5M pixels
         const pixels = createMockPixels(6000000)
         const result = processDiffPixels(pixels, 5)
         expect(result).toMatchSnapshot()
@@ -134,7 +131,6 @@ describe('processDiffPixels', () => {
     })
 
     it('should handle two adjacent pixels to trigger equal rank union', () => {
-        // This should trigger the rankX === rankY case (line 79)
         const pixels = [
             { x: 0, y: 0 },
             { x: 1, y: 0 }

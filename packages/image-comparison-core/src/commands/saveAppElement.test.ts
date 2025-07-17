@@ -17,10 +17,42 @@ vi.mock('../helpers/afterScreenshot.js', () => ({
         fileName: 'test-element.png'
     })
 }))
+vi.mock('../helpers/options.js', () => ({
+    buildAfterScreenshotOptions: vi.fn().mockReturnValue({
+        actualFolder: '/path/to/actual',
+        base64Image: 'base64-screenshot-data',
+        filePath: {
+            browserName: 'chrome',
+            deviceName: '',
+            isMobile: false,
+            savePerInstance: false
+        },
+        fileName: {
+            browserName: 'chrome',
+            browserVersion: 'latest',
+            deviceName: '',
+            devicePixelRatio: 1,
+            formatImageName: '{tag}',
+            isMobile: false,
+            isTestInBrowser: false,
+            logName: 'chrome',
+            name: '',
+            platformName: 'Windows',
+            platformVersion: 'latest',
+            screenHeight: 720,
+            screenWidth: 1366,
+            tag: 'test-element'
+        },
+        isNativeContext: true,
+        isLandscape: false,
+        platformName: 'Windows'
+    })
+}))
 
 describe('saveAppElement', () => {
     let takeBase64ElementScreenshotSpy: ReturnType<typeof vi.fn>
     let afterScreenshotSpy: ReturnType<typeof vi.fn>
+    let buildAfterScreenshotOptionsSpy: ReturnType<typeof vi.fn>
 
     const baseOptions: InternalSaveElementMethodOptions = {
         element: {
@@ -44,9 +76,11 @@ describe('saveAppElement', () => {
     beforeEach(async () => {
         const { takeBase64ElementScreenshot } = await import('../methods/images.js')
         const afterScreenshot = (await import('../helpers/afterScreenshot.js')).default
+        const { buildAfterScreenshotOptions } = await import('../helpers/options.js')
 
         takeBase64ElementScreenshotSpy = vi.mocked(takeBase64ElementScreenshot)
         afterScreenshotSpy = vi.mocked(afterScreenshot)
+        buildAfterScreenshotOptionsSpy = vi.mocked(buildAfterScreenshotOptions)
     })
 
     afterEach(() => {
@@ -58,7 +92,8 @@ describe('saveAppElement', () => {
 
         expect(result).toMatchSnapshot()
         expect(takeBase64ElementScreenshotSpy.mock.calls[0]).toMatchSnapshot()
-        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
     })
 
     it('should handle custom resize dimensions', async () => {
@@ -81,7 +116,8 @@ describe('saveAppElement', () => {
         await saveAppElement(options)
 
         expect(takeBase64ElementScreenshotSpy.mock.calls[0]).toMatchSnapshot()
-        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
     })
 
     it('should handle iOS device correctly', async () => {
@@ -105,7 +141,8 @@ describe('saveAppElement', () => {
         await saveAppElement(options)
 
         expect(takeBase64ElementScreenshotSpy.mock.calls[0]).toMatchSnapshot()
-        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
     })
 
     it('should handle Android device correctly', async () => {
@@ -129,7 +166,8 @@ describe('saveAppElement', () => {
         await saveAppElement(options)
 
         expect(takeBase64ElementScreenshotSpy.mock.calls[0]).toMatchSnapshot()
-        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
     })
 
     it('should handle non-native context correctly', async () => {
@@ -140,7 +178,8 @@ describe('saveAppElement', () => {
         await saveAppElement(options)
 
         expect(takeBase64ElementScreenshotSpy.mock.calls[0]).toMatchSnapshot()
-        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
     })
 
     it('should handle custom image naming', async () => {
@@ -150,7 +189,8 @@ describe('saveAppElement', () => {
 
         await saveAppElement(options)
 
-        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
     })
 
     it('should handle save per instance', async () => {
@@ -166,7 +206,8 @@ describe('saveAppElement', () => {
 
         await saveAppElement(options)
 
-        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
     })
 
     it('should handle custom screen sizes', async () => {
@@ -186,6 +227,7 @@ describe('saveAppElement', () => {
         await saveAppElement(options)
 
         expect(takeBase64ElementScreenshotSpy.mock.calls[0]).toMatchSnapshot()
-        expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
+        expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
+        expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
     })
 })

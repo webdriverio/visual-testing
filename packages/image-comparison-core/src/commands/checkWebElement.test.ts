@@ -31,6 +31,53 @@ vi.mock('../helpers/options.js', () => ({
         scaleImagesToSameSize: false,
     })
 }))
+vi.mock('../helpers/utils.js', () => ({
+    extractCommonCheckVariables: vi.fn().mockReturnValue({
+        actualFolder: '/mock/actual',
+        baselineFolder: '/mock/baseline',
+        diffFolder: '/mock/diff',
+        browserName: 'chrome',
+        deviceName: 'Desktop',
+        deviceRectangles: { screenSize: { width: 1280, height: 720 } },
+        isAndroid: false,
+        isMobile: false,
+        isAndroidNativeWebScreenshot: false,
+        platformName: 'Windows',
+        autoSaveBaseline: false,
+        savePerInstance: false,
+    }),
+    buildBaseExecuteCompareOptions: vi.fn().mockImplementation((params) => {
+        const wicOptions = params.isElementScreenshot ? {
+            ...params.wicCompareOptions,
+            blockOutSideBar: false,
+            blockOutStatusBar: false,
+            blockOutToolBar: false,
+        } : params.wicCompareOptions
+
+        return {
+            compareOptions: {
+                wic: wicOptions,
+                method: params.methodCompareOptions,
+            },
+            devicePixelRatio: params.devicePixelRatio,
+            deviceRectangles: { screenSize: { width: 1280, height: 720 } },
+            fileName: params.fileName,
+            folderOptions: {
+                autoSaveBaseline: false,
+                actualFolder: '/mock/actual',
+                baselineFolder: '/mock/baseline',
+                diffFolder: '/mock/diff',
+                browserName: 'chrome',
+                deviceName: 'Desktop',
+                isMobile: false,
+                savePerInstance: false,
+            },
+            isAndroid: false,
+            isAndroidNativeWebScreenshot: false,
+            platformName: 'Windows',
+        }
+    }),
+}))
 
 describe('checkWebElement', () => {
     let executeImageCompareSpy: ReturnType<typeof vi.fn>
@@ -248,7 +295,6 @@ describe('checkWebElement', () => {
                     enableLegacyScreenshotMethod: false,
                     hideScrollBars: true,
                     waitForFontsLoaded: true,
-                    // Intentionally omitting hideElements, removeElements, and resizeDimensions
                 }
             }
         }

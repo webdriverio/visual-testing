@@ -1,38 +1,23 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`saveWebElement > should handle NaN dimension values 1`] = `
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when legacy method enabled 1`] = `
 {
   "devicePixelRatio": 2,
   "fileName": "test-element.png",
 }
 `;
 
-exports[`saveWebElement > should handle NaN dimension values 2`] = `
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when legacy method enabled 2`] = `
 [
   {
-    "browserInstance": {
-      "execute": [MockFunction spy] {
-        "calls": [
-          [
-            [MockFunction spy],
-            {
-              "elementId": "test-element",
-            },
-            6,
-          ],
-        ],
-        "results": [
-          {
-            "type": "return",
-            "value": Promise {},
-          },
-        ],
-      },
-      "getElementRect": [MockFunction spy],
-      "isAndroid": false,
-      "isMobile": false,
-    },
-    "devicePixelRatio": NaN,
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
     "deviceRectangles": {
       "bottomBar": {
         "height": 0,
@@ -84,163 +69,1273 @@ exports[`saveWebElement > should handle NaN dimension values 2`] = `
     "element": {
       "elementId": "test-element",
     },
-    "fallback": false,
-    "initialDevicePixelRatio": NaN,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "isMobile": false,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+    "toolBarShadowPadding": 6,
+  },
+  false,
+]
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when mobile device 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when mobile device 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "element": {
+      "elementId": "test-element",
+    },
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "isMobile": true,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+    "toolBarShadowPadding": 6,
+  },
+  false,
+]
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when mobile device 3`] = `
+{
+  "base64Image": "element-screenshot-data",
+  "beforeOptions": {
+    "addressBarShadowPadding": 6,
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "hideElements": [],
+    "instanceData": {
+      "test": "data",
+    },
+    "noScrollBars": true,
+    "removeElements": [],
+    "toolBarShadowPadding": 6,
+    "waitForFontsLoaded": false,
+  },
+  "enrichedInstanceData": {
+    "addressBarShadowPadding": 0,
+    "appName": "",
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "homeBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 0,
+        "width": 0,
+      },
+      "statusBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+    },
+    "dimensions": {
+      "body": {
+        "offsetHeight": 1000,
+        "scrollHeight": 1000,
+      },
+      "html": {
+        "clientHeight": 900,
+        "clientWidth": 1200,
+        "offsetHeight": 1000,
+        "scrollHeight": 1000,
+        "scrollWidth": 1200,
+      },
+      "window": {
+        "devicePixelRatio": 2,
+        "innerHeight": 900,
+        "innerWidth": 1200,
+        "isEmulated": false,
+        "isLandscape": false,
+        "outerHeight": 1000,
+        "outerWidth": 1200,
+        "screenHeight": 1080,
+        "screenWidth": 1920,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isIOS": false,
+    "isMobile": true,
+    "isTestInBrowser": true,
+    "isTestInMobileBrowser": false,
+    "logName": "chrome",
+    "name": "chrome",
+    "nativeWebScreenshot": false,
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "toolBarShadowPadding": 0,
+  },
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": false,
+  "tag": "test-element",
+  "wicOptions": {
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "savePerInstance": true,
+  },
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when not available 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when not available 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "element": {
+      "elementId": "test-element",
+    },
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "isMobile": false,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+    "toolBarShadowPadding": 6,
+  },
+  false,
+]
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when not available 3`] = `
+{
+  "base64Image": "element-screenshot-data",
+  "beforeOptions": {
+    "addressBarShadowPadding": 6,
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "hideElements": [],
+    "instanceData": {
+      "test": "data",
+    },
+    "noScrollBars": true,
+    "removeElements": [],
+    "toolBarShadowPadding": 6,
+    "waitForFontsLoaded": false,
+  },
+  "enrichedInstanceData": {
+    "addressBarShadowPadding": 0,
+    "appName": "",
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "dimensions": {
+      "window": {
+        "devicePixelRatio": 2,
+        "innerHeight": 900,
+        "isEmulated": false,
+        "isLandscape": false,
+        "outerHeight": 1000,
+        "outerWidth": 1200,
+        "screenHeight": 1080,
+        "screenWidth": 1920,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isIOS": false,
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "isTestInMobileBrowser": false,
+    "logName": "chrome",
+    "name": "chrome",
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "toolBarShadowPadding": 0,
+  },
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": false,
+  "tag": "test-element",
+  "wicOptions": {
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "savePerInstance": true,
+  },
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled when not available 4`] = `
+{
+  "actualFolder": "/test/actual",
+  "base64Image": "element-screenshot-data",
+  "disableBlinkingCursor": false,
+  "disableCSSAnimation": false,
+  "enableLayoutTesting": false,
+  "fileName": {
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "formatImageName": "{tag}-{browserName}-{width}x{height}",
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "logName": "chrome",
+    "name": "chrome",
+    "outerHeight": 1000,
+    "outerWidth": 1200,
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "screenHeight": 1080,
+    "screenWidth": 1920,
+    "tag": "test-element",
+  },
+  "filePath": {
+    "browserName": "chrome",
+    "deviceName": "desktop",
+    "isMobile": false,
+    "savePerInstance": false,
+  },
+  "hideElements": [],
+  "hideScrollBars": true,
+  "isLandscape": false,
+  "isNativeContext": false,
+  "platformName": "desktop",
+  "removeElements": [],
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with correct options when BiDi is available 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with correct options when BiDi is available 2`] = `
+[
+  {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  {
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "enableLegacyScreenshotMethod": false,
+    "hideElements": [],
+    "hideScrollBars": true,
+    "removeElements": [],
+    "waitForFontsLoaded": true,
+  },
+  {
+    "addIOSBezelCorners": false,
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "autoSaveBaseline": false,
+    "clearFolder": false,
+    "compareOptions": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "createJsonReportFiles": false,
+      "diffPixelBoundingBoxProximity": 5,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+      "ignoreColors": false,
+      "ignoreLess": false,
+      "ignoreNothing": false,
+      "rawMisMatchPercentage": false,
+      "returnAllCompareData": false,
+      "saveAboveTolerance": 0,
+      "scaleImagesToSameSize": false,
+    },
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "enableLegacyScreenshotMethod": false,
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "fullPageScrollTimeout": 1500,
+    "hideScrollBars": true,
+    "isHybridApp": false,
+    "savePerInstance": true,
+    "tabbableOptions": {
+      "circle": {
+        "backgroundColor": "rgba(255, 0, 0, 0.4)",
+        "borderColor": "rgba(255, 0, 0, 1)",
+        "borderWidth": 1,
+        "fontColor": "rgba(0, 0, 0, 1)",
+        "fontFamily": "Arial",
+        "fontSize": 10,
+        "size": 10,
+      },
+      "line": {
+        "color": "rgba(255, 0, 0, 1)",
+        "width": 1,
+      },
+    },
+    "toolBarShadowPadding": 6,
+    "userBasedFullPageScreenshot": false,
+    "waitForFontsLoaded": true,
+  },
+]
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with correct options when BiDi is available 3`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "element": {
+      "elementId": "test-element",
+    },
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+    "isMobile": false,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+    "toolBarShadowPadding": 6,
+  },
+  true,
+]
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with correct options when BiDi is available 4`] = `
+{
+  "base64Image": "element-screenshot-data",
+  "beforeOptions": {
+    "addressBarShadowPadding": 6,
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "hideElements": [],
+    "instanceData": {
+      "test": "data",
+    },
+    "noScrollBars": true,
+    "removeElements": [],
+    "toolBarShadowPadding": 6,
+    "waitForFontsLoaded": false,
+  },
+  "enrichedInstanceData": {
+    "addressBarShadowPadding": 0,
+    "appName": "",
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "dimensions": {
+      "window": {
+        "devicePixelRatio": 2,
+        "innerHeight": 900,
+        "isEmulated": false,
+        "isLandscape": false,
+        "outerHeight": 1000,
+        "outerWidth": 1200,
+        "screenHeight": 1080,
+        "screenWidth": 1920,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isIOS": false,
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "isTestInMobileBrowser": false,
+    "logName": "chrome",
+    "name": "chrome",
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "toolBarShadowPadding": 0,
+  },
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": false,
+  "tag": "test-element",
+  "wicOptions": {
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "savePerInstance": true,
+  },
+}
+`;
+
+exports[`saveWebElement > should call takeElementScreenshot with correct options when BiDi is available 5`] = `
+{
+  "actualFolder": "/test/actual",
+  "base64Image": "element-screenshot-data",
+  "disableBlinkingCursor": false,
+  "disableCSSAnimation": false,
+  "enableLayoutTesting": false,
+  "fileName": {
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "formatImageName": "{tag}-{browserName}-{width}x{height}",
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "logName": "chrome",
+    "name": "chrome",
+    "outerHeight": 1000,
+    "outerWidth": 1200,
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "screenHeight": 1080,
+    "screenWidth": 1920,
+    "tag": "test-element",
+  },
+  "filePath": {
+    "browserName": "chrome",
+    "deviceName": "desktop",
+    "isMobile": false,
+    "savePerInstance": false,
+  },
+  "hideElements": [],
+  "hideScrollBars": true,
+  "isLandscape": false,
+  "isNativeContext": false,
+  "platformName": "desktop",
+  "removeElements": [],
+}
+`;
+
+exports[`saveWebElement > should handle NaN dimension values correctly 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveWebElement > should handle NaN dimension values correctly 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "deviceName": "desktop",
+    "devicePixelRatio": 1,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "element": {
+      "elementId": "test-element",
+    },
+    "initialDevicePixelRatio": 1,
     "innerHeight": NaN,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
     "isLandscape": false,
+    "isMobile": false,
+    "resizeDimensions": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+    "toolBarShadowPadding": 6,
   },
+  false,
 ]
 `;
 
-exports[`saveWebElement > should handle NaN dimension values 3`] = `
-[
-  {
-    "addIOSBezelCorners": false,
-    "base64Image": "web-element-screenshot-data",
+exports[`saveWebElement > should handle NaN dimension values correctly 3`] = `
+{
+  "base64Image": "element-screenshot-data",
+  "beforeOptions": {
+    "addressBarShadowPadding": 6,
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "hideElements": [],
+    "instanceData": {
+      "test": "data",
+    },
+    "noScrollBars": true,
+    "removeElements": [],
+    "toolBarShadowPadding": 6,
+    "waitForFontsLoaded": false,
+  },
+  "enrichedInstanceData": {
+    "addressBarShadowPadding": 0,
+    "appName": "",
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
     "deviceName": "desktop",
     "devicePixelRatio": NaN,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "homeBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 0,
+        "width": 0,
+      },
+      "statusBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+    },
+    "dimensions": {
+      "window": {
+        "devicePixelRatio": NaN,
+        "innerHeight": NaN,
+        "isEmulated": false,
+        "isLandscape": false,
+        "outerHeight": NaN,
+        "outerWidth": NaN,
+        "screenHeight": NaN,
+        "screenWidth": NaN,
+      },
+    },
+    "initialDevicePixelRatio": NaN,
+    "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
     "isIOS": false,
-    "isLandscape": false,
-    "isWebDriverElementScreenshot": false,
-    "rectangles": {
-      "height": 100,
-      "width": 100,
-      "x": 0,
-      "y": 0,
-    },
-    "resizeDimensions": {
-      "bottom": 0,
-      "left": 0,
-      "right": 0,
-      "top": 0,
-    },
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "isTestInMobileBrowser": false,
+    "logName": "chrome",
+    "name": "chrome",
+    "nativeWebScreenshot": false,
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "toolBarShadowPadding": 0,
   },
-]
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 390,
+        "x": 0,
+        "y": 800,
+      },
+      "homeBar": {
+        "height": 34,
+        "width": 390,
+        "x": 0,
+        "y": 780,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 47,
+        "width": 390,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 733,
+        "width": 390,
+        "x": 0,
+        "y": 47,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": false,
+  "tag": "test-element",
+  "wicOptions": {
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "savePerInstance": true,
+  },
+}
 `;
 
-exports[`saveWebElement > should handle NaN dimension values 4`] = `
+exports[`saveWebElement > should handle NaN dimension values correctly 4`] = `
+{
+  "actualFolder": "/test/actual",
+  "base64Image": "element-screenshot-data",
+  "disableBlinkingCursor": false,
+  "disableCSSAnimation": false,
+  "enableLayoutTesting": false,
+  "fileName": {
+    "browserName": "chrome",
+    "browserVersion": "120.0.0",
+    "deviceName": "desktop",
+    "devicePixelRatio": NaN,
+    "formatImageName": "{tag}-{browserName}-{width}x{height}",
+    "isMobile": false,
+    "isTestInBrowser": true,
+    "logName": "chrome",
+    "name": "chrome",
+    "outerHeight": NaN,
+    "outerWidth": NaN,
+    "platformName": "desktop",
+    "platformVersion": "120.0.0",
+    "screenHeight": NaN,
+    "screenWidth": NaN,
+    "tag": "test-element",
+  },
+  "filePath": {
+    "browserName": "chrome",
+    "deviceName": "desktop",
+    "isMobile": false,
+    "savePerInstance": false,
+  },
+  "hideElements": [],
+  "hideScrollBars": true,
+  "isLandscape": false,
+  "isNativeContext": false,
+  "platformName": "desktop",
+  "removeElements": [],
+}
+`;
+
+exports[`saveWebElement > should pass autoElementScroll option correctly 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-element.png",
+}
+`;
+
+exports[`saveWebElement > should pass autoElementScroll option correctly 2`] = `
 [
   {
-    "execute": [MockFunction spy] {
-      "calls": [
-        [
-          [MockFunction spy],
-          {
-            "elementId": "test-element",
-          },
-          6,
-        ],
-      ],
-      "results": [
-        {
-          "type": "return",
-          "value": Promise {},
-        },
-      ],
-    },
-    "getElementRect": [MockFunction spy],
     "isAndroid": false,
     "isMobile": false,
   },
   {
-    "actualFolder": "/test/actual",
-    "base64Image": "cropped-screenshot-data",
-    "disableBlinkingCursor": false,
-    "disableCSSAnimation": false,
-    "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": NaN,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": NaN,
-      "outerWidth": NaN,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": NaN,
-      "screenWidth": NaN,
-      "tag": "test-element",
-    },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
-    "hideElements": [],
-    "hideScrollBars": true,
-    "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "iOS",
-    "removeElements": [],
-  },
-]
-`;
-
-exports[`saveWebElement > should handle auto scroll 1`] = `
-{
-  "devicePixelRatio": 2,
-  "fileName": "test-element.png",
-}
-`;
-
-exports[`saveWebElement > should handle auto scroll 2`] = `
-[
-  [
-    [MockFunction spy],
-    {
-      "elementId": "test-element",
-    },
-    6,
-  ],
-  [
-    [MockFunction spy],
-    100,
-  ],
-]
-`;
-
-exports[`saveWebElement > should handle zero dimensions 1`] = `
-{
-  "devicePixelRatio": 2,
-  "fileName": "test-element.png",
-}
-`;
-
-exports[`saveWebElement > should handle zero dimensions 2`] = `
-[
-  {
-    "browserInstance": {
-      "execute": [MockFunction spy] {
-        "calls": [
-          [
-            [MockFunction spy],
-            {
-              "elementId": "test-element",
-            },
-            6,
-          ],
-        ],
-        "results": [
-          {
-            "type": "return",
-            "value": Promise {},
-          },
-        ],
-      },
-      "getElementRect": [MockFunction spy],
-      "isAndroid": false,
-      "isMobile": false,
-    },
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "deviceName": "desktop",
     "devicePixelRatio": 2,
     "deviceRectangles": {
       "bottomBar": {
@@ -293,369 +1388,44 @@ exports[`saveWebElement > should handle zero dimensions 2`] = `
     "element": {
       "elementId": "test-element",
     },
-    "fallback": false,
-    "initialDevicePixelRatio": undefined,
+    "initialDevicePixelRatio": 2,
     "innerHeight": 900,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
     "isLandscape": false,
-  },
-]
-`;
-
-exports[`saveWebElement > should handle zero dimensions 3`] = `
-[
-  {
-    "addIOSBezelCorners": false,
-    "base64Image": "web-element-screenshot-data",
-    "deviceName": "desktop",
-    "devicePixelRatio": 2,
-    "isIOS": false,
-    "isLandscape": false,
-    "isWebDriverElementScreenshot": false,
-    "rectangles": {
-      "height": 100,
-      "width": 100,
-      "x": 0,
-      "y": 0,
-    },
+    "isMobile": false,
     "resizeDimensions": {
       "bottom": 0,
       "left": 0,
       "right": 0,
       "top": 0,
     },
+    "toolBarShadowPadding": 6,
   },
+  false,
 ]
 `;
 
-exports[`saveWebElement > should handle zero dimensions 4`] = `
-[
-  {
-    "execute": [MockFunction spy] {
-      "calls": [
-        [
-          [MockFunction spy],
-          {
-            "elementId": "test-element",
-          },
-          6,
-        ],
-      ],
-      "results": [
-        {
-          "type": "return",
-          "value": Promise {},
-        },
-      ],
-    },
-    "getElementRect": [MockFunction spy],
-    "isAndroid": false,
-    "isMobile": false,
-  },
-  {
-    "actualFolder": "/test/actual",
-    "base64Image": "cropped-screenshot-data",
-    "disableBlinkingCursor": false,
-    "disableCSSAnimation": false,
-    "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": 1000,
-      "outerWidth": 1200,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": 1080,
-      "screenWidth": 1920,
-      "tag": "test-element",
-    },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
-    "hideElements": [],
-    "hideScrollBars": true,
-    "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "iOS",
-    "removeElements": [],
-  },
-]
-`;
-
-exports[`saveWebElement > should use Bidi screenshot from document when viewport fails 1`] = `
+exports[`saveWebElement > should pass resizeDimensions option correctly 1`] = `
 {
   "devicePixelRatio": 2,
   "fileName": "test-element.png",
 }
 `;
 
-exports[`saveWebElement > should use Bidi screenshot from document when viewport fails 2`] = `
-[
-  [
-    {
-      "browserInstance": {
-        "execute": [MockFunction spy],
-        "getElementRect": [MockFunction spy] {
-          "calls": [
-            [
-              "test-element",
-            ],
-          ],
-          "results": [
-            {
-              "type": "return",
-              "value": Promise {},
-            },
-          ],
-        },
-        "isAndroid": false,
-        "isMobile": false,
-      },
-      "clip": {
-        "height": 100,
-        "width": 100,
-        "x": 0,
-        "y": 0,
-      },
-      "origin": "viewport",
-    },
-  ],
-  [
-    {
-      "browserInstance": {
-        "execute": [MockFunction spy],
-        "getElementRect": [MockFunction spy] {
-          "calls": [
-            [
-              "test-element",
-            ],
-          ],
-          "results": [
-            {
-              "type": "return",
-              "value": Promise {},
-            },
-          ],
-        },
-        "isAndroid": false,
-        "isMobile": false,
-      },
-      "clip": {
-        "height": 100,
-        "width": 100,
-        "x": 0,
-        "y": 0,
-      },
-      "origin": "document",
-    },
-  ],
-]
-`;
-
-exports[`saveWebElement > should use Bidi screenshot from document when viewport fails 3`] = `
+exports[`saveWebElement > should pass resizeDimensions option correctly 2`] = `
 [
   {
-    "execute": [MockFunction spy],
-    "getElementRect": [MockFunction spy] {
-      "calls": [
-        [
-          "test-element",
-        ],
-      ],
-      "results": [
-        {
-          "type": "return",
-          "value": Promise {},
-        },
-      ],
-    },
     "isAndroid": false,
     "isMobile": false,
   },
   {
-    "actualFolder": "/test/actual",
-    "base64Image": "bidi-screenshot-data",
-    "disableBlinkingCursor": false,
-    "disableCSSAnimation": false,
-    "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": 1000,
-      "outerWidth": 1200,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": 1080,
-      "screenWidth": 1920,
-      "tag": "test-element",
-    },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
-    "hideElements": [],
-    "hideScrollBars": true,
-    "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "iOS",
-    "removeElements": [],
-  },
-]
-`;
-
-exports[`saveWebElement > should use Bidi screenshot when available and not mobile 1`] = `
-{
-  "devicePixelRatio": 2,
-  "fileName": "test-element.png",
-}
-`;
-
-exports[`saveWebElement > should use Bidi screenshot when available and not mobile 2`] = `
-[
-  {
-    "browserInstance": {
-      "execute": [MockFunction spy],
-      "getElementRect": [MockFunction spy] {
-        "calls": [
-          [
-            "test-element",
-          ],
-        ],
-        "results": [
-          {
-            "type": "return",
-            "value": Promise {},
-          },
-        ],
-      },
-      "isAndroid": false,
-      "isMobile": false,
-    },
-    "clip": {
-      "height": 100,
-      "width": 100,
-      "x": 0,
-      "y": 0,
-    },
-    "origin": "viewport",
-  },
-]
-`;
-
-exports[`saveWebElement > should use Bidi screenshot when available and not mobile 3`] = `
-[
-  {
-    "execute": [MockFunction spy],
-    "getElementRect": [MockFunction spy] {
-      "calls": [
-        [
-          "test-element",
-        ],
-      ],
-      "results": [
-        {
-          "type": "return",
-          "value": Promise {},
-        },
-      ],
-    },
-    "isAndroid": false,
-    "isMobile": false,
-  },
-  {
-    "actualFolder": "/test/actual",
-    "base64Image": "bidi-screenshot-data",
-    "disableBlinkingCursor": false,
-    "disableCSSAnimation": false,
-    "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": 1000,
-      "outerWidth": 1200,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": 1080,
-      "screenWidth": 1920,
-      "tag": "test-element",
-    },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
-    "hideElements": [],
-    "hideScrollBars": true,
-    "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "iOS",
-    "removeElements": [],
-  },
-]
-`;
-
-exports[`saveWebElement > should use default values when hideElements and removeElements are not provided 1`] = `
-{
-  "devicePixelRatio": 2,
-  "fileName": "test-element.png",
-}
-`;
-
-exports[`saveWebElement > should use default values when hideElements and removeElements are not provided 2`] = `
-[
-  {
-    "browserInstance": {
-      "execute": [MockFunction spy] {
-        "calls": [
-          [
-            [MockFunction spy],
-            {
-              "elementId": "test-element",
-            },
-            6,
-          ],
-        ],
-        "results": [
-          {
-            "type": "return",
-            "value": Promise {},
-          },
-        ],
-      },
-      "getElementRect": [MockFunction spy],
-      "isAndroid": false,
-      "isMobile": false,
-    },
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "deviceName": "desktop",
     "devicePixelRatio": 2,
     "deviceRectangles": {
       "bottomBar": {
@@ -708,290 +1478,23 @@ exports[`saveWebElement > should use default values when hideElements and remove
     "element": {
       "elementId": "test-element",
     },
-    "fallback": false,
-    "initialDevicePixelRatio": undefined,
+    "initialDevicePixelRatio": 2,
     "innerHeight": 900,
     "isAndroid": false,
+    "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
     "isEmulated": false,
     "isIOS": false,
     "isLandscape": false,
-  },
-]
-`;
-
-exports[`saveWebElement > should use default values when hideElements and removeElements are not provided 3`] = `
-[
-  {
-    "addIOSBezelCorners": false,
-    "base64Image": "web-element-screenshot-data",
-    "deviceName": "desktop",
-    "devicePixelRatio": 2,
-    "isIOS": false,
-    "isLandscape": false,
-    "isWebDriverElementScreenshot": false,
-    "rectangles": {
-      "height": 100,
-      "width": 100,
-      "x": 0,
-      "y": 0,
-    },
-    "resizeDimensions": {
-      "bottom": 0,
-      "left": 0,
-      "right": 0,
-      "top": 0,
-    },
-  },
-]
-`;
-
-exports[`saveWebElement > should use default values when hideElements and removeElements are not provided 4`] = `
-[
-  {
-    "execute": [MockFunction spy] {
-      "calls": [
-        [
-          [MockFunction spy],
-          {
-            "elementId": "test-element",
-          },
-          6,
-        ],
-      ],
-      "results": [
-        {
-          "type": "return",
-          "value": Promise {},
-        },
-      ],
-    },
-    "getElementRect": [MockFunction spy],
-    "isAndroid": false,
     "isMobile": false,
-  },
-  {
-    "actualFolder": "/test/actual",
-    "base64Image": "cropped-screenshot-data",
-    "disableBlinkingCursor": false,
-    "disableCSSAnimation": false,
-    "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": 1000,
-      "outerWidth": 1200,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": 1080,
-      "screenWidth": 1920,
-      "tag": "test-element",
-    },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
-    "hideElements": [],
-    "hideScrollBars": true,
-    "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "iOS",
-    "removeElements": [],
-  },
-]
-`;
-
-exports[`saveWebElement > should use legacy method when Bidi is not available 1`] = `
-{
-  "devicePixelRatio": 2,
-  "fileName": "test-element.png",
-}
-`;
-
-exports[`saveWebElement > should use legacy method when Bidi is not available 2`] = `
-[
-  {
-    "browserInstance": {
-      "execute": [MockFunction spy] {
-        "calls": [
-          [
-            [MockFunction spy],
-            {
-              "elementId": "test-element",
-            },
-            6,
-          ],
-        ],
-        "results": [
-          {
-            "type": "return",
-            "value": Promise {},
-          },
-        ],
-      },
-      "getElementRect": [MockFunction spy],
-      "isAndroid": false,
-      "isMobile": false,
-    },
-    "devicePixelRatio": 2,
-    "deviceRectangles": {
-      "bottomBar": {
-        "height": 0,
-        "width": 390,
-        "x": 0,
-        "y": 800,
-      },
-      "homeBar": {
-        "height": 34,
-        "width": 390,
-        "x": 0,
-        "y": 780,
-      },
-      "leftSidePadding": {
-        "height": 0,
-        "width": 0,
-        "x": 0,
-        "y": 0,
-      },
-      "rightSidePadding": {
-        "height": 0,
-        "width": 0,
-        "x": 0,
-        "y": 0,
-      },
-      "screenSize": {
-        "height": 844,
-        "width": 390,
-      },
-      "statusBar": {
-        "height": 47,
-        "width": 390,
-        "x": 0,
-        "y": 0,
-      },
-      "statusBarAndAddressBar": {
-        "height": 47,
-        "width": 390,
-        "x": 0,
-        "y": 0,
-      },
-      "viewport": {
-        "height": 733,
-        "width": 390,
-        "x": 0,
-        "y": 47,
-      },
-    },
-    "element": {
-      "elementId": "test-element",
-    },
-    "fallback": false,
-    "initialDevicePixelRatio": undefined,
-    "innerHeight": 900,
-    "isAndroid": false,
-    "isAndroidNativeWebScreenshot": false,
-    "isEmulated": false,
-    "isIOS": false,
-    "isLandscape": false,
-  },
-]
-`;
-
-exports[`saveWebElement > should use legacy method when Bidi is not available 3`] = `
-[
-  {
-    "addIOSBezelCorners": false,
-    "base64Image": "web-element-screenshot-data",
-    "deviceName": "desktop",
-    "devicePixelRatio": 2,
-    "isIOS": false,
-    "isLandscape": false,
-    "isWebDriverElementScreenshot": false,
-    "rectangles": {
-      "height": 100,
-      "width": 100,
-      "x": 0,
-      "y": 0,
-    },
     "resizeDimensions": {
-      "bottom": 0,
-      "left": 0,
-      "right": 0,
-      "top": 0,
+      "bottom": 20,
+      "left": 25,
+      "right": 15,
+      "top": 10,
     },
+    "toolBarShadowPadding": 6,
   },
-]
-`;
-
-exports[`saveWebElement > should use legacy method when Bidi is not available 4`] = `
-[
-  {
-    "execute": [MockFunction spy] {
-      "calls": [
-        [
-          [MockFunction spy],
-          {
-            "elementId": "test-element",
-          },
-          6,
-        ],
-      ],
-      "results": [
-        {
-          "type": "return",
-          "value": Promise {},
-        },
-      ],
-    },
-    "getElementRect": [MockFunction spy],
-    "isAndroid": false,
-    "isMobile": false,
-  },
-  {
-    "actualFolder": "/test/actual",
-    "base64Image": "cropped-screenshot-data",
-    "disableBlinkingCursor": false,
-    "disableCSSAnimation": false,
-    "enableLayoutTesting": false,
-    "fileName": {
-      "browserName": "chrome",
-      "browserVersion": "120.0.0",
-      "deviceName": "desktop",
-      "devicePixelRatio": 2,
-      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
-      "isMobile": false,
-      "isTestInBrowser": true,
-      "logName": "chrome",
-      "name": "chrome",
-      "outerHeight": 1000,
-      "outerWidth": 1200,
-      "platformName": "desktop",
-      "platformVersion": "120.0.0",
-      "screenHeight": 1080,
-      "screenWidth": 1920,
-      "tag": "test-element",
-    },
-    "filePath": {
-      "browserName": "chrome",
-      "deviceName": "desktop",
-      "isMobile": false,
-      "savePerInstance": true,
-    },
-    "hideElements": [],
-    "hideScrollBars": true,
-    "isLandscape": false,
-    "isNativeContext": false,
-    "platformName": "iOS",
-    "removeElements": [],
-  },
+  false,
 ]
 `;

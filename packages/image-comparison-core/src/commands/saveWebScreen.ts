@@ -1,13 +1,12 @@
-import { takeBase64BiDiScreenshot, takeBase64Screenshot } from '../methods/screenshots.js'
-import { makeCroppedBase64Image } from '../methods/images.js'
+import { takeWebScreenshot } from '../methods/takeWebScreenshots.js'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
-import { determineScreenRectangles } from '../methods/rectangles.js'
-import type { BeforeScreenshotOptions, BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
-import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
-import type { RectanglesOutput, ScreenRectanglesOptions } from '../methods/rectangles.interfaces.js'
+import type { BeforeScreenshotResult } from '../helpers/beforeScreenshot.interfaces.js'
+import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
+import type { WebScreenshotDataOptions } from '../methods/screenshots.interfaces.js'
 import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
+import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
 
 /**
  * Saves an image of the viewport of the screen
@@ -22,37 +21,14 @@ export default async function saveWebScreen(
         isNativeContext = false,
     }: InternalSaveScreenMethodOptions
 ): Promise<ScreenshotOutput> {
-    // 1a. Set some variables
-    const { addressBarShadowPadding, addIOSBezelCorners, formatImageName, savePerInstance, toolBarShadowPadding } =
-        saveScreenOptions.wic
-
-    // 1b. Set the method options to the right values
-    const disableBlinkingCursor = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'disableBlinkingCursor')
-    const disableCSSAnimation = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'disableCSSAnimation')
-    const enableLayoutTesting = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'enableLayoutTesting')
+    // 1. Set some variables
+    const { addIOSBezelCorners, formatImageName, savePerInstance } = saveScreenOptions.wic
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'enableLegacyScreenshotMethod')
-    const hideScrollBars = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'hideScrollBars')
-    const hideElements: HTMLElement[] = saveScreenOptions.method.hideElements || []
-    const removeElements: HTMLElement[] = saveScreenOptions.method.removeElements || []
-    const waitForFontsLoaded = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'waitForFontsLoaded')
 
-    // 2.  Prepare the beforeScreenshot
-    const beforeOptions: BeforeScreenshotOptions = {
-        instanceData,
-        addressBarShadowPadding,
-        disableBlinkingCursor,
-        disableCSSAnimation,
-        enableLayoutTesting,
-        hideElements,
-        noScrollBars: hideScrollBars,
-        removeElements,
-        toolBarShadowPadding,
-        waitForFontsLoaded,
-    }
+    // 2.  Prepare the screenshot
+    const beforeOptions = createBeforeScreenshotOptions(instanceData, saveScreenOptions.method, saveScreenOptions.wic)
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions)
     const {
-        browserName,
-        browserVersion,
         deviceName,
         dimensions: {
             window: {
@@ -61,99 +37,47 @@ export default async function saveWebScreen(
                 innerWidth,
                 isEmulated,
                 isLandscape,
-                outerHeight,
-                outerWidth,
-                screenHeight,
-                screenWidth,
             },
         },
         initialDevicePixelRatio,
+        isAndroid,
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
         isIOS,
         isMobile,
-        isTestInBrowser,
-        logName,
-        name,
-        platformName,
-        platformVersion,
     } = enrichedInstanceData
 
-    // 3.  Take the screenshot
-    let base64Image: string
-
-    if (canUseBidiScreenshot(browserInstance) && !isMobile && !enableLegacyScreenshotMethod) {
-        // 3a. Take the screenshot with the BiDi method
-        base64Image = await takeBase64BiDiScreenshot({ browserInstance })
-    } else {
-        // 3b. Take the screenshot with the regular method
-        base64Image = await takeBase64Screenshot(browserInstance)
-
-        // Determine the rectangles
-        const screenRectangleOptions: ScreenRectanglesOptions = {
-            devicePixelRatio: devicePixelRatio || NaN,
-            enableLegacyScreenshotMethod,
-            innerHeight: innerHeight || NaN,
-            innerWidth: innerWidth || NaN,
-            isAndroidChromeDriverScreenshot,
-            isAndroidNativeWebScreenshot,
-            isEmulated: isEmulated || false,
-            initialDevicePixelRatio: initialDevicePixelRatio || NaN,
-            isIOS,
-            isLandscape,
-        }
-        const rectangles: RectanglesOutput = determineScreenRectangles(base64Image, screenRectangleOptions)
-        // 4.  Make a cropped base64 image
-        base64Image = await makeCroppedBase64Image({
-            addIOSBezelCorners,
-            base64Image,
-            deviceName,
-            devicePixelRatio: devicePixelRatio || NaN,
-            isIOS,
-            isLandscape,
-            rectangles,
-        })
-    }
-
-    // 5.  The after the screenshot methods
-    const afterOptions: AfterScreenshotOptions = {
-        actualFolder: folders.actualFolder,
-        base64Image,
-        disableBlinkingCursor,
-        disableCSSAnimation,
-        enableLayoutTesting,
-        filePath: {
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
-        fileName: {
-            browserName,
-            browserVersion,
-            deviceName,
-            devicePixelRatio: devicePixelRatio || NaN,
-            formatImageName,
-            isMobile,
-            isTestInBrowser,
-            logName,
-            name,
-            outerHeight: outerHeight || NaN,
-            outerWidth: outerWidth || NaN,
-            platformName,
-            platformVersion,
-            screenHeight: screenHeight || NaN,
-            screenWidth: screenWidth || NaN,
-            tag,
-        },
-        hideElements,
-        hideScrollBars,
+    // 3. Take the screenshot
+    const shouldUseBidi = canUseBidiScreenshot(browserInstance) && !isMobile && !enableLegacyScreenshotMethod
+    const webScreenshotOptions: WebScreenshotDataOptions = {
+        addIOSBezelCorners,
+        deviceName,
+        devicePixelRatio: devicePixelRatio || 1,
+        enableLegacyScreenshotMethod,
+        innerHeight,
+        innerWidth,
+        initialDevicePixelRatio,
+        isAndroid,
+        isAndroidChromeDriverScreenshot,
+        isAndroidNativeWebScreenshot,
+        isEmulated,
+        isIOS,
         isLandscape,
-        isNativeContext,
-        platformName: instanceData.platformName,
-        removeElements,
+        isMobile,
     }
+    const { base64Image } = await takeWebScreenshot(browserInstance, webScreenshotOptions, shouldUseBidi)
 
-    // 6.  Return the data
+    // 4. Return the data
+    const afterOptions = buildAfterScreenshotOptions({
+        base64Image,
+        folders,
+        tag,
+        isNativeContext,
+        instanceData,
+        enrichedInstanceData,
+        beforeOptions,
+        wicOptions: { formatImageName, savePerInstance }
+    })
+
     return afterScreenshot(browserInstance, afterOptions)
 }

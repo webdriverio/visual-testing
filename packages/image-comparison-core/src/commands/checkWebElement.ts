@@ -3,6 +3,7 @@ import saveWebElement from './saveWebElement.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveElementOptions } from './element.interfaces.js'
 import { methodCompareOptions } from '../helpers/options.js'
+import { extractCommonCheckVariables, buildBaseExecuteCompareOptions } from '../helpers/utils.js'
 import type { InternalCheckElementMethodOptions } from './check.interfaces.js'
 
 /**
@@ -20,18 +21,8 @@ export default async function checkWebElement(
         isNativeContext = false,
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
-    // Set some vars
-    const { actualFolder, baselineFolder, diffFolder } = folders
-    const {
-        browserName,
-        deviceName,
-        deviceRectangles,
-        isAndroid,
-        isMobile,
-        nativeWebScreenshot: isAndroidNativeWebScreenshot,
-        platformName,
-    } = instanceData
-    const { autoSaveBaseline, savePerInstance } = checkElementOptions.wic
+    // 1. Extract common variables
+    const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkElementOptions.wic })
     const {
         disableBlinkingCursor,
         disableCSSAnimation,
@@ -44,7 +35,7 @@ export default async function checkWebElement(
         waitForFontsLoaded = false,
     } = checkElementOptions.method
 
-    // 1. Take the actual element screenshot and retrieve the needed data
+    // 2. Take the actual element screenshot and retrieve the needed data
     const saveElementOptions: SaveElementOptions = {
         wic: checkElementOptions.wic,
         method: {
@@ -68,38 +59,18 @@ export default async function checkWebElement(
         saveElementOptions,
     })
 
-    // 2a. Determine the options
+    // 3. Determine the options
     const compareOptions = methodCompareOptions(checkElementOptions.method)
-    const executeCompareOptions = {
-        compareOptions: {
-            wic: {
-                ...checkElementOptions.wic.compareOptions,
-                // No need to block out anything on the app for element screenshots
-                blockOutSideBar: false,
-                blockOutStatusBar: false,
-                blockOutToolBar: false,
-            },
-            method: compareOptions,
-        },
+    const executeCompareOptions = buildBaseExecuteCompareOptions({
+        commonCheckVariables,
+        wicCompareOptions: checkElementOptions.wic.compareOptions,
+        methodCompareOptions: compareOptions,
         devicePixelRatio,
-        deviceRectangles,
         fileName,
-        folderOptions: {
-            autoSaveBaseline,
-            actualFolder,
-            baselineFolder,
-            diffFolder,
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
-        isAndroid,
-        isAndroidNativeWebScreenshot,
-        platformName,
-    }
+        isElementScreenshot: true,
+    })
 
-    // 2b Now execute the compare and return the data
+    // 4. Now execute the compare and return the data
     return executeImageCompare({
         isViewPortScreenshot: true,
         isNativeContext,

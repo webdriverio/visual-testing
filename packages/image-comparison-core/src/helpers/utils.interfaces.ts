@@ -1,5 +1,6 @@
-import type { BaseCoordinates, BaseDimensions } from '../base.interfaces.js'
+import type { BaseCoordinates, BaseDimensions, FilePaths, FolderPaths } from '../base.interfaces.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
+import type { Folders } from '../base.interfaces.js'
 
 export interface GetAndCreatePathOptions {
     /** The name of the browser */
@@ -152,3 +153,122 @@ export interface ExecuteNativeClickOptions extends BaseCoordinates {
     /** Is the device iOS */
     isIOS: boolean;
 }
+
+export interface CommonCheckVariables {
+    /** Folder paths */
+    actualFolder: string;
+    baselineFolder: string;
+    diffFolder: string;
+
+    /** Instance data properties */
+    browserName: string;
+    deviceName: string;
+    deviceRectangles: any;
+    isAndroid: boolean;
+    isMobile: boolean;
+    isAndroidNativeWebScreenshot: boolean;
+
+    /** Optional instance data (not all methods need these) */
+    platformName?: string;
+    isIOS?: boolean;
+
+    /** WIC options */
+    autoSaveBaseline: boolean;
+    savePerInstance: boolean;
+
+    /** Optional WIC options (not all methods need these) */
+    isHybridApp?: boolean;
+}
+
+export interface ExtractCommonCheckVariablesOptions {
+    /** The folders object */
+    folders: Folders;
+    /** The instance data object */
+    instanceData: any;
+    /** The wic options object */
+    wicOptions: any;
+}
+
+export interface FolderOptions {
+    /** Whether to auto-save baseline images */
+    autoSaveBaseline: boolean;
+    /** The actual folder path */
+    actualFolder: string;
+    /** The baseline folder path */
+    baselineFolder: string;
+    /** The diff folder path */
+    diffFolder: string;
+    /** The browser name */
+    browserName: string;
+    /** The device name */
+    deviceName: string;
+    /** Whether this is a mobile device */
+    isMobile: boolean;
+    /** Whether to save per instance */
+    savePerInstance: boolean;
+}
+
+export interface BuildFolderOptionsOptions {
+    /** Common check variables that include all the needed folder options properties */
+    commonCheckVariables: CommonCheckVariables;
+}
+
+export interface BaseExecuteCompareOptions {
+    /** Compare options for both wic and method */
+    compareOptions: {
+        wic: any;
+        method: any;
+    };
+    /** Device pixel ratio */
+    devicePixelRatio: number;
+    /** Device rectangles */
+    deviceRectangles: any;
+    /** File name */
+    fileName: string;
+    /** Folder options */
+    folderOptions: FolderOptions;
+    /** Whether this is Android */
+    isAndroid: boolean;
+    /** Whether this is Android native web screenshot */
+    isAndroidNativeWebScreenshot: boolean;
+    /** Optional: platform name */
+    platformName?: string;
+    /** Optional: whether this is iOS */
+    isIOS?: boolean;
+    /** Optional: whether this is hybrid app */
+    isHybridApp?: boolean;
+    /** Optional: ignore regions for special cases */
+    ignoreRegions?: any[];
+}
+
+export interface BuildBaseExecuteCompareOptionsOptions {
+    /** Common check variables that include device and folder info */
+    commonCheckVariables: CommonCheckVariables;
+    /** WIC compare options */
+    wicCompareOptions: any;
+    /** Method compare options */
+    methodCompareOptions: any;
+    /** Device pixel ratio from screenshot */
+    devicePixelRatio: number;
+    /** File name from screenshot */
+    fileName: string;
+    /** Whether to override wic options for element screenshots (sets blockOut* to false) */
+    isElementScreenshot?: boolean;
+    /** Additional properties to add to the options */
+    additionalProperties?: Record<string, any>;
+}
+
+export interface PrepareComparisonFilePathsOptions extends Folders {
+    /** The browser name */
+    browserName: string;
+    /** The device name */
+    deviceName: string;
+    /** Whether this is a mobile device */
+    isMobile: boolean;
+    /** Whether to save per instance */
+    savePerInstance: boolean;
+    /** The file name */
+    fileName: string;
+}
+
+export interface ComparisonFilePaths extends FilePaths, FolderPaths {}

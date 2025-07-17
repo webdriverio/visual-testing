@@ -5,7 +5,6 @@ import removeElementFromDom from './removeElementFromDom.js'
 
 describe('removeElementFromDom', () => {
     it('should be able to remove the custom css', () => {
-        // Set up our document body
         const id = 'test'
         const cssText = 'body:{width:100%}'
         const head = document.head || document.getElementsByTagName('head')[0]

@@ -12,17 +12,14 @@ describe('injectWebviewOverlay', () => {
         global.window = dom.window as unknown as Window & typeof globalThis
         global.document = dom.window.document
 
-        // Mock required layout properties
         Object.defineProperty(document.documentElement, 'clientHeight', {
             value: 800,
             configurable: true,
         })
-
         Object.defineProperty(window, 'innerWidth', {
             value: 400,
             configurable: true,
         })
-
         Object.defineProperty(window, 'devicePixelRatio', {
             value: 2,
             configurable: true,
@@ -53,8 +50,6 @@ describe('injectWebviewOverlay', () => {
         injectWebviewOverlay(true)
 
         const overlay = document.querySelector('[data-test="ics-overlay"]') as HTMLDivElement
-
-        // Simulate click at position (50, 100)
         const event = new window.MouseEvent('click', {
             clientX: 50,
             clientY: 100,
@@ -63,6 +58,7 @@ describe('injectWebviewOverlay', () => {
         overlay.dispatchEvent(event)
 
         const parsedData = JSON.parse(overlay.dataset.icsWebviewData!)
+
         expect(parsedData).toEqual({
             x: 100,
             y: 200,
@@ -75,7 +71,6 @@ describe('injectWebviewOverlay', () => {
         injectWebviewOverlay(false)
 
         const overlay = document.querySelector('[data-test="ics-overlay"]') as HTMLDivElement
-
         const event = new window.MouseEvent('click', {
             clientX: 50,
             clientY: 100,
@@ -84,6 +79,7 @@ describe('injectWebviewOverlay', () => {
         overlay.dispatchEvent(event)
 
         const parsedData = JSON.parse(overlay.dataset.icsWebviewData!)
+
         expect(parsedData).toEqual({
             x: 50,
             y: 100,

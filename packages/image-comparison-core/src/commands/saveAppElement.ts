@@ -1,6 +1,7 @@
-import type { AfterScreenshotOptions, ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
+import type { ScreenshotOutput } from '../helpers/afterScreenshot.interfaces.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { DEFAULT_RESIZE_DIMENSIONS } from '../helpers/constants.js'
+import { buildAfterScreenshotOptions } from '../helpers/options.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import { takeBase64ElementScreenshot } from '../methods/images.js'
 import type { WicElement } from './element.interfaces.js'
@@ -21,23 +22,8 @@ export default async function saveAppElement(
     }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1. Set some variables
-    const {
-        formatImageName,
-        savePerInstance,
-    } = saveElementOptions.wic
     const resizeDimensions: ResizeDimensions = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
-    const {
-        browserName,
-        browserVersion,
-        deviceName,
-        devicePixelRatio,
-        deviceRectangles:{ screenSize },
-        isIOS,
-        isMobile,
-        logName,
-        platformName,
-        platformVersion,
-    } = instanceData
+    const { devicePixelRatio, isIOS } = instanceData
 
     // 2. Take the screenshot
     const base64Image: string = await takeBase64ElementScreenshot({
@@ -48,37 +34,15 @@ export default async function saveAppElement(
         resizeDimensions,
     })
 
-    // 3.  The after the screenshot methods
-    const afterOptions: AfterScreenshotOptions = {
-        actualFolder: folders.actualFolder,
+    // 3. Return the data
+    const afterOptions = buildAfterScreenshotOptions({
         base64Image,
-        filePath: {
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
-        fileName: {
-            browserName,
-            browserVersion,
-            deviceName,
-            devicePixelRatio: devicePixelRatio,
-            formatImageName,
-            isMobile,
-            isTestInBrowser: !isNativeContext,
-            logName,
-            name: '',
-            platformName,
-            platformVersion,
-            screenHeight: screenSize.height,
-            screenWidth: screenSize.width,
-            tag,
-        },
+        folders,
+        tag,
         isNativeContext,
-        isLandscape:false,
-        platformName,
-    }
+        instanceData: instanceData,
+        wicOptions: saveElementOptions.wic
+    })
 
-    // 4.  Return the data
     return afterScreenshot(browserInstance, afterOptions)
 }

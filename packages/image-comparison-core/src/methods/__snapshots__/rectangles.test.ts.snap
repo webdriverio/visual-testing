@@ -1,5 +1,72 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`rectangles > determineDeviceBlockOuts > should handle custom device rectangles 1`] = `
+[
+  {
+    "height": 60,
+    "width": 500,
+    "x": 10,
+    "y": 20,
+  },
+  {
+    "height": 40,
+    "width": 500,
+    "x": 10,
+    "y": 900,
+  },
+]
+`;
+
+exports[`rectangles > determineDeviceBlockOuts > should only return statusBar when both blockouts are enabled for Android device 1`] = `
+[
+  {
+    "height": 47,
+    "width": 390,
+    "x": 0,
+    "y": 0,
+  },
+]
+`;
+
+exports[`rectangles > determineDeviceBlockOuts > should return both statusBar and homeBar when both blockouts are enabled for non-Android device 1`] = `
+[
+  {
+    "height": 47,
+    "width": 390,
+    "x": 0,
+    "y": 0,
+  },
+  {
+    "height": 34,
+    "width": 390,
+    "x": 0,
+    "y": 780,
+  },
+]
+`;
+
+exports[`rectangles > determineDeviceBlockOuts > should return homeBar when blockOutToolBar is enabled for non-Android device 1`] = `
+[
+  {
+    "height": 34,
+    "width": 390,
+    "x": 0,
+    "y": 780,
+  },
+]
+`;
+
+exports[`rectangles > determineDeviceBlockOuts > should return statusBar when blockOutStatusBar is enabled 1`] = `
+[
+  {
+    "height": 47,
+    "width": 390,
+    "x": 0,
+    "y": 0,
+  },
+]
+`;
+
 exports[`rectangles > determineElementRectangles > should determine them for Android ChromeDriver 1`] = `
 {
   "height": 20,
@@ -108,6 +175,24 @@ exports[`rectangles > determineScreenRectangles > should determine them with leg
 }
 `;
 
+exports[`rectangles > determineScreenRectangles > should handle landscape rotation when height > width 1`] = `
+{
+  "height": 768,
+  "width": 1024,
+  "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`rectangles > determineScreenRectangles > should use initialDevicePixelRatio when isEmulated and enableLegacyScreenshotMethod are both true 1`] = `
+{
+  "height": 1536,
+  "width": 2048,
+  "x": 0,
+  "y": 0,
+}
+`;
+
 exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for Android without native web screenshot 1`] = `[]`;
 
 exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles for iOS with blockouts 1`] = `
@@ -179,3 +264,106 @@ exports[`rectangles > determineStatusAddressToolBarRectangles > should determine
 exports[`rectangles > determineStatusAddressToolBarRectangles > should determine the rectangles with only toolbar blockout 1`] = `[]`;
 
 exports[`rectangles > determineStatusAddressToolBarRectangles > should handle empty device rectangles 1`] = `[]`;
+
+exports[`rectangles > prepareIgnoreRectangles > should combine all rectangle sources correctly 1`] = `
+[
+  {
+    "bottom": 140,
+    "left": 20,
+    "right": 220,
+    "top": 40,
+  },
+  {
+    "bottom": 750,
+    "left": 400,
+    "right": 700,
+    "top": 600,
+  },
+  {
+    "bottom": 640,
+    "left": 0,
+    "right": 2688,
+    "top": 0,
+  },
+]
+`;
+
+exports[`rectangles > prepareIgnoreRectangles > should filter out zero-sized rectangles from mobile web context 1`] = `
+[
+  {
+    "bottom": 94,
+    "left": 0,
+    "right": 780,
+    "top": 0,
+  },
+]
+`;
+
+exports[`rectangles > prepareIgnoreRectangles > should handle Android device with different DPR calculation 1`] = `
+[
+  {
+    "bottom": 70,
+    "left": 10,
+    "right": 110,
+    "top": 20,
+  },
+  {
+    "bottom": 375,
+    "left": 200,
+    "right": 350,
+    "top": 300,
+  },
+]
+`;
+
+exports[`rectangles > prepareIgnoreRectangles > should handle blockOut and ignoreRegions without mobile web rectangles 1`] = `
+[
+  {
+    "bottom": 140,
+    "left": 20,
+    "right": 220,
+    "top": 40,
+  },
+  {
+    "bottom": 750,
+    "left": 400,
+    "right": 700,
+    "top": 600,
+  },
+]
+`;
+
+exports[`rectangles > prepareIgnoreRectangles > should include mobile web rectangles when mobile and not native context 1`] = `
+[
+  {
+    "bottom": 640,
+    "left": 0,
+    "right": 2688,
+    "top": 0,
+  },
+  {
+    "bottom": 5984,
+    "left": 0,
+    "right": 2688,
+    "top": 5842,
+  },
+  {
+    "bottom": 5842,
+    "left": 0,
+    "right": 0,
+    "top": 640,
+  },
+  {
+    "bottom": 5842,
+    "left": 2688,
+    "right": 2688,
+    "top": 640,
+  },
+]
+`;
+
+exports[`rectangles > splitIgnores > should handle mixed valid and invalid items in nested array 1`] = `[Error: Invalid elements or regions: invalid is not a valid WebdriverIO element]`;
+
+exports[`rectangles > splitIgnores > should throw error for invalid element in nested array 1`] = `[Error: Invalid elements or regions: invalid-nested is not a valid WebdriverIO element]`;
+
+exports[`rectangles > splitIgnores > should throw error for invalid element in top-level array 1`] = `[Error: Invalid elements or regions: invalid-string is not a valid WebdriverIO element or region, {"invalid":"object"} is not a valid WebdriverIO element or region, 123 is not a valid WebdriverIO element or region]`;

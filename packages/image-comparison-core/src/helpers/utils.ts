@@ -3,7 +3,14 @@ import { join } from 'node:path'
 import { DESKTOP, NOT_KNOWN } from './constants.js'
 import { mkdirSync } from 'node:fs'
 import type {
+    BaseExecuteCompareOptions,
+    BuildBaseExecuteCompareOptionsOptions,
+    BuildFolderOptionsOptions,
+    CommonCheckVariables,
+    ComparisonFilePaths,
     ExecuteNativeClickOptions,
+    ExtractCommonCheckVariablesOptions,
+    FolderOptions,
     FormatFileDefaults,
     FormatFileNameOptions,
     GetAddressBarShadowPaddingOptions,
@@ -13,6 +20,7 @@ import type {
     GetMobileViewPortPositionOptions,
     GetToolBarShadowPaddingOptions,
     LoadBase64HtmlOptions,
+    PrepareComparisonFilePathsOptions,
     ScreenshotSize,
 } from './utils.interfaces.js'
 import type { ClassOptions, CompareOptions } from './options.interfaces.js'
@@ -494,7 +502,6 @@ export async function getMobileViewPortPosition({
     screenHeight,
     screenWidth,
 }: GetMobileViewPortPositionOptions): Promise<DeviceRectangles> {
-
     if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
         const currentUrl = await browserInstance.getUrl()
         // 1. Load a base64 HTML page
@@ -569,4 +576,146 @@ export function getBooleanOption(options: ClassOptions, key: keyof ClassOptions,
  */
 export function createConditionalProperty<T>(condition: boolean, key: string, value: T): Record<string, T> | {} {
     return condition ? { [key]: value } : {}
+}
+
+/**
+ * Check if resizeDimensions has any non-zero values (indicating it's been changed from default)
+ */
+export function hasResizeDimensions(resizeDimensions: any): boolean {
+    return resizeDimensions && Object.values(resizeDimensions).some(value => value !== 0)
+}
+
+/**
+ * Extracts common variables used across all check methods to reduce duplication
+ */
+export function extractCommonCheckVariables(
+    options: ExtractCommonCheckVariablesOptions
+): CommonCheckVariables {
+    const { folders, instanceData, wicOptions } = options
+
+    return {
+    // Folders
+        actualFolder: folders.actualFolder,
+        baselineFolder: folders.baselineFolder,
+        diffFolder: folders.diffFolder,
+
+        // Instance data
+        browserName: instanceData.browserName,
+        deviceName: instanceData.deviceName,
+        deviceRectangles: instanceData.deviceRectangles,
+        isAndroid: instanceData.isAndroid,
+        isMobile: instanceData.isMobile,
+        isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
+
+        // Optional instance data
+        ...(instanceData.platformName && { platformName: instanceData.platformName }),
+        ...(instanceData.isIOS !== undefined && { isIOS: instanceData.isIOS }),
+
+        // WIC options
+        autoSaveBaseline: wicOptions.autoSaveBaseline,
+        savePerInstance: wicOptions.savePerInstance,
+
+        // Optional WIC options
+        ...(wicOptions.isHybridApp !== undefined && { isHybridApp: wicOptions.isHybridApp }),
+    }
+}
+
+/**
+ * Builds folder options object used across all check methods to reduce duplication
+ */
+export function buildFolderOptions(
+    options: BuildFolderOptionsOptions
+): FolderOptions {
+    const { commonCheckVariables } = options
+
+    return {
+        autoSaveBaseline: commonCheckVariables.autoSaveBaseline,
+        actualFolder: commonCheckVariables.actualFolder,
+        baselineFolder: commonCheckVariables.baselineFolder,
+        diffFolder: commonCheckVariables.diffFolder,
+        browserName: commonCheckVariables.browserName,
+        deviceName: commonCheckVariables.deviceName,
+        isMobile: commonCheckVariables.isMobile,
+        savePerInstance: commonCheckVariables.savePerInstance,
+    }
+}
+
+/**
+ * Builds base execute compare options object used across all check methods to reduce duplication
+ */
+export function buildBaseExecuteCompareOptions(
+    options: BuildBaseExecuteCompareOptionsOptions
+): BaseExecuteCompareOptions {
+    const {
+        commonCheckVariables,
+        wicCompareOptions,
+        methodCompareOptions,
+        devicePixelRatio,
+        fileName,
+        isElementScreenshot = false,
+        additionalProperties = {}
+    } = options
+
+    // For element screenshots, override blockOut options to false
+    const processedWicOptions = isElementScreenshot ? {
+        ...wicCompareOptions,
+        blockOutSideBar: false,
+        blockOutStatusBar: false,
+        blockOutToolBar: false,
+    } : wicCompareOptions
+
+    const baseOptions: BaseExecuteCompareOptions = {
+        compareOptions: {
+            wic: processedWicOptions,
+            method: methodCompareOptions,
+        },
+        devicePixelRatio,
+        deviceRectangles: commonCheckVariables.deviceRectangles,
+        fileName,
+        folderOptions: buildFolderOptions({ commonCheckVariables }),
+        isAndroid: commonCheckVariables.isAndroid,
+        isAndroidNativeWebScreenshot: commonCheckVariables.isAndroidNativeWebScreenshot,
+        // Add optional properties from commonCheckVariables if they exist
+        ...(commonCheckVariables.platformName && { platformName: commonCheckVariables.platformName }),
+        ...(commonCheckVariables.isIOS !== undefined && { isIOS: commonCheckVariables.isIOS }),
+        ...(commonCheckVariables.isHybridApp !== undefined && { isHybridApp: commonCheckVariables.isHybridApp }),
+    }
+
+    // Add any additional properties
+    return {
+        ...baseOptions,
+        ...additionalProperties,
+    }
+}
+
+/**
+ * Prepare all file paths needed for image comparison
+ */
+export function prepareComparisonFilePaths(options: PrepareComparisonFilePathsOptions): ComparisonFilePaths {
+    const {
+        actualFolder,
+        baselineFolder,
+        diffFolder,
+        browserName,
+        deviceName,
+        isMobile,
+        savePerInstance,
+        fileName
+    } = options
+    const createFolderOptions = { browserName, deviceName, isMobile, savePerInstance }
+    const actualFolderPath = getAndCreatePath(actualFolder, createFolderOptions)
+    const baselineFolderPath = getAndCreatePath(baselineFolder, createFolderOptions)
+    const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
+    const actualFilePath = join(actualFolderPath, fileName)
+    const baselineFilePath = join(baselineFolderPath, fileName)
+    const diffFilePath = join(diffFolderPath, fileName)
+
+    return {
+        actualFolderPath,
+        baselineFolderPath,
+        diffFolderPath,
+        actualFilePath,
+        baselineFilePath,
+        diffFilePath
+    }
 }

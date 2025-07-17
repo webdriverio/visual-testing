@@ -137,51 +137,6 @@ exports[`createCompareReport > should create a report for mobile browser 1`] = `
 }
 `;
 
-exports[`createCompareReport > should create a report without diff file path 1`] = `
-{
-  "boundingBoxes": {
-    "diffBoundingBoxes": [],
-    "ignoredBoxes": [],
-  },
-  "commandName": "test-command",
-  "description": "test parent",
-  "fileData": {
-    "actualFilePath": "/actual/test.png",
-    "baselineFilePath": "/baseline/test.png",
-    "fileName": "test.png",
-    "size": {
-      "actual": {
-        "height": 100,
-        "width": 100,
-      },
-      "baseline": {
-        "height": 100,
-        "width": 100,
-      },
-      "diff": {
-        "height": 100,
-        "width": 100,
-      },
-    },
-  },
-  "framework": "wdio",
-  "instanceData": {
-    "browser": {
-      "name": "chrome",
-      "version": "100",
-    },
-    "platform": {
-      "name": "windows",
-      "version": "10",
-    },
-  },
-  "misMatchPercentage": "0",
-  "rawMisMatchPercentage": 0,
-  "tag": "test-tag",
-  "test": "test title",
-}
-`;
-
 exports[`createCompareReport > should include misMatchPercentage in the report 1`] = `
 {
   "boundingBoxes": {
@@ -227,3 +182,86 @@ exports[`createCompareReport > should include misMatchPercentage in the report 1
   "test": "test title",
 }
 `;
+
+exports[`createJsonReportIfNeeded > should create report when createJsonReportFiles is true with diff 1`] = `
+[
+  [
+    "/actual/test.png",
+  ],
+  [
+    "/baseline/test.png",
+  ],
+  [
+    "/diff/test.png",
+  ],
+]
+`;
+
+exports[`createJsonReportIfNeeded > should create report when createJsonReportFiles is true with diff 2`] = `
+[
+  [
+    "YmFzZTY0LWltYWdlLWRhdGE=",
+    1,
+  ],
+  [
+    "YmFzZTY0LWltYWdlLWRhdGE=",
+    1,
+  ],
+  [
+    "YmFzZTY0LWltYWdlLWRhdGE=",
+    1,
+  ],
+]
+`;
+
+exports[`createJsonReportIfNeeded > should create report when createJsonReportFiles is true without diff 1`] = `
+[
+  [
+    "/actual/test.png",
+  ],
+  [
+    "/baseline/test.png",
+  ],
+]
+`;
+
+exports[`createJsonReportIfNeeded > should create report when createJsonReportFiles is true without diff 2`] = `
+[
+  [
+    "YmFzZTY0LWltYWdlLWRhdGE=",
+    2,
+  ],
+  [
+    "YmFzZTY0LWltYWdlLWRhdGE=",
+    2,
+  ],
+]
+`;
+
+exports[`createJsonReportIfNeeded > should create report without diff when diffFilePath is undefined 1`] = `
+[
+  [
+    "/actual/test.png",
+  ],
+  [
+    "/baseline/test.png",
+  ],
+]
+`;
+
+exports[`createJsonReportIfNeeded > should create report without diff when diffFilePath is undefined 2`] = `
+[
+  [
+    "YmFzZTY0LWltYWdlLWRhdGE=",
+    1,
+  ],
+  [
+    "YmFzZTY0LWltYWdlLWRhdGE=",
+    1,
+  ],
+]
+`;
+
+exports[`createJsonReportIfNeeded > should not create report when createJsonReportFiles is false 1`] = `[]`;
+
+exports[`createJsonReportIfNeeded > should not create report when createJsonReportFiles is false 2`] = `[]`;

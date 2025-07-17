@@ -1,7 +1,8 @@
 import { screenMethodCompareOptions } from '../helpers/options.js'
-import type {  ImageCompareOptions, ImageCompareResult } from '../methods/images.interfaces.js'
+import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
 import { determineDeviceBlockOuts, determineIgnoreRegions } from '../methods/rectangles.js'
+import { extractCommonCheckVariables, buildBaseExecuteCompareOptions } from '../helpers/utils.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 import saveAppScreen from './saveAppScreen.js'
 import type { ElementIgnore } from './element.interfaces.js'
@@ -20,7 +21,8 @@ export default async function checkAppScreen(
         testContext,
     }: InternalCheckScreenMethodOptions
 ): Promise<ImageCompareResult | number> {
-    // 1. Set some vars
+    // 1. Set some variables
+    const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkScreenOptions.wic })
     const saveAppScreenOptions = {
         wic: checkScreenOptions.wic,
         method:{
@@ -39,9 +41,6 @@ export default async function checkAppScreen(
         ]
 
     }
-    const { isAndroid, isMobile, deviceRectangles, browserName, deviceName, nativeWebScreenshot: isAndroidNativeWebScreenshot } = instanceData
-    const { actualFolder, baselineFolder, diffFolder } = folders
-    const { autoSaveBaseline, savePerInstance, compareOptions } = checkScreenOptions.wic
 
     // 2. Take the actual screenshot and retrieve the needed data
     const { devicePixelRatio, fileName } = await saveAppScreen({
@@ -53,41 +52,37 @@ export default async function checkAppScreen(
         tag,
     })
 
-    // 3. Determine the ignore regions
+    // 3. Determine the ignore regions and compare options
     const ignoreRegions = await determineIgnoreRegions(browserInstance, screenCompareOptions.ignore || [])
     const deviceIgnoreRegions = await determineDeviceBlockOuts({
-        isAndroid,
+        isAndroid: commonCheckVariables.isAndroid,
         screenCompareOptions,
         instanceData,
     })
-
-    // 4a. Determine the compare options
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)
-
-    const executeCompareOptions: ImageCompareOptions = {
-        compareOptions: {
-            wic: compareOptions,
-            method: methodCompareOptions,
-        },
+    const baseExecuteCompareOptions = buildBaseExecuteCompareOptions({
+        commonCheckVariables,
+        wicCompareOptions: checkScreenOptions.wic.compareOptions,
+        methodCompareOptions,
         devicePixelRatio,
-        deviceRectangles,
         fileName,
-        folderOptions: {
-            autoSaveBaseline,
-            actualFolder,
-            baselineFolder,
-            diffFolder,
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
-        ignoreRegions: [...ignoreRegions, ...deviceIgnoreRegions],
-        isAndroid,
-        isAndroidNativeWebScreenshot,
+        additionalProperties: {
+            ignoreRegions: [...ignoreRegions, ...deviceIgnoreRegions],
+        }
+    })
+
+    // 4. Now execute the compare and return the data
+    const executeCompareOptions = {
+        compareOptions: baseExecuteCompareOptions.compareOptions,
+        devicePixelRatio: baseExecuteCompareOptions.devicePixelRatio,
+        deviceRectangles: baseExecuteCompareOptions.deviceRectangles,
+        fileName: baseExecuteCompareOptions.fileName,
+        folderOptions: baseExecuteCompareOptions.folderOptions,
+        ignoreRegions: baseExecuteCompareOptions.ignoreRegions,
+        isAndroid: baseExecuteCompareOptions.isAndroid,
+        isAndroidNativeWebScreenshot: baseExecuteCompareOptions.isAndroidNativeWebScreenshot,
     }
 
-    // 4b Now execute the compare and return the data
     return executeImageCompare({
         isViewPortScreenshot: true,
         isNativeContext,

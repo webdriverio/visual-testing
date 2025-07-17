@@ -3,6 +3,7 @@ import saveFullPageScreen from './saveFullPageScreen.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveFullPageOptions } from './fullPage.interfaces.js'
 import { methodCompareOptions } from '../helpers/options.js'
+import { extractCommonCheckVariables, buildBaseExecuteCompareOptions } from '../helpers/utils.js'
 import type { InternalCheckFullPageMethodOptions } from './check.interfaces.js'
 
 /**
@@ -19,19 +20,8 @@ export default async function checkFullPageScreen(
         testContext,
     }: InternalCheckFullPageMethodOptions
 ): Promise<ImageCompareResult | number> {
-    // Set some variables
-    const { actualFolder, baselineFolder, diffFolder } = folders
-    const {
-        browserName,
-        deviceName,
-        deviceRectangles,
-        isAndroid,
-        isIOS,
-        isMobile,
-        nativeWebScreenshot: isAndroidNativeWebScreenshot,
-        platformName,
-    } = instanceData
-    const { autoSaveBaseline, isHybridApp, savePerInstance } = checkFullPageOptions.wic
+    // 1. Extract common variables
+    const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkFullPageOptions.wic })
     const {
         disableBlinkingCursor,
         disableCSSAnimation,
@@ -45,12 +35,12 @@ export default async function checkFullPageScreen(
         waitForFontsLoaded,
     } = checkFullPageOptions.method
 
-    // 1a. Check if the method is supported in native context
+    // 2. Check if the method is supported in native context
     if (isNativeContext) {
         throw new Error('The method checkFullPageScreen is not supported in native context for native mobile apps!')
     }
 
-    // 1b. Take the actual full page screenshot and retrieve the needed data
+    // 3. Take the actual full page screenshot and retrieve the needed data
     const saveFullPageOptions: SaveFullPageOptions = {
         wic: checkFullPageOptions.wic,
         method: {
@@ -75,34 +65,17 @@ export default async function checkFullPageScreen(
         tag,
     })
 
-    // 2a. Determine the options
+    // 4. Determine the options
     const compareOptions = methodCompareOptions(checkFullPageOptions.method)
-    const executeCompareOptions = {
-        compareOptions: {
-            wic: checkFullPageOptions.wic.compareOptions,
-            method: compareOptions,
-        },
+    const executeCompareOptions = buildBaseExecuteCompareOptions({
+        commonCheckVariables,
+        wicCompareOptions: checkFullPageOptions.wic.compareOptions,
+        methodCompareOptions: compareOptions,
         devicePixelRatio,
-        deviceRectangles,
         fileName,
-        folderOptions: {
-            autoSaveBaseline,
-            actualFolder,
-            baselineFolder,
-            diffFolder,
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
-        isAndroid,
-        isAndroidNativeWebScreenshot,
-        isIOS,
-        isHybridApp,
-        platformName,
-    }
+    })
 
-    // 2b Now execute the compare and return the data
+    // 5. Now execute the compare and return the data
     return executeImageCompare({
         isViewPortScreenshot: false,
         isNativeContext,

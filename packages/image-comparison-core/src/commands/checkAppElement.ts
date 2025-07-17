@@ -1,6 +1,7 @@
 import { methodCompareOptions } from '../helpers/options.js'
 import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import { executeImageCompare } from '../methods/images.js'
+import { extractCommonCheckVariables, buildBaseExecuteCompareOptions } from '../helpers/utils.js'
 import type { InternalCheckElementMethodOptions } from './check.interfaces.js'
 import type { WicElement } from './element.interfaces.js'
 import saveAppElement from './saveAppElement.js'
@@ -20,18 +21,8 @@ export default async function checkAppElement(
         testContext,
     }: InternalCheckElementMethodOptions
 ): Promise<ImageCompareResult | number> {
-    // 1. Set some vars
-    const {
-        browserName,
-        deviceName,
-        deviceRectangles,
-        isAndroid,
-        isMobile,
-        nativeWebScreenshot: isAndroidNativeWebScreenshot,
-        platformName,
-    } = instanceData
-    const { autoSaveBaseline, savePerInstance, isHybridApp } = checkElementOptions.wic
-    const { actualFolder, baselineFolder, diffFolder } = folders
+    // 1. Extract common variables
+    const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkElementOptions.wic })
 
     // 2. Save the element and return the data
     const { devicePixelRatio, fileName } = await saveAppElement({
@@ -46,39 +37,22 @@ export default async function checkAppElement(
     // @TODO: This is something for the future, to allow ignore regions on the element itself.
     // This will become a feature request
 
-    // 3a. Determine the options
+    // 3. Determine the options
     const compareOptions = methodCompareOptions(checkElementOptions.method)
-    const executeCompareOptions = {
-        compareOptions: {
-            wic: {
-                ...checkElementOptions.wic.compareOptions,
-                // No need to block out anything on the app for element screenshots
-                blockOutSideBar: false,
-                blockOutStatusBar: false,
-                blockOutToolBar: false,
-            },
-            method: compareOptions,
-        },
+    const executeCompareOptions = buildBaseExecuteCompareOptions({
+        commonCheckVariables,
+        wicCompareOptions: checkElementOptions.wic.compareOptions,
+        methodCompareOptions: compareOptions,
         devicePixelRatio,
-        deviceRectangles,
         fileName,
-        folderOptions: {
-            autoSaveBaseline,
-            actualFolder,
-            baselineFolder,
-            diffFolder,
-            browserName,
-            deviceName,
-            isMobile,
-            savePerInstance,
-        },
-        isAndroid,
-        isAndroidNativeWebScreenshot,
-        isHybridApp,
-        platformName,
-    }
+        isElementScreenshot: true, // This will automatically set blockOut* options to false
+        additionalProperties: {
+            isHybridApp: checkElementOptions.wic.isHybridApp,
+            platformName: instanceData.platformName,
+        }
+    })
 
-    // 3b Now execute the compare and return the data
+    // 4. Now execute the compare and return the data
     return executeImageCompare({
         options: executeCompareOptions,
         testContext,

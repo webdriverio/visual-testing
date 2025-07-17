@@ -12,8 +12,6 @@ import * as compareImages from '../resemble/compareImages.js'
 const log = logger('test')
 
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
-
-// Mock Jimp BEFORE importing the module under test
 vi.mock('jimp', () => {
     const mockImage = {
         composite: vi.fn().mockReturnThis(),
@@ -45,8 +43,6 @@ vi.mock('jimp', () => {
         },
     }
 })
-
-// Mock all dependencies
 vi.mock('node:fs', async () => {
     const actual = await vi.importActual('node:fs')
     return {
@@ -64,42 +60,35 @@ vi.mock('node:fs', async () => {
         },
     }
 })
-
 vi.mock('../helpers/utils.js', () => ({
     getAndCreatePath: vi.fn(),
     getBase64ScreenshotSize: vi.fn(),
     updateVisualBaseline: vi.fn(),
-    calculateDprData: vi.fn()
+    calculateDprData: vi.fn(),
+    prepareComparisonFilePaths: vi.fn()
 }))
-
 vi.mock('./rectangles.js', () => ({
     determineStatusAddressToolBarRectangles: vi.fn(),
-    isWdioElement: vi.fn()
+    isWdioElement: vi.fn(),
+    prepareIgnoreRectangles: vi.fn()
 }))
-
 vi.mock('./processDiffPixels.js', () => ({
-    processDiffPixels: vi.fn()
+    processDiffPixels: vi.fn(),
+    generateAndSaveDiff: vi.fn()
 }))
-
 vi.mock('./createCompareReport.js', () => ({
-    createCompareReport: vi.fn()
+    createCompareReport: vi.fn(),
+    createJsonReportIfNeeded: vi.fn()
 }))
-
 vi.mock('../resemble/compareImages.js', () => ({
     default: vi.fn()
 }))
-
-// Mock the constants module
 vi.mock('../helpers/constants.js', () => ({
     DEFAULT_RESIZE_DIMENSIONS: { top: 0, right: 0, bottom: 0, left: 0 }
 }))
-
-// Mock process.argv
 vi.mock('process', () => ({
     argv: ['node', 'test.js']
 }))
-
-// Mock the internal functions from the same module
 vi.mock('./images.js', async () => {
     const actual = await vi.importActual('./images.js')
     return {
@@ -111,7 +100,6 @@ vi.mock('./images.js', async () => {
     }
 })
 
-// Now import the function after all mocks are set up
 import { executeImageCompare } from './images.js'
 import * as images from './images.js'
 
@@ -126,7 +114,6 @@ describe('executeImageCompare', () => {
         statusBar: { x: 0, y: 0, width: 0, height: 0 },
         viewport: { x: 0, y: 0, width: 1920, height: 1080 }
     }
-
     const mockOptions = {
         devicePixelRatio: 2,
         deviceRectangles: mockDeviceRectangles,
@@ -156,7 +143,6 @@ describe('executeImageCompare', () => {
             method: {}
         }
     }
-
     const mockTestContext = {
         commandName: 'test',
         framework: 'mocha',
@@ -179,10 +165,8 @@ describe('executeImageCompare', () => {
     beforeEach(async () => {
         vi.clearAllMocks()
 
-        // Mock Jimp - following the pattern from images.test.ts
         const jimp = await import('jimp')
         const jimpReadMock = vi.mocked(jimp.Jimp.read)
-
         const mockImage = {
             composite: vi.fn().mockReturnThis(),
             getBase64: vi.fn().mockResolvedValue('data:image/png;base64,mock-image-data'),
@@ -203,32 +187,36 @@ describe('executeImageCompare', () => {
         } as any
         jimpReadMock.mockResolvedValue(mockImage)
 
-        // Mock fsPromises methods
         vi.mocked(fsPromises.access).mockResolvedValue(undefined)
         vi.mocked(fsPromises.unlink).mockResolvedValue(undefined)
         vi.mocked(fsPromises.mkdir).mockResolvedValue(undefined)
         vi.mocked(fsPromises.writeFile).mockResolvedValue(undefined)
-
-        // Mock fs methods
         vi.mocked(readFileSync).mockReturnValue(Buffer.from('mock-image-data'))
         vi.mocked(writeFileSync).mockReturnValue(undefined)
-
-        // Mock utils
         vi.mocked(utils.getAndCreatePath).mockReturnValue('/mock/path')
         vi.mocked(utils.getBase64ScreenshotSize).mockReturnValue({ width: 100, height: 200 })
         vi.mocked(utils.updateVisualBaseline).mockReturnValue(false)
         vi.mocked(utils.calculateDprData).mockImplementation((rectangles) => rectangles)
-
-        // Mock rectangles
+        vi.mocked(utils.prepareComparisonFilePaths).mockReturnValue({
+            actualFolderPath: '/mock/actual',
+            baselineFolderPath: '/mock/baseline',
+            diffFolderPath: '/mock/diff',
+            actualFilePath: '/mock/actual/test.png',
+            baselineFilePath: '/mock/baseline/test.png',
+            diffFilePath: '/mock/diff/test.png'
+        })
         vi.mocked(rectangles.determineStatusAddressToolBarRectangles).mockReturnValue(null as any)
-
-        // Mock processDiffPixels
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+            ignoredBoxes: [],
+            hasIgnoreRectangles: false
+        })
         vi.mocked(processDiffPixels.processDiffPixels).mockReturnValue([])
-
-        // Mock createCompareReport
+        vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
+            diffBoundingBoxes: [],
+            storeDiffs: false
+        })
         vi.mocked(createCompareReport.createCompareReport).mockReturnValue(undefined)
-
-        // Mock compareImages
+        vi.mocked(createCompareReport.createJsonReportIfNeeded).mockResolvedValue(undefined)
         vi.mocked(compareImages.default).mockResolvedValue({
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
@@ -237,14 +225,11 @@ describe('executeImageCompare', () => {
             analysisTime: 100,
             diffPixels: []
         })
-
-        // Mock internal functions
         vi.mocked(images.checkBaselineImageExists).mockResolvedValue(undefined)
         vi.mocked(images.removeDiffImageIfExists).mockResolvedValue(undefined)
         vi.mocked(images.saveBase64Image).mockResolvedValue(undefined)
         vi.mocked(images.addBlockOuts).mockResolvedValue('mock-blockout-image')
 
-        // Set up log spies
         logWarnSpy = vi.spyOn(log, 'warn')
     })
 
@@ -262,7 +247,17 @@ describe('executeImageCompare', () => {
         })
 
         expect(result).toMatchSnapshot()
-        expect(utils.getAndCreatePath).toHaveBeenCalledTimes(3)
+        expect(utils.prepareComparisonFilePaths).toHaveBeenCalledTimes(1)
+        expect(utils.prepareComparisonFilePaths).toHaveBeenCalledWith({
+            actualFolder: '/actual',
+            baselineFolder: '/baseline',
+            diffFolder: '/diff',
+            browserName: 'chrome',
+            deviceName: 'desktop',
+            isMobile: false,
+            savePerInstance: false,
+            fileName: 'test.png'
+        })
         expect(compareImages.default).toHaveBeenCalledWith(
             Buffer.from('mock-image-data'),
             Buffer.from('mock-image-data'),
@@ -287,9 +282,10 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(rectangles.determineStatusAddressToolBarRectangles).mockReturnValue([
-            { x: 0, y: 0, width: 100, height: 50 }
-        ])
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+            ignoredBoxes: [{ left: 0, top: 0, right: 100, bottom: 50 }],
+            hasIgnoreRectangles: true
+        })
 
         await executeImageCompare({
             isViewPortScreenshot: true,
@@ -298,16 +294,20 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(rectangles.determineStatusAddressToolBarRectangles).toHaveBeenCalledWith({
+        expect(rectangles.prepareIgnoreRectangles).toHaveBeenCalledWith({
+            blockOut: [],
+            ignoreRegions: [],
             deviceRectangles: mockOptions.deviceRectangles,
-            options: {
+            devicePixelRatio: 2,
+            isMobile: true,
+            isNativeContext: false,
+            isAndroid: false,
+            isAndroidNativeWebScreenshot: false,
+            isViewPortScreenshot: true,
+            imageCompareOptions: {
                 blockOutSideBar: true,
                 blockOutStatusBar: true,
-                blockOutToolBar: true,
-                isAndroid: false,
-                isAndroidNativeWebScreenshot: false,
-                isMobile: true,
-                isViewPortScreenshot: true
+                blockOutToolBar: true
             }
         })
     })
@@ -318,10 +318,10 @@ describe('executeImageCompare', () => {
             folderOptions: { ...mockOptions.folderOptions, isMobile: true }
         }
 
-        vi.mocked(rectangles.determineStatusAddressToolBarRectangles).mockReturnValue([
-            { x: 0, y: 0, width: 0, height: 0 },
-            { x: 10, y: 10, width: 50, height: 50 }
-        ])
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+            ignoredBoxes: [{ left: 10, top: 10, right: 60, bottom: 60 }], // Only non-zero rectangle
+            hasIgnoreRectangles: true
+        })
 
         await executeImageCompare({
             isViewPortScreenshot: true,
@@ -330,10 +330,22 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(utils.calculateDprData).toHaveBeenCalledWith(
-            { bottom: 60, right: 60, left: 10, top: 10 },
-            2
-        )
+        expect(rectangles.prepareIgnoreRectangles).toHaveBeenCalledWith({
+            blockOut: [],
+            ignoreRegions: [],
+            deviceRectangles: mockOptions.deviceRectangles,
+            devicePixelRatio: 2,
+            isMobile: true,
+            isNativeContext: false,
+            isAndroid: false,
+            isAndroidNativeWebScreenshot: false,
+            isViewPortScreenshot: true,
+            imageCompareOptions: {
+                blockOutSideBar: undefined,
+                blockOutStatusBar: undefined,
+                blockOutToolBar: undefined
+            }
+        })
     })
 
     it('should handle when determineStatusAddressToolBarRectangles returns null', async () => {
@@ -350,7 +362,10 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(rectangles.determineStatusAddressToolBarRectangles).mockReturnValue(null as any)
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+            ignoredBoxes: [],
+            hasIgnoreRectangles: false
+        })
 
         await executeImageCompare({
             isViewPortScreenshot: true,
@@ -359,16 +374,20 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(rectangles.determineStatusAddressToolBarRectangles).toHaveBeenCalledWith({
+        expect(rectangles.prepareIgnoreRectangles).toHaveBeenCalledWith({
+            blockOut: [],
+            ignoreRegions: [],
             deviceRectangles: mockOptions.deviceRectangles,
-            options: {
+            devicePixelRatio: 2,
+            isMobile: true,
+            isNativeContext: false,
+            isAndroid: false,
+            isAndroidNativeWebScreenshot: false,
+            isViewPortScreenshot: true,
+            imageCompareOptions: {
                 blockOutSideBar: true,
                 blockOutStatusBar: true,
-                blockOutToolBar: true,
-                isAndroid: false,
-                isAndroidNativeWebScreenshot: false,
-                isMobile: true,
-                isViewPortScreenshot: true
+                blockOutToolBar: true
             }
         })
     })
@@ -385,6 +404,14 @@ describe('executeImageCompare', () => {
             }
         }
 
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+            ignoredBoxes: [
+                { left: 0, top: 0, right: 100, bottom: 50 },
+                { left: 200, top: 200, right: 300, bottom: 300 }
+            ],
+            hasIgnoreRectangles: true
+        })
+
         await executeImageCompare({
             isViewPortScreenshot: true,
             isNativeContext: false,
@@ -392,7 +419,22 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(utils.calculateDprData).toHaveBeenCalledTimes(2)
+        expect(rectangles.prepareIgnoreRectangles).toHaveBeenCalledWith({
+            blockOut: [{ x: 200, y: 200, width: 100, height: 100 }],
+            ignoreRegions: [{ x: 0, y: 0, width: 100, height: 50 }],
+            deviceRectangles: mockOptions.deviceRectangles,
+            devicePixelRatio: 2,
+            isMobile: false,
+            isNativeContext: false,
+            isAndroid: false,
+            isAndroidNativeWebScreenshot: false,
+            isViewPortScreenshot: true,
+            imageCompareOptions: {
+                blockOutSideBar: undefined,
+                blockOutStatusBar: undefined,
+                blockOutToolBar: undefined
+            }
+        })
     })
 
     it('should create JSON report files when enabled', async () => {
@@ -417,6 +459,11 @@ describe('executeImageCompare', () => {
             diffPixels: [{ x: 10, y: 10 }]
         })
 
+        vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
+            diffBoundingBoxes: [{ left: 5, top: 5, right: 15, bottom: 15 }],
+            storeDiffs: true
+        })
+
         await executeImageCompare({
             isViewPortScreenshot: true,
             isNativeContext: false,
@@ -424,25 +471,38 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(processDiffPixels.processDiffPixels).toHaveBeenCalledWith([{ x: 10, y: 10 }], 10)
-        expect(createCompareReport.createCompareReport).toHaveBeenCalledWith({
+        expect(processDiffPixels.generateAndSaveDiff).toHaveBeenCalledWith(
+            expect.any(Object),
+            expect.objectContaining({
+                createJsonReportFiles: true,
+                saveAboveTolerance: 0.1
+            }),
+            [],
+            '/mock/diff/test.png',
+            0.5
+        )
+        expect(createCompareReport.createJsonReportIfNeeded).toHaveBeenCalledWith({
             boundingBoxes: {
-                diffBoundingBoxes: [],
+                diffBoundingBoxes: [{ left: 5, top: 5, right: 15, bottom: 15 }],
                 ignoredBoxes: []
             },
             data: expect.any(Object),
             fileName: 'test.png',
-            folders: {
-                actualFolderPath: '/mock/path',
-                baselineFolderPath: '/mock/path',
-                diffFolderPath: '/mock/path'
+            filePaths: {
+                actualFolderPath: '/mock/actual',
+                baselineFolderPath: '/mock/baseline',
+                diffFolderPath: '/mock/diff',
+                actualFilePath: '/mock/actual/test.png',
+                baselineFilePath: '/mock/baseline/test.png',
+                diffFilePath: '/mock/diff/test.png'
             },
-            size: {
-                actual: { width: 100, height: 200 },
-                baseline: { width: 100, height: 200 },
-                diff: { width: 100, height: 200 }
-            },
-            testContext: mockTestContext
+            devicePixelRatio: 2,
+            imageCompareOptions: expect.objectContaining({
+                createJsonReportFiles: true,
+                saveAboveTolerance: 0.1
+            }),
+            testContext: mockTestContext,
+            storeDiffs: true
         })
     })
 
@@ -457,7 +517,6 @@ describe('executeImageCompare', () => {
                 }
             }
         }
-
         const result = await executeImageCompare({
             isViewPortScreenshot: true,
             isNativeContext: false,
@@ -533,6 +592,11 @@ describe('executeImageCompare', () => {
             ignoreRegions: [{ x: 0, y: 0, width: 100, height: 50 }]
         }
 
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+            ignoredBoxes: [{ left: 0, top: 0, right: 100, bottom: 50 }],
+            hasIgnoreRectangles: true
+        })
+
         await executeImageCompare({
             isViewPortScreenshot: true,
             isNativeContext: false,
@@ -540,10 +604,22 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(utils.calculateDprData).toHaveBeenCalledWith(
-            expect.any(Object),
-            1
-        )
+        expect(rectangles.prepareIgnoreRectangles).toHaveBeenCalledWith({
+            blockOut: [],
+            ignoreRegions: [{ x: 0, y: 0, width: 100, height: 50 }],
+            deviceRectangles: mockOptions.deviceRectangles,
+            devicePixelRatio: 3,
+            isMobile: false,
+            isNativeContext: false,
+            isAndroid: true,
+            isAndroidNativeWebScreenshot: false,
+            isViewPortScreenshot: true,
+            imageCompareOptions: {
+                blockOutSideBar: undefined,
+                blockOutStatusBar: undefined,
+                blockOutToolBar: undefined
+            }
+        })
     })
 
     it('should handle ignore options from compareOptions', async () => {
@@ -591,7 +667,22 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(rectangles.determineStatusAddressToolBarRectangles).not.toHaveBeenCalled()
+        expect(rectangles.prepareIgnoreRectangles).toHaveBeenCalledWith({
+            blockOut: [],
+            ignoreRegions: [],
+            deviceRectangles: mockOptions.deviceRectangles,
+            devicePixelRatio: 2,
+            isMobile: true,
+            isNativeContext: true,
+            isAndroid: false,
+            isAndroidNativeWebScreenshot: false,
+            isViewPortScreenshot: true,
+            imageCompareOptions: {
+                blockOutSideBar: undefined,
+                blockOutStatusBar: undefined,
+                blockOutToolBar: undefined
+            }
+        })
     })
 
     it('should handle case when no ignored boxes are present', async () => {
@@ -622,6 +713,11 @@ describe('executeImageCompare', () => {
                 }
             }
         }
+
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+            ignoredBoxes: [{ bottom: 50, right: 100, left: 0, top: 0 }],
+            hasIgnoreRectangles: true
+        })
 
         await executeImageCompare({
             isViewPortScreenshot: true,
@@ -660,7 +756,7 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(utils.getAndCreatePath).toHaveBeenCalledTimes(3)
+        expect(utils.prepareComparisonFilePaths).toHaveBeenCalledTimes(1)
     })
 
     it('should store diffs when rawMisMatchPercentage exceeds saveAboveTolerance', async () => {
@@ -684,6 +780,11 @@ describe('executeImageCompare', () => {
             diffPixels: []
         })
 
+        vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
+            diffBoundingBoxes: [],
+            storeDiffs: true
+        })
+
         await executeImageCompare({
             isViewPortScreenshot: true,
             isNativeContext: false,
@@ -691,9 +792,14 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('WARNING:\n There was a difference. Saved the difference to')
+        expect(processDiffPixels.generateAndSaveDiff).toHaveBeenCalledWith(
+            expect.any(Object),
+            expect.objectContaining({
+                saveAboveTolerance: 0.1
+            }),
+            [],
+            '/mock/diff/test.png',
+            0.5
         )
     })
 
@@ -721,6 +827,11 @@ describe('executeImageCompare', () => {
             diffPixels: []
         })
 
+        vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
+            diffBoundingBoxes: [],
+            storeDiffs: true
+        })
+
         await executeImageCompare({
             isViewPortScreenshot: true,
             isNativeContext: false,
@@ -728,9 +839,14 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(logWarnSpy).toHaveBeenCalledWith(
-            '\x1b[33m%s\x1b[0m',
-            expect.stringContaining('INFO:\n Debug mode is enabled. Saved the debug file to:')
+        expect(processDiffPixels.generateAndSaveDiff).toHaveBeenCalledWith(
+            expect.any(Object),
+            expect.objectContaining({
+                saveAboveTolerance: 1.0
+            }),
+            [],
+            '/mock/diff/test.png',
+            0.5
         )
 
         process.argv = originalArgv

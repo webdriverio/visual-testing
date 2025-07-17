@@ -1,5 +1,234 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`utils > buildBaseExecuteCompareOptions > should add additional properties correctly 1`] = `
+{
+  "compareOptions": {
+    "method": {
+      "ignoreColors": false,
+      "scaleImagesToSameSize": false,
+    },
+    "wic": {
+      "blockOutSideBar": true,
+      "blockOutStatusBar": true,
+      "blockOutToolBar": true,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+    },
+  },
+  "customProperty": "test-value",
+  "devicePixelRatio": 2,
+  "deviceRectangles": {
+    "screenSize": {
+      "height": 844,
+      "width": 390,
+    },
+  },
+  "fileName": "test-screenshot.png",
+  "folderOptions": {
+    "actualFolder": "/path/to/actual",
+    "autoSaveBaseline": true,
+    "baselineFolder": "/path/to/baseline",
+    "browserName": "chrome",
+    "deviceName": "iPhone 12",
+    "diffFolder": "/path/to/diff",
+    "isMobile": true,
+    "savePerInstance": false,
+  },
+  "ignoreRegions": [
+    {
+      "height": 100,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+  ],
+  "isAndroid": false,
+  "isAndroidNativeWebScreenshot": true,
+}
+`;
+
+exports[`utils > buildBaseExecuteCompareOptions > should build base execute compare options 1`] = `
+{
+  "compareOptions": {
+    "method": {
+      "ignoreColors": false,
+      "scaleImagesToSameSize": false,
+    },
+    "wic": {
+      "blockOutSideBar": true,
+      "blockOutStatusBar": true,
+      "blockOutToolBar": true,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+    },
+  },
+  "devicePixelRatio": 2,
+  "deviceRectangles": {
+    "screenSize": {
+      "height": 844,
+      "width": 390,
+    },
+  },
+  "fileName": "test-screenshot.png",
+  "folderOptions": {
+    "actualFolder": "/path/to/actual",
+    "autoSaveBaseline": true,
+    "baselineFolder": "/path/to/baseline",
+    "browserName": "chrome",
+    "deviceName": "iPhone 12",
+    "diffFolder": "/path/to/diff",
+    "isMobile": true,
+    "savePerInstance": false,
+  },
+  "isAndroid": false,
+  "isAndroidNativeWebScreenshot": true,
+}
+`;
+
+exports[`utils > buildBaseExecuteCompareOptions > should handle Android device correctly 1`] = `
+{
+  "compareOptions": {
+    "method": {
+      "ignoreColors": false,
+      "scaleImagesToSameSize": false,
+    },
+    "wic": {
+      "blockOutSideBar": true,
+      "blockOutStatusBar": true,
+      "blockOutToolBar": true,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+    },
+  },
+  "devicePixelRatio": 1.5,
+  "deviceRectangles": {
+    "screenSize": {
+      "height": 844,
+      "width": 390,
+    },
+  },
+  "fileName": "test-android.png",
+  "folderOptions": {
+    "actualFolder": "/path/to/actual",
+    "autoSaveBaseline": true,
+    "baselineFolder": "/path/to/baseline",
+    "browserName": "chrome",
+    "deviceName": "iPhone 12",
+    "diffFolder": "/path/to/diff",
+    "isMobile": true,
+    "savePerInstance": false,
+  },
+  "isAndroid": true,
+  "isAndroidNativeWebScreenshot": false,
+  "platformName": "Android",
+}
+`;
+
+exports[`utils > buildBaseExecuteCompareOptions > should handle element screenshot correctly (blockOut options set to false) 1`] = `
+{
+  "compareOptions": {
+    "method": {
+      "ignoreColors": false,
+      "scaleImagesToSameSize": false,
+    },
+    "wic": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+    },
+  },
+  "devicePixelRatio": 2,
+  "deviceRectangles": {
+    "screenSize": {
+      "height": 844,
+      "width": 390,
+    },
+  },
+  "fileName": "test-element.png",
+  "folderOptions": {
+    "actualFolder": "/path/to/actual",
+    "autoSaveBaseline": true,
+    "baselineFolder": "/path/to/baseline",
+    "browserName": "chrome",
+    "deviceName": "iPhone 12",
+    "diffFolder": "/path/to/diff",
+    "isMobile": true,
+    "savePerInstance": false,
+  },
+  "isAndroid": false,
+  "isAndroidNativeWebScreenshot": true,
+}
+`;
+
+exports[`utils > buildBaseExecuteCompareOptions > should include optional properties from commonCheckVariables 1`] = `
+{
+  "compareOptions": {
+    "method": {
+      "ignoreColors": false,
+      "scaleImagesToSameSize": false,
+    },
+    "wic": {
+      "blockOutSideBar": true,
+      "blockOutStatusBar": true,
+      "blockOutToolBar": true,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+    },
+  },
+  "devicePixelRatio": 2,
+  "deviceRectangles": {
+    "screenSize": {
+      "height": 844,
+      "width": 390,
+    },
+  },
+  "fileName": "test-screenshot.png",
+  "folderOptions": {
+    "actualFolder": "/path/to/actual",
+    "autoSaveBaseline": true,
+    "baselineFolder": "/path/to/baseline",
+    "browserName": "chrome",
+    "deviceName": "iPhone 12",
+    "diffFolder": "/path/to/diff",
+    "isMobile": true,
+    "savePerInstance": false,
+  },
+  "isAndroid": false,
+  "isAndroidNativeWebScreenshot": true,
+  "isHybridApp": true,
+  "isIOS": true,
+  "platformName": "iOS",
+}
+`;
+
+exports[`utils > buildFolderOptions > should build folder options from common check variables 1`] = `
+{
+  "actualFolder": "/path/to/actual",
+  "autoSaveBaseline": true,
+  "baselineFolder": "/path/to/baseline",
+  "browserName": "chrome",
+  "deviceName": "iPhone 12",
+  "diffFolder": "/path/to/diff",
+  "isMobile": true,
+  "savePerInstance": false,
+}
+`;
+
+exports[`utils > buildFolderOptions > should handle all properties correctly 1`] = `
+{
+  "actualFolder": "/test/actual",
+  "autoSaveBaseline": false,
+  "baselineFolder": "/test/baseline",
+  "browserName": "firefox",
+  "deviceName": "Desktop",
+  "diffFolder": "/test/diff",
+  "isMobile": false,
+  "savePerInstance": true,
+}
+`;
+
 exports[`utils > calculateDprData > should multiply all number values by the dpr value 1`] = `
 {
   "1": 6,
