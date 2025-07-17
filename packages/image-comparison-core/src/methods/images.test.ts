@@ -21,7 +21,6 @@ import type { WicElement } from '../commands/element.interfaces.js'
 
 const log = logger('test')
 
-// Mock Jimp BEFORE importing the module under test
 vi.mock('jimp', () => ({
     Jimp: Object.assign(vi.fn().mockImplementation(() => ({
         composite: vi.fn().mockReturnThis(),
@@ -37,8 +36,6 @@ vi.mock('jimp', () => ({
         png: 'image/png',
     },
 }))
-
-// Mock the logger
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('node:fs', async () => {
     const actual = await vi.importActual('node:fs')
@@ -55,8 +52,6 @@ vi.mock('node:fs', async () => {
         },
     }
 })
-
-// Mock the helpers/utils module
 vi.mock('../helpers/utils.js', () => ({
     getBase64ScreenshotSize: vi.fn(),
     getAndCreatePath: vi.fn(),
@@ -64,8 +59,6 @@ vi.mock('../helpers/utils.js', () => ({
     updateVisualBaseline: vi.fn(),
     calculateDprData: vi.fn(),
 }))
-
-// Mock the constants module
 vi.mock('../helpers/constants.js', () => ({
     DEFAULT_RESIZE_DIMENSIONS: { top: 0, right: 0, bottom: 0, left: 0 },
     supportedIosBezelDevices: [
@@ -75,14 +68,10 @@ vi.mock('../helpers/constants.js', () => ({
         'iphone15', 'ipadmini', 'ipadair', 'ipadpro11', 'ipadpro129'
     ],
 }))
-
-// Mock the rectangles module
 vi.mock('./rectangles.js', () => ({
     isWdioElement: vi.fn(),
     determineStatusAddressToolBarRectangles: vi.fn(),
 }))
-
-// Mock the screenshots module
 vi.mock('./screenshots.js', () => ({
     takeBase64Screenshot: vi.fn(),
 }))
@@ -334,12 +323,10 @@ describe('getRotatedImageIfNeeded', () => {
     let getBase64ScreenshotSizeMock: ReturnType<typeof vi.fn>
 
     beforeEach(async () => {
-        // Import the mocked modules
         const utils = await import('../helpers/utils.js')
 
         getBase64ScreenshotSizeMock = vi.mocked(utils.getBase64ScreenshotSize)
 
-        // Clear any existing mocks first
         vi.clearAllMocks()
     })
 
@@ -371,7 +358,6 @@ describe('getRotatedImageIfNeeded', () => {
             base64Image: 'originalImageData'
         })
 
-        // The result should be different from the input when rotation occurs
         expect(result).toMatchSnapshot()
         expect(getBase64ScreenshotSizeMock.mock.calls).toMatchSnapshot()
     })
@@ -582,8 +568,8 @@ describe('getAdjustedAxis', () => {
         const result = getAdjustedAxis({
             length: 50,
             maxDimension: 100,
-            paddingEnd: 100, // Very large padding
-            paddingStart: 100, // Very large padding
+            paddingEnd: 100,
+            paddingStart: 100,
             start: 50,
             warningType: 'WIDTH'
         })
@@ -628,16 +614,13 @@ describe('handleIOSBezelCorners', () => {
     beforeEach(async () => {
         logWarnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
 
-        // Mock the utils functions
         const utilsModule = vi.mocked(await import('../helpers/utils.js'))
         getIosBezelImageNamesMock = vi.spyOn(utilsModule, 'getIosBezelImageNames')
         getBase64ScreenshotSizeMock = vi.spyOn(utilsModule, 'getBase64ScreenshotSize')
 
-        // Mock fs functions
         const fsModule = vi.mocked(await import('node:fs'))
         readFileSyncMock = vi.spyOn(fsModule, 'readFileSync')
 
-        // Mock image object
         mockImage = {
             composite: vi.fn().mockReturnThis(),
             getBase64: vi.fn().mockResolvedValue('data:image/png;base64,mockImageData'),
@@ -860,7 +843,6 @@ describe('cropAndConvertToDataURL', () => {
     let mockImage: any
     let mockCroppedImage: any
 
-    // Default options for cropAndConvertToDataURL tests
     const defaultCropOptions = {
         addIOSBezelCorners: false,
         base64Image: 'originalImageData',
@@ -875,17 +857,13 @@ describe('cropAndConvertToDataURL', () => {
     }
 
     beforeEach(async () => {
-        // Mock cropped image
         mockCroppedImage = {
             getBase64: vi.fn().mockResolvedValue('data:image/png;base64,croppedImageData'),
         }
-
-        // Mock image with crop method
         mockImage = {
             crop: vi.fn().mockReturnValue(mockCroppedImage),
         }
 
-        // Mock Jimp.read to return our mock image
         const jimpModule = vi.mocked(await import('jimp'))
         vi.spyOn(jimpModule.Jimp, 'read').mockResolvedValue(mockImage)
     })
@@ -998,7 +976,6 @@ describe('makeCroppedBase64Image', () => {
     let mockImage: any
     let mockCroppedImage: any
 
-    // Default options for makeCroppedBase64Image tests
     const defaultCropOptions = {
         addIOSBezelCorners: false,
         base64Image: 'originalImageData',
@@ -1017,18 +994,13 @@ describe('makeCroppedBase64Image', () => {
     }
 
     beforeEach(async () => {
-        // Mock the utils function
         const utilsModule = vi.mocked(await import('../helpers/utils.js'))
         getBase64ScreenshotSizeMock = vi.spyOn(utilsModule, 'getBase64ScreenshotSize')
-
-        // Mock cropped image
         mockCroppedImage = {
             getBase64: vi.fn().mockResolvedValue('data:image/png;base64,finalCroppedImageData'),
             composite: vi.fn().mockReturnThis(),
             opacity: vi.fn().mockReturnThis(),
         }
-
-        // Mock image with crop method
         mockImage = {
             crop: vi.fn().mockReturnValue(mockCroppedImage),
             composite: vi.fn().mockReturnThis(),
@@ -1037,11 +1009,9 @@ describe('makeCroppedBase64Image', () => {
             rotate: vi.fn().mockReturnThis(),
         }
 
-        // Mock Jimp.read to return our mock image
         const jimpModule = vi.mocked(await import('jimp'))
         vi.spyOn(jimpModule.Jimp, 'read').mockResolvedValue(mockImage)
 
-        // Set up default mock returns
         getBase64ScreenshotSizeMock.mockReturnValue({ width: 1000, height: 2000 })
     })
 
@@ -1179,7 +1149,6 @@ describe('makeFullPageBase64Image', () => {
     let mockCanvas: any
     let mockImage: any
 
-    // Default test data
     const defaultScreenshotsData = {
         fullPageHeight: 2000,
         fullPageWidth: 1000,
@@ -1220,17 +1189,12 @@ describe('makeFullPageBase64Image', () => {
     }
 
     beforeEach(async () => {
-        // Mock the utils function
         const utilsModule = vi.mocked(await import('../helpers/utils.js'))
         getBase64ScreenshotSizeMock = vi.spyOn(utilsModule, 'getBase64ScreenshotSize')
-
-        // Mock canvas
         mockCanvas = {
             composite: vi.fn().mockReturnThis(),
             getBase64: vi.fn().mockResolvedValue('data:image/png;base64,fullPageImageData'),
         }
-
-        // Mock image
         mockImage = {
             crop: vi.fn().mockReturnThis(),
             composite: vi.fn().mockReturnThis(),
@@ -1238,12 +1202,9 @@ describe('makeFullPageBase64Image', () => {
             opacity: vi.fn().mockReturnThis(),
             rotate: vi.fn().mockReturnThis(),
         }
-
-        // Mock Jimp.read to return our mock image
         const jimpModule = vi.mocked(await import('jimp'))
-        vi.spyOn(jimpModule.Jimp, 'read').mockResolvedValue(mockImage)
 
-        // Mock the constructor to return our mock canvas
+        vi.spyOn(jimpModule.Jimp, 'read').mockResolvedValue(mockImage)
         vi.mocked(jimpModule.Jimp).mockImplementation((options: any) => {
             if (options && (options.width || options.height)) {
                 return mockCanvas
@@ -1251,7 +1212,6 @@ describe('makeFullPageBase64Image', () => {
             return mockImage
         })
 
-        // Set up default mock returns
         getBase64ScreenshotSizeMock.mockReturnValue({ width: 1000, height: 800 })
     })
 
@@ -1270,7 +1230,7 @@ describe('makeFullPageBase64Image', () => {
     })
 
     it('should handle landscape mode with rotation', async () => {
-        getBase64ScreenshotSizeMock.mockReturnValue({ width: 800, height: 1000 }) // height > width for rotation
+        getBase64ScreenshotSizeMock.mockReturnValue({ width: 800, height: 1000 })
 
         const result = await makeFullPageBase64Image(defaultScreenshotsData, {
             ...defaultOptions,
@@ -1384,7 +1344,7 @@ describe('makeFullPageBase64Image', () => {
     })
 
     it('should handle landscape mode without rotation when width >= height', async () => {
-        getBase64ScreenshotSizeMock.mockReturnValue({ width: 1000, height: 800 }) // width > height, no rotation needed
+        getBase64ScreenshotSizeMock.mockReturnValue({ width: 1000, height: 800 })
 
         const result = await makeFullPageBase64Image(defaultScreenshotsData, {
             ...defaultOptions,
@@ -1463,7 +1423,6 @@ describe('takeResizedBase64Screenshot', () => {
     let calculateDprDataMock: any
     let isWdioElementMock: any
 
-    // Default test options
     const defaultOptions = {
         browserInstance: {} as any,
         element: {} as any,
@@ -1473,38 +1432,25 @@ describe('takeResizedBase64Screenshot', () => {
     }
 
     beforeEach(async () => {
-        // Mock element region
         mockElementRegion = {
             height: 100,
             width: 200,
             x: 50,
             y: 25
         }
-
-        // Mock element
         mockElement = {
             elementId: 'test-element-id',
             takeElementScreenshot: vi.fn().mockResolvedValue('nativeScreenshotData')
         }
-
-        // Mock browser instance
         mockBrowserInstance = {
             getElementRect: vi.fn().mockResolvedValue(mockElementRegion)
         }
-
-        // Mock the utils function
         const utilsModule = vi.mocked(await import('../helpers/utils.js'))
         calculateDprDataMock = vi.spyOn(utilsModule, 'calculateDprData')
-
-        // Mock the screenshots function
         const screenshotsModule = vi.mocked(await import('./screenshots.js'))
         takeBase64ScreenshotMock = vi.spyOn(screenshotsModule, 'takeBase64Screenshot')
-
-        // Mock the rectangles function
         const rectanglesModule = vi.mocked(await import('./rectangles.js'))
         isWdioElementMock = vi.spyOn(rectanglesModule, 'isWdioElement')
-
-        // Set up default mock returns
         takeBase64ScreenshotMock.mockResolvedValue('base64ScreenshotData')
         calculateDprDataMock.mockReturnValue({
             height: 100,
@@ -1556,7 +1502,6 @@ describe('takeResizedBase64Screenshot', () => {
             bottom: 15,
             left: 5
         }
-
         const result = await takeResizedBase64Screenshot({
             ...defaultOptions,
             browserInstance: mockBrowserInstance,
@@ -1578,9 +1523,7 @@ describe('takeResizedBase64Screenshot', () => {
             x: 100,
             y: 75
         }
-
         mockBrowserInstance.getElementRect.mockResolvedValue(differentElementRegion)
-
         const result = await takeResizedBase64Screenshot({
             ...defaultOptions,
             browserInstance: mockBrowserInstance,
@@ -1597,7 +1540,6 @@ describe('takeResizedBase64Screenshot', () => {
     it('should handle non-WDIO element with logging', async () => {
         const nonWdioElement = { someProperty: 'not-a-wdio-element' } as unknown as WicElement
         isWdioElementMock.mockReturnValue(false)
-
         const result = await takeResizedBase64Screenshot({
             ...defaultOptions,
             browserInstance: mockBrowserInstance,
@@ -1632,9 +1574,7 @@ describe('takeResizedBase64Screenshot', () => {
             x: 0,
             y: 0
         }
-
         mockBrowserInstance.getElementRect.mockResolvedValue(zeroElementRegion)
-
         const result = await takeResizedBase64Screenshot({
             ...defaultOptions,
             browserInstance: mockBrowserInstance,
@@ -1655,9 +1595,7 @@ describe('takeResizedBase64Screenshot', () => {
             x: 1000,
             y: 500
         }
-
         mockBrowserInstance.getElementRect.mockResolvedValue(largeElementRegion)
-
         const result = await takeResizedBase64Screenshot({
             ...defaultOptions,
             browserInstance: mockBrowserInstance,
@@ -1673,7 +1611,6 @@ describe('takeResizedBase64Screenshot', () => {
 
     it('should handle different screenshot data', async () => {
         takeBase64ScreenshotMock.mockResolvedValue('differentScreenshotData')
-
         const result = await takeResizedBase64Screenshot({
             ...defaultOptions,
             browserInstance: mockBrowserInstance,
@@ -1690,7 +1627,6 @@ describe('takeResizedBase64Screenshot', () => {
         const elementWithDifferentId = {
             elementId: 'different-element-id'
         } as WicElement
-
         const result = await takeResizedBase64Screenshot({
             ...defaultOptions,
             browserInstance: mockBrowserInstance,
@@ -1738,7 +1674,6 @@ describe('takeBase64ElementScreenshot', () => {
                 y: 25
             })
         }
-        // Mock isWdioElement
         const rectanglesModule = await import('./rectangles.js')
         isWdioElementMock = vi.spyOn(rectanglesModule, 'isWdioElement')
         isWdioElementMock.mockReturnValue(true)
@@ -1784,12 +1719,10 @@ describe('takeBase64ElementScreenshot', () => {
         const { takeBase64ElementScreenshot } = await import('./images.js')
         const errorSpy = vi.spyOn(log, 'error').mockImplementation(() => {})
 
-        // Create a fresh mock element that throws an error
         const mockElementWithError = {
             elementId: 'test-element-id',
             takeElementScreenshot: vi.fn().mockRejectedValue(new Error('Screenshot failed'))
         }
-
         const result = await takeBase64ElementScreenshot({
             browserInstance: mockBrowserInstance,
             element: Promise.resolve(mockElementWithError) as any,
@@ -1800,7 +1733,6 @@ describe('takeBase64ElementScreenshot', () => {
 
         expect(mockElementWithError.takeElementScreenshot.mock.calls).toMatchSnapshot()
         expect(errorSpy.mock.calls).toMatchSnapshot()
-        // Verify that the function completed successfully (meaning fallback worked)
         expect(result).toBeDefined()
         expect(typeof result).toBe('string')
 

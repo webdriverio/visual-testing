@@ -51,19 +51,16 @@ import type { ClassOptions } from './options.interfaces.js'
 vi.mock('../clientSideScripts/injectWebviewOverlay.js', () => ({
     injectWebviewOverlay: Symbol('injectWebviewOverlay'),
 }))
-
 vi.mock('../clientSideScripts/getMobileWebviewClickAndDimensions.js', () => ({
     getMobileWebviewClickAndDimensions: Symbol('getMobileWebviewClickAndDimensions'),
 }))
-
 vi.mock('../clientSideScripts/checkMetaTag.js', () => ({
     checkMetaTag: Symbol('checkMetaTag'),
 }))
 
 const log = logger('test')
-vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
-// Mock the global browser object for functions that use it
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('@wdio/globals', () => ({
     browser: {
         execute: vi.fn(),
@@ -73,7 +70,6 @@ vi.mock('@wdio/globals', () => ({
 }))
 
 describe('utils', () => {
-    // Helper function to create mock browser instance
     const createMockBrowserInstance = () => {
         return {
             execute: vi.fn(),
@@ -103,12 +99,12 @@ describe('utils', () => {
             }
             const expectedFolderName = join(folder, options.deviceName)
 
-            // Mock: folder doesn't exist initially
             vi.mocked(existsSync).mockReturnValueOnce(false)
+
             expect(existsSync(expectedFolderName)).toMatchSnapshot()
 
-            // Mock: folder exists after creation
             vi.mocked(existsSync).mockReturnValue(true)
+
             expect(getAndCreatePath(folder, options)).toEqual(expectedFolderName)
             expect(existsSync(expectedFolderName)).toMatchSnapshot()
         })
@@ -122,12 +118,12 @@ describe('utils', () => {
             }
             const expectedFolderName = join(folder, `desktop_${options.browserName}`)
 
-            // Mock: folder doesn't exist initially
             vi.mocked(existsSync).mockReturnValueOnce(false)
+
             expect(existsSync(expectedFolderName)).toMatchSnapshot()
 
-            // Mock: folder exists after creation
             vi.mocked(existsSync).mockReturnValue(true)
+
             expect(getAndCreatePath(folder, options)).toEqual(expectedFolderName)
             expect(existsSync(expectedFolderName)).toMatchSnapshot()
         })
@@ -140,12 +136,12 @@ describe('utils', () => {
                 savePerInstance: false,
             }
 
-            // Mock: folder doesn't exist initially
             vi.mocked(existsSync).mockReturnValueOnce(false)
+
             expect(existsSync(folder)).toMatchSnapshot()
 
-            // Mock: folder exists after creation
             vi.mocked(existsSync).mockReturnValue(true)
+
             expect(getAndCreatePath(folder, options)).toEqual(folder)
             expect(existsSync(folder)).toMatchSnapshot()
         })
@@ -269,7 +265,6 @@ describe('utils', () => {
             addressBarShadowPadding: 6,
             addShadowPadding: false,
         }
-
         const testCases = [
             { ...baseOptions, browserName: 'chrome', description: 'desktop browser', expected: 0 },
             { ...baseOptions, isAndroid: true, description: 'Android app', expected: 0 },
@@ -296,7 +291,6 @@ describe('utils', () => {
             toolBarShadowPadding: 6,
             addShadowPadding: false,
         }
-
         const testCases = [
             { ...baseOptions, browserName: 'chrome', description: 'desktop browser', expected: 0 },
             { ...baseOptions, isAndroid: true, isMobile: true, description: 'Android app', expected: 0 },
@@ -395,15 +389,14 @@ describe('utils', () => {
 
     describe('process.argv dependent functions', () => {
         const originalArgv = [...process.argv]
-
-        afterEach(() => {
-            process.argv = [...originalArgv]
-        })
-
         const processArgvTests = [
             { functionName: 'isStorybook', testFunction: isStorybook, flag: '--storybook' },
             { functionName: 'updateVisualBaseline', testFunction: updateVisualBaseline, flag: '--update-visual-baseline' },
         ]
+
+        afterEach(() => {
+            process.argv = [...originalArgv]
+        })
 
         processArgvTests.forEach(({ functionName, testFunction, flag }) => {
             describe(functionName, () => {
@@ -771,7 +764,6 @@ describe('utils', () => {
             baselineFolder: '/path/to/baseline',
             diffFolder: '/path/to/diff',
         }
-
         const baseInstanceData = {
             browserName: 'chrome',
             deviceName: 'iPhone 12',
@@ -780,7 +772,6 @@ describe('utils', () => {
             isMobile: true,
             nativeWebScreenshot: true,
         }
-
         const baseWicOptions = {
             autoSaveBaseline: true,
             savePerInstance: false,
@@ -792,7 +783,6 @@ describe('utils', () => {
                 instanceData: baseInstanceData,
                 wicOptions: baseWicOptions,
             }
-
             const result = extractCommonCheckVariables(options)
 
             expect(result).toEqual({
@@ -823,7 +813,6 @@ describe('utils', () => {
                     isHybridApp: true,
                 },
             }
-
             const result = extractCommonCheckVariables(options)
 
             expect(result).toEqual({
@@ -857,7 +846,6 @@ describe('utils', () => {
                     isHybridApp: undefined,
                 },
             }
-
             const result = extractCommonCheckVariables(options)
 
             expect(result).toEqual({
@@ -885,7 +873,6 @@ describe('utils', () => {
                 },
                 wicOptions: baseWicOptions,
             }
-
             const result = extractCommonCheckVariables(options)
 
             expect(result).toEqual({
@@ -918,7 +905,6 @@ describe('utils', () => {
                 },
                 wicOptions: baseWicOptions,
             }
-
             const result = extractCommonCheckVariables(options)
 
             expect(result.isAndroid).toBe(true)
@@ -943,7 +929,6 @@ describe('utils', () => {
                 autoSaveBaseline: true,
                 savePerInstance: false,
             }
-
             const result = buildFolderOptions({ commonCheckVariables })
 
             expect(result).toMatchSnapshot()
@@ -966,7 +951,6 @@ describe('utils', () => {
                 isIOS: false,
                 isHybridApp: true,
             }
-
             const result = buildFolderOptions({ commonCheckVariables })
 
             expect(result).toMatchSnapshot()
@@ -987,7 +971,6 @@ describe('utils', () => {
             autoSaveBaseline: true,
             savePerInstance: false,
         }
-
         const baseWicCompareOptions = {
             ignoreAlpha: false,
             ignoreAntialiasing: false,
@@ -995,7 +978,6 @@ describe('utils', () => {
             blockOutStatusBar: true,
             blockOutToolBar: true,
         }
-
         const baseMethodCompareOptions = {
             ignoreColors: false,
             scaleImagesToSameSize: false,
@@ -1036,7 +1018,6 @@ describe('utils', () => {
                 isIOS: true,
                 isHybridApp: true,
             }
-
             const result = buildBaseExecuteCompareOptions({
                 commonCheckVariables: commonCheckVariablesWithOptional,
                 wicCompareOptions: baseWicCompareOptions,
@@ -1056,7 +1037,6 @@ describe('utils', () => {
                 ignoreRegions: [{ x: 0, y: 0, width: 100, height: 100 }],
                 customProperty: 'test-value',
             }
-
             const result = buildBaseExecuteCompareOptions({
                 commonCheckVariables: baseCommonCheckVariables,
                 wicCompareOptions: baseWicCompareOptions,
@@ -1079,7 +1059,6 @@ describe('utils', () => {
                 isAndroidNativeWebScreenshot: false,
                 platformName: 'Android',
             }
-
             const result = buildBaseExecuteCompareOptions({
                 commonCheckVariables: androidCommonCheckVariables,
                 wicCompareOptions: baseWicCompareOptions,

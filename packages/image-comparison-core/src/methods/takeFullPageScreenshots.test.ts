@@ -82,7 +82,7 @@ describe('takeFullPageScreenshots', () => {
 
     it('should default to desktop for other cases', async () => {
         const { getDesktopFullPageScreenshotsData } = await import('./screenshots.js')
-        const options = createOptions() // Basic desktop options
+        const options = createOptions()
 
         await takeFullPageScreenshots(mockBrowser, options, false)
 

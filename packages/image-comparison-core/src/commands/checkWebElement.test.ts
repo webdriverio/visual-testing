@@ -47,7 +47,6 @@ vi.mock('../helpers/utils.js', () => ({
         savePerInstance: false,
     }),
     buildBaseExecuteCompareOptions: vi.fn().mockImplementation((params) => {
-        // For element screenshots, blockOut options should be set to false
         const wicOptions = params.isElementScreenshot ? {
             ...params.wicCompareOptions,
             blockOutSideBar: false,
@@ -296,7 +295,6 @@ describe('checkWebElement', () => {
                     enableLegacyScreenshotMethod: false,
                     hideScrollBars: true,
                     waitForFontsLoaded: true,
-                    // Intentionally omitting hideElements, removeElements, and resizeDimensions
                 }
             }
         }

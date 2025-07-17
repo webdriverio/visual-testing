@@ -232,7 +232,6 @@ describe('saveWebElement', () => {
         })
         vi.mocked((await import('../helpers/beforeScreenshot.js')).default).mockResolvedValueOnce(nanDimensions)
 
-        // Mock buildAfterScreenshotOptions to return NaN values for this test
         buildAfterScreenshotOptionsSpy.mockReturnValueOnce({
             actualFolder: '/test/actual',
             base64Image: 'element-screenshot-data',

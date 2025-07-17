@@ -4,7 +4,6 @@ import { DEVICE_RECTANGLES, NOT_KNOWN } from '../helpers/constants.js'
 import type { InstanceOptions } from './instanceData.interfaces.js'
 
 describe('getEnrichedInstanceData', () => {
-    // Helper function to create mock browser instance with custom properties
     const createMockBrowserInstance = (
         mockExecuteFn = vi.fn().mockResolvedValue({
             dimensions: {
@@ -43,7 +42,6 @@ describe('getEnrichedInstanceData', () => {
         vi.clearAllMocks()
     })
 
-    // Base instance options that are common across tests
     const baseInstanceOptions = {
         addressBarShadowPadding: 6,
         toolBarShadowPadding: 6,
@@ -64,7 +62,6 @@ describe('getEnrichedInstanceData', () => {
         isIOS: false,
         isMobile: false,
     }
-
     const createInstanceOptions = (overrides: Partial<InstanceOptions> = {}): InstanceOptions => ({
         ...baseInstanceOptions,
         ...overrides,
@@ -90,7 +87,7 @@ describe('getEnrichedInstanceData', () => {
         const result = await getEnrichedInstanceData(mockBrowserInstance, instanceOptions, false)
 
         expect(result).toMatchSnapshot()
-        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true) // isMobile = true
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true)
     })
 
     it('should be able to enrich the instance data with all the defaults for Android Native Webscreenshot with no shadow padding', async () => {
@@ -105,7 +102,7 @@ describe('getEnrichedInstanceData', () => {
         const result = await getEnrichedInstanceData(mockBrowserInstance, instanceOptions, false)
 
         expect(result).toMatchSnapshot()
-        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true) // isMobile = true
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true)
     })
 
     it('should be able to enrich the instance data with all the defaults for iOS with shadow padding', async () => {
@@ -119,7 +116,7 @@ describe('getEnrichedInstanceData', () => {
         const result = await getEnrichedInstanceData(mockBrowserInstance, instanceOptions, true)
 
         expect(result).toMatchSnapshot()
-        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true) // isMobile = true
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true)
     })
 
     it('should handle test in mobile browser scenario', async () => {
@@ -134,7 +131,7 @@ describe('getEnrichedInstanceData', () => {
         const result = await getEnrichedInstanceData(mockBrowserInstance, instanceOptions, false)
 
         expect(result).toMatchSnapshot()
-        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true) // isMobile = true
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true)
     })
 
     it('should handle native context without browserName', async () => {
@@ -149,7 +146,7 @@ describe('getEnrichedInstanceData', () => {
         const result = await getEnrichedInstanceData(mockBrowserInstance, instanceOptions, false)
 
         expect(result).toMatchSnapshot()
-        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true) // isMobile = true
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true)
     })
 
     it('should handle case-insensitive platform names', async () => {
@@ -163,7 +160,7 @@ describe('getEnrichedInstanceData', () => {
         const result = await getEnrichedInstanceData(mockBrowserInstance, instanceOptions, true)
 
         expect(result).toMatchSnapshot()
-        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true) // isMobile = true
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true)
     })
 
     it('should handle unknown platform name', async () => {
@@ -175,7 +172,7 @@ describe('getEnrichedInstanceData', () => {
         const result = await getEnrichedInstanceData(mockBrowserInstance, instanceOptions, false)
 
         expect(result).toMatchSnapshot()
-        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), false) // isMobile = false
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), false)
     })
 
     it('should handle Android with shadow padding enabled', async () => {
@@ -191,7 +188,7 @@ describe('getEnrichedInstanceData', () => {
         const result = await getEnrichedInstanceData(mockBrowserInstance, instanceOptions, true)
 
         expect(result).toMatchSnapshot()
-        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true) // isMobile = true
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true)
     })
 
     it('should handle iOS home bar padding calculation', async () => {
@@ -207,7 +204,7 @@ describe('getEnrichedInstanceData', () => {
         const result = await getEnrichedInstanceData(mockBrowserInstance, instanceOptions, true)
 
         expect(result).toMatchSnapshot()
-        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true) // isMobile = true
+        expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), true)
     })
 
     it('should handle different screen dimensions', async () => {
@@ -237,7 +234,6 @@ describe('getEnrichedInstanceData', () => {
             }
         })
         const mockBrowserInstance = createMockBrowserInstance(mockExecute)
-
         const instanceOptions = createInstanceOptions({
             devicePixelRatio: 2,
         })

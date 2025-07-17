@@ -23,7 +23,6 @@ describe('scrollToPosition', () => {
             scrollTop: 0,
         } as unknown as HTMLElement
 
-        // Mock document
         global.document = {
             querySelector: vi.fn((selector) => {
                 if (selector === 'html') {return mockHtmlNode}

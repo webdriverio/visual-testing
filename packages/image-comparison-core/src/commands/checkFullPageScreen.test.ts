@@ -284,7 +284,6 @@ describe('checkFullPageScreen', () => {
                     fullPageScrollTimeout: 1500,
                     hideScrollBars: true,
                     waitForFontsLoaded: true,
-                    // Intentionally omitting hideAfterFirstScroll, hideElements, and removeElements
                 }
             }
         }

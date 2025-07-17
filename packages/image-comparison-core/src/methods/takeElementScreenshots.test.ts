@@ -247,7 +247,7 @@ describe('takeElementScreenshot', () => {
         it('should disable fallback when no resizeDimensions and not emulated', async () => {
             const optionsNoResize = {
                 ...baseOptions,
-                resizeDimensions: undefined, // falsy resizeDimensions
+                resizeDimensions: undefined,
                 isEmulated: false
             }
 
@@ -334,7 +334,6 @@ describe('takeElementScreenshot', () => {
 
     describe('Edge cases', () => {
         it('should handle devicePixelRatio values and fallback to NaN when falsy', async () => {
-            // Test with valid devicePixelRatio
             const optionsWithValidDPR = { ...baseOptions, devicePixelRatio: 1 }
             const result1 = await takeElementScreenshot(browserInstance, optionsWithValidDPR, false)
 
@@ -350,10 +349,8 @@ describe('takeElementScreenshot', () => {
                 })
             )
 
-            // Clear mocks for second test
             vi.clearAllMocks()
 
-            // Test with falsy devicePixelRatio (should fallback to NaN)
             const optionsWithZeroDPR = { ...baseOptions, devicePixelRatio: 0 }
             const result2 = await takeElementScreenshot(browserInstance, optionsWithZeroDPR, false)
 

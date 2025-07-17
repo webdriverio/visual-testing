@@ -34,7 +34,6 @@ describe('scrollElementIntoView', () => {
             removeChild: vi.fn(),
         } as unknown as HTMLElement
 
-        // Mock document
         global.document = {
             documentElement: mockHtmlNode,
             body: mockBodyNode,
@@ -48,7 +47,7 @@ describe('scrollElementIntoView', () => {
         const result = scrollElementIntoView(mockElement, addressBarShadowPadding)
 
         expect(result).toBe(0)
-        expect(mockHtmlNode.scrollTop).toBe(90) // top - addressBarShadowPadding
+        expect(mockHtmlNode.scrollTop).toBe(90)
         expect(mockHead.appendChild).toHaveBeenCalledWith(mockStyleTag)
         expect(mockHead.removeChild).toHaveBeenCalledWith(mockStyleTag)
     })

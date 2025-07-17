@@ -263,7 +263,6 @@ describe('saveFullPageScreen', () => {
     })
 
     it('should handle missing dimension values with NaN fallbacks', async () => {
-        // Mock beforeScreenshot to return undefined values for some dimensions
         beforeScreenshotSpy.mockResolvedValueOnce({
             browserName: 'chrome',
             browserVersion: '120.0.0',
@@ -281,14 +280,14 @@ describe('saveFullPageScreen', () => {
                     offsetHeight: 1000,
                 },
                 window: {
-                    devicePixelRatio: undefined, // Will fallback to NaN
-                    innerHeight: undefined, // Will fallback to NaN
+                    devicePixelRatio: undefined,
+                    innerHeight: undefined,
                     isEmulated: false,
                     isLandscape: false,
-                    outerHeight: undefined, // Will fallback to NaN
-                    outerWidth: undefined, // Will fallback to NaN
-                    screenHeight: undefined, // Will fallback to NaN
-                    screenWidth: undefined, // Will fallback to NaN
+                    outerHeight: undefined,
+                    outerWidth: undefined,
+                    screenHeight: undefined,
+                    screenWidth: undefined,
                 },
             },
             isAndroid: false,

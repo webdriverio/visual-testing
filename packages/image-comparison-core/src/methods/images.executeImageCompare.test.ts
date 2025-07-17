@@ -114,7 +114,6 @@ describe('executeImageCompare', () => {
         statusBar: { x: 0, y: 0, width: 0, height: 0 },
         viewport: { x: 0, y: 0, width: 1920, height: 1080 }
     }
-
     const mockOptions = {
         devicePixelRatio: 2,
         deviceRectangles: mockDeviceRectangles,
@@ -144,7 +143,6 @@ describe('executeImageCompare', () => {
             method: {}
         }
     }
-
     const mockTestContext = {
         commandName: 'test',
         framework: 'mocha',
@@ -320,7 +318,6 @@ describe('executeImageCompare', () => {
             folderOptions: { ...mockOptions.folderOptions, isMobile: true }
         }
 
-        // Mock prepareIgnoreRectangles to simulate filtering behavior
         vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
             ignoredBoxes: [{ left: 10, top: 10, right: 60, bottom: 60 }], // Only non-zero rectangle
             hasIgnoreRectangles: true
@@ -365,7 +362,6 @@ describe('executeImageCompare', () => {
             }
         }
 
-        // Mock prepareIgnoreRectangles to handle null/empty case
         vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
             ignoredBoxes: [],
             hasIgnoreRectangles: false
@@ -408,7 +404,6 @@ describe('executeImageCompare', () => {
             }
         }
 
-        // Mock prepareIgnoreRectangles to return the processed rectangles
         vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
             ignoredBoxes: [
                 { left: 0, top: 0, right: 100, bottom: 50 },
@@ -522,7 +517,6 @@ describe('executeImageCompare', () => {
                 }
             }
         }
-
         const result = await executeImageCompare({
             isViewPortScreenshot: true,
             isNativeContext: false,
@@ -598,7 +592,6 @@ describe('executeImageCompare', () => {
             ignoreRegions: [{ x: 0, y: 0, width: 100, height: 50 }]
         }
 
-        // Mock prepareIgnoreRectangles to handle Android-specific behavior
         vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
             ignoredBoxes: [{ left: 0, top: 0, right: 100, bottom: 50 }],
             hasIgnoreRectangles: true
@@ -721,7 +714,6 @@ describe('executeImageCompare', () => {
             }
         }
 
-        // Mock prepareIgnoreRectangles to return processed ignored boxes
         vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
             ignoredBoxes: [{ bottom: 50, right: 100, left: 0, top: 0 }],
             hasIgnoreRectangles: true
@@ -788,7 +780,6 @@ describe('executeImageCompare', () => {
             diffPixels: []
         })
 
-        // Mock generateAndSaveDiff to return storeDiffs: true when tolerance is exceeded
         vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
             diffBoundingBoxes: [],
             storeDiffs: true
@@ -836,7 +827,6 @@ describe('executeImageCompare', () => {
             diffPixels: []
         })
 
-        // Mock generateAndSaveDiff to return storeDiffs: true when --store-diffs flag is present
         vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
             diffBoundingBoxes: [],
             storeDiffs: true

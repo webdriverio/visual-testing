@@ -143,7 +143,6 @@ describe('options', () => {
                 disableCSSAnimation: false,
                 hideScrollBars: false,
             }
-
             const result = createBeforeScreenshotOptions('testInstance', methodOptions, wicOptions)
 
             expect(result.disableBlinkingCursor).toBe(true)
@@ -158,7 +157,6 @@ describe('options', () => {
                 enableLayoutTesting: true,
                 waitForFontsLoaded: true,
             }
-
             const result = createBeforeScreenshotOptions('testInstance', {}, wicOptions)
 
             expect(result.disableBlinkingCursor).toBe(true)
@@ -173,7 +171,6 @@ describe('options', () => {
                 hideElements,
                 removeElements,
             }
-
             const result = createBeforeScreenshotOptions('testInstance', methodOptions, baseWicOptions)
 
             expect(result.hideElements).toBe(hideElements)
@@ -188,7 +185,6 @@ describe('options', () => {
                 hideScrollBars: true,
                 waitForFontsLoaded: true,
             }
-
             const result = createBeforeScreenshotOptions('testInstance', methodOptions, baseWicOptions)
 
             expect(result.disableBlinkingCursor).toBe(true)
@@ -200,7 +196,6 @@ describe('options', () => {
 
         it('should preserve instanceData exactly as passed', () => {
             const complexInstanceData = { browser: 'chrome', version: '120', viewport: { width: 1920, height: 1080 } }
-
             const result = createBeforeScreenshotOptions(complexInstanceData, {}, baseWicOptions)
 
             expect(result.instanceData).toBe(complexInstanceData)
@@ -234,7 +229,6 @@ describe('options', () => {
             platformName: 'desktop',
             platformVersion: '120.0.0'
         }
-
         const mockEnrichedInstanceData: BeforeScreenshotResult = {
             ...mockInstanceData,
             dimensions: {
@@ -268,7 +262,6 @@ describe('options', () => {
             addressBarShadowPadding: 10,
             toolBarShadowPadding: 20
         }
-
         const baseInput = {
             base64Image: 'test-screenshot-data',
             folders: { actualFolder: '/test/actual' },
@@ -286,13 +279,11 @@ describe('options', () => {
                 ...baseInput,
                 isNativeContext: true
             }
-
             const result = buildAfterScreenshotOptions(input)
 
             expect(result).toMatchSnapshot()
-            // Verify native command characteristics
             expect(result.isNativeContext).toBe(true)
-            expect(result.isLandscape).toBe(false) // Should default to false for native
+            expect(result.isLandscape).toBe(false)
             expect(result.disableBlinkingCursor).toBeUndefined()
             expect(result.hideElements).toBeUndefined()
         })
@@ -310,23 +301,20 @@ describe('options', () => {
                 removeElements: [] as HTMLElement[],
                 waitForFontsLoaded: false
             }
-
             const input = {
                 ...baseInput,
                 enrichedInstanceData: mockEnrichedInstanceData,
                 beforeOptions
             }
-
             const result = buildAfterScreenshotOptions(input)
 
             expect(result).toMatchSnapshot()
-            // Verify web command characteristics
             expect(result.isNativeContext).toBe(false)
-            expect(result.isLandscape).toBe(true) // From enriched data
+            expect(result.isLandscape).toBe(true)
             expect(result.disableBlinkingCursor).toBe(true)
             expect(result.disableCSSAnimation).toBe(false)
             expect(result.enableLayoutTesting).toBe(true)
-            expect(result.hideScrollBars).toBe(true) // noScrollBars mapped
+            expect(result.hideScrollBars).toBe(true)
             expect(result.hideElements).toEqual([])
             expect(result.removeElements).toEqual([])
         })
@@ -336,14 +324,12 @@ describe('options', () => {
                 ...baseInput,
                 enrichedInstanceData: mockEnrichedInstanceData
             }
-
             const result = buildAfterScreenshotOptions(input)
 
-            // Should use enriched data dimensions
-            expect(result.fileName.devicePixelRatio).toBe(3) // From enriched
-            expect(result.fileName.outerHeight).toBe(1000) // From enriched
-            expect(result.fileName.screenHeight).toBe(1440) // From enriched
-            expect(result.isLandscape).toBe(true) // From enriched
+            expect(result.fileName.devicePixelRatio).toBe(3)
+            expect(result.fileName.outerHeight).toBe(1000)
+            expect(result.fileName.screenHeight).toBe(1440)
+            expect(result.isLandscape).toBe(true)
         })
 
         it('should handle NaN values correctly', () => {
@@ -361,7 +347,6 @@ describe('options', () => {
                     }
                 }
             }
-
             const input = {
                 ...baseInput,
                 enrichedInstanceData: enrichedWithNaN
@@ -369,11 +354,11 @@ describe('options', () => {
 
             const result = buildAfterScreenshotOptions(input)
 
-            expect(result.fileName.devicePixelRatio).toBe(2) // Fallback to instance data
-            expect(result.fileName.outerHeight).toBeNaN() // Should be NaN when undefined
+            expect(result.fileName.devicePixelRatio).toBe(2)
+            expect(result.fileName.outerHeight).toBeNaN()
             expect(result.fileName.outerWidth).toBeNaN()
-            expect(result.fileName.screenHeight).toBe(1080) // Fallback to instance data
-            expect(result.fileName.screenWidth).toBe(1920) // Fallback to instance data
+            expect(result.fileName.screenHeight).toBe(1080)
+            expect(result.fileName.screenWidth).toBe(1920)
         })
 
         it('should handle missing enriched data gracefully', () => {
@@ -381,16 +366,14 @@ describe('options', () => {
                 ...baseInput,
                 enrichedInstanceData: undefined
             }
-
             const result = buildAfterScreenshotOptions(input)
 
-            // Should fallback to instance data
             expect(result.fileName.devicePixelRatio).toBe(2)
             expect(result.fileName.screenHeight).toBe(1080)
             expect(result.fileName.screenWidth).toBe(1920)
             expect(result.fileName.logName).toBe('chrome')
             expect(result.fileName.name).toBe('chrome')
-            expect(result.isLandscape).toBe(false) // Default
+            expect(result.isLandscape).toBe(false)
         })
 
         it('should handle element arrays from beforeOptions', () => {
@@ -407,12 +390,10 @@ describe('options', () => {
                 removeElements: [mockElement, mockElement],
                 waitForFontsLoaded: false
             }
-
             const input = {
                 ...baseInput,
                 beforeOptions
             }
-
             const result = buildAfterScreenshotOptions(input)
 
             expect(result.hideElements).toEqual([mockElement])
@@ -427,7 +408,6 @@ describe('options', () => {
                     savePerInstance: true
                 }
             }
-
             const result = buildAfterScreenshotOptions(input)
 
             expect(result.filePath).toEqual({
@@ -443,7 +423,6 @@ describe('options', () => {
                 ...baseInput,
                 enrichedInstanceData: mockEnrichedInstanceData
             }
-
             const result = buildAfterScreenshotOptions(input)
 
             expect(result.fileName).toEqual({
@@ -473,20 +452,17 @@ describe('options', () => {
                 deviceName: 'iPhone',
                 platformName: 'iOS'
             }
-
             const mobileEnrichedData: BeforeScreenshotResult = {
                 ...mockEnrichedInstanceData,
                 isMobile: true,
                 deviceName: 'iPhone',
                 platformName: 'iOS'
             }
-
             const input = {
                 ...baseInput,
                 instanceData: mobileInstanceData,
                 enrichedInstanceData: mobileEnrichedData
             }
-
             const result = buildAfterScreenshotOptions(input)
 
             expect(result.filePath.isMobile).toBe(true)

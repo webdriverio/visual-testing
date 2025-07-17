@@ -15,7 +15,6 @@ describe('hideRemoveElements', () => {
             '  </div>' +
             '</div>'
 
-        // Check not hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
 
@@ -27,7 +26,6 @@ describe('hideRemoveElements', () => {
             true,
         )
 
-        // Check hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
 
@@ -39,7 +37,6 @@ describe('hideRemoveElements', () => {
             false,
         )
 
-        // Check not hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
     })
@@ -55,7 +52,6 @@ describe('hideRemoveElements', () => {
             '  </div>' +
             '</div>'
 
-        // Check not hidden
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.hide')))[0].style.visibility).toMatchSnapshot()
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.hide')))[1].style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
@@ -69,7 +65,6 @@ describe('hideRemoveElements', () => {
             true,
         )
 
-        // Check hidden
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.hide')))[0].style.visibility).toMatchSnapshot()
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.hide')))[1].style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
@@ -83,7 +78,6 @@ describe('hideRemoveElements', () => {
             false,
         )
 
-        // Check not hidden
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.hide')))[0].style.visibility).toMatchSnapshot()
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.hide')))[1].style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
@@ -101,7 +95,6 @@ describe('hideRemoveElements', () => {
             '  </div>' +
             '</div>'
 
-        // Check not removed
         expect((<HTMLElement>document.querySelector('#id-2')).style.display).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-4')).style.display).toMatchSnapshot()
 
@@ -113,7 +106,6 @@ describe('hideRemoveElements', () => {
             true,
         )
 
-        // Check removed
         expect((<HTMLElement>document.querySelector('#id-2')).style.display).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-4')).style.display).toMatchSnapshot()
 
@@ -125,7 +117,6 @@ describe('hideRemoveElements', () => {
             false,
         )
 
-        // Check not removed
         expect((<HTMLElement>document.querySelector('#id-2')).style.display).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-4')).style.display).toMatchSnapshot()
     })
@@ -141,7 +132,6 @@ describe('hideRemoveElements', () => {
             '  </div>' +
             '</div>'
 
-        // Check not hidden
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.remove')))[0].style.display).toMatchSnapshot()
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.remove')))[1].style.display).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.display).toMatchSnapshot()
@@ -155,7 +145,6 @@ describe('hideRemoveElements', () => {
             true,
         )
 
-        // Check hidden
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.remove')))[0].style.display).toMatchSnapshot()
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.remove')))[1].style.display).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.display).toMatchSnapshot()
@@ -169,7 +158,6 @@ describe('hideRemoveElements', () => {
             false,
         )
 
-        // Check not hidden
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.remove')))[0].style.display).toMatchSnapshot()
         expect((<HTMLElement[]>(<unknown>document.querySelectorAll('.remove')))[1].style.display).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.display).toMatchSnapshot()
@@ -187,7 +175,6 @@ describe('hideRemoveElements', () => {
             '  </div>' +
             '</div>'
 
-        // Check not hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
 
@@ -199,7 +186,6 @@ describe('hideRemoveElements', () => {
             true,
         )
 
-        // Check hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
     })
@@ -215,7 +201,6 @@ describe('hideRemoveElements', () => {
             '  </div>' +
             '</div>'
 
-        // Check not hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-2')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
@@ -229,7 +214,6 @@ describe('hideRemoveElements', () => {
             true,
         )
 
-        // Check hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-2')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
@@ -247,7 +231,6 @@ describe('hideRemoveElements', () => {
             '  </div>' +
             '</div>'
 
-        // Check not hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-2')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
@@ -261,7 +244,6 @@ describe('hideRemoveElements', () => {
             true,
         )
 
-        // Check hidden
         expect((<HTMLElement>document.querySelector('#id-1')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-2')).style.visibility).toMatchSnapshot()
         expect((<HTMLElement>document.querySelector('#id-3')).style.visibility).toMatchSnapshot()
@@ -279,7 +261,6 @@ describe('hideRemoveElements', () => {
             '  </div>' +
             '</div>'
 
-        // Check not hidden
         expect(<HTMLElement[]>(<unknown>document.querySelectorAll('.hide'))).toMatchSnapshot()
 
         hideRemoveElements(
@@ -290,7 +271,6 @@ describe('hideRemoveElements', () => {
             true,
         )
 
-        // Check hidden
         expect(<HTMLElement[]>(<unknown>document.querySelectorAll('.hide'))).toMatchSnapshot()
     })
 })

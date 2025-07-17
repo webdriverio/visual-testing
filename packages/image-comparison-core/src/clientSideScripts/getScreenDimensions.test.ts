@@ -29,7 +29,7 @@ describe('getScreenDimensions', () => {
         Object.defineProperty(window, 'outerHeight', { value: 0 })
         Object.defineProperty(window, 'outerWidth', { value: 0 })
         Object.defineProperty(document.documentElement, 'clientHeight', { value: 1234 })
-        Object.defineProperty(document.documentElement, 'clientWidth', { value: 4321 }) // @ts-ignore
+        Object.defineProperty(document.documentElement, 'clientWidth', { value: 4321 })
         Object.defineProperty(window, 'matchMedia', {
             value: vi.fn().mockImplementation(() => ({
                 matches: false,
