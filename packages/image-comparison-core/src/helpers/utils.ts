@@ -7,6 +7,7 @@ import type {
     BuildBaseExecuteCompareOptionsOptions,
     BuildFolderOptionsOptions,
     CommonCheckVariables,
+    ComparisonFilePaths,
     ExecuteNativeClickOptions,
     ExtractCommonCheckVariablesOptions,
     FolderOptions,
@@ -19,6 +20,7 @@ import type {
     GetMobileViewPortPositionOptions,
     GetToolBarShadowPaddingOptions,
     LoadBase64HtmlOptions,
+    PrepareComparisonFilePathsOptions,
     ScreenshotSize,
 } from './utils.interfaces.js'
 import type { ClassOptions, CompareOptions } from './options.interfaces.js'
@@ -683,5 +685,37 @@ export function buildBaseExecuteCompareOptions(
     return {
         ...baseOptions,
         ...additionalProperties,
+    }
+}
+
+/**
+ * Prepare all file paths needed for image comparison
+ */
+export function prepareComparisonFilePaths(options: PrepareComparisonFilePathsOptions): ComparisonFilePaths {
+    const {
+        actualFolder,
+        baselineFolder,
+        diffFolder,
+        browserName,
+        deviceName,
+        isMobile,
+        savePerInstance,
+        fileName
+    } = options
+    const createFolderOptions = { browserName, deviceName, isMobile, savePerInstance }
+    const actualFolderPath = getAndCreatePath(actualFolder, createFolderOptions)
+    const baselineFolderPath = getAndCreatePath(baselineFolder, createFolderOptions)
+    const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
+    const actualFilePath = join(actualFolderPath, fileName)
+    const baselineFilePath = join(baselineFolderPath, fileName)
+    const diffFilePath = join(diffFolderPath, fileName)
+
+    return {
+        actualFolderPath,
+        baselineFolderPath,
+        diffFolderPath,
+        actualFilePath,
+        baselineFilePath,
+        diffFilePath
     }
 }

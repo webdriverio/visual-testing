@@ -10,9 +10,9 @@ exports[`executeImageCompare > should return all compare data when returnAllComp
 {
   "fileName": "test.png",
   "folders": {
-    "actual": "/mock/path/test.png",
-    "baseline": "/mock/path/test.png",
-    "diff": "/mock/path/test.png",
+    "actual": "/mock/actual/test.png",
+    "baseline": "/mock/baseline/test.png",
+    "diff": "/mock/diff/test.png",
   },
   "misMatchPercentage": 0.5,
 }
@@ -22,9 +22,9 @@ exports[`executeImageCompare > should return all compare data when returnAllComp
 {
   "fileName": "test.png",
   "folders": {
-    "actual": "/mock/path/actual/test.png",
-    "baseline": "/mock/path/baseline/test.png",
-    "diff": "/mock/path/diff/test.png",
+    "actual": "/mock/actual/test.png",
+    "baseline": "/mock/baseline/test.png",
+    "diff": "/mock/diff/test.png",
   },
   "misMatchPercentage": 0.5,
 }

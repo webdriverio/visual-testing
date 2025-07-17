@@ -12,6 +12,7 @@ import type { BeforeScreenshotOptions } from './beforeScreenshot.interfaces.js'
 import type { AfterScreenshotOptions } from './afterScreenshot.interfaces.js'
 import type { BeforeScreenshotResult } from './beforeScreenshot.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
+import type { ComparisonIgnoreOption } from '../resemble/compare.interfaces.js'
 import {
     logAllDeprecatedCompareOptions,
     isStorybook,
@@ -264,5 +265,18 @@ export function buildAfterScreenshotOptions({
     }
 
     return afterOptions
+}
+
+/**
+ * Prepare ignore options for resemble.js comparison
+ */
+export function prepareIgnoreOptions(imageCompareOptions: MethodImageCompareCompareOptions): ComparisonIgnoreOption[] {
+    const resembleIgnoreDefaults: ComparisonIgnoreOption[] = ['alpha', 'antialiasing', 'colors', 'less', 'nothing']
+
+    return resembleIgnoreDefaults.filter((option) =>
+        Object.keys(imageCompareOptions).find(
+            (key: keyof typeof imageCompareOptions) => key.toLowerCase().includes(option) && imageCompareOptions[key],
+        ),
+    )
 }
 

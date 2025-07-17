@@ -7,6 +7,24 @@ export interface Folders {
     diffFolder: string;
 }
 
+export interface FolderPaths {
+    /** The actual folder path where the current screenshots need to be saved */
+    actualFolderPath: string;
+    /** The baseline folder path where the baseline screenshots can be found */
+    baselineFolderPath: string;
+    /** The diff folder path where the differences are saved */
+    diffFolderPath: string;
+}
+
+export interface FilePaths {
+    /** The actual file path where the current screenshots need to be saved */
+    actualFilePath: string;
+    /** The baseline file path where the baseline screenshots can be found */
+    baselineFilePath: string;
+    /** The diff file path where the difference is saved */
+    diffFilePath: string;
+}
+
 export interface BaseWebScreenshotOptions {
     /**
      * Disable the blinking cursor

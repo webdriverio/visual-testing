@@ -1,4 +1,4 @@
-import type { BaseCoordinates, BaseDimensions } from '../base.interfaces.js'
+import type { BaseCoordinates, BaseDimensions, FilePaths, FolderPaths } from '../base.interfaces.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
 
@@ -257,3 +257,18 @@ export interface BuildBaseExecuteCompareOptionsOptions {
     /** Additional properties to add to the options */
     additionalProperties?: Record<string, any>;
 }
+
+export interface PrepareComparisonFilePathsOptions extends Folders {
+    /** The browser name */
+    browserName: string;
+    /** The device name */
+    deviceName: string;
+    /** Whether this is a mobile device */
+    isMobile: boolean;
+    /** Whether to save per instance */
+    savePerInstance: boolean;
+    /** The file name */
+    fileName: string;
+}
+
+export interface ComparisonFilePaths extends FilePaths, FolderPaths {}

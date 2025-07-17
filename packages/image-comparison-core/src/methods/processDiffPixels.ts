@@ -45,7 +45,11 @@
  */
 
 import logger from '@wdio/logger'
-import type { BoundingBox, Pixel } from 'src/methods/images.interfaces.js'
+import type { Pixel, WicImageCompareOptions } from 'src/methods/images.interfaces.js'
+import type { BoundingBox } from './rectangles.interfaces.js'
+import type { IgnoreBoxes } from './rectangles.interfaces.js'
+import type { CompareData } from '../resemble/compare.interfaces.js'
+import { saveBase64Image, addBlockOuts } from './images.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:pixelDiffProcessing')
 
@@ -243,6 +247,44 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[
     log.info(`Number merged: ${mergedBoxes.length}`)
 
     return mergedBoxes
+}
+
+/**
+ * Generate and save diff image with bounding boxes
+ */
+export async function generateAndSaveDiff(
+    data: CompareData,
+    imageCompareOptions: WicImageCompareOptions,
+    ignoredBoxes: IgnoreBoxes[],
+    diffFilePath: string,
+    rawMisMatchPercentage: number
+): Promise<{ diffBoundingBoxes: BoundingBox[]; storeDiffs: boolean }> {
+    const diffBoundingBoxes: BoundingBox[] = []
+    const saveAboveTolerance = imageCompareOptions.saveAboveTolerance ?? 0
+    const storeDiffs = rawMisMatchPercentage > saveAboveTolerance || process.argv.includes('--store-diffs')
+
+    if (storeDiffs) {
+        const isDifference = rawMisMatchPercentage > saveAboveTolerance
+        const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
+        const debugMessage = 'INFO:\n Debug mode is enabled. Saved the debug file to:'
+
+        if (imageCompareOptions.createJsonReportFiles) {
+            diffBoundingBoxes.push(...processDiffPixels(data.diffPixels, imageCompareOptions.diffPixelBoundingBoxProximity))
+        }
+
+        await saveBase64Image(await addBlockOuts(Buffer.from(await data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
+
+        log.warn(
+            '\x1b[33m%s\x1b[0m',
+            `
+#####################################################################################
+ ${isDifference ? isDifferenceMessage : debugMessage}
+ ${diffFilePath}
+#####################################################################################`,
+        )
+    }
+
+    return { diffBoundingBoxes, storeDiffs }
 }
 
 export { processDiffPixels }
