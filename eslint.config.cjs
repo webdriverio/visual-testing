@@ -7,6 +7,7 @@ module.exports = [
             '**/dist/*',
             '**/build/*',
             '**/.next/*',
+            '**/.vitest-ui/*',
         ]
     },
     {
