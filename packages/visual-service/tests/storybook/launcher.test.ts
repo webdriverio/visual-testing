@@ -4,7 +4,7 @@ import logger from '@wdio/logger'
 import type { Capabilities, Services } from '@wdio/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import VisualLauncher from '../../src/storybook/launcher.js'
-import type { ClassOptions } from 'webdriver-image-comparison'
+import type { ClassOptions } from '@wdio/image-comparison-core'
 import * as storybookUtils from '../../src/storybook/utils.js'
 
 const log = logger('test')

@@ -1,0 +1,55 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`beforeScreenshot > should be able to return the enriched instance data with \`addShadowPadding: true\` 1`] = `
+{
+  "appName": "mocked-app",
+  "browserName": "mocked-browser",
+  "devicePixelRatio": 1,
+  "isAndroid": false,
+  "isIOS": false,
+  "isMobile": false,
+  "platformName": "mocked-platform",
+}
+`;
+
+exports[`beforeScreenshot > should be able to return the enriched instance data with default options 1`] = `
+{
+  "appName": "mocked-app",
+  "browserName": "mocked-browser",
+  "devicePixelRatio": 1,
+  "isAndroid": false,
+  "isIOS": false,
+  "isMobile": false,
+  "platformName": "mocked-platform",
+}
+`;
+
+exports[`beforeScreenshot > should handle hide/remove elements error gracefully and log warning 1`] = `
+[
+  "[33m%s[0m",
+  "
+#####################################################################################
+ WARNING:
+ (One of) the elements that needed to be hidden or removed could not be found on the
+ page and caused this error
+ Error: Error: Element not found
+ We made sure the test didn't break.
+#####################################################################################
+",
+]
+`;
+
+exports[`beforeScreenshot > should handle multiple errors and log both debug and warning messages 1`] = `
+[
+  "[33m%s[0m",
+  "
+#####################################################################################
+ WARNING:
+ (One of) the elements that needed to be hidden or removed could not be found on the
+ page and caused this error
+ Error: Error: Element not found
+ We made sure the test didn't break.
+#####################################################################################
+",
+]
+`;

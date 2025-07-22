@@ -1,0 +1,336 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`screenshots > getAndroidChromeDriverFullPageScreenshotsData > should hide elements after first scroll when hideAfterFirstScroll is provided 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 0,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 768,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 1536,
+  "fullPageWidth": 1366,
+}
+`;
+
+exports[`screenshots > getAndroidChromeDriverFullPageScreenshotsData > should take multiple screenshots when content exceeds viewport 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 0,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 768,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 1536,
+  "fullPageWidth": 1366,
+}
+`;
+
+exports[`screenshots > getAndroidChromeDriverFullPageScreenshotsData > should take single screenshot when content fits in viewport 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 0,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 768,
+  "fullPageWidth": 1366,
+}
+`;
+
+exports[`screenshots > getDesktopFullPageScreenshotsData > should handle screenshot size adjustment when different from inner height 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 0,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 768,
+  "fullPageWidth": 1366,
+}
+`;
+
+exports[`screenshots > getDesktopFullPageScreenshotsData > should hide elements after first scroll when hideAfterFirstScroll is provided 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 0,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 768,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 1536,
+  "fullPageWidth": 1366,
+}
+`;
+
+exports[`screenshots > getDesktopFullPageScreenshotsData > should take multiple screenshots when content exceeds viewport 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 0,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 768,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 1536,
+  "fullPageWidth": 1366,
+}
+`;
+
+exports[`screenshots > getDesktopFullPageScreenshotsData > should take single screenshot when content fits in viewport 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 1366,
+      "canvasYPosition": 0,
+      "imageHeight": 768,
+      "imageWidth": 1366,
+      "imageXPosition": 0,
+      "imageYPosition": 0,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 768,
+  "fullPageWidth": 1366,
+}
+`;
+
+exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should handle landscape mode with rotation detection 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 1334,
+      "canvasYPosition": 0,
+      "imageHeight": 652,
+      "imageWidth": 1334,
+      "imageXPosition": 0,
+      "imageYPosition": 193,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 637,
+  "fullPageWidth": 1334,
+}
+`;
+
+exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should hide elements after first scroll when hideAfterFirstScroll is provided 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 750,
+      "canvasYPosition": 0,
+      "imageHeight": 1319,
+      "imageWidth": 750,
+      "imageXPosition": 0,
+      "imageYPosition": 110,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+    {
+      "canvasWidth": 750,
+      "canvasYPosition": 1319,
+      "imageHeight": 1319,
+      "imageWidth": 750,
+      "imageXPosition": 0,
+      "imageYPosition": 110,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 2623,
+  "fullPageWidth": 750,
+}
+`;
+
+exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should take multiple screenshots when content exceeds viewport (Android) 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 375,
+      "canvasYPosition": 0,
+      "imageHeight": 652,
+      "imageWidth": 375,
+      "imageXPosition": 0,
+      "imageYPosition": 60,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+    {
+      "canvasWidth": 375,
+      "canvasYPosition": 652,
+      "imageHeight": 652,
+      "imageWidth": 375,
+      "imageXPosition": 0,
+      "imageYPosition": 60,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 1289,
+  "fullPageWidth": 375,
+}
+`;
+
+exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should take single screenshot when content fits in viewport (iOS) 1`] = `
+{
+  "data": [
+    {
+      "canvasWidth": 750,
+      "canvasYPosition": 0,
+      "imageHeight": 652,
+      "imageWidth": 750,
+      "imageXPosition": 0,
+      "imageYPosition": 777,
+      "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+    },
+  ],
+  "fullPageHeight": 637,
+  "fullPageWidth": 750,
+}
+`;
+
+exports[`screenshots > logHiddenRemovedError > should log a warning when the elements are not found 1`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+ WARNING:
+ (One of) the elements that needed to be hidden or removed could not be found on the
+ page and caused this error
+ Error: Error: Element not found
+ We made sure the test didn't break.
+#####################################################################################
+",
+  ],
+]
+`;
+
+exports[`screenshots > takeWebElementScreenshot > fallback mode (fallback = true) > should take full screenshot and determine element rectangles 1`] = `
+{
+  "base64Image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAyCAYAAACM/XaiAAABH0lEQVR4nO2TsQnCQBBF36EOQYbOEbsA7iBsYA7gBygTuYQ5QBuZQZ1F6tEftIu/vf1kJMAzDMMy9FxgBrwf0JHDG9uD7Qiy0eAE3ArTVFFMuAi6zbqpxRQk0sUgGnEtENNEQaYUUU00RBppRRRRTTJGmlFFFNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFNP8C+C8AAtLf59gAAAAASUVORK5CYII=",
+  "isWebDriverElementScreenshot": false,
+  "rectangles": {
+    "height": 150,
+    "width": 250,
+    "x": 50,
+    "y": 100,
+  },
+}
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should fallback when takeElementScreenshot throws an error 1`] = `
+[
+  [
+    "The element screenshot failed, falling back to cutting the full device/viewport screenshot:",
+    [Error: Element screenshot failed],
+  ],
+]
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should fallback when takeElementScreenshot throws an error 2`] = `
+{
+  "base64Image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAyCAYAAACM/XaiAAABH0lEQVR4nO2TsQnCQBBF36EOQYbOEbsA7iBsYA7gBygTuYQ5QBuZQZ1F6tEftIu/vf1kJMAzDMMy9FxgBrwf0JHDG9uD7Qiy0eAE3ArTVFFMuAi6zbqpxRQk0sUgGnEtENNEQaYUUU00RBppRRRRTTJGmlFFFNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFFNNMEaaUUU00wRppRRRTTBGmlFNP8C+C8AAtLf59gAAAAASUVORK5CYII=",
+  "isWebDriverElementScreenshot": false,
+  "rectangles": {
+    "height": 200,
+    "width": 300,
+    "x": 10,
+    "y": 20,
+  },
+}
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should successfully take element screenshot using webdriver element screenshot 1`] = `
+{
+  "base64Image": "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVQYV2NkYGBg+M+ABQxEAH7DBAfpUPw1AAAAAElFTkSuQmCC",
+  "isWebDriverElementScreenshot": true,
+  "rectangles": {
+    "height": 200,
+    "width": 300,
+    "x": 0,
+    "y": 0,
+  },
+}
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should throw error when element has zero height 1`] = `
+[
+  [
+    "The element screenshot failed, falling back to cutting the full device/viewport screenshot:",
+    [Error: The element has no width or height.],
+  ],
+]
+`;
+
+exports[`screenshots > takeWebElementScreenshot > normal mode (fallback = false) > should throw error when element has zero width 1`] = `
+[
+  [
+    "The element screenshot failed, falling back to cutting the full device/viewport screenshot:",
+    [Error: The element has no width or height.],
+  ],
+]
+`;
