@@ -1,0 +1,81 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`takeElementScreenshot > Edge cases > should handle undefined devicePixelRatio 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": false,
+}
+`;
+
+exports[`takeElementScreenshot > Edge cases > should handle undefined innerHeight 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": false,
+}
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should disable fallback when no resizeDimensions and not emulated 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": false,
+}
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should enable fallback when device is emulated 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": false,
+}
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should enable fallback when resizeDimensions is provided 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": false,
+}
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should handle auto scroll when enabled 1`] = `
+[
+  [MockFunction spy],
+  {
+    "elementId": "test-element",
+  },
+  6,
+]
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should handle auto scroll when enabled 2`] = `
+[
+  [MockFunction spy],
+  100,
+]
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should handle zero dimensions by falling back to viewport size 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": false,
+}
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should handle zero height only 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": true,
+}
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should handle zero width only 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": true,
+}
+`;
+
+exports[`takeElementScreenshot > Legacy screenshots > should not scroll back when autoElementScroll is enabled but no current position 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+  "isWebDriverElementScreenshot": false,
+}
+`;

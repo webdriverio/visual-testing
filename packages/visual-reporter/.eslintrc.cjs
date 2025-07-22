@@ -71,6 +71,41 @@ module.exports = {
                 'plugin:import/recommended',
                 'plugin:import/typescript',
             ],
+            rules: {
+                // Enforce max line length
+                'max-len': ['error', {
+                    code: 140,
+                    ignoreUrls: true,
+                    ignoreStrings: true,
+                    ignoreTemplateLiterals: true,
+                    ignoreRegExpLiterals: true
+                }],
+                // Enforce no extra blank lines between const declarations
+                'no-multiple-empty-lines': ['error', {
+                    max: 1,
+                    maxEOF: 1,
+                    maxBOF: 0
+                }],
+                // Enforce consistent spacing around operators
+                'operator-linebreak': ['error', 'before'],
+                // Enforce consistent object formatting
+                'object-curly-spacing': ['error', 'always'],
+                // Enforce consistent object property formatting
+                'object-property-newline': ['error', {
+                    allowAllPropertiesOnSameLine: true
+                }],
+                // Enforce consistent spacing in object literals
+                'object-curly-newline': ['error', {
+                    ObjectExpression: {
+                        multiline: true,
+                        minProperties: 2
+                    },
+                    ObjectPattern: {
+                        multiline: true,
+                        minProperties: 2
+                    }
+                }]
+            }
         },
 
         // Node

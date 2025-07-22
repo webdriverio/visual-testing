@@ -325,9 +325,9 @@ exports[`utils > getInstanceData > should return instance data for an iOS iPad m
     },
     "homeBar": {
       "height": 9,
-      "width": 276,
-      "x": 279,
-      "y": 1179,
+      "width": 318,
+      "x": 438,
+      "y": 819,
     },
     "leftSidePadding": {
       "height": 0,

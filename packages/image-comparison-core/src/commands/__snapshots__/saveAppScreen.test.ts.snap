@@ -1,0 +1,1239 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`saveAppScreen > should execute saveAppScreen with basic options 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "test-screen.png",
+}
+`;
+
+exports[`saveAppScreen > should execute saveAppScreen with basic options 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+]
+`;
+
+exports[`saveAppScreen > should execute saveAppScreen with basic options 3`] = `
+{
+  "base64Image": "base64-screenshot-data",
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "homeBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 812,
+        "width": 375,
+      },
+      "statusBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": true,
+  "tag": "test-screen",
+  "wicOptions": {
+    "addIOSBezelCorners": false,
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "autoSaveBaseline": false,
+    "clearFolder": false,
+    "compareOptions": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "createJsonReportFiles": false,
+      "diffPixelBoundingBoxProximity": 5,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+      "ignoreColors": false,
+      "ignoreLess": false,
+      "ignoreNothing": false,
+      "rawMisMatchPercentage": false,
+      "returnAllCompareData": false,
+      "saveAboveTolerance": 0,
+      "scaleImagesToSameSize": false,
+    },
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "enableLegacyScreenshotMethod": false,
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "fullPageScrollTimeout": 1500,
+    "hideScrollBars": true,
+    "isHybridApp": false,
+    "savePerInstance": true,
+    "tabbableOptions": {
+      "circle": {
+        "backgroundColor": "rgba(255, 0, 0, 0.4)",
+        "borderColor": "rgba(255, 0, 0, 1)",
+        "borderWidth": 1,
+        "fontColor": "rgba(0, 0, 0, 1)",
+        "fontFamily": "Arial",
+        "fontSize": 10,
+        "size": 10,
+      },
+      "line": {
+        "color": "rgba(255, 0, 0, 1)",
+        "width": 1,
+      },
+    },
+    "toolBarShadowPadding": 6,
+    "userBasedFullPageScreenshot": false,
+    "waitForFontsLoaded": true,
+  },
+}
+`;
+
+exports[`saveAppScreen > should execute saveAppScreen with basic options 4`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "test-browser",
+      "browserVersion": "17.0",
+      "deviceName": "test-device",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "test-device",
+      "outerHeight": NaN,
+      "outerWidth": NaN,
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "test-browser",
+      "deviceName": "test-device",
+      "isMobile": true,
+      "savePerInstance": false,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle Android device correctly 1`] = `
+[
+  {
+    "isAndroid": true,
+    "isMobile": true,
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle Android device correctly 2`] = `
+{
+  "base64Image": "base64-screenshot-data",
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "Pixel 4",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "homeBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 915,
+        "width": 412,
+      },
+      "statusBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": true,
+    "isIOS": false,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "Android",
+    "platformVersion": "11.0",
+  },
+  "isNativeContext": true,
+  "tag": "test-screen",
+  "wicOptions": {
+    "addIOSBezelCorners": false,
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "autoSaveBaseline": false,
+    "clearFolder": false,
+    "compareOptions": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "createJsonReportFiles": false,
+      "diffPixelBoundingBoxProximity": 5,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+      "ignoreColors": false,
+      "ignoreLess": false,
+      "ignoreNothing": false,
+      "rawMisMatchPercentage": false,
+      "returnAllCompareData": false,
+      "saveAboveTolerance": 0,
+      "scaleImagesToSameSize": false,
+    },
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "enableLegacyScreenshotMethod": false,
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "fullPageScrollTimeout": 1500,
+    "hideScrollBars": true,
+    "isHybridApp": false,
+    "savePerInstance": true,
+    "tabbableOptions": {
+      "circle": {
+        "backgroundColor": "rgba(255, 0, 0, 0.4)",
+        "borderColor": "rgba(255, 0, 0, 1)",
+        "borderWidth": 1,
+        "fontColor": "rgba(0, 0, 0, 1)",
+        "fontFamily": "Arial",
+        "fontSize": 10,
+        "size": 10,
+      },
+      "line": {
+        "color": "rgba(255, 0, 0, 1)",
+        "width": 1,
+      },
+    },
+    "toolBarShadowPadding": 6,
+    "userBasedFullPageScreenshot": false,
+    "waitForFontsLoaded": true,
+  },
+}
+`;
+
+exports[`saveAppScreen > should handle Android device correctly 3`] = `
+[
+  {
+    "isAndroid": true,
+    "isMobile": true,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "test-browser",
+      "browserVersion": "17.0",
+      "deviceName": "test-device",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "test-device",
+      "outerHeight": NaN,
+      "outerWidth": NaN,
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "test-browser",
+      "deviceName": "test-device",
+      "isMobile": true,
+      "savePerInstance": false,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle custom image naming 1`] = `
+{
+  "base64Image": "base64-screenshot-data",
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "homeBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 812,
+        "width": 375,
+      },
+      "statusBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": true,
+  "tag": "test-screen",
+  "wicOptions": {
+    "addIOSBezelCorners": false,
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "autoSaveBaseline": false,
+    "clearFolder": false,
+    "compareOptions": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "createJsonReportFiles": false,
+      "diffPixelBoundingBoxProximity": 5,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+      "ignoreColors": false,
+      "ignoreLess": false,
+      "ignoreNothing": false,
+      "rawMisMatchPercentage": false,
+      "returnAllCompareData": false,
+      "saveAboveTolerance": 0,
+      "scaleImagesToSameSize": false,
+    },
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "enableLegacyScreenshotMethod": false,
+    "formatImageName": "{tag}-{browserName}-{deviceName}",
+    "fullPageScrollTimeout": 1500,
+    "hideScrollBars": true,
+    "isHybridApp": false,
+    "savePerInstance": true,
+    "tabbableOptions": {
+      "circle": {
+        "backgroundColor": "rgba(255, 0, 0, 0.4)",
+        "borderColor": "rgba(255, 0, 0, 1)",
+        "borderWidth": 1,
+        "fontColor": "rgba(0, 0, 0, 1)",
+        "fontFamily": "Arial",
+        "fontSize": 10,
+        "size": 10,
+      },
+      "line": {
+        "color": "rgba(255, 0, 0, 1)",
+        "width": 1,
+      },
+    },
+    "toolBarShadowPadding": 6,
+    "userBasedFullPageScreenshot": false,
+    "waitForFontsLoaded": true,
+  },
+}
+`;
+
+exports[`saveAppScreen > should handle custom image naming 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "test-browser",
+      "browserVersion": "17.0",
+      "deviceName": "test-device",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "test-device",
+      "outerHeight": NaN,
+      "outerWidth": NaN,
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "test-browser",
+      "deviceName": "test-device",
+      "isMobile": true,
+      "savePerInstance": false,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle custom screen sizes 1`] = `
+{
+  "isAndroid": false,
+  "isMobile": false,
+}
+`;
+
+exports[`saveAppScreen > should handle custom screen sizes 2`] = `
+{
+  "base64Image": "base64-screenshot-data",
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "homeBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 1080,
+        "width": 1920,
+      },
+      "statusBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": true,
+  "tag": "test-screen",
+  "wicOptions": {
+    "addIOSBezelCorners": false,
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "autoSaveBaseline": false,
+    "clearFolder": false,
+    "compareOptions": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "createJsonReportFiles": false,
+      "diffPixelBoundingBoxProximity": 5,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+      "ignoreColors": false,
+      "ignoreLess": false,
+      "ignoreNothing": false,
+      "rawMisMatchPercentage": false,
+      "returnAllCompareData": false,
+      "saveAboveTolerance": 0,
+      "scaleImagesToSameSize": false,
+    },
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "enableLegacyScreenshotMethod": false,
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "fullPageScrollTimeout": 1500,
+    "hideScrollBars": true,
+    "isHybridApp": false,
+    "savePerInstance": true,
+    "tabbableOptions": {
+      "circle": {
+        "backgroundColor": "rgba(255, 0, 0, 0.4)",
+        "borderColor": "rgba(255, 0, 0, 1)",
+        "borderWidth": 1,
+        "fontColor": "rgba(0, 0, 0, 1)",
+        "fontFamily": "Arial",
+        "fontSize": 10,
+        "size": 10,
+      },
+      "line": {
+        "color": "rgba(255, 0, 0, 1)",
+        "width": 1,
+      },
+    },
+    "toolBarShadowPadding": 6,
+    "userBasedFullPageScreenshot": false,
+    "waitForFontsLoaded": true,
+  },
+}
+`;
+
+exports[`saveAppScreen > should handle custom screen sizes 3`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "test-browser",
+      "browserVersion": "17.0",
+      "deviceName": "test-device",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "test-device",
+      "outerHeight": NaN,
+      "outerWidth": NaN,
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "test-browser",
+      "deviceName": "test-device",
+      "isMobile": true,
+      "savePerInstance": false,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle iOS device with bezel corners 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": true,
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle iOS device with bezel corners 2`] = `
+{
+  "base64Image": "cropped-base64-screenshot-data",
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 12",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "homeBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 844,
+        "width": 390,
+      },
+      "statusBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "14.0",
+  },
+  "isNativeContext": true,
+  "tag": "test-screen",
+  "wicOptions": {
+    "addIOSBezelCorners": true,
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "autoSaveBaseline": false,
+    "clearFolder": false,
+    "compareOptions": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "createJsonReportFiles": false,
+      "diffPixelBoundingBoxProximity": 5,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+      "ignoreColors": false,
+      "ignoreLess": false,
+      "ignoreNothing": false,
+      "rawMisMatchPercentage": false,
+      "returnAllCompareData": false,
+      "saveAboveTolerance": 0,
+      "scaleImagesToSameSize": false,
+    },
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "enableLegacyScreenshotMethod": false,
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "fullPageScrollTimeout": 1500,
+    "hideScrollBars": true,
+    "isHybridApp": false,
+    "savePerInstance": true,
+    "tabbableOptions": {
+      "circle": {
+        "backgroundColor": "rgba(255, 0, 0, 0.4)",
+        "borderColor": "rgba(255, 0, 0, 1)",
+        "borderWidth": 1,
+        "fontColor": "rgba(0, 0, 0, 1)",
+        "fontFamily": "Arial",
+        "fontSize": 10,
+        "size": 10,
+      },
+      "line": {
+        "color": "rgba(255, 0, 0, 1)",
+        "width": 1,
+      },
+    },
+    "toolBarShadowPadding": 6,
+    "userBasedFullPageScreenshot": false,
+    "waitForFontsLoaded": true,
+  },
+}
+`;
+
+exports[`saveAppScreen > should handle iOS device with bezel corners 3`] = `
+[
+  {
+    "addIOSBezelCorners": true,
+    "base64Image": "base64-screenshot-data",
+    "deviceName": "iPhone 12",
+    "devicePixelRatio": 2,
+    "isIOS": true,
+    "isLandscape": false,
+    "rectangles": {
+      "height": 1688,
+      "width": 780,
+      "x": 0,
+      "y": 0,
+    },
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle iOS device with bezel corners 4`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": true,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "test-browser",
+      "browserVersion": "17.0",
+      "deviceName": "test-device",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "test-device",
+      "outerHeight": NaN,
+      "outerWidth": NaN,
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "test-browser",
+      "deviceName": "test-device",
+      "isMobile": true,
+      "savePerInstance": false,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle non-native context correctly 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle non-native context correctly 2`] = `
+{
+  "base64Image": "base64-screenshot-data",
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "homeBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 812,
+        "width": 375,
+      },
+      "statusBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": false,
+  "tag": "test-screen",
+  "wicOptions": {
+    "addIOSBezelCorners": false,
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "autoSaveBaseline": false,
+    "clearFolder": false,
+    "compareOptions": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "createJsonReportFiles": false,
+      "diffPixelBoundingBoxProximity": 5,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+      "ignoreColors": false,
+      "ignoreLess": false,
+      "ignoreNothing": false,
+      "rawMisMatchPercentage": false,
+      "returnAllCompareData": false,
+      "saveAboveTolerance": 0,
+      "scaleImagesToSameSize": false,
+    },
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "enableLegacyScreenshotMethod": false,
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "fullPageScrollTimeout": 1500,
+    "hideScrollBars": true,
+    "isHybridApp": false,
+    "savePerInstance": true,
+    "tabbableOptions": {
+      "circle": {
+        "backgroundColor": "rgba(255, 0, 0, 0.4)",
+        "borderColor": "rgba(255, 0, 0, 1)",
+        "borderWidth": 1,
+        "fontColor": "rgba(0, 0, 0, 1)",
+        "fontFamily": "Arial",
+        "fontSize": 10,
+        "size": 10,
+      },
+      "line": {
+        "color": "rgba(255, 0, 0, 1)",
+        "width": 1,
+      },
+    },
+    "toolBarShadowPadding": 6,
+    "userBasedFullPageScreenshot": false,
+    "waitForFontsLoaded": true,
+  },
+}
+`;
+
+exports[`saveAppScreen > should handle non-native context correctly 3`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "test-browser",
+      "browserVersion": "17.0",
+      "deviceName": "test-device",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "test-device",
+      "outerHeight": NaN,
+      "outerWidth": NaN,
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "test-browser",
+      "deviceName": "test-device",
+      "isMobile": true,
+      "savePerInstance": false,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
+
+exports[`saveAppScreen > should handle save per instance 1`] = `
+{
+  "base64Image": "base64-screenshot-data",
+  "folders": {
+    "actualFolder": "/test/actual",
+    "baselineFolder": "/test/baseline",
+    "diffFolder": "/test/diff",
+  },
+  "instanceData": {
+    "appName": "TestApp",
+    "browserName": "Chrome",
+    "browserVersion": "118.0.0.0",
+    "deviceName": "iPhone 14",
+    "devicePixelRatio": 2,
+    "deviceRectangles": {
+      "bottomBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "homeBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "leftSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "rightSidePadding": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "screenSize": {
+        "height": 812,
+        "width": 375,
+      },
+      "statusBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "statusBarAndAddressBar": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+      "viewport": {
+        "height": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0,
+      },
+    },
+    "initialDevicePixelRatio": 2,
+    "isAndroid": false,
+    "isIOS": true,
+    "isMobile": true,
+    "logName": "test-log",
+    "name": "test-device",
+    "nativeWebScreenshot": false,
+    "platformName": "iOS",
+    "platformVersion": "17.0",
+  },
+  "isNativeContext": true,
+  "tag": "test-screen",
+  "wicOptions": {
+    "addIOSBezelCorners": false,
+    "addressBarShadowPadding": 6,
+    "autoElementScroll": true,
+    "autoSaveBaseline": false,
+    "clearFolder": false,
+    "compareOptions": {
+      "blockOutSideBar": false,
+      "blockOutStatusBar": false,
+      "blockOutToolBar": false,
+      "createJsonReportFiles": false,
+      "diffPixelBoundingBoxProximity": 5,
+      "ignoreAlpha": false,
+      "ignoreAntialiasing": false,
+      "ignoreColors": false,
+      "ignoreLess": false,
+      "ignoreNothing": false,
+      "rawMisMatchPercentage": false,
+      "returnAllCompareData": false,
+      "saveAboveTolerance": 0,
+      "scaleImagesToSameSize": false,
+    },
+    "disableBlinkingCursor": false,
+    "disableCSSAnimation": false,
+    "enableLayoutTesting": false,
+    "enableLegacyScreenshotMethod": false,
+    "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+    "fullPageScrollTimeout": 1500,
+    "hideScrollBars": true,
+    "isHybridApp": false,
+    "savePerInstance": true,
+    "tabbableOptions": {
+      "circle": {
+        "backgroundColor": "rgba(255, 0, 0, 0.4)",
+        "borderColor": "rgba(255, 0, 0, 1)",
+        "borderWidth": 1,
+        "fontColor": "rgba(0, 0, 0, 1)",
+        "fontFamily": "Arial",
+        "fontSize": 10,
+        "size": 10,
+      },
+      "line": {
+        "color": "rgba(255, 0, 0, 1)",
+        "width": 1,
+      },
+    },
+    "toolBarShadowPadding": 6,
+    "userBasedFullPageScreenshot": false,
+    "waitForFontsLoaded": true,
+  },
+}
+`;
+
+exports[`saveAppScreen > should handle save per instance 2`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+  {
+    "actualFolder": "/test/actual",
+    "base64Image": "base64-screenshot-data",
+    "fileName": {
+      "browserName": "test-browser",
+      "browserVersion": "17.0",
+      "deviceName": "test-device",
+      "devicePixelRatio": 2,
+      "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
+      "isMobile": true,
+      "isTestInBrowser": false,
+      "logName": "test-log",
+      "name": "test-device",
+      "outerHeight": NaN,
+      "outerWidth": NaN,
+      "platformName": "iOS",
+      "platformVersion": "17.0",
+      "screenHeight": 812,
+      "screenWidth": 375,
+      "tag": "test-screen",
+    },
+    "filePath": {
+      "browserName": "test-browser",
+      "deviceName": "test-device",
+      "isMobile": true,
+      "savePerInstance": false,
+    },
+    "isLandscape": false,
+    "isNativeContext": true,
+    "platformName": "iOS",
+  },
+]
+`;
