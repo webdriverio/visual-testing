@@ -17,7 +17,7 @@
     "build": "run-s clean build:*",
     "build:report": "remix vite:build",
     "build:scripts": "tsc -p tsconfig.scripts.json",
-    "clean": "rimraf coverage build *.tsbuildinfo",
+    "clean": "rimraf coverage build --glob *.tsbuildinfo",
     "dev": "cross-env VISUAL_REPORT_LOCAL_DEV=true run-s build:scripts script:prepare.report && run-p watch:scripts dev:remix",
     "dev:remix": "remix vite:dev",
     "script:prepare.report": "node ./dist/prepareReportAssets.js",
