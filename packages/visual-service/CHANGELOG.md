@@ -84,6 +84,11 @@
 - Updated dependencies [1326e99]
   - @wdio/image-comparison-core@1.0.0
 
+  ## Committers: 2
+
+    -   P-Courteille ([@P-Courteille](https://github.com/P-Courteille))
+    -   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 8.0.4
 
 ### Patch Changes
