@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`executeImageCompare > should execute image comparison successfully with default options 1`] = `0.5`;
+
+exports[`executeImageCompare > should handle rawMisMatchPercentage option 1`] = `0.123456`;
+
+exports[`executeImageCompare > should handle updateVisualBaseline flag 1`] = `0`;
+
+exports[`executeImageCompare > should return all compare data when returnAllCompareData is true 1`] = `
+{
+  "fileName": "test.png",
+  "folders": {
+    "actual": "/mock/actual/test.png",
+    "baseline": "/mock/baseline/test.png",
+    "diff": "/mock/diff/test.png",
+  },
+  "misMatchPercentage": 0.5,
+}
+`;
+
+exports[`executeImageCompare > should return all compare data when returnAllCompareData is true 2`] = `
+{
+  "fileName": "test.png",
+  "folders": {
+    "actual": "/mock/actual/test.png",
+    "baseline": "/mock/baseline/test.png",
+    "diff": "/mock/diff/test.png",
+  },
+  "misMatchPercentage": 0.5,
+}
+`;

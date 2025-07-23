@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path'
 import { $, browser } from '@wdio/globals'
 import logger from '@wdio/logger'
 import type { Options } from '@wdio/types'
-import type { ClassOptions } from 'webdriver-image-comparison'
+import type { ClassOptions } from '@wdio/image-comparison-core'
 
 import type {
     CategoryComponent,

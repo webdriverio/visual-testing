@@ -1,0 +1,259 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`takeWebScreenshot > BiDi screenshots > should take BiDi screenshot when shouldUseBidi is true 1`] = `
+[
+  {
+    "browserInstance": {
+      "isAndroid": false,
+      "isMobile": false,
+    },
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle Android configurations 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+}
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle Android configurations 2`] = `
+[
+  "screenshot-data",
+  {
+    "devicePixelRatio": 2,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "innerWidth": 1200,
+    "isAndroidChromeDriverScreenshot": true,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle NaN dimension values in screen rectangles 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+}
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle NaN dimension values in screen rectangles 2`] = `
+[
+  "screenshot-data",
+  {
+    "devicePixelRatio": NaN,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": NaN,
+    "innerHeight": NaN,
+    "innerWidth": NaN,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle NaN dimension values in screen rectangles 3`] = `
+[
+  {
+    "addIOSBezelCorners": false,
+    "base64Image": "screenshot-data",
+    "deviceName": "desktop",
+    "devicePixelRatio": NaN,
+    "isIOS": false,
+    "isLandscape": false,
+    "rectangles": {
+      "height": 100,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle default dimension values in screen rectangles 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+}
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle default dimension values in screen rectangles 2`] = `
+[
+  "screenshot-data",
+  {
+    "devicePixelRatio": 1,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 1,
+    "innerHeight": NaN,
+    "innerWidth": NaN,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle default dimension values in screen rectangles 3`] = `
+[
+  {
+    "addIOSBezelCorners": false,
+    "base64Image": "screenshot-data",
+    "deviceName": "desktop",
+    "devicePixelRatio": 1,
+    "isIOS": false,
+    "isLandscape": false,
+    "rectangles": {
+      "height": 100,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle emulated device configuration 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+}
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle emulated device configuration 2`] = `
+[
+  "screenshot-data",
+  {
+    "devicePixelRatio": 2,
+    "enableLegacyScreenshotMethod": true,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "innerWidth": 1200,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": true,
+    "isIOS": false,
+    "isLandscape": false,
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle native web screenshot configuration 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+}
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should handle native web screenshot configuration 2`] = `
+[
+  "screenshot-data",
+  {
+    "devicePixelRatio": 2,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "innerWidth": 1200,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": true,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should pass iOS configuration correctly 1`] = `
+{
+  "base64Image": "cropped-screenshot-data",
+}
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should pass iOS configuration correctly 2`] = `
+[
+  "screenshot-data",
+  {
+    "devicePixelRatio": 2,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "innerWidth": 1200,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": true,
+    "isLandscape": true,
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should pass iOS configuration correctly 3`] = `
+[
+  {
+    "addIOSBezelCorners": true,
+    "base64Image": "screenshot-data",
+    "deviceName": "iPhone 14 Pro",
+    "devicePixelRatio": 2,
+    "isIOS": true,
+    "isLandscape": true,
+    "rectangles": {
+      "height": 100,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should take legacy screenshot when shouldUseBidi is false 1`] = `
+[
+  {
+    "isAndroid": false,
+    "isMobile": false,
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should take legacy screenshot when shouldUseBidi is false 2`] = `
+[
+  "screenshot-data",
+  {
+    "devicePixelRatio": 2,
+    "enableLegacyScreenshotMethod": false,
+    "initialDevicePixelRatio": 2,
+    "innerHeight": 900,
+    "innerWidth": 1200,
+    "isAndroidChromeDriverScreenshot": false,
+    "isAndroidNativeWebScreenshot": false,
+    "isEmulated": false,
+    "isIOS": false,
+    "isLandscape": false,
+  },
+]
+`;
+
+exports[`takeWebScreenshot > Legacy screenshots > should take legacy screenshot when shouldUseBidi is false 3`] = `
+[
+  {
+    "addIOSBezelCorners": false,
+    "base64Image": "screenshot-data",
+    "deviceName": "desktop",
+    "devicePixelRatio": 2,
+    "isIOS": false,
+    "isLandscape": false,
+    "rectangles": {
+      "height": 100,
+      "width": 100,
+      "x": 0,
+      "y": 0,
+    },
+  },
+]
+`;
