@@ -1,7 +1,7 @@
 import type { Capabilities } from '@wdio/types'
 import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
-import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from 'webdriver-image-comparison'
-import type { Folders, InstanceData, TestContext } from 'webdriver-image-comparison'
+import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from '@wdio/image-comparison-core'
+import type { Folders, InstanceData, TestContext } from '@wdio/image-comparison-core'
 import type {
     EnrichTestContextOptions,
     getFolderMethodOptions,
@@ -59,25 +59,19 @@ export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {heigh
  * Get the mobile instance data
  */
 async function getMobileInstanceData({
-    currentBrowser,
+    browserInstance,
     initialDeviceRectangles,
     isNativeContext,
     nativeWebScreenshot,
 }: GetMobileInstanceDataOptions): Promise<MobileInstanceData>{
-    const { isAndroid, isIOS, isMobile } = currentBrowser
+    const { isAndroid, isIOS, isMobile } = browserInstance
     let devicePixelRatio = 1
     let deviceRectangles = initialDeviceRectangles
 
     if (isMobile) {
-        const executor = <ReturnValue, InnerArguments extends unknown[]>(
-            fn: string | ((...args: InnerArguments) => ReturnValue),
-            ...args: InnerArguments) => currentBrowser.execute(fn, ...args) as Promise<ReturnValue>
-        const getUrl = () => currentBrowser.getUrl()
-        const url = (arg:string) => currentBrowser.url(arg)
-        const currentDriverCapabilities = currentBrowser.capabilities
+        const currentDriverCapabilities = browserInstance.capabilities
         const { height: screenHeight, width: screenWidth } = await getMobileScreenSize({
-            currentBrowser,
-            executor,
+            browserInstance,
             isIOS,
             isNativeContext,
         })
@@ -88,15 +82,11 @@ async function getMobileInstanceData({
         deviceRectangles.statusBarAndAddressBar.width = screenWidth
         deviceRectangles.statusBar.width = screenWidth
         deviceRectangles = await getMobileViewPortPosition({
+            browserInstance,
             initialDeviceRectangles,
             isAndroid,
             isIOS,
             isNativeContext,
-            methods: {
-                executor,
-                getUrl,
-                url,
-            },
             nativeWebScreenshot,
             screenHeight,
             screenWidth,
@@ -120,7 +110,7 @@ async function getMobileInstanceData({
             }
         } else {
             // This is to already determine the device pixel ratio if it's not set in the capabilities
-            const base64Image = await currentBrowser.takeScreenshot()
+            const base64Image = await browserInstance.takeScreenshot()
             devicePixelRatio = getDevicePixelRatio(base64Image, deviceRectangles.screenSize)
             const isIphone = deviceRectangles.screenSize.width < 1024 && deviceRectangles.screenSize.height < 1024
             const deviceType = isIphone ? 'IPHONE' : 'IPAD'
@@ -131,7 +121,7 @@ async function getMobileInstanceData({
             const offsetPortraitHeight = Object.keys(IOS_OFFSETS[deviceType]).indexOf(portraitHeight.toString()) > -1 ?
                 portraitHeight :
                 defaultPortraitHeight
-            const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight].PORTRAIT
+            const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight][screenWidth > screenHeight ? 'LANDSCAPE' : 'PORTRAIT']
             // NOTE: The values for iOS are based on CSS pixels, so we need to multiply them with the devicePixelRatio,
             // This will NOT be done here but in a central place
             deviceRectangles.statusBar = {
@@ -164,13 +154,13 @@ export function getLtOptions(capabilities: WebdriverIO.Capabilities): any | unde
 /**
  * Get the device name
  */
-function getDeviceName(currentBrowser: WebdriverIO.Browser): string {
+function getDeviceName(browserInstance: WebdriverIO.Browser): string {
     const { capabilities: {
         // We use a few `@ts-ignore` here because this is returned by the driver
         // and not recognized by the types because they are not requested
         // @ts-ignore
         deviceName: returnedDeviceName = NOT_KNOWN,
-    }, requestedCapabilities } = currentBrowser
+    }, requestedCapabilities } = browserInstance
     let deviceName = NOT_KNOWN
 
     // First check if it's a BrowserStack session, they don't:
@@ -198,11 +188,11 @@ function getDeviceName(currentBrowser: WebdriverIO.Browser): string {
  * Get the instance data
  */
 export async function getInstanceData({
-    currentBrowser,
+    browserInstance,
     initialDeviceRectangles,
     isNativeContext
 }: GetInstanceDataOptions): Promise<InstanceData> {
-    const { capabilities: currentCapabilities, requestedCapabilities } = currentBrowser
+    const { capabilities: currentCapabilities, requestedCapabilities } = browserInstance
     const {
         browserName: rawBrowserName = NOT_KNOWN,
         browserVersion: rawBrowserVersion = NOT_KNOWN,
@@ -215,7 +205,7 @@ export async function getInstanceData({
     // For #967: When a screenshot of an emulated device is taken, but the browser was initially
     // started as a "desktop" session, so not with emulated caps, we need to store the initial
     // devicePixelRatio when we take a screenshot and enableLegacyScreenshotMethod is enabled
-    let devicePixelRatio = !currentBrowser.isMobile ? (await currentBrowser.execute('return window.devicePixelRatio')) as number : 1
+    let devicePixelRatio = !browserInstance.isMobile ? (await browserInstance.execute('return window.devicePixelRatio')) as number : 1
     const platformName = rawPlatformName === '' ? NOT_KNOWN : rawPlatformName.toLowerCase()
     const logName =
         'wdio-ics:options' in requestedCapabilities
@@ -227,7 +217,7 @@ export async function getInstanceData({
             : ''
 
     // Mobile data
-    const { isAndroid, isIOS, isMobile } = currentBrowser
+    const { isAndroid, isIOS, isMobile } = browserInstance
     const {
         // We use a few `@ts-ignore` here because this is returned by the driver
         // and not recognized by the types because they are not requested
@@ -239,7 +229,7 @@ export async function getInstanceData({
     const appName = rawApp !== NOT_KNOWN
         ? rawApp.replace(/\\/g, '/').split('/').pop().replace(/[^a-zA-Z0-9.]/g, '_')
         : NOT_KNOWN
-    const deviceName = getDeviceName(currentBrowser)
+    const deviceName = getDeviceName(browserInstance)
     const ltOptions = getLtOptions(requestedCapabilities)
     // @TODO: Figure this one out in the future when we know more about the Appium capabilities from LT
     // 20241216: LT doesn't have the option to take a ChromeDriver screenshot, so if it's Android it's always native
@@ -248,7 +238,7 @@ export async function getInstanceData({
     const {
         devicePixelRatio: mobileDevicePixelRatio,
         deviceRectangles,
-    } = await getMobileInstanceData({ currentBrowser, initialDeviceRectangles, isNativeContext, nativeWebScreenshot })
+    } = await getMobileInstanceData({ browserInstance, initialDeviceRectangles, isNativeContext, nativeWebScreenshot })
 
     devicePixelRatio = isMobile ? mobileDevicePixelRatio : devicePixelRatio
 
@@ -357,15 +347,5 @@ export function enrichTestContext(
         tag,
         title,
     }
-}
-
-/**
- * Check if the current browser supports isBidi screenshots
- */
-export function isBiDiScreenshotSupported(driver: WebdriverIO.Browser): boolean {
-    const { isBidi } = driver
-    const isBiDiSupported = typeof driver.browsingContextCaptureScreenshot === 'function'
-
-    return isBidi && isBiDiSupported
 }
 

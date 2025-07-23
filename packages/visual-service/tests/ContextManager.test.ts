@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { DEVICE_RECTANGLES } from 'webdriver-image-comparison'
+import { DEVICE_RECTANGLES } from '@wdio/image-comparison-core'
 import { ContextManager } from '../src/contextManager.js'
 
 vi.mock('../src/utils', async () => {
