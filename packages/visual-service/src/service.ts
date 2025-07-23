@@ -141,6 +141,15 @@ export default class WdioImageComparisonService extends BaseClass {
         const browserNames = Object.keys(capabilities)
 
         /**
+         * Add all the commands to the global browser object that will execute
+         * on each browser in the Multi Remote
+         * Start with the page commands
+         */
+        for (const [commandName, command] of Object.entries(pageCommands)) {
+            this.#addMultiremoteCommand(browser, browserNames, commandName as keyof CommandMap, command)
+        }
+
+        /**
          * Add all the commands to each browser in the Multi Remote
          */
         for (const browserName of browserNames) {
@@ -152,15 +161,6 @@ export default class WdioImageComparisonService extends BaseClass {
             this._contextManagers?.set(browserName, contextManager)
 
             await this.#addCommandsToBrowser(browserInstance)
-        }
-
-        /**
-         * Add all the commands to the global browser object that will execute
-         * on each browser in the Multi Remote
-         * Start with the page commands
-         */
-        for (const [commandName, command] of Object.entries(pageCommands)) {
-            this.#addMultiremoteCommand(browser, browserNames, commandName as keyof CommandMap, command)
         }
 
         /**
