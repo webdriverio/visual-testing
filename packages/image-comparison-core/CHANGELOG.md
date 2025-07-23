@@ -77,4 +77,6 @@
   **Note**: This is an architectural improvement that modernizes the codebase while maintaining full backward compatibility. All existing functionality remains unchanged for users.
 
   ***
+    ## Committers: 1
 
+    -   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
