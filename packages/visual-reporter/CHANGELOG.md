@@ -1,10 +1,20 @@
 # @wdio/visual-reporter
 
+## 0.4.11
+
+### Patch Changes
+
+- 3dbfa0e: fix: [990](#990)mclean script from package.json is now working on Windows
+
+  ## Committers: 1
+
+    -   P-Courteille ([@P-Courteille](https://github.com/P-Courteille))
+
 ## 0.4.10
 
 ### Patch Changes
 
-- 42956e4:  🔧 Other
+- 42956e4: 🔧 Other
 
   - 🆙 Updated dependencies
 

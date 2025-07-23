@@ -1,10 +1,20 @@
 # @wdio/ocr-service
 
+## 2.2.7
+
+### Patch Changes
+
+- 75d31d1: fix: [657](#657) in multiremote, commands are now executed on the requested instances (ocrGetText no longer loop)
+
+  ## Committers: 1
+
+    -   P-Courteille ([@P-Courteille](https://github.com/P-Courteille))
+
 ## 2.2.6
 
 ### Patch Changes
 
-- 42956e4:  🔧 Other
+- 42956e4: 🔧 Other
 
   - 🆙 Updated dependencies
 
