@@ -78,6 +78,3 @@
 
   ***
 
-### Patch Changes
-
-- 74df53b: chore: remove unused package
