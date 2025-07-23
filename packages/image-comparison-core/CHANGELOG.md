@@ -70,6 +70,7 @@
   - Improved security with latest package versions
   - Better compatibility with current WebdriverIO ecosystem
   - Enhanced performance through updated dependencies
+  - Remove unused packages
 
   ***
 
