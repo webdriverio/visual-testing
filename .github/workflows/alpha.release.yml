@@ -25,7 +25,10 @@ jobs:
   alpha-release:
     name: Alpha Release
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
 
     strategy:
       matrix:
@@ -33,7 +36,7 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -52,13 +55,24 @@ jobs:
           npm whoami
 
       - name: 🔧 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
 
       - name: 🧩 Install Dependencies
         run: pnpm pnpm.install.workaround
+
+      - name: 🔄 Validate Package Directory
+        run: |
+          if [[ ! "${{ github.event.inputs.package_dir }}" =~ ^packages/[a-zA-Z0-9_-]+$ ]]; then
+            echo "Invalid package directory: ${{ github.event.inputs.package_dir }}"
+            exit 1
+          fi
+          if [[ ! -d "${{ github.event.inputs.package_dir }}" ]]; then
+            echo "Package directory does not exist: ${{ github.event.inputs.package_dir }}"
+            exit 1
+          fi
 
       - name: 🔄 Navigate to Package Directory
         run: |
