@@ -5,7 +5,13 @@ on:
     branches:
       - main
   pull_request:
-  pull_request_target:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+env:
+  PNPM_VERSION: 9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7
 
 jobs:
   dependency-check:
@@ -40,18 +46,15 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: ⬇️ Checkout PR Repository
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+        uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -78,20 +81,15 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+        uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -141,20 +139,15 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+        uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -204,20 +197,15 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+        uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -267,20 +255,15 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+        uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -330,20 +313,15 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+        uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -393,20 +371,15 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v3
-
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+        uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm

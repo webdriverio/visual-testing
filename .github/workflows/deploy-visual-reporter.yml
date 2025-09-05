@@ -26,8 +26,12 @@ jobs:
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@v4
+
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -35,6 +39,7 @@ jobs:
           cache: pnpm
       - name: 🧩 Install Dependencies
         run: pnpm pnpm.install.workaround
+
       - name: 🏗️ Build
         working-directory: packages/visual-reporter
         run: |
@@ -42,12 +47,15 @@ jobs:
           pnpm script:prepare.report
         env:
           GITHUB_PAGES: "/visual-testing/"
+
       - name: ⚙️ Setup Pages
         uses: actions/configure-pages@v5
+
       - name: 📤 Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: "packages/visual-reporter/build/client"
+
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

@@ -3,8 +3,7 @@
 # Ref: https://github.com/dependabot/fetch-metadata
 name: Auto-merge
 
-# `pull_request_target` means this uses code in the base branch, not the PR.
-on: pull_request_target
+on: pull_request
 
 # Dependabot PRs' tokens have read permissions by default and thus we must enable write permissions.
 permissions:
@@ -20,7 +19,7 @@ jobs:
       # Fetch PR metadata
       - name: Fetch PR metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.6.0
+        uses: dependabot/fetch-metadata@v2.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
