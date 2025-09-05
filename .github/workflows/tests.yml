@@ -10,6 +10,9 @@ permissions:
   contents: read
   pull-requests: read
 
+env:
+  PNPM_VERSION: 9.15.9
+
 jobs:
   dependency-check:
     name: 🔎 📦 Dependency Check
@@ -48,7 +51,7 @@ jobs:
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9.15.9
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -83,6 +86,8 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -140,6 +145,8 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -197,6 +204,8 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -254,6 +263,8 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -311,6 +322,8 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -374,6 +387,8 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🟢 Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
