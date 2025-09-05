@@ -81,7 +81,6 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
@@ -140,7 +139,6 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
@@ -199,7 +197,6 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
@@ -258,7 +255,6 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
@@ -317,7 +313,6 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/checkout@v4
 
       - name: 📦 Setup pnpm
@@ -376,14 +371,7 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/checkout@v4
-
-      - name: ⬇️ Checkout PR Repository
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
