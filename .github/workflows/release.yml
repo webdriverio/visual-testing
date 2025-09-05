@@ -13,7 +13,10 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
 
     strategy:
       matrix:
@@ -21,7 +24,7 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🔧 Setup Git
         run: |
@@ -38,7 +41,7 @@ jobs:
           npm whoami
 
       - name: 🔧 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
