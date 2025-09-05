@@ -11,7 +11,7 @@ permissions:
   pull-requests: read
 
 env:
-  PNPM_VERSION: 9.15.9
+  PNPM_VERSION: 9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7
 
 jobs:
   dependency-check:
