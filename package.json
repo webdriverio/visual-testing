@@ -73,7 +73,7 @@
     "@wdio/sauce-service": "^9.18.1",
     "@wdio/shared-store-service": "^9.18.1",
     "@wdio/spec-reporter": "^9.18.0",
-    "@wdio/types": "^9.16.2",
+    "@wdio/types": "^9.19.2",
     "cross-env": "^7.0.3",
     "eslint": "^9.31.0",
     "eslint-plugin-import": "^2.32.0",
