@@ -45,8 +45,8 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.4)
       '@wdio/appium-service':
-        specifier: ^9.18.1
-        version: 9.18.1
+        specifier: ^9.19.2
+        version: 9.19.2
       '@wdio/browserstack-service':
         specifier: ^9.18.1
         version: 9.18.1(@wdio/cli@9.19.2(@types/node@24.0.14)(expect-webdriverio@5.4.2))
@@ -2407,8 +2407,8 @@ packages:
   '@vitest/utils@3.2.4':
     resolution: {integrity: sha512-fB2V0JFrQSMsCo9HiSq3Ezpdv4iYaXRG1Sx8edX3MwxfyNn83mKiGzOcH+Fkxt4MHxr3y42fQi1oeAInqgX2QA==}
 
-  '@wdio/appium-service@9.18.1':
-    resolution: {integrity: sha512-Yrr47KQ2mBJJCScIFAsLCSgh6Jpu0shc5RQi9/K34uoIcIxxdStzZvxGrhoBwLWNHKDOiMsuFIr6YFlkOtFNGw==}
+  '@wdio/appium-service@9.19.2':
+    resolution: {integrity: sha512-xc+4qpc6M3Yz217ZqFu2JNtiN36crEerVm549RF/TR9HO4KhOw2cWRpTB5dDqc6e7hTHN/mX0OG4Yuokn9e61Q==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/browserstack-service@9.18.1':
@@ -4429,9 +4429,6 @@ packages:
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
     engines: {node: '>=6'}
-
-  import-meta-resolve@4.1.0:
-    resolution: {integrity: sha512-I6fiaX09Xivtk+THaMfAwnA3MVA5Big1WHF1Dfx9hFuvNIWpXnorlkzhcQf6ehrqQiiZECRt1poOAkPmer3ruw==}
 
   import-meta-resolve@4.2.0:
     resolution: {integrity: sha512-Iqv2fzaTQN28s/FwZAoFq0ZSs/7hMAHJVX+w8PZl3cY19Pxk6jFFalxQoIfW2826i/fDLXv8IiEZRIT0lDuWcg==}
@@ -10080,17 +10077,17 @@ snapshots:
       loupe: 3.1.4
       tinyrainbow: 2.0.0
 
-  '@wdio/appium-service@9.18.1':
+  '@wdio/appium-service@9.19.2':
     dependencies:
-      '@wdio/config': 9.18.0
+      '@wdio/config': 9.19.2
       '@wdio/logger': 9.18.0
-      '@wdio/types': 9.16.2
-      '@wdio/utils': 9.18.0
+      '@wdio/types': 9.19.2
+      '@wdio/utils': 9.19.2
       change-case: 5.4.4
       get-port: 7.1.0
-      import-meta-resolve: 4.1.0
+      import-meta-resolve: 4.2.0
       tree-kill: 1.2.2
-      webdriverio: 9.18.1
+      webdriverio: 9.19.2
     transitivePeerDependencies:
       - bare-buffer
       - bufferutil
@@ -10168,7 +10165,7 @@ snapshots:
       '@wdio/utils': 9.18.0
       deepmerge-ts: 7.1.5
       glob: 10.4.5
-      import-meta-resolve: 4.1.0
+      import-meta-resolve: 4.2.0
     transitivePeerDependencies:
       - bare-buffer
       - react-native-b4a
@@ -12683,8 +12680,6 @@ snapshots:
     dependencies:
       parent-module: 1.0.1
       resolve-from: 4.0.0
-
-  import-meta-resolve@4.1.0: {}
 
   import-meta-resolve@4.2.0: {}
 
