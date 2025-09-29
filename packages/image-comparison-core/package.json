@@ -36,7 +36,7 @@
   "dependencies": {
     "jimp": "^1.6.0",
     "@wdio/logger": "^9.18.0",
-    "@wdio/types": "^9.19.2"
+    "@wdio/types": "^9.20.0"
   },
   "devDependencies": {
     "webdriverio": "^9.19.2"
