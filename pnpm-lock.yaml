@@ -72,8 +72,8 @@ importers:
         specifier: ^9.18.0
         version: 9.18.0
       '@wdio/types':
-        specifier: ^9.19.2
-        version: 9.19.2
+        specifier: ^9.20.0
+        version: 9.20.0
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -118,7 +118,7 @@ importers:
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.14)(@vitest/ui@3.2.4)(jsdom@26.1.0)
       wdio-lambdatest-service:
         specifier: ^4.0.0
-        version: 4.0.0(@wdio/cli@9.19.2(@types/node@24.0.14)(expect-webdriverio@5.4.2))(@wdio/types@9.19.2)(webdriverio@9.19.2)
+        version: 4.0.0(@wdio/cli@9.19.2(@types/node@24.0.14)(expect-webdriverio@5.4.2))(@wdio/types@9.20.0)(webdriverio@9.19.2)
       webdriverio:
         specifier: ^9.19.2
         version: 9.19.2
@@ -129,8 +129,8 @@ importers:
         specifier: ^9.18.0
         version: 9.18.0
       '@wdio/types':
-        specifier: ^9.19.2
-        version: 9.19.2
+        specifier: ^9.20.0
+        version: 9.20.0
       jimp:
         specifier: ^1.6.0
         version: 1.6.0
@@ -151,8 +151,8 @@ importers:
         specifier: ^9.18.0
         version: 9.18.0
       '@wdio/types':
-        specifier: ^9.19.2
-        version: 9.19.2
+        specifier: ^9.20.0
+        version: 9.20.0
       fuse.js:
         specifier: ^7.1.0
         version: 7.1.0
@@ -279,8 +279,8 @@ importers:
         specifier: ^9.18.0
         version: 9.18.0
       '@wdio/types':
-        specifier: ^9.19.2
-        version: 9.19.2
+        specifier: ^9.20.0
+        version: 9.20.0
       expect-webdriverio:
         specifier: ^5.4.0
         version: 5.4.0(@wdio/globals@9.17.0)(@wdio/logger@9.18.0)(webdriverio@9.20.0)
@@ -2130,9 +2130,6 @@ packages:
 
   '@types/node@24.0.14':
     resolution: {integrity: sha512-4zXMWD91vBLGRtHK3YbIoFMia+1nqEz72coM42C5ETjnNCa/heoj7NT1G67iAfOqMmcfhuCZ4uNpyz8EjlAejw==}
-
-  '@types/node@24.4.0':
-    resolution: {integrity: sha512-gUuVEAK4/u6F9wRLznPUU4WGUacSEBDPoC2TrBkw3GAnOLHBL45QdfHOXp1kJ4ypBGLxTOB+t7NJLpKoC3gznQ==}
 
   '@types/node@24.5.2':
     resolution: {integrity: sha512-FYxk1I7wPv3K2XBaoyH2cTnocQEu8AOZ60hPbsyukMPLv5/5qr7V1i8PLHdl6Zf87I+xZXFvPCXYjiTFq+YSDQ==}
@@ -7113,9 +7110,6 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
-  undici-types@7.11.0:
-    resolution: {integrity: sha512-kt1ZriHTi7MU+Z/r9DOdAI3ONdaR3M3csEaRc6ewa4f4dTvX4cQCbJ4NkEn0ohE4hHtq85+PhPSTY+pO/1PwgA==}
-
   undici-types@7.12.0:
     resolution: {integrity: sha512-goOacqME2GYyOZZfb5Lgtu+1IDmAlAEu5xnD3+xTzS10hT0vzpf0SPjkXwAw9Jm+4n/mQGDP3LO8CPbYROeBfQ==}
 
@@ -9756,10 +9750,6 @@ snapshots:
     dependencies:
       undici-types: 7.8.0
 
-  '@types/node@24.4.0':
-    dependencies:
-      undici-types: 7.11.0
-
   '@types/node@24.5.2':
     dependencies:
       undici-types: 7.12.0
@@ -9797,7 +9787,7 @@ snapshots:
 
   '@types/through@0.0.33':
     dependencies:
-      '@types/node': 24.4.0
+      '@types/node': 24.5.2
 
   '@types/tough-cookie@4.0.5': {}
 
@@ -10379,7 +10369,7 @@ snapshots:
 
   '@wdio/types@9.16.2':
     dependencies:
-      '@types/node': 20.19.0
+      '@types/node': 20.19.17
 
   '@wdio/types@9.19.2':
     dependencies:
@@ -15904,8 +15894,6 @@ snapshots:
 
   undici-types@6.21.0: {}
 
-  undici-types@7.11.0: {}
-
   undici-types@7.12.0: {}
 
   undici-types@7.8.0: {}
@@ -16230,12 +16218,12 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@4.0.0(@wdio/cli@9.19.2(@types/node@24.0.14)(expect-webdriverio@5.4.2))(@wdio/types@9.19.2)(webdriverio@9.19.2):
+  wdio-lambdatest-service@4.0.0(@wdio/cli@9.19.2(@types/node@24.0.14)(expect-webdriverio@5.4.2))(@wdio/types@9.20.0)(webdriverio@9.19.2):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.9
       '@wdio/cli': 9.19.2(@types/node@24.0.14)(expect-webdriverio@5.4.2)
       '@wdio/logger': 7.26.0
-      '@wdio/types': 9.19.2
+      '@wdio/types': 9.20.0
       axios: 1.9.0
       colors: 1.4.0
       form-data: 4.0.3
