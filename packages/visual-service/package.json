@@ -29,7 +29,7 @@
     "@wdio/globals": "^9.17.0",
     "@wdio/logger": "^9.18.0",
     "@wdio/types": "^9.20.0",
-    "expect-webdriverio": "^5.4.0",
+    "expect-webdriverio": "^5.4.3",
     "@wdio/image-comparison-core": "workspace:*"
   }
 }
