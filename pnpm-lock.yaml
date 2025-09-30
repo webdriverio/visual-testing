@@ -60,8 +60,8 @@ importers:
         specifier: ^9.19.2
         version: 9.19.2(@wdio/globals@9.17.0)(webdriverio@9.19.2)
       '@wdio/mocha-framework':
-        specifier: ^9.18.0
-        version: 9.18.0
+        specifier: ^9.20.0
+        version: 9.20.0
       '@wdio/sauce-service':
         specifier: ^9.18.1
         version: 9.18.1
@@ -2119,9 +2119,6 @@ packages:
   '@types/node@16.9.1':
     resolution: {integrity: sha512-QpLcX9ZSsq3YYUUnD3nFDY8H7wctAhQj/TFKL8Ya8v5fMm3CFXxo8zStsLAl780ltoYoo1WvKUVGBQK+1ifr7g==}
 
-  '@types/node@20.19.0':
-    resolution: {integrity: sha512-hfrc+1tud1xcdVTABC2JiomZJEklMcXYNTVtZLAeqTVWD+qL5jkHKT+1lOtqDdGxt+mB53DTtiz673vfjU8D1Q==}
-
   '@types/node@20.19.14':
     resolution: {integrity: sha512-gqiKWld3YIkmtrrg9zDvg9jfksZCcPywXVN7IauUGhilwGV/yOyeUsvpR796m/Jye0zUzMXPKe8Ct1B79A7N5Q==}
 
@@ -2453,8 +2450,8 @@ packages:
     resolution: {integrity: sha512-HdzDrRs+ywAqbXGKqe1i/bLtCv47plz4TvsHFH3j729OooT5VH38ctFn5aLXgECmiAKDkmH/A6kOq2Zh5DIxww==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/mocha-framework@9.18.0':
-    resolution: {integrity: sha512-foycDp9DFpW1z4+GJMPitn69V7CJ8FK86Z1C/6JHJlvGfNpz5Kpfn22NYX6+ph1mpW4bvK2BeWCNMm1EgOl4mw==}
+  '@wdio/mocha-framework@9.20.0':
+    resolution: {integrity: sha512-kqLaGJ2okdNyOjBsTJcmZ9fvl2nrcdbgaXHk9V1znhAzuHiTEPicaIRPG5T0Itb/vOKb72rp0BdisuJ/PBfs7g==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/protocols@9.16.2':
@@ -2499,12 +2496,20 @@ packages:
     resolution: {integrity: sha512-fBI7ljL+YcPXSXUhdk2+zVuz7IYP1aDMTq1eVmMme9GY0y67t0dCNPOt6xkCAEdL5dOcV6D2L1r6Cf/M2ifTvQ==}
     engines: {node: '>=18.20.0'}
 
+  '@wdio/types@9.20.0':
+    resolution: {integrity: sha512-zMmAtse2UMCSOW76mvK3OejauAdcFGuKopNRH7crI0gwKTZtvV89yXWRziz9cVXpFgfmJCjf9edxKFWdhuF5yw==}
+    engines: {node: '>=18.20.0'}
+
   '@wdio/utils@9.18.0':
     resolution: {integrity: sha512-M+QH05FUw25aFXZfjb+V16ydKoURgV61zeZrMjQdW2aAiks3F5iiI9pgqYT5kr1kHZcMy8gawGqQQ+RVfKYscQ==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/utils@9.19.2':
     resolution: {integrity: sha512-caimJiTsxDUfXn/gRAzcYTO3RydSl7XzD+QpjfWZYJjzr8a2XfNnj+Vdmr8gG4BSkiVHirW9mFCZeQp2eTD7rA==}
+    engines: {node: '>=18.20.0'}
+
+  '@wdio/utils@9.20.0':
+    resolution: {integrity: sha512-T1ze005kncUTocYImSBQc/FAVcOwP/vOU4MDJFgzz/RTcps600qcKX98sVdWM5/ukXCVkjOufWteDHIbX5/tEA==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/xvfb@9.19.2':
@@ -9711,10 +9716,6 @@ snapshots:
 
   '@types/node@16.9.1': {}
 
-  '@types/node@20.19.0':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@20.19.14':
     dependencies:
       undici-types: 6.21.0
@@ -10236,13 +10237,13 @@ snapshots:
       safe-regex2: 5.0.0
       strip-ansi: 7.1.0
 
-  '@wdio/mocha-framework@9.18.0':
+  '@wdio/mocha-framework@9.20.0':
     dependencies:
       '@types/mocha': 10.0.10
-      '@types/node': 20.19.0
+      '@types/node': 20.19.17
       '@wdio/logger': 9.18.0
-      '@wdio/types': 9.16.2
-      '@wdio/utils': 9.18.0
+      '@wdio/types': 9.20.0
+      '@wdio/utils': 9.20.0
       mocha: 10.8.2
     transitivePeerDependencies:
       - bare-buffer
@@ -10331,11 +10332,15 @@ snapshots:
 
   '@wdio/types@9.16.2':
     dependencies:
-      '@types/node': 20.19.0
+      '@types/node': 20.19.17
 
   '@wdio/types@9.19.2':
     dependencies:
       '@types/node': 20.19.14
+
+  '@wdio/types@9.20.0':
+    dependencies:
+      '@types/node': 20.19.17
 
   '@wdio/utils@9.18.0':
     dependencies:
@@ -10363,6 +10368,27 @@ snapshots:
       '@puppeteer/browsers': 2.10.10
       '@wdio/logger': 9.18.0
       '@wdio/types': 9.19.2
+      decamelize: 6.0.1
+      deepmerge-ts: 7.1.5
+      edgedriver: 6.1.2
+      geckodriver: 5.0.0
+      get-port: 7.1.0
+      import-meta-resolve: 4.2.0
+      locate-app: 2.5.0
+      mitt: 3.0.1
+      safaridriver: 1.0.0
+      split2: 4.2.0
+      wait-port: 1.1.0
+    transitivePeerDependencies:
+      - bare-buffer
+      - react-native-b4a
+      - supports-color
+
+  '@wdio/utils@9.20.0':
+    dependencies:
+      '@puppeteer/browsers': 2.10.10
+      '@wdio/logger': 9.18.0
+      '@wdio/types': 9.20.0
       decamelize: 6.0.1
       deepmerge-ts: 7.1.5
       edgedriver: 6.1.2
