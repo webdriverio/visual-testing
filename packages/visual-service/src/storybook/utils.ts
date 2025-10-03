@@ -60,7 +60,7 @@ export async function checkStorybookIsRunning(url: string) {
     try {
         const res = await fetch(url, { method: 'GET', headers: {} })
         if (res.status !== 200) {
-            throw new Error(`Unxpected status: ${res.status}`)
+            throw new Error(`Unexpected status: ${res.status}`)
         }
     } catch (_e) {
         log.error(`It seems that the Storybook instance is not running at: ${url}. Are you sure it's running?`)

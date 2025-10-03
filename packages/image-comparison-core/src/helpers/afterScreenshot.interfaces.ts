@@ -58,7 +58,7 @@ export interface ScreenshotFileNameOptions {
     deviceName: string;
     // The device pixel ratio
     devicePixelRatio: number;
-    // The string that needs to be formated
+    // The string that needs to be formatted
     formatImageName: string;
     // Is this a mobile
     isMobile: boolean;

@@ -11,7 +11,7 @@ describe('@wdio/visual-service check methods folder options', () => {
         await browser.pause(500)
     })
 
-    // Chrome remembers the last postion when the url is loaded again, this will reset it.
+    // Chrome remembers the last position when the url is loaded again, this will reset it.
     afterEach(async () => await browser.execute('window.scrollTo(0, 0);', []))
 
     describe('checkFullPageScreen method with folder options', () => {

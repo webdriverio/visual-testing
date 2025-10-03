@@ -12,7 +12,7 @@ describe('@wdio/visual-service check that multi remote is working', () => {
         await multiremotebrowser.chromeBrowserTwo.pause(500)
     })
 
-    // Chrome remembers the last postion when the url is loaded again, this will reset it.
+    // Chrome remembers the last position when the url is loaded again, this will reset it.
     afterEach(async () => {
         await multiremotebrowser.chromeBrowserOne.execute(
             'window.scrollTo(0, 0);',
