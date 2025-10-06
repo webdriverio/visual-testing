@@ -1,8 +1,6 @@
 'use client'
 
-import type { MultiValue, SingleValue, StylesConfig } from 'react-select'
-import { components } from 'react-select'
-import Select from 'react-select'
+import Select, { components, type MultiValue, type SingleValue, type StylesConfig } from 'react-select'
 import type {
     OptionType,
     SelectedOptions,

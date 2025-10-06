@@ -1,5 +1,4 @@
-import type { DeviceRectangles } from './rectangles.interfaces.js'
-import type { RectanglesOutput } from './rectangles.interfaces.js'
+import type { DeviceRectangles, RectanglesOutput } from './rectangles.interfaces.js'
 
 // === UNIVERSAL BASE INTERFACES ===
 

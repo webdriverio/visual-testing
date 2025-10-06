@@ -1,6 +1,5 @@
 import { fileURLToPath } from 'node:url'
-import { readFileSync, writeFileSync } from 'node:fs'
-import { promises as fsPromises, constants } from 'node:fs'
+import { readFileSync, writeFileSync, promises as fsPromises, constants } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { Jimp, JimpMime } from 'jimp'
 import logger from '@wdio/logger'
