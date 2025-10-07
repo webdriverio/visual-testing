@@ -46,8 +46,7 @@
 
 import logger from '@wdio/logger'
 import type { Pixel, WicImageCompareOptions } from 'src/methods/images.interfaces.js'
-import type { BoundingBox } from './rectangles.interfaces.js'
-import type { IgnoreBoxes } from './rectangles.interfaces.js'
+import type { BoundingBox, IgnoreBoxes } from './rectangles.interfaces.js'
 import type { CompareData } from '../resemble/compare.interfaces.js'
 import { saveBase64Image, addBlockOuts } from './images.js'
 

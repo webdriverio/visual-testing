@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import fs from 'node:fs'
-import path from 'node:path'
-import { join } from 'node:path'
+import path, { join } from 'node:path'
 import logger from '@wdio/logger'
 import VisualReportGenerator from '../src/reporter.js'
 import { jsonFileContent } from './reporter.tests.mockdata.js'
