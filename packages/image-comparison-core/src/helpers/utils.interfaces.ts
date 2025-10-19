@@ -1,6 +1,5 @@
-import type { BaseCoordinates, BaseDimensions, FilePaths, FolderPaths } from '../base.interfaces.js'
+import type { BaseCoordinates, BaseDimensions, FilePaths, FolderPaths, Folders } from '../base.interfaces.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
-import type { Folders } from '../base.interfaces.js'
 
 export interface GetAndCreatePathOptions {
     /** The name of the browser */

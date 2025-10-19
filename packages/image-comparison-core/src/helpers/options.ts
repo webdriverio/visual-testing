@@ -8,9 +8,8 @@ import {
 } from './constants.js'
 import type { ClassOptions, DefaultOptions } from './options.interfaces.js'
 import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
-import type { BeforeScreenshotOptions } from './beforeScreenshot.interfaces.js'
+import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeScreenshot.interfaces.js'
 import type { AfterScreenshotOptions } from './afterScreenshot.interfaces.js'
-import type { BeforeScreenshotResult } from './beforeScreenshot.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
 import type { ComparisonIgnoreOption } from '../resemble/compare.interfaces.js'
 import {
