@@ -82,13 +82,13 @@
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "npm-run-all2": "^8.0.4",
-    "release-it": "^19.0.4",
+    "release-it": "^19.0.5",
     "rimraf": "^6.0.1",
     "saucelabs": "^9.0.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.4",
-    "webdriverio": "^9.19.2",
+    "webdriverio": "^9.20.0",
     "wdio-lambdatest-service": "^4.0.0"
   },
   "packageManager": "pnpm@9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7"
