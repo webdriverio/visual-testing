@@ -45,8 +45,8 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.4)
       '@wdio/appium-service':
-        specifier: ^9.19.2
-        version: 9.19.2
+        specifier: ^9.20.0
+        version: 9.20.0
       '@wdio/browserstack-service':
         specifier: ^9.18.1
         version: 9.18.1(@wdio/cli@9.19.2(@types/node@24.0.14)(expect-webdriverio@5.4.3))
@@ -2359,8 +2359,8 @@ packages:
   '@vitest/utils@3.2.4':
     resolution: {integrity: sha512-fB2V0JFrQSMsCo9HiSq3Ezpdv4iYaXRG1Sx8edX3MwxfyNn83mKiGzOcH+Fkxt4MHxr3y42fQi1oeAInqgX2QA==}
 
-  '@wdio/appium-service@9.19.2':
-    resolution: {integrity: sha512-xc+4qpc6M3Yz217ZqFu2JNtiN36crEerVm549RF/TR9HO4KhOw2cWRpTB5dDqc6e7hTHN/mX0OG4Yuokn9e61Q==}
+  '@wdio/appium-service@9.20.0':
+    resolution: {integrity: sha512-BOQ/Vgv1p7EkjuFUkHiAaM9QgXKXfWm8kvTn0SBR8I4fqMawobMk3C3fZimPuPMRAkuKsvto0LH1oKR/YZXQog==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/browserstack-service@9.18.1':
@@ -9984,17 +9984,17 @@ snapshots:
       loupe: 3.1.4
       tinyrainbow: 2.0.0
 
-  '@wdio/appium-service@9.19.2':
+  '@wdio/appium-service@9.20.0':
     dependencies:
-      '@wdio/config': 9.19.2
+      '@wdio/config': 9.20.0
       '@wdio/logger': 9.18.0
-      '@wdio/types': 9.19.2
-      '@wdio/utils': 9.19.2
+      '@wdio/types': 9.20.0
+      '@wdio/utils': 9.20.0
       change-case: 5.4.4
       get-port: 7.1.0
       import-meta-resolve: 4.2.0
       tree-kill: 1.2.2
-      webdriverio: 9.19.2
+      webdriverio: 9.20.0
     transitivePeerDependencies:
       - bare-buffer
       - bufferutil
