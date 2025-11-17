@@ -347,18 +347,6 @@ exports[`rectangles > prepareIgnoreRectangles > should include mobile web rectan
     "right": 2688,
     "top": 5842,
   },
-  {
-    "bottom": 5842,
-    "left": 0,
-    "right": 0,
-    "top": 640,
-  },
-  {
-    "bottom": 5842,
-    "left": 2688,
-    "right": 2688,
-    "top": 640,
-  },
 ]
 `;
 
