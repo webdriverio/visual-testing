@@ -66,8 +66,8 @@ importers:
         specifier: ^9.20.0
         version: 9.20.0
       '@wdio/shared-store-service':
-        specifier: ^9.19.2
-        version: 9.19.2
+        specifier: ^9.20.0
+        version: 9.20.0
       '@wdio/spec-reporter':
         specifier: ^9.18.0
         version: 9.18.0
@@ -2439,8 +2439,8 @@ packages:
     resolution: {integrity: sha512-guSY9PVmpchiZhBSz18IaOqoxVNzZj5jkxa2QnszsKtZA/UdZKVXgnOLSlmg3uSBaYWA/4EZ1GIS3NM52sTj3w==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/shared-store-service@9.19.2':
-    resolution: {integrity: sha512-o3WkrlI403Hbjo+3RmJxwXDjLVUtSM0D+VKm1XXIR2ANpfPzZbiclxJDQfS6okvbXNCEkxx2pB1KRtA76UJ0NQ==}
+  '@wdio/shared-store-service@9.20.0':
+    resolution: {integrity: sha512-nW8QxNfRFigmOrocDai7Bd7uS7EZVe/Pd2PXhoTPSKLsmiAaxSsDk5XvQe5xJGKdlYnCSLhrmgsG5gMz6TLcwA==}
     engines: {node: '>=18.20.0'}
 
   '@wdio/spec-reporter@9.18.0':
@@ -10227,13 +10227,13 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/shared-store-service@9.19.2':
+  '@wdio/shared-store-service@9.20.0':
     dependencies:
       '@polka/parse': 1.0.0-next.0
       '@wdio/logger': 9.18.0
-      '@wdio/types': 9.19.2
+      '@wdio/types': 9.20.0
       polka: 0.5.2
-      webdriverio: 9.19.2
+      webdriverio: 9.20.0
     transitivePeerDependencies:
       - bare-buffer
       - bufferutil
