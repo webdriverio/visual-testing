@@ -1,3 +1,4 @@
+import { Jimp } from 'jimp'
 import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import type {
@@ -300,7 +301,7 @@ export async function determineDeviceBlockOuts({ isAndroid, screenCompareOptions
 /**
  * Prepare all ignore rectangles for image comparison
  */
-export function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOptions): PreparedIgnoreRectangles {
+export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOptions): Promise<PreparedIgnoreRectangles> {
     const {
         blockOut,
         ignoreRegions,
@@ -311,7 +312,8 @@ export function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOptions)
         isAndroid,
         isAndroidNativeWebScreenshot,
         isViewPortScreenshot,
-        imageCompareOptions
+        imageCompareOptions,
+        actualFilePath
     } = options
 
     // Get blockOut rectangles
@@ -338,6 +340,35 @@ export function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOptions)
             // blockout of the image and the comparison will succeed with 0 % difference
             webStatusAddressToolBarOptions = webStatusAddressToolBarOptions
                 .filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
+        }
+
+        // Handle home bar (iOS) blockOut for full page screenshots
+        // The toolbar should be blocked out by default (when blockOutToolBar is true or undefined)
+        if (!isViewPortScreenshot && imageCompareOptions.blockOutToolBar !== false && actualFilePath) {
+            try {
+                // For iOS: block out home bar
+                if (!isAndroid && deviceRectangles.homeBar.height > 0) {
+                    const image = await Jimp.read(actualFilePath)
+                    const imageHeightDevicePixels = image.bitmap.height
+                    const imageHeightCssPixels = imageHeightDevicePixels / devicePixelRatio
+                    // Adjust home bar X position relative to the viewport (full page image only contains viewport)
+                    const viewportXCssPixels = deviceRectangles.viewport.x
+                    const homeBarXRelativeToViewport = deviceRectangles.homeBar.x - viewportXCssPixels
+                    // Position the home bar at the bottom of the full page image
+                    const homeBarYFullPageCssPixels = imageHeightCssPixels - deviceRectangles.homeBar.height
+                    const homeBarRectangle: RectanglesOutput = {
+                        x: homeBarXRelativeToViewport,
+                        y: homeBarYFullPageCssPixels,
+                        width: deviceRectangles.homeBar.width,
+                        height: deviceRectangles.homeBar.height,
+                    }
+
+                    webStatusAddressToolBarOptions.push(homeBarRectangle)
+                }
+            } catch (_error) {
+                // If we can't read the image, skip adding the toolbar blockOut
+                // This shouldn't happen in normal operation, but we don't want to fail the comparison
+            }
         }
     }
 

@@ -852,10 +852,10 @@ describe('rectangles', () => {
     })
 
     describe('prepareIgnoreRectangles', () => {
-        it('should return empty ignored boxes and false hasIgnoreRectangles when no inputs provided', () => {
+        it('should return empty ignored boxes and false hasIgnoreRectangles when no inputs provided', async () => {
             const options = createPrepareIgnoreRectanglesOptions()
 
-            const result = prepareIgnoreRectangles(options)
+            const result = await prepareIgnoreRectangles(options)
 
             expect(result).toEqual({
                 ignoredBoxes: [],
@@ -863,7 +863,7 @@ describe('rectangles', () => {
             })
         })
 
-        it('should handle blockOut and ignoreRegions without mobile web rectangles', () => {
+        it('should handle blockOut and ignoreRegions without mobile web rectangles', async () => {
             const options = createPrepareIgnoreRectanglesOptions({
                 blockOut: [{ x: 10, y: 20, width: 100, height: 50 }],
                 ignoreRegions: [{ x: 200, y: 300, width: 150, height: 75 }],
@@ -871,13 +871,13 @@ describe('rectangles', () => {
                 isAndroid: false
             })
 
-            const result = prepareIgnoreRectangles(options)
+            const result = await prepareIgnoreRectangles(options)
 
             expect(result.hasIgnoreRectangles).toBe(true)
             expect(result.ignoredBoxes).toMatchSnapshot()
         })
 
-        it('should handle Android device with different DPR calculation', () => {
+        it('should handle Android device with different DPR calculation', async () => {
             const options = createPrepareIgnoreRectanglesOptions({
                 blockOut: [{ x: 10, y: 20, width: 100, height: 50 }],
                 ignoreRegions: [{ x: 200, y: 300, width: 150, height: 75 }],
@@ -885,13 +885,13 @@ describe('rectangles', () => {
                 isAndroid: true
             })
 
-            const result = prepareIgnoreRectangles(options)
+            const result = await prepareIgnoreRectangles(options)
 
             expect(result.hasIgnoreRectangles).toBe(true)
             expect(result.ignoredBoxes).toMatchSnapshot()
         })
 
-        it('should skip mobile web rectangles when not mobile', () => {
+        it('should skip mobile web rectangles when not mobile', async () => {
             const options = createPrepareIgnoreRectanglesOptions({
                 isMobile: false,
                 isNativeContext: false,
@@ -902,7 +902,7 @@ describe('rectangles', () => {
                 }
             })
 
-            const result = prepareIgnoreRectangles(options)
+            const result = await prepareIgnoreRectangles(options)
 
             expect(result).toEqual({
                 ignoredBoxes: [],
@@ -910,7 +910,7 @@ describe('rectangles', () => {
             })
         })
 
-        it('should skip mobile web rectangles when in native context', () => {
+        it('should skip mobile web rectangles when in native context', async () => {
             const options = createPrepareIgnoreRectanglesOptions({
                 isMobile: true,
                 isNativeContext: true,
@@ -921,7 +921,7 @@ describe('rectangles', () => {
                 }
             })
 
-            const result = prepareIgnoreRectangles(options)
+            const result = await prepareIgnoreRectangles(options)
 
             expect(result).toEqual({
                 ignoredBoxes: [],
@@ -929,7 +929,7 @@ describe('rectangles', () => {
             })
         })
 
-        it('should include mobile web rectangles when mobile and not native context', () => {
+        it('should include mobile web rectangles when mobile and not native context', async () => {
             const options = createPrepareIgnoreRectanglesOptions({
                 isMobile: true,
                 isNativeContext: false,
@@ -944,13 +944,13 @@ describe('rectangles', () => {
                 }
             })
 
-            const result = prepareIgnoreRectangles(options)
+            const result = await prepareIgnoreRectangles(options)
 
             expect(result.hasIgnoreRectangles).toBe(true)
             expect(result.ignoredBoxes).toMatchSnapshot()
         })
 
-        it('should filter out zero-sized rectangles from mobile web context', () => {
+        it('should filter out zero-sized rectangles from mobile web context', async () => {
             const deviceRectanglesWithZeros = createDeviceRectanglesWithData({
                 statusBarAndAddressBar: { x: 0, y: 0, width: 0, height: 0 }, // Will be filtered
                 bottomBar: { x: 0, y: 0, width: 390, height: 47 }, // Will be kept
@@ -970,13 +970,13 @@ describe('rectangles', () => {
                 }
             })
 
-            const result = prepareIgnoreRectangles(options)
+            const result = await prepareIgnoreRectangles(options)
 
             expect(result.hasIgnoreRectangles).toBe(true)
             expect(result.ignoredBoxes).toMatchSnapshot()
         })
 
-        it('should handle empty web rectangles without filtering', () => {
+        it('should handle empty web rectangles without filtering', async () => {
             const options = createPrepareIgnoreRectanglesOptions({
                 isMobile: true,
                 isNativeContext: false,
@@ -990,7 +990,7 @@ describe('rectangles', () => {
                 }
             })
 
-            const result = prepareIgnoreRectangles(options)
+            const result = await prepareIgnoreRectangles(options)
 
             expect(result).toEqual({
                 ignoredBoxes: [],
@@ -998,7 +998,7 @@ describe('rectangles', () => {
             })
         })
 
-        it('should combine all rectangle sources correctly', () => {
+        it('should combine all rectangle sources correctly', async () => {
             const options = createPrepareIgnoreRectanglesOptions({
                 blockOut: [{ x: 10, y: 20, width: 100, height: 50 }],
                 ignoreRegions: [{ x: 200, y: 300, width: 150, height: 75 }],
@@ -1013,7 +1013,7 @@ describe('rectangles', () => {
                 }
             })
 
-            const result = prepareIgnoreRectangles(options)
+            const result = await prepareIgnoreRectangles(options)
 
             expect(result.hasIgnoreRectangles).toBe(true)
             expect(result.ignoredBoxes).toMatchSnapshot()

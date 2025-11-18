@@ -128,6 +128,7 @@ export interface PrepareIgnoreRectanglesOptions {
         blockOutStatusBar?: boolean;
         blockOutToolBar?: boolean;
     };
+    actualFilePath?: string;
 }
 
 export interface PreparedIgnoreRectangles {

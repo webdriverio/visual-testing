@@ -105,6 +105,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce(undefined) // scrollToPosition
                 .mockResolvedValueOnce(undefined) // hideScrollBars
                 .mockResolvedValueOnce(652) // getDocumentScrollHeight (effective viewport height)
+                .mockResolvedValueOnce({ scrollTop: 0 }) // actualScrollInfo
                 .mockResolvedValueOnce(undefined) // hideScrollBars
 
             const options = createMobileOptions() // iOS device by default
@@ -122,10 +123,12 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce(undefined) // scrollToPosition 0 (i=0)
                 .mockResolvedValueOnce(undefined) // hideScrollBars true
                 .mockResolvedValueOnce(1304) // getDocumentScrollHeight (2x effectiveViewportHeight)
+                .mockResolvedValueOnce({ scrollTop: 0 }) // actualScrollInfo
                 .mockResolvedValueOnce(undefined) // hideScrollBars false
                 .mockResolvedValueOnce(undefined) // scrollToPosition 652 (i=1)
                 .mockResolvedValueOnce(undefined) // hideScrollBars true
                 .mockResolvedValueOnce(1304) // getDocumentScrollHeight
+                .mockResolvedValueOnce({ scrollTop: 652 }) // actualScrollInfo
                 .mockResolvedValueOnce(undefined) // hideScrollBars false
 
             const options = createMobileOptions({ isAndroid: true })
@@ -143,6 +146,7 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce(undefined) // scrollToPosition
                 .mockResolvedValueOnce(undefined) // hideScrollBars
                 .mockResolvedValueOnce(652) // getDocumentScrollHeight
+                .mockResolvedValueOnce({ scrollTop: 0 }) // actualScrollInfo
                 .mockResolvedValueOnce(undefined) // hideScrollBars
 
             const options = createMobileOptions({
@@ -171,11 +175,13 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce(undefined) // scrollToPosition 0 (i=0)
                 .mockResolvedValueOnce(undefined) // hideScrollBars true
                 .mockResolvedValueOnce(2638) // getDocumentScrollHeight (2x effectiveViewportHeight to trigger scroll)
+                .mockResolvedValueOnce({ scrollTop: 0 }) // actualScrollInfo
                 .mockResolvedValueOnce(undefined) // hideScrollBars false
                 .mockResolvedValueOnce(undefined) // scrollToPosition 1319 (i=1)
                 .mockResolvedValueOnce(undefined) // hideScrollBars true
                 .mockResolvedValueOnce(undefined) // hideRemoveElements (i=1, hide elements)
                 .mockResolvedValueOnce(2638) // getDocumentScrollHeight
+                .mockResolvedValueOnce({ scrollTop: 1319 }) // actualScrollInfo
                 .mockResolvedValueOnce(undefined) // hideScrollBars false
                 .mockResolvedValueOnce(undefined) // hideRemoveElements (restore at end)
 
@@ -210,11 +216,13 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce(undefined) // scrollToPosition 0 (i=0)
                 .mockResolvedValueOnce(undefined) // hideScrollBars true
                 .mockResolvedValueOnce(2638) // getDocumentScrollHeight (2x effectiveViewportHeight)
+                .mockResolvedValueOnce({ scrollTop: 0 }) // actualScrollInfo
                 .mockResolvedValueOnce(undefined) // hideScrollBars false
                 .mockResolvedValueOnce(undefined) // scrollToPosition 1319 (i=1)
                 .mockResolvedValueOnce(undefined) // hideScrollBars true
                 .mockRejectedValueOnce(executeError) // hideRemoveElements fails
                 .mockResolvedValueOnce(2638) // getDocumentScrollHeight
+                .mockResolvedValueOnce({ scrollTop: 1319 }) // actualScrollInfo
                 .mockResolvedValueOnce(undefined) // hideScrollBars false
                 .mockRejectedValueOnce(executeError) // hideRemoveElements restore fails
 

@@ -205,7 +205,7 @@ describe('executeImageCompare', () => {
             diffFilePath: '/mock/diff/test.png'
         })
         vi.mocked(rectangles.determineStatusAddressToolBarRectangles).mockReturnValue(null as any)
-        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockResolvedValue({
             ignoredBoxes: [],
             hasIgnoreRectangles: false
         })
@@ -281,7 +281,7 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockResolvedValue({
             ignoredBoxes: [{ left: 0, top: 0, right: 100, bottom: 50 }],
             hasIgnoreRectangles: true
         })
@@ -317,7 +317,7 @@ describe('executeImageCompare', () => {
             folderOptions: { ...mockOptions.folderOptions, isMobile: true }
         }
 
-        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockResolvedValue({
             ignoredBoxes: [{ left: 10, top: 10, right: 60, bottom: 60 }], // Only non-zero rectangle
             hasIgnoreRectangles: true
         })
@@ -361,7 +361,7 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockResolvedValue({
             ignoredBoxes: [],
             hasIgnoreRectangles: false
         })
@@ -403,7 +403,7 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockResolvedValue({
             ignoredBoxes: [
                 { left: 0, top: 0, right: 100, bottom: 50 },
                 { left: 200, top: 200, right: 300, bottom: 300 }
@@ -591,7 +591,7 @@ describe('executeImageCompare', () => {
             ignoreRegions: [{ x: 0, y: 0, width: 100, height: 50 }]
         }
 
-        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockResolvedValue({
             ignoredBoxes: [{ left: 0, top: 0, right: 100, bottom: 50 }],
             hasIgnoreRectangles: true
         })
@@ -713,7 +713,7 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(rectangles.prepareIgnoreRectangles).mockReturnValue({
+        vi.mocked(rectangles.prepareIgnoreRectangles).mockResolvedValue({
             ignoredBoxes: [{ bottom: 50, right: 100, left: 0, top: 0 }],
             hasIgnoreRectangles: true
         })

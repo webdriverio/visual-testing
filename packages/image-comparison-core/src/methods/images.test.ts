@@ -1196,6 +1196,10 @@ describe('makeFullPageBase64Image', () => {
             getBase64: vi.fn().mockResolvedValue('data:image/png;base64,fullPageImageData'),
         }
         mockImage = {
+            bitmap: {
+                width: 1000,
+                height: 800,
+            },
             crop: vi.fn().mockReturnThis(),
             composite: vi.fn().mockReturnThis(),
             getBase64: vi.fn().mockResolvedValue('data:image/png;base64,mockImageData'),

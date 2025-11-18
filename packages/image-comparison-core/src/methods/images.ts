@@ -365,7 +365,7 @@ export async function executeImageCompare(
     const ignore = prepareIgnoreOptions(imageCompareOptions)
 
     // 4b. Determine the ignore rectangles for the block outs
-    const { ignoredBoxes } = prepareIgnoreRectangles({
+    const { ignoredBoxes } = await prepareIgnoreRectangles({
         blockOut: imageCompareOptions.blockOut ?? [],
         ignoreRegions,
         deviceRectangles,
@@ -379,7 +379,8 @@ export async function executeImageCompare(
             blockOutSideBar: imageCompareOptions.blockOutSideBar,
             blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
             blockOutToolBar: imageCompareOptions.blockOutToolBar,
-        }
+        },
+        actualFilePath: isViewPortScreenshot ? undefined : actualFilePath,
     })
 
     const compareOptions: ComparisonOptions = {
@@ -464,8 +465,17 @@ export async function makeFullPageBase64Image(
         const { canvasYPosition, imageHeight, imageWidth, imageXPosition, imageYPosition } = screenshotsData.data[i]
         const image = await Jimp.read(Buffer.from(newBase64Image, 'base64'))
 
+        // Clamp crop dimensions to fit within the actual image bounds
+        // This is especially important for the last image where the calculated height might exceed available pixels
+        const actualImageWidth = image.bitmap.width
+        const actualImageHeight = image.bitmap.height
+        const clampedCropX = Math.max(0, Math.min(imageXPosition, actualImageWidth - 1))
+        const clampedCropY = Math.max(0, Math.min(imageYPosition, actualImageHeight - 1))
+        const clampedCropWidth = Math.min(imageWidth, actualImageWidth - clampedCropX)
+        const clampedCropHeight = Math.min(imageHeight, actualImageHeight - clampedCropY)
+
         canvas.composite(
-            image.crop({ x:imageXPosition, y:imageYPosition, w:imageWidth, h:imageHeight }),
+            image.crop({ x: clampedCropX, y: clampedCropY, w: clampedCropWidth, h: clampedCropHeight }),
             0,
             canvasYPosition
         )
