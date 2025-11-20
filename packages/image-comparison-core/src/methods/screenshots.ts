@@ -48,6 +48,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
     let isRotated = false
+    let actualFullPageWidth: number | undefined
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
@@ -151,7 +152,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
             : scrollY
 
         // Store all the screenshot data in the screenshot object
-        viewportScreenshots.push({
+        const screenshotData = {
             ...calculateDprData(
                 {
                     canvasWidth: isRotated ? effectiveViewportHeight : viewportWidth,
@@ -164,7 +165,19 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
                 devicePixelRatio,
             ),
             screenshot,
-        })
+        }
+        viewportScreenshots.push(screenshotData)
+
+        // Calculate the actual cropped width from the first screenshot to handle rounding differences
+        if (i === 0 && !actualFullPageWidth) {
+            const { height: screenshotHeightDevicePixels, width: screenshotWidthDevicePixels } = getBase64ScreenshotSize(screenshot)
+            const screenshotIsRotated = Boolean(isLandscape && screenshotHeightDevicePixels > screenshotWidthDevicePixels)
+            const actualScreenshotWidthDevicePixels = screenshotIsRotated ? screenshotHeightDevicePixels : screenshotWidthDevicePixels
+            const maxAvailableWidthDevicePixels = actualScreenshotWidthDevicePixels - screenshotData.imageXPosition
+            const actualCroppedWidthDevicePixels = Math.min(screenshotData.imageWidth, maxAvailableWidthDevicePixels)
+
+            actualFullPageWidth = actualCroppedWidthDevicePixels / devicePixelRatio
+        }
 
         // Show scrollbars again
         await browserInstance.execute(hideScrollBars, false)
@@ -184,7 +197,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
     }
 
     const fullPageHeight = scrollHeight - addressBarShadowPadding - toolBarShadowPadding
-    const fullPageWidth = isRotated ? effectiveViewportHeight : viewportWidth
+    const fullPageWidth = actualFullPageWidth ?? (isRotated ? effectiveViewportHeight : viewportWidth)
 
     return {
         ...calculateDprData(

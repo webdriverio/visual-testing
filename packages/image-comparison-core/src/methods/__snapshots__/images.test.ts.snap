@@ -2137,7 +2137,7 @@ exports[`makeFullPageBase64Image > should handle screenshots with cropping posit
   [
     {
       "h": 500,
-      "w": 500,
+      "w": 900,
       "x": 100,
       "y": 50,
     },
@@ -2159,7 +2159,7 @@ exports[`makeFullPageBase64Image > should handle screenshots with cropping posit
           [
             {
               "h": 500,
-              "w": 500,
+              "w": 900,
               "x": 100,
               "y": 50,
             },

@@ -176,7 +176,7 @@ exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should handle
     },
   ],
   "fullPageHeight": 637,
-  "fullPageWidth": 1334,
+  "fullPageWidth": 667,
 }
 `;
 
@@ -203,7 +203,7 @@ exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should hide e
     },
   ],
   "fullPageHeight": 2623,
-  "fullPageWidth": 750,
+  "fullPageWidth": 375,
 }
 `;
 
@@ -230,7 +230,7 @@ exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should take m
     },
   ],
   "fullPageHeight": 1289,
-  "fullPageWidth": 375,
+  "fullPageWidth": 187.5,
 }
 `;
 
@@ -248,7 +248,7 @@ exports[`screenshots > getMobileFullPageNativeWebScreenshotsData > should take s
     },
   ],
   "fullPageHeight": 637,
-  "fullPageWidth": 750,
+  "fullPageWidth": 375,
 }
 `;
 

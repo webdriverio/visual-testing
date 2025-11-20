@@ -91,6 +91,14 @@ describe('screenshots', () => {
 
             vi.mocked(utilsModule.waitFor).mockResolvedValue(undefined)
             vi.mocked(utilsModule.calculateDprData).mockImplementation((data) => data)
+            vi.mocked(utilsModule.getBase64ScreenshotSize).mockImplementation((_screenshot, dpr = 1) => {
+                const baseWidth = 750
+                const baseHeight = 1334
+                return {
+                    width: Math.round(baseWidth / dpr),
+                    height: Math.round(baseHeight / dpr)
+                }
+            })
         })
 
         afterEach(() => {
