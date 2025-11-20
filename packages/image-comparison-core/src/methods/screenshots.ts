@@ -1,6 +1,4 @@
 import logger from '@wdio/logger'
-import { join } from 'node:path'
-import { promises as fsPromises } from 'node:fs'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
 import { calculateDprData, getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
@@ -15,7 +13,6 @@ import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import type { ElementRectanglesOptions, RectanglesOutput } from './rectangles.interfaces.js'
 import { determineElementRectangles } from './rectangles.js'
-import { cropAndConvertToDataURL, saveBase64Image } from './images.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:screenshots')
 
@@ -280,26 +277,16 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
     const { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, innerHeight } = options
     let actualInnerHeight = innerHeight
 
-    // Detect Safari desktop for debug saving and drop shadow cropping
     const { capabilities } = browserInstance
     const browserName = (capabilities?.browserName || '').toLowerCase()
     const isSafariDesktop = browserName.includes('safari') && !browserInstance.isMobile
-    const debugDir = isSafariDesktop ? join(process.cwd(), '.tmp', 'debug', 'safari-desktop-fullpage-screenshots') : null
 
-    // Safari desktop has a drop shadow at the top
-    // The drop shadow is always 1 device pixel, which translates to 1 * DPR CSS pixels
     const safariTopDropShadowCssPixels = isSafariDesktop ? Math.round(1 * devicePixelRatio) : 0
-    // For Safari desktop, calculate effective scroll increment
-    // First image: scroll by 0, use full height (716px)
-    // Subsequent images: scroll by (actualInnerHeight - dropShadowOffset) = 715px, crop 1px from top
-    const effectiveScrollIncrement = isSafariDesktop
-        ? actualInnerHeight - safariTopDropShadowCssPixels
-        : actualInnerHeight
+    const safariBottomCropOffsetCssPixels = isSafariDesktop ? Math.round(10 * devicePixelRatio) : 0
 
-    // Create debug directory if needed
-    if (debugDir) {
-        await fsPromises.mkdir(debugDir, { recursive: true })
-    }
+    const effectiveScrollIncrement = isSafariDesktop
+        ? actualInnerHeight - safariTopDropShadowCssPixels - safariBottomCropOffsetCssPixels
+        : actualInnerHeight
 
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
@@ -307,12 +294,6 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
     let screenshotSize
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
-        // Determine and start scrolling
-        // For Safari desktop: first image scrolls to 0, subsequent images scroll by effectiveScrollIncrement (715px)
-        // Image 0: scrollY = 0
-        // Image 1: scrollY = 715 (effectiveScrollIncrement)
-        // Image 2: scrollY = 1430 (2 * effectiveScrollIncrement)
-        // etc.
         const scrollY = isSafariDesktop
             ? (i === 0 ? 0 : i * effectiveScrollIncrement)
             : actualInnerHeight * i
@@ -344,10 +325,8 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
             // and SafariDriver for Safari 11
         }
 
-        // Determine scroll height and check if we need to scroll again
         scrollHeight = await browserInstance.execute(getDocumentScrollHeight)
 
-        // For Safari desktop, use effectiveScrollIncrement for the scroll check
         const scrollCheckHeight = isSafariDesktop ? effectiveScrollIncrement : actualInnerHeight
         if (scrollHeight && (scrollY + scrollCheckHeight < scrollHeight) && screenshotSize.height === actualInnerHeight) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
@@ -355,148 +334,64 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
         // There is no else, Lazy load and large screenshots,
         // like with older drivers such as FF <= 47 and IE11, will not work
 
-        // The height of the image of the last 1 could be different
-        // For Safari desktop, account for first image being full height and subsequent images being cropped
         const isFirstImage = i === 0
         const isLastImage = amountOfScrollsArray.length === i
         let imageHeight: number
         if (scrollHeight && isLastImage) {
             if (isSafariDesktop) {
-                // Calculate remaining content: scrollHeight - (firstImageHeight + (numberOfPreviousImages - 1) * effectiveScrollIncrement)
                 const numberOfPreviousImages = viewportScreenshots.length
                 const totalPreviousHeight = numberOfPreviousImages === 0
                     ? 0
                     : actualInnerHeight + (numberOfPreviousImages - 1) * effectiveScrollIncrement
                 const remainingContent = scrollHeight - totalPreviousHeight
 
-                // For the last image, we need to be smart:
-                // - If remainingContent >= actualInnerHeight: it's a full screenshot, treat it like a regular non-first image
-                //   (crop 1px from top, visible height = 715px)
-                // - If remainingContent < actualInnerHeight: it's a partial screenshot
-                //   For partial screenshots, we're cropping from a position that doesn't include the drop shadow at pixel 0
-                //   So we don't need to add 1px - just use remainingContent directly
                 imageHeight = remainingContent >= actualInnerHeight
-                    ? effectiveScrollIncrement // Full screenshot: treat like regular non-first image
-                    : remainingContent // Partial screenshot: use remainingContent directly (no drop shadow in cropped region)
+                    ? effectiveScrollIncrement + safariBottomCropOffsetCssPixels
+                    : remainingContent + safariBottomCropOffsetCssPixels
             } else {
                 imageHeight = scrollHeight - actualInnerHeight * viewportScreenshots.length
             }
         } else {
-            // Non-last images: use full height for first, effectiveScrollIncrement for subsequent
             imageHeight = isSafariDesktop && !isFirstImage
                 ? effectiveScrollIncrement
                 : screenshotSize.height
         }
 
-        // The starting position for cropping could be different for the last image (0 means no cropping)
-        // For Safari desktop, crop 1px from top for all images except first
+        if (isSafariDesktop && isFirstImage && safariBottomCropOffsetCssPixels > 0) {
+            imageHeight -= safariBottomCropOffsetCssPixels
+        }
+
         let imageYPosition: number
         if (isSafariDesktop) {
             if (isLastImage && !isFirstImage) {
-                // Last image: need to handle two cases
                 const numberOfPreviousImages = viewportScreenshots.length
                 const totalPreviousHeight = numberOfPreviousImages === 0
                     ? 0
                     : actualInnerHeight + (numberOfPreviousImages - 1) * effectiveScrollIncrement
                 const remainingContent = scrollHeight ? scrollHeight - totalPreviousHeight : 0
 
-                // Full screenshot: treat like regular non-first image (crop 1px from top)
-                // Partial screenshot: we want to show the last remainingContent pixels
-                // imageHeight = remainingContent, so we start at: 716 - remainingContent
-                // For partial screenshots, the drop shadow is at pixel 0, but we're cropping from a different position
-                // so we don't need to crop the drop shadow - just position to get the last remainingContent pixels
                 imageYPosition = remainingContent >= actualInnerHeight
                     ? safariTopDropShadowCssPixels
-                    : actualInnerHeight - remainingContent
+                    : actualInnerHeight - remainingContent - safariBottomCropOffsetCssPixels
             } else if (!isFirstImage) {
-                // Non-last, non-first images: crop 1px from top
                 imageYPosition = safariTopDropShadowCssPixels
             } else {
-                // First image: no crop
                 imageYPosition = 0
             }
         } else {
-            // Non-Safari: standard calculation
             imageYPosition = isLastImage && !isFirstImage
                 ? actualInnerHeight - imageHeight
                 : 0
         }
 
-        // Debug logging for Safari desktop to see what's being cropped
-        if (isSafariDesktop) {
-            // For non-first images, imageHeight already accounts for the crop, so visible = imageHeight
-            // For first image, visible = imageHeight (no crop)
-            const visibleHeightAfterCrop = imageHeight
-            console.log(`Safari desktop screenshot ${i} cropping details:`, {
-                isFirstImage,
-                isLastImage,
-                scrollY,
-                screenshotSize: {
-                    width: screenshotSize.width,
-                    height: screenshotSize.height,
-                },
-                imageHeight,
-                imageYPosition,
-                visibleHeightAfterCrop,
-                actualInnerHeight,
-                effectiveScrollIncrement,
-                remainingContent: isLastImage && scrollHeight
-                    ? (() => {
-                        const numberOfPreviousImages = viewportScreenshots.length
-                        const totalPreviousHeight = numberOfPreviousImages === 0
-                            ? 0
-                            : actualInnerHeight + (numberOfPreviousImages - 1) * effectiveScrollIncrement
-                        return scrollHeight - totalPreviousHeight
-                    })()
-                    : undefined,
-                cropFromOriginal: {
-                    startY: imageYPosition,
-                    height: imageHeight,
-                    endY: imageYPosition + imageHeight,
-                },
-            })
-        }
-
-        // Calculate canvasYPosition for stitching
-        // For Safari desktop: first image at 0, subsequent images start where previous image ends
         let canvasYPosition: number
         if (isSafariDesktop && !isFirstImage) {
-            // Calculate based on where the previous image ends
-            // Previous image's canvasYPosition + previous image's height
             const previousImage = viewportScreenshots[viewportScreenshots.length - 1]
             canvasYPosition = previousImage
                 ? previousImage.canvasYPosition + previousImage.imageHeight
-                : actualInnerHeight + (i - 1) * effectiveScrollIncrement // Fallback (shouldn't happen)
+                : actualInnerHeight + (i - 1) * effectiveScrollIncrement
         } else {
             canvasYPosition = isSafariDesktop ? 0 : scrollY
-        }
-
-        // Calculate crop dimensions in device pixels for debug saving
-        const imageXPositionDevicePixels = 0
-        const imageYPositionDevicePixels = Math.round(imageYPosition * devicePixelRatio)
-        const imageWidthDevicePixels = Math.round(screenshotSize.width * devicePixelRatio)
-        const imageHeightDevicePixels = Math.round(imageHeight * devicePixelRatio)
-
-        // Save cropped screenshot to debug folder for Safari desktop
-        if (isSafariDesktop && debugDir) {
-            try {
-                const croppedBase64 = await cropAndConvertToDataURL({
-                    addIOSBezelCorners: false,
-                    base64Image: screenshot,
-                    deviceName: '',
-                    devicePixelRatio: 1, // Already in device pixels
-                    height: imageHeightDevicePixels,
-                    isIOS: false,
-                    isLandscape: false,
-                    sourceX: imageXPositionDevicePixels,
-                    sourceY: imageYPositionDevicePixels,
-                    width: imageWidthDevicePixels,
-                })
-                const debugFilePath = join(debugDir, `step-${i}-scrollY-${scrollY}-height-${imageHeight}-yPos-${imageYPosition}.png`)
-                await saveBase64Image(croppedBase64, debugFilePath)
-            } catch (error) {
-                log.warn(`Failed to save debug screenshot for step ${i}:`, error)
-            }
         }
 
         // Store all the screenshot data in the screenshot object
