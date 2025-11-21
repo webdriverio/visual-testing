@@ -23,7 +23,7 @@ describe('@wdio/visual-service desktop', () => {
         await expect(browser).toMatchScreenSnapshot('viewportScreenshot')
     })
 
-    it.only(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function () {
+    it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function () {
         await expect(browser).toMatchFullPageSnapshot('fullPage', {
             fullPageScrollTimeout: 1500,
             hideAfterFirstScroll: [
