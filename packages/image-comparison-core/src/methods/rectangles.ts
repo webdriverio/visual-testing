@@ -337,9 +337,12 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
 
         if (webStatusAddressToolBarOptions.length > 0) {
             // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full
-            // blockout of the image and the comparison will succeed with 0 % difference
+            // blockout of the image and the comparison will succeed with 0 % difference.
+            // Additionally, rectangles with either width or height equal to 0 will result in an entire axis being ignored
+            // due to how resemble handles falsy values. Filter those out up front.
             webStatusAddressToolBarOptions = webStatusAddressToolBarOptions
                 .filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
+                .filter((rectangle) => rectangle.width > 0 && rectangle.height > 0)
         }
 
         // Handle home bar (iOS) blockOut for full page screenshots
