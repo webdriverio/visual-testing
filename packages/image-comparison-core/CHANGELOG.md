@@ -1,5 +1,39 @@
 # @wdio/image-comparison-core
 
+## 1.0.1
+
+### Patch Changes
+
+- 79d2b1d: # 🐛 Bugfixes
+
+  ## #1073 Normalize Safari desktop screenshots by trimming macOS window corner radius and top window shadow
+
+  Safari desktop screenshots included the macOS window mask at the bottom and a shadow at the top. These artifacts caused incorrect detection of the viewable area for full page screenshots, which resulted in misaligned stitching. The viewable region is now calculated correctly by trimming these areas.
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
+- 782b98a: # 🐛 Bugfixes
+
+  ## #1000 fix incorrect cropping and stitching of last image for fullpage screenshots on mobile
+
+  The determination of the position of the last image in mobile fullpage webscreenshots was incorrect. This was mostly seen with iOS, but also had some impact on Android. This is now fixed
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
+- 2c109b3: # 🐛 Bugfixes
+
+  ## #1038 fix incorrect determination of ignore area
+
+  Ignore regions with `left: 0` and `right:0` lead to an incorrect width which lead to an incorrect ignore area. This is now fixed
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 1.0.0
 
 ### Major Changes
@@ -77,6 +111,7 @@
   **Note**: This is an architectural improvement that modernizes the codebase while maintaining full backward compatibility. All existing functionality remains unchanged for users.
 
   ***
-    ## Committers: 1
 
-    -   Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+  ## Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
