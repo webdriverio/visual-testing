@@ -854,6 +854,10 @@ exports[`makeFullPageBase64Image > should create full page base64 image with mul
 [
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -906,6 +910,10 @@ exports[`makeFullPageBase64Image > should create full page base64 image with mul
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -958,6 +966,10 @@ exports[`makeFullPageBase64Image > should create full page base64 image with mul
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1025,6 +1037,10 @@ exports[`makeFullPageBase64Image > should handle canvas Y positions correctly 1`
 [
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1077,6 +1093,10 @@ exports[`makeFullPageBase64Image > should handle canvas Y positions correctly 1`
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1129,6 +1149,10 @@ exports[`makeFullPageBase64Image > should handle canvas Y positions correctly 1`
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1234,6 +1258,10 @@ exports[`makeFullPageBase64Image > should handle different device pixel ratios 3
 [
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1286,6 +1314,10 @@ exports[`makeFullPageBase64Image > should handle different device pixel ratios 3
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1338,6 +1370,10 @@ exports[`makeFullPageBase64Image > should handle different device pixel ratios 3
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1478,6 +1514,10 @@ exports[`makeFullPageBase64Image > should handle landscape mode with rotation 3`
 [
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1582,6 +1622,10 @@ exports[`makeFullPageBase64Image > should handle landscape mode with rotation 3`
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1686,6 +1730,10 @@ exports[`makeFullPageBase64Image > should handle landscape mode with rotation 3`
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1843,6 +1891,10 @@ exports[`makeFullPageBase64Image > should handle landscape mode without rotation
 [
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1895,6 +1947,10 @@ exports[`makeFullPageBase64Image > should handle landscape mode without rotation
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -1947,6 +2003,10 @@ exports[`makeFullPageBase64Image > should handle landscape mode without rotation
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
@@ -2015,8 +2075,8 @@ exports[`makeFullPageBase64Image > should handle large canvas dimensions 2`] = `
 [
   [
     {
-      "h": 2000,
-      "w": 3000,
+      "h": 800,
+      "w": 1000,
       "x": 0,
       "y": 0,
     },
@@ -2028,13 +2088,17 @@ exports[`makeFullPageBase64Image > should handle large canvas dimensions 3`] = `
 [
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
           [
             {
-              "h": 2000,
-              "w": 3000,
+              "h": 800,
+              "w": 1000,
               "x": 0,
               "y": 0,
             },
@@ -2073,7 +2137,7 @@ exports[`makeFullPageBase64Image > should handle screenshots with cropping posit
   [
     {
       "h": 500,
-      "w": 500,
+      "w": 900,
       "x": 100,
       "y": 50,
     },
@@ -2085,13 +2149,17 @@ exports[`makeFullPageBase64Image > should handle screenshots with cropping posit
 [
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
           [
             {
               "h": 500,
-              "w": 500,
+              "w": 900,
               "x": 100,
               "y": 50,
             },
@@ -2134,15 +2202,15 @@ exports[`makeFullPageBase64Image > should handle screenshots with different dime
   [
     {
       "h": 600,
-      "w": 1200,
+      "w": 1000,
       "x": 0,
       "y": 0,
     },
   ],
   [
     {
-      "h": 900,
-      "w": 1200,
+      "h": 800,
+      "w": 1000,
       "x": 0,
       "y": 0,
     },
@@ -2154,21 +2222,25 @@ exports[`makeFullPageBase64Image > should handle screenshots with different dime
 [
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
           [
             {
               "h": 600,
-              "w": 1200,
+              "w": 1000,
               "x": 0,
               "y": 0,
             },
           ],
           [
             {
-              "h": 900,
-              "w": 1200,
+              "h": 800,
+              "w": 1000,
               "x": 0,
               "y": 0,
             },
@@ -2194,21 +2266,25 @@ exports[`makeFullPageBase64Image > should handle screenshots with different dime
   ],
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
           [
             {
               "h": 600,
-              "w": 1200,
+              "w": 1000,
               "x": 0,
               "y": 0,
             },
           ],
           [
             {
-              "h": 900,
-              "w": 1200,
+              "h": 800,
+              "w": 1000,
               "x": 0,
               "y": 0,
             },
@@ -2263,6 +2339,10 @@ exports[`makeFullPageBase64Image > should handle single screenshot 3`] = `
 [
   [
     {
+      "bitmap": {
+        "height": 800,
+        "width": 1000,
+      },
       "composite": [MockFunction spy],
       "crop": [MockFunction spy] {
         "calls": [
