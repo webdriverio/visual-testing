@@ -401,6 +401,14 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
                 imageYPosition = remainingContent >= actualInnerHeight
                     ? safariTopDropShadowCssPixels
                     : actualInnerHeight - remainingContent - safariBottomCropOffsetCssPixels
+
+                // If remainingContent is too small, we might get negative imageYPosition or invalid dimensions
+                if (imageYPosition < 0) {
+                    imageYPosition = actualInnerHeight - remainingContent
+                    imageHeight = remainingContent
+                } else if (imageYPosition + imageHeight > screenshotSize.height) {
+                    imageHeight = screenshotSize.height - imageYPosition
+                }
             } else if (!isFirstImage) {
                 // Non-last, non-first images: crop 1px from top
                 imageYPosition = safariTopDropShadowCssPixels
@@ -412,6 +420,15 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
             imageYPosition = isLastImage && !isFirstImage
                 ? actualInnerHeight - imageHeight
                 : 0
+        }
+
+        // Ensure imageYPosition and imageHeight are valid for all cases
+        if (imageYPosition < 0) {
+            imageHeight += imageYPosition
+            imageYPosition = 0
+        }
+        if (imageYPosition + imageHeight > screenshotSize.height) {
+            imageHeight = screenshotSize.height - imageYPosition
         }
 
         // Calculate based on where the previous image ends
