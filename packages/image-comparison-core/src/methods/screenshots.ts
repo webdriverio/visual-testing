@@ -279,24 +279,32 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
 
     const { capabilities } = browserInstance
     const browserName = (capabilities?.browserName || '').toLowerCase()
+    // Safari desktop returns the browser mask with rounded corners and a drop shadow, so we need to fix this
     const isSafariDesktop = browserName.includes('safari') && !browserInstance.isMobile
-
     const safariTopDropShadowCssPixels = isSafariDesktop ? Math.round(1 * devicePixelRatio) : 0
     const safariBottomCropOffsetCssPixels = isSafariDesktop ? Math.round(10 * devicePixelRatio) : 0
-
+    // For Safari desktop, calculate effective scroll increment
+    // First image: scroll by 0, use full height (e.g.716px), crop 10px from bottom
+    // Subsequent images: scroll by (actualInnerHeight - dropShadowOffset - bottomCropOffset) = 705px, crop 1px from top and 10px from bottom
     const effectiveScrollIncrement = isSafariDesktop
         ? actualInnerHeight - safariTopDropShadowCssPixels - safariBottomCropOffsetCssPixels
         : actualInnerHeight
-
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
     let screenshotSize
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
+        // Determine and start scrolling
+        // For Safari desktop: first image scrolls to 0, subsequent images scroll by effectiveScrollIncrement (715px)
+        // Image 0: scrollY = 0
+        // Image 1: scrollY = 715 (effectiveScrollIncrement)
+        // Image 2: scrollY = 1430 (2 * effectiveScrollIncrement)
+        // etc.
         const scrollY = isSafariDesktop
             ? (i === 0 ? 0 : i * effectiveScrollIncrement)
             : actualInnerHeight * i
+
         await browserInstance.execute(scrollToPosition, scrollY)
 
         // Simply wait the amount of time specified for lazy-loading
@@ -327,24 +335,32 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
 
         scrollHeight = await browserInstance.execute(getDocumentScrollHeight)
 
+        // For Safari desktop, use effectiveScrollIncrement for the scroll check
         const scrollCheckHeight = isSafariDesktop ? effectiveScrollIncrement : actualInnerHeight
+
         if (scrollHeight && (scrollY + scrollCheckHeight < scrollHeight) && screenshotSize.height === actualInnerHeight) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
-        // There is no else, Lazy load and large screenshots,
-        // like with older drivers such as FF <= 47 and IE11, will not work
 
+        // The height of the image of the last 1 could be different
+        // For Safari desktop, account for first image being full height and subsequent images being cropped
         const isFirstImage = i === 0
         const isLastImage = amountOfScrollsArray.length === i
         let imageHeight: number
         if (scrollHeight && isLastImage) {
             if (isSafariDesktop) {
+                // Calculate remaining content: scrollHeight - (firstImageHeight + (numberOfPreviousImages - 1) * effectiveScrollIncrement)
                 const numberOfPreviousImages = viewportScreenshots.length
                 const totalPreviousHeight = numberOfPreviousImages === 0
                     ? 0
                     : actualInnerHeight + (numberOfPreviousImages - 1) * effectiveScrollIncrement
                 const remainingContent = scrollHeight - totalPreviousHeight
-
+                // For the last image, we need to be smart:
+                // - If remainingContent >= actualInnerHeight: it's a full screenshot, treat it like a regular non-first image
+                //   (crop 1px from top, visible height = 705px, but last image doesn't crop bottom, so add 10px)
+                // - If remainingContent < actualInnerHeight: it's a partial screenshot
+                //   For partial screenshots, we're cropping from a position that doesn't include the drop shadow at pixel 0
+                //   Last image doesn't crop bottom, so we need to add 10px to account for that
                 imageHeight = remainingContent >= actualInnerHeight
                     ? effectiveScrollIncrement + safariBottomCropOffsetCssPixels
                     : remainingContent + safariBottomCropOffsetCssPixels
@@ -352,30 +368,44 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
                 imageHeight = scrollHeight - actualInnerHeight * viewportScreenshots.length
             }
         } else {
+            // Non-last images: use full height for first, effectiveScrollIncrement for subsequent
+            // For non-first images, effectiveScrollIncrement already accounts for top and bottom crops
             imageHeight = isSafariDesktop && !isFirstImage
                 ? effectiveScrollIncrement
                 : screenshotSize.height
         }
 
+        // The starting position for cropping could be different for the last image (0 means no cropping)
+        // For Safari desktop, crop 1px from top for all images except first
         if (isSafariDesktop && isFirstImage && safariBottomCropOffsetCssPixels > 0) {
             imageHeight -= safariBottomCropOffsetCssPixels
         }
 
+        // The starting position for cropping could be different for the last image (0 means no cropping)
+        // For Safari desktop, crop 1px from top for all images except first
         let imageYPosition: number
         if (isSafariDesktop) {
             if (isLastImage && !isFirstImage) {
+                // Last image: need to handle two cases
                 const numberOfPreviousImages = viewportScreenshots.length
                 const totalPreviousHeight = numberOfPreviousImages === 0
                     ? 0
                     : actualInnerHeight + (numberOfPreviousImages - 1) * effectiveScrollIncrement
                 const remainingContent = scrollHeight ? scrollHeight - totalPreviousHeight : 0
 
+                // Full screenshot: treat like regular non-first image (crop 1px from top)
+                // Partial screenshot: we want to show the last remainingContent pixels
+                // But we need to include the bottom 10px that we're not cropping, so start 10px higher
+                // imageHeight = remainingContent, so we start at: 716 - remainingContent - 10px
+                // This way we crop 10px higher to include the bottom corners
                 imageYPosition = remainingContent >= actualInnerHeight
                     ? safariTopDropShadowCssPixels
                     : actualInnerHeight - remainingContent - safariBottomCropOffsetCssPixels
             } else if (!isFirstImage) {
+                // Non-last, non-first images: crop 1px from top
                 imageYPosition = safariTopDropShadowCssPixels
             } else {
+                // First image: no crop
                 imageYPosition = 0
             }
         } else {
@@ -384,6 +414,8 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
                 : 0
         }
 
+        // Calculate based on where the previous image ends
+        // Previous image's canvasYPosition + previous image's height
         let canvasYPosition: number
         if (isSafariDesktop && !isFirstImage) {
             const previousImage = viewportScreenshots[viewportScreenshots.length - 1]
