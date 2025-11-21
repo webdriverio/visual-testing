@@ -48,6 +48,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
     let isRotated = false
+    let actualFullPageWidth: number | undefined
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
@@ -110,12 +111,25 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
 
         // Determine scroll height and check if we need to scroll again
         scrollHeight = await browserInstance.execute(getDocumentScrollHeight)
+
+        // Get actual scroll position after scrolling to verify it matches scrollY
+        const actualScrollInfo = await browserInstance.execute(() => ({
+            scrollTop: window.pageYOffset || document.documentElement.scrollTop,
+        }))
+
         if (scrollHeight && (scrollY + effectiveViewportHeight < scrollHeight)) {
             amountOfScrollsArray.push(amountOfScrollsArray.length)
         }
 
-        const remainingContent = scrollHeight ? scrollHeight - scrollY : 0
-        const imageHeight = amountOfScrollsArray.length === i && scrollHeight && remainingContent > 0
+        // For the last image, use the actual scroll position instead of the intended scrollY
+        // because the browser may not be able to scroll to the exact position we requested
+        const isLastImage = amountOfScrollsArray.length === i
+        const scrollPositionForCalculation = isLastImage && actualScrollInfo
+            ? actualScrollInfo.scrollTop
+            : scrollY
+
+        const remainingContent = scrollHeight ? scrollHeight - scrollPositionForCalculation : 0
+        const imageHeight = isLastImage && scrollHeight && remainingContent > 0
             ? remainingContent
             : effectiveViewportHeight
 
@@ -125,15 +139,24 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
 
         // The starting position for cropping could be different for the last image
         // The cropping always needs to start at status and address bar height and the address bar shadow padding
-        const imageYPosition =
-            (amountOfScrollsArray.length === i ? effectiveViewportHeight - imageHeight : 0) + viewportY + addressBarShadowPadding
+        // For the last image, if imageHeight > effectiveViewportHeight, we crop from the top (y=0)
+        // Otherwise, we crop from the bottom to align with previous images
+        const imageYPositionBase = isLastImage && imageHeight <= effectiveViewportHeight
+            ? effectiveViewportHeight - imageHeight
+            : 0
+        const imageYPosition = imageYPositionBase + viewportY + addressBarShadowPadding
+        // For the last image, use the actual scroll position for canvasYPosition
+        // because the browser may not be able to scroll to the exact position we requested
+        const canvasYPositionForStorage = isLastImage && actualScrollInfo
+            ? actualScrollInfo.scrollTop
+            : scrollY
 
         // Store all the screenshot data in the screenshot object
-        viewportScreenshots.push({
+        const screenshotData = {
             ...calculateDprData(
                 {
                     canvasWidth: isRotated ? effectiveViewportHeight : viewportWidth,
-                    canvasYPosition: scrollY,
+                    canvasYPosition: canvasYPositionForStorage,
                     imageHeight: imageHeight,
                     imageWidth: isRotated ? effectiveViewportHeight : viewportWidth,
                     imageXPosition: viewportX,
@@ -142,7 +165,19 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
                 devicePixelRatio,
             ),
             screenshot,
-        })
+        }
+        viewportScreenshots.push(screenshotData)
+
+        // Calculate the actual cropped width from the first screenshot to handle rounding differences
+        if (i === 0 && !actualFullPageWidth) {
+            const { height: screenshotHeightDevicePixels, width: screenshotWidthDevicePixels } = getBase64ScreenshotSize(screenshot)
+            const screenshotIsRotated = Boolean(isLandscape && screenshotHeightDevicePixels > screenshotWidthDevicePixels)
+            const actualScreenshotWidthDevicePixels = screenshotIsRotated ? screenshotHeightDevicePixels : screenshotWidthDevicePixels
+            const maxAvailableWidthDevicePixels = actualScreenshotWidthDevicePixels - screenshotData.imageXPosition
+            const actualCroppedWidthDevicePixels = Math.min(screenshotData.imageWidth, maxAvailableWidthDevicePixels)
+
+            actualFullPageWidth = actualCroppedWidthDevicePixels / devicePixelRatio
+        }
 
         // Show scrollbars again
         await browserInstance.execute(hideScrollBars, false)
@@ -161,11 +196,14 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
         throw new Error('Couldn\'t determine scroll height or screenshot size')
     }
 
+    const fullPageHeight = scrollHeight - addressBarShadowPadding - toolBarShadowPadding
+    const fullPageWidth = actualFullPageWidth ?? (isRotated ? effectiveViewportHeight : viewportWidth)
+
     return {
         ...calculateDprData(
             {
-                fullPageHeight: scrollHeight - addressBarShadowPadding - toolBarShadowPadding,
-                fullPageWidth: isRotated ? effectiveViewportHeight : viewportWidth,
+                fullPageHeight,
+                fullPageWidth,
             },
             devicePixelRatio,
         ),

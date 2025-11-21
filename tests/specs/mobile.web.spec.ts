@@ -7,11 +7,9 @@ describe('@wdio/visual-service mobile web', () => {
     // Get the commands that need to be executed
     // 0 means all, otherwise it will only execute the commands that are specified
     const wdioIcsCommands = driver.requestedCapabilities['wdio-ics:options'].commands
-    const deviceName = (
-        driver.requestedCapabilities['lt:options']?.deviceOrientation ||
-        driver.requestedCapabilities['bstack:options']?.deviceOrientation ||
-        driver.requestedCapabilities.orientation
-    ).deviceName
+    const deviceName = driver.requestedCapabilities['lt:options']?.deviceName ||
+        driver.requestedCapabilities['bstack:options']?.deviceName ||
+        driver.requestedCapabilities.deviceName
     const platformName = (
         driver.requestedCapabilities['lt:options']?.platformName ||
         driver.requestedCapabilities.platformName
