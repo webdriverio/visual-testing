@@ -25,7 +25,7 @@ exports[`setCustomCss > should be able to set the custom css with the default op
 
 exports[`setCustomCss > should be able to set the custom css with the with disableBlinkingCursor set to true 1`] = `""`;
 
-exports[`setCustomCss > should be able to set the custom css with the with disableBlinkingCursor set to true 2`] = `" input, textarea, [contenteditable]{caret-color: transparent !important;}"`;
+exports[`setCustomCss > should be able to set the custom css with the with disableBlinkingCursor set to true 2`] = `" *{caret-color: transparent !important;}"`;
 
 exports[`setCustomCss > should be able to set the custom css with the with padding set to 0 1`] = `""`;
 
