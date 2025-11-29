@@ -1,5 +1,19 @@
 # @wdio/image-comparison-core
 
+## 1.0.2
+
+### Patch Changes
+
+- 8ff1bc3: # 🐛 BugFix
+
+  ## #1078: Cursor inside shadow is shown, even with disableBlinkingCursor
+
+  Fix option "disableBlinkingCursor" to also work within shadowdom
+
+  # Committers: 1
+
+  - Carlo Jeske ([@plusgut](https://github.com/plusgut))
+
 ## 1.0.1
 
 ### Patch Changes
