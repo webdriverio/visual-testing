@@ -25,7 +25,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         ui: 'bdd',
         timeout: 10 * 60 * 1000,
     },
-    reporters: ['spec'],
+    reporters: ['dot'],
     specFileRetriesDelay: 0,
 
     // =====
