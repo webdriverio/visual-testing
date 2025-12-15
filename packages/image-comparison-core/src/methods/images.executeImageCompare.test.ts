@@ -588,6 +588,162 @@ describe('executeImageCompare', () => {
         expect(result).toMatchSnapshot()
     })
 
+    it('should compare from base64 when not saving actuals', async () => {
+        const base64Image = Buffer.from('base64-image').toString('base64')
+        const optionsWithBase64 = {
+            ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: false,
+                autoSaveBaseline: false,
+            }
+        }
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0,
+            misMatchPercentage: 0,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
+            analysisTime: 10,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithBase64,
+            testContext: mockTestContext,
+            actualBase64Image: base64Image,
+        })
+
+        expect(images.saveBase64Image).not.toHaveBeenCalled()
+        expect(compareImages.default).toHaveBeenCalledWith(
+            expect.any(Buffer),
+            Buffer.from(base64Image, 'base64'),
+            expect.any(Object),
+        )
+        expect(fsPromises.writeFile).not.toHaveBeenCalled()
+    })
+
+    it('should disable JSON reports when actuals are not saved', async () => {
+        const optionsWithJsonButNoSave = {
+            ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: false,
+            },
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    createJsonReportFiles: true,
+                    saveAboveTolerance: 0.1,
+                },
+            },
+        }
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithJsonButNoSave,
+            testContext: mockTestContext,
+            actualBase64Image: Buffer.from('base64-image').toString('base64'),
+        })
+
+        expect(logWarnSpy).toHaveBeenCalled()
+        expect(createCompareReport.createJsonReportIfNeeded).toHaveBeenCalledWith(expect.objectContaining({
+            imageCompareOptions: expect.objectContaining({ createJsonReportFiles: false }),
+        }))
+    })
+
+    it('should save base64 actual for auto-saved baseline', async () => {
+        const base64Image = Buffer.from('base64-image').toString('base64')
+        const optionsWithAutoSave = {
+            ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: false,
+                autoSaveBaseline: true,
+            }
+        }
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0,
+            misMatchPercentage: 0,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
+            analysisTime: 10,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithAutoSave,
+            testContext: mockTestContext,
+            actualBase64Image: base64Image,
+        })
+
+        expect(fsPromises.writeFile).toHaveBeenCalledWith('/mock/actual/test.png', Buffer.from(base64Image, 'base64'))
+    })
+
+    it('should save base64 actual on diff when not always saving', async () => {
+        const base64Image = Buffer.from('base64-image').toString('base64')
+        const optionsWithDiff = {
+            ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: false,
+            }
+        }
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0.5,
+            misMatchPercentage: 0.5,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
+            analysisTime: 10,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithDiff,
+            testContext: mockTestContext,
+            actualBase64Image: base64Image,
+        })
+
+        expect(fsPromises.writeFile).toHaveBeenCalledWith('/mock/actual/test.png', Buffer.from(base64Image, 'base64'))
+    })
+
+    it('should update baseline using base64 when visual baseline is updated', async () => {
+        const base64Image = Buffer.from('base64-image').toString('base64')
+        vi.mocked(utils.updateVisualBaseline).mockReturnValueOnce(true)
+        const optionsWithUpdate = {
+            ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: false,
+            }
+        }
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0,
+            misMatchPercentage: 0,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
+            analysisTime: 10,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithUpdate,
+            testContext: mockTestContext,
+            actualBase64Image: base64Image,
+        })
+
+        expect(writeFileSync).toHaveBeenCalledWith('/mock/baseline/test.png', Buffer.from(base64Image, 'base64'))
+    })
+
     it('should handle Android device pixel ratio correctly', async () => {
         const androidOptions = {
             ...mockOptions,

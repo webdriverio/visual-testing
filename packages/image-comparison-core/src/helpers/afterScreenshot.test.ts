@@ -102,6 +102,19 @@ describe('afterScreenshot', () => {
         expect(result).toMatchSnapshot()
     })
 
+    it('should return base64 when alwaysSaveActualImage is false', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
+        const options = createBaseOptions({
+            alwaysSaveActualImage: false,
+        })
+
+        const result = await afterScreenshot(mockBrowserInstance, options)
+
+        expect(vi.mocked(saveBase64Image)).not.toHaveBeenCalled()
+        expect(result.base64Image).toBe(options.base64Image)
+        expect(result).toMatchSnapshot()
+    })
+
     it('should handle native context and skip browser operations', async () => {
         const mockBrowserInstance = createMockBrowserInstance()
         const options = createBaseOptions({

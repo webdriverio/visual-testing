@@ -87,6 +87,16 @@ exports[`afterScreenshot > should handle only removeElements with length > 0 1`]
 }
 `;
 
+exports[`afterScreenshot > should return base64 when alwaysSaveActualImage is false 1`] = `
+{
+  "base64Image": "string",
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;
+
 exports[`afterScreenshot > should skip hide/remove elements when both are empty arrays 1`] = `
 {
   "devicePixelRatio": 2,
