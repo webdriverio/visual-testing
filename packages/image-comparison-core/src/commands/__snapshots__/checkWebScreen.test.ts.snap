@@ -158,6 +158,7 @@ exports[`checkWebScreen > should execute checkWebScreen with basic options 2`] =
 exports[`checkWebScreen > should execute checkWebScreen with basic options 3`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {
@@ -240,6 +241,7 @@ exports[`checkWebScreen > should execute checkWebScreen with basic options 3`] =
 exports[`checkWebScreen > should handle Android device correctly 1`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {
@@ -483,6 +485,7 @@ exports[`checkWebScreen > should handle all method options correctly 1`] = `
 exports[`checkWebScreen > should handle all method options correctly 2`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {
@@ -726,6 +729,7 @@ exports[`checkWebScreen > should handle hideElements and removeElements correctl
 exports[`checkWebScreen > should handle hideElements and removeElements correctly 2`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {
@@ -953,6 +957,7 @@ exports[`checkWebScreen > should handle native context correctly 1`] = `
 exports[`checkWebScreen > should handle native context correctly 2`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": true,
     "isViewPortScreenshot": true,
     "options": {
@@ -1180,6 +1185,7 @@ exports[`checkWebScreen > should merge compare options correctly 1`] = `
 exports[`checkWebScreen > should merge compare options correctly 2`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {

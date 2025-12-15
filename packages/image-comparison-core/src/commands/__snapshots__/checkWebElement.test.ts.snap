@@ -161,6 +161,7 @@ exports[`checkWebElement > should execute checkWebElement with basic options 2`]
 exports[`checkWebElement > should execute checkWebElement with basic options 3`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {
@@ -244,6 +245,7 @@ exports[`checkWebElement > should execute checkWebElement with basic options 3`]
 exports[`checkWebElement > should handle Android device correctly 1`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {
@@ -327,6 +329,7 @@ exports[`checkWebElement > should handle Android device correctly 1`] = `
 exports[`checkWebElement > should handle compare options correctly 1`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {
@@ -581,6 +584,7 @@ exports[`checkWebElement > should handle custom element options 1`] = `
 exports[`checkWebElement > should handle device rectangles correctly 1`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {
@@ -664,6 +668,7 @@ exports[`checkWebElement > should handle device rectangles correctly 1`] = `
 exports[`checkWebElement > should handle hybrid app options correctly 1`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": true,
     "options": {

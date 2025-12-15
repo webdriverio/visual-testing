@@ -159,7 +159,7 @@ exports[`checkFullPageScreen > should execute checkFullPageScreen with basic opt
 exports[`checkFullPageScreen > should handle Android device correctly 1`] = `
 [
   {
-
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": false,
     "options": {
@@ -698,6 +698,7 @@ exports[`checkFullPageScreen > should handle hideElements and removeElements cor
 exports[`checkFullPageScreen > should handle hybrid app options correctly 1`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": false,
     "options": {
@@ -929,6 +930,7 @@ exports[`checkFullPageScreen > should handle undefined method options with fallb
 exports[`checkFullPageScreen > should merge compare options correctly 1`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": false,
     "isViewPortScreenshot": false,
     "options": {

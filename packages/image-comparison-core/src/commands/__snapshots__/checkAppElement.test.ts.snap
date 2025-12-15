@@ -3,6 +3,7 @@
 exports[`checkAppElement > should always disable block out options for element screenshots 1`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": true,
     "isViewPortScreenshot": false,
     "options": {
@@ -277,7 +278,7 @@ exports[`checkAppElement > should execute checkAppElement with basic options 2`]
 exports[`checkAppElement > should handle Android device correctly 1`] = `
 [
   {
-    
+    "actualBase64Image": undefined,
     "isNativeContext": true,
     "isViewPortScreenshot": false,
     "options": {

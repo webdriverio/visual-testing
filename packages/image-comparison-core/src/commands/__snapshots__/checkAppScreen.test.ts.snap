@@ -379,6 +379,7 @@ exports[`checkAppScreen > should handle Android device correctly 1`] = `
 exports[`checkAppScreen > should handle Android device correctly 2`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": true,
     "isViewPortScreenshot": true,
     "options": {
@@ -654,7 +655,7 @@ exports[`checkAppScreen > should handle ignore regions and device blockouts 2`] 
 exports[`checkAppScreen > should handle ignore regions and device blockouts 3`] = `
 [
   {
-
+    "actualBase64Image": undefined,
     "isNativeContext": true,
     "isViewPortScreenshot": true,
     "options": {
@@ -793,6 +794,7 @@ exports[`checkAppScreen > should handle ignore regions and device blockouts 3`] 
 exports[`checkAppScreen > should merge compare options correctly 1`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": true,
     "isViewPortScreenshot": true,
     "options": {
@@ -953,6 +955,7 @@ exports[`checkAppScreen > should spread hideElements and removeElements into ign
 exports[`checkAppScreen > should spread hideElements and removeElements into ignore array 2`] = `
 [
   {
+    "actualBase64Image": undefined,
     "isNativeContext": true,
     "isViewPortScreenshot": true,
     "options": {

@@ -1,0 +1,106 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`afterScreenshot > should be able to return the ScreenshotOutput with default options 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;
+
+exports[`afterScreenshot > should handle hide/remove elements with error handling 1`] = `
+[
+  "[33m%s[0m",
+  "
+#####################################################################################
+ WARNING:
+ (One of) the elements that needed to be hidden or removed could not be found on the
+ page and caused this error
+ Error: Error: Element not found
+ We made sure the test didn't break.
+#####################################################################################
+",
+]
+`;
+
+exports[`afterScreenshot > should handle hide/remove elements with error handling 2`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;
+
+exports[`afterScreenshot > should handle hideScrollBars when hideScrollBars is true 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;
+
+exports[`afterScreenshot > should handle layout testing with enableLayoutTesting 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;
+
+exports[`afterScreenshot > should handle mobile platform and remove custom CSS 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;
+
+exports[`afterScreenshot > should handle native context and skip browser operations 1`] = `
+{
+  "devicePixelRatio": 1.5,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": true,
+  "path": "/mocked/path",
+}
+`;
+
+exports[`afterScreenshot > should handle only hideElements with length > 0 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;
+
+exports[`afterScreenshot > should handle only removeElements with length > 0 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;
+
+exports[`afterScreenshot > should skip hide/remove elements when both are empty arrays 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;
+
+exports[`afterScreenshot > should skip hide/remove elements when both are falsy 1`] = `
+{
+  "devicePixelRatio": 2,
+  "fileName": "mocked-file-name.png",
+  "isLandscape": false,
+  "path": "/mocked/path",
+}
+`;

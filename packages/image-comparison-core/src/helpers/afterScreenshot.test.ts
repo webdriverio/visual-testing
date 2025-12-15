@@ -79,6 +79,7 @@ describe('afterScreenshot', () => {
         isLandscape: false,
         isNativeContext: false,
         platformName: '',
+        alwaysSaveActualImage: true,
         ...overrides,
     })
 
