@@ -614,6 +614,7 @@ export function extractCommonCheckVariables(
         // WIC options
         autoSaveBaseline: wicOptions.autoSaveBaseline,
         savePerInstance: wicOptions.savePerInstance,
+        ...(wicOptions.alwaysSaveActualImage !== undefined && { alwaysSaveActualImage: wicOptions.alwaysSaveActualImage }),
 
         // Optional WIC options
         ...(wicOptions.isHybridApp !== undefined && { isHybridApp: wicOptions.isHybridApp }),
@@ -630,6 +631,7 @@ export function buildFolderOptions(
 
     return {
         autoSaveBaseline: commonCheckVariables.autoSaveBaseline,
+        ...(commonCheckVariables.alwaysSaveActualImage !== undefined && { alwaysSaveActualImage: commonCheckVariables.alwaysSaveActualImage }),
         actualFolder: commonCheckVariables.actualFolder,
         baselineFolder: commonCheckVariables.baselineFolder,
         diffFolder: commonCheckVariables.diffFolder,

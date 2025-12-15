@@ -88,7 +88,7 @@ export default async function saveFullPageScreen(
         instanceData,
         enrichedInstanceData,
         beforeOptions,
-        wicOptions: { formatImageName, savePerInstance }
+        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: saveFullPageOptions.wic.alwaysSaveActualImage }
     })
 
     return afterScreenshot(browserInstance, afterOptions!)

@@ -174,6 +174,7 @@ export interface CommonCheckVariables {
     /** WIC options */
     autoSaveBaseline: boolean;
     savePerInstance: boolean;
+    alwaysSaveActualImage?: boolean;
 
     /** Optional WIC options (not all methods need these) */
     isHybridApp?: boolean;
@@ -191,6 +192,8 @@ export interface ExtractCommonCheckVariablesOptions {
 export interface FolderOptions {
     /** Whether to auto-save baseline images */
     autoSaveBaseline: boolean;
+    /** Always save the actual image to disk */
+    alwaysSaveActualImage?: boolean;
     /** The actual folder path */
     actualFolder: string;
     /** The baseline folder path */

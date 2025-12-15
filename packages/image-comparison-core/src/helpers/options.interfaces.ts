@@ -63,6 +63,13 @@ export interface ClassOptions {
      */
     waitForFontsLoaded?: boolean;
 
+    /**
+     * Always save the actual image to disk, even when comparison passes.
+     * When false, the actual image is only saved when comparison fails (mismatch > 0 or > threshold).
+     * @default true
+     */
+    alwaysSaveActualImage?: boolean;
+
     // ==================
     // Baseline options
     // ==================
@@ -373,6 +380,12 @@ export interface DefaultOptions {
      * Wait for fonts to be fully loaded before taking a screenshot.
      */
     waitForFontsLoaded: boolean;
+
+    /**
+     * Always save the actual image to disk, even when comparison passes.
+     * When false, the actual image is only saved when comparison fails (mismatch > 0 or > threshold).
+     */
+    alwaysSaveActualImage: boolean;
 }
 
 export interface CompareOptions {

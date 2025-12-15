@@ -56,7 +56,7 @@ export default async function checkFullPageScreen(
             waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName } = await saveFullPageScreen({
+    const { devicePixelRatio, fileName, base64Image } = await saveFullPageScreen({
         browserInstance,
         folders,
         instanceData,
@@ -81,5 +81,6 @@ export default async function checkFullPageScreen(
         isNativeContext,
         options: executeCompareOptions,
         testContext,
+        actualBase64Image: base64Image,
     })
 }

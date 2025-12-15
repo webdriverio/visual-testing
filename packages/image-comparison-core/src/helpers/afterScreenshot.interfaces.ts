@@ -7,6 +7,8 @@ export interface ScreenshotOutput {
     isLandscape: boolean;
     // The path where the file can be found
     path: string;
+    // The base64 image (only present when alwaysSaveActualImage is false and image wasn't saved)
+    base64Image?: string;
 }
 
 export interface AfterScreenshotOptions {
@@ -36,6 +38,8 @@ export interface AfterScreenshotOptions {
     platformName: string;
     // Elements that need to be removed (display: none) before saving a screenshot
     removeElements?: (HTMLElement | HTMLElement[])[];
+    // Always save the actual image to disk
+    alwaysSaveActualImage?: boolean;
 }
 
 export interface ScreenshotFilePathOptions {

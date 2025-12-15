@@ -50,7 +50,7 @@ export default async function checkWebElement(
             waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName } = await saveWebElement({
+    const { devicePixelRatio, fileName, base64Image } = await saveWebElement({
         browserInstance,
         instanceData,
         folders,
@@ -76,5 +76,6 @@ export default async function checkWebElement(
         isNativeContext,
         options: executeCompareOptions,
         testContext,
+        actualBase64Image: base64Image,
     })
 }
