@@ -85,6 +85,7 @@ describe('checkAppElement', () => {
                 autoElementScroll: true,
                 addIOSBezelCorners: false,
                 autoSaveBaseline: false,
+                alwaysSaveActualImage: true,
                 clearFolder: false,
                 userBasedFullPageScreenshot: false,
                 enableLegacyScreenshotMethod: false,
