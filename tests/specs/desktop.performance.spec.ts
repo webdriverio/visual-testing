@@ -27,6 +27,10 @@ describe('@wdio/visual-service desktop performance', () => {
                 returnAllCompareData: true
             }) as ImageCompareResult
 
+            const endTime = Date.now()
+            const executionTime = endTime - startTime
+            executionTimes.push(executionTime)
+
             // Delete the actual image after each iteration
             try {
                 await unlink(result.folders.actual)
@@ -36,10 +40,6 @@ describe('@wdio/visual-service desktop performance', () => {
 
             // Assert the result
             expect(result.misMatchPercentage).toBeLessThanOrEqual(0)
-
-            const endTime = Date.now()
-            const executionTime = endTime - startTime
-            executionTimes.push(executionTime)
 
             if (i === iterations - 1) {
                 const averageTime = executionTimes.reduce((sum, time) => sum + time, 0) / executionTimes.length
@@ -58,6 +58,10 @@ describe('@wdio/visual-service desktop performance', () => {
                 returnAllCompareData: true
             }) as ImageCompareResult
 
+            const endTime = Date.now()
+            const executionTime = endTime - startTime
+            executionTimes.push(executionTime)
+
             // Delete the actual image after each iteration
             try {
                 await unlink(result.folders.actual)
@@ -67,10 +71,6 @@ describe('@wdio/visual-service desktop performance', () => {
 
             // Assert the result
             expect(result.misMatchPercentage).toBeLessThanOrEqual(0)
-
-            const endTime = Date.now()
-            const executionTime = endTime - startTime
-            executionTimes.push(executionTime)
 
             if (i === iterations - 1) {
                 const averageTime = executionTimes.reduce((sum, time) => sum + time, 0) / executionTimes.length
@@ -93,6 +93,10 @@ describe('@wdio/visual-service desktop performance', () => {
                 returnAllCompareData: true
             }) as ImageCompareResult
 
+            const endTime = Date.now()
+            const executionTime = endTime - startTime
+            executionTimes.push(executionTime)
+
             // Delete the actual image after each iteration
             try {
                 await unlink(result.folders.actual)
@@ -102,10 +106,6 @@ describe('@wdio/visual-service desktop performance', () => {
 
             // Assert the result
             expect(result.misMatchPercentage).toBeLessThanOrEqual(0)
-
-            const endTime = Date.now()
-            const executionTime = endTime - startTime
-            executionTimes.push(executionTime)
 
             if (i === iterations - 1) {
                 const averageTime = executionTimes.reduce((sum, time) => sum + time, 0) / executionTimes.length
@@ -127,6 +127,10 @@ describe('@wdio/visual-service desktop performance', () => {
                 returnAllCompareData: true
             }) as ImageCompareResult
 
+            const endTime = Date.now()
+            const executionTime = endTime - startTime
+            executionTimes.push(executionTime)
+
             // Delete the actual image after each iteration
             try {
                 await unlink(result.folders.actual)
@@ -136,10 +140,6 @@ describe('@wdio/visual-service desktop performance', () => {
 
             // Assert the result
             expect(result.misMatchPercentage).toBeLessThanOrEqual(0)
-
-            const endTime = Date.now()
-            const executionTime = endTime - startTime
-            executionTimes.push(executionTime)
 
             if (i === iterations - 1) {
                 const averageTime = executionTimes.reduce((sum, time) => sum + time, 0) / executionTimes.length
