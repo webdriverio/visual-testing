@@ -109,6 +109,7 @@ exports[`checkTabbablePage > should execute checkTabbablePage with basic options
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -314,6 +315,7 @@ exports[`checkTabbablePage > should handle Android device correctly 1`] = `
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -599,6 +601,7 @@ exports[`checkTabbablePage > should handle hybrid app options correctly 1`] = `
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,

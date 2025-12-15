@@ -220,6 +220,7 @@ exports[`checkAppElement > should execute checkAppElement with basic options 2`]
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -276,6 +277,7 @@ exports[`checkAppElement > should execute checkAppElement with basic options 2`]
 exports[`checkAppElement > should handle Android device correctly 1`] = `
 [
   {
+    
     "isNativeContext": true,
     "isViewPortScreenshot": false,
     "options": {

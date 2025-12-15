@@ -101,6 +101,7 @@ exports[`checkWebScreen > should execute checkWebScreen with basic options 2`] =
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -425,6 +426,7 @@ exports[`checkWebScreen > should handle all method options correctly 1`] = `
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -667,6 +669,7 @@ exports[`checkWebScreen > should handle hideElements and removeElements correctl
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -893,6 +896,7 @@ exports[`checkWebScreen > should handle native context correctly 1`] = `
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -1119,6 +1123,7 @@ exports[`checkWebScreen > should merge compare options correctly 1`] = `
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,

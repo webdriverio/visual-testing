@@ -104,6 +104,7 @@ exports[`checkWebElement > should execute checkWebElement with basic options 2`]
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -523,6 +524,7 @@ exports[`checkWebElement > should handle custom element options 1`] = `
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -836,6 +838,7 @@ exports[`checkWebElement > should handle undefined method options with fallbacks
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,

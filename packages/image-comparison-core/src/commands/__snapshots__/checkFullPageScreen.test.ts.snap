@@ -102,6 +102,7 @@ exports[`checkFullPageScreen > should execute checkFullPageScreen with basic opt
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -158,6 +159,7 @@ exports[`checkFullPageScreen > should execute checkFullPageScreen with basic opt
 exports[`checkFullPageScreen > should handle Android device correctly 1`] = `
 [
   {
+
     "isNativeContext": false,
     "isViewPortScreenshot": false,
     "options": {
@@ -332,6 +334,7 @@ exports[`checkFullPageScreen > should handle all full page specific options 1`] 
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -482,6 +485,7 @@ exports[`checkFullPageScreen > should handle hideAfterFirstScroll correctly 1`] 
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -637,6 +641,7 @@ exports[`checkFullPageScreen > should handle hideElements and removeElements cor
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -867,6 +872,7 @@ exports[`checkFullPageScreen > should handle undefined method options with fallb
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,

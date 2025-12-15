@@ -123,6 +123,7 @@ describe('executeImageCompare', () => {
         folderOptions: {
             actualFolder: '/actual',
             autoSaveBaseline: false,
+            alwaysSaveActualImage: true,
             baselineFolder: '/baseline',
             browserName: 'chrome',
             deviceName: 'desktop',
@@ -439,6 +440,10 @@ describe('executeImageCompare', () => {
     it('should create JSON report files when enabled', async () => {
         const optionsWithJsonReport = {
             ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: true,
+            },
             compareOptions: {
                 ...mockOptions.compareOptions,
                 wic: {

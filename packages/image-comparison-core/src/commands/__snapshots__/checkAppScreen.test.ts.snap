@@ -230,6 +230,7 @@ exports[`checkAppScreen > should execute checkAppScreen with basic options 2`] =
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -653,6 +654,7 @@ exports[`checkAppScreen > should handle ignore regions and device blockouts 2`] 
 exports[`checkAppScreen > should handle ignore regions and device blockouts 3`] = `
 [
   {
+
     "isNativeContext": true,
     "isViewPortScreenshot": true,
     "options": {

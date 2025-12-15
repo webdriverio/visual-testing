@@ -110,6 +110,7 @@ exports[`saveAppElement > should execute saveAppElement with basic options 3`] =
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -295,6 +296,7 @@ exports[`saveAppElement > should handle Android device correctly 2`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -454,6 +456,7 @@ exports[`saveAppElement > should handle custom image naming 1`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -639,6 +642,7 @@ exports[`saveAppElement > should handle custom resize dimensions 2`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -824,6 +828,7 @@ exports[`saveAppElement > should handle custom screen sizes 2`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -1009,6 +1014,7 @@ exports[`saveAppElement > should handle iOS device correctly 2`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -1194,6 +1200,7 @@ exports[`saveAppElement > should handle non-native context correctly 2`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -1353,6 +1360,7 @@ exports[`saveAppElement > should handle save per instance 1`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
