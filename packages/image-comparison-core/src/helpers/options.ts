@@ -55,6 +55,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         // This also saves an extra webdriver call
         hideScrollBars: getBooleanOption(options, 'hideScrollBars', !isStorybookMode),
         waitForFontsLoaded: options.waitForFontsLoaded ?? true,
+        alwaysSaveActualImage: options.alwaysSaveActualImage ?? true,
 
         /**
          * Compare options (merged sequentially):
@@ -171,6 +172,7 @@ export interface BuildAfterScreenshotOptionsInput {
     wicOptions: {
         formatImageName: string
         savePerInstance: boolean
+        alwaysSaveActualImage?: boolean
     }
 
     // Optional inputs (for web commands)
@@ -219,7 +221,7 @@ export function buildAfterScreenshotOptions({
     const logName = enrichedInstanceData?.logName ?? instanceData.logName
     const name = enrichedInstanceData?.name ?? instanceData.name
 
-    const { formatImageName, savePerInstance } = wicOptions
+    const { formatImageName, savePerInstance, alwaysSaveActualImage } = wicOptions
 
     const afterOptions: AfterScreenshotOptions = {
         actualFolder: folders.actualFolder,
@@ -251,6 +253,7 @@ export function buildAfterScreenshotOptions({
         isLandscape,
         isNativeContext,
         platformName: instanceData.platformName,
+        alwaysSaveActualImage: alwaysSaveActualImage ?? true,
     }
 
     // Add browser state options only for web commands (when beforeOptions is provided)

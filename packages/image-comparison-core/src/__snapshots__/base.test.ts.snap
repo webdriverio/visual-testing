@@ -4,6 +4,7 @@ exports[`BaseClass > initializes default options correctly 1`] = `
 {
   "addIOSBezelCorners": false,
   "addressBarShadowPadding": 6,
+  "alwaysSaveActualImage": true,
   "autoElementScroll": true,
   "autoSaveBaseline": true,
   "clearFolder": false,

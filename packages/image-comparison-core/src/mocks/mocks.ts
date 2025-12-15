@@ -156,6 +156,7 @@ export const BASE_CHECK_OPTIONS = {
         autoElementScroll: true,
         addIOSBezelCorners: false,
         autoSaveBaseline: false,
+        alwaysSaveActualImage: true,
         clearFolder: false,
         userBasedFullPageScreenshot: false,
         enableLegacyScreenshotMethod: false,

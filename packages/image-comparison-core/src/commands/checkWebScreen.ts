@@ -47,7 +47,7 @@ export default async function checkWebScreen(
             waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName } = await saveWebScreen({
+    const { devicePixelRatio, fileName, base64Image } = await saveWebScreen({
         browserInstance,
         instanceData,
         folders,
@@ -72,5 +72,6 @@ export default async function checkWebScreen(
         isNativeContext,
         options: executeCompareOptions,
         testContext,
+        actualBase64Image: base64Image,
     })
 }

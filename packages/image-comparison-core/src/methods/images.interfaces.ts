@@ -23,6 +23,8 @@ export interface ExecuteImageCompare {
     isViewPortScreenshot: boolean;
     /** Whether this is a native context */
     isNativeContext: boolean;
+    /** The base64 image to use for comparison (when alwaysSaveActualImage is false) */
+    actualBase64Image?: string;
 }
 
 export interface ImageCompareOptions {
@@ -83,6 +85,8 @@ export interface MethodImageCompareCompareOptions extends BaseImageCompareOption
 export interface ImageCompareFolderOptions extends Folders {
     /** Auto save image to baseline */
     autoSaveBaseline: boolean;
+    /** Always save the actual image to disk */
+    alwaysSaveActualImage?: boolean;
     /** The name of the browser */
     browserName: string;
     /** The name of the device */
@@ -187,6 +191,8 @@ export interface CheckBaselineImageExists {
     autoSaveBaseline?: boolean,
     /** Whether to update baseline */
     updateBaseline?: boolean,
+    /** Optional base64 image (when actual file doesn't exist yet) */
+    actualBase64Image?: string,
 }
 
 export interface RotatedImage {

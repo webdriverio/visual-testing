@@ -29,17 +29,21 @@ export default async function afterScreenshot(browserInstance: WebdriverIO.Brows
         isLandscape,
         isNativeContext,
         removeElements,
+        alwaysSaveActualImage,
     } = options
     const path = getAndCreatePath(actualFolder, filePath)
     const fileName = formatFileName(fileNameOptions)
-
-    await saveBase64Image(base64Image, join(path, fileName))
-
-    const result = {
+    const result: ScreenshotOutput = {
         devicePixelRatio: fileNameOptions.devicePixelRatio,
         fileName,
         isLandscape,
         path,
+    }
+
+    if (alwaysSaveActualImage) {
+        await saveBase64Image(base64Image, join(path, fileName))
+    } else {
+        result.base64Image = base64Image
     }
 
     if (isNativeContext) {

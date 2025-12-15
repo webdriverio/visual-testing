@@ -363,6 +363,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
   "isNativeContext": false,
   "tag": "test-element",
   "wicOptions": {
+    "alwaysSaveActualImage": true,
     "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
     "savePerInstance": true,
   },
@@ -580,6 +581,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
   "isNativeContext": false,
   "tag": "test-element",
   "wicOptions": {
+    "alwaysSaveActualImage": true,
     "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
     "savePerInstance": true,
   },
@@ -712,6 +714,7 @@ exports[`saveWebElement > should call takeElementScreenshot with correct options
   {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -966,6 +969,7 @@ exports[`saveWebElement > should call takeElementScreenshot with correct options
   "isNativeContext": false,
   "tag": "test-element",
   "wicOptions": {
+    "alwaysSaveActualImage": true,
     "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
     "savePerInstance": true,
   },
@@ -1273,6 +1277,7 @@ exports[`saveWebElement > should handle NaN dimension values correctly 3`] = `
   "isNativeContext": false,
   "tag": "test-element",
   "wicOptions": {
+    "alwaysSaveActualImage": true,
     "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
     "savePerInstance": true,
   },

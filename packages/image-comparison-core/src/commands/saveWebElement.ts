@@ -81,7 +81,7 @@ export default async function saveWebElement(
         instanceData,
         enrichedInstanceData,
         beforeOptions,
-        wicOptions: { formatImageName, savePerInstance }
+        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: saveElementOptions.wic.alwaysSaveActualImage }
     })
 
     return afterScreenshot(browserInstance, afterOptions)

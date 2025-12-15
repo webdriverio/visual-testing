@@ -270,7 +270,8 @@ describe('options', () => {
             instanceData: mockInstanceData,
             wicOptions: {
                 formatImageName: '{tag}-{browserName}-{width}x{height}',
-                savePerInstance: false
+                savePerInstance: false,
+                alwaysSaveActualImage: true
             }
         }
 

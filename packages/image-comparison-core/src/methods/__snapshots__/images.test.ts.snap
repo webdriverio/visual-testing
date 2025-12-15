@@ -28,6 +28,20 @@ exports[`checkBaselineImageExists > should update baseline when updateBaseline i
 ]
 `;
 
+exports[`checkBaselineImageExists > should use provided base64 when auto-saving baseline 1`] = `
+[
+  [
+    "[33m%s[0m",
+    "
+#####################################################################################
+ INFO:
+ Autosaved the image to
+ /path/to/baseline.png
+#####################################################################################",
+  ],
+]
+`;
+
 exports[`checkIfImageExists > should return false when file does not exist 1`] = `false`;
 
 exports[`checkIfImageExists > should return true when file exists 1`] = `true`;

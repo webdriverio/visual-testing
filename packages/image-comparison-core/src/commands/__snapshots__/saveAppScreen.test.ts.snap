@@ -93,6 +93,7 @@ exports[`saveAppScreen > should execute saveAppScreen with basic options 3`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -269,6 +270,7 @@ exports[`saveAppScreen > should handle Android device correctly 2`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -436,6 +438,7 @@ exports[`saveAppScreen > should handle custom image naming 1`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -610,6 +613,7 @@ exports[`saveAppScreen > should handle custom screen sizes 2`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -786,6 +790,7 @@ exports[`saveAppScreen > should handle iOS device with bezel corners 2`] = `
   "wicOptions": {
     "addIOSBezelCorners": true,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -981,6 +986,7 @@ exports[`saveAppScreen > should handle non-native context correctly 2`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -1148,6 +1154,7 @@ exports[`saveAppScreen > should handle save per instance 1`] = `
   "wicOptions": {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,

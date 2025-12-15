@@ -3,6 +3,7 @@
 exports[`options > buildAfterScreenshotOptions > should build options for native commands (no enriched data) 1`] = `
 {
   "actualFolder": "/test/actual",
+  "alwaysSaveActualImage": true,
   "base64Image": "test-screenshot-data",
   "fileName": {
     "browserName": "chrome",
@@ -37,6 +38,7 @@ exports[`options > buildAfterScreenshotOptions > should build options for native
 exports[`options > buildAfterScreenshotOptions > should build options for web commands with enriched data 1`] = `
 {
   "actualFolder": "/test/actual",
+  "alwaysSaveActualImage": true,
   "base64Image": "test-screenshot-data",
   "disableBlinkingCursor": true,
   "disableCSSAnimation": false,
@@ -78,6 +80,7 @@ exports[`options > defaultOptions > should return the default options when no op
 {
   "addIOSBezelCorners": false,
   "addressBarShadowPadding": 6,
+  "alwaysSaveActualImage": true,
   "autoElementScroll": true,
   "autoSaveBaseline": true,
   "clearFolder": false,
@@ -132,6 +135,7 @@ exports[`options > defaultOptions > should return the provided options when opti
 {
   "addIOSBezelCorners": false,
   "addressBarShadowPadding": 1,
+  "alwaysSaveActualImage": true,
   "autoElementScroll": true,
   "autoSaveBaseline": true,
   "clearFolder": false,

@@ -76,7 +76,7 @@ export default async function saveWebScreen(
         instanceData,
         enrichedInstanceData,
         beforeOptions,
-        wicOptions: { formatImageName, savePerInstance }
+        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: saveScreenOptions.wic.alwaysSaveActualImage }
     })
 
     return afterScreenshot(browserInstance, afterOptions)

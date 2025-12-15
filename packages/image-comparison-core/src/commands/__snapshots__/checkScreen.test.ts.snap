@@ -21,6 +21,7 @@ exports[`checkScreen > should call checkAppScreen when isNativeContext is true 2
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,
@@ -187,6 +188,7 @@ exports[`checkScreen > should call checkWebScreen when isNativeContext is false 
       "wic": {
         "addIOSBezelCorners": false,
         "addressBarShadowPadding": 6,
+        "alwaysSaveActualImage": true,
         "autoElementScroll": true,
         "autoSaveBaseline": false,
         "clearFolder": false,

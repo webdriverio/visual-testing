@@ -107,6 +107,7 @@ exports[`saveWebScreen > should call takeWebScreenshot with BiDi disabled when n
   },
   {
     "actualFolder": "/test/actual",
+    "alwaysSaveActualImage": true,
     "base64Image": "web-screenshot-data",
     "disableBlinkingCursor": false,
     "disableCSSAnimation": false,
@@ -186,6 +187,7 @@ exports[`saveWebScreen > should call takeWebScreenshot with correct options when
   },
   {
     "actualFolder": "/test/actual",
+    "alwaysSaveActualImage": true,
     "base64Image": "web-screenshot-data",
     "disableBlinkingCursor": false,
     "disableCSSAnimation": false,
@@ -265,6 +267,7 @@ exports[`saveWebScreen > should handle NaN dimension values correctly 3`] = `
   },
   {
     "actualFolder": "/test/actual",
+    "alwaysSaveActualImage": true,
     "base64Image": "web-screenshot-data",
     "disableBlinkingCursor": false,
     "disableCSSAnimation": false,

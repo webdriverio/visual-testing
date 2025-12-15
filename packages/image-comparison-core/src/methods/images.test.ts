@@ -222,6 +222,23 @@ describe('checkBaselineImageExists', () => {
         expect(logInfoSpy.mock.calls).toMatchSnapshot()
     })
 
+    it('should use provided base64 when auto-saving baseline', async () => {
+        accessSpy.mockRejectedValue(new Error('File not found'))
+        const base64Actual = Buffer.from('image data').toString('base64')
+        vi.mocked(writeFileSync).mockImplementation(() => {})
+
+        await checkBaselineImageExists({
+            actualFilePath: '/path/to/actual.png',
+            baselineFilePath: '/path/to/baseline.png',
+            autoSaveBaseline: true,
+            actualBase64Image: base64Actual,
+        })
+
+        expect(vi.mocked(readFileSync)).not.toHaveBeenCalled()
+        expect(vi.mocked(writeFileSync)).toHaveBeenCalledWith('/path/to/baseline.png', Buffer.from(base64Actual, 'base64'))
+        expect(logInfoSpy.mock.calls).toMatchSnapshot()
+    })
+
     it('should throw error when file does not exist and autoSaveBaseline is false', async () => {
         accessSpy.mockRejectedValue(new Error('File not found'))
 
@@ -252,6 +269,20 @@ describe('checkBaselineImageExists', () => {
         expect(vi.mocked(readFileSync)).toHaveBeenCalledWith('/path/to/actual.png')
         expect(vi.mocked(writeFileSync)).not.toHaveBeenCalled()
         expect(logInfoSpy).not.toHaveBeenCalled()
+    })
+
+    it('should mention missing actual file in error when not saved to disk', async () => {
+        accessSpy.mockRejectedValue(new Error('File not found'))
+        vi.mocked(fsPromises.access).mockRejectedValue(new Error('File not found'))
+
+        await expect(checkBaselineImageExists({
+            actualFilePath: '/path/to/actual.png',
+            baselineFilePath: '/path/to/baseline.png',
+            autoSaveBaseline: false
+        })).rejects.toThrow(/actual image was not saved to disk/)
+
+        expect(vi.mocked(readFileSync)).not.toHaveBeenCalled()
+        expect(vi.mocked(writeFileSync)).not.toHaveBeenCalled()
     })
 })
 

@@ -67,7 +67,8 @@ export async function checkBaselineImageExists({
     actualFilePath,
     baselineFilePath,
     autoSaveBaseline = false,
-    updateBaseline = false
+    updateBaseline = false,
+    actualBase64Image,
 }: CheckBaselineImageExists): Promise<void> {
     try {
         if (updateBaseline || !(await checkIfImageExists(baselineFilePath))) {
@@ -78,7 +79,10 @@ export async function checkBaselineImageExists({
             try {
                 const autoSaveMessage = 'Autosaved the'
                 const updateBaselineMessage = 'Updated the actual'
-                const data = readFileSync(actualFilePath)
+                // Use base64 image if provided, otherwise read from file
+                const data = actualBase64Image
+                    ? Buffer.from(actualBase64Image, 'base64')
+                    : readFileSync(actualFilePath)
                 writeFileSync(baselineFilePath, data)
                 log.info(
                     '\x1b[33m%s\x1b[0m',
@@ -99,12 +103,16 @@ export async function checkBaselineImageExists({
                 )
             }
         } else {
+            // Check if actual file exists before referencing it in error message
+            const actualFileExists = await checkIfImageExists(actualFilePath)
+            const filePathMessage = actualFileExists
+                ? `The image can be found here:\n${actualFilePath}`
+                : 'The actual image was not saved to disk (alwaysSaveActualImage is false).'
             throw new Error(
                 `
 #####################################################################################
  Baseline image not found, save the actual image manually to the baseline.
- The image can be found here:
- ${actualFilePath}
+ ${filePathMessage}
 #####################################################################################`,
             )
         }
@@ -326,6 +334,7 @@ export async function executeImageCompare(
         isNativeContext,
         options,
         testContext,
+        actualBase64Image,
     }: ExecuteImageCompare
 ): Promise<ImageCompareResult | number> {
     // 1. Set some variables
@@ -337,9 +346,23 @@ export async function executeImageCompare(
         isAndroid,
         fileName,
     } = options
-    const { actualFolder, autoSaveBaseline, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
+    const { actualFolder, autoSaveBaseline, alwaysSaveActualImage, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
         options.folderOptions
     const imageCompareOptions = { ...options.compareOptions.wic, ...options.compareOptions.method }
+
+    // 1a. Disable JSON reports if alwaysSaveActualImage is false (JSON reports need the actual file to exist)
+    if (!alwaysSaveActualImage && imageCompareOptions.createJsonReportFiles) {
+        log.warn(
+            '\x1b[33m%s\x1b[0m',
+            `
+#####################################################################################
+ WARNING:
+ JSON report files require the actual image to be saved to disk.
+ Since alwaysSaveActualImage is false, createJsonReportFiles has been disabled.
+#####################################################################################`,
+        )
+        imageCompareOptions.createJsonReportFiles = false
+    }
 
     // 2. Create all needed folders and file paths
     const filePaths = prepareComparisonFilePaths({
@@ -354,8 +377,29 @@ export async function executeImageCompare(
     })
     const { actualFilePath, baselineFilePath, diffFilePath } = filePaths
 
+    // 2a. If we have a base64 image and alwaysSaveActualImage is false, use it directly
+    const useBase64Image = !alwaysSaveActualImage && actualBase64Image !== undefined
+    let actualImageBuffer: Buffer
+
+    if (useBase64Image) {
+        // Convert base64 to buffer for comparison
+        actualImageBuffer = Buffer.from(actualBase64Image, 'base64')
+        // Only save if autoSaveBaseline is true (needed to copy to baseline)
+        if (autoSaveBaseline) {
+            await saveBase64Image(actualBase64Image, actualFilePath)
+        }
+    } else {
+        // Read from file as before
+        actualImageBuffer = readFileSync(actualFilePath)
+    }
+
     // 3a. Check if there is a baseline image, and determine if it needs to be auto saved or not
-    await checkBaselineImageExists({ actualFilePath, baselineFilePath, autoSaveBaseline })
+    await checkBaselineImageExists({
+        actualFilePath,
+        baselineFilePath,
+        autoSaveBaseline,
+        actualBase64Image: useBase64Image ? actualBase64Image : undefined,
+    })
 
     // 3b. At this point we shouldn't have a diff image, so check if there is a diff image and remove it if it exists
     await removeDiffImageIfExists(diffFilePath)
@@ -390,7 +434,7 @@ export async function executeImageCompare(
     }
 
     // 5. Execute the compare and retrieve the data
-    const data: CompareData = await compareImages(readFileSync(baselineFilePath), readFileSync(actualFilePath), compareOptions)
+    const data: CompareData = await compareImages(readFileSync(baselineFilePath), actualImageBuffer, compareOptions)
     const rawMisMatchPercentage = data.rawMisMatchPercentage
     const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage
@@ -404,6 +448,14 @@ export async function executeImageCompare(
         diffFilePath,
         rawMisMatchPercentage
     )
+
+    // 6a. Save actual image on failure if alwaysSaveActualImage is false
+    const saveAboveTolerance = imageCompareOptions.saveAboveTolerance ?? 0
+    const hasFailure = rawMisMatchPercentage > 0 || rawMisMatchPercentage > saveAboveTolerance
+    if (useBase64Image && hasFailure && actualBase64Image) {
+        // Save the actual image only when comparison fails
+        await saveBase64Image(actualBase64Image, actualFilePath)
+    }
 
     // 7. Create JSON report if requested
     await createJsonReportIfNeeded({
@@ -426,7 +478,8 @@ export async function executeImageCompare(
         await checkBaselineImageExists({
             actualFilePath,
             baselineFilePath,
-            updateBaseline: true
+            updateBaseline: true,
+            actualBase64Image: useBase64Image ? actualBase64Image : undefined,
         })
         finalReportMisMatchPercentage = 0
     }

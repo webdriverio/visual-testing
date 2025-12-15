@@ -43,7 +43,7 @@ export default async function checkAppScreen(
     }
 
     // 2. Take the actual screenshot and retrieve the needed data
-    const { devicePixelRatio, fileName } = await saveAppScreen({
+    const { devicePixelRatio, fileName, base64Image } = await saveAppScreen({
         browserInstance,
         folders,
         instanceData,
@@ -88,5 +88,6 @@ export default async function checkAppScreen(
         isNativeContext,
         options: executeCompareOptions,
         testContext,
+        actualBase64Image: base64Image,
     })
 }

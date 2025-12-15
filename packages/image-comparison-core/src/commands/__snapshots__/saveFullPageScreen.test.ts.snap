@@ -134,6 +134,7 @@ exports[`saveFullPageScreen > should handle missing dimension values with NaN fa
   "isNativeContext": false,
   "tag": "test-fullpage",
   "wicOptions": {
+    "alwaysSaveActualImage": true,
     "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
     "savePerInstance": true,
   },
@@ -316,6 +317,7 @@ exports[`saveFullPageScreen > should take full page screenshots and return resul
   {
     "addIOSBezelCorners": false,
     "addressBarShadowPadding": 6,
+    "alwaysSaveActualImage": true,
     "autoElementScroll": true,
     "autoSaveBaseline": false,
     "clearFolder": false,
@@ -555,6 +557,7 @@ exports[`saveFullPageScreen > should take full page screenshots and return resul
   "isNativeContext": false,
   "tag": "test-fullpage",
   "wicOptions": {
+    "alwaysSaveActualImage": true,
     "formatImageName": "{tag}-{logName}-{width}x{height}-dpr-{dpr}",
     "savePerInstance": true,
   },

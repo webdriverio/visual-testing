@@ -79,6 +79,7 @@ describe('afterScreenshot', () => {
         isLandscape: false,
         isNativeContext: false,
         platformName: '',
+        alwaysSaveActualImage: true,
         ...overrides,
     })
 
@@ -98,6 +99,19 @@ describe('afterScreenshot', () => {
         expect(vi.mocked(formatFileName)).toHaveBeenCalledWith(options.fileName)
         expect(vi.mocked(saveBase64Image)).toHaveBeenCalledWith(options.base64Image, join(mockPath, mockFileName))
 
+        expect(result).toMatchSnapshot()
+    })
+
+    it('should return base64 when alwaysSaveActualImage is false', async () => {
+        const mockBrowserInstance = createMockBrowserInstance()
+        const options = createBaseOptions({
+            alwaysSaveActualImage: false,
+        })
+
+        const result = await afterScreenshot(mockBrowserInstance, options)
+
+        expect(vi.mocked(saveBase64Image)).not.toHaveBeenCalled()
+        expect(result.base64Image).toBe(options.base64Image)
         expect(result).toMatchSnapshot()
     })
 

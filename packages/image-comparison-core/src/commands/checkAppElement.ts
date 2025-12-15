@@ -25,7 +25,7 @@ export default async function checkAppElement(
     const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkElementOptions.wic })
 
     // 2. Save the element and return the data
-    const { devicePixelRatio, fileName } = await saveAppElement({
+    const { devicePixelRatio, fileName, base64Image } = await saveAppElement({
         browserInstance,
         element: element as WicElement,
         folders,
@@ -58,5 +58,6 @@ export default async function checkAppElement(
         testContext,
         isViewPortScreenshot: false,
         isNativeContext,
+        actualBase64Image: base64Image,
     })
 }
