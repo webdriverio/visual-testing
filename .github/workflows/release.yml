@@ -1,6 +1,26 @@
 name: Release
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: "Select the release type"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+          - alpha
+      package_dir:
+        description: "Select the package directory (only for alpha releases)"
+        required: false
+        default: "packages/visual-service"
+        type: choice
+        options:
+          - packages/ocr-service
+          - packages/visual-reporter
+          - packages/visual-service
+          - packages/webdriver-image-comparison
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -10,7 +30,7 @@ env:
 
 jobs:
   release:
-    name: Release
+    name: ${{ github.event.inputs.release_type == 'alpha' && 'Alpha Release' || 'Production Release' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -21,6 +41,8 @@ jobs:
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
 
       - name: 🔧 Setup Git
         run: |
@@ -39,12 +61,64 @@ jobs:
       - name: 🧩 Install Dependencies
         run: pnpm pnpm.install.workaround
 
-      - name: 🏗️ Build
+      # ========================================
+      # Alpha Release Steps
+      # ========================================
+      - name: 🔄 Validate Package Directory
+        if: github.event.inputs.release_type == 'alpha'
+        run: |
+          if [[ ! "${{ github.event.inputs.package_dir }}" =~ ^packages/[a-zA-Z0-9_-]+$ ]]; then
+            echo "Invalid package directory: ${{ github.event.inputs.package_dir }}"
+            exit 1
+          fi
+          if [[ ! -d "${{ github.event.inputs.package_dir }}" ]]; then
+            echo "Package directory does not exist: ${{ github.event.inputs.package_dir }}"
+            exit 1
+          fi
+
+      - name: 🏗️ Build the Package (Alpha)
+        if: github.event.inputs.release_type == 'alpha'
+        run: |
+          cd ${{ github.event.inputs.package_dir }}
+          pnpm build
+
+      - name: 🔢 Bump Version for Alpha Release
+        if: github.event.inputs.release_type == 'alpha'
+        run: |
+          cd ${{ github.event.inputs.package_dir }}
+          npm version prerelease --preid=alpha
+
+      - name: 📦 Commit and Push Version Changes (Alpha)
+        if: github.event.inputs.release_type == 'alpha'
+        working-directory: ${{ github.event.inputs.package_dir }}
+        run: |
+          git add package.json
+          git commit -m "chore: bump version for alpha release [skip ci]"
+          git push origin HEAD
+
+      - name: 🚀 Publish to npm with Alpha Tag
+        if: github.event.inputs.release_type == 'alpha'
+        run: |
+          cd ${{ github.event.inputs.package_dir }}
+          npm publish --tag alpha
+
+      - name: 📦 Push Tags to GitHub (Alpha)
+        if: github.event.inputs.release_type == 'alpha'
+        run: |
+          cd ${{ github.event.inputs.package_dir }}
+          git push --follow-tags
+
+      # ========================================
+      # Production Release Steps
+      # ========================================
+      - name: 🏗️ Build (Production)
+        if: github.event.inputs.release_type == 'production'
         id: build-the-mono-repo
         run: |
           pnpm build
 
       - name: 📣 Create Release Pull Request or Publish to npm
+        if: github.event.inputs.release_type == 'production'
         id: changesets
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         with:
