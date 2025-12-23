@@ -19,7 +19,7 @@ jobs:
       # Fetch PR metadata
       - name: Fetch PR metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v2.0.0
+        uses: dependabot/fetch-metadata@08eff52bf64351f401fb50d4972fa95b9f2c2d1b # v2.4.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -65,7 +65,7 @@ jobs:
       # (Some repos may wish to limit by version range (major/minor/patch), or scope (dep vs dev-dep), too.)
       - name: Wait for PR CI
         if: contains(steps.metadata.outputs.package-ecosystem, 'npm') && env.MAJOR_BUMP == 'false'
-        uses: lewagon/wait-on-check-action@v1.3.3
+        uses: lewagon/wait-on-check-action@3603e826ee561ea102b58accb5ea55a1a7482343 # v1.4.1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}

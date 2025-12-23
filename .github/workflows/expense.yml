@@ -41,7 +41,7 @@ jobs:
   authorize:
     runs-on: ubuntu-latest
     steps:
-      - uses: octokit/request-action@v2.1.9
+      - uses: octokit/request-action@dad4362715b7fb2ddedf9772c8670824af564f0d # v2.4.0
         with:
           route: GET /orgs/:organisation/teams/:team/memberships/${{ github.actor }}
           team: technical-steering-committee
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Expense Flow
-        uses: webdriverio/expense-action@v1
+        uses: webdriverio/expense-action@1612787adc5a33202b53c80d643258fe741bcb74 # v1.3.0
         with:
           prNumber: ${{ github.event.inputs.prNumber }}
           amount: ${{ github.event.inputs.amount }}
