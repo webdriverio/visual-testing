@@ -57,6 +57,7 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: pnpm
+          registry-url: "https://registry.npmjs.org"
 
       - name: 🧩 Install Dependencies
         run: pnpm pnpm.install.workaround
