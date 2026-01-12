@@ -52,7 +52,7 @@
     "watch": "pnpm run -r --parallel watch"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.7",
+    "@changesets/cli": "^2.29.8",
     "@tsconfig/node20": "^20.1.8",
     "@types/eslint": "^9.6.1",
     "@types/inquirer": "^9.0.9",
