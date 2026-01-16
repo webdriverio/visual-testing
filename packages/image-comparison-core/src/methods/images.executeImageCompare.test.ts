@@ -99,7 +99,7 @@ vi.mock('./images.js', async () => {
     }
 })
 
-import { executeImageCompare } from './images.js'
+import { executeImageCompare, checkBaselineImageExists } from './images.js'
 import * as images from './images.js'
 
 describe('executeImageCompare', () => {
@@ -1090,5 +1090,47 @@ describe('executeImageCompare', () => {
 
         expect(images.saveBase64Image).not.toHaveBeenCalled()
         expect(fsPromises.writeFile).not.toHaveBeenCalledWith('/mock/actual/test.png', expect.anything())
+    })
+
+    it('should not save actual image when baseline does not exist, alwaysSaveActualImage is false, and autoSaveBaseline is false', async () => {
+        // This test covers issue #1098: When both flags are false, we respect the user's choice
+        // and provide a helpful error message suggesting to adjust the arguments if needed
+        const base64Image = Buffer.from('base64-image').toString('base64')
+        const optionsWithoutAutoSave = {
+            ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: false,
+                autoSaveBaseline: false,
+            }
+        }
+
+        vi.mocked(fsPromises.access).mockImplementation(async (path: any) => {
+            if (path === '/mock/baseline/test.png' || path === '/mock/actual/test.png') {
+                throw new Error('File not found')
+            }
+            return undefined
+        })
+
+        vi.mocked(images.checkBaselineImageExists).mockImplementation(checkBaselineImageExists)
+
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0,
+            misMatchPercentage: 0,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
+            analysisTime: 10,
+            diffPixels: []
+        })
+
+        await expect(executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithoutAutoSave,
+            testContext: mockTestContext,
+            actualBase64Image: base64Image,
+        })).rejects.toThrow(/If you need the actual image to create a baseline, please set alwaysSaveActualImage to true/)
+
+        expect(images.saveBase64Image).not.toHaveBeenCalled()
     })
 })

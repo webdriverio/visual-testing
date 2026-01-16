@@ -107,12 +107,12 @@ export async function checkBaselineImageExists({
             const actualFileExists = await checkIfImageExists(actualFilePath)
             const filePathMessage = actualFileExists
                 ? `The image can be found here:\n${actualFilePath}`
-                : 'The actual image was not saved to disk (alwaysSaveActualImage is false).'
+                : 'The actual image was not saved to disk (alwaysSaveActualImage is false).\nIf you need the actual image to create a baseline, please set alwaysSaveActualImage to true.'
             throw new Error(
                 `
 #####################################################################################
- Baseline image not found, save the actual image manually to the baseline.
- ${filePathMessage}
+Baseline image not found, save the actual image manually to the baseline.
+${filePathMessage}
 #####################################################################################`,
             )
         }
