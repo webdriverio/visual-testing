@@ -1,5 +1,19 @@
 # @wdio/ocr-service
 
+## 2.2.8
+
+### Patch Changes
+
+- e4e5b5c: # 🐛 Bugfixes
+
+  ## #1085 autoSaveBaseline collides with the new alwaysSaveActualImage flag
+
+  When `autoSaveBaseline` is `true` and `alwaysSaveActualImage` is `false`, actual images were still saved. This patch should fix that
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 2.2.7
 
 ### Patch Changes
@@ -8,7 +22,7 @@
 
   ## Committers: 1
 
-    -   P-Courteille ([@P-Courteille](https://github.com/P-Courteille))
+  - P-Courteille ([@P-Courteille](https://github.com/P-Courteille))
 
 ## 2.2.6
 

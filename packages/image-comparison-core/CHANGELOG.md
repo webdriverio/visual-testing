@@ -1,5 +1,29 @@
 # @wdio/image-comparison-core
 
+## 1.1.1
+
+### Patch Changes
+
+- 340fbe6: # 🐛 Bugfixes
+
+  ## #1098 Improve error message when baseline is missing and both flags are false
+
+  When `autoSaveBaseline = false` and `alwaysSaveActualImage = false` and a baseline image doesn't exist, the error message now provides clear guidance suggesting users set `alwaysSaveActualImage` to `true` if they need the actual image to create a baseline manually.
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
+- e4e5b5c: # 🐛 Bugfixes
+
+  ## #1085 autoSaveBaseline collides with the new alwaysSaveActualImage flag
+
+  When `autoSaveBaseline` is `true` and `alwaysSaveActualImage` is `false`, actual images were still saved. This patch should fix that
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 1.1.0
 
 ### Minor Changes
