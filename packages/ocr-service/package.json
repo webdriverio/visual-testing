@@ -28,7 +28,7 @@
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "@wdio/globals": "^9.17.0",
+    "@wdio/globals": "^9.23.0",
     "@wdio/logger": "^9.18.0",
     "@wdio/types": "^9.20.0",
     "fuse.js": "^7.1.0",

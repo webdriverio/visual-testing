@@ -384,8 +384,8 @@ export async function executeImageCompare(
     if (useBase64Image) {
         // Convert base64 to buffer for comparison
         actualImageBuffer = Buffer.from(actualBase64Image, 'base64')
-        // Only save if autoSaveBaseline is true (needed to copy to baseline)
-        if (autoSaveBaseline) {
+        // Only save actual image if baseline doesn't exist and autoSaveBaseline is true
+        if (autoSaveBaseline && !(await checkIfImageExists(baselineFilePath))) {
             await saveBase64Image(actualBase64Image, actualFilePath)
         }
     } else {
