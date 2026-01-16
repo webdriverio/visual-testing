@@ -14,12 +14,12 @@ const asymmetricMatcher =
         ? Symbol.for('jest.asymmetricMatcher')
         : 0x13_57_a5
 
-function isAsymmetricMatcher (expected: unknown): expected is ExpectWebdriverIO.PartialMatcher {
+function isAsymmetricMatcher (expected: unknown): expected is ExpectWebdriverIO.PartialMatcher<number> {
     return Boolean(expected && typeof expected === 'object' && '$$typeof' in expected && expected.$$typeof === asymmetricMatcher && 'asymmetricMatch' in expected)
 }
 function evaluateResult(
     result: ImageCompareResult,
-    expected: number | ExpectWebdriverIO.PartialMatcher,
+    expected: number | ExpectWebdriverIO.PartialMatcher<number>,
     instanceName: string
 ) {
     if (isAsymmetricMatcher(expected)) {
@@ -58,7 +58,7 @@ function isMultiremoteResult(
     return typeof result === 'object' && Object.values(result)[0]?.misMatchPercentage !== undefined
 }
 
-function compareResult (result: ImageCompareResult, expected: number | ExpectWebdriverIO.PartialMatcher) {
+function compareResult (result: ImageCompareResult, expected: number | ExpectWebdriverIO.PartialMatcher<number>) {
     const isMultiremote = isMultiremoteResult(result)
     const results = isMultiremote
         ? Object.entries(result as unknown as Record<string, ImageCompareResult>).map(([instanceName, instanceResult]) => ({
@@ -86,7 +86,7 @@ function compareResult (result: ImageCompareResult, expected: number | ExpectWeb
 
 function parseMatcherParams (
     tag: string,
-    expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+    expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
     options?: WdioCheckFullPageMethodOptions
 ) {
     /**
@@ -125,7 +125,7 @@ function parseMatcherParams (
 export async function toMatchScreenSnapshot (
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
-    expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher,
+    expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher<number>,
     optionsOrUndefined?: WdioCheckScreenMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
@@ -136,7 +136,7 @@ export async function toMatchScreenSnapshot (
 export async function toMatchFullPageSnapshot (
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
-    expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher,
+    expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher<number>,
     optionsOrUndefined?: WdioCheckFullPageMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
@@ -147,7 +147,7 @@ export async function toMatchFullPageSnapshot (
 export async function toMatchElementSnapshot (
     element: WebdriverIO.Element,
     tag: string,
-    expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher,
+    expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher<number>,
     optionsOrUndefined?: WdioCheckElementMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
@@ -159,7 +159,7 @@ export async function toMatchElementSnapshot (
 export async function toMatchTabbablePageSnapshot (
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
-    expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher,
+    expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher<number>,
     optionsOrUndefined?: WdioCheckFullPageMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)

@@ -112,13 +112,13 @@ declare global {
              */
             toMatchScreenSnapshot(
                 tag: string,
-                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
                 options?: WdioCheckScreenMethodOptions
-            ): R
+            ): Promise<R>
             toMatchScreenSnapshot(
                 tag: string,
                 options?: WdioCheckScreenMethodOptions
-            ): R
+            ): Promise<R>
             /**
              * Checks that if the full page screenshot matches with snapshot of baseline.
              * @param tag snapshot name
@@ -127,13 +127,13 @@ declare global {
              */
             toMatchFullPageSnapshot(
                 tag: string,
-                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
                 options?: WdioCheckFullPageMethodOptions
-            ): R
+            ): Promise<R>
             toMatchFullPageSnapshot(
                 tag: string,
                 options?: WdioCheckFullPageMethodOptions
-            ): R
+            ): Promise<R>
             /**
              * Checks that if given element matches with snapshot of baseline.
              * @param tag snapshot name
@@ -142,13 +142,13 @@ declare global {
              */
             toMatchElementSnapshot(
                 tag: string,
-                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
                 options?: WdioCheckElementMethodOptions
-            ): R
+            ): Promise<R>
             toMatchElementSnapshot(
                 tag: string,
                 options?: WdioCheckElementMethodOptions
-            ): R
+            ): Promise<R>
             /**
              * Checks that if the full page screenshot including tab marks matches with snapshot of baseline.
              * @param tag snapshot name
@@ -157,17 +157,25 @@ declare global {
              */
             toMatchTabbablePageSnapshot(
                 tag: string,
-                expectedResult?: number | ExpectWebdriverIO.PartialMatcher,
+                expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
                 options?: WdioCheckFullPageMethodOptions
-            ): R
+            ): Promise<R>
             toMatchTabbablePageSnapshot(
                 tag: string,
                 options?: WdioCheckFullPageMethodOptions
-            ): R
+            ): Promise<R>
         }
     }
 }
-export type { VisualServiceOptions }
+export type {
+    VisualServiceOptions,
+    WdioCheckElementMethodOptions,
+    WdioCheckScreenMethodOptions,
+    WdioCheckFullPageMethodOptions,
+    WdioSaveElementMethodOptions,
+    WdioSaveScreenMethodOptions,
+    WdioSaveFullPageMethodOptions
+}
 
 export default WdioImageComparisonService
 export const launcher = VisualLauncher
