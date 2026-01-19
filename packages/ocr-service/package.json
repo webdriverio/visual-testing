@@ -35,7 +35,7 @@
     "@inquirer/prompts": "7.10.1",
     "jimp": "^1.6.0",
     "node-tesseract-ocr": "^2.2.1",
-    "tesseract.js": "^5.1.1",
+    "tesseract.js": "^7.0.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
