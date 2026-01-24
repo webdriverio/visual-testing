@@ -722,6 +722,78 @@ describe('executeImageCompare', () => {
         expect(fsPromises.writeFile).toHaveBeenCalledWith('/mock/actual/test.png', Buffer.from(base64Image, 'base64'))
     })
 
+    it('should not save base64 actual when diff is below saveAboveTolerance', async () => {
+        const base64Image = Buffer.from('base64-image').toString('base64')
+        const optionsWithTolerance = {
+            ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: false,
+            },
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    saveAboveTolerance: 0.1,
+                },
+            },
+        }
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0.05,
+            misMatchPercentage: 0.05,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
+            analysisTime: 10,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithTolerance,
+            testContext: mockTestContext,
+            actualBase64Image: base64Image,
+        })
+
+        expect(fsPromises.writeFile).not.toHaveBeenCalled()
+    })
+
+    it('should save base64 actual when diff exceeds saveAboveTolerance', async () => {
+        const base64Image = Buffer.from('base64-image').toString('base64')
+        const optionsWithTolerance = {
+            ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: false,
+            },
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    saveAboveTolerance: 0.1,
+                },
+            },
+        }
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0.2,
+            misMatchPercentage: 0.2,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
+            analysisTime: 10,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithTolerance,
+            testContext: mockTestContext,
+            actualBase64Image: base64Image,
+        })
+
+        expect(fsPromises.writeFile).toHaveBeenCalledWith('/mock/actual/test.png', Buffer.from(base64Image, 'base64'))
+    })
+
     it('should update baseline using base64 when visual baseline is updated', async () => {
         const base64Image = Buffer.from('base64-image').toString('base64')
         vi.mocked(utils.updateVisualBaseline).mockReturnValueOnce(true)

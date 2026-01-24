@@ -451,7 +451,7 @@ export async function executeImageCompare(
 
     // 6a. Save actual image on failure if alwaysSaveActualImage is false
     const saveAboveTolerance = imageCompareOptions.saveAboveTolerance ?? 0
-    const hasFailure = rawMisMatchPercentage > 0 || rawMisMatchPercentage > saveAboveTolerance
+    const hasFailure = rawMisMatchPercentage > saveAboveTolerance
     if (useBase64Image && hasFailure && actualBase64Image) {
         // Save the actual image only when comparison fails
         await saveBase64Image(actualBase64Image, actualFilePath)
