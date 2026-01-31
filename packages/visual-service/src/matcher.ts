@@ -119,6 +119,25 @@ function parseMatcherParams (
      */
     options.returnAllCompareData = true
 
+    /**
+     * Pass the expected threshold to the core as `saveAboveTolerance` so it knows
+     * when to save actual images (only when mismatch exceeds the threshold).
+     * This ensures that when `alwaysSaveActualImage: false`, images are not saved
+     * if the comparison passes within the user's acceptable threshold.
+     * Only set if user hasn't explicitly set saveAboveTolerance.
+     * For numeric thresholds, use that value; otherwise default to 0 (same as comparison default).
+     * @see https://github.com/webdriverio/visual-testing/issues/1111
+     */
+    if (options.saveAboveTolerance === undefined) {
+        // Only set saveAboveTolerance for numeric thresholds (including undefined which defaults to 0)
+        // Asymmetric matchers can't be converted to a numeric tolerance
+        if (typeof expectedResult === 'number') {
+            options.saveAboveTolerance = expectedResult
+        } else if (expectedResult === undefined) {
+            options.saveAboveTolerance = DEFAULT_EXPECTED_RESULT
+        }
+    }
+
     return { expectedResult, options }
 }
 

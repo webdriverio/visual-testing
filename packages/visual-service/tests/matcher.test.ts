@@ -145,4 +145,72 @@ describe('custom visual matcher', () => {
         expect(results.pass).toBe(false)
         expect(results.message()).toMatchSnapshot()
     })
+
+    describe('saveAboveTolerance threshold passthrough (#1111)', () => {
+        it('should pass numeric expectedResult as saveAboveTolerance to checkScreen', async () => {
+            await toMatchScreenSnapshot(browser, 'foo', 0.9, {})
+            expect(browser.checkScreen).toHaveBeenCalledWith('foo', {
+                returnAllCompareData: true,
+                saveAboveTolerance: 0.9
+            })
+        })
+
+        it('should pass numeric expectedResult as saveAboveTolerance to checkFullPageScreen', async () => {
+            await toMatchFullPageSnapshot(browser, 'foo', 0.5, {})
+            expect(browser.checkFullPageScreen).toHaveBeenCalledWith('foo', {
+                returnAllCompareData: true,
+                saveAboveTolerance: 0.5
+            })
+        })
+
+        it('should pass numeric expectedResult as saveAboveTolerance to checkElement', async () => {
+            await toMatchElementSnapshot(browser as any as WebdriverIO.Element, 'foo', 1.5, {})
+            expect(browser.checkElement).toHaveBeenCalledWith(browser, 'foo', {
+                returnAllCompareData: true,
+                saveAboveTolerance: 1.5
+            })
+        })
+
+        it('should pass numeric expectedResult as saveAboveTolerance to checkTabbablePage', async () => {
+            await toMatchTabbablePageSnapshot(browser, 'foo', 2.0, {})
+            expect(browser.checkTabbablePage).toHaveBeenCalledWith('foo', {
+                returnAllCompareData: true,
+                saveAboveTolerance: 2.0
+            })
+        })
+
+        it('should use default saveAboveTolerance of 0 when no threshold is provided', async () => {
+            await toMatchScreenSnapshot(browser, 'foo')
+            expect(browser.checkScreen).toHaveBeenCalledWith('foo', {
+                returnAllCompareData: true,
+                saveAboveTolerance: 0
+            })
+        })
+
+        it('should not override user-provided saveAboveTolerance', async () => {
+            await toMatchScreenSnapshot(browser, 'foo', 0.9, { saveAboveTolerance: 0.1 })
+            expect(browser.checkScreen).toHaveBeenCalledWith('foo', {
+                returnAllCompareData: true,
+                saveAboveTolerance: 0.1  // User's explicit value is preserved
+            })
+        })
+
+        it('should not set saveAboveTolerance for asymmetric matchers', async () => {
+            await toMatchScreenSnapshot(browser, 'foo', expect.any(Number))
+            expect(browser.checkScreen).toHaveBeenCalledWith('foo', {
+                returnAllCompareData: true
+                // No saveAboveTolerance - can't convert asymmetric matcher to number
+            })
+        })
+
+        it('should set saveAboveTolerance to 0 when options object is passed without threshold', async () => {
+            // When only options are passed (no expectedResult), threshold defaults to 0
+            await toMatchScreenSnapshot(browser, 'foo', { hideScrollBars: true })
+            expect(browser.checkScreen).toHaveBeenCalledWith('foo', {
+                hideScrollBars: true,
+                returnAllCompareData: true,
+                saveAboveTolerance: 0
+            })
+        })
+    })
 })
