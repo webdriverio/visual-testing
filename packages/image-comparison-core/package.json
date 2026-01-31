@@ -39,7 +39,7 @@
     "@wdio/types": "^9.20.0"
   },
   "devDependencies": {
-    "webdriverio": "^9.23.0"
+    "webdriverio": "^9.23.2"
   },
   "publishConfig": {
     "access": "public"
