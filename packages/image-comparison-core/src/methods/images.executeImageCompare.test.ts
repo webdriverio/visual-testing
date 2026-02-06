@@ -693,14 +693,60 @@ describe('executeImageCompare', () => {
         expect(fsPromises.writeFile).toHaveBeenCalledWith('/mock/actual/test.png', Buffer.from(base64Image, 'base64'))
     })
 
-    it('should save base64 actual on diff when not always saving', async () => {
+    it('should NOT save base64 actual on diff when alwaysSaveActualImage is false and saveAboveTolerance is not set (#1115)', async () => {
+        // When alwaysSaveActualImage: false and saveAboveTolerance is not explicitly set,
+        // actual images should never be saved - respecting the literal meaning of the option
         const base64Image = Buffer.from('base64-image').toString('base64')
         const optionsWithDiff = {
             ...mockOptions,
             folderOptions: {
                 ...mockOptions.folderOptions,
                 alwaysSaveActualImage: false,
-            }
+            },
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    saveAboveTolerance: undefined,
+                },
+            },
+        }
+        vi.mocked(compareImages.default).mockResolvedValue({
+            rawMisMatchPercentage: 0.5,
+            misMatchPercentage: 0.5,
+            getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
+            diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
+            analysisTime: 10,
+            diffPixels: []
+        })
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithDiff,
+            testContext: mockTestContext,
+            actualBase64Image: base64Image,
+        })
+
+        expect(fsPromises.writeFile).not.toHaveBeenCalled()
+    })
+
+    it('should save base64 actual on diff when saveAboveTolerance is explicitly set to 0', async () => {
+        // When saveAboveTolerance is explicitly set (even to 0), save actual images when diff exceeds it
+        const base64Image = Buffer.from('base64-image').toString('base64')
+        const optionsWithDiff = {
+            ...mockOptions,
+            folderOptions: {
+                ...mockOptions.folderOptions,
+                alwaysSaveActualImage: false,
+            },
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    saveAboveTolerance: 0,
+                },
+            },
         }
         vi.mocked(compareImages.default).mockResolvedValue({
             rawMisMatchPercentage: 0.5,

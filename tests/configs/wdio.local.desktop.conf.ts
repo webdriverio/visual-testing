@@ -72,7 +72,7 @@ export const config: WebdriverIO.Config = {
                 createJsonReportFiles: true,
                 clearRuntimeFolder: true,
                 enableLayoutTesting: true,
-                alwaysSaveActualImage: false,
+                alwaysSaveActualImage: process.env.SAVE_ACTUAL === 'true',
             },
         ]
     ],

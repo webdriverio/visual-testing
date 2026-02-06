@@ -97,7 +97,6 @@ exports[`options > defaultOptions > should return the default options when no op
     "ignoreNothing": false,
     "rawMisMatchPercentage": false,
     "returnAllCompareData": false,
-    "saveAboveTolerance": 0,
     "scaleImagesToSameSize": false,
   },
   "disableBlinkingCursor": false,

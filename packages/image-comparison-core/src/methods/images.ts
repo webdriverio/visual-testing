@@ -450,10 +450,15 @@ export async function executeImageCompare(
     )
 
     // 6a. Save actual image on failure if alwaysSaveActualImage is false
-    const saveAboveTolerance = imageCompareOptions.saveAboveTolerance ?? 0
-    const hasFailure = rawMisMatchPercentage > saveAboveTolerance
-    if (useBase64Image && hasFailure && actualBase64Image) {
-        // Save the actual image only when comparison fails
+    // Only save when saveAboveTolerance is explicitly set (e.g., by matchers).
+    // When using checkScreen directly without saveAboveTolerance, respect
+    // alwaysSaveActualImage: false literally and don't save actual images.
+    // @see https://github.com/webdriverio/visual-testing/issues/1115
+    const saveAboveTolerance = imageCompareOptions.saveAboveTolerance
+    const shouldSaveOnFailure = saveAboveTolerance !== undefined
+    const hasFailure = rawMisMatchPercentage > (saveAboveTolerance ?? 0)
+    if (useBase64Image && shouldSaveOnFailure && hasFailure && actualBase64Image) {
+        // Save the actual image only when comparison fails and threshold was explicitly set
         await saveBase64Image(actualBase64Image, actualFilePath)
     }
 
