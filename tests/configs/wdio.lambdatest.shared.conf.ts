@@ -46,6 +46,7 @@ export const config: WebdriverIO.Config  = {
                 rawMisMatchPercentage: !!process.env.RAW_MISMATCH || false,
                 enableLayoutTesting: true,
                 ignoreAntialiasing: true,
+                alwaysSaveActualImage: false,
             } satisfies VisualServiceOptions,
         ],
     ],

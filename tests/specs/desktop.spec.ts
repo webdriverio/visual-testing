@@ -43,7 +43,7 @@ describe('@wdio/visual-service desktop', () => {
         })
     })
 
-    it.only(`should not store an actual image for '${browserName}' when the diff is below the threshold (#1115)`, async function () {
+    it(`should not store an actual image for '${browserName}' when the diff is below the threshold (#1115)`, async function () {
         const tag = 'noActualStoredOnDiff'
         const baselineFolder = join(process.cwd(), '.tmp/1115-baseline')
 
@@ -60,6 +60,7 @@ describe('@wdio/visual-service desktop', () => {
 
         expect(result.misMatchPercentage).toBeGreaterThan(0)
         expect(result.misMatchPercentage).toBeLessThanOrEqual(50)
+
         expect(fileExists(result.folders.actual)).toBe(false)
     })
 })
