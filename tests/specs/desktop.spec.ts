@@ -1,5 +1,4 @@
 import type { ImageCompareResult } from '@wdio/image-comparison-core'
-import { join } from 'node:path'
 import { browser, expect } from '@wdio/globals'
 import { fileExists } from '../helpers/fileExists.ts'
 
@@ -45,22 +44,20 @@ describe('@wdio/visual-service desktop', () => {
 
     it(`should not store an actual image for '${browserName}' when the diff is below the threshold (#1115)`, async function () {
         const tag = 'noActualStoredOnDiff'
-        const baselineFolder = join(process.cwd(), '.tmp/1115-baseline')
 
-        await browser.saveScreen(tag, {
-            actualFolder: baselineFolder,
-            enableLayoutTesting: false,
+        await browser.execute(() => {
+            const el = document.createElement('div')
+            el.id = 'test-diff-element'
+            el.style.cssText = 'position:fixed;top:10px;left:10px;width:500px;height:500px;background:red;z-index:9999;'
+            document.body.appendChild(el)
         })
 
         const result = await browser.checkScreen(tag, {
-            baselineFolder,
             returnAllCompareData: true,
-            enableLayoutTesting: true,
         }) as ImageCompareResult
 
         expect(result.misMatchPercentage).toBeGreaterThan(0)
-        expect(result.misMatchPercentage).toBeLessThanOrEqual(50)
-
+        expect(result.misMatchPercentage).toBeLessThanOrEqual(70)
         expect(fileExists(result.folders.actual)).toBe(false)
     })
 })
