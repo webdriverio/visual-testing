@@ -1,4 +1,6 @@
+import type { ImageCompareResult } from '@wdio/image-comparison-core'
 import { browser, expect } from '@wdio/globals'
+import { fileExists } from '../helpers/fileExists.ts'
 
 describe('@wdio/visual-service desktop', () => {
     // @TODO
@@ -38,5 +40,24 @@ describe('@wdio/visual-service desktop', () => {
                 await $('nav.navbar'),
             ],
         })
+    })
+
+    it(`should not store an actual image for '${browserName}' when the diff is below the threshold (#1115)`, async function () {
+        const tag = 'noActualStoredOnDiff'
+
+        await browser.execute(() => {
+            const el = document.createElement('div')
+            el.id = 'test-diff-element'
+            el.style.cssText = 'position:fixed;top:10px;left:10px;width:500px;height:500px;background:red;z-index:9999;'
+            document.body.appendChild(el)
+        })
+
+        const result = await browser.checkScreen(tag, {
+            returnAllCompareData: true,
+        }) as ImageCompareResult
+
+        expect(result.misMatchPercentage).toBeGreaterThan(0)
+        expect(result.misMatchPercentage).toBeLessThanOrEqual(70)
+        expect(fileExists(result.folders.actual)).toBe(false)
     })
 })

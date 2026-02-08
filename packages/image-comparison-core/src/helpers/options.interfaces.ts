@@ -461,8 +461,10 @@ export interface CompareOptions {
 
     /**
      * Mismatch percentage threshold above which the image with differences will be saved.
+     * When undefined, actual images won't be saved (respects alwaysSaveActualImage: false).
+     * Matchers set this value internally based on the expected threshold.
      */
-    saveAboveTolerance: number;
+    saveAboveTolerance?: number;
 
     /**
      * Scale images to the same size before comparing them.

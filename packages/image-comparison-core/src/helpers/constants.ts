@@ -16,7 +16,6 @@ export const DEFAULT_COMPARE_OPTIONS = {
     ignoreNothing: false,
     rawMisMatchPercentage: false,
     returnAllCompareData: false,
-    saveAboveTolerance: 0,
     scaleImagesToSameSize: false,
 }
 export const DEFAULT_FORMAT_STRING = '{tag}-{browserName}-{width}x{height}-dpr-{dpr}'
