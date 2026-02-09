@@ -318,4 +318,23 @@ describe('saveFullPageScreen', () => {
             fileName: 'test-fullpage.png'
         })
     })
+
+    it('should always save actual image even when alwaysSaveActualImage is false in config', async () => {
+        const options = {
+            ...baseOptions,
+            saveFullPageOptions: {
+                ...baseOptions.saveFullPageOptions,
+                wic: {
+                    ...baseOptions.saveFullPageOptions.wic,
+                    alwaysSaveActualImage: false, // Set to false in config
+                }
+            }
+        }
+
+        await saveFullPageScreen(options)
+
+        expect(buildAfterScreenshotOptionsSpy).toHaveBeenCalled()
+        const buildAfterScreenshotOptionsCall = buildAfterScreenshotOptionsSpy.mock.calls[buildAfterScreenshotOptionsSpy.mock.calls.length - 1]
+        expect(buildAfterScreenshotOptionsCall[0].wicOptions).toHaveProperty('alwaysSaveActualImage', true)
+    })
 })
