@@ -81,7 +81,9 @@ export default async function saveWebElement(
         instanceData,
         enrichedInstanceData,
         beforeOptions,
-        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: saveElementOptions.wic.alwaysSaveActualImage }
+        // save* methods should always save files, regardless of alwaysSaveActualImage setting
+        // (alwaysSaveActualImage only applies to check* methods)
+        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: true }
     })
 
     return afterScreenshot(browserInstance, afterOptions)

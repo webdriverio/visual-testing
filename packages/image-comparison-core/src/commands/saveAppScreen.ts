@@ -52,7 +52,9 @@ export default async function saveAppScreen(
         tag,
         isNativeContext,
         instanceData,
-        wicOptions: saveScreenOptions.wic
+        // save* methods should always save files, regardless of alwaysSaveActualImage setting
+        // (alwaysSaveActualImage only applies to check* methods)
+        wicOptions: { ...saveScreenOptions.wic, alwaysSaveActualImage: true }
     })
 
     return afterScreenshot(browserInstance, afterOptions)

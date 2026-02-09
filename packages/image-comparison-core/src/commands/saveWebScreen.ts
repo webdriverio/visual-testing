@@ -76,7 +76,9 @@ export default async function saveWebScreen(
         instanceData,
         enrichedInstanceData,
         beforeOptions,
-        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: saveScreenOptions.wic.alwaysSaveActualImage }
+        // save* methods should always save files, regardless of alwaysSaveActualImage setting
+        // (alwaysSaveActualImage only applies to check* methods)
+        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: true }
     })
 
     return afterScreenshot(browserInstance, afterOptions)
