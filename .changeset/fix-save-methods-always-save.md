@@ -10,9 +10,15 @@ Previously, when `alwaysSaveActualImage: false` was set in the configuration, `s
 The `alwaysSaveActualImage` option is intended to control whether actual images are saved during `check*` methods (comparison operations), not `save*` methods. Since `save*` methods are explicitly designed to save screenshots, they should always save files regardless of this setting.
 
 This fix ensures:
-- `save*` methods always save files to disk, even when `alwaysSaveActualImage: false` is set
+- `save*` methods always save files to disk, even when `alwaysSaveActualImage: false` is set in the config
 - `alwaysSaveActualImage: false` continues to work correctly for `check*` methods (as intended for issue #1115)
 - The behavior is now consistent: `save*` = always save, `check*` = respect `alwaysSaveActualImage` setting
+
+**Implementation details:**
+- The visual service overrides `alwaysSaveActualImage: true` when calling `save*` methods directly from the browser API
+- `save*` methods respect whatever `alwaysSaveActualImage` value is passed to them (no special logic needed)
+- `check*` methods pass through the config value (which may be `false`), so `save*` methods respect it when called internally
+- This clean separation ensures `save*` methods work correctly when called directly while still respecting `alwaysSaveActualImage` for `check*` methods
 
 # Committers: 1
 

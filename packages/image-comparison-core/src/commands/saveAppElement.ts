@@ -41,9 +41,7 @@ export default async function saveAppElement(
         tag,
         isNativeContext,
         instanceData: instanceData,
-        // save* methods should always save files, regardless of alwaysSaveActualImage setting
-        // (alwaysSaveActualImage only applies to check* methods)
-        wicOptions: { ...saveElementOptions.wic, alwaysSaveActualImage: true }
+        wicOptions: saveElementOptions.wic
     })
 
     return afterScreenshot(browserInstance, afterOptions)
