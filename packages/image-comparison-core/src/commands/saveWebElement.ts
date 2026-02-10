@@ -24,7 +24,7 @@ export default async function saveWebElement(
     }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1. Set some variables
-    const { addressBarShadowPadding, autoElementScroll, formatImageName, savePerInstance } = saveElementOptions.wic
+    const { addressBarShadowPadding, autoElementScroll } = saveElementOptions.wic
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'enableLegacyScreenshotMethod')
     const resizeDimensions: ResizeDimensions | number = saveElementOptions.method.resizeDimensions || DEFAULT_RESIZE_DIMENSIONS
 
@@ -81,7 +81,7 @@ export default async function saveWebElement(
         instanceData,
         enrichedInstanceData,
         beforeOptions,
-        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: saveElementOptions.wic.alwaysSaveActualImage }
+        wicOptions: saveElementOptions.wic
     })
 
     return afterScreenshot(browserInstance, afterOptions)

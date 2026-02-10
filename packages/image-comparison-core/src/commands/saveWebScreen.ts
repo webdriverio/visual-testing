@@ -22,7 +22,7 @@ export default async function saveWebScreen(
     }: InternalSaveScreenMethodOptions
 ): Promise<ScreenshotOutput> {
     // 1. Set some variables
-    const { addIOSBezelCorners, formatImageName, savePerInstance } = saveScreenOptions.wic
+    const { addIOSBezelCorners } = saveScreenOptions.wic
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'enableLegacyScreenshotMethod')
 
     // 2.  Prepare the screenshot
@@ -76,7 +76,7 @@ export default async function saveWebScreen(
         instanceData,
         enrichedInstanceData,
         beforeOptions,
-        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: saveScreenOptions.wic.alwaysSaveActualImage }
+        wicOptions: saveScreenOptions.wic
     })
 
     return afterScreenshot(browserInstance, afterOptions)

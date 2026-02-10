@@ -28,7 +28,6 @@ export default async function saveFullPageScreen(
     }
 
     // 2. Set some variables
-    const { formatImageName, savePerInstance } = saveFullPageOptions.wic
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'enableLegacyScreenshotMethod')
     const fullPageScrollTimeout = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'fullPageScrollTimeout')
     const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
@@ -88,9 +87,8 @@ export default async function saveFullPageScreen(
         instanceData,
         enrichedInstanceData,
         beforeOptions,
-        wicOptions: { formatImageName, savePerInstance, alwaysSaveActualImage: saveFullPageOptions.wic.alwaysSaveActualImage }
+        wicOptions: saveFullPageOptions.wic
     })
 
     return afterScreenshot(browserInstance, afterOptions!)
 }
-

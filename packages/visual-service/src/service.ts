@@ -229,6 +229,12 @@ export default class WdioImageComparisonService extends BaseClass {
                         }
                         const isCurrentContextNative = self.contextManager.isNativeContext
 
+                        // save* methods should always save files, regardless of alwaysSaveActualImage config
+                        const isSaveCommand = commandName === 'saveElement'
+                        const wicOptions = isSaveCommand
+                            ? { ...self.defaultOptions, alwaysSaveActualImage: true }
+                            : self.defaultOptions
+
                         return [{
                             browserInstance,
                             element,
@@ -237,7 +243,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             isNativeContext: isCurrentContextNative,
                             tag,
                             [elementOptionsKey]: {
-                                wic: self.defaultOptions,
+                                wic: wicOptions,
                                 method: elementOptions,
                             },
                             testContext: enrichTestContext({
@@ -294,6 +300,12 @@ export default class WdioImageComparisonService extends BaseClass {
                         }
                         const isCurrentContextNative = self.contextManager.isNativeContext
 
+                        // save* methods should always save files, regardless of alwaysSaveActualImage config
+                        const isSaveCommand = commandName === 'saveScreen' || commandName === 'saveFullPageScreen' || commandName === 'saveTabbablePage'
+                        const wicOptions = isSaveCommand
+                            ? { ...self.defaultOptions, alwaysSaveActualImage: true }
+                            : self.defaultOptions
+
                         return [{
                             browserInstance,
                             folders: getFolders(pageOptions, self.folders, self.#getBaselineFolder()),
@@ -301,7 +313,7 @@ export default class WdioImageComparisonService extends BaseClass {
                             isNativeContext: isCurrentContextNative,
                             tag,
                             [pageOptionsKey]: {
-                                wic: self.defaultOptions,
+                                wic: wicOptions,
                                 method: pageOptions,
                             },
                             testContext: enrichTestContext({

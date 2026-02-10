@@ -21,7 +21,6 @@ exports[`BaseClass > initializes default options correctly 1`] = `
     "ignoreNothing": false,
     "rawMisMatchPercentage": false,
     "returnAllCompareData": false,
-    "saveAboveTolerance": 0,
     "scaleImagesToSameSize": false,
   },
   "disableBlinkingCursor": false,

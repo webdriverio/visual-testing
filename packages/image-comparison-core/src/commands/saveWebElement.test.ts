@@ -277,4 +277,23 @@ describe('saveWebElement', () => {
         expect(buildAfterScreenshotOptionsSpy.mock.calls[0][0]).toMatchSnapshot()
         expect(afterScreenshotSpy.mock.calls[0][1]).toMatchSnapshot()
     })
+
+    it('should pass through alwaysSaveActualImage value from options (service overrides for direct save* calls)', async () => {
+        const options = {
+            ...baseOptions,
+            saveElementOptions: {
+                ...baseOptions.saveElementOptions,
+                wic: {
+                    ...baseOptions.saveElementOptions.wic,
+                    alwaysSaveActualImage: false,
+                }
+            }
+        }
+
+        await saveWebElement(options)
+
+        expect(buildAfterScreenshotOptionsSpy).toHaveBeenCalled()
+        const buildAfterScreenshotOptionsCall = buildAfterScreenshotOptionsSpy.mock.calls[buildAfterScreenshotOptionsSpy.mock.calls.length - 1]
+        expect(buildAfterScreenshotOptionsCall[0].wicOptions).toHaveProperty('alwaysSaveActualImage', false)
+    })
 })
