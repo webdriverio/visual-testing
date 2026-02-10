@@ -319,14 +319,14 @@ describe('saveFullPageScreen', () => {
         })
     })
 
-    it('should always save actual image even when alwaysSaveActualImage is false in config', async () => {
+    it('should pass through alwaysSaveActualImage value from options (service overrides for direct save* calls)', async () => {
         const options = {
             ...baseOptions,
             saveFullPageOptions: {
                 ...baseOptions.saveFullPageOptions,
                 wic: {
                     ...baseOptions.saveFullPageOptions.wic,
-                    alwaysSaveActualImage: false, // Set to false in config
+                    alwaysSaveActualImage: false,
                 }
             }
         }
@@ -335,6 +335,6 @@ describe('saveFullPageScreen', () => {
 
         expect(buildAfterScreenshotOptionsSpy).toHaveBeenCalled()
         const buildAfterScreenshotOptionsCall = buildAfterScreenshotOptionsSpy.mock.calls[buildAfterScreenshotOptionsSpy.mock.calls.length - 1]
-        expect(buildAfterScreenshotOptionsCall[0].wicOptions).toHaveProperty('alwaysSaveActualImage', true)
+        expect(buildAfterScreenshotOptionsCall[0].wicOptions).toHaveProperty('alwaysSaveActualImage', false)
     })
 })

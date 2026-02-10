@@ -3,6 +3,7 @@ import logger from '@wdio/logger'
 import { expect as wdioExpect } from '@wdio/globals'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import VisualService from '../src/index.js'
+import { saveScreen } from '@wdio/image-comparison-core'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
@@ -17,6 +18,7 @@ vi.mock('@wdio/image-comparison-core', () => ({
     saveTabbablePage: vi.fn(),
     checkTabbablePage: vi.fn(),
     DEFAULT_TEST_CONTEXT: {},
+    FOLDERS: { ACTUAL: 'actual', DIFF: 'diff', TEMP_FULL_SCREEN: 'tempFullScreen', DEFAULT: { BASE: './__snapshots__/', SCREENSHOTS: '.tmp/' } },
     NOT_KNOWN: 'not_known',
     DEVICE_RECTANGLES: {
         bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -171,6 +173,31 @@ describe('@wdio/visual-service', () => {
             await service.before({}, [], browser)
 
             expect(log.warn).toMatchSnapshot()
+        })
+
+        it('should pass alwaysSaveActualImage: true to core for direct saveScreen calls when config is false', async () => {
+            vi.mocked(saveScreen).mockResolvedValue({} as any)
+            const service = new VisualService({ alwaysSaveActualImage: false }, {}, {} as unknown as WebdriverIO.Config)
+            // Mocked BaseClass does not set defaultOptions/folders; set them so the command can run
+            ;(service as any).defaultOptions = { alwaysSaveActualImage: false }
+            ;(service as any).folders = { baselineFolder: './__snapshots__/' }
+            const browser = {
+                isMultiremote: false,
+                addCommand: vi.fn((name, fn) => {
+                    (browser as any)[name] = fn
+                }),
+                capabilities: {},
+                requestedCapabilities: {},
+                on: vi.fn(),
+                execute: vi.fn().mockResolvedValue(1),
+            } as any as WebdriverIO.Browser
+
+            await service.before({}, [], browser)
+            await (browser as any).saveScreen('tag')
+
+            expect(saveScreen).toHaveBeenCalledTimes(1)
+            const [saveScreenOptions] = vi.mocked(saveScreen).mock.calls[0]
+            expect((saveScreenOptions as any).saveScreenOptions?.wic?.alwaysSaveActualImage).toBe(true)
         })
     })
 })

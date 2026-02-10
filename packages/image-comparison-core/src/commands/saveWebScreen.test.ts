@@ -249,13 +249,13 @@ describe('saveWebScreen', () => {
         expect(afterScreenshotSpy.mock.calls[0]).toMatchSnapshot()
     })
 
-    it('should always save actual image even when alwaysSaveActualImage is false in config', async () => {
+    it('should pass through alwaysSaveActualImage value from options (service overrides for direct save* calls)', async () => {
         const options = createTestOptions(baseOptions, {
             saveScreenOptions: {
                 ...baseOptions.saveScreenOptions,
                 wic: {
                     ...baseOptions.saveScreenOptions.wic,
-                    alwaysSaveActualImage: false, // Set to false in config
+                    alwaysSaveActualImage: false,
                 }
             }
         })
@@ -264,6 +264,6 @@ describe('saveWebScreen', () => {
 
         expect(afterScreenshotSpy).toHaveBeenCalled()
         const afterScreenshotCall = afterScreenshotSpy.mock.calls[afterScreenshotSpy.mock.calls.length - 1]
-        expect(afterScreenshotCall[1]).toHaveProperty('alwaysSaveActualImage', true)
+        expect(afterScreenshotCall[1]).toHaveProperty('alwaysSaveActualImage', false)
     })
 })
