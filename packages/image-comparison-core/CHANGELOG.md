@@ -1,5 +1,47 @@
 # @wdio/image-comparison-core
 
+## 1.1.3
+
+### Patch Changes
+
+- a3bc7a4: ## #1115 Respect `alwaysSaveActualImage: false` for `checkScreen` methods
+
+  When using visual matchers like `toMatchScreenSnapshot('tag', 0.9)` with `alwaysSaveActualImage: false`, the actual image was still being saved even when the comparison passed within the threshold.
+
+  The root cause was that the matcher's expected threshold was not being passed to the core comparison logic. The core used `saveAboveTolerance` (defaulting to 0) to decide whether to save images, while the matcher used the user-provided threshold to determine pass/fail - these were disconnected.
+
+  This fix ensures:
+
+  - When `alwaysSaveActualImage: false` and `saveAboveTolerance` is not explicitly set, actual images are never saved (respecting the literal meaning of the option)
+  - When `saveAboveTolerance` is explicitly set (like matchers do internally), actual images are saved only when the mismatch exceeds that threshold
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
+- a3bc7a4: ## Fix: `save*` methods now always save files regardless of `alwaysSaveActualImage` setting
+
+  Previously, when `alwaysSaveActualImage: false` was set in the configuration, `save*` methods (`saveScreen`, `saveElement`, `saveFullPageScreen`, `saveAppScreen`, `saveAppElement`) were not saving files to disk, causing test failures.
+
+  The `alwaysSaveActualImage` option is intended to control whether actual images are saved during `check*` methods (comparison operations), not `save*` methods. Since `save*` methods are explicitly designed to save screenshots, they should always save files regardless of this setting.
+
+  This fix ensures:
+
+  - `save*` methods always save files to disk, even when `alwaysSaveActualImage: false` is set in the config
+  - `alwaysSaveActualImage: false` continues to work correctly for `check*` methods (as intended for issue #1115)
+  - The behavior is now consistent: `save*` = always save, `check*` = respect `alwaysSaveActualImage` setting
+
+  **Implementation details:**
+
+  - The visual service overrides `alwaysSaveActualImage: true` when calling `save*` methods directly from the browser API
+  - `save*` methods respect whatever `alwaysSaveActualImage` value is passed to them (no special logic needed)
+  - `check*` methods pass through the config value (which may be `false`), so `save*` methods respect it when called internally
+  - This clean separation ensures `save*` methods work correctly when called directly while still respecting `alwaysSaveActualImage` for `check*` methods
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 1.1.2
 
 ### Patch Changes
