@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { existsSync } from 'node:fs'
+import { existsSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 vi.mock('node:fs', async () => {
@@ -33,12 +33,14 @@ import {
     getMethodOrWicOption,
     getMobileScreenSize,
     getMobileViewPortPosition,
+    getPath,
     getToolBarShadowPadding,
     hasResizeDimensions,
     isObject,
     isStorybook,
     loadBase64Html,
     logAllDeprecatedCompareOptions,
+    prepareComparisonFilePaths,
     updateVisualBaseline,
 } from './utils.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions, ExtractCommonCheckVariablesOptions } from './utils.interfaces.js'
@@ -144,6 +146,107 @@ describe('utils', () => {
 
             expect(getAndCreatePath(folder, options)).toEqual(folder)
             expect(existsSync(folder)).toMatchSnapshot()
+        })
+    })
+
+    describe('getPath', () => {
+        const folder = join(process.cwd(), '/.tmp/utils')
+
+        it('should return the folder path for a mobile device with savePerInstance', () => {
+            const options: GetAndCreatePathOptions = {
+                browserName: '',
+                deviceName: 'deviceName',
+                isMobile: true,
+                savePerInstance: true,
+            }
+            expect(getPath(folder, options)).toEqual(join(folder, options.deviceName))
+        })
+
+        it('should return the folder path for a desktop browser with savePerInstance', () => {
+            const options: GetAndCreatePathOptions = {
+                browserName: 'browser',
+                deviceName: '',
+                isMobile: false,
+                savePerInstance: true,
+            }
+            expect(getPath(folder, options)).toEqual(join(folder, `desktop_${options.browserName}`))
+        })
+
+        it('should return the base folder when savePerInstance is false', () => {
+            const options: GetAndCreatePathOptions = {
+                browserName: 'browser',
+                deviceName: '',
+                isMobile: false,
+                savePerInstance: false,
+            }
+            expect(getPath(folder, options)).toEqual(folder)
+        })
+
+        it('should not create any directories on disk', () => {
+            vi.mocked(mkdirSync).mockClear()
+            const options: GetAndCreatePathOptions = {
+                browserName: 'chrome',
+                deviceName: '',
+                isMobile: false,
+                savePerInstance: true,
+            }
+            getPath(folder, options)
+            expect(mkdirSync).not.toHaveBeenCalled()
+        })
+    })
+
+    describe('prepareComparisonFilePaths', () => {
+        beforeEach(() => {
+            vi.mocked(mkdirSync).mockClear()
+        })
+
+        it('should create actual and baseline folders but not the diff folder', () => {
+            const options = {
+                actualFolder: '/tmp/actual',
+                baselineFolder: '/tmp/baseline',
+                diffFolder: '/tmp/diff',
+                browserName: 'chrome',
+                deviceName: '',
+                isMobile: false,
+                savePerInstance: false,
+                fileName: 'test.png',
+            }
+
+            const result = prepareComparisonFilePaths(options)
+
+            expect(result.actualFolderPath).toEqual('/tmp/actual')
+            expect(result.baselineFolderPath).toEqual('/tmp/baseline')
+            expect(result.diffFolderPath).toEqual('/tmp/diff')
+            expect(result.actualFilePath).toEqual(join('/tmp/actual', 'test.png'))
+            expect(result.baselineFilePath).toEqual(join('/tmp/baseline', 'test.png'))
+            expect(result.diffFilePath).toEqual(join('/tmp/diff', 'test.png'))
+
+            const mkdirCalls = vi.mocked(mkdirSync).mock.calls.map(call => call[0])
+            expect(mkdirCalls).toContain('/tmp/actual')
+            expect(mkdirCalls).toContain('/tmp/baseline')
+            expect(mkdirCalls).not.toContain('/tmp/diff')
+        })
+
+        it('should include instance subfolder in paths when savePerInstance is true', () => {
+            const options = {
+                actualFolder: '/tmp/actual',
+                baselineFolder: '/tmp/baseline',
+                diffFolder: '/tmp/diff',
+                browserName: 'chrome',
+                deviceName: '',
+                isMobile: false,
+                savePerInstance: true,
+                fileName: 'test.png',
+            }
+
+            const result = prepareComparisonFilePaths(options)
+
+            expect(result.actualFolderPath).toEqual(join('/tmp/actual', 'desktop_chrome'))
+            expect(result.baselineFolderPath).toEqual(join('/tmp/baseline', 'desktop_chrome'))
+            expect(result.diffFolderPath).toEqual(join('/tmp/diff', 'desktop_chrome'))
+
+            const mkdirCalls = vi.mocked(mkdirSync).mock.calls.map(call => call[0])
+            expect(mkdirCalls).not.toContain(join('/tmp/diff', 'desktop_chrome'))
         })
     })
 
