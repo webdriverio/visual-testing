@@ -484,6 +484,190 @@ describe('utils', () => {
             })
             expect(await getInstanceData({ browserInstance: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext:true })).toMatchSnapshot()
         })
+
+        it('should return the deviceName from appium:options when using the nested capability format', async() => {
+            // @ts-ignore
+            const driver = createDriverMock({
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    // @ts-ignore
+                    deviceName: 'emulator-5554',
+                    platformVersion: '14.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                    pixelRatio: 3.5,
+                    statBarHeight: 144,
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    'appium:options': {
+                        automationName: 'UiAutomator2',
+                        deviceName: 'Pixel_6_API_34',
+                        platformVersion: '14.0',
+                        app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                    },
+                } as WebdriverIO.Capabilities,
+                isAndroid: true,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize: '100x200' }),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
+            })
+            const result = await getInstanceData({ browserInstance: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext: true })
+            expect(result.deviceName).toBe('pixel_6_api_34')
+        })
+
+        it('should fall back to appium:avd when appium:deviceName is not provided for Android', async() => {
+            // @ts-ignore
+            const driver = createDriverMock({
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    // @ts-ignore
+                    deviceName: 'emulator-5554',
+                    platformVersion: '14.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                    pixelRatio: 3.5,
+                    statBarHeight: 144,
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    'appium:avd': 'Pixel_6_API_34',
+                    'appium:platformVersion': '14.0',
+                    'appium:app': '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                } as WebdriverIO.Capabilities,
+                isAndroid: true,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize: '100x200' }),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
+            })
+            const result = await getInstanceData({ browserInstance: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext: true })
+            expect(result.deviceName).toBe('pixel_6_api_34')
+        })
+
+        it('should fall back to avd in appium:options when deviceName is not provided for Android', async() => {
+            // @ts-ignore
+            const driver = createDriverMock({
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    // @ts-ignore
+                    deviceName: 'emulator-5554',
+                    platformVersion: '14.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                    pixelRatio: 3.5,
+                    statBarHeight: 144,
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    'appium:options': {
+                        automationName: 'UiAutomator2',
+                        avd: 'Pixel_6_API_34',
+                        platformVersion: '14.0',
+                        app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                    },
+                } as WebdriverIO.Capabilities,
+                isAndroid: true,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize: '100x200' }),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
+            })
+            const result = await getInstanceData({ browserInstance: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext: true })
+            expect(result.deviceName).toBe('pixel_6_api_34')
+        })
+
+        it('should prefer deviceName over avd when both are in appium:options', async() => {
+            // @ts-ignore
+            const driver = createDriverMock({
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    // @ts-ignore
+                    deviceName: 'emulator-5554',
+                    platformVersion: '14.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                    pixelRatio: 3.5,
+                    statBarHeight: 144,
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    'appium:options': {
+                        automationName: 'UiAutomator2',
+                        deviceName: 'Pixel_6_API_34',
+                        avd: 'Some_Other_AVD_Name',
+                        platformVersion: '14.0',
+                        app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                    },
+                } as WebdriverIO.Capabilities,
+                isAndroid: true,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize: '100x200' }),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
+            })
+            const result = await getInstanceData({ browserInstance: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext: true })
+            expect(result.deviceName).toBe('pixel_6_api_34')
+        })
+
+        it('should read nativeWebScreenshot from appium:options', async() => {
+            // @ts-ignore
+            const driver = createDriverMock({
+                capabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.capabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    // @ts-ignore
+                    deviceName: 'emulator-5554',
+                    platformVersion: '14.0',
+                    app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                    pixelRatio: 3.5,
+                    statBarHeight: 144,
+                } as WebdriverIO.Capabilities,
+                requestedCapabilities: {
+                    ...DEFAULT_DESKTOP_BROWSER.requestedCapabilities,
+                    browserName: '',
+                    browserVersion: '',
+                    platformName: 'android',
+                    'appium:options': {
+                        automationName: 'UiAutomator2',
+                        deviceName: 'Pixel_6_API_34',
+                        platformVersion: '14.0',
+                        app: '/Users/WebdriverIO/visual-testing/apps/android.apk',
+                        nativeWebScreenshot: true,
+                    },
+                } as WebdriverIO.Capabilities,
+                isAndroid: true,
+                isMobile: true,
+                getWindowSize: vi.fn().mockResolvedValueOnce({ width: 100, height: 200 }),
+                execute: vi.fn().mockResolvedValueOnce({ realDisplaySize: '100x200' }),
+                getOrientation: vi.fn().mockResolvedValue('PORTRAIT')
+            })
+            const result = await getInstanceData({ browserInstance: driver, initialDeviceRectangles: DEVICE_RECTANGLES, isNativeContext: true })
+            expect(result.nativeWebScreenshot).toBe(true)
+        })
     })
 
     describe('getBrowserObject', () => {

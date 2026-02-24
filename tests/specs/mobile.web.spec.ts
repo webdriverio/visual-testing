@@ -9,19 +9,23 @@ describe('@wdio/visual-service mobile web', () => {
     const wdioIcsCommands = driver.requestedCapabilities['wdio-ics:options'].commands
     const deviceName = driver.requestedCapabilities['lt:options']?.deviceName ||
         driver.requestedCapabilities['bstack:options']?.deviceName ||
+        driver.requestedCapabilities['appium:options']?.deviceName ||
         driver.requestedCapabilities.deviceName
     const platformName = (
         driver.requestedCapabilities['lt:options']?.platformName ||
+        driver.requestedCapabilities['appium:options']?.platformName ||
         driver.requestedCapabilities.platformName
     ).toLowerCase() === 'android' ? 'Android' : 'iOS'
     const platformVersion =
         driver.requestedCapabilities['lt:options']?.platformVersion ||
         driver.requestedCapabilities['bstack:options']?.osVersion ||
+        driver.requestedCapabilities['appium:options']?.platformVersion ||
         driver.requestedCapabilities.platformVersion
     const orientation = (
         driver.requestedCapabilities['lt:options']?.deviceOrientation ||
         driver.requestedCapabilities['bstack:options']?.deviceOrientation ||
-        driver.requestedCapabilities.orientation
+        driver.requestedCapabilities['appium:options']?.orientation ||
+        driver.requestedCapabilities.orientation || 'PORTRAIT'
     ).toLowerCase()
 
     beforeEach(async () => {
