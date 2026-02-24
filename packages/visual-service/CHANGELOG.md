@@ -1,5 +1,31 @@
 # @wdio/visual-service
 
+## 9.1.6
+
+### Patch Changes
+
+- 0a19d78: Fix `clearRuntimeFolder` clearing the actual and diff folders after each spec/feature execution instead of once before all workers start. This caused only the last spec's visual data to be present in the output when running multiple specs.
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
+- ed0bea6: Fix `EISDIR` error when using `resolveSnapshotPath` with the visual service. The service now uses `dirname()` of the resolved path as the baseline folder, preventing it from creating a directory at a path that `expect-webdriverio`'s snapshot service expects to be a file. Fixes #984.
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
+- cbf1d22: Fix incomplete `wdio-ics:options` type augmentation on `WebdriverIO.Capabilities`. The global type declaration now uses the `WdioIcsOptions` interface directly, ensuring all supported properties (`logName`, `name`) are available to TypeScript users in both standalone and multiremote configurations. Fixes #732.
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
+- Updated dependencies [0a19d78]
+- Updated dependencies [ce74703]
+  - @wdio/image-comparison-core@1.1.4
+
 ## 9.1.5
 
 ### Patch Changes
