@@ -1,5 +1,4 @@
 import type { Capabilities } from '@wdio/types'
-import type { AppiumCapabilities } from 'node_modules/@wdio/types/build/Capabilities.js'
 import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from '@wdio/image-comparison-core'
 import type { Folders, InstanceData, TestContext } from '@wdio/image-comparison-core'
 import type {
@@ -152,6 +151,15 @@ export function getLtOptions(capabilities: WebdriverIO.Capabilities): any | unde
 }
 
 /**
+ * Get a requested Appium capability value by checking both the `appium:`-prefixed
+ * top-level format and the nested `appium:options` format.
+ */
+function getRequestedAppiumCapability(requestedCapabilities: WebdriverIO.Capabilities, capName: string): unknown {
+    return (requestedCapabilities as Record<string, unknown>)[`appium:${capName}`]
+        ?? (requestedCapabilities as WebdriverIO.Capabilities)['appium:options']?.[capName as keyof typeof requestedCapabilities['appium:options']]
+}
+
+/**
  * Get the device name
  */
 function getDeviceName(browserInstance: WebdriverIO.Browser): string {
@@ -179,7 +187,10 @@ function getDeviceName(browserInstance: WebdriverIO.Browser): string {
         deviceName = ltOptions[capName as keyof typeof ltOptions] as string
     }
 
-    const { 'appium:deviceName': requestedDeviceName } = requestedCapabilities as AppiumCapabilities
+    const requestedDeviceName = (
+        getRequestedAppiumCapability(requestedCapabilities, 'deviceName')
+        || getRequestedAppiumCapability(requestedCapabilities, 'avd')
+    ) as string | undefined
 
     return (deviceName !== NOT_KNOWN ? deviceName : requestedDeviceName || returnedDeviceName || NOT_KNOWN).toLowerCase()
 }
@@ -233,7 +244,7 @@ export async function getInstanceData({
     const ltOptions = getLtOptions(requestedCapabilities)
     // @TODO: Figure this one out in the future when we know more about the Appium capabilities from LT
     // 20241216: LT doesn't have the option to take a ChromeDriver screenshot, so if it's Android it's always native
-    const nativeWebScreenshot = isAndroid && ltOptions || !!((requestedCapabilities as Capabilities.AppiumAndroidCapabilities)['appium:nativeWebScreenshot'])
+    const nativeWebScreenshot = isAndroid && ltOptions || !!getRequestedAppiumCapability(requestedCapabilities, 'nativeWebScreenshot')
     const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? NOT_KNOWN : rawPlatformVersion.toLowerCase()
     const {
         devicePixelRatio: mobileDevicePixelRatio,
