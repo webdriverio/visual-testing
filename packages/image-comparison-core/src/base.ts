@@ -18,11 +18,6 @@ export default class BaseClass {
 
         // Setup folder structure
         this.folders = this._setupFolders(options)
-
-        // Clear runtime folders if requested
-        if (options.clearRuntimeFolder) {
-            this._clearRuntimeFolders()
-        }
     }
 
     /**
@@ -47,9 +42,9 @@ export default class BaseClass {
 
     /**
      * Clear the runtime folders (actual and diff)
-     * @private
+     * @protected
      */
-    private _clearRuntimeFolders(): void {
+    protected _clearRuntimeFolders(): void {
         log.info('\x1b[33m\n##############################\n!!CLEARING RUNTIME FOLDERS!!\n##############################\x1b[0m')
 
         try {

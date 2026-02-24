@@ -45,12 +45,9 @@ describe('BaseClass', () => {
         expect(instance.folders.actualFolder).toContain('functional/screenshots')
     })
 
-    it('clears runtime folders if clearRuntimeFolder is true', () => {
-        const options = {
-            clearRuntimeFolder: true,
-        }
-        new BaseClass(options)
-
-        expect(rmSync).toHaveBeenCalledTimes(2)
+    it('should not clear runtime folders in the constructor - clearing should only happen once in the launcher (issue #683)', () => {
+        vi.mocked(rmSync).mockClear()
+        new BaseClass({ clearRuntimeFolder: true })
+        expect(rmSync).not.toHaveBeenCalled()
     })
 })
