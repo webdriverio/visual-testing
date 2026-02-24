@@ -33,9 +33,9 @@ import type { BaseDimensions } from '../base.interfaces.js'
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:utils')
 
 /**
- * Get and create a folder
+ * Resolve the folder path without creating it on disk
  */
-export function getAndCreatePath(folder: string, options: GetAndCreatePathOptions): string {
+export function getPath(folder: string, options: GetAndCreatePathOptions): string {
     const {
         browserName = NOT_KNOWN,
         deviceName = NOT_KNOWN,
@@ -44,7 +44,15 @@ export function getAndCreatePath(folder: string, options: GetAndCreatePathOption
     } = options
     const instanceName = (isMobile ? deviceName : `${DESKTOP}_${browserName}`).replace(/ /g, '_')
     const subFolder = savePerInstance ? instanceName : ''
-    const folderName = join(folder, subFolder)
+
+    return join(folder, subFolder)
+}
+
+/**
+ * Get and create a folder
+ */
+export function getAndCreatePath(folder: string, options: GetAndCreatePathOptions): string {
+    const folderName = getPath(folder, options)
 
     mkdirSync(folderName, { recursive: true })
 
@@ -707,7 +715,7 @@ export function prepareComparisonFilePaths(options: PrepareComparisonFilePathsOp
     const createFolderOptions = { browserName, deviceName, isMobile, savePerInstance }
     const actualFolderPath = getAndCreatePath(actualFolder, createFolderOptions)
     const baselineFolderPath = getAndCreatePath(baselineFolder, createFolderOptions)
-    const diffFolderPath = getAndCreatePath(diffFolder, createFolderOptions)
+    const diffFolderPath = getPath(diffFolder, createFolderOptions)
     const actualFilePath = join(actualFolderPath, fileName)
     const baselineFilePath = join(baselineFolderPath, fileName)
     const diffFilePath = join(diffFolderPath, fileName)
