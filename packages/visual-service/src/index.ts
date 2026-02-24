@@ -5,6 +5,7 @@ import type {
     Output,
     Result,
     VisualServiceOptions,
+    WdioIcsOptions,
     WdioCheckFullPageMethodOptions,
     WdioSaveFullPageMethodOptions,
     WdioSaveElementMethodOptions,
@@ -94,9 +95,7 @@ declare global {
         interface MultiRemoteBrowser extends BaseBrowser {}
         interface Element {}
         interface Capabilities {
-            'wdio-ics:options'?:{
-                logName?: string;
-            }
+            'wdio-ics:options'?: WdioIcsOptions;
         }
     }
 
