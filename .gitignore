@@ -36,3 +36,6 @@ dist
 
 *.tgz
 bugreport*.zip
+
+# IDE
+.cursor/

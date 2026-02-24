@@ -130,7 +130,7 @@ export default class WdioImageComparisonService extends BaseClass {
          * We also check `this.#config` because for standalone usage of the service, the config is not available
          */
         if (this.#config && typeof this.#config.resolveSnapshotPath === 'function' && this.#currentFile && isDefaultBaselineFolder) {
-            return this.#config.resolveSnapshotPath(this.#currentFile, '.png')
+            return dirname(this.#config.resolveSnapshotPath(this.#currentFile, '.png'))
         }
 
         return baselineFolder
