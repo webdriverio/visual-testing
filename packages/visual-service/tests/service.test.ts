@@ -1,4 +1,4 @@
-import { join } from 'node:path'
+import { dirname, join, normalize } from 'node:path'
 import logger from '@wdio/logger'
 import { expect as wdioExpect } from '@wdio/globals'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -198,6 +198,42 @@ describe('@wdio/visual-service', () => {
             expect(saveScreen).toHaveBeenCalledTimes(1)
             const [saveScreenOptions] = vi.mocked(saveScreen).mock.calls[0]
             expect((saveScreenOptions as any).saveScreenOptions?.wic?.alwaysSaveActualImage).toBe(true)
+        })
+
+        it('should use dirname() of resolveSnapshotPath result as baselineFolder to avoid EISDIR conflicts', async () => {
+            vi.mocked(saveScreen).mockResolvedValue({} as any)
+            const resolveSnapshotPath = vi.fn().mockReturnValue('/custom/snapshots/specs/test.e2e.png')
+            const config = {
+                framework: 'mocha',
+                resolveSnapshotPath,
+            } as unknown as WebdriverIO.Config
+            const service = new VisualService({}, {}, config)
+            ;(service as any).defaultOptions = {}
+            ;(service as any).folders = { baselineFolder: normalize('./__snapshots__/') }
+            const browser = {
+                isMultiremote: false,
+                addCommand: vi.fn((name, fn) => {
+                    (browser as any)[name] = fn
+                }),
+                capabilities: {},
+                requestedCapabilities: {},
+                on: vi.fn(),
+                execute: vi.fn().mockResolvedValue(1),
+            } as any as WebdriverIO.Browser
+
+            await service.before({}, [], browser)
+            service.beforeTest({
+                file: '/project/specs/test.e2e.ts',
+                parent: 'suite',
+                title: 'test',
+            } as any)
+            await (browser as any).saveScreen('tag')
+
+            expect(resolveSnapshotPath).toHaveBeenCalledWith('/project/specs/test.e2e.ts', '.png')
+            const [saveScreenOptions] = vi.mocked(saveScreen).mock.calls[0]
+            expect((saveScreenOptions as any).folders.baselineFolder).toBe(
+                dirname('/custom/snapshots/specs/test.e2e.png')
+            )
         })
     })
 })
