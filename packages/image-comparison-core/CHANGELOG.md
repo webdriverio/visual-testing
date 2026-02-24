@@ -1,5 +1,21 @@
 # @wdio/image-comparison-core
 
+## 1.1.4
+
+### Patch Changes
+
+- 0a19d78: Fix `clearRuntimeFolder` clearing the actual and diff folders after each spec/feature execution instead of once before all workers start. This caused only the last spec's visual data to be present in the output when running multiple specs.
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
+- ce74703: Stop creating empty diff folders when no visual differences exist. The diff directory is now only created on disk when a diff image is actually saved, instead of being eagerly created during path preparation. Fixes #879.
+
+  # Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 1.1.3
 
 ### Patch Changes
