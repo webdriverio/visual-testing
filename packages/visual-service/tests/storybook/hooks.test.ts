@@ -1,17 +1,17 @@
-import { rmdirSync, rmSync } from 'node:fs'
+import { rmdirSync } from 'node:fs'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
-import type { Capabilities, Services } from '@wdio/types'
+import type { Capabilities } from '@wdio/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import VisualLauncher from '../../src/storybook/launcher.js'
-import type { ClassOptions } from '@wdio/image-comparison-core'
+import type { ClassOptions, Folders } from '@wdio/image-comparison-core'
+import { prepareStorybook, cleanupStorybook } from '../../src/storybook/hooks.js'
 import * as storybookUtils from '../../src/storybook/utils.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('fs')
 
-vi.mock('../../src/storybook/utils.js', ()=>({
+vi.mock('../../src/storybook/utils.js', () => ({
     isStorybookMode: vi.fn(() => true),
     isCucumberFramework: vi.fn(() => false),
     scanStorybook: vi.fn(() => ({
@@ -25,34 +25,12 @@ vi.mock('../../src/storybook/utils.js', ()=>({
     createStorybookCapabilities: vi.fn(),
 }))
 
-describe('Visual Launcher - clearRuntimeFolder (issue #683)', () => {
-    afterEach(() => {
-        vi.restoreAllMocks()
-    })
-
-    it('should clear runtime folders once in onPrepare, not per-worker', async () => {
-        vi.mocked(storybookUtils.isStorybookMode).mockReturnValueOnce(false)
-        const rmSyncMock = vi.mocked(rmSync)
-        rmSyncMock.mockClear()
-
-        const launcher = new VisualLauncher({ clearRuntimeFolder: true })
-        // Clear any calls that happened during construction — these are the bug
-        rmSyncMock.mockClear()
-
-        const config = { runner: 'local', framework: 'mocha' } as WebdriverIO.Config
-        await launcher.onPrepare!(config, [{}])
-
-        // onPrepare should clear both the actual and diff folders
-        expect(rmSyncMock).toHaveBeenCalledTimes(2)
-    })
-})
-
-describe('Visual Launcher for Storybook', () => {
-    describe('onPrepare', () => {
-        let options: ClassOptions,
-            caps: Capabilities.RequestedStandaloneCapabilities[],
-            config: WebdriverIO.Config,
-            Launcher: Services.ServiceInstance
+describe('Storybook hooks', () => {
+    describe('prepareStorybook', () => {
+        let options: ClassOptions
+        let caps: Capabilities.RequestedStandaloneCapabilities[]
+        let config: WebdriverIO.Config
+        let folders: Folders
 
         beforeEach(() => {
             options = {}
@@ -61,19 +39,19 @@ describe('Visual Launcher for Storybook', () => {
                 runner: 'local',
                 framework: 'mocha'
             } as WebdriverIO.Config
-            Launcher = new VisualLauncher(options)
+            folders = {
+                actualFolder: '.tmp/actual',
+                baselineFolder: '.tmp/baseline',
+                diffFolder: '.tmp/diff',
+            }
 
             vi.clearAllMocks()
         })
 
         it('should process all default data', async () => {
-            if (!Launcher.onPrepare) {
-                throw new Error('onPrepare method is not defined on Launcher')
-            }
-
             const logInfoMock = vi.spyOn(log, 'info')
 
-            await Launcher!.onPrepare(config, caps)
+            await prepareStorybook(config, caps, options, folders)
 
             expect(vi.mocked(storybookUtils.isStorybookMode)).toHaveBeenCalledOnce()
             expect(vi.mocked(storybookUtils.isCucumberFramework)).toHaveBeenCalledOnce()
@@ -86,9 +64,6 @@ describe('Visual Launcher for Storybook', () => {
         })
 
         it('should process all process.argv data', async () => {
-            if (!Launcher.onPrepare) {
-                throw new Error('onPrepare method is not defined on Launcher')
-            }
             vi.mocked(storybookUtils.getArgvValue)
                 .mockReturnValueOnce(6) // --version
                 .mockReturnValueOnce(2) // --numShards
@@ -97,36 +72,28 @@ describe('Visual Launcher for Storybook', () => {
                 .mockReturnValueOnce(['foo-bar-foo']) // --skipStories
                 .mockReturnValueOnce('foo=bar') // --additionalSearchParams
 
-            await Launcher.onPrepare(config, caps)
+            await prepareStorybook(config, caps, options, folders)
 
             expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(6)
             expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith(['foo-bar-foo'])
         })
 
         it('should process all options data', async () => {
-            if (!Launcher.onPrepare) {
-                throw new Error('onPrepare method is not defined on Launcher')
-            }
-
             options.storybook = { version: 7, numShards: 16, clip: false, clipSelector: 'clipSelector', skipStories: 'skipStories', additionalSearchParams: new URLSearchParams({ foo: 'bar' }) }
 
-            await Launcher.onPrepare(config, caps)
+            await prepareStorybook(config, caps, options, folders)
 
             expect(vi.mocked(storybookUtils.getArgvValue)).toHaveBeenCalledTimes(6)
             expect(vi.mocked(storybookUtils.parseSkipStories)).toHaveBeenCalledWith('skipStories')
         })
 
         it('should throw an error for storybook and cucumber', async () => {
-            if (!Launcher.onPrepare) {
-                throw new Error('onPrepare method is not defined on Launcher')
-            }
-
             const logInfoMock = vi.spyOn(log, 'info')
             vi.mocked(storybookUtils.isCucumberFramework).mockReturnValueOnce(true)
 
             let error
             try {
-                await Launcher.onPrepare(config, caps)
+                await prepareStorybook(config, caps, options, folders)
             } catch (e) {
                 error = e
             }
@@ -136,7 +103,6 @@ describe('Visual Launcher for Storybook', () => {
             expect(vi.mocked(storybookUtils.isStorybookMode)).toHaveBeenCalledOnce()
             expect(vi.mocked(storybookUtils.isCucumberFramework)).toHaveBeenCalledOnce()
             expect(logInfoMock).not.toHaveBeenCalled()
-            // Ensure other mocks were not called
             expect(vi.mocked(storybookUtils.getArgvValue)).not.toHaveBeenCalled()
             expect(vi.mocked(storybookUtils.parseSkipStories)).not.toHaveBeenCalled()
             expect(vi.mocked(storybookUtils.createTestFiles)).not.toHaveBeenCalled()
@@ -144,10 +110,6 @@ describe('Visual Launcher for Storybook', () => {
         })
 
         it('should throw an error for storybook multiremote', async () => {
-            if (!Launcher.onPrepare) {
-                throw new Error('onPrepare method is not defined on Launcher')
-            }
-
             const logInfoMock = vi.spyOn(log, 'info')
             const multiremoteCaps = {
                 myChromeBrowser: {
@@ -161,9 +123,10 @@ describe('Visual Launcher for Storybook', () => {
                     }
                 }
             }
+
             let error
             try {
-                await Launcher.onPrepare(config, multiremoteCaps)
+                await prepareStorybook(config, multiremoteCaps, options, folders)
             } catch (e) {
                 error = e
             }
@@ -171,68 +134,61 @@ describe('Visual Launcher for Storybook', () => {
             expect(error).toBeDefined()
             expect((error as Error).message).toMatchSnapshot()
             expect(logInfoMock).toHaveBeenCalledOnce()
-            // Ensure other mocks were not called
             expect(vi.mocked(storybookUtils.getArgvValue)).not.toHaveBeenCalled()
             expect(vi.mocked(storybookUtils.parseSkipStories)).not.toHaveBeenCalled()
             expect(vi.mocked(storybookUtils.createTestFiles)).not.toHaveBeenCalled()
             expect(vi.mocked(storybookUtils.createStorybookCapabilities)).not.toHaveBeenCalled()
         })
+
+        it('should do nothing when not in storybook mode', async () => {
+            vi.mocked(storybookUtils.isStorybookMode).mockReturnValueOnce(false)
+
+            await prepareStorybook(config, caps, options, folders)
+
+            expect(vi.mocked(storybookUtils.scanStorybook)).not.toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.createTestFiles)).not.toHaveBeenCalled()
+            expect(vi.mocked(storybookUtils.createStorybookCapabilities)).not.toHaveBeenCalled()
+        })
     })
 
-    describe('onComplete', () => {
-        let Launcher: Services.ServiceInstance
-
+    describe('cleanupStorybook', () => {
         beforeEach(() => {
             vi.clearAllMocks()
-            Launcher = new VisualLauncher({})
         })
 
         afterEach(() => {
-        // Clean up environment variables
             delete process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER
         })
 
-        it('should remove temporary folder and log success', async () => {
-            if (!Launcher.onComplete) {
-                throw new Error('onComplete method is not defined on Launcher')
-            }
+        it('should remove temporary folder and log success', () => {
             process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER = 'path/to/tempDir'
             const logInfoSpy = vi.spyOn(log, 'info')
             const rmdirSyncMock = vi.mocked(rmdirSync)
 
-            // @ts-ignore
-            await Launcher.onComplete()
+            cleanupStorybook()
 
             expect(rmdirSyncMock).toHaveBeenCalledWith('path/to/tempDir', { recursive: true })
             expect(logInfoSpy).toHaveBeenCalledWith(expect.stringContaining('Temporary folder for storybook specs has been removed'))
             expect(process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER).toBeUndefined()
         })
 
-        it('should log error if temporary folder removal fails', async () => {
-            if (!Launcher.onComplete) {
-                throw new Error('onComplete method is not defined on Launcher')
-            }
+        it('should log error if temporary folder removal fails', () => {
             process.env.VISUAL_STORYBOOK_TEMP_SPEC_FOLDER = 'path/to/tempDir'
             const logErrorSpy = vi.spyOn(log, 'error')
             vi.mocked(rmdirSync).mockImplementationOnce(() => {
                 throw new Error('Deletion Failed')
             })
 
-            // @ts-ignore
-            await Launcher.onComplete()
+            cleanupStorybook()
 
             expect(logErrorSpy).toHaveBeenCalledWith(expect.stringContaining('Failed to remove temporary folder for storybook specs'))
         })
 
-        it('should do nothing if temp directory is not set', async () => {
-            if (!Launcher.onComplete) {
-                throw new Error('onComplete method is not defined on Launcher')
-            }
+        it('should do nothing if temp directory is not set', () => {
             const rmdirSyncMock = vi.mocked(rmdirSync)
             const logInfoSpy = vi.spyOn(log, 'info')
 
-            // @ts-ignore
-            await Launcher.onComplete()
+            cleanupStorybook()
 
             expect(rmdirSyncMock).not.toHaveBeenCalled()
             expect(logInfoSpy).not.toHaveBeenCalled()

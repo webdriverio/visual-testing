@@ -1,6 +1,6 @@
 import type { WicElement } from '@wdio/image-comparison-core'
 import WdioImageComparisonService from './service.js'
-import VisualLauncher from './storybook/launcher.js'
+import VisualLauncher from './launcher.js'
 import type {
     Output,
     Result,
