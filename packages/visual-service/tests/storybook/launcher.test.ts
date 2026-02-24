@@ -1,4 +1,4 @@
-import { rmdirSync } from 'node:fs'
+import { rmdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
 import type { Capabilities, Services } from '@wdio/types'
@@ -24,6 +24,28 @@ vi.mock('../../src/storybook/utils.js', ()=>({
     createTestFiles: vi.fn(),
     createStorybookCapabilities: vi.fn(),
 }))
+
+describe('Visual Launcher - clearRuntimeFolder (issue #683)', () => {
+    afterEach(() => {
+        vi.restoreAllMocks()
+    })
+
+    it('should clear runtime folders once in onPrepare, not per-worker', async () => {
+        vi.mocked(storybookUtils.isStorybookMode).mockReturnValueOnce(false)
+        const rmSyncMock = vi.mocked(rmSync)
+        rmSyncMock.mockClear()
+
+        const launcher = new VisualLauncher({ clearRuntimeFolder: true })
+        // Clear any calls that happened during construction — these are the bug
+        rmSyncMock.mockClear()
+
+        const config = { runner: 'local', framework: 'mocha' } as WebdriverIO.Config
+        await launcher.onPrepare!(config, [{}])
+
+        // onPrepare should clear both the actual and diff folders
+        expect(rmSyncMock).toHaveBeenCalledTimes(2)
+    })
+})
 
 describe('Visual Launcher for Storybook', () => {
     describe('onPrepare', () => {

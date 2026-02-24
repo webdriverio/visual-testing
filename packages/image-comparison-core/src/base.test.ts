@@ -53,4 +53,10 @@ describe('BaseClass', () => {
 
         expect(rmSync).toHaveBeenCalledTimes(2)
     })
+
+    it('should not clear runtime folders in the constructor - clearing should only happen once in the launcher (issue #683)', () => {
+        vi.mocked(rmSync).mockClear()
+        new BaseClass({ clearRuntimeFolder: true })
+        expect(rmSync).not.toHaveBeenCalled()
+    })
 })
