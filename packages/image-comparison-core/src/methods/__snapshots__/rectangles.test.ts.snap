@@ -274,16 +274,16 @@ exports[`rectangles > prepareIgnoreRectangles > should combine all rectangle sou
     "top": 40,
   },
   {
-    "bottom": 750,
-    "left": 400,
-    "right": 700,
-    "top": 600,
-  },
-  {
     "bottom": 640,
     "left": 0,
     "right": 2688,
     "top": 0,
+  },
+  {
+    "bottom": 375,
+    "left": 200,
+    "right": 350,
+    "top": 300,
   },
 ]
 `;
@@ -325,10 +325,10 @@ exports[`rectangles > prepareIgnoreRectangles > should handle blockOut and ignor
     "top": 40,
   },
   {
-    "bottom": 750,
-    "left": 400,
-    "right": 700,
-    "top": 600,
+    "bottom": 375,
+    "left": 200,
+    "right": 350,
+    "top": 300,
   },
 ]
 `;

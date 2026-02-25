@@ -18,6 +18,9 @@ vi.mock('./saveWebScreen.js', () => ({
         fileName: 'test-screen.png'
     })
 }))
+vi.mock('../methods/rectangles.js', () => ({
+    determineWebScreenIgnoreRegions: vi.fn().mockResolvedValue([])
+}))
 vi.mock('../helpers/options.js', () => ({
     screenMethodCompareOptions: vi.fn().mockReturnValue({
         ignoreAlpha: false,
@@ -209,6 +212,67 @@ describe('checkWebScreen', () => {
 
         expect(saveWebScreenSpy.mock.calls[0]).toMatchSnapshot()
         expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
+    })
+
+    it('should resolve ignore regions and pass them as additionalProperties', async () => {
+        const { determineWebScreenIgnoreRegions } = await import('../methods/rectangles.js')
+        const { buildBaseExecuteCompareOptions } = await import('../helpers/utils.js')
+        const determineWebScreenIgnoreRegionsSpy = vi.mocked(determineWebScreenIgnoreRegions)
+        const buildBaseExecuteCompareOptionsSpy = vi.mocked(buildBaseExecuteCompareOptions)
+
+        const mockIgnoreElement = {
+            elementId: 'ignore-el',
+            selector: '.navbar',
+        } as any
+        const mockIgnoreRegion = { x: 10, y: 20, width: 100, height: 50 }
+        const resolvedRegions = [
+            { x: 50, y: 60, width: 200, height: 100 },
+            { x: 10, y: 20, width: 100, height: 50 },
+        ]
+        determineWebScreenIgnoreRegionsSpy.mockResolvedValueOnce(resolvedRegions)
+
+        const options = {
+            ...baseOptions,
+            checkScreenOptions: {
+                ...baseOptions.checkScreenOptions,
+                method: {
+                    ...baseOptions.checkScreenOptions.method,
+                    ignore: [mockIgnoreElement, mockIgnoreRegion],
+                }
+            }
+        }
+
+        await checkWebScreen(options)
+
+        expect(determineWebScreenIgnoreRegionsSpy).toHaveBeenCalledWith(
+            {
+                browserInstance: options.browserInstance,
+                devicePixelRatio: 2,
+                deviceRectangles: options.instanceData.deviceRectangles,
+                isAndroid: options.instanceData.isAndroid,
+                isAndroidNativeWebScreenshot: options.instanceData.nativeWebScreenshot,
+                isIOS: options.instanceData.isIOS,
+            },
+            [mockIgnoreElement, mockIgnoreRegion],
+        )
+        expect(buildBaseExecuteCompareOptionsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                additionalProperties: { ignoreRegions: resolvedRegions },
+            })
+        )
+    })
+
+    it('should pass empty array when no ignore option is provided', async () => {
+        const { determineWebScreenIgnoreRegions } = await import('../methods/rectangles.js')
+        const determineWebScreenIgnoreRegionsSpy = vi.mocked(determineWebScreenIgnoreRegions)
+        determineWebScreenIgnoreRegionsSpy.mockResolvedValueOnce([])
+
+        await checkWebScreen(baseOptions)
+
+        expect(determineWebScreenIgnoreRegionsSpy).toHaveBeenCalledWith(
+            expect.any(Object),
+            [],
+        )
     })
 
     it('should handle all method options correctly', async () => {

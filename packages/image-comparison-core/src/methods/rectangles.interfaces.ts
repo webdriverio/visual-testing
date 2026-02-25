@@ -141,6 +141,8 @@ export interface PreparedIgnoreRectangles {
 export interface DetermineWebScreenIgnoreRegionsOptions {
     /** The browser instance */
     browserInstance: WebdriverIO.Browser;
+    /** The device pixel ratio */
+    devicePixelRatio: number;
     /** The device rectangles (contains viewport offset for mobile) */
     deviceRectangles: DeviceRectangles;
     /** Whether this is an Android device */

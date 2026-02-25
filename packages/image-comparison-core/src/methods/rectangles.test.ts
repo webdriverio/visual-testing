@@ -5,6 +5,7 @@ import {
     determineScreenRectangles,
     determineStatusAddressToolBarRectangles,
     determineIgnoreRegions,
+    determineWebScreenIgnoreRegions,
     splitIgnores,
     determineDeviceBlockOuts,
     prepareIgnoreRectangles
@@ -754,6 +755,167 @@ describe('rectangles', () => {
             // @ts-expect-error - invalid ignore regions for testing
             await expect(determineIgnoreRegions(mockBrowserInstance, invalidIgnores))
                 .rejects.toThrow('Invalid elements or regions')
+        })
+    })
+
+    describe('determineWebScreenIgnoreRegions', () => {
+        const desktopOptions = {
+            browserInstance: null as unknown as WebdriverIO.Browser,
+            devicePixelRatio: 2,
+            deviceRectangles: baseDeviceRectangles,
+            isAndroid: false,
+            isAndroidNativeWebScreenshot: false,
+            isIOS: false,
+        }
+
+        beforeEach(() => {
+            desktopOptions.browserInstance = mockBrowserInstance
+        })
+
+        it('should resolve elements via raw BCR on desktop and apply DPR', async () => {
+            const mockElement = { elementId: 'el1', selector: '.nav' } as WebdriverIO.Element
+            mockExecute.mockResolvedValueOnce({ x: 10, y: 20, width: 200, height: 50 })
+
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [mockElement])
+
+            expect(mockExecute).toHaveBeenCalledOnce()
+            expect(result).toEqual([
+                { x: 20, y: 40, width: 400, height: 100 },
+            ])
+        })
+
+        it('should add DPR-scaled viewport offset on iOS', async () => {
+            const iosDeviceRectangles = {
+                ...baseDeviceRectangles,
+                viewport: { y: 94, x: 0, width: 390, height: 650 },
+            }
+            const iosOptions = {
+                ...desktopOptions,
+                devicePixelRatio: 3,
+                deviceRectangles: iosDeviceRectangles,
+                isIOS: true,
+            }
+            const mockElement = { elementId: 'el1', selector: '.hero' } as WebdriverIO.Element
+            mockExecute.mockResolvedValueOnce({ x: 0, y: 100, width: 390, height: 200 })
+
+            const result = await determineWebScreenIgnoreRegions(iosOptions, [mockElement])
+
+            // iOS viewport offset added in CSS space, then floor/ceil for DPR:
+            // x: floor((0+0)*3)=0, y: floor((100+94)*3)=582
+            // right: ceil((0+390)*3)=1170, bottom: ceil((100+200+94)*3)=1182
+            expect(result).toEqual([
+                { x: 0, y: 582, width: 1170, height: 600 },
+            ])
+        })
+
+        it('should add device-pixel viewport offset on Android native web screenshot', async () => {
+            const androidDeviceRectangles = {
+                ...baseDeviceRectangles,
+                // On Android, viewport offset is already in device pixels
+                // (injectWebviewOverlay pre-scales by DPR)
+                viewport: { y: 240, x: 0, width: 1236, height: 1956 },
+            }
+            const androidOptions = {
+                ...desktopOptions,
+                devicePixelRatio: 3,
+                deviceRectangles: androidDeviceRectangles,
+                isAndroid: true,
+                isAndroidNativeWebScreenshot: true,
+            }
+            const mockElement = { elementId: 'el1', selector: '#header' } as WebdriverIO.Element
+            mockExecute.mockResolvedValueOnce({ x: 0, y: 0, width: 412, height: 64 })
+
+            const result = await determineWebScreenIgnoreRegions(androidOptions, [mockElement])
+
+            // BCR × DPR + viewport (already device px):
+            // x: 0*3 + 0 = 0, y: 0*3 + 240 = 240, w: 412*3 = 1236, h: 64*3 = 192
+            expect(result).toEqual([
+                { x: 0, y: 240, width: 1236, height: 192 },
+            ])
+        })
+
+        it('should NOT add viewport offset on Android ChromeDriver screenshot', async () => {
+            const androidChromeOptions = {
+                ...desktopOptions,
+                devicePixelRatio: 3,
+                isAndroid: true,
+                isAndroidNativeWebScreenshot: false,
+            }
+            const mockElement = { elementId: 'el1', selector: '#header' } as WebdriverIO.Element
+            mockExecute.mockResolvedValueOnce({ x: 0, y: 0, width: 412, height: 64 })
+
+            const result = await determineWebScreenIgnoreRegions(androidChromeOptions, [mockElement])
+
+            // BCR × DPR only, no viewport offset
+            expect(result).toEqual([
+                { x: 0, y: 0, width: 1236, height: 192 },
+            ])
+        })
+
+        it('should apply DPR to coordinate regions as well', async () => {
+            const region = { x: 10, y: 20, width: 100, height: 150 }
+
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            expect(result).toEqual([
+                { x: 20, y: 40, width: 200, height: 300 },
+            ])
+        })
+
+        it('should handle mixed elements and regions with DPR applied to both', async () => {
+            const mockElement = { elementId: 'el1', selector: '.ad' } as WebdriverIO.Element
+            const region = { x: 500, y: 0, width: 200, height: 90 }
+            mockExecute.mockResolvedValueOnce({ x: 10, y: 20, width: 300, height: 80 })
+
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [mockElement, region])
+
+            expect(result).toEqual([
+                { x: 1000, y: 0, width: 400, height: 180 },
+                { x: 20, y: 40, width: 600, height: 160 },
+            ])
+        })
+
+        it('should handle empty array', async () => {
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [])
+
+            expect(result).toEqual([])
+            expect(mockExecute).not.toHaveBeenCalled()
+        })
+
+        it('should handle chainable promise elements', async () => {
+            const chainableElement = Promise.resolve({ elementId: 'el1', selector: '.footer' } as WebdriverIO.Element)
+            mockExecute.mockResolvedValueOnce({ x: 0, y: 900, width: 1200, height: 100 })
+
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [chainableElement as any])
+
+            expect(result).toEqual([
+                { x: 0, y: 1800, width: 2400, height: 200 },
+            ])
+        })
+
+        it('should use floor/ceil rounding on sub-pixel BCR values to fully cover elements', async () => {
+            const mockElement = { elementId: 'el1', selector: '.banner' } as WebdriverIO.Element
+            // Sub-pixel BCR values that would lose precision if rounded independently
+            mockExecute.mockResolvedValueOnce({ x: 0.33, y: 50.67, width: 412.5, height: 64.33 })
+
+            const opts = { ...desktopOptions, devicePixelRatio: 3 }
+            const result = await determineWebScreenIgnoreRegions(opts, [mockElement])
+
+            // Position uses floor, far-edge uses ceil:
+            // x: floor(0.33*3) = floor(0.99) = 0
+            // y: floor(50.67*3) = floor(152.01) = 152
+            // right: ceil((0.33+412.5)*3) = ceil(1238.49) = 1239 → w = 1239-0 = 1239
+            // bottom: ceil((50.67+64.33)*3) = ceil(345.0) = 345 → h = 345-152 = 193
+            expect(result).toEqual([
+                { x: 0, y: 152, width: 1239, height: 193 },
+            ])
+        })
+
+        it('should throw on invalid ignore items', async () => {
+            await expect(
+                determineWebScreenIgnoreRegions(desktopOptions, ['invalid' as any])
+            ).rejects.toThrow('Invalid elements or regions')
         })
     })
 

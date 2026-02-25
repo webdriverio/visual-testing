@@ -4,6 +4,7 @@ import type { ImageCompareResult } from '../methods/images.interfaces.js'
 import type { SaveScreenOptions } from './screen.interfaces.js'
 import { screenMethodCompareOptions } from '../helpers/options.js'
 import { extractCommonCheckVariables, buildBaseExecuteCompareOptions } from '../helpers/utils.js'
+import { determineWebScreenIgnoreRegions } from '../methods/rectangles.js'
 import type { InternalCheckScreenMethodOptions } from './check.interfaces.js'
 
 /**
@@ -56,7 +57,20 @@ export default async function checkWebScreen(
         isNativeContext,
     })
 
-    // 3. Determine the compare options
+    // 3. Determine the ignore regions
+    const ignoreRegions = await determineWebScreenIgnoreRegions(
+        {
+            browserInstance,
+            devicePixelRatio,
+            deviceRectangles: instanceData.deviceRectangles,
+            isAndroid: instanceData.isAndroid,
+            isAndroidNativeWebScreenshot: instanceData.nativeWebScreenshot,
+            isIOS: instanceData.isIOS,
+        },
+        checkScreenOptions.method.ignore || [],
+    )
+
+    // 4. Determine the compare options
     const methodCompareOptions = screenMethodCompareOptions(checkScreenOptions.method)
     const executeCompareOptions = buildBaseExecuteCompareOptions({
         commonCheckVariables,
@@ -64,9 +78,12 @@ export default async function checkWebScreen(
         methodCompareOptions,
         devicePixelRatio,
         fileName,
+        additionalProperties: {
+            ignoreRegions,
+        },
     })
 
-    // 4. Now execute the compare and return the data
+    // 5. Now execute the compare and return the data
     return executeImageCompare({
         isViewPortScreenshot: true,
         isNativeContext,

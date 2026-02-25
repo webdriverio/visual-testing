@@ -3,6 +3,7 @@ import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import type {
     DetermineDeviceBlockOutsOptions,
+    DetermineWebScreenIgnoreRegionsOptions,
     DeviceRectangles,
     ElementRectangles,
     PrepareIgnoreRectanglesOptions,
@@ -254,7 +255,7 @@ export async function getRegionsFromElements(browserInstance: WebdriverIO.Browse
  */
 export async function determineIgnoreRegions(
     browserInstance: WebdriverIO.Browser,
-    ignores: ElementIgnore[],
+    ignores: (ElementIgnore | ElementIgnore[])[],
 ): Promise<RectanglesOutput[]>{
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
@@ -267,6 +268,74 @@ export async function determineIgnoreRegions(
             width: Math.round(region.width),
             height: Math.round(region.height),
         }))
+}
+
+/**
+ * Translate ignores to regions for web screen (viewport) screenshots.
+ * Uses getBoundingClientRect (CSS pixels) and converts to device pixels,
+ * accounting for the viewport offset on native web screenshot devices.
+ *
+ * Coordinate systems per platform:
+ * - Desktop / Android ChromeDriver: screenshot is viewport-only, BCR × DPR
+ * - iOS: full-device screenshot, viewport offset is in CSS points → (BCR + offset) × DPR
+ * - Android native web: full-device screenshot, viewport offset is already in
+ *   device pixels (injectWebviewOverlay pre-scales by DPR) → BCR × DPR + offset
+ */
+export async function determineWebScreenIgnoreRegions(
+    options: DetermineWebScreenIgnoreRegionsOptions,
+    ignores: (ElementIgnore | ElementIgnore[])[],
+): Promise<RectanglesOutput[]> {
+    const awaitedIgnores = await Promise.all(ignores)
+    const { elements, regions } = splitIgnores(awaitedIgnores)
+    const { browserInstance, devicePixelRatio, deviceRectangles, isAndroid, isAndroidNativeWebScreenshot, isIOS } = options
+
+    // Get raw (unrounded) BCR values so we can multiply by DPR before
+    // rounding. The shared getBoundingClientRect script pre-rounds to CSS
+    // integers which loses sub-pixel precision that matters at higher DPRs.
+    const rawBcr = (el: HTMLElement) => {
+        const rect = el.getBoundingClientRect()
+        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+    }
+    const regionsFromElements: RectanglesOutput[] = []
+    for (const element of elements) {
+        const bcr = await browserInstance.execute(rawBcr, element as any) as RectanglesOutput
+        regionsFromElements.push(bcr)
+    }
+
+    return [...regions, ...regionsFromElements]
+        .map((region: RectanglesOutput) => {
+            // Use floor for top-left and ceil for bottom-right so the
+            // device-pixel rectangle fully covers the CSS-pixel element.
+            // Rounding position and size independently can miss edge pixels.
+            let cssX = region.x
+            let cssY = region.y
+
+            if (isIOS) {
+                cssX += deviceRectangles.viewport.x
+                cssY += deviceRectangles.viewport.y
+            }
+
+            const left = Math.floor(cssX * devicePixelRatio)
+            const top = Math.floor(cssY * devicePixelRatio)
+            const right = Math.ceil((cssX + region.width) * devicePixelRatio)
+            const bottom = Math.ceil((cssY + region.height) * devicePixelRatio)
+
+            let x = left
+            let y = top
+
+            if (isAndroid && isAndroidNativeWebScreenshot) {
+                // Android native web viewport offset is already in device pixels
+                x += deviceRectangles.viewport.x
+                y += deviceRectangles.viewport.y
+            }
+
+            return {
+                x,
+                y,
+                width: right - left,
+                height: bottom - top,
+            }
+        })
 }
 
 /**
@@ -375,32 +444,37 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
         }
     }
 
-    // Combine all ignore regions
-    const ignoredBoxes = [
-        // These come from the method
+    // blockOut and device bar rectangles are in CSS pixels, scale by DPR
+    const dprScaledBoxes = [
         ...blockOut,
-        // @TODO: I'm defaulting ignore regions for devices
-        // Need to check if this is the right thing to do for web and mobile browser tests
-        ...ignoreRegions,
-        // Only get info about the status bars when we are in the web context
         ...webStatusAddressToolBarOptions
     ]
         .map(
-            // Make sure all the rectangles are equal to the dpr for the screenshot
             (rectangles) => {
                 return calculateDprData(
                     {
-                        // Adjust for the ResembleJS API
                         bottom: rectangles.y + rectangles.height,
                         right: rectangles.x + rectangles.width,
                         left: rectangles.x,
                         top: rectangles.y,
                     },
-                    // For Android we don't need to do it times the pixel ratio, for all others we need to
                     isAndroid ? 1 : devicePixelRatio,
                 )
             },
         )
+
+    // ignoreRegions are already in device pixels (pre-scaled by the caller),
+    // only convert to the ResembleJS format (top/left/bottom/right)
+    const preScaledIgnoreBoxes = ignoreRegions.map(
+        (rectangles) => ({
+            bottom: rectangles.y + rectangles.height,
+            right: rectangles.x + rectangles.width,
+            left: rectangles.x,
+            top: rectangles.y,
+        }),
+    )
+
+    const ignoredBoxes = [...dprScaledBoxes, ...preScaledIgnoreBoxes]
 
     return {
         ignoredBoxes,
