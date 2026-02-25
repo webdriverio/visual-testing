@@ -7,6 +7,7 @@ import type { InternalSaveScreenMethodOptions } from './save.interfaces.js'
 import type { WebScreenshotDataOptions } from '../methods/screenshots.interfaces.js'
 import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
+import { determineWebScreenIgnoreRegions } from '../methods/rectangles.js'
 
 /**
  * Saves an image of the viewport of the screen
@@ -17,6 +18,7 @@ export default async function saveWebScreen(
         instanceData,
         folders,
         tag,
+        ignore,
         saveScreenOptions,
         isNativeContext = false,
     }: InternalSaveScreenMethodOptions
@@ -67,7 +69,24 @@ export default async function saveWebScreen(
     }
     const { base64Image } = await takeWebScreenshot(browserInstance, webScreenshotOptions, shouldUseBidi)
 
-    // 4. Return the data
+    // 4. Resolve ignore regions while the DOM is still in screenshot state
+    //    (scrollbar hidden, elements hidden/removed, CSS applied).
+    //    This must happen BEFORE afterScreenshot restores the DOM.
+    const ignoreRegions = ignore && ignore.length > 0
+        ? await determineWebScreenIgnoreRegions(
+            {
+                browserInstance,
+                devicePixelRatio: devicePixelRatio || 1,
+                deviceRectangles: instanceData.deviceRectangles,
+                isAndroid,
+                isAndroidNativeWebScreenshot,
+                isIOS,
+            },
+            ignore,
+        )
+        : undefined
+
+    // 5. Restore the DOM and return the data
     const afterOptions = buildAfterScreenshotOptions({
         base64Image,
         folders,
@@ -79,5 +98,10 @@ export default async function saveWebScreen(
         wicOptions: saveScreenOptions.wic
     })
 
-    return afterScreenshot(browserInstance, afterOptions)
+    const result = await afterScreenshot(browserInstance, afterOptions)
+
+    return {
+        ...result,
+        ...(ignoreRegions ? { ignoreRegions } : {}),
+    }
 }

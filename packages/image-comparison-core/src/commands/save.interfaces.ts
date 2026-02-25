@@ -1,7 +1,7 @@
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
 import type { SaveFullPageOptions } from './fullPage.interfaces.js'
 import type { SaveScreenOptions } from './screen.interfaces.js'
-import type { SaveElementOptions, WicElement } from './element.interfaces.js'
+import type { SaveElementOptions, WicElement, ElementIgnore } from './element.interfaces.js'
 import type { SaveTabbableOptions } from './tabbable.interfaces.js'
 import type { Folders } from '../base.interfaces.js'
 
@@ -14,6 +14,8 @@ export interface InternalSaveMethodOptions {
 }
 
 export interface InternalSaveScreenMethodOptions extends InternalSaveMethodOptions {
+    /** Elements/regions to resolve for ignore during comparison (resolved while DOM is in screenshot state) */
+    ignore?: (ElementIgnore | ElementIgnore[])[];
     saveScreenOptions: SaveScreenOptions,
 }
 

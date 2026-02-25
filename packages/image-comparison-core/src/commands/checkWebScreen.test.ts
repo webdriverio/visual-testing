@@ -18,9 +18,6 @@ vi.mock('./saveWebScreen.js', () => ({
         fileName: 'test-screen.png'
     })
 }))
-vi.mock('../methods/rectangles.js', () => ({
-    determineWebScreenIgnoreRegions: vi.fn().mockResolvedValue([])
-}))
 vi.mock('../helpers/options.js', () => ({
     screenMethodCompareOptions: vi.fn().mockReturnValue({
         ignoreAlpha: false,
@@ -214,22 +211,23 @@ describe('checkWebScreen', () => {
         expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 
-    it('should resolve ignore regions and pass them as additionalProperties', async () => {
-        const { determineWebScreenIgnoreRegions } = await import('../methods/rectangles.js')
+    it('should pass ignore elements to saveWebScreen and forward resolved regions', async () => {
         const { buildBaseExecuteCompareOptions } = await import('../helpers/utils.js')
-        const determineWebScreenIgnoreRegionsSpy = vi.mocked(determineWebScreenIgnoreRegions)
         const buildBaseExecuteCompareOptionsSpy = vi.mocked(buildBaseExecuteCompareOptions)
 
-        const mockIgnoreElement = {
-            elementId: 'ignore-el',
-            selector: '.navbar',
-        } as any
+        const mockIgnoreElement = { elementId: 'ignore-el', selector: '.navbar' } as any
         const mockIgnoreRegion = { x: 10, y: 20, width: 100, height: 50 }
         const resolvedRegions = [
             { x: 50, y: 60, width: 200, height: 100 },
             { x: 10, y: 20, width: 100, height: 50 },
         ]
-        determineWebScreenIgnoreRegionsSpy.mockResolvedValueOnce(resolvedRegions)
+
+        // saveWebScreen returns ignoreRegions resolved during screenshot
+        saveWebScreenSpy.mockResolvedValueOnce({
+            devicePixelRatio: 2,
+            fileName: 'test-screen.png',
+            ignoreRegions: resolvedRegions,
+        })
 
         const options = {
             ...baseOptions,
@@ -244,17 +242,13 @@ describe('checkWebScreen', () => {
 
         await checkWebScreen(options)
 
-        expect(determineWebScreenIgnoreRegionsSpy).toHaveBeenCalledWith(
-            {
-                browserInstance: options.browserInstance,
-                devicePixelRatio: 2,
-                deviceRectangles: options.instanceData.deviceRectangles,
-                isAndroid: options.instanceData.isAndroid,
-                isAndroidNativeWebScreenshot: options.instanceData.nativeWebScreenshot,
-                isIOS: options.instanceData.isIOS,
-            },
-            [mockIgnoreElement, mockIgnoreRegion],
+        // ignore is passed through to saveWebScreen
+        expect(saveWebScreenSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                ignore: [mockIgnoreElement, mockIgnoreRegion],
+            })
         )
+        // resolved regions are forwarded to the compare options
         expect(buildBaseExecuteCompareOptionsSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 additionalProperties: { ignoreRegions: resolvedRegions },
@@ -262,16 +256,16 @@ describe('checkWebScreen', () => {
         )
     })
 
-    it('should pass empty array when no ignore option is provided', async () => {
-        const { determineWebScreenIgnoreRegions } = await import('../methods/rectangles.js')
-        const determineWebScreenIgnoreRegionsSpy = vi.mocked(determineWebScreenIgnoreRegions)
-        determineWebScreenIgnoreRegionsSpy.mockResolvedValueOnce([])
+    it('should pass empty array when no ignore regions are returned', async () => {
+        const { buildBaseExecuteCompareOptions } = await import('../helpers/utils.js')
+        const buildBaseExecuteCompareOptionsSpy = vi.mocked(buildBaseExecuteCompareOptions)
 
         await checkWebScreen(baseOptions)
 
-        expect(determineWebScreenIgnoreRegionsSpy).toHaveBeenCalledWith(
-            expect.any(Object),
-            [],
+        expect(buildBaseExecuteCompareOptionsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                additionalProperties: { ignoreRegions: [] },
+            })
         )
     })
 
