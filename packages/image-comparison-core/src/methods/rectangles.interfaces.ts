@@ -138,6 +138,19 @@ export interface PreparedIgnoreRectangles {
     hasIgnoreRectangles: boolean;
 }
 
+export interface DetermineWebScreenIgnoreRegionsOptions {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
+    /** The device rectangles (contains viewport offset for mobile) */
+    deviceRectangles: DeviceRectangles;
+    /** Whether this is an Android device */
+    isAndroid: boolean;
+    /** Whether this is an Android native web screenshot */
+    isAndroidNativeWebScreenshot: boolean;
+    /** Whether this is an iOS device */
+    isIOS: boolean;
+}
+
 export interface BoundingBox extends BaseBoundingBox { }
 export interface IgnoreBoxes extends BoundingBox { }
 

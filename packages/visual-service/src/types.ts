@@ -19,8 +19,9 @@ import type {
     InternalCheckScreenMethodOptions,
     InternalCheckElementMethodOptions,
     InternalCheckFullPageMethodOptions,
+    ElementIgnore,
 } from '@wdio/image-comparison-core'
-import type { ChainablePromiseElement } from 'webdriverio'
+import type { ChainablePromiseElement, ChainablePromiseArray } from 'webdriverio'
 import type { ContextManager } from './contextManager.js'
 import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 
@@ -82,15 +83,19 @@ export interface WdioIcsScrollOptions extends WdioIcsCommonOptions {
     hideAfterFirstScroll?: (WebdriverIO.Element | ChainablePromiseElement)[];
 }
 
+export interface WdioIcsIgnoreOptions {
+    ignore?: (ElementIgnore | ElementIgnore[] | WebdriverIO.ElementArray | ChainablePromiseArray)[];
+}
+
 // Save methods
 export interface WdioSaveScreenMethodOptions extends Omit<SaveScreenMethodOptions, keyof WdioIcsCommonOptions>, WdioIcsCommonOptions {}
 export interface WdioSaveElementMethodOptions extends Omit<SaveElementMethodOptions, keyof WdioIcsCommonOptions>, WdioIcsCommonOptions {}
 export interface WdioSaveFullPageMethodOptions extends Omit<SaveFullPageMethodOptions, keyof WdioIcsScrollOptions>, WdioIcsScrollOptions { }
 
 // Check methods
-export interface WdioCheckScreenMethodOptions extends Omit<CheckScreenMethodOptions, keyof WdioIcsCommonOptions>, WdioIcsCommonOptions {}
-export interface WdioCheckElementMethodOptions extends Omit<CheckElementMethodOptions, keyof WdioIcsCommonOptions>, WdioIcsCommonOptions {}
-export interface WdioCheckFullPageMethodOptions extends Omit<CheckFullPageMethodOptions, keyof WdioIcsScrollOptions>, WdioIcsScrollOptions {}
+export interface WdioCheckScreenMethodOptions extends Omit<CheckScreenMethodOptions, keyof WdioIcsCommonOptions | keyof WdioIcsIgnoreOptions>, WdioIcsCommonOptions, WdioIcsIgnoreOptions {}
+export interface WdioCheckElementMethodOptions extends Omit<CheckElementMethodOptions, keyof WdioIcsCommonOptions | keyof WdioIcsIgnoreOptions>, WdioIcsCommonOptions, WdioIcsIgnoreOptions {}
+export interface WdioCheckFullPageMethodOptions extends Omit<CheckFullPageMethodOptions, keyof WdioIcsScrollOptions | keyof WdioIcsIgnoreOptions>, WdioIcsScrollOptions, WdioIcsIgnoreOptions {}
 
 export interface VisualServiceOptions extends ClassOptions { }
 
