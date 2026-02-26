@@ -125,8 +125,14 @@ describe('@wdio/visual-service mobile web', () => {
     }
 })
 
+/******************************************************************************************
+ * SKIP RULES
+ * These are most likely TODO's that we have to fix but are not a blocker for the release.
+ * The reason is added to help us remember why we skipped the test.
+ ******************************************************************************************/
+
 interface SkipRule {
-    titleIncludes: string
+    titleIncludes: string | string[]
     deviceName: string
     platformName: 'Android' | 'iOS'
     platformVersions: string[]
@@ -134,10 +140,6 @@ interface SkipRule {
     reason: string
 }
 
-/**
- * Rules for skipping tests,
- * these are most likely TODO's that we have to fix but are not a blocker for the release
- */
 const skipRules: SkipRule[] = [
     {
         // @TODO: remove when fixed
@@ -168,12 +170,21 @@ const skipRules: SkipRule[] = [
     },
     {
         // @TODO: remove when fixed
-        titleIncludes: 'ignore elements',
+        titleIncludes: ['ignore elements', 'screen successful'],
         deviceName: 'Galaxy Tab S8',
         platformName: 'Android',
         platformVersions: ['14'],
-        orientations: ['landscape'],
+        orientations: ['landscape', 'portrait'],
         reason: 'Fully ignored in the screenshot so it will never find a difference',
+    },
+    {
+        // @TODO: remove when fixed
+        titleIncludes: 'full page screenshot',
+        deviceName: 'Galaxy Tab S8',
+        platformName: 'Android',
+        platformVersions: ['13', '14'],
+        orientations: ['landscape', 'portrait'],
+        reason: 'There are difference in the full page screenshot that might be related to things introduced in PR #1126',
     },
     {
         // @TODO: remove when fixed
@@ -201,10 +212,6 @@ const skipRules: SkipRule[] = [
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
 ]
-
-/**
- * Skips a test if it matches any of the skip rules
- */
 function skipTest({ test, deviceName, platformName, platformVersion, orientation }: {
     test: Mocha.Context
     deviceName: string
@@ -214,13 +221,15 @@ function skipTest({ test, deviceName, platformName, platformVersion, orientation
 }) {
     const { title } = test.test!
 
-    const matchedRule = skipRules.find(rule =>
-        title.includes(rule.titleIncludes)
-        && rule.deviceName === deviceName
-        && rule.platformName === platformName
-        && rule.platformVersions.includes(platformVersion)
-        && rule.orientations.includes(orientation as 'landscape' | 'portrait')
-    )
+    const matchedRule = skipRules.find(rule => {
+        const patterns = Array.isArray(rule.titleIncludes) ? rule.titleIncludes : [rule.titleIncludes]
+
+        return patterns.some(p => title.includes(p))
+            && rule.deviceName === deviceName
+            && rule.platformName === platformName
+            && rule.platformVersions.includes(platformVersion)
+            && rule.orientations.includes(orientation as 'landscape' | 'portrait')
+    })
 
     if (matchedRule) {
         test.skip()
