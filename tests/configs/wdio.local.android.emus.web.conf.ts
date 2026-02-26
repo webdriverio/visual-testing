@@ -12,8 +12,8 @@ export const config: WebdriverIO.Config  = {
     // Capabilities
     // ============
     capabilities: [
-        // androidCaps('Pixel_8_Pro_Android_15_API_35', 'PORTRAIT', '15.0', true),
-        androidCaps('Pixel_8_Pro_Android_15_API_35', 'LANDSCAPE', '15.0', true),
+        androidCaps('Pixel_8_Pro_Android_15_API_35', 'PORTRAIT', '15.0', true),
+        // androidCaps('Pixel_8_Pro_Android_15_API_35', 'LANDSCAPE', '15.0', true),
     ],
 }
 
@@ -36,6 +36,7 @@ function androidCaps(
         'appium:orientation': orientation,
         'appium:newCommandTimeout': 240,
         ...(nativeWebScreenshot ? { 'appium:nativeWebScreenshot': true } : {}),
+        'wdio:enforceWebDriverClassic': true,
         'wdio-ics:options': {
             logName: `${deviceName
                 .split(' ')
