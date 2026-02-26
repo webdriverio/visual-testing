@@ -60,6 +60,10 @@ describe('@wdio/visual-service mobile web', () => {
         it(`should compare a screen with ignore elements successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
             skipTest({ test: this, deviceName, platformName, platformVersion, orientation })
 
+            // When running a new set of images then first comment out block 1 and 2. Then run the test.
+            // Then uncomment block 1, check if they fail with `--store-diffs` as an extra argument.
+            // If so, then uncomment block 2 and check if pass with the same arguments.
+            // Block 1
             await browser.execute(() => {
                 document.querySelectorAll('.getStarted_Sjon').forEach(link => {
                     (link as HTMLElement).style.backgroundColor = 'var(--ifm-font-color-base)'
@@ -70,6 +74,7 @@ describe('@wdio/visual-service mobile web', () => {
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
             const result = await browser.checkScreen(
                 'ignoredElementsScreenshot', {
+                    // Block 2
                     ignore: [
                         await $$('.getStarted_Sjon'),
                     ],
@@ -209,6 +214,38 @@ const skipRules: SkipRule[] = [
         platformName: 'Android',
         platformVersions: ['11', '12'],
         orientations: ['landscape', 'portrait'],
+        reason: 'Elements not visible in the screenshot, no value in testing',
+    },
+    {
+        titleIncludes: 'ignore elements',
+        deviceName: 'iPhone 13 mini',
+        platformName: 'iOS',
+        platformVersions: ['17.5'],
+        orientations: ['landscape'],
+        reason: 'Elements not visible in the screenshot, no value in testing',
+    },
+    {
+        titleIncludes: 'ignore elements',
+        deviceName: 'iPhone 13 Pro',
+        platformName: 'iOS',
+        platformVersions: ['16.0'],
+        orientations: ['landscape'],
+        reason: 'Elements not visible in the screenshot, no value in testing',
+    },
+    {
+        titleIncludes: 'ignore elements',
+        deviceName: 'iPhone 14 Pro',
+        platformName: 'iOS',
+        platformVersions: ['17.5'],
+        orientations: ['landscape'],
+        reason: 'Elements not visible in the screenshot, no value in testing',
+    },
+    {
+        titleIncludes: 'ignore elements',
+        deviceName: 'iPhone 15 Pro Max',
+        platformName: 'iOS',
+        platformVersions: ['18.0'],
+        orientations: ['landscape'],
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
 ]

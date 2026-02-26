@@ -32,7 +32,9 @@ describe('rectangles', () => {
 
         mockBrowserInstance = {
             execute: mockExecute,
-            getElementRect: mockGetElementRect
+            getElementRect: mockGetElementRect,
+            $: vi.fn(),
+            $$: vi.fn(),
         } as unknown as WebdriverIO.Browser
     })
 
@@ -772,19 +774,20 @@ describe('rectangles', () => {
             desktopOptions.browserInstance = mockBrowserInstance
         })
 
-        it('should resolve elements via raw BCR on desktop and apply DPR', async () => {
+        it('should resolve elements via raw BCR on desktop and apply DPR without re-querying', async () => {
             const mockElement = { elementId: 'el1', selector: '.nav' } as WebdriverIO.Element
             mockExecute.mockResolvedValueOnce({ x: 10, y: 20, width: 200, height: 50 })
 
             const result = await determineWebScreenIgnoreRegions(desktopOptions, [mockElement])
 
             expect(mockExecute).toHaveBeenCalledOnce()
+            expect(mockBrowserInstance.$).not.toHaveBeenCalled()
             expect(result).toEqual([
                 { x: 20, y: 40, width: 400, height: 100 },
             ])
         })
 
-        it('should add DPR-scaled viewport offset on iOS', async () => {
+        it('should add DPR-scaled viewport offset on iOS and re-query elements via $$', async () => {
             const iosDeviceRectangles = {
                 ...baseDeviceRectangles,
                 viewport: { y: 94, x: 0, width: 390, height: 650 },
@@ -796,15 +799,56 @@ describe('rectangles', () => {
                 isIOS: true,
             }
             const mockElement = { elementId: 'el1', selector: '.hero' } as WebdriverIO.Element
+            const freshElement = { elementId: 'el1-fresh', selector: '.hero' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
             mockExecute.mockResolvedValueOnce({ x: 0, y: 100, width: 390, height: 200 })
 
             const result = await determineWebScreenIgnoreRegions(iosOptions, [mockElement])
 
-            // iOS viewport offset added in CSS space, then floor/ceil for DPR:
-            // x: floor((0+0)*3)=0, y: floor((100+94)*3)=582
-            // right: ceil((0+390)*3)=1170, bottom: ceil((100+200+94)*3)=1182
+            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.hero')
+            expect(mockBrowserInstance.$).not.toHaveBeenCalled()
             expect(result).toEqual([
                 { x: 0, y: 582, width: 1170, height: 600 },
+            ])
+        })
+
+        it('should correctly resolve multiple elements sharing the same selector on iOS', async () => {
+            const iosDeviceRectangles = {
+                ...baseDeviceRectangles,
+                viewport: { y: 94, x: 0, width: 390, height: 650 },
+            }
+            const iosOptions = {
+                ...desktopOptions,
+                devicePixelRatio: 1,
+                deviceRectangles: iosDeviceRectangles,
+                isIOS: true,
+            }
+            const el1 = { elementId: 'a', selector: '.card' } as WebdriverIO.Element
+            const el2 = { elementId: 'b', selector: '.card' } as WebdriverIO.Element
+            const el3 = { elementId: 'c', selector: '.card' } as WebdriverIO.Element
+
+            const fresh1 = { elementId: 'f1', selector: '.card' } as unknown as WebdriverIO.Element
+            const fresh2 = { elementId: 'f2', selector: '.card' } as unknown as WebdriverIO.Element
+            const fresh3 = { elementId: 'f3', selector: '.card' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([fresh1, fresh2, fresh3] as any)
+
+            mockExecute
+                .mockResolvedValueOnce({ x: 0, y: 100, width: 390, height: 50 })
+                .mockResolvedValueOnce({ x: 0, y: 200, width: 390, height: 50 })
+                .mockResolvedValueOnce({ x: 0, y: 300, width: 390, height: 50 })
+
+            const result = await determineWebScreenIgnoreRegions(iosOptions, [[el1, el2, el3]])
+
+            // $$ called once for the shared selector, not $ three times
+            expect(mockBrowserInstance.$$).toHaveBeenCalledTimes(1)
+            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.card')
+            // execute called with each fresh element
+            expect(mockExecute).toHaveBeenCalledTimes(3)
+            // Each region has different y (viewport offset 94 added)
+            expect(result).toEqual([
+                { x: 0, y: 194, width: 390, height: 50 },
+                { x: 0, y: 294, width: 390, height: 50 },
+                { x: 0, y: 394, width: 390, height: 50 },
             ])
         })
 

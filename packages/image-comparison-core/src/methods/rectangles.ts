@@ -297,9 +297,36 @@ export async function determineWebScreenIgnoreRegions(
         return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
     }
     const regionsFromElements: RectanglesOutput[] = []
-    for (const element of elements) {
-        const bcr = await browserInstance.execute(rawBcr, element as any) as RectanglesOutput
-        regionsFromElements.push(bcr)
+    if (isIOS && elements.length > 0) {
+        // iOS Safari invalidates element references when the DOM is mutated
+        // (e.g. by beforeScreenshot CSS injection). Re-query to get fresh refs.
+        // Use $$ per unique selector so multiple elements sharing the same
+        // selector (e.g. from a $$ call) each resolve to the correct match.
+        const selectorCache = new Map<string, WebdriverIO.Element[]>()
+        const selectorIndex = new Map<string, number>()
+
+        for (const element of elements) {
+            const selector = element.selector as string
+
+            if (!selectorCache.has(selector)) {
+                const fresh = await browserInstance.$$(selector)
+                selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
+                selectorIndex.set(selector, 0)
+            }
+
+            const idx = selectorIndex.get(selector)!
+            const cached = selectorCache.get(selector)!
+            const el = idx < cached.length ? cached[idx] : element
+            selectorIndex.set(selector, idx + 1)
+
+            const bcr = await browserInstance.execute(rawBcr, el as any) as RectanglesOutput
+            regionsFromElements.push(bcr)
+        }
+    } else {
+        for (const element of elements) {
+            const bcr = await browserInstance.execute(rawBcr, element as any) as RectanglesOutput
+            regionsFromElements.push(bcr)
+        }
     }
 
     return [...regions, ...regionsFromElements]
