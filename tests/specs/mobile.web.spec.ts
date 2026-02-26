@@ -201,6 +201,14 @@ const skipRules: SkipRule[] = [
         reason: 'Fully ignored in the screenshot so it will never find a difference',
     },
     {
+        titleIncludes: 'screen successful',
+        deviceName: 'Pixel 4',
+        platformName: 'Android',
+        platformVersions: ['13'],
+        orientations: ['portrait'],
+        reason: 'Elements not visible in the screenshot, no value in testing',
+    },
+    {
         titleIncludes: 'ignore elements',
         deviceName: 'Pixel 9 Pro',
         platformName: 'Android',

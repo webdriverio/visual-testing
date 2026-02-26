@@ -774,14 +774,16 @@ describe('rectangles', () => {
             desktopOptions.browserInstance = mockBrowserInstance
         })
 
-        it('should resolve elements via raw BCR on desktop and apply DPR without re-querying', async () => {
+        it('should resolve elements via raw BCR on desktop and apply DPR', async () => {
             const mockElement = { elementId: 'el1', selector: '.nav' } as WebdriverIO.Element
+            const freshElement = { elementId: 'el1-fresh', selector: '.nav' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
             mockExecute.mockResolvedValueOnce({ x: 10, y: 20, width: 200, height: 50 })
 
             const result = await determineWebScreenIgnoreRegions(desktopOptions, [mockElement])
 
+            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.nav')
             expect(mockExecute).toHaveBeenCalledOnce()
-            expect(mockBrowserInstance.$).not.toHaveBeenCalled()
             expect(result).toEqual([
                 { x: 20, y: 40, width: 400, height: 100 },
             ])
@@ -867,6 +869,7 @@ describe('rectangles', () => {
                 isAndroidNativeWebScreenshot: true,
             }
             const mockElement = { elementId: 'el1', selector: '#header' } as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
             mockExecute.mockResolvedValueOnce({ x: 0, y: 0, width: 412, height: 64 })
 
             const result = await determineWebScreenIgnoreRegions(androidOptions, [mockElement])
@@ -886,6 +889,7 @@ describe('rectangles', () => {
                 isAndroidNativeWebScreenshot: false,
             }
             const mockElement = { elementId: 'el1', selector: '#header' } as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
             mockExecute.mockResolvedValueOnce({ x: 0, y: 0, width: 412, height: 64 })
 
             const result = await determineWebScreenIgnoreRegions(androidChromeOptions, [mockElement])
@@ -909,6 +913,7 @@ describe('rectangles', () => {
 
         it('should handle mixed elements and regions with DPR applied to both', async () => {
             const mockElement = { elementId: 'el1', selector: '.ad' } as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
             const region = { x: 500, y: 0, width: 200, height: 90 }
             mockExecute.mockResolvedValueOnce({ x: 10, y: 20, width: 300, height: 80 })
 
@@ -929,6 +934,8 @@ describe('rectangles', () => {
 
         it('should handle chainable promise elements', async () => {
             const chainableElement = Promise.resolve({ elementId: 'el1', selector: '.footer' } as WebdriverIO.Element)
+            const freshElement = { elementId: 'el1-fresh', selector: '.footer' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
             mockExecute.mockResolvedValueOnce({ x: 0, y: 900, width: 1200, height: 100 })
 
             const result = await determineWebScreenIgnoreRegions(desktopOptions, [chainableElement as any])
@@ -940,6 +947,7 @@ describe('rectangles', () => {
 
         it('should use floor/ceil rounding on sub-pixel BCR values to fully cover elements', async () => {
             const mockElement = { elementId: 'el1', selector: '.banner' } as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
             // Sub-pixel BCR values that would lose precision if rounded independently
             mockExecute.mockResolvedValueOnce({ x: 0.33, y: 50.67, width: 412.5, height: 64.33 })
 

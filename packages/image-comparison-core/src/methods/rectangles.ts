@@ -296,37 +296,31 @@ export async function determineWebScreenIgnoreRegions(
         const rect = el.getBoundingClientRect()
         return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
     }
+    // Browsers can invalidate element references when the DOM is mutated
+    // (e.g. by beforeScreenshot CSS/style injection). Re-query via $$ to
+    // get fresh refs. Use $$ per unique selector so multiple elements
+    // sharing the same selector (e.g. from a $$ call) each resolve to
+    // the correct match by index.
     const regionsFromElements: RectanglesOutput[] = []
-    if (isIOS && elements.length > 0) {
-        // iOS Safari invalidates element references when the DOM is mutated
-        // (e.g. by beforeScreenshot CSS injection). Re-query to get fresh refs.
-        // Use $$ per unique selector so multiple elements sharing the same
-        // selector (e.g. from a $$ call) each resolve to the correct match.
-        const selectorCache = new Map<string, WebdriverIO.Element[]>()
-        const selectorIndex = new Map<string, number>()
+    const selectorCache = new Map<string, WebdriverIO.Element[]>()
+    const selectorIndex = new Map<string, number>()
 
-        for (const element of elements) {
-            const selector = element.selector as string
+    for (const element of elements) {
+        const selector = element.selector as string
 
-            if (!selectorCache.has(selector)) {
-                const fresh = await browserInstance.$$(selector)
-                selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
-                selectorIndex.set(selector, 0)
-            }
-
-            const idx = selectorIndex.get(selector)!
-            const cached = selectorCache.get(selector)!
-            const el = idx < cached.length ? cached[idx] : element
-            selectorIndex.set(selector, idx + 1)
-
-            const bcr = await browserInstance.execute(rawBcr, el as any) as RectanglesOutput
-            regionsFromElements.push(bcr)
+        if (!selectorCache.has(selector)) {
+            const fresh = await browserInstance.$$(selector)
+            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
+            selectorIndex.set(selector, 0)
         }
-    } else {
-        for (const element of elements) {
-            const bcr = await browserInstance.execute(rawBcr, element as any) as RectanglesOutput
-            regionsFromElements.push(bcr)
-        }
+
+        const idx = selectorIndex.get(selector)!
+        const cached = selectorCache.get(selector)!
+        const el = idx < cached.length ? cached[idx] : element
+        selectorIndex.set(selector, idx + 1)
+
+        const bcr = await browserInstance.execute(rawBcr, el as any) as RectanglesOutput
+        regionsFromElements.push(bcr)
     }
 
     return [...regions, ...regionsFromElements]
