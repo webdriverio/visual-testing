@@ -25,6 +25,30 @@ describe('@wdio/visual-service desktop', () => {
         await expect(browser).toMatchScreenSnapshot('viewportScreenshot')
     })
 
+    it(`should compare a viewport screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
+        // First store the baseline
+        // await browser.checkScreen('ignoredElementsViewportScreenshot')
+
+        // First change the background color of the elements to be ignored
+        await browser.execute(() => {
+            document.querySelectorAll('.navbar__items--right a.navbar__item,  .feature_G9wp').forEach(link => {
+                (link as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
+            })
+        })
+
+        await expect(browser).toMatchScreenSnapshot(
+            'ignoredElementsViewportScreenshot',
+            {
+                // Now ignore the elements by their class name
+                // If the ignore fails, the test will fail
+                ignore: [
+                    await $$('.navbar__items--right a.navbar__item'),
+                    await $$('.feature_G9wp'),
+                ],
+            }
+        )
+    })
+
     it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function () {
         await expect(browser).toMatchFullPageSnapshot('fullPage', {
             fullPageScrollTimeout: 1500,
