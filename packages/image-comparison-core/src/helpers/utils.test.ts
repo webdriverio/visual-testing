@@ -691,6 +691,49 @@ describe('utils', () => {
             expect(result).toMatchSnapshot()
         })
 
+        it('should handle float overlay values from non-integer DPR and ensure consistent dimensions', async () => {
+            const dpr = 2.625
+            const screenW = 1080
+            const screenH = 2424
+
+            const cssClickX = 206
+            const cssClickY = 385
+            const cssWidth = 412
+            const cssHeight = 363
+
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce(undefined) // loadBase64Html
+                .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick
+                .mockResolvedValueOnce({
+                    x: cssClickX * dpr,
+                    y: cssClickY * dpr,
+                    width: cssWidth * dpr,
+                    height: cssHeight * dpr,
+                }) // getMobileWebviewClickAndDimensions (floats, not rounded)
+
+            const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                screenHeight: screenH,
+                screenWidth: screenW,
+            })
+
+            const viewportTop = Math.max(0, Math.round(screenH / 2 - cssClickY * dpr))
+            const viewportLeft = Math.max(0, Math.round(screenW / 2 - cssClickX * dpr))
+            const viewportWidth = Math.min(Math.round(cssWidth * dpr), screenW - viewportLeft)
+            const viewportHeight = Math.min(Math.round(cssHeight * dpr), screenH - viewportTop)
+
+            expect(result.viewport.y).toBe(viewportTop)
+            expect(result.viewport.x).toBe(viewportLeft)
+            expect(result.viewport.width).toBe(viewportWidth)
+            expect(result.viewport.height).toBe(viewportHeight)
+            expect(result.statusBarAndAddressBar.height).toBe(viewportTop)
+            expect(result.viewport.y + result.viewport.height + result.bottomBar.height).toBe(screenH)
+            expect(result.viewport.x + result.viewport.width + result.rightSidePadding.width).toBe(screenW)
+        })
+
         it('should return initialDeviceRectangles if not WebView (native context)', async () => {
             const result = await getMobileViewPortPosition({
                 browserInstance: mockBrowserInstance,
