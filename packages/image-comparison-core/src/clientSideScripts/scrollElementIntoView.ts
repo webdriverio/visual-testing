@@ -19,7 +19,10 @@ export default function scrollElementIntoView(element: HTMLElement, addressBarSh
     }
 
     const { top } = element.getBoundingClientRect()
-    const yPosition = top - addressBarShadowPadding
+    // BCR.top is viewport-relative, so the element's document position is
+    // currentPosition + top. Scroll there (minus padding) to place the
+    // element at the viewport top.
+    const yPosition = currentPosition + top - addressBarShadowPadding
 
     // Scroll to the position
     if (htmlNode.scrollHeight > htmlNode.clientHeight) {

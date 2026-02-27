@@ -83,7 +83,7 @@ describe('takeElementScreenshot', () => {
     })
 
     describe('BiDi screenshots', () => {
-        it('should take BiDi screenshot from viewport when shouldUseBidi is true', async () => {
+        it('should take BiDi screenshot from document when shouldUseBidi is true', async () => {
             const result = await takeElementScreenshot(browserInstance, baseOptions, true)
 
             expect(result).toEqual({
@@ -93,44 +93,43 @@ describe('takeElementScreenshot', () => {
             expect(getElementRectMock).toHaveBeenCalledWith('test-element')
             expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith({
                 browserInstance,
-                origin: 'viewport',
+                origin: 'document',
                 clip: { x: 10, y: 20, width: 100, height: 200 }
             })
             expect(takeWebElementScreenshotSpy).not.toHaveBeenCalled()
             expect(makeCroppedBase64ImageSpy).not.toHaveBeenCalled()
         })
+        //
+        // We intentionally rely on BiDi with origin: 'document' only. If that
+        // ever fails, we surface the underlying error instead of silently
+        // falling back to a different origin with mismatched coordinates.
 
-        it('should fallback to document screenshot when viewport fails with zero dimensions error', async () => {
-            takeBase64BiDiScreenshotSpy.mockRejectedValueOnce(
-                new Error('WebDriver Bidi command "browsingContext.captureScreenshot" failed with error: unable to capture screen - Unable to capture screenshot with zero dimensions')
-            )
+        it('should scroll element into view when autoElementScroll is enabled', async () => {
+            const optionsWithScroll = { ...baseOptions, autoElementScroll: true }
+            executeMock.mockResolvedValueOnce(100) // previous scroll position
 
-            const result = await takeElementScreenshot(browserInstance, baseOptions, true)
+            const result = await takeElementScreenshot(browserInstance, optionsWithScroll, true)
 
             expect(result).toEqual({
                 base64Image: 'bidi-screenshot-data',
                 isWebDriverElementScreenshot: false
             })
-            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledTimes(2)
-            expect(takeBase64BiDiScreenshotSpy.mock.calls[0][0]).toEqual({
-                browserInstance,
-                origin: 'viewport',
-                clip: { x: 10, y: 20, width: 100, height: 200 }
-            })
-            expect(takeBase64BiDiScreenshotSpy.mock.calls[1][0]).toEqual({
-                browserInstance,
-                origin: 'document',
-                clip: { x: 10, y: 20, width: 100, height: 200 }
-            })
+            // First call: scrollElementIntoView, second call: scrollToPosition (restore)
+            expect(executeMock).toHaveBeenCalledTimes(2)
+            expect(executeMock.mock.calls[0]).toMatchSnapshot()
+            expect(executeMock.mock.calls[1]).toMatchSnapshot()
+            expect(waitForSpy).toHaveBeenCalledWith(100)
         })
 
-        it('should throw error when BiDi screenshot fails with non-zero dimension error', async () => {
-            const error = new Error('Some other BiDi error')
-            takeBase64BiDiScreenshotSpy.mockRejectedValueOnce(error)
+        it('should not restore scroll when autoElementScroll is enabled but no previous position', async () => {
+            const optionsWithScroll = { ...baseOptions, autoElementScroll: true }
+            executeMock.mockResolvedValueOnce(undefined) // no previous position
 
-            await expect(takeElementScreenshot(browserInstance, baseOptions, true)).rejects.toThrow(error)
-            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledTimes(1)
-            expect(takeWebElementScreenshotSpy).not.toHaveBeenCalled()
+            await takeElementScreenshot(browserInstance, optionsWithScroll, true)
+
+            // Only the scrollElementIntoView call, no restore
+            expect(executeMock).toHaveBeenCalledTimes(1)
+            expect(waitForSpy).toHaveBeenCalledWith(100)
         })
     })
 

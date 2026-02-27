@@ -69,7 +69,8 @@ describe('scrollElementIntoView', () => {
         const result = scrollElementIntoView(mockElement, addressBarShadowPadding)
 
         expect(result).toBe(50)
-        expect(mockHtmlNode.scrollTop).toBe(90)
+        // Document y = currentScroll(50) + BCR.top(100) - padding(10) = 140
+        expect(mockHtmlNode.scrollTop).toBe(140)
     })
 
     it('should return current scroll position when body node has scroll', () => {
@@ -80,7 +81,19 @@ describe('scrollElementIntoView', () => {
         const result = scrollElementIntoView(mockElement, addressBarShadowPadding)
 
         expect(result).toBe(50)
-        expect(mockBodyNode.scrollTop).toBe(90)
+        // Document y = currentScroll(50) + BCR.top(100) - padding(10) = 140
+        expect(mockBodyNode.scrollTop).toBe(140)
+    })
+
+    it('should not re-scroll when element is already at the viewport top', () => {
+        mockHtmlNode.scrollTop = 600
+        ;(mockElement.getBoundingClientRect as ReturnType<typeof vi.fn>).mockReturnValue({ top: 0 })
+        const addressBarShadowPadding = 0
+        const result = scrollElementIntoView(mockElement, addressBarShadowPadding)
+
+        expect(result).toBe(600)
+        // Document y = currentScroll(600) + BCR.top(0) - padding(0) = 600 (stays put)
+        expect(mockHtmlNode.scrollTop).toBe(600)
     })
 
     it('should not scroll when neither html nor body is scrollable', () => {
