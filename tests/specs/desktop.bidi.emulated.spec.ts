@@ -11,7 +11,11 @@ describe('@wdio/visual-service desktop bidi emulated', () => {
     })
 
     it(`should compare an element successful with a baseline for '${browserName}'`, async function() {
-        await expect($('.hero__title-logo')).toMatchElementSnapshot('bidiEmulatedWdioLogo')
+        await expect($('.hero__title-logo')).toMatchElementSnapshot(
+            'bidiEmulatedWdioLogo', {
+                hideElements: [await $('nav.navbar')]
+            }
+        )
     })
 
     it(`should compare an element screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
