@@ -769,6 +769,7 @@ describe('rectangles', () => {
             isAndroid: false,
             isAndroidNativeWebScreenshot: false,
             isIOS: false,
+            ignoreRegionPadding: 0,
         }
 
         beforeEach(() => {
@@ -970,6 +971,37 @@ describe('rectangles', () => {
                 determineWebScreenIgnoreRegions(desktopOptions, ['invalid' as any])
             ).rejects.toThrow('Invalid elements or regions')
         })
+
+        it('should expand regions by ignoreRegionPadding (default 1) on each side', async () => {
+            const region = { x: 10, y: 20, width: 100, height: 50 }
+            const optionsWithDefaultPadding = {
+                ...desktopOptions,
+                ignoreRegionPadding: 1,
+            }
+
+            const result = await determineWebScreenIgnoreRegions(optionsWithDefaultPadding, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            // (10,20,100,50) × DPR 2 → (20,40,200,100); + padding 1 each side → (19,39,202,102)
+            expect(result).toEqual([
+                { x: 19, y: 39, width: 202, height: 102 },
+            ])
+        })
+
+        it('should use custom ignoreRegionPadding when provided for screen', async () => {
+            const region = { x: 0, y: 0, width: 50, height: 20 }
+            const optionsWithPadding2 = {
+                ...desktopOptions,
+                ignoreRegionPadding: 2,
+            }
+
+            const result = await determineWebScreenIgnoreRegions(optionsWithPadding2, [region])
+
+            // (0,0,50,20) × 2 → (0,0,100,40); + padding 2 → (0,0,104,44)
+            expect(result).toEqual([
+                { x: 0, y: 0, width: 104, height: 44 },
+            ])
+        })
     })
 
     describe('determineWebElementIgnoreRegions', () => {
@@ -986,6 +1018,7 @@ describe('rectangles', () => {
                 browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
                 devicePixelRatio: 2,
                 rootElement,
+                ignoreRegionPadding: 0,
             }, [childElement])
 
             // CSS: (20,30,100,40) × DPR(2) → (40,60,200,80)
@@ -1002,12 +1035,48 @@ describe('rectangles', () => {
                 browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
                 devicePixelRatio: 2,
                 rootElement,
+                ignoreRegionPadding: 0,
             }, [region])
 
             expect(mockExecute).not.toHaveBeenCalled()
             // (5,10,50,20) × 2 → (10,20,100,40)
             expect(result).toEqual([
                 { x: 10, y: 20, width: 100, height: 40 },
+            ])
+        })
+
+        it('should expand regions by ignoreRegionPadding (default 1) on each side', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const region = { x: 10, y: 20, width: 100, height: 40 }
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+                ignoreRegionPadding: 1,
+            }, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            // (10,20,100,40) × 2 → (20,40,200,80); + padding 1 each side → (19,39,202,82)
+            expect(result).toEqual([
+                { x: 19, y: 39, width: 202, height: 82 },
+            ])
+        })
+
+        it('should use custom ignoreRegionPadding when provided', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const region = { x: 0, y: 0, width: 50, height: 20 }
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 1,
+                rootElement,
+                ignoreRegionPadding: 2,
+            }, [region])
+
+            // (0,0,50,20) + padding 2 each side → (0,0,54,24) — x,y clamped to 0
+            expect(result).toEqual([
+                { x: 0, y: 0, width: 54, height: 24 },
             ])
         })
 
@@ -1018,6 +1087,7 @@ describe('rectangles', () => {
                 browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
                 devicePixelRatio: 2,
                 rootElement,
+                ignoreRegionPadding: 0,
             }, [])
 
             expect(result).toEqual([])

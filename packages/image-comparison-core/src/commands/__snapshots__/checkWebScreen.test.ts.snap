@@ -96,6 +96,7 @@ exports[`checkWebScreen > should execute checkWebScreen with basic options 2`] =
         "enableLegacyScreenshotMethod": false,
         "hideElements": [],
         "hideScrollBars": true,
+        "ignoreRegionPadding": undefined,
         "removeElements": [],
         "waitForFontsLoaded": true,
       },
@@ -416,6 +417,7 @@ exports[`checkWebScreen > should handle all method options correctly 1`] = `
           },
         ],
         "hideScrollBars": false,
+        "ignoreRegionPadding": undefined,
         "removeElements": [
           {
             "elementId": "remove-element",
@@ -661,6 +663,7 @@ exports[`checkWebScreen > should handle hideElements and removeElements correctl
           },
         ],
         "hideScrollBars": true,
+        "ignoreRegionPadding": undefined,
         "removeElements": [
           {
             "elementId": "test-element",
@@ -898,6 +901,7 @@ exports[`checkWebScreen > should handle native context correctly 1`] = `
         "enableLegacyScreenshotMethod": false,
         "hideElements": [],
         "hideScrollBars": true,
+        "ignoreRegionPadding": undefined,
         "removeElements": [],
         "waitForFontsLoaded": true,
       },
@@ -1127,6 +1131,7 @@ exports[`checkWebScreen > should merge compare options correctly 1`] = `
         "enableLegacyScreenshotMethod": false,
         "hideElements": [],
         "hideScrollBars": true,
+        "ignoreRegionPadding": undefined,
         "removeElements": [],
         "waitForFontsLoaded": true,
       },

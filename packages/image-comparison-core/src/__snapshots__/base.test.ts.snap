@@ -30,6 +30,7 @@ exports[`BaseClass > initializes default options correctly 1`] = `
   "formatImageName": "{tag}-{browserName}-{width}x{height}-dpr-{dpr}",
   "fullPageScrollTimeout": 1500,
   "hideScrollBars": true,
+  "ignoreRegionPadding": 1,
   "isHybridApp": false,
   "savePerInstance": false,
   "tabbableOptions": {

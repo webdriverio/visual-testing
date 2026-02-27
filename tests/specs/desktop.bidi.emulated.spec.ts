@@ -14,26 +14,29 @@ describe('@wdio/visual-service desktop bidi emulated', () => {
         await expect($('.hero__title-logo')).toMatchElementSnapshot('bidiEmulatedWdioLogo')
     })
 
-    it.only(`should compare an element screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
+    it(`should compare an element screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
         await $('.features_vqN4').scrollIntoView()
 
         // When running a new set of images then first comment out block 1 and 2. Then run the test.
         // Then uncomment block 1, check if they fail with `--store-diffs` as an extra argument.
         // If so, then uncomment block 2 and check if pass with the same arguments.
         // Block 1
-        // await browser.execute(() => {
-        //     document.querySelectorAll('.feature_G9wp h3').forEach(heading => {
-        //         (heading as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
-        //     })
-        // })
+        await browser.execute(() => {
+            document.querySelectorAll('.feature_G9wp h3').forEach(heading => {
+                (heading as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
+            })
+        })
 
         await expect($('.features_vqN4')).toMatchElementSnapshot(
             'bidiIgnoredElementsElementScreenshot',
             {
                 // Block 2
-                // ignore: [
-                //     await $$('.feature_G9wp h3'),
-                // ],
+                ignore: [
+                    await $$('.feature_G9wp h3'),
+                ],
+                // Some padding to make sure that we cover the element,
+                // with BiDi we sometimes miss the element due to internal calculations
+                ignoreRegionPadding: 2,
                 // Don't comment this out, it's needed to hide the navbar
                 hideElements: [await $('nav.navbar')]
             }
@@ -58,27 +61,27 @@ describe('@wdio/visual-service desktop bidi emulated', () => {
         })
     })
 
-    it.only(`should compare an element screenshot with ignore elements successful with a baseline for '${browserName}' with the legacy API`, async function () {
+    it(`should compare an element screenshot with ignore elements successful with a baseline for '${browserName}' with the legacy API`, async function () {
         await $('.features_vqN4').scrollIntoView()
 
         // When running a new set of images then first comment out block 1 and 2. Then run the test.
         // Then uncomment block 1, check if they fail with `--store-diffs` as an extra argument.
         // If so, then uncomment block 2 and check if pass with the same arguments.
         // Block 1
-        // await browser.execute(() => {
-        //     document.querySelectorAll('.feature_G9wp h3').forEach(heading => {
-        //         (heading as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
-        //     })
-        // })
+        await browser.execute(() => {
+            document.querySelectorAll('.feature_G9wp h3').forEach(heading => {
+                (heading as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
+            })
+        })
 
         await expect($('.features_vqN4')).toMatchElementSnapshot(
             'legacyIgnoredElementsElementScreenshot',
             {
                 enableLegacyScreenshotMethod: true,
                 // Block 2
-                // ignore: [
-                //     await $$('.feature_G9wp h3'),
-                // ],
+                ignore: [
+                    await $$('.feature_G9wp h3'),
+                ],
                 // Don't comment this out, it's needed to hide the navbar
                 hideElements: [await $('nav.navbar')]
             }

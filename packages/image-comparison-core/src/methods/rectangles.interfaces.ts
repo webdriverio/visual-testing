@@ -151,6 +151,8 @@ export interface DetermineWebScreenIgnoreRegionsOptions {
     isAndroidNativeWebScreenshot: boolean;
     /** Whether this is an iOS device */
     isIOS: boolean;
+    /** Padding in device pixels added to each side of computed ignore regions (caller defaults to 1). */
+    ignoreRegionPadding: number;
 }
 
 export interface DetermineWebElementIgnoreRegionsOptions {
@@ -160,6 +162,8 @@ export interface DetermineWebElementIgnoreRegionsOptions {
     devicePixelRatio: number;
     /** The root element being captured in the element screenshot */
     rootElement: WebdriverIO.Element;
+    /** Padding in device pixels added to each side of computed ignore regions (caller defaults to 1). */
+    ignoreRegionPadding: number;
 }
 
 export interface BoundingBox extends BaseBoundingBox { }

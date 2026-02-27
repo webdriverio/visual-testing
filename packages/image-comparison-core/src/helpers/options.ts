@@ -54,6 +54,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         // Default to false for storybook mode as element screenshots use W3C protocol without scrollbars
         // This also saves an extra webdriver call
         hideScrollBars: getBooleanOption(options, 'hideScrollBars', !isStorybookMode),
+        ignoreRegionPadding: options.ignoreRegionPadding ?? 1,
         waitForFontsLoaded: options.waitForFontsLoaded ?? true,
         alwaysSaveActualImage: options.alwaysSaveActualImage ?? true,
 

@@ -12,6 +12,13 @@ export interface SaveElementOptions {
 
 export interface SaveElementMethodOptions extends Partial<Folders>, BaseWebScreenshotOptions, BaseMobileWebScreenshotOptions {
     /**
+     * Padding in device pixels added to each side of element ignore regions (makes each region 2× this value wider and higher).
+     * Helps avoid 1px boundary differences on high-DPR / BiDi. Set to 0 to disable.
+     * @default 1
+     */
+    ignoreRegionPadding?: number;
+
+    /**
      * Resize the screenshot to the given dimensions
      * @default undefined
      */

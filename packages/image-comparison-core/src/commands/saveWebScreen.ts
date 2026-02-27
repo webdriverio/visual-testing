@@ -72,6 +72,7 @@ export default async function saveWebScreen(
     // 4. Resolve ignore regions while the DOM is still in screenshot state
     //    (scrollbar hidden, elements hidden/removed, CSS applied).
     //    This must happen BEFORE afterScreenshot restores the DOM.
+    const ignoreRegionPadding = (getMethodOrWicOption(saveScreenOptions.method, saveScreenOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
     const ignoreRegions = ignore && ignore.length > 0
         ? await determineWebScreenIgnoreRegions(
             {
@@ -81,6 +82,7 @@ export default async function saveWebScreen(
                 isAndroid,
                 isAndroidNativeWebScreenshot,
                 isIOS,
+                ignoreRegionPadding,
             },
             ignore,
         )

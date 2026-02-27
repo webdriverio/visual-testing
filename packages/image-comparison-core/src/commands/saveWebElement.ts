@@ -76,6 +76,7 @@ export default async function saveWebElement(
 
     // 3b. Resolve ignore regions (element-local, in device pixels) while the DOM
     // is still in screenshot state.
+    const ignoreRegionPadding = (getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
     const ignoreRegions = ignore && ignore.length > 0
         ? await (async () => {
             const rootElement = await (element as any as WebdriverIO.Element | Promise<WebdriverIO.Element>)
@@ -85,6 +86,7 @@ export default async function saveWebElement(
                     browserInstance,
                     devicePixelRatio: devicePixelRatio || 1,
                     rootElement: rootElement as WebdriverIO.Element,
+                    ignoreRegionPadding,
                 },
                 ignore,
             )

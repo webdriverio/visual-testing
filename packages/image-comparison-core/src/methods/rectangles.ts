@@ -288,7 +288,7 @@ export async function determineWebScreenIgnoreRegions(
 ): Promise<RectanglesOutput[]> {
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const { browserInstance, devicePixelRatio, deviceRectangles, isAndroid, isAndroidNativeWebScreenshot, isIOS } = options
+    const { browserInstance, devicePixelRatio, deviceRectangles, isAndroid, isAndroidNativeWebScreenshot, isIOS, ignoreRegionPadding: padding } = options
 
     // Get raw (unrounded) BCR values so we can multiply by DPR before
     // rounding. The shared getBoundingClientRect script pre-rounds to CSS
@@ -351,12 +351,15 @@ export async function determineWebScreenIgnoreRegions(
                 y += deviceRectangles.viewport.y
             }
 
-            return {
-                x,
-                y,
-                width: right - left,
-                height: bottom - top,
+            let width = right - left
+            let height = bottom - top
+            if (padding > 0) {
+                x = Math.max(0, x - padding)
+                y = Math.max(0, y - padding)
+                width += 2 * padding
+                height += 2 * padding
             }
+            return { x, y, width, height }
         })
 }
 
@@ -372,7 +375,7 @@ export async function determineWebElementIgnoreRegions(
 ): Promise<RectanglesOutput[]> {
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const { browserInstance, devicePixelRatio, rootElement } = options
+    const { browserInstance, devicePixelRatio, rootElement, ignoreRegionPadding: padding } = options
 
     // Compute bounding boxes relative to the root element: (childBCR - rootBCR)
     const rawRelativeBcr = (el: HTMLElement, root: HTMLElement) => {
@@ -411,20 +414,23 @@ export async function determineWebElementIgnoreRegions(
 
     // Both literal regions and element-derived regions are currently expected
     // to be in CSS pixels relative to the element. Scale everything by DPR and
-    // express as device-pixel rectangles.
+    // express as device-pixel rectangles using the same floor-based rounding
+    // strategy as the BiDi element clip (x/y/width/height all floored).
+    // Then expand each region by ignoreRegionPadding on each side (configurable, default 1)
+    // to reduce 1px boundary differences on high-DPR / BiDi.
     return [...regions, ...regionsFromElements]
         .map((region: RectanglesOutput) => {
-            const left = Math.floor(region.x * devicePixelRatio)
-            const top = Math.floor(region.y * devicePixelRatio)
-            const right = Math.ceil((region.x + region.width) * devicePixelRatio)
-            const bottom = Math.ceil((region.y + region.height) * devicePixelRatio)
-
-            return {
-                x: left,
-                y: top,
-                width: right - left,
-                height: bottom - top,
+            let x = Math.floor(region.x * devicePixelRatio)
+            let y = Math.floor(region.y * devicePixelRatio)
+            let width = Math.floor(region.width * devicePixelRatio)
+            let height = Math.floor(region.height * devicePixelRatio)
+            if (padding > 0) {
+                x = Math.max(0, x - padding)
+                y = Math.max(0, y - padding)
+                width += 2 * padding
+                height += 2 * padding
             }
+            return { x, y, width, height }
         })
 }
 
