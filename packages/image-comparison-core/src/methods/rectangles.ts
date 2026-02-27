@@ -4,6 +4,7 @@ import { getElementPositionAndroid, getElementPositionDesktop, getElementWebview
 import type {
     DetermineDeviceBlockOutsOptions,
     DetermineWebScreenIgnoreRegionsOptions,
+    DetermineWebElementIgnoreRegionsOptions,
     DeviceRectangles,
     ElementRectangles,
     PrepareIgnoreRectanglesOptions,
@@ -353,6 +354,74 @@ export async function determineWebScreenIgnoreRegions(
             return {
                 x,
                 y,
+                width: right - left,
+                height: bottom - top,
+            }
+        })
+}
+
+/**
+ * Translate ignores to regions for web element screenshots.
+ * Regions are expressed in *element-local* coordinates in device pixels so
+ * they can be applied directly on the cropped element image regardless of
+ * how the element screenshot was taken (BiDi clip vs. WebDriver crop).
+ */
+export async function determineWebElementIgnoreRegions(
+    options: DetermineWebElementIgnoreRegionsOptions,
+    ignores: (ElementIgnore | ElementIgnore[])[],
+): Promise<RectanglesOutput[]> {
+    const awaitedIgnores = await Promise.all(ignores)
+    const { elements, regions } = splitIgnores(awaitedIgnores)
+    const { browserInstance, devicePixelRatio, rootElement } = options
+
+    // Compute bounding boxes relative to the root element: (childBCR - rootBCR)
+    const rawRelativeBcr = (el: HTMLElement, root: HTMLElement) => {
+        const elRect = el.getBoundingClientRect()
+        const rootRect = root.getBoundingClientRect()
+
+        return {
+            x: elRect.x - rootRect.x,
+            y: elRect.y - rootRect.y,
+            width: elRect.width,
+            height: elRect.height,
+        }
+    }
+
+    const regionsFromElements: RectanglesOutput[] = []
+    const selectorCache = new Map<string, WebdriverIO.Element[]>()
+    const selectorIndex = new Map<string, number>()
+
+    for (const element of elements) {
+        const selector = element.selector as string
+
+        if (!selectorCache.has(selector)) {
+            const fresh = await browserInstance.$$(selector)
+            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
+            selectorIndex.set(selector, 0)
+        }
+
+        const idx = selectorIndex.get(selector)!
+        const cached = selectorCache.get(selector)!
+        const el = idx < cached.length ? cached[idx] : element
+        selectorIndex.set(selector, idx + 1)
+
+        const bcr = await browserInstance.execute(rawRelativeBcr, el as any, rootElement as any) as RectanglesOutput
+        regionsFromElements.push(bcr)
+    }
+
+    // Both literal regions and element-derived regions are currently expected
+    // to be in CSS pixels relative to the element. Scale everything by DPR and
+    // express as device-pixel rectangles.
+    return [...regions, ...regionsFromElements]
+        .map((region: RectanglesOutput) => {
+            const left = Math.floor(region.x * devicePixelRatio)
+            const top = Math.floor(region.y * devicePixelRatio)
+            const right = Math.ceil((region.x + region.width) * devicePixelRatio)
+            const bottom = Math.ceil((region.y + region.height) * devicePixelRatio)
+
+            return {
+                x: left,
+                y: top,
                 width: right - left,
                 height: bottom - top,
             }

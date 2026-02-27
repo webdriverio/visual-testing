@@ -6,6 +6,7 @@ import {
     determineStatusAddressToolBarRectangles,
     determineIgnoreRegions,
     determineWebScreenIgnoreRegions,
+    determineWebElementIgnoreRegions,
     splitIgnores,
     determineDeviceBlockOuts,
     prepareIgnoreRectangles
@@ -968,6 +969,59 @@ describe('rectangles', () => {
             await expect(
                 determineWebScreenIgnoreRegions(desktopOptions, ['invalid' as any])
             ).rejects.toThrow('Invalid elements or regions')
+        })
+    })
+
+    describe('determineWebElementIgnoreRegions', () => {
+        it('should resolve element-local regions and apply DPR', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const childElement = { elementId: 'child', selector: '.child' } as WebdriverIO.Element
+            const freshChild = { elementId: 'child-fresh', selector: '.child' } as unknown as WebdriverIO.Element
+
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshChild] as any)
+            // Simulate already-relative BCR from execute: (20,30,100,40)
+            mockExecute.mockResolvedValueOnce({ x: 20, y: 30, width: 100, height: 40 })
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+            }, [childElement])
+
+            // CSS: (20,30,100,40) × DPR(2) → (40,60,200,80)
+            expect(result).toEqual([
+                { x: 40, y: 60, width: 200, height: 80 },
+            ])
+        })
+
+        it('should pass through literal regions (CSS relative to element) with DPR applied', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const region = { x: 5, y: 10, width: 50, height: 20 }
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+            }, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            // (5,10,50,20) × 2 → (10,20,100,40)
+            expect(result).toEqual([
+                { x: 10, y: 20, width: 100, height: 40 },
+            ])
+        })
+
+        it('should handle empty ignores', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+            }, [])
+
+            expect(result).toEqual([])
+            expect(mockExecute).not.toHaveBeenCalled()
         })
     })
 

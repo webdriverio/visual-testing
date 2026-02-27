@@ -14,13 +14,13 @@ export interface InternalSaveMethodOptions {
 }
 
 export interface InternalSaveScreenMethodOptions extends InternalSaveMethodOptions {
-    /** Elements/regions to resolve for ignore during comparison (resolved while DOM is in screenshot state) */
     ignore?: (ElementIgnore | ElementIgnore[])[];
     saveScreenOptions: SaveScreenOptions,
 }
 
 export interface InternalSaveElementMethodOptions extends InternalSaveMethodOptions {
     element: HTMLElement | WicElement;
+    ignore?: (ElementIgnore | ElementIgnore[])[];
     saveElementOptions: SaveElementOptions,
 }
 

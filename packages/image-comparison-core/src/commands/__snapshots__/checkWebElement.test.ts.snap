@@ -25,6 +25,7 @@ exports[`checkWebElement > should execute checkWebElement with basic options 2`]
       "baselineFolder": "/test/baseline",
       "diffFolder": "/test/diff",
     },
+    "ignore": undefined,
     "instanceData": {
       "appName": "TestApp",
       "browserName": "Chrome",
@@ -425,6 +426,7 @@ exports[`checkWebElement > should handle custom element options 1`] = `
       "baselineFolder": "/test/baseline",
       "diffFolder": "/test/diff",
     },
+    "ignore": undefined,
     "instanceData": {
       "appName": "TestApp",
       "browserName": "Chrome",
@@ -764,6 +766,7 @@ exports[`checkWebElement > should handle undefined method options with fallbacks
       "baselineFolder": "/test/baseline",
       "diffFolder": "/test/diff",
     },
+    "ignore": undefined,
     "instanceData": {
       "appName": "TestApp",
       "browserName": "Chrome",

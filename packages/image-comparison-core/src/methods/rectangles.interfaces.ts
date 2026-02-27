@@ -153,6 +153,15 @@ export interface DetermineWebScreenIgnoreRegionsOptions {
     isIOS: boolean;
 }
 
+export interface DetermineWebElementIgnoreRegionsOptions {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
+    /** The device pixel ratio */
+    devicePixelRatio: number;
+    /** The root element being captured in the element screenshot */
+    rootElement: WebdriverIO.Element;
+}
+
 export interface BoundingBox extends BaseBoundingBox { }
 export interface IgnoreBoxes extends BoundingBox { }
 

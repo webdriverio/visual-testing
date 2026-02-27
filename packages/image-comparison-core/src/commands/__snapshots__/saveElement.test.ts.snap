@@ -185,6 +185,7 @@ exports[`saveElement > should execute saveWebElement when isNativeContext is fal
       "baselineFolder": "/test/baseline",
       "diffFolder": "/test/diff",
     },
+    "ignore": undefined,
     "instanceData": {
       "appName": "TestApp",
       "browserName": "Chrome",
