@@ -26,10 +26,10 @@ describe('@wdio/visual-service desktop', () => {
     })
 
     it(`should compare a viewport screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
-        // First store the baseline
-        // await browser.checkScreen('ignoredElementsViewportScreenshot')
-
-        // First change the background color of the elements to be ignored
+        // When running a new set of images then first comment out block 1 and 2. Then run the test.
+        // Then uncomment block 1, check if they fail with `--store-diffs` as an extra argument.
+        // If so, then uncomment block 2 and check if pass with the same arguments.
+        // Block 1
         await browser.execute(() => {
             document.querySelectorAll('.navbar__items--right a.navbar__item,  .feature_G9wp').forEach(link => {
                 (link as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
@@ -39,8 +39,7 @@ describe('@wdio/visual-service desktop', () => {
         await expect(browser).toMatchScreenSnapshot(
             'ignoredElementsViewportScreenshot',
             {
-                // Now ignore the elements by their class name
-                // If the ignore fails, the test will fail
+                // Block 2
                 ignore: [
                     await $$('.navbar__items--right a.navbar__item'),
                     await $$('.feature_G9wp'),
