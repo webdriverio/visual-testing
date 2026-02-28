@@ -1093,6 +1093,26 @@ describe('rectangles', () => {
             expect(result).toEqual([])
             expect(mockExecute).not.toHaveBeenCalled()
         })
+
+        it('should output CSS-pixel regions when isAndroidNativeWebScreenshot and isWebDriverElementScreenshot (native driver image at CSS size)', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const region = { x: 10, y: 20, width: 100, height: 40 }
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+                ignoreRegionPadding: 0,
+                isAndroidNativeWebScreenshot: true,
+                isWebDriverElementScreenshot: true,
+            }, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            // Device px: (10,20,100,40) × 2 → (20,40,200,80); then downscale to CSS for native driver image → (10,20,100,40)
+            expect(result).toEqual([
+                { x: 10, y: 20, width: 100, height: 40 },
+            ])
+        })
     })
 
     describe('determineDeviceBlockOuts', () => {

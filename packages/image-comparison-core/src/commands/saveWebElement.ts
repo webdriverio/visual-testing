@@ -74,8 +74,9 @@ export default async function saveWebElement(
     const shouldUseBidi = canUseBidiScreenshot(browserInstance) && !isMobile && !enableLegacyScreenshotMethod
     const screenshotData = await takeElementScreenshot(browserInstance, elementScreenshotOptions, shouldUseBidi)
 
-    // 3b. Resolve ignore regions (element-local, in device pixels) while the DOM
-    // is still in screenshot state.
+    // 3b. Resolve ignore regions (element-local) while the DOM is still in screenshot state.
+    // determineWebElementIgnoreRegions returns device-pixel regions, or CSS-pixel regions when
+    // the element image is from the native driver on Android native web (see that function).
     const ignoreRegionPadding = (getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
     const ignoreRegions = ignore && ignore.length > 0
         ? await (async () => {
@@ -87,6 +88,8 @@ export default async function saveWebElement(
                     devicePixelRatio: devicePixelRatio || 1,
                     rootElement: rootElement as WebdriverIO.Element,
                     ignoreRegionPadding,
+                    isAndroidNativeWebScreenshot,
+                    isWebDriverElementScreenshot: screenshotData.isWebDriverElementScreenshot,
                 },
                 ignore,
             )

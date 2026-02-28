@@ -164,6 +164,14 @@ export interface DetermineWebElementIgnoreRegionsOptions {
     rootElement: WebdriverIO.Element;
     /** Padding in device pixels added to each side of computed ignore regions (caller defaults to 1). */
     ignoreRegionPadding: number;
+    /**
+     * When both this and isWebDriverElementScreenshot are true, the element image is at CSS pixel size
+     * (native driver returns a downscaled image). We then output ignore regions in CSS pixel coordinates
+     * by dividing by DPR; otherwise regions are in device pixels.
+     */
+    isAndroidNativeWebScreenshot?: boolean;
+    /** When true, the element screenshot came from the native driver (no fallback crop). */
+    isWebDriverElementScreenshot?: boolean;
 }
 
 export interface BoundingBox extends BaseBoundingBox { }

@@ -365,9 +365,13 @@ export async function determineWebScreenIgnoreRegions(
 
 /**
  * Translate ignores to regions for web element screenshots.
- * Regions are expressed in *element-local* coordinates in device pixels so
- * they can be applied directly on the cropped element image regardless of
- * how the element screenshot was taken (BiDi clip vs. WebDriver crop).
+ * By default regions are in *element-local* device pixels so they match the cropped element image
+ * (BiDi clip or fallback full-screenshot crop, both at device pixel size).
+ * Exception: when the element screenshot is from the native driver on Android native web
+ * (isWebDriverElementScreenshot && isAndroidNativeWebScreenshot), the driver returns an image at
+ * CSS pixel size (downscaled). We then output regions in CSS pixel coordinates (divide by DPR)
+ * so they align with that image. Fallback (full screenshot + crop) is at device size, so we do
+ * not downscale when fallback was used.
  */
 export async function determineWebElementIgnoreRegions(
     options: DetermineWebElementIgnoreRegionsOptions,
@@ -375,7 +379,14 @@ export async function determineWebElementIgnoreRegions(
 ): Promise<RectanglesOutput[]> {
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const { browserInstance, devicePixelRatio, rootElement, ignoreRegionPadding: padding } = options
+    const {
+        browserInstance,
+        devicePixelRatio,
+        rootElement,
+        ignoreRegionPadding: padding,
+        isAndroidNativeWebScreenshot,
+        isWebDriverElementScreenshot,
+    } = options
 
     // Compute bounding boxes relative to the root element: (childBCR - rootBCR)
     const rawRelativeBcr = (el: HTMLElement, root: HTMLElement) => {
@@ -418,7 +429,7 @@ export async function determineWebElementIgnoreRegions(
     // strategy as the BiDi element clip (x/y/width/height all floored).
     // Then expand each region by ignoreRegionPadding on each side (configurable, default 1)
     // to reduce 1px boundary differences on high-DPR / BiDi.
-    return [...regions, ...regionsFromElements]
+    let result = [...regions, ...regionsFromElements]
         .map((region: RectanglesOutput) => {
             let x = Math.floor(region.x * devicePixelRatio)
             let y = Math.floor(region.y * devicePixelRatio)
@@ -432,6 +443,20 @@ export async function determineWebElementIgnoreRegions(
             }
             return { x, y, width, height }
         })
+
+    // Only downscale when the element image is at CSS pixel size: native driver element screenshot
+    // on Android native web (fallback false). Fallback uses a device-pixel crop, so no downscale.
+    if (isAndroidNativeWebScreenshot === true && isWebDriverElementScreenshot === true && devicePixelRatio > 0) {
+        const dpr = devicePixelRatio
+        result = result.map((r) => ({
+            x: Math.round(r.x / dpr),
+            y: Math.round(r.y / dpr),
+            width: Math.round(r.width / dpr),
+            height: Math.round(r.height / dpr),
+        }))
+    }
+
+    return result
 }
 
 /**
