@@ -155,6 +155,19 @@ export interface DetermineWebScreenIgnoreRegionsOptions {
     ignoreRegionPadding: number;
 }
 
+/**
+ * Options for full-page web ignore regions (desktop).
+ * Full-page image is in document coordinates: (0,0) = top-left of document, device pixels.
+ */
+export interface DetermineWebFullPageIgnoreRegionsOptions {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
+    /** The device pixel ratio */
+    devicePixelRatio: number;
+    /** Padding in device pixels added to each side of computed ignore regions (caller defaults to 1). */
+    ignoreRegionPadding: number;
+}
+
 export interface DetermineWebElementIgnoreRegionsOptions {
     /** The browser instance */
     browserInstance: WebdriverIO.Browser;

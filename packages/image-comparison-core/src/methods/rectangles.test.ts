@@ -5,6 +5,7 @@ import {
     determineScreenRectangles,
     determineStatusAddressToolBarRectangles,
     determineIgnoreRegions,
+    determineWebFullPageIgnoreRegions,
     determineWebScreenIgnoreRegions,
     determineWebElementIgnoreRegions,
     splitIgnores,
@@ -1001,6 +1002,67 @@ describe('rectangles', () => {
             expect(result).toEqual([
                 { x: 0, y: 0, width: 104, height: 44 },
             ])
+        })
+    })
+
+    describe('determineWebFullPageIgnoreRegions', () => {
+        const fullPageOptions = {
+            browserInstance: null as unknown as WebdriverIO.Browser,
+            devicePixelRatio: 2,
+            ignoreRegionPadding: 0,
+        }
+
+        beforeEach(() => {
+            fullPageOptions.browserInstance = mockBrowserInstance
+        })
+
+        it('should resolve elements via document BCR (BCR + scroll) and apply DPR', async () => {
+            const mockElement = { elementId: 'el1', selector: '.nav' } as WebdriverIO.Element
+            const freshElement = { elementId: 'el1-fresh', selector: '.nav' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
+            // rawDocumentBcr returns getBoundingClientRect() + (scrollX, scrollY) = document-relative CSS pixels
+            mockExecute.mockResolvedValueOnce({ x: 10, y: 1200, width: 200, height: 50 })
+
+            const result = await determineWebFullPageIgnoreRegions(fullPageOptions, [mockElement])
+
+            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.nav')
+            expect(mockExecute).toHaveBeenCalledOnce()
+            // Document CSS (10, 1200, 200, 50) × DPR 2 → device pixels (20, 2400, 400, 100)
+            expect(result).toEqual([
+                { x: 20, y: 2400, width: 400, height: 100 },
+            ])
+        })
+
+        it('should treat raw regions as document-relative CSS pixels and apply DPR', async () => {
+            const region = { x: 0, y: 500, width: 300, height: 80 }
+
+            const result = await determineWebFullPageIgnoreRegions(fullPageOptions, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            expect(result).toEqual([
+                { x: 0, y: 1000, width: 600, height: 160 },
+            ])
+        })
+
+        it('should expand regions by ignoreRegionPadding', async () => {
+            const region = { x: 10, y: 20, width: 100, height: 50 }
+            const optionsWithPadding = {
+                ...fullPageOptions,
+                ignoreRegionPadding: 1,
+            }
+
+            const result = await determineWebFullPageIgnoreRegions(optionsWithPadding, [region])
+
+            // (10,20,100,50) × 2 → (20,40,200,100); + padding 1 → (19,39,202,102)
+            expect(result).toEqual([
+                { x: 19, y: 39, width: 202, height: 102 },
+            ])
+        })
+
+        it('should return empty array when ignores is empty', async () => {
+            const result = await determineWebFullPageIgnoreRegions(fullPageOptions, [])
+
+            expect(result).toEqual([])
         })
     })
 

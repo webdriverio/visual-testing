@@ -3,6 +3,7 @@ import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import type {
     DetermineDeviceBlockOutsOptions,
+    DetermineWebFullPageIgnoreRegionsOptions,
     DetermineWebScreenIgnoreRegionsOptions,
     DetermineWebElementIgnoreRegionsOptions,
     DeviceRectangles,
@@ -351,6 +352,72 @@ export async function determineWebScreenIgnoreRegions(
                 y += deviceRectangles.viewport.y
             }
 
+            let width = right - left
+            let height = bottom - top
+            if (padding > 0) {
+                x = Math.max(0, x - padding)
+                y = Math.max(0, y - padding)
+                width += 2 * padding
+                height += 2 * padding
+            }
+            return { x, y, width, height }
+        })
+}
+
+/**
+ * Translate ignores to regions for web full-page (desktop) screenshots.
+ * Full-page image is in document coordinates: (0,0) = top-left of document, device pixels.
+ * Uses getBoundingClientRect + (scrollX, scrollY) for elements, then converts to device pixels.
+ */
+export async function determineWebFullPageIgnoreRegions(
+    options: DetermineWebFullPageIgnoreRegionsOptions,
+    ignores: (ElementIgnore | ElementIgnore[])[],
+): Promise<RectanglesOutput[]> {
+    const awaitedIgnores = await Promise.all(ignores)
+    const { elements, regions } = splitIgnores(awaitedIgnores)
+    const { browserInstance, devicePixelRatio, ignoreRegionPadding: padding } = options
+
+    const rawDocumentBcr = (el: HTMLElement) => {
+        const rect = el.getBoundingClientRect()
+        return {
+            x: rect.x + window.scrollX,
+            y: rect.y + window.scrollY,
+            width: rect.width,
+            height: rect.height,
+        }
+    }
+
+    const regionsFromElements: RectanglesOutput[] = []
+    const selectorCache = new Map<string, WebdriverIO.Element[]>()
+    const selectorIndex = new Map<string, number>()
+
+    for (const element of elements) {
+        const selector = element.selector as string
+
+        if (!selectorCache.has(selector)) {
+            const fresh = await browserInstance.$$(selector)
+            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
+            selectorIndex.set(selector, 0)
+        }
+
+        const idx = selectorIndex.get(selector)!
+        const cached = selectorCache.get(selector)!
+        const el = idx < cached.length ? cached[idx] : element
+        selectorIndex.set(selector, idx + 1)
+
+        const bcr = await browserInstance.execute(rawDocumentBcr, el as any) as RectanglesOutput
+        regionsFromElements.push(bcr)
+    }
+
+    return [...regions, ...regionsFromElements]
+        .map((region: RectanglesOutput) => {
+            const left = Math.floor(region.x * devicePixelRatio)
+            const top = Math.floor(region.y * devicePixelRatio)
+            const right = Math.ceil((region.x + region.width) * devicePixelRatio)
+            const bottom = Math.ceil((region.y + region.height) * devicePixelRatio)
+
+            let x = left
+            let y = top
             let width = right - left
             let height = bottom - top
             if (padding > 0) {

@@ -8,6 +8,7 @@ import type { FullPageScreenshotDataOptions } from '../methods/screenshots.inter
 import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
 import { getMethodOrWicOption, canUseBidiScreenshot } from '../helpers/utils.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
+import { determineWebFullPageIgnoreRegions } from '../methods/rectangles.js'
 
 /**
  * Saves an image of the full page
@@ -51,6 +52,7 @@ export default async function saveFullPageScreen(
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
         isIOS,
+        isMobile,
     } = enrichedInstanceData
 
     // 4.  Take the screenshot
@@ -78,7 +80,22 @@ export default async function saveFullPageScreen(
         ? screenshotsData.data[0].screenshot // BiDi screenshot - use directly
         : await makeFullPageBase64Image(screenshotsData, { devicePixelRatio: devicePixelRatio || NaN, isLandscape })
 
-    // 6.  Return the data
+    // 6. Resolve ignore regions (desktop only) while the DOM is still in screenshot state.
+    //    Full-page image is in document coordinates; regions are document-relative device pixels.
+    const ignore = saveFullPageOptions.method?.ignore
+    const ignoreRegionPadding = (getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
+    const ignoreRegions = !isMobile && ignore && ignore.length > 0
+        ? await determineWebFullPageIgnoreRegions(
+            {
+                browserInstance,
+                devicePixelRatio: devicePixelRatio || 1,
+                ignoreRegionPadding,
+            },
+            ignore,
+        )
+        : undefined
+
+    // 7.  Return the data
     const afterOptions = buildAfterScreenshotOptions({
         base64Image: fullPageBase64Image,
         folders,
@@ -90,5 +107,10 @@ export default async function saveFullPageScreen(
         wicOptions: saveFullPageOptions.wic
     })
 
-    return afterScreenshot(browserInstance, afterOptions!)
+    const result = await afterScreenshot(browserInstance, afterOptions!)
+
+    return {
+        ...result,
+        ...(ignoreRegions ? { ignoreRegions } : {}),
+    }
 }

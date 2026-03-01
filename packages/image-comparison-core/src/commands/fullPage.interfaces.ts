@@ -2,6 +2,7 @@ import type { BaseMobileWebScreenshotOptions, BaseWebScreenshotOptions, Folders 
 import type { DefaultOptions } from '../helpers/options.interfaces.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import type { CheckMethodOptions } from './check.interfaces.js'
+import type { ElementIgnore } from './element.interfaces.js'
 
 export interface SaveFullPageOptions {
     wic: DefaultOptions;
@@ -9,6 +10,11 @@ export interface SaveFullPageOptions {
 }
 
 export interface SaveFullPageMethodOptions extends Partial<Folders>, BaseWebScreenshotOptions, BaseMobileWebScreenshotOptions {
+    /**
+     * Elements or regions to ignore when saving/comparing (desktop full-page only).
+     * Same format as saveScreen / checkScreen (selectors or { x, y, width, height }).
+     */
+    ignore?: (ElementIgnore | ElementIgnore[])[];
     /**
      * The amount of milliseconds to wait for a new scroll. This will be used for the legacy
      * fullpage screenshot method.

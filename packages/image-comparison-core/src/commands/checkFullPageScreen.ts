@@ -52,11 +52,12 @@ export default async function checkFullPageScreen(
             hideAfterFirstScroll,
             hideScrollBars,
             hideElements,
+            ignore: checkFullPageOptions.method.ignore,
             removeElements,
             waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, base64Image } = await saveFullPageScreen({
+    const { devicePixelRatio, fileName, base64Image, ignoreRegions } = await saveFullPageScreen({
         browserInstance,
         folders,
         instanceData,
@@ -73,6 +74,9 @@ export default async function checkFullPageScreen(
         methodCompareOptions: compareOptions,
         devicePixelRatio,
         fileName,
+        additionalProperties: {
+            ignoreRegions: ignoreRegions || [],
+        },
     })
 
     // 5. Now execute the compare and return the data
