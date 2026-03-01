@@ -11,8 +11,8 @@ export interface SaveFullPageOptions {
 
 export interface SaveFullPageMethodOptions extends Partial<Folders>, BaseWebScreenshotOptions, BaseMobileWebScreenshotOptions {
     /**
-     * Elements or regions to ignore when saving/comparing (desktop full-page only).
-     * Same format as saveScreen / checkScreen (selectors or { x, y, width, height }).
+     * Elements or regions to ignore when saving/comparing full-page (desktop and mobile web).
+     * Same format as saveScreen / checkScreen (selectors or { x, y, width, height } in document CSS pixels).
      */
     ignore?: (ElementIgnore | ElementIgnore[])[];
     /**

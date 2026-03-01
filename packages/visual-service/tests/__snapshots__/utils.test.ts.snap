@@ -571,10 +571,7 @@ exports[`utils > getInstanceData > should return instance data when the lambdate
   "isMobile": true,
   "logName": "",
   "name": "",
-  "nativeWebScreenshot": {
-    "deviceName": "Samsung Galaxy S22 LT",
-    "platformVersion": "11",
-  },
+  "nativeWebScreenshot": true,
   "platformName": "osx",
   "platformVersion": "11",
 }

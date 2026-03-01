@@ -365,9 +365,11 @@ export async function determineWebScreenIgnoreRegions(
 }
 
 /**
- * Translate ignores to regions for web full-page (desktop) screenshots.
- * Full-page image is in document coordinates: (0,0) = top-left of document, device pixels.
- * Uses getBoundingClientRect + (scrollX, scrollY) for elements, then converts to device pixels.
+ * Translate ignores to regions for web full-page screenshots (desktop and mobile).
+ * Full-page image (BiDi or scroll-and-stitch) is in document coordinates: (0,0) = top-left
+ * of document, device pixels. Uses getBoundingClientRect + (scrollX, scrollY) for elements,
+ * then converts to device pixels. Same logic for all platforms; no viewport offset needed
+ * because the stitched canvas is built in document space.
  */
 export async function determineWebFullPageIgnoreRegions(
     options: DetermineWebFullPageIgnoreRegionsOptions,

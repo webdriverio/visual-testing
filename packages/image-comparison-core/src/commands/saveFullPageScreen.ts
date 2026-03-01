@@ -52,7 +52,6 @@ export default async function saveFullPageScreen(
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
         isIOS,
-        isMobile,
     } = enrichedInstanceData
 
     // 4.  Take the screenshot
@@ -80,11 +79,12 @@ export default async function saveFullPageScreen(
         ? screenshotsData.data[0].screenshot // BiDi screenshot - use directly
         : await makeFullPageBase64Image(screenshotsData, { devicePixelRatio: devicePixelRatio || NaN, isLandscape })
 
-    // 6. Resolve ignore regions (desktop only) while the DOM is still in screenshot state.
-    //    Full-page image is in document coordinates; regions are document-relative device pixels.
+    // 6. Resolve ignore regions while the DOM is still in screenshot state.
+    //    Full-page image (BiDi or stitched) is in document coordinates; regions are document-relative device pixels.
+    //    Same for desktop and mobile: document BCR (getBoundingClientRect + scroll) × DPR.
     const ignore = saveFullPageOptions.method?.ignore
     const ignoreRegionPadding = (getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
-    const ignoreRegions = !isMobile && ignore && ignore.length > 0
+    const ignoreRegions = ignore && ignore.length > 0
         ? await determineWebFullPageIgnoreRegions(
             {
                 browserInstance,
