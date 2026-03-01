@@ -104,6 +104,34 @@ describe('@wdio/visual-service mobile web', () => {
                 )
             ).toEqual(0)
         })
+
+        it(`should compare an element with ignore elements successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function() {
+            skipTest({ test: this, deviceName, platformName, platformVersion, orientation })
+
+            await $('.features_vqN4').scrollIntoView()
+
+            // When running a new set of images then first comment out block 1 and 2. Then run the test.
+            // Then uncomment block 1, check if they fail with `--store-diffs` as an extra argument.
+            // If so, then uncomment block 2 and check if pass with the same arguments.
+            // Block 1
+            await browser.execute(() => {
+                document.querySelectorAll('.feature_G9wp h3').forEach(heading => {
+                    (heading as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
+                })
+            })
+
+            await expect($('.features_vqN4')).toMatchElementSnapshot(
+                'ignoredElementsElementScreenshot',
+                {
+                    // Block 2
+                    ignore: [
+                        await $$('.feature_G9wp h3'),
+                    ],
+                    // Don't comment this out, it's needed to hide the navbar
+                    hideElements: [await $('nav.navbar')]
+                }
+            )
+        })
     }
 
     if (
@@ -146,9 +174,10 @@ interface SkipRule {
 }
 
 const skipRules: SkipRule[] = [
+    // Android devices
     {
         // @TODO: remove when fixed
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'Pixel 9 Pro',
         platformName: 'Android',
         platformVersions: ['15'],
@@ -157,7 +186,7 @@ const skipRules: SkipRule[] = [
     },
     {
         // @TODO: remove when fixed
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'Galaxy Tab S8',
         platformName: 'Android',
         platformVersions: ['13'],
@@ -166,7 +195,7 @@ const skipRules: SkipRule[] = [
     },
     {
         // @TODO: remove when fixed
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'Galaxy Tab S8',
         platformName: 'Android',
         platformVersions: ['14'],
@@ -175,7 +204,7 @@ const skipRules: SkipRule[] = [
     },
     {
         // @TODO: remove when fixed
-        titleIncludes: ['ignore elements', 'screen successful'],
+        titleIncludes: ['screen with ignore elements', 'screen successful'],
         deviceName: 'Galaxy Tab S8',
         platformName: 'Android',
         platformVersions: ['14'],
@@ -193,7 +222,7 @@ const skipRules: SkipRule[] = [
     },
     {
         // @TODO: remove when fixed
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'Pixel 4',
         platformName: 'Android',
         platformVersions: ['13'],
@@ -209,7 +238,7 @@ const skipRules: SkipRule[] = [
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
     {
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'Pixel 9 Pro',
         platformName: 'Android',
         platformVersions: ['14', '15'],
@@ -217,15 +246,16 @@ const skipRules: SkipRule[] = [
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
     {
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'Pixel 4',
         platformName: 'Android',
         platformVersions: ['11', '12'],
         orientations: ['landscape', 'portrait'],
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
+    // iOS devices
     {
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'iPhone 13 mini',
         platformName: 'iOS',
         platformVersions: ['17.5'],
@@ -233,7 +263,7 @@ const skipRules: SkipRule[] = [
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
     {
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'iPhone 13 Pro',
         platformName: 'iOS',
         platformVersions: ['16.0'],
@@ -241,7 +271,7 @@ const skipRules: SkipRule[] = [
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
     {
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'iPhone 14 Pro',
         platformName: 'iOS',
         platformVersions: ['17.5'],
@@ -249,7 +279,7 @@ const skipRules: SkipRule[] = [
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
     {
-        titleIncludes: 'ignore elements',
+        titleIncludes: 'screen with ignore elements',
         deviceName: 'iPhone 15 Pro Max',
         platformName: 'iOS',
         platformVersions: ['18.0'],
