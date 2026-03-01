@@ -83,6 +83,29 @@ describe('@wdio/visual-service desktop', () => {
         })
     })
 
+    it(`should compare a full page screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
+        // When running a new set of images then first comment out block 1 and 2. Then run the test.
+        // Then uncomment block 1, check if they fail with `--store-diffs` as an extra argument.
+        // If so, then uncomment block 2 and check if pass with the same arguments.
+        // Block 1
+        await browser.execute(() => {
+            document.querySelectorAll('.feature_G9wp h3').forEach(heading => {
+                (heading as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
+            })
+        })
+
+        await expect(browser).toMatchFullPageSnapshot('ignoredElementsFullPageScreenshot', {
+            fullPageScrollTimeout: 1500,
+            hideAfterFirstScroll: [
+                await $('nav.navbar'),
+            ],
+            // // Block 2
+            ignore: [
+                await $$('.feature_G9wp h3'),
+            ],
+        })
+    })
+
     it(`should compare a tabbable screenshot successful with a baseline for '${browserName}'`, async function() {
         await expect(browser).toMatchTabbablePageSnapshot('tabbable', {
             hideAfterFirstScroll: [
