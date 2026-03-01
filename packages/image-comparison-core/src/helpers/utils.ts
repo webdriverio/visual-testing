@@ -125,7 +125,7 @@ export function checkTestInMobileBrowser(isMobile: boolean, browserName: string)
  * Checks if this is a native webscreenshot on android
  */
 export function checkAndroidNativeWebScreenshot(isAndroid: boolean, nativeWebscreenshot: boolean): boolean {
-    return (isAndroid && nativeWebscreenshot) || false
+    return (isAndroid && !!nativeWebscreenshot) || false
 }
 
 /**
