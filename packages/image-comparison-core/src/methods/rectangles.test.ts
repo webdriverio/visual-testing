@@ -1064,6 +1064,23 @@ describe('rectangles', () => {
 
             expect(result).toEqual([])
         })
+
+        it('should subtract fullPageCropTopPaddingCSS from y for mobile scroll-and-stitch alignment', async () => {
+            const region = { x: 0, y: 100, width: 300, height: 80 }
+            const optionsWithCropTop = {
+                ...fullPageOptions,
+                devicePixelRatio: 3,
+                fullPageCropTopPaddingCSS: 6,
+            }
+
+            const result = await determineWebFullPageIgnoreRegions(optionsWithCropTop, [region])
+
+            // document (0, 100, 300, 80) with cropTop 6 → canvas y = (100-6)*3 = 282, height = 80*3 = 240
+            expect(mockExecute).not.toHaveBeenCalled()
+            expect(result).toEqual([
+                { x: 0, y: 282, width: 900, height: 240 },
+            ])
+        })
     })
 
     describe('determineWebElementIgnoreRegions', () => {

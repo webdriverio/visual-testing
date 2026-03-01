@@ -31,6 +31,7 @@ export default async function checkFullPageScreen(
         hideAfterFirstScroll = [],
         hideScrollBars,
         hideElements = [],
+        ignoreRegionPadding,
         removeElements = [],
         waitForFontsLoaded,
     } = checkFullPageOptions.method
@@ -53,6 +54,7 @@ export default async function checkFullPageScreen(
             hideScrollBars,
             hideElements,
             ignore: checkFullPageOptions.method.ignore,
+            ignoreRegionPadding,
             removeElements,
             waitForFontsLoaded,
         },

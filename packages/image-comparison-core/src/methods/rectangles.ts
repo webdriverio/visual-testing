@@ -377,7 +377,7 @@ export async function determineWebFullPageIgnoreRegions(
 ): Promise<RectanglesOutput[]> {
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const { browserInstance, devicePixelRatio, ignoreRegionPadding: padding } = options
+    const { browserInstance, devicePixelRatio, ignoreRegionPadding: padding, fullPageCropTopPaddingCSS: cropTop = 0 } = options
 
     const rawDocumentBcr = (el: HTMLElement) => {
         const rect = el.getBoundingClientRect()
@@ -414,9 +414,13 @@ export async function determineWebFullPageIgnoreRegions(
     return [...regions, ...regionsFromElements]
         .map((region: RectanglesOutput) => {
             const left = Math.floor(region.x * devicePixelRatio)
-            const top = Math.floor(region.y * devicePixelRatio)
             const right = Math.ceil((region.x + region.width) * devicePixelRatio)
-            const bottom = Math.ceil((region.y + region.height) * devicePixelRatio)
+            // On mobile full-page scroll-and-stitch, the canvas crops cropTop (e.g. 6px) from the top
+            // of each tile, so canvas y = (documentY - cropTop) × DPR
+            const topDevice = Math.floor((region.y - cropTop) * devicePixelRatio)
+            const bottomDevice = Math.ceil((region.y + region.height - cropTop) * devicePixelRatio)
+            const top = Math.max(0, topDevice)
+            const bottom = Math.max(top, bottomDevice)
 
             let x = left
             let y = top

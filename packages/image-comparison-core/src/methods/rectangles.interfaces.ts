@@ -156,8 +156,9 @@ export interface DetermineWebScreenIgnoreRegionsOptions {
 }
 
 /**
- * Options for full-page web ignore regions (desktop).
- * Full-page image is in document coordinates: (0,0) = top-left of document, device pixels.
+ * Options for full-page web ignore regions (desktop and mobile).
+ * Full-page image is in document coordinates; on mobile scroll-and-stitch the canvas
+ * crops off the top addressBarShadowPadding (CSS px), so we subtract that from y.
  */
 export interface DetermineWebFullPageIgnoreRegionsOptions {
     /** The browser instance */
@@ -166,6 +167,13 @@ export interface DetermineWebFullPageIgnoreRegionsOptions {
     devicePixelRatio: number;
     /** Padding in device pixels added to each side of computed ignore regions (caller defaults to 1). */
     ignoreRegionPadding: number;
+    /**
+     * Top crop offset in CSS pixels (e.g. addressBarShadowPadding on mobile full-page).
+     * When set, canvas y = (documentY - fullPageCropTopPaddingCSS) × DPR so ignore regions
+     * align with the stitched image which crops this much from the top of each tile.
+     * @default 0
+     */
+    fullPageCropTopPaddingCSS?: number;
 }
 
 export interface DetermineWebElementIgnoreRegionsOptions {

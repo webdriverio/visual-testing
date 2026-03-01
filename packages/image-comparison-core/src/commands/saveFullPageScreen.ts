@@ -52,6 +52,7 @@ export default async function saveFullPageScreen(
         isAndroidChromeDriverScreenshot,
         isAndroidNativeWebScreenshot,
         isIOS,
+        isMobile,
     } = enrichedInstanceData
 
     // 4.  Take the screenshot
@@ -81,14 +82,17 @@ export default async function saveFullPageScreen(
 
     // 6. Resolve ignore regions while the DOM is still in screenshot state.
     //    Full-page image (BiDi or stitched) is in document coordinates; regions are document-relative device pixels.
-    //    Same for desktop and mobile: document BCR (getBoundingClientRect + scroll) × DPR.
+    //    On mobile scroll-and-stitch we crop addressBarShadowPadding from the top of each tile, so we pass
+    //    fullPageCropTopPaddingCSS so ignore regions align with the stitched canvas.
     const ignore = saveFullPageOptions.method?.ignore
     const ignoreRegionPadding = (getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
+    const usedStitchedMobile = isMobile && !(screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
     const ignoreRegions = ignore && ignore.length > 0
         ? await determineWebFullPageIgnoreRegions(
             {
                 browserInstance,
                 devicePixelRatio: devicePixelRatio || 1,
+                fullPageCropTopPaddingCSS: usedStitchedMobile ? beforeOptions.addressBarShadowPadding : 0,
                 ignoreRegionPadding,
             },
             ignore,
