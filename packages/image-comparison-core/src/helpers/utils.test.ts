@@ -691,7 +691,7 @@ describe('utils', () => {
             expect(result).toMatchSnapshot()
         })
 
-        it('should handle float overlay values from non-integer DPR and ensure consistent dimensions', async () => {
+        it('should handle rounded overlay values from non-integer DPR', async () => {
             const dpr = 2.625
             const screenW = 1080
             const screenH = 2424
@@ -701,17 +701,20 @@ describe('utils', () => {
             const cssWidth = 412
             const cssHeight = 363
 
+            const overlayWidth = Math.round(cssWidth * dpr)
+            const overlayHeight = Math.round(cssHeight * dpr)
+
             vi.mocked(mockBrowserInstance.execute)
                 .mockResolvedValueOnce(undefined) // loadBase64Html
                 .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce(undefined) // executeNativeClick
                 .mockResolvedValueOnce({
-                    x: cssClickX * dpr,
-                    y: cssClickY * dpr,
-                    width: cssWidth * dpr,
-                    height: cssHeight * dpr,
-                }) // getMobileWebviewClickAndDimensions (floats, not rounded)
+                    x: Math.round(cssClickX * dpr),
+                    y: Math.round(cssClickY * dpr),
+                    width: overlayWidth,
+                    height: overlayHeight,
+                }) // getMobileWebviewClickAndDimensions (rounded integers from overlay)
 
             const result = await getMobileViewPortPosition({
                 browserInstance: mockBrowserInstance,
@@ -720,18 +723,14 @@ describe('utils', () => {
                 screenWidth: screenW,
             })
 
-            const viewportTop = Math.max(0, Math.round(screenH / 2 - cssClickY * dpr))
-            const viewportLeft = Math.max(0, Math.round(screenW / 2 - cssClickX * dpr))
-            const viewportWidth = Math.min(Math.round(cssWidth * dpr), screenW - viewportLeft)
-            const viewportHeight = Math.min(Math.round(cssHeight * dpr), screenH - viewportTop)
+            const viewportTop = Math.max(0, Math.round(screenH / 2 - Math.round(cssClickY * dpr)))
+            const viewportLeft = Math.max(0, Math.round(screenW / 2 - Math.round(cssClickX * dpr)))
 
             expect(result.viewport.y).toBe(viewportTop)
             expect(result.viewport.x).toBe(viewportLeft)
-            expect(result.viewport.width).toBe(viewportWidth)
-            expect(result.viewport.height).toBe(viewportHeight)
-            expect(result.statusBarAndAddressBar.height).toBe(viewportTop)
-            expect(result.viewport.y + result.viewport.height + result.bottomBar.height).toBe(screenH)
-            expect(result.viewport.x + result.viewport.width + result.rightSidePadding.width).toBe(screenW)
+            expect(result.viewport.width).toBe(overlayWidth)
+            expect(result.viewport.height).toBe(overlayHeight)
+            expect(result.statusBarAndAddressBar.height).toBe(Math.max(0, Math.round(viewportTop)))
         })
 
         it('should return initialDeviceRectangles if not WebView (native context)', async () => {

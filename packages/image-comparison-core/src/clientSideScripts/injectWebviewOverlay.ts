@@ -21,10 +21,10 @@ export function injectWebviewOverlay(isAndroid: boolean): void {
     overlay.onclick = (event) => {
         const { clientX: x, clientY: y } = event
         const data = {
-            x: x * dpr,
-            y: y * dpr,
-            width: window.innerWidth * dpr,
-            height: document.documentElement.clientHeight * dpr,
+            x: Math.round(x * dpr),
+            y: Math.round(y * dpr),
+            width: Math.round(window.innerWidth * dpr),
+            height: Math.round(document.documentElement.clientHeight * dpr),
         }
 
         overlay.dataset.icsWebviewData = JSON.stringify(data)

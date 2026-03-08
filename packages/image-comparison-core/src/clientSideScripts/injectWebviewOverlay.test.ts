@@ -67,7 +67,7 @@ describe('injectWebviewOverlay', () => {
         })
     })
 
-    it('should preserve float precision with non-integer DPR (Android)', () => {
+    it('should round values to integers with non-integer DPR (Android)', () => {
         Object.defineProperty(window, 'devicePixelRatio', {
             value: 2.625,
             configurable: true,
@@ -94,10 +94,10 @@ describe('injectWebviewOverlay', () => {
         const parsedData = JSON.parse(overlay.dataset.icsWebviewData!)
 
         expect(parsedData).toEqual({
-            x: 206 * 2.625,
-            y: 181 * 2.625,
-            width: 412 * 2.625,
-            height: 363 * 2.625,
+            x: Math.round(206 * 2.625),
+            y: Math.round(181 * 2.625),
+            width: Math.round(412 * 2.625),
+            height: Math.round(363 * 2.625),
         })
     })
 

@@ -22,10 +22,10 @@ describe('@wdio/visual-service mobile web', () => {
         await browser.pause(3000)
     })
 
-    // Chrome remembers the last position when the url is loaded again, this will reset it.
-    afterEach(
-        async () => await browser.executeScript('window.scrollTo(0, 0);', [])
-    )
+    // Refresh after each test to reset DOM modifications and scroll position.
+    // Chrome can restore pages from bfcache when navigating to the same URL,
+    // which would preserve inline style changes from "ignore elements" tests.
+    afterEach(async () => await browser.refresh())
 
     if (
         wdioIcsCommands.length === 0 ||
