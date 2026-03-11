@@ -733,6 +733,116 @@ describe('utils', () => {
             expect(result.statusBarAndAddressBar.height).toBe(Math.max(0, Math.round(viewportTop)))
         })
 
+        it('should retry and succeed on Android when overlay returns zeros (Start Surface blocking)', async () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+            const infoSpy = vi.spyOn(log, 'info').mockImplementation(() => {})
+
+            vi.mocked(mockBrowserInstance.execute)
+                // --- Attempt 1: overlay returns zeros (Start Surface is blocking) ---
+                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick (screen center)
+                .mockResolvedValueOnce({ x: 0, y: 0, width: 0, height: 0 }) // getMobileWebviewClickAndDimensions
+                // --- Dismiss Start Surface: tap tab thumbnail area ---
+                .mockResolvedValueOnce(undefined) // executeNativeClick (thumbnail tap)
+                // --- Attempt 2: overlay returns valid data ---
+                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick (screen center)
+                .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
+
+            const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                isAndroid: true,
+                isIOS: false,
+            })
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('overlay did not receive the native click')
+            )
+            expect(infoSpy).toHaveBeenCalledWith(
+                expect.stringContaining('Tapping tab thumbnail area')
+            )
+            expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
+            expect(result.viewport.width).toBe(100)
+            expect(result.viewport.height).toBe(100)
+
+            warnSpy.mockRestore()
+            infoSpy.mockRestore()
+        })
+
+        it('should return initialDeviceRectangles after all retries are exhausted on Android', async () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+            const infoSpy = vi.spyOn(log, 'info').mockImplementation(() => {})
+            const errorSpy = vi.spyOn(log, 'error').mockImplementation(() => {})
+
+            const zeroOverlay = { x: 0, y: 0, width: 0, height: 0 }
+            vi.mocked(mockBrowserInstance.execute)
+                // --- Attempt 1 ---
+                .mockResolvedValueOnce(undefined) // loadBase64Html
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick (center)
+                .mockResolvedValueOnce(zeroOverlay) // getMobileWebviewClickAndDimensions
+                .mockResolvedValueOnce(undefined) // dismissal tap
+                // --- Attempt 2 ---
+                .mockResolvedValueOnce(undefined) // loadBase64Html
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick (center)
+                .mockResolvedValueOnce(zeroOverlay) // getMobileWebviewClickAndDimensions
+                .mockResolvedValueOnce(undefined) // dismissal tap
+                // --- Attempt 3 (last, no dismissal after) ---
+                .mockResolvedValueOnce(undefined) // loadBase64Html
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick (center)
+                .mockResolvedValueOnce(zeroOverlay) // getMobileWebviewClickAndDimensions
+
+            const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                isAndroid: true,
+                isIOS: false,
+            })
+
+            expect(warnSpy).toHaveBeenCalledTimes(3)
+            expect(errorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('Viewport measurement failed after 3 attempts')
+            )
+            expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
+            expect(result).toEqual(DEVICE_RECTANGLES)
+
+            warnSpy.mockRestore()
+            infoSpy.mockRestore()
+            errorSpy.mockRestore()
+        })
+
+        it('should not retry on iOS when overlay returns zeros', async () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick (center, 'mobile: tap')
+                .mockResolvedValueOnce({ x: 0, y: 0, width: 0, height: 0 }) // getMobileWebviewClickAndDimensions
+
+            const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                isAndroid: false,
+                isIOS: true,
+            })
+
+            // iOS uses a single attempt — no retry, no Start Surface dismissal
+            expect(warnSpy).not.toHaveBeenCalled()
+            expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
+            // The zero overlay values produce a viewport at screen center with 0 dimensions
+            expect(result.viewport.width).toBe(0)
+            expect(result.viewport.height).toBe(0)
+
+            warnSpy.mockRestore()
+        })
+
         it('should return initialDeviceRectangles if not WebView (native context)', async () => {
             const result = await getMobileViewPortPosition({
                 browserInstance: mockBrowserInstance,

@@ -492,6 +492,17 @@ export async function executeNativeClick({ browserInstance, isIOS, x, y }: Execu
 }
 
 /**
+ * The maximum number of times we attempt to measure the viewport position on Android.
+ * Chrome may start in the "Start Surface" (tab thumbnail overview) which blocks
+ * native clicks from reaching the webview overlay. Each retry taps the top-left
+ * area of the screen where the tab thumbnail typically sits, dismissing the Start
+ * Surface so the next measurement attempt succeeds.
+ *
+ * iOS does not suffer from this issue, so only a single attempt is made there.
+ */
+const MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES = 3
+
+/**
  * Get the mobile viewport position, we determine this by:
  * 1. Loading a base64 HTML page
  * 2. Injecting an overlay on top of the webview with an event listener that stores the click position in the webview
@@ -499,6 +510,12 @@ export async function executeNativeClick({ browserInstance, isIOS, x, y }: Execu
  * 4. Getting the data from the overlay and removing it
  * 5. Calculating the position of the viewport based on the click position of the native click vs the overlay
  * 6. Returning the calculated values
+ *
+ * On Android only: when the overlay reports zero dimensions (width=0, height=0)
+ * the native click did not reach the webview. This typically means Chrome's Start
+ * Surface or tab overview is blocking it. The function will retry up to
+ * MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES times, tapping the tab thumbnail area
+ * between attempts to dismiss the blocking UI.
  */
 export async function getMobileViewPortPosition({
     browserInstance,
@@ -512,42 +529,100 @@ export async function getMobileViewPortPosition({
 }: GetMobileViewPortPositionOptions): Promise<DeviceRectangles> {
     if (!isNativeContext && (isIOS || (isAndroid && nativeWebScreenshot))) {
         const currentUrl = await browserInstance.getUrl()
-        // 1. Load a base64 HTML page
-        await loadBase64Html({ browserInstance, isIOS })
-        // 2. Inject an overlay on top of the webview with an event listener that stores the click position in the webview
-        await browserInstance.execute(injectWebviewOverlay, isAndroid)
-        // 3. Click on the overlay in the center of the screen with a native click
         const nativeClickX = screenWidth / 2
         const nativeClickY = screenHeight / 2
-        await executeNativeClick({ browserInstance, isIOS, x: nativeClickX, y: nativeClickY })
-        // We need to wait a bit here, otherwise the click is not registered
-        await waitFor(100)
-        // 4a. Get the data from the overlay and remove it
-        const { y, x, width, height } = await browserInstance.execute(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
-        // 4.b reset the url
-        await browserInstance.url(currentUrl)
-        // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
-        const viewportTop = Math.max(0, Math.round(nativeClickY - y))
-        const viewportLeft = Math.max(0, Math.round(nativeClickX - x))
-        const statusBarAndAddressBarHeight = Math.max(0, Math.round(viewportTop))
-        const bottomBarHeight = Math.max(0, Math.round(screenHeight - (viewportTop + height)))
-        const leftSidePaddingWidth = Math.max(0, Math.round(viewportLeft))
-        const rightSidePaddingWidth = Math.max(0, Math.round(screenWidth - (viewportLeft + width)))
-        const deviceRectangles = {
-            ...initialDeviceRectangles,
-            bottomBar: { y: viewportTop + height, x: 0, width: screenWidth, height: bottomBarHeight },
-            leftSidePadding: { y: viewportTop, x: 0, width: leftSidePaddingWidth, height: height },
-            rightSidePadding: { y: viewportTop, x: viewportLeft + width, width: rightSidePaddingWidth, height: height },
-            screenSize: { height: screenHeight, width: screenWidth },
-            statusBarAndAddressBar: { y: 0, x: 0, width: screenWidth, height: statusBarAndAddressBarHeight },
-            viewport: { y: viewportTop, x: viewportLeft, width: width, height: height },
+        const maxAttempts = isAndroid ? MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES : 1
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            // 1. Load a base64 HTML page
+            await loadBase64Html({ browserInstance, isIOS })
+            // 2. Inject an overlay on top of the webview with an event listener that stores the click position in the webview
+            await browserInstance.execute(injectWebviewOverlay, isAndroid)
+            // 3. Click on the overlay in the center of the screen with a native click
+            await executeNativeClick({ browserInstance, isIOS, x: nativeClickX, y: nativeClickY })
+            // We need to wait a bit here, otherwise the click is not registered
+            await waitFor(100)
+            // 4a. Get the data from the overlay and remove it
+            const { y, x, width, height } = await browserInstance.execute(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
+
+            // 4b. On Android, validate the overlay data.
+            // When width and height are both 0 the native click never reached the overlay,
+            // which typically means Chrome's Start Surface or tab overview is blocking the webview.
+            if (isAndroid && width === 0 && height === 0) {
+                log.warn(
+                    `Viewport measurement attempt ${attempt}/${maxAttempts}: ` +
+                    'overlay did not receive the native click. ' +
+                    'Chrome may be showing its Start Surface or tab overview.'
+                )
+
+                if (attempt < maxAttempts) {
+                    await dismissAndroidStartSurface({ browserInstance, screenWidth, screenHeight })
+                }
+
+                continue
+            }
+
+            // 4c. Reset the url
+            await browserInstance.url(currentUrl)
+            // 5. Calculate the position of the viewport based on the click position of the native click vs the overlay
+            const viewportTop = Math.max(0, Math.round(nativeClickY - y))
+            const viewportLeft = Math.max(0, Math.round(nativeClickX - x))
+            const statusBarAndAddressBarHeight = Math.max(0, Math.round(viewportTop))
+            const bottomBarHeight = Math.max(0, Math.round(screenHeight - (viewportTop + height)))
+            const leftSidePaddingWidth = Math.max(0, Math.round(viewportLeft))
+            const rightSidePaddingWidth = Math.max(0, Math.round(screenWidth - (viewportLeft + width)))
+            const deviceRectangles = {
+                ...initialDeviceRectangles,
+                bottomBar: { y: viewportTop + height, x: 0, width: screenWidth, height: bottomBarHeight },
+                leftSidePadding: { y: viewportTop, x: 0, width: leftSidePaddingWidth, height: height },
+                rightSidePadding: { y: viewportTop, x: viewportLeft + width, width: rightSidePaddingWidth, height: height },
+                screenSize: { height: screenHeight, width: screenWidth },
+                statusBarAndAddressBar: { y: 0, x: 0, width: screenWidth, height: statusBarAndAddressBarHeight },
+                viewport: { y: viewportTop, x: viewportLeft, width: width, height: height },
+            }
+
+            return deviceRectangles
         }
 
-        return deviceRectangles
+        // All Android retries exhausted — reset the URL and fall through to initialDeviceRectangles
+        log.error(
+            `Viewport measurement failed after ${maxAttempts} attempts. ` +
+            'Chrome appears stuck in Start Surface or tab overview mode. ' +
+            'Returning initial device rectangles; screenshots may have incorrect dimensions.'
+        )
+        await browserInstance.url(currentUrl)
     }
 
     // No WebView detected, return empty values
     return initialDeviceRectangles
+}
+
+/**
+ * Attempt to dismiss Chrome's "Start Surface" (tab thumbnail overview) on Android.
+ *
+ * The Start Surface places the first tab thumbnail in the top-left quadrant of
+ * the screen. A native tap at ~15 % of the screen's width/height reliably hits
+ * that thumbnail across phone and tablet form factors, opening the active tab
+ * and dismissing the overlay so subsequent viewport measurements can succeed.
+ */
+async function dismissAndroidStartSurface({
+    browserInstance,
+    screenWidth,
+    screenHeight,
+}: {
+    browserInstance: WebdriverIO.Browser
+    screenWidth: number
+    screenHeight: number
+}): Promise<void> {
+    try {
+        const thumbX = Math.round(screenWidth * 0.15)
+        const thumbY = Math.round(screenHeight * 0.15)
+        log.info(`Tapping tab thumbnail area (${thumbX}, ${thumbY}) to dismiss Start Surface`)
+        await executeNativeClick({ browserInstance, isIOS: false, x: thumbX, y: thumbY })
+        await waitFor(1500)
+    } catch (error) {
+        log.warn('Failed to dismiss Chrome Start Surface via native tap', error)
+    }
 }
 
 /**
