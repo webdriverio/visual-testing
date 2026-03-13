@@ -494,13 +494,13 @@ export async function executeNativeClick({ browserInstance, isIOS, x, y }: Execu
 /**
  * The maximum number of times we attempt to measure the viewport position on Android.
  * Chrome may start in the "Start Surface" (tab thumbnail overview) which blocks
- * native clicks from reaching the webview overlay. Each retry taps the top-left
- * area of the screen where the tab thumbnail typically sits, dismissing the Start
- * Surface so the next measurement attempt succeeds.
+ * native clicks from reaching the webview overlay. Each retry dismisses the Start
+ * Surface via a combination of native taps and WebDriver URL navigation, then
+ * re-attempts the measurement.
  *
  * iOS does not suffer from this issue, so only a single attempt is made there.
  */
-const MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES = 3
+const MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES = 5
 
 /**
  * Get the mobile viewport position, we determine this by:
@@ -546,6 +546,9 @@ export async function getMobileViewPortPosition({
             const { y, x, width, height } = await browserInstance.execute(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
 
             // 4b. On Android, validate the overlay data.
+            // NOTE: for future detection of Chrome's Start Surface, `document.visibilityState`
+            // and `document.hasFocus()` can be used as a more direct signal. When the Start
+            // Surface is active the webview reports visibility: "hidden" and hasFocus: false.
             // When width and height are both 0 the native click never reached the overlay,
             // which typically means Chrome's Start Surface or tab overview is blocking the webview.
             if (isAndroid && width === 0 && height === 0) {
@@ -556,7 +559,7 @@ export async function getMobileViewPortPosition({
                 )
 
                 if (attempt < maxAttempts) {
-                    await dismissAndroidStartSurface({ browserInstance, screenWidth, screenHeight })
+                    await dismissAndroidStartSurface({ browserInstance })
                 }
 
                 continue
@@ -598,30 +601,31 @@ export async function getMobileViewPortPosition({
 }
 
 /**
- * Attempt to dismiss Chrome's "Start Surface" (tab thumbnail overview) on Android.
+ * Attempt to dismiss Chrome's "Start Surface" (tab thumbnail overview) on Android
+ * by pressing the Android Back button (KEYCODE_BACK = 4).
  *
- * The Start Surface places the first tab thumbnail in the top-left quadrant of
- * the screen. A native tap at ~15 % of the screen's width/height reliably hits
- * that thumbnail across phone and tablet form factors, opening the active tab
- * and dismissing the overlay so subsequent viewport measurements can succeed.
+ * The Back button is preferred over tapping a tab thumbnail because:
+ * - It reliably exits the tab overview regardless of orientation or device
+ * - It doesn't risk accidentally closing a tab by hitting the "X" button
+ *
+ * // --- Commented-out tap approach kept for reference ---
+ * // const isLandscape = screenWidth > screenHeight
+ * // const pct = isLandscape ? 0.30 : 0.15
+ * // const tapX = Math.round(screenWidth * pct)
+ * // const tapY = Math.round(screenHeight * pct)
+ * // console.log(`[VIEWPORT-DEBUG] dismissStartSurface: tapping (${tapX}, ${tapY}) on ${screenWidth}x${screenHeight} (${isLandscape ? 'landscape' : 'portrait'})`)
+ * // await executeNativeClick({ browserInstance, isIOS: false, x: tapX, y: tapY })
  */
 async function dismissAndroidStartSurface({
     browserInstance,
-    screenWidth,
-    screenHeight,
 }: {
     browserInstance: WebdriverIO.Browser
-    screenWidth: number
-    screenHeight: number
 }): Promise<void> {
     try {
-        const thumbX = Math.round(screenWidth * 0.15)
-        const thumbY = Math.round(screenHeight * 0.15)
-        log.info(`Tapping tab thumbnail area (${thumbX}, ${thumbY}) to dismiss Start Surface`)
-        await executeNativeClick({ browserInstance, isIOS: false, x: thumbX, y: thumbY })
+        await browserInstance.execute('mobile: pressKey', { keycode: 4 })
         await waitFor(1500)
     } catch (error) {
-        log.warn('Failed to dismiss Chrome Start Surface via native tap', error)
+        log.warn('Failed to dismiss Chrome Start Surface via Back button', error)
     }
 }
 

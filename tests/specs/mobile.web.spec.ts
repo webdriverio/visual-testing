@@ -207,74 +207,19 @@ interface SkipRule {
 const skipRules: SkipRule[] = [
     // Android devices
     {
-        // @TODO: remove when fixed
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'Pixel 9 Pro',
-        platformName: 'Android',
-        platformVersions: ['15'],
-        orientations: ['portrait'],
-        reason: '1px difference in the ignore elements screenshot',
-    },
-    {
-        // @TODO: remove when fixed
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'Galaxy Tab S8',
-        platformName: 'Android',
-        platformVersions: ['13'],
-        orientations: ['landscape', 'portrait'],
-        reason: '1px difference in the ignore elements screenshot',
-    },
-    {
-        // @TODO: remove when fixed
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'Galaxy Tab S8',
-        platformName: 'Android',
-        platformVersions: ['14'],
-        orientations: ['portrait'],
-        reason: '1px difference in the ignore elements screenshot',
-    },
-    {
-        // @TODO: remove when fixed
-        titleIncludes: 'should compare a full page screenshot with ignore elements',
-        deviceName: 'Galaxy Tab S8',
-        platformName: 'Android',
-        platformVersions: ['14'],
-        orientations: ['portrait', 'landscape'],
-        reason: 'it always starts with the tabbed view, so it will break at the start of the screenshot',
-    },
-    {
-        // @TODO: remove when fixed
-        titleIncludes: ['compare a screen with ignore elements', 'compare a screen successful'],
-        deviceName: 'Galaxy Tab S8',
-        platformName: 'Android',
-        platformVersions: ['14'],
-        orientations: ['landscape', 'portrait'],
-        reason: 'Fully ignored in the screenshot so it will never find a difference',
-    },
-    {
-        // @TODO: remove when fixed
-        titleIncludes: 'compare a full page screenshot successful',
-        deviceName: 'Galaxy Tab S8',
-        platformName: 'Android',
-        platformVersions: ['13', '14'],
-        orientations: ['landscape', 'portrait'],
-        reason: 'There are difference in the full page screenshot that might be related to things introduced in PR #1126',
-    },
-    {
-        // @TODO: remove when fixed
         titleIncludes: 'compare a screen with ignore elements',
         deviceName: 'Pixel 4',
         platformName: 'Android',
-        platformVersions: ['13'],
+        platformVersions: ['11'],
         orientations: ['landscape', 'portrait'],
-        reason: 'Fully ignored in the screenshot so it will never find a difference',
+        reason: 'Elements not visible in the screenshot, no value in testing',
     },
     {
-        titleIncludes: 'compare a screen successful',
+        titleIncludes: 'compare a screen with ignore elements',
         deviceName: 'Pixel 4',
         platformName: 'Android',
-        platformVersions: ['13'],
-        orientations: ['portrait'],
+        platformVersions: ['12', '13'],
+        orientations: ['landscape'],
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
     {
@@ -283,14 +228,6 @@ const skipRules: SkipRule[] = [
         platformName: 'Android',
         platformVersions: ['14', '15'],
         orientations: ['landscape'],
-        reason: 'Elements not visible in the screenshot, no value in testing',
-    },
-    {
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'Pixel 4',
-        platformName: 'Android',
-        platformVersions: ['11', '12'],
-        orientations: ['landscape', 'portrait'],
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
     // iOS devices
