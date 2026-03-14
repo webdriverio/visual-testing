@@ -696,6 +696,7 @@ export function extractCommonCheckVariables(
 
         // Optional instance data
         ...(instanceData.platformName && { platformName: instanceData.platformName }),
+        ...(instanceData.platformVersion && { platformVersion: instanceData.platformVersion }),
         ...(instanceData.isIOS !== undefined && { isIOS: instanceData.isIOS }),
 
         // WIC options
@@ -766,6 +767,7 @@ export function buildBaseExecuteCompareOptions(
         isAndroidNativeWebScreenshot: commonCheckVariables.isAndroidNativeWebScreenshot,
         // Add optional properties from commonCheckVariables if they exist
         ...(commonCheckVariables.platformName && { platformName: commonCheckVariables.platformName }),
+        ...(commonCheckVariables.platformVersion && { platformVersion: commonCheckVariables.platformVersion }),
         ...(commonCheckVariables.isIOS !== undefined && { isIOS: commonCheckVariables.isIOS }),
         ...(commonCheckVariables.isHybridApp !== undefined && { isHybridApp: commonCheckVariables.isHybridApp }),
     }

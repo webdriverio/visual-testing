@@ -434,6 +434,8 @@ export async function executeImageCompare(
             blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
             blockOutToolBar: imageCompareOptions.blockOutToolBar,
         },
+        isHybridApp: options.isHybridApp,
+        platformVersion: options.platformVersion,
         actualFilePath: isViewPortScreenshot ? undefined : actualFilePath,
     })
 

@@ -1,4 +1,5 @@
 import { Jimp } from 'jimp'
+import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import type {
@@ -562,6 +563,59 @@ export async function determineDeviceBlockOuts({ isAndroid, screenCompareOptions
 }
 
 /**
+ * Return a status bar rectangle for hybrid-app fallback when the overlay reports zero height.
+ * Uses IOS_OFFSETS / ANDROID_OFFSETS so the system status bar is blocked out in webview context.
+ * Android: uses device platformVersion (e.g. "14.0") as API level when present and in list; otherwise latest.
+ * iOS: keyed by screen size only (no OS version in data). When device not in list, uses latest entry.
+ */
+function getHybridAppStatusBarFallback(
+    deviceRectangles: DeviceRectangles,
+    isAndroid: boolean,
+    platformVersion?: string,
+): RectanglesOutput | null {
+    const { width: screenWidth, height: screenHeight } = deviceRectangles.screenSize
+    if (screenWidth === 0 || screenHeight === 0) {
+        return null
+    }
+
+    if (isAndroid) {
+        const apiLevels = Object.keys(ANDROID_OFFSETS).map(Number)
+        const latestApiLevel = apiLevels.length > 0 ? Math.max(...apiLevels) : 14
+        const deviceApiLevel = platformVersion !== undefined ? parseInt(platformVersion, 10) : NaN
+        const useApiLevel =
+            Number.isInteger(deviceApiLevel) && apiLevels.includes(deviceApiLevel)
+                ? deviceApiLevel
+                : latestApiLevel
+        const statusBarHeight = ANDROID_OFFSETS[useApiLevel as keyof typeof ANDROID_OFFSETS]?.STATUS_BAR ?? 24
+        return {
+            x: 0,
+            y: 0,
+            width: screenWidth,
+            height: statusBarHeight,
+        }
+    }
+
+    const isIphone = screenWidth < 1024 && screenHeight < 1024
+    const deviceType = isIphone ? 'IPHONE' : 'IPAD'
+    const portraitHeight = screenWidth > screenHeight ? screenWidth : screenHeight
+    const keys = Object.keys(IOS_OFFSETS[deviceType]).map(Number)
+    const exactMatch = keys.includes(portraitHeight)
+    const offsetPortraitHeight = exactMatch
+        ? portraitHeight
+        : (keys.length > 0 ? Math.max(...keys) : (isIphone ? 667 : 1024))
+    const orientation = screenWidth > screenHeight ? 'LANDSCAPE' : 'PORTRAIT'
+    const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight]?.[orientation]
+    const statusBarHeight = currentOffsets?.STATUS_BAR ?? (isIphone ? 44 : 20)
+
+    return {
+        x: 0,
+        y: 0,
+        width: screenWidth,
+        height: statusBarHeight,
+    }
+}
+
+/**
  * Prepare all ignore rectangles for image comparison
  */
 export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOptions): Promise<PreparedIgnoreRectangles> {
@@ -576,6 +630,8 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
         isAndroidNativeWebScreenshot,
         isViewPortScreenshot,
         imageCompareOptions,
+        isHybridApp,
+        platformVersion,
         actualFilePath
     } = options
 
@@ -597,6 +653,18 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
         webStatusAddressToolBarOptions.push(
             ...(determineStatusAddressToolBarRectangles({ deviceRectangles, options: statusAddressToolBarOptions })) || []
         )
+
+        // Hybrid-app fallback: in webview the overlay often reports statusBarAndAddressBar height 0.
+        // Use native offsets (IOS_OFFSETS / ANDROID_OFFSETS) so the system status bar is still blocked out.
+        const needStatusBarFallback =
+            imageCompareOptions.blockOutStatusBar !== false &&
+            (isHybridApp === true || deviceRectangles.statusBarAndAddressBar.height === 0)
+        if (needStatusBarFallback) {
+            const fallback = getHybridAppStatusBarFallback(deviceRectangles, isAndroid, platformVersion)
+            if (fallback && fallback.height > 0) {
+                webStatusAddressToolBarOptions.push(fallback)
+            }
+        }
 
         if (webStatusAddressToolBarOptions.length > 0) {
             // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full

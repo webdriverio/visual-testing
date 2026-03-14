@@ -1550,5 +1550,146 @@ describe('rectangles', () => {
                 bottom: 70,
             })
         })
+
+        it('should add hybrid-app status bar fallback when statusBarAndAddressBar height is 0 (iOS)', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 375, height: 812 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 375, height: 0 },
+                bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: false,
+                isAndroidNativeWebScreenshot: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 3,
+                imageCompareOptions: {
+                    blockOutStatusBar: true,
+                },
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBox = result.ignoredBoxes.find(
+                (b: { top: number }) => b.top === 0
+            ) as { left: number; top: number; right: number; bottom: number }
+            expect(statusBarBox).toBeDefined()
+            expect(statusBarBox.left).toBe(0)
+            expect(statusBarBox.top).toBe(0)
+            expect(statusBarBox.right).toBe(1125)
+            expect(statusBarBox.bottom).toBe(132)
+        })
+
+        it('should add hybrid-app status bar fallback when isHybridApp is true (iOS)', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 390, height: 844 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 390, height: 47 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: false,
+                isAndroidNativeWebScreenshot: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 2,
+                isHybridApp: true,
+                imageCompareOptions: {
+                    blockOutStatusBar: true,
+                },
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBoxes = result.ignoredBoxes.filter(
+                (b: { top: number }) => b.top === 0
+            ) as Array<{ left: number; top: number; right: number; bottom: number }>
+            expect(statusBarBoxes.length).toBeGreaterThanOrEqual(1)
+        })
+
+        it('should add hybrid-app status bar fallback for Android when overlay reports zero', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 412, height: 869 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 412, height: 0 },
+                bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: true,
+                isAndroidNativeWebScreenshot: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 2,
+                imageCompareOptions: {
+                    blockOutStatusBar: true,
+                },
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBox = result.ignoredBoxes.find(
+                (b: { top: number }) => b.top === 0
+            ) as { left: number; top: number; right: number; bottom: number }
+            expect(statusBarBox).toBeDefined()
+            expect(statusBarBox.bottom).toBe(24)
+        })
+
+        it('should use device platformVersion for Android hybrid status bar fallback when in ANDROID_OFFSETS list', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 412, height: 869 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 412, height: 0 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 2,
+                imageCompareOptions: { blockOutStatusBar: true },
+                platformVersion: '12',
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBox = result.ignoredBoxes.find(
+                (b: { top: number }) => b.top === 0
+            ) as { left: number; top: number; right: number; bottom: number }
+            expect(statusBarBox).toBeDefined()
+            expect(statusBarBox.bottom).toBe(24)
+        })
+
+        it('should fall back to latest API level for Android when platformVersion not in ANDROID_OFFSETS', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 412, height: 869 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 412, height: 0 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 2,
+                imageCompareOptions: { blockOutStatusBar: true },
+                platformVersion: '99',
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBox = result.ignoredBoxes.find(
+                (b: { top: number }) => b.top === 0
+            ) as { left: number; top: number; right: number; bottom: number }
+            expect(statusBarBox).toBeDefined()
+            expect(statusBarBox.bottom).toBe(24)
+        })
     })
 })

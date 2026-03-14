@@ -128,6 +128,10 @@ export interface PrepareIgnoreRectanglesOptions {
         blockOutStatusBar?: boolean;
         blockOutToolBar?: boolean;
     };
+    /** Whether this is a hybrid (native + webview) app; enables status bar fallback when overlay reports zero */
+    isHybridApp?: boolean;
+    /** Platform version from the device (e.g. "14.0"); used for Android API level lookup in fallback */
+    platformVersion?: string;
     actualFilePath?: string;
 }
 
