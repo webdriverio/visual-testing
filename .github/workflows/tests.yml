@@ -23,16 +23,14 @@ jobs:
     steps:
       - name: 🧐 Determine Job to Run
         id: set-vars
-        shell: bash
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          UNIT_TEST_REGEX='(@typescript-eslint|vitest|eslint|@types|@tsconfig|ts-node|jsdom|typescript)'
-          WEB_TEST_REGEX='(@wdio(?!\/appium-service)|copyfiles|rimraf|saucelabs|lambdatest|webdriverio)'
-          if [[ $PR_TITLE =~ $UNIT_TEST_REGEX ]]; then
-            echo "::set-output name=run_unit_tests::true"
-          fi
-          if [[ $PR_TITLE =~ $WEB_TEST_REGEX ]]; then
-            echo "::set-output name=run_web_tests::true"
+          echo "$PR_TITLE" | grep -qE '@typescript-eslint|vitest|eslint|@types|@tsconfig|ts-node|jsdom|typescript' && echo "run_unit_tests=true" >> "$GITHUB_OUTPUT"
+          if echo "$PR_TITLE" | grep -qE 'copyfiles|rimraf|saucelabs|lambdatest|webdriverio'; then
+            echo "run_web_tests=true" >> "$GITHUB_OUTPUT"
+          elif echo "$PR_TITLE" | grep -q '@wdio/' && ! echo "$PR_TITLE" | grep -q '@wdio/appium-service'; then
+            echo "run_web_tests=true" >> "$GITHUB_OUTPUT"
           fi
 
   ci-dependency-unit-test:
