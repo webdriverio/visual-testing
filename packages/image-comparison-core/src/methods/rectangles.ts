@@ -657,16 +657,22 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
             },
         )
 
-    // ignoreRegions are already in device pixels (pre-scaled by the caller),
-    // only convert to the ResembleJS format (top/left/bottom/right)
-    const preScaledIgnoreBoxes = ignoreRegions.map(
-        (rectangles) => ({
-            bottom: rectangles.y + rectangles.height,
-            right: rectangles.x + rectangles.width,
+    // ignoreRegions: for web they are already in device pixels (pre-scaled by the caller).
+    // For native iOS app they are in logical pixels (getElementRect / statusBar/homeBar),
+    // so we scale by DPR here to match the device-pixel screenshot.
+    const isNativeIos = isNativeContext && isMobile && !isAndroid
+    const preScaledIgnoreBoxes = ignoreRegions.map((rectangles) => {
+        const box = {
             left: rectangles.x,
             top: rectangles.y,
-        }),
-    )
+            right: rectangles.x + rectangles.width,
+            bottom: rectangles.y + rectangles.height,
+        }
+        if (isNativeIos) {
+            return calculateDprData({ ...box }, devicePixelRatio)
+        }
+        return box
+    })
 
     const ignoredBoxes = [...dprScaledBoxes, ...preScaledIgnoreBoxes]
 

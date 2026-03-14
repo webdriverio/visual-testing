@@ -23,6 +23,7 @@ jobs:
     steps:
       - name: 🧐 Determine Job to Run
         id: set-vars
+        shell: bash
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           UNIT_TEST_REGEX='(@typescript-eslint|vitest|eslint|@types|@tsconfig|ts-node|jsdom|typescript)'

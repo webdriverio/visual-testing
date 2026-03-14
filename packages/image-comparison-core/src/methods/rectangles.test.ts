@@ -1455,5 +1455,100 @@ describe('rectangles', () => {
             expect(result.hasIgnoreRectangles).toBe(true)
             expect(result.ignoredBoxes).toMatchSnapshot()
         })
+
+        it('should scale ignoreRegions by DPR for native iOS app (logical → device pixels)', async () => {
+            const options = createPrepareIgnoreRectanglesOptions({
+                ignoreRegions: [
+                    { x: 10, y: 20, width: 100, height: 50 },
+                ],
+                devicePixelRatio: 3,
+                isMobile: true,
+                isNativeContext: true,
+                isAndroid: false,
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            expect(result.ignoredBoxes).toHaveLength(1)
+            expect(result.ignoredBoxes[0]).toEqual({
+                left: 30,
+                top: 60,
+                right: 330,
+                bottom: 210,
+            })
+        })
+
+        it('should scale multiple ignoreRegions by DPR for native iOS app', async () => {
+            const options = createPrepareIgnoreRectanglesOptions({
+                ignoreRegions: [
+                    { x: 0, y: 0, width: 390, height: 47 },
+                    { x: 50, y: 100, width: 200, height: 80 },
+                ],
+                devicePixelRatio: 3,
+                isMobile: true,
+                isNativeContext: true,
+                isAndroid: false,
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            expect(result.ignoredBoxes).toHaveLength(2)
+            expect(result.ignoredBoxes[0]).toEqual({
+                left: 0,
+                top: 0,
+                right: 1170,
+                bottom: 141,
+            })
+            expect(result.ignoredBoxes[1]).toEqual({
+                left: 150,
+                top: 300,
+                right: 750,
+                bottom: 540,
+            })
+        })
+
+        it('should not scale ignoreRegions for native Android app', async () => {
+            const options = createPrepareIgnoreRectanglesOptions({
+                ignoreRegions: [{ x: 100, y: 200, width: 150, height: 75 }],
+                devicePixelRatio: 3,
+                isMobile: true,
+                isNativeContext: true,
+                isAndroid: true,
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            expect(result.ignoredBoxes).toHaveLength(1)
+            expect(result.ignoredBoxes[0]).toEqual({
+                left: 100,
+                top: 200,
+                right: 250,
+                bottom: 275,
+            })
+        })
+
+        it('should not scale ignoreRegions when not native context (e.g. web)', async () => {
+            const options = createPrepareIgnoreRectanglesOptions({
+                ignoreRegions: [{ x: 10, y: 20, width: 100, height: 50 }],
+                devicePixelRatio: 3,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: false,
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            expect(result.ignoredBoxes).toHaveLength(1)
+            expect(result.ignoredBoxes[0]).toEqual({
+                left: 10,
+                top: 20,
+                right: 110,
+                bottom: 70,
+            })
+        })
     })
 })
