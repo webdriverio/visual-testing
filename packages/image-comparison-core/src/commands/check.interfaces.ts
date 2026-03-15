@@ -15,7 +15,7 @@ export interface CheckMethodOptions extends BaseImageCompareOptions, BaseMobileB
     /**
      * Ignore elements and or areas
      */
-    ignore?: ElementIgnore[];
+    ignore?: (ElementIgnore | ElementIgnore[])[];
 }
 
 export interface InternalCheckMethodOptions extends InternalSaveMethodOptions {

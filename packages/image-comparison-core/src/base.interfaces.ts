@@ -52,6 +52,13 @@ export interface BaseWebScreenshotOptions {
      */
     hideScrollBars?: boolean;
     /**
+     * Padding in device pixels added to each side of ignore regions (makes each region 2× this value wider and higher).
+     * Helps avoid 1px boundary differences on high-DPR / BiDi. Set to 0 to disable.
+     * Applies to screen, element, and full-page web methods.
+     * @default 1
+     */
+    ignoreRegionPadding?: number;
+    /**
      * Elements to hide before taking screenshot
      * @default []
      */

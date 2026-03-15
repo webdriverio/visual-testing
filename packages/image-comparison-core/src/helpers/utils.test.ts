@@ -679,6 +679,7 @@ describe('utils', () => {
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce(undefined) // executeNativeClick
                 .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
+                .mockResolvedValueOnce({ vs: 'visible', focus: true }) // visibilityState debug check
 
             const result = await getMobileViewPortPosition({
                 browserInstance: mockBrowserInstance,
@@ -689,6 +690,149 @@ describe('utils', () => {
             expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
             expect(mockBrowserInstance.execute).toHaveBeenCalledWith(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
             expect(result).toMatchSnapshot()
+        })
+
+        it('should handle rounded overlay values from non-integer DPR', async () => {
+            const dpr = 2.625
+            const screenW = 1080
+            const screenH = 2424
+
+            const cssClickX = 206
+            const cssClickY = 385
+            const cssWidth = 412
+            const cssHeight = 363
+
+            const overlayWidth = Math.round(cssWidth * dpr)
+            const overlayHeight = Math.round(cssHeight * dpr)
+
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce(undefined) // loadBase64Html
+                .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick
+                .mockResolvedValueOnce({
+                    x: Math.round(cssClickX * dpr),
+                    y: Math.round(cssClickY * dpr),
+                    width: overlayWidth,
+                    height: overlayHeight,
+                }) // getMobileWebviewClickAndDimensions (rounded integers from overlay)
+                .mockResolvedValueOnce({ vs: 'visible', focus: true }) // visibilityState debug check
+
+            const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                screenHeight: screenH,
+                screenWidth: screenW,
+            })
+
+            const viewportTop = Math.max(0, Math.round(screenH / 2 - Math.round(cssClickY * dpr)))
+            const viewportLeft = Math.max(0, Math.round(screenW / 2 - Math.round(cssClickX * dpr)))
+
+            expect(result.viewport.y).toBe(viewportTop)
+            expect(result.viewport.x).toBe(viewportLeft)
+            expect(result.viewport.width).toBe(overlayWidth)
+            expect(result.viewport.height).toBe(overlayHeight)
+            expect(result.statusBarAndAddressBar.height).toBe(Math.max(0, Math.round(viewportTop)))
+        })
+
+        it('should retry and succeed on Android when overlay returns zeros (Start Surface blocking)', async () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+
+            vi.mocked(mockBrowserInstance.execute)
+                // --- Attempt 1: overlay returns zeros (Start Surface is blocking) ---
+                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick (screen center)
+                .mockResolvedValueOnce({ x: 0, y: 0, width: 0, height: 0 }) // getMobileWebviewClickAndDimensions
+                // --- Dismiss Start Surface: Back button ---
+                .mockResolvedValueOnce(undefined) // mobile: pressKey (Back button)
+                // --- Attempt 2: overlay returns valid data ---
+                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick (screen center)
+                .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
+
+            const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                isAndroid: true,
+                isIOS: false,
+            })
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('overlay did not receive the native click')
+            )
+            expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
+            expect(result.viewport.width).toBe(100)
+            expect(result.viewport.height).toBe(100)
+
+            warnSpy.mockRestore()
+        })
+
+        it('should return initialDeviceRectangles after all retries are exhausted on Android', { timeout: 15000 }, async () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+            const errorSpy = vi.spyOn(log, 'error').mockImplementation(() => {})
+
+            const zeroOverlay = { x: 0, y: 0, width: 0, height: 0 }
+            const attemptMocks = () => [
+                undefined, // loadBase64Html
+                undefined, // injectWebviewOverlay
+                undefined, // executeNativeClick (center)
+                zeroOverlay, // getMobileWebviewClickAndDimensions
+            ]
+            const mocked = vi.mocked(mockBrowserInstance.execute)
+            // 5 attempts: attempts 1-4 have Back button dismissal, last attempt has none
+            for (let i = 0; i < 5; i++) {
+                for (const val of attemptMocks()) { mocked.mockResolvedValueOnce(val) }
+                if (i < 4) {
+                    mocked.mockResolvedValueOnce(undefined) // mobile: pressKey (Back button)
+                }
+            }
+
+            const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                isAndroid: true,
+                isIOS: false,
+            })
+
+            expect(warnSpy).toHaveBeenCalledTimes(5)
+            expect(errorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('Viewport measurement failed after 5 attempts')
+            )
+            expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
+            expect(result).toEqual(DEVICE_RECTANGLES)
+
+            warnSpy.mockRestore()
+            errorSpy.mockRestore()
+        })
+
+        it('should not retry on iOS when overlay returns zeros', async () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce(undefined) // executeNativeClick (center, 'mobile: tap')
+                .mockResolvedValueOnce({ x: 0, y: 0, width: 0, height: 0 }) // getMobileWebviewClickAndDimensions
+                .mockResolvedValueOnce({ vs: 'visible', focus: true }) // visibilityState debug check
+
+            const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                isAndroid: false,
+                isIOS: true,
+            })
+
+            // iOS uses a single attempt — no retry, no Start Surface dismissal
+            expect(warnSpy).not.toHaveBeenCalled()
+            expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
+            // The zero overlay values produce a viewport at screen center with 0 dimensions
+            expect(result.viewport.width).toBe(0)
+            expect(result.viewport.height).toBe(0)
+
+            warnSpy.mockRestore()
         })
 
         it('should return initialDeviceRectangles if not WebView (native context)', async () => {

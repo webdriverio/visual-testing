@@ -128,6 +128,10 @@ export interface PrepareIgnoreRectanglesOptions {
         blockOutStatusBar?: boolean;
         blockOutToolBar?: boolean;
     };
+    /** Whether this is a hybrid (native + webview) app; enables status bar fallback when overlay reports zero */
+    isHybridApp?: boolean;
+    /** Platform version from the device (e.g. "14.0"); used for Android API level lookup in fallback */
+    platformVersion?: string;
     actualFilePath?: string;
 }
 
@@ -136,6 +140,63 @@ export interface PreparedIgnoreRectangles {
     ignoredBoxes: any[];
     /** Whether any ignore rectangles were found */
     hasIgnoreRectangles: boolean;
+}
+
+export interface DetermineWebScreenIgnoreRegionsOptions {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
+    /** The device pixel ratio */
+    devicePixelRatio: number;
+    /** The device rectangles (contains viewport offset for mobile) */
+    deviceRectangles: DeviceRectangles;
+    /** Whether this is an Android device */
+    isAndroid: boolean;
+    /** Whether this is an Android native web screenshot */
+    isAndroidNativeWebScreenshot: boolean;
+    /** Whether this is an iOS device */
+    isIOS: boolean;
+    /** Padding in device pixels added to each side of computed ignore regions (caller defaults to 1). */
+    ignoreRegionPadding: number;
+}
+
+/**
+ * Options for full-page web ignore regions (desktop and mobile).
+ * Full-page image is in document coordinates; on mobile scroll-and-stitch the canvas
+ * crops off the top addressBarShadowPadding (CSS px), so we subtract that from y.
+ */
+export interface DetermineWebFullPageIgnoreRegionsOptions {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
+    /** The device pixel ratio */
+    devicePixelRatio: number;
+    /** Padding in device pixels added to each side of computed ignore regions (caller defaults to 1). */
+    ignoreRegionPadding: number;
+    /**
+     * Top crop offset in CSS pixels (e.g. addressBarShadowPadding on mobile full-page).
+     * When set, canvas y = (documentY - fullPageCropTopPaddingCSS) × DPR so ignore regions
+     * align with the stitched image which crops this much from the top of each tile.
+     * @default 0
+     */
+    fullPageCropTopPaddingCSS?: number;
+}
+
+export interface DetermineWebElementIgnoreRegionsOptions {
+    /** The browser instance */
+    browserInstance: WebdriverIO.Browser;
+    /** The device pixel ratio */
+    devicePixelRatio: number;
+    /** The root element being captured in the element screenshot */
+    rootElement: WebdriverIO.Element;
+    /** Padding in device pixels added to each side of computed ignore regions (caller defaults to 1). */
+    ignoreRegionPadding: number;
+    /**
+     * When both this and isWebDriverElementScreenshot are true, the element image is at CSS pixel size
+     * (native driver returns a downscaled image). We then output ignore regions in CSS pixel coordinates
+     * by dividing by DPR; otherwise regions are in device pixels.
+     */
+    isAndroidNativeWebScreenshot?: boolean;
+    /** When true, the element screenshot came from the native driver (no fallback crop). */
+    isWebDriverElementScreenshot?: boolean;
 }
 
 export interface BoundingBox extends BaseBoundingBox { }

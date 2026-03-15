@@ -67,6 +67,40 @@ describe('injectWebviewOverlay', () => {
         })
     })
 
+    it('should round values to integers with non-integer DPR (Android)', () => {
+        Object.defineProperty(window, 'devicePixelRatio', {
+            value: 2.625,
+            configurable: true,
+        })
+        Object.defineProperty(window, 'innerWidth', {
+            value: 412,
+            configurable: true,
+        })
+        Object.defineProperty(document.documentElement, 'clientHeight', {
+            value: 363,
+            configurable: true,
+        })
+
+        injectWebviewOverlay(true)
+
+        const overlay = document.querySelector('[data-test="ics-overlay"]') as HTMLDivElement
+        const event = new window.MouseEvent('click', {
+            clientX: 206,
+            clientY: 181,
+            bubbles: true,
+        })
+        overlay.dispatchEvent(event)
+
+        const parsedData = JSON.parse(overlay.dataset.icsWebviewData!)
+
+        expect(parsedData).toEqual({
+            x: Math.round(206 * 2.625),
+            y: Math.round(181 * 2.625),
+            width: Math.round(412 * 2.625),
+            height: Math.round(363 * 2.625),
+        })
+    })
+
     it('should use DPR = 1 for iOS (isAndroid = false)', () => {
         injectWebviewOverlay(false)
 

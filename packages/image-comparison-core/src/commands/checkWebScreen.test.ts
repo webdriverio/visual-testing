@@ -211,6 +211,64 @@ describe('checkWebScreen', () => {
         expect(executeImageCompareSpy.mock.calls[0]).toMatchSnapshot()
     })
 
+    it('should pass ignore elements to saveWebScreen and forward resolved regions', async () => {
+        const { buildBaseExecuteCompareOptions } = await import('../helpers/utils.js')
+        const buildBaseExecuteCompareOptionsSpy = vi.mocked(buildBaseExecuteCompareOptions)
+
+        const mockIgnoreElement = { elementId: 'ignore-el', selector: '.navbar' } as any
+        const mockIgnoreRegion = { x: 10, y: 20, width: 100, height: 50 }
+        const resolvedRegions = [
+            { x: 50, y: 60, width: 200, height: 100 },
+            { x: 10, y: 20, width: 100, height: 50 },
+        ]
+
+        // saveWebScreen returns ignoreRegions resolved during screenshot
+        saveWebScreenSpy.mockResolvedValueOnce({
+            devicePixelRatio: 2,
+            fileName: 'test-screen.png',
+            ignoreRegions: resolvedRegions,
+        })
+
+        const options = {
+            ...baseOptions,
+            checkScreenOptions: {
+                ...baseOptions.checkScreenOptions,
+                method: {
+                    ...baseOptions.checkScreenOptions.method,
+                    ignore: [mockIgnoreElement, mockIgnoreRegion],
+                }
+            }
+        }
+
+        await checkWebScreen(options)
+
+        // ignore is passed through to saveWebScreen
+        expect(saveWebScreenSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                ignore: [mockIgnoreElement, mockIgnoreRegion],
+            })
+        )
+        // resolved regions are forwarded to the compare options
+        expect(buildBaseExecuteCompareOptionsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                additionalProperties: { ignoreRegions: resolvedRegions },
+            })
+        )
+    })
+
+    it('should pass empty array when no ignore regions are returned', async () => {
+        const { buildBaseExecuteCompareOptions } = await import('../helpers/utils.js')
+        const buildBaseExecuteCompareOptionsSpy = vi.mocked(buildBaseExecuteCompareOptions)
+
+        await checkWebScreen(baseOptions)
+
+        expect(buildBaseExecuteCompareOptionsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                additionalProperties: { ignoreRegions: [] },
+            })
+        )
+    })
+
     it('should handle all method options correctly', async () => {
         const mockHideElement = {
             elementId: 'hide-element',

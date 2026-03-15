@@ -30,6 +30,7 @@ export default async function checkWebElement(
         enableLegacyScreenshotMethod,
         hideScrollBars,
         resizeDimensions,
+        ignoreRegionPadding,
         hideElements = [],
         removeElements = [],
         waitForFontsLoaded = false,
@@ -45,17 +46,19 @@ export default async function checkWebElement(
             enableLegacyScreenshotMethod,
             hideScrollBars,
             resizeDimensions,
+            ignoreRegionPadding,
             hideElements,
             removeElements,
             waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, base64Image } = await saveWebElement({
+    const { devicePixelRatio, fileName, base64Image, ignoreRegions } = await saveWebElement({
         browserInstance,
         instanceData,
         folders,
         element,
         tag,
+        ignore: checkElementOptions.method.ignore,
         saveElementOptions,
     })
 
@@ -68,6 +71,9 @@ export default async function checkWebElement(
         devicePixelRatio,
         fileName,
         isElementScreenshot: true,
+        additionalProperties: {
+            ignoreRegions: ignoreRegions || [],
+        },
     })
 
     // 4. Now execute the compare and return the data

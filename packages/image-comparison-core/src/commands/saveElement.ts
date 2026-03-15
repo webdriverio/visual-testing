@@ -13,11 +13,12 @@ export default async function saveElement(
         folders,
         instanceData,
         isNativeContext,
+        ignore,
         saveElementOptions,
         tag,
     }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
     return isNativeContext
         ? saveAppElement({ browserInstance, element, folders, instanceData, saveElementOptions, isNativeContext, tag })
-        : saveWebElement({ browserInstance, element, folders, instanceData, saveElementOptions, tag })
+        : saveWebElement({ browserInstance, element, folders, instanceData, saveElementOptions, tag, ignore })
 }

@@ -1,5 +1,22 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`takeElementScreenshot > BiDi screenshots > should scroll element into view when autoElementScroll is enabled 1`] = `
+[
+  [MockFunction spy],
+  {
+    "elementId": "test-element",
+  },
+  6,
+]
+`;
+
+exports[`takeElementScreenshot > BiDi screenshots > should scroll element into view when autoElementScroll is enabled 2`] = `
+[
+  [MockFunction spy],
+  100,
+]
+`;
+
 exports[`takeElementScreenshot > Edge cases > should handle devicePixelRatio values and fallback to NaN when falsy 1`] = `
 {
   "base64Image": "cropped-screenshot-data",

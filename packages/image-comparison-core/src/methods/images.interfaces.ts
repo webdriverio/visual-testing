@@ -47,6 +47,10 @@ export interface ImageCompareOptions {
     isAndroid: boolean;
     /** If this is a native web screenshot */
     isAndroidNativeWebScreenshot: boolean;
+    /** If this is a hybrid (native + webview) app; enables status bar fallback in webview when overlay reports zero */
+    isHybridApp?: boolean;
+    /** Platform version from the device (e.g. "14.0" for Android API 14); used for Android status bar fallback lookup */
+    platformVersion?: string;
 }
 
 export interface WicImageCompareOptions extends BaseImageCompareOptions, BaseMobileBlockOutOptions {

@@ -345,9 +345,19 @@ export async function executeImageCompare(
         isAndroidNativeWebScreenshot,
         isAndroid,
         fileName,
+        folderOptions,
     } = options
-    const { actualFolder, autoSaveBaseline, alwaysSaveActualImage, baselineFolder, browserName, deviceName, diffFolder, isMobile, savePerInstance } =
-        options.folderOptions
+    const {
+        actualFolder,
+        autoSaveBaseline,
+        alwaysSaveActualImage,
+        baselineFolder,
+        browserName,
+        deviceName,
+        diffFolder,
+        isMobile,
+        savePerInstance,
+    } = folderOptions
     const imageCompareOptions = { ...options.compareOptions.wic, ...options.compareOptions.method }
 
     // 1a. Disable JSON reports if alwaysSaveActualImage is false (JSON reports need the actual file to exist)
@@ -424,6 +434,8 @@ export async function executeImageCompare(
             blockOutStatusBar: imageCompareOptions.blockOutStatusBar,
             blockOutToolBar: imageCompareOptions.blockOutToolBar,
         },
+        isHybridApp: options.isHybridApp,
+        platformVersion: options.platformVersion,
         actualFilePath: isViewPortScreenshot ? undefined : actualFilePath,
     })
 

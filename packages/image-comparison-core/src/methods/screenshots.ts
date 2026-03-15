@@ -41,7 +41,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
     const effectiveViewportHeight = hasNoBottomBar && hasHomeBar
         ? viewportHeight - Math.round(homeBar.height / (isAndroid ? devicePixelRatio : 1))
         : viewportHeight
-    const viewportWidth= Math.round(viewport.width / (isAndroid ? devicePixelRatio : 1))
+    const viewportWidth = Math.round(viewport.width / (isAndroid ? devicePixelRatio : 1))
     const viewportX = Math.round(viewport.x / (isAndroid ? devicePixelRatio : 1))
     const viewportY = Math.round(viewport.y / (isAndroid ? devicePixelRatio : 1))
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading

@@ -1,8 +1,12 @@
+import type { RectanglesOutput } from '../methods/rectangles.interfaces.js'
+
 export interface ScreenshotOutput {
     // The device pixel ratio of the instance
     devicePixelRatio: number;
     // The filename
     fileName: string;
+    // Resolved ignore regions in device pixels (when ignore elements were provided)
+    ignoreRegions?: RectanglesOutput[];
     // Is Landscape
     isLandscape: boolean;
     // The path where the file can be found

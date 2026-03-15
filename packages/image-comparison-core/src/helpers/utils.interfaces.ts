@@ -169,6 +169,7 @@ export interface CommonCheckVariables {
 
     /** Optional instance data (not all methods need these) */
     platformName?: string;
+    platformVersion?: string;
     isIOS?: boolean;
 
     /** WIC options */
@@ -235,6 +236,8 @@ export interface BaseExecuteCompareOptions {
     isAndroidNativeWebScreenshot: boolean;
     /** Optional: platform name */
     platformName?: string;
+    /** Optional: platform version (e.g. "14.0" for Android API 14, "17.0" for iOS) */
+    platformVersion?: string;
     /** Optional: whether this is iOS */
     isIOS?: boolean;
     /** Optional: whether this is hybrid app */

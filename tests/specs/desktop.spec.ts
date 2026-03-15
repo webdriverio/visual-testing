@@ -21,8 +21,57 @@ describe('@wdio/visual-service desktop', () => {
         })
     })
 
+    it(`should compare an element screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
+        await $('.features_vqN4').scrollIntoView()
+
+        // When running a new set of images then first comment out block 1 and 2. Then run the test.
+        // Then uncomment block 1, check if they fail with `--store-diffs` as an extra argument.
+        // If so, then uncomment block 2 and check if pass with the same arguments.
+        // Block 1
+        await browser.execute(() => {
+            document.querySelectorAll('.feature_G9wp h3').forEach(heading => {
+                (heading as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
+            })
+        })
+
+        await expect($('.features_vqN4')).toMatchElementSnapshot(
+            'ignoredElementsElementScreenshot',
+            {
+                // Block 2
+                ignore: [
+                    await $$('.feature_G9wp h3'),
+                ],
+                // Don't comment this out, it's needed to hide the navbar
+                hideElements: [await $('nav.navbar')]
+            }
+        )
+    })
+
     it(`should compare a viewport screenshot successful with a baseline for '${browserName}'`, async function() {
         await expect(browser).toMatchScreenSnapshot('viewportScreenshot')
+    })
+
+    it(`should compare a viewport screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
+        // When running a new set of images then first comment out block 1 and 2. Then run the test.
+        // Then uncomment block 1, check if they fail with `--store-diffs` as an extra argument.
+        // If so, then uncomment block 2 and check if pass with the same arguments.
+        // Block 1
+        await browser.execute(() => {
+            document.querySelectorAll('.navbar__items--right a.navbar__item,  .feature_G9wp').forEach(link => {
+                (link as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
+            })
+        })
+
+        await expect(browser).toMatchScreenSnapshot(
+            'ignoredElementsViewportScreenshot',
+            {
+                // Block 2
+                ignore: [
+                    await $$('.navbar__items--right a.navbar__item'),
+                    await $$('.feature_G9wp'),
+                ],
+            }
+        )
     })
 
     it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function () {
@@ -30,6 +79,29 @@ describe('@wdio/visual-service desktop', () => {
             fullPageScrollTimeout: 1500,
             hideAfterFirstScroll: [
                 await $('nav.navbar'),
+            ],
+        })
+    })
+
+    it(`should compare a full page screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
+        // When running a new set of images then first comment out block 1 and 2. Then run the test.
+        // Then uncomment block 1, check if they fail with `--store-diffs` as an extra argument.
+        // If so, then uncomment block 2 and check if pass with the same arguments.
+        // Block 1
+        await browser.execute(() => {
+            document.querySelectorAll('.feature_G9wp h3').forEach(heading => {
+                (heading as HTMLElement).style.backgroundColor = 'var(--ifm-color-primary)'
+            })
+        })
+
+        await expect(browser).toMatchFullPageSnapshot('ignoredElementsFullPageScreenshot', {
+            fullPageScrollTimeout: 1500,
+            hideAfterFirstScroll: [
+                await $('nav.navbar'),
+            ],
+            // // Block 2
+            ignore: [
+                await $$('.feature_G9wp h3'),
             ],
         })
     })

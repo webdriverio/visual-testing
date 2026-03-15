@@ -1,8 +1,12 @@
 import { Jimp } from 'jimp'
+import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import type {
     DetermineDeviceBlockOutsOptions,
+    DetermineWebFullPageIgnoreRegionsOptions,
+    DetermineWebScreenIgnoreRegionsOptions,
+    DetermineWebElementIgnoreRegionsOptions,
     DeviceRectangles,
     ElementRectangles,
     PrepareIgnoreRectanglesOptions,
@@ -254,7 +258,7 @@ export async function getRegionsFromElements(browserInstance: WebdriverIO.Browse
  */
 export async function determineIgnoreRegions(
     browserInstance: WebdriverIO.Browser,
-    ignores: ElementIgnore[],
+    ignores: (ElementIgnore | ElementIgnore[])[],
 ): Promise<RectanglesOutput[]>{
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
@@ -267,6 +271,266 @@ export async function determineIgnoreRegions(
             width: Math.round(region.width),
             height: Math.round(region.height),
         }))
+}
+
+/**
+ * Translate ignores to regions for web screen (viewport) screenshots.
+ * Uses getBoundingClientRect (CSS pixels) and converts to device pixels,
+ * accounting for the viewport offset on native web screenshot devices.
+ *
+ * Coordinate systems per platform:
+ * - Desktop / Android ChromeDriver: screenshot is viewport-only, BCR × DPR
+ * - iOS: full-device screenshot, viewport offset is in CSS points → (BCR + offset) × DPR
+ * - Android native web: full-device screenshot, viewport offset is already in
+ *   device pixels (injectWebviewOverlay pre-scales by DPR) → BCR × DPR + offset
+ */
+export async function determineWebScreenIgnoreRegions(
+    options: DetermineWebScreenIgnoreRegionsOptions,
+    ignores: (ElementIgnore | ElementIgnore[])[],
+): Promise<RectanglesOutput[]> {
+    const awaitedIgnores = await Promise.all(ignores)
+    const { elements, regions } = splitIgnores(awaitedIgnores)
+    const { browserInstance, devicePixelRatio, deviceRectangles, isAndroid, isAndroidNativeWebScreenshot, isIOS, ignoreRegionPadding: padding } = options
+
+    // Get raw (unrounded) BCR values so we can multiply by DPR before
+    // rounding. The shared getBoundingClientRect script pre-rounds to CSS
+    // integers which loses sub-pixel precision that matters at higher DPRs.
+    const rawBcr = (el: HTMLElement) => {
+        const rect = el.getBoundingClientRect()
+        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+    }
+    // Browsers can invalidate element references when the DOM is mutated
+    // (e.g. by beforeScreenshot CSS/style injection). Re-query via $$ to
+    // get fresh refs. Use $$ per unique selector so multiple elements
+    // sharing the same selector (e.g. from a $$ call) each resolve to
+    // the correct match by index.
+    const regionsFromElements: RectanglesOutput[] = []
+    const selectorCache = new Map<string, WebdriverIO.Element[]>()
+    const selectorIndex = new Map<string, number>()
+
+    for (const element of elements) {
+        const selector = element.selector as string
+
+        if (!selectorCache.has(selector)) {
+            const fresh = await browserInstance.$$(selector)
+            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
+            selectorIndex.set(selector, 0)
+        }
+
+        const idx = selectorIndex.get(selector)!
+        const cached = selectorCache.get(selector)!
+        const el = idx < cached.length ? cached[idx] : element
+        selectorIndex.set(selector, idx + 1)
+
+        const bcr = await browserInstance.execute(rawBcr, el as any) as RectanglesOutput
+        regionsFromElements.push(bcr)
+    }
+
+    return [...regions, ...regionsFromElements]
+        .map((region: RectanglesOutput) => {
+            // Use floor for top-left and ceil for bottom-right so the
+            // device-pixel rectangle fully covers the CSS-pixel element.
+            // Rounding position and size independently can miss edge pixels.
+            let cssX = region.x
+            let cssY = region.y
+
+            if (isIOS) {
+                cssX += deviceRectangles.viewport.x
+                cssY += deviceRectangles.viewport.y
+            }
+
+            const left = Math.floor(cssX * devicePixelRatio)
+            const top = Math.floor(cssY * devicePixelRatio)
+            const right = Math.ceil((cssX + region.width) * devicePixelRatio)
+            const bottom = Math.ceil((cssY + region.height) * devicePixelRatio)
+
+            let x = left
+            let y = top
+
+            if (isAndroid && isAndroidNativeWebScreenshot) {
+                // Android native web viewport offset is already in device pixels
+                x += deviceRectangles.viewport.x
+                y += deviceRectangles.viewport.y
+            }
+
+            let width = right - left
+            let height = bottom - top
+            if (padding > 0) {
+                x = Math.max(0, x - padding)
+                y = Math.max(0, y - padding)
+                width += 2 * padding
+                height += 2 * padding
+            }
+            return { x, y, width, height }
+        })
+}
+
+/**
+ * Translate ignores to regions for web full-page screenshots (desktop and mobile).
+ * Full-page image (BiDi or scroll-and-stitch) is in document coordinates: (0,0) = top-left
+ * of document, device pixels. Uses getBoundingClientRect + (scrollX, scrollY) for elements,
+ * then converts to device pixels. Same logic for all platforms; no viewport offset needed
+ * because the stitched canvas is built in document space.
+ */
+export async function determineWebFullPageIgnoreRegions(
+    options: DetermineWebFullPageIgnoreRegionsOptions,
+    ignores: (ElementIgnore | ElementIgnore[])[],
+): Promise<RectanglesOutput[]> {
+    const awaitedIgnores = await Promise.all(ignores)
+    const { elements, regions } = splitIgnores(awaitedIgnores)
+    const { browserInstance, devicePixelRatio, ignoreRegionPadding: padding, fullPageCropTopPaddingCSS: cropTop = 0 } = options
+
+    const rawDocumentBcr = (el: HTMLElement) => {
+        const rect = el.getBoundingClientRect()
+        return {
+            x: rect.x + window.scrollX,
+            y: rect.y + window.scrollY,
+            width: rect.width,
+            height: rect.height,
+        }
+    }
+
+    const regionsFromElements: RectanglesOutput[] = []
+    const selectorCache = new Map<string, WebdriverIO.Element[]>()
+    const selectorIndex = new Map<string, number>()
+
+    for (const element of elements) {
+        const selector = element.selector as string
+
+        if (!selectorCache.has(selector)) {
+            const fresh = await browserInstance.$$(selector)
+            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
+            selectorIndex.set(selector, 0)
+        }
+
+        const idx = selectorIndex.get(selector)!
+        const cached = selectorCache.get(selector)!
+        const el = idx < cached.length ? cached[idx] : element
+        selectorIndex.set(selector, idx + 1)
+
+        const bcr = await browserInstance.execute(rawDocumentBcr, el as any) as RectanglesOutput
+        regionsFromElements.push(bcr)
+    }
+
+    return [...regions, ...regionsFromElements]
+        .map((region: RectanglesOutput) => {
+            const left = Math.floor(region.x * devicePixelRatio)
+            const right = Math.ceil((region.x + region.width) * devicePixelRatio)
+            // On mobile full-page scroll-and-stitch, the canvas crops cropTop (e.g. 6px) from the top
+            // of each tile, so canvas y = (documentY - cropTop) × DPR
+            const topDevice = Math.floor((region.y - cropTop) * devicePixelRatio)
+            const bottomDevice = Math.ceil((region.y + region.height - cropTop) * devicePixelRatio)
+            const top = Math.max(0, topDevice)
+            const bottom = Math.max(top, bottomDevice)
+
+            let x = left
+            let y = top
+            let width = right - left
+            let height = bottom - top
+            if (padding > 0) {
+                x = Math.max(0, x - padding)
+                y = Math.max(0, y - padding)
+                width += 2 * padding
+                height += 2 * padding
+            }
+            return { x, y, width, height }
+        })
+}
+
+/**
+ * Translate ignores to regions for web element screenshots.
+ * By default regions are in *element-local* device pixels so they match the cropped element image
+ * (BiDi clip or fallback full-screenshot crop, both at device pixel size).
+ * Exception: when the element screenshot is from the native driver on Android native web
+ * (isWebDriverElementScreenshot && isAndroidNativeWebScreenshot), the driver returns an image at
+ * CSS pixel size (downscaled). We then output regions in CSS pixel coordinates (divide by DPR)
+ * so they align with that image. Fallback (full screenshot + crop) is at device size, so we do
+ * not downscale when fallback was used.
+ */
+export async function determineWebElementIgnoreRegions(
+    options: DetermineWebElementIgnoreRegionsOptions,
+    ignores: (ElementIgnore | ElementIgnore[])[],
+): Promise<RectanglesOutput[]> {
+    const awaitedIgnores = await Promise.all(ignores)
+    const { elements, regions } = splitIgnores(awaitedIgnores)
+    const {
+        browserInstance,
+        devicePixelRatio,
+        rootElement,
+        ignoreRegionPadding: padding,
+        isAndroidNativeWebScreenshot,
+        isWebDriverElementScreenshot,
+    } = options
+
+    // Compute bounding boxes relative to the root element: (childBCR - rootBCR)
+    const rawRelativeBcr = (el: HTMLElement, root: HTMLElement) => {
+        const elRect = el.getBoundingClientRect()
+        const rootRect = root.getBoundingClientRect()
+
+        return {
+            x: elRect.x - rootRect.x,
+            y: elRect.y - rootRect.y,
+            width: elRect.width,
+            height: elRect.height,
+        }
+    }
+
+    const regionsFromElements: RectanglesOutput[] = []
+    const selectorCache = new Map<string, WebdriverIO.Element[]>()
+    const selectorIndex = new Map<string, number>()
+
+    for (const element of elements) {
+        const selector = element.selector as string
+
+        if (!selectorCache.has(selector)) {
+            const fresh = await browserInstance.$$(selector)
+            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
+            selectorIndex.set(selector, 0)
+        }
+
+        const idx = selectorIndex.get(selector)!
+        const cached = selectorCache.get(selector)!
+        const el = idx < cached.length ? cached[idx] : element
+        selectorIndex.set(selector, idx + 1)
+
+        const bcr = await browserInstance.execute(rawRelativeBcr, el as any, rootElement as any) as RectanglesOutput
+        regionsFromElements.push(bcr)
+    }
+
+    // Both literal regions and element-derived regions are currently expected
+    // to be in CSS pixels relative to the element. Scale everything by DPR and
+    // express as device-pixel rectangles using the same floor-based rounding
+    // strategy as the BiDi element clip (x/y/width/height all floored).
+    // Then expand each region by ignoreRegionPadding on each side (configurable, default 1)
+    // to reduce 1px boundary differences on high-DPR / BiDi.
+    let result = [...regions, ...regionsFromElements]
+        .map((region: RectanglesOutput) => {
+            let x = Math.floor(region.x * devicePixelRatio)
+            let y = Math.floor(region.y * devicePixelRatio)
+            let width = Math.floor(region.width * devicePixelRatio)
+            let height = Math.floor(region.height * devicePixelRatio)
+            if (padding > 0) {
+                x = Math.max(0, x - padding)
+                y = Math.max(0, y - padding)
+                width += 2 * padding
+                height += 2 * padding
+            }
+            return { x, y, width, height }
+        })
+
+    // Only downscale when the element image is at CSS pixel size: native driver element screenshot
+    // on Android native web (fallback false). Fallback uses a device-pixel crop, so no downscale.
+    if (isAndroidNativeWebScreenshot === true && isWebDriverElementScreenshot === true && devicePixelRatio > 0) {
+        const dpr = devicePixelRatio
+        result = result.map((r) => ({
+            x: Math.round(r.x / dpr),
+            y: Math.round(r.y / dpr),
+            width: Math.round(r.width / dpr),
+            height: Math.round(r.height / dpr),
+        }))
+    }
+
+    return result
 }
 
 /**
@@ -299,6 +563,59 @@ export async function determineDeviceBlockOuts({ isAndroid, screenCompareOptions
 }
 
 /**
+ * Return a status bar rectangle for hybrid-app fallback when the overlay reports zero height.
+ * Uses IOS_OFFSETS / ANDROID_OFFSETS so the system status bar is blocked out in webview context.
+ * Android: uses device platformVersion (e.g. "14.0") as API level when present and in list; otherwise latest.
+ * iOS: keyed by screen size only (no OS version in data). When device not in list, uses latest entry.
+ */
+function getHybridAppStatusBarFallback(
+    deviceRectangles: DeviceRectangles,
+    isAndroid: boolean,
+    platformVersion?: string,
+): RectanglesOutput | null {
+    const { width: screenWidth, height: screenHeight } = deviceRectangles.screenSize
+    if (screenWidth === 0 || screenHeight === 0) {
+        return null
+    }
+
+    if (isAndroid) {
+        const apiLevels = Object.keys(ANDROID_OFFSETS).map(Number)
+        const latestApiLevel = apiLevels.length > 0 ? Math.max(...apiLevels) : 14
+        const deviceApiLevel = platformVersion !== undefined ? parseInt(platformVersion, 10) : NaN
+        const useApiLevel =
+            Number.isInteger(deviceApiLevel) && apiLevels.includes(deviceApiLevel)
+                ? deviceApiLevel
+                : latestApiLevel
+        const statusBarHeight = ANDROID_OFFSETS[useApiLevel as keyof typeof ANDROID_OFFSETS]?.STATUS_BAR ?? 24
+        return {
+            x: 0,
+            y: 0,
+            width: screenWidth,
+            height: statusBarHeight,
+        }
+    }
+
+    const isIphone = screenWidth < 1024 && screenHeight < 1024
+    const deviceType = isIphone ? 'IPHONE' : 'IPAD'
+    const portraitHeight = screenWidth > screenHeight ? screenWidth : screenHeight
+    const keys = Object.keys(IOS_OFFSETS[deviceType]).map(Number)
+    const exactMatch = keys.includes(portraitHeight)
+    const offsetPortraitHeight = exactMatch
+        ? portraitHeight
+        : (keys.length > 0 ? Math.max(...keys) : (isIphone ? 667 : 1024))
+    const orientation = screenWidth > screenHeight ? 'LANDSCAPE' : 'PORTRAIT'
+    const currentOffsets = IOS_OFFSETS[deviceType][offsetPortraitHeight]?.[orientation]
+    const statusBarHeight = currentOffsets?.STATUS_BAR ?? (isIphone ? 44 : 20)
+
+    return {
+        x: 0,
+        y: 0,
+        width: screenWidth,
+        height: statusBarHeight,
+    }
+}
+
+/**
  * Prepare all ignore rectangles for image comparison
  */
 export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOptions): Promise<PreparedIgnoreRectangles> {
@@ -313,6 +630,8 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
         isAndroidNativeWebScreenshot,
         isViewPortScreenshot,
         imageCompareOptions,
+        isHybridApp,
+        platformVersion,
         actualFilePath
     } = options
 
@@ -334,6 +653,18 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
         webStatusAddressToolBarOptions.push(
             ...(determineStatusAddressToolBarRectangles({ deviceRectangles, options: statusAddressToolBarOptions })) || []
         )
+
+        // Hybrid-app fallback: in webview the overlay often reports statusBarAndAddressBar height 0.
+        // Use native offsets (IOS_OFFSETS / ANDROID_OFFSETS) so the system status bar is still blocked out.
+        const needStatusBarFallback =
+            imageCompareOptions.blockOutStatusBar !== false &&
+            (isHybridApp === true || deviceRectangles.statusBarAndAddressBar.height === 0)
+        if (needStatusBarFallback) {
+            const fallback = getHybridAppStatusBarFallback(deviceRectangles, isAndroid, platformVersion)
+            if (fallback && fallback.height > 0) {
+                webStatusAddressToolBarOptions.push(fallback)
+            }
+        }
 
         if (webStatusAddressToolBarOptions.length > 0) {
             // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full
@@ -375,32 +706,43 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
         }
     }
 
-    // Combine all ignore regions
-    const ignoredBoxes = [
-        // These come from the method
+    // blockOut and device bar rectangles are in CSS pixels, scale by DPR
+    const dprScaledBoxes = [
         ...blockOut,
-        // @TODO: I'm defaulting ignore regions for devices
-        // Need to check if this is the right thing to do for web and mobile browser tests
-        ...ignoreRegions,
-        // Only get info about the status bars when we are in the web context
         ...webStatusAddressToolBarOptions
     ]
         .map(
-            // Make sure all the rectangles are equal to the dpr for the screenshot
             (rectangles) => {
                 return calculateDprData(
                     {
-                        // Adjust for the ResembleJS API
                         bottom: rectangles.y + rectangles.height,
                         right: rectangles.x + rectangles.width,
                         left: rectangles.x,
                         top: rectangles.y,
                     },
-                    // For Android we don't need to do it times the pixel ratio, for all others we need to
                     isAndroid ? 1 : devicePixelRatio,
                 )
             },
         )
+
+    // ignoreRegions: for web they are already in device pixels (pre-scaled by the caller).
+    // For native iOS app they are in logical pixels (getElementRect / statusBar/homeBar),
+    // so we scale by DPR here to match the device-pixel screenshot.
+    const isNativeIos = isNativeContext && isMobile && !isAndroid
+    const preScaledIgnoreBoxes = ignoreRegions.map((rectangles) => {
+        const box = {
+            left: rectangles.x,
+            top: rectangles.y,
+            right: rectangles.x + rectangles.width,
+            bottom: rectangles.y + rectangles.height,
+        }
+        if (isNativeIos) {
+            return calculateDprData({ ...box }, devicePixelRatio)
+        }
+        return box
+    })
+
+    const ignoredBoxes = [...dprScaledBoxes, ...preScaledIgnoreBoxes]
 
     return {
         ignoredBoxes,

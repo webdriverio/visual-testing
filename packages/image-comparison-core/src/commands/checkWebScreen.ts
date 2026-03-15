@@ -28,12 +28,15 @@ export default async function checkWebScreen(
         enableLayoutTesting,
         enableLegacyScreenshotMethod,
         hideScrollBars,
+        ignoreRegionPadding,
         hideElements = [],
         removeElements = [],
         waitForFontsLoaded,
     } = checkScreenOptions.method
 
-    // 2. Take the actual screenshot and retrieve the needed data
+    // 2. Take the actual screenshot and resolve ignore regions in one go.
+    //    Ignore regions are resolved while the DOM is still in screenshot state
+    //    (scrollbar hidden, elements hidden/removed) so positions match the image.
     const saveScreenOptions: SaveScreenOptions = {
         wic: checkScreenOptions.wic,
         method: {
@@ -42,16 +45,18 @@ export default async function checkWebScreen(
             enableLayoutTesting,
             enableLegacyScreenshotMethod,
             hideScrollBars,
+            ignoreRegionPadding,
             hideElements,
             removeElements,
             waitForFontsLoaded,
         },
     }
-    const { devicePixelRatio, fileName, base64Image } = await saveWebScreen({
+    const { devicePixelRatio, fileName, base64Image, ignoreRegions } = await saveWebScreen({
         browserInstance,
         instanceData,
         folders,
         tag,
+        ignore: checkScreenOptions.method.ignore,
         saveScreenOptions,
         isNativeContext,
     })
@@ -64,6 +69,9 @@ export default async function checkWebScreen(
         methodCompareOptions,
         devicePixelRatio,
         fileName,
+        additionalProperties: {
+            ignoreRegions: ignoreRegions || [],
+        },
     })
 
     // 4. Now execute the compare and return the data

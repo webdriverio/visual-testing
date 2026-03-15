@@ -5,6 +5,9 @@ import {
     determineScreenRectangles,
     determineStatusAddressToolBarRectangles,
     determineIgnoreRegions,
+    determineWebFullPageIgnoreRegions,
+    determineWebScreenIgnoreRegions,
+    determineWebElementIgnoreRegions,
     splitIgnores,
     determineDeviceBlockOuts,
     prepareIgnoreRectangles
@@ -31,7 +34,9 @@ describe('rectangles', () => {
 
         mockBrowserInstance = {
             execute: mockExecute,
-            getElementRect: mockGetElementRect
+            getElementRect: mockGetElementRect,
+            $: vi.fn(),
+            $$: vi.fn(),
         } as unknown as WebdriverIO.Browser
     })
 
@@ -757,6 +762,438 @@ describe('rectangles', () => {
         })
     })
 
+    describe('determineWebScreenIgnoreRegions', () => {
+        const desktopOptions = {
+            browserInstance: null as unknown as WebdriverIO.Browser,
+            devicePixelRatio: 2,
+            deviceRectangles: baseDeviceRectangles,
+            isAndroid: false,
+            isAndroidNativeWebScreenshot: false,
+            isIOS: false,
+            ignoreRegionPadding: 0,
+        }
+
+        beforeEach(() => {
+            desktopOptions.browserInstance = mockBrowserInstance
+        })
+
+        it('should resolve elements via raw BCR on desktop and apply DPR', async () => {
+            const mockElement = { elementId: 'el1', selector: '.nav' } as WebdriverIO.Element
+            const freshElement = { elementId: 'el1-fresh', selector: '.nav' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
+            mockExecute.mockResolvedValueOnce({ x: 10, y: 20, width: 200, height: 50 })
+
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [mockElement])
+
+            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.nav')
+            expect(mockExecute).toHaveBeenCalledOnce()
+            expect(result).toEqual([
+                { x: 20, y: 40, width: 400, height: 100 },
+            ])
+        })
+
+        it('should add DPR-scaled viewport offset on iOS and re-query elements via $$', async () => {
+            const iosDeviceRectangles = {
+                ...baseDeviceRectangles,
+                viewport: { y: 94, x: 0, width: 390, height: 650 },
+            }
+            const iosOptions = {
+                ...desktopOptions,
+                devicePixelRatio: 3,
+                deviceRectangles: iosDeviceRectangles,
+                isIOS: true,
+            }
+            const mockElement = { elementId: 'el1', selector: '.hero' } as WebdriverIO.Element
+            const freshElement = { elementId: 'el1-fresh', selector: '.hero' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
+            mockExecute.mockResolvedValueOnce({ x: 0, y: 100, width: 390, height: 200 })
+
+            const result = await determineWebScreenIgnoreRegions(iosOptions, [mockElement])
+
+            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.hero')
+            expect(mockBrowserInstance.$).not.toHaveBeenCalled()
+            expect(result).toEqual([
+                { x: 0, y: 582, width: 1170, height: 600 },
+            ])
+        })
+
+        it('should correctly resolve multiple elements sharing the same selector on iOS', async () => {
+            const iosDeviceRectangles = {
+                ...baseDeviceRectangles,
+                viewport: { y: 94, x: 0, width: 390, height: 650 },
+            }
+            const iosOptions = {
+                ...desktopOptions,
+                devicePixelRatio: 1,
+                deviceRectangles: iosDeviceRectangles,
+                isIOS: true,
+            }
+            const el1 = { elementId: 'a', selector: '.card' } as WebdriverIO.Element
+            const el2 = { elementId: 'b', selector: '.card' } as WebdriverIO.Element
+            const el3 = { elementId: 'c', selector: '.card' } as WebdriverIO.Element
+
+            const fresh1 = { elementId: 'f1', selector: '.card' } as unknown as WebdriverIO.Element
+            const fresh2 = { elementId: 'f2', selector: '.card' } as unknown as WebdriverIO.Element
+            const fresh3 = { elementId: 'f3', selector: '.card' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([fresh1, fresh2, fresh3] as any)
+
+            mockExecute
+                .mockResolvedValueOnce({ x: 0, y: 100, width: 390, height: 50 })
+                .mockResolvedValueOnce({ x: 0, y: 200, width: 390, height: 50 })
+                .mockResolvedValueOnce({ x: 0, y: 300, width: 390, height: 50 })
+
+            const result = await determineWebScreenIgnoreRegions(iosOptions, [[el1, el2, el3]])
+
+            // $$ called once for the shared selector, not $ three times
+            expect(mockBrowserInstance.$$).toHaveBeenCalledTimes(1)
+            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.card')
+            // execute called with each fresh element
+            expect(mockExecute).toHaveBeenCalledTimes(3)
+            // Each region has different y (viewport offset 94 added)
+            expect(result).toEqual([
+                { x: 0, y: 194, width: 390, height: 50 },
+                { x: 0, y: 294, width: 390, height: 50 },
+                { x: 0, y: 394, width: 390, height: 50 },
+            ])
+        })
+
+        it('should add device-pixel viewport offset on Android native web screenshot', async () => {
+            const androidDeviceRectangles = {
+                ...baseDeviceRectangles,
+                // On Android, viewport offset is already in device pixels
+                // (injectWebviewOverlay pre-scales by DPR)
+                viewport: { y: 240, x: 0, width: 1236, height: 1956 },
+            }
+            const androidOptions = {
+                ...desktopOptions,
+                devicePixelRatio: 3,
+                deviceRectangles: androidDeviceRectangles,
+                isAndroid: true,
+                isAndroidNativeWebScreenshot: true,
+            }
+            const mockElement = { elementId: 'el1', selector: '#header' } as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
+            mockExecute.mockResolvedValueOnce({ x: 0, y: 0, width: 412, height: 64 })
+
+            const result = await determineWebScreenIgnoreRegions(androidOptions, [mockElement])
+
+            // BCR × DPR + viewport (already device px):
+            // x: 0*3 + 0 = 0, y: 0*3 + 240 = 240, w: 412*3 = 1236, h: 64*3 = 192
+            expect(result).toEqual([
+                { x: 0, y: 240, width: 1236, height: 192 },
+            ])
+        })
+
+        it('should NOT add viewport offset on Android ChromeDriver screenshot', async () => {
+            const androidChromeOptions = {
+                ...desktopOptions,
+                devicePixelRatio: 3,
+                isAndroid: true,
+                isAndroidNativeWebScreenshot: false,
+            }
+            const mockElement = { elementId: 'el1', selector: '#header' } as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
+            mockExecute.mockResolvedValueOnce({ x: 0, y: 0, width: 412, height: 64 })
+
+            const result = await determineWebScreenIgnoreRegions(androidChromeOptions, [mockElement])
+
+            // BCR × DPR only, no viewport offset
+            expect(result).toEqual([
+                { x: 0, y: 0, width: 1236, height: 192 },
+            ])
+        })
+
+        it('should apply DPR to coordinate regions as well', async () => {
+            const region = { x: 10, y: 20, width: 100, height: 150 }
+
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            expect(result).toEqual([
+                { x: 20, y: 40, width: 200, height: 300 },
+            ])
+        })
+
+        it('should handle mixed elements and regions with DPR applied to both', async () => {
+            const mockElement = { elementId: 'el1', selector: '.ad' } as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
+            const region = { x: 500, y: 0, width: 200, height: 90 }
+            mockExecute.mockResolvedValueOnce({ x: 10, y: 20, width: 300, height: 80 })
+
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [mockElement, region])
+
+            expect(result).toEqual([
+                { x: 1000, y: 0, width: 400, height: 180 },
+                { x: 20, y: 40, width: 600, height: 160 },
+            ])
+        })
+
+        it('should handle empty array', async () => {
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [])
+
+            expect(result).toEqual([])
+            expect(mockExecute).not.toHaveBeenCalled()
+        })
+
+        it('should handle chainable promise elements', async () => {
+            const chainableElement = Promise.resolve({ elementId: 'el1', selector: '.footer' } as WebdriverIO.Element)
+            const freshElement = { elementId: 'el1-fresh', selector: '.footer' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
+            mockExecute.mockResolvedValueOnce({ x: 0, y: 900, width: 1200, height: 100 })
+
+            const result = await determineWebScreenIgnoreRegions(desktopOptions, [chainableElement as any])
+
+            expect(result).toEqual([
+                { x: 0, y: 1800, width: 2400, height: 200 },
+            ])
+        })
+
+        it('should use floor/ceil rounding on sub-pixel BCR values to fully cover elements', async () => {
+            const mockElement = { elementId: 'el1', selector: '.banner' } as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
+            // Sub-pixel BCR values that would lose precision if rounded independently
+            mockExecute.mockResolvedValueOnce({ x: 0.33, y: 50.67, width: 412.5, height: 64.33 })
+
+            const opts = { ...desktopOptions, devicePixelRatio: 3 }
+            const result = await determineWebScreenIgnoreRegions(opts, [mockElement])
+
+            // Position uses floor, far-edge uses ceil:
+            // x: floor(0.33*3) = floor(0.99) = 0
+            // y: floor(50.67*3) = floor(152.01) = 152
+            // right: ceil((0.33+412.5)*3) = ceil(1238.49) = 1239 → w = 1239-0 = 1239
+            // bottom: ceil((50.67+64.33)*3) = ceil(345.0) = 345 → h = 345-152 = 193
+            expect(result).toEqual([
+                { x: 0, y: 152, width: 1239, height: 193 },
+            ])
+        })
+
+        it('should throw on invalid ignore items', async () => {
+            await expect(
+                determineWebScreenIgnoreRegions(desktopOptions, ['invalid' as any])
+            ).rejects.toThrow('Invalid elements or regions')
+        })
+
+        it('should expand regions by ignoreRegionPadding (default 1) on each side', async () => {
+            const region = { x: 10, y: 20, width: 100, height: 50 }
+            const optionsWithDefaultPadding = {
+                ...desktopOptions,
+                ignoreRegionPadding: 1,
+            }
+
+            const result = await determineWebScreenIgnoreRegions(optionsWithDefaultPadding, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            // (10,20,100,50) × DPR 2 → (20,40,200,100); + padding 1 each side → (19,39,202,102)
+            expect(result).toEqual([
+                { x: 19, y: 39, width: 202, height: 102 },
+            ])
+        })
+
+        it('should use custom ignoreRegionPadding when provided for screen', async () => {
+            const region = { x: 0, y: 0, width: 50, height: 20 }
+            const optionsWithPadding2 = {
+                ...desktopOptions,
+                ignoreRegionPadding: 2,
+            }
+
+            const result = await determineWebScreenIgnoreRegions(optionsWithPadding2, [region])
+
+            // (0,0,50,20) × 2 → (0,0,100,40); + padding 2 → (0,0,104,44)
+            expect(result).toEqual([
+                { x: 0, y: 0, width: 104, height: 44 },
+            ])
+        })
+    })
+
+    describe('determineWebFullPageIgnoreRegions', () => {
+        const fullPageOptions = {
+            browserInstance: null as unknown as WebdriverIO.Browser,
+            devicePixelRatio: 2,
+            ignoreRegionPadding: 0,
+        }
+
+        beforeEach(() => {
+            fullPageOptions.browserInstance = mockBrowserInstance
+        })
+
+        it('should resolve elements via document BCR (BCR + scroll) and apply DPR', async () => {
+            const mockElement = { elementId: 'el1', selector: '.nav' } as WebdriverIO.Element
+            const freshElement = { elementId: 'el1-fresh', selector: '.nav' } as unknown as WebdriverIO.Element
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
+            // rawDocumentBcr returns getBoundingClientRect() + (scrollX, scrollY) = document-relative CSS pixels
+            mockExecute.mockResolvedValueOnce({ x: 10, y: 1200, width: 200, height: 50 })
+
+            const result = await determineWebFullPageIgnoreRegions(fullPageOptions, [mockElement])
+
+            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.nav')
+            expect(mockExecute).toHaveBeenCalledOnce()
+            // Document CSS (10, 1200, 200, 50) × DPR 2 → device pixels (20, 2400, 400, 100)
+            expect(result).toEqual([
+                { x: 20, y: 2400, width: 400, height: 100 },
+            ])
+        })
+
+        it('should treat raw regions as document-relative CSS pixels and apply DPR', async () => {
+            const region = { x: 0, y: 500, width: 300, height: 80 }
+
+            const result = await determineWebFullPageIgnoreRegions(fullPageOptions, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            expect(result).toEqual([
+                { x: 0, y: 1000, width: 600, height: 160 },
+            ])
+        })
+
+        it('should expand regions by ignoreRegionPadding', async () => {
+            const region = { x: 10, y: 20, width: 100, height: 50 }
+            const optionsWithPadding = {
+                ...fullPageOptions,
+                ignoreRegionPadding: 1,
+            }
+
+            const result = await determineWebFullPageIgnoreRegions(optionsWithPadding, [region])
+
+            // (10,20,100,50) × 2 → (20,40,200,100); + padding 1 → (19,39,202,102)
+            expect(result).toEqual([
+                { x: 19, y: 39, width: 202, height: 102 },
+            ])
+        })
+
+        it('should return empty array when ignores is empty', async () => {
+            const result = await determineWebFullPageIgnoreRegions(fullPageOptions, [])
+
+            expect(result).toEqual([])
+        })
+
+        it('should subtract fullPageCropTopPaddingCSS from y for mobile scroll-and-stitch alignment', async () => {
+            const region = { x: 0, y: 100, width: 300, height: 80 }
+            const optionsWithCropTop = {
+                ...fullPageOptions,
+                devicePixelRatio: 3,
+                fullPageCropTopPaddingCSS: 6,
+            }
+
+            const result = await determineWebFullPageIgnoreRegions(optionsWithCropTop, [region])
+
+            // document (0, 100, 300, 80) with cropTop 6 → canvas y = (100-6)*3 = 282, height = 80*3 = 240
+            expect(mockExecute).not.toHaveBeenCalled()
+            expect(result).toEqual([
+                { x: 0, y: 282, width: 900, height: 240 },
+            ])
+        })
+    })
+
+    describe('determineWebElementIgnoreRegions', () => {
+        it('should resolve element-local regions and apply DPR', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const childElement = { elementId: 'child', selector: '.child' } as WebdriverIO.Element
+            const freshChild = { elementId: 'child-fresh', selector: '.child' } as unknown as WebdriverIO.Element
+
+            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshChild] as any)
+            // Simulate already-relative BCR from execute: (20,30,100,40)
+            mockExecute.mockResolvedValueOnce({ x: 20, y: 30, width: 100, height: 40 })
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+                ignoreRegionPadding: 0,
+            }, [childElement])
+
+            // CSS: (20,30,100,40) × DPR(2) → (40,60,200,80)
+            expect(result).toEqual([
+                { x: 40, y: 60, width: 200, height: 80 },
+            ])
+        })
+
+        it('should pass through literal regions (CSS relative to element) with DPR applied', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const region = { x: 5, y: 10, width: 50, height: 20 }
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+                ignoreRegionPadding: 0,
+            }, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            // (5,10,50,20) × 2 → (10,20,100,40)
+            expect(result).toEqual([
+                { x: 10, y: 20, width: 100, height: 40 },
+            ])
+        })
+
+        it('should expand regions by ignoreRegionPadding (default 1) on each side', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const region = { x: 10, y: 20, width: 100, height: 40 }
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+                ignoreRegionPadding: 1,
+            }, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            // (10,20,100,40) × 2 → (20,40,200,80); + padding 1 each side → (19,39,202,82)
+            expect(result).toEqual([
+                { x: 19, y: 39, width: 202, height: 82 },
+            ])
+        })
+
+        it('should use custom ignoreRegionPadding when provided', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const region = { x: 0, y: 0, width: 50, height: 20 }
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 1,
+                rootElement,
+                ignoreRegionPadding: 2,
+            }, [region])
+
+            // (0,0,50,20) + padding 2 each side → (0,0,54,24) — x,y clamped to 0
+            expect(result).toEqual([
+                { x: 0, y: 0, width: 54, height: 24 },
+            ])
+        })
+
+        it('should handle empty ignores', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+                ignoreRegionPadding: 0,
+            }, [])
+
+            expect(result).toEqual([])
+            expect(mockExecute).not.toHaveBeenCalled()
+        })
+
+        it('should output CSS-pixel regions when isAndroidNativeWebScreenshot and isWebDriverElementScreenshot (native driver image at CSS size)', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const region = { x: 10, y: 20, width: 100, height: 40 }
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+                ignoreRegionPadding: 0,
+                isAndroidNativeWebScreenshot: true,
+                isWebDriverElementScreenshot: true,
+            }, [region])
+
+            expect(mockExecute).not.toHaveBeenCalled()
+            // Device px: (10,20,100,40) × 2 → (20,40,200,80); then downscale to CSS for native driver image → (10,20,100,40)
+            expect(result).toEqual([
+                { x: 10, y: 20, width: 100, height: 40 },
+            ])
+        })
+    })
+
     describe('determineDeviceBlockOuts', () => {
         it('should return empty array when no blockouts are enabled', async () => {
             const options = createDeviceBlockOutsOptions()
@@ -1017,6 +1454,242 @@ describe('rectangles', () => {
 
             expect(result.hasIgnoreRectangles).toBe(true)
             expect(result.ignoredBoxes).toMatchSnapshot()
+        })
+
+        it('should scale ignoreRegions by DPR for native iOS app (logical → device pixels)', async () => {
+            const options = createPrepareIgnoreRectanglesOptions({
+                ignoreRegions: [
+                    { x: 10, y: 20, width: 100, height: 50 },
+                ],
+                devicePixelRatio: 3,
+                isMobile: true,
+                isNativeContext: true,
+                isAndroid: false,
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            expect(result.ignoredBoxes).toHaveLength(1)
+            expect(result.ignoredBoxes[0]).toEqual({
+                left: 30,
+                top: 60,
+                right: 330,
+                bottom: 210,
+            })
+        })
+
+        it('should scale multiple ignoreRegions by DPR for native iOS app', async () => {
+            const options = createPrepareIgnoreRectanglesOptions({
+                ignoreRegions: [
+                    { x: 0, y: 0, width: 390, height: 47 },
+                    { x: 50, y: 100, width: 200, height: 80 },
+                ],
+                devicePixelRatio: 3,
+                isMobile: true,
+                isNativeContext: true,
+                isAndroid: false,
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            expect(result.ignoredBoxes).toHaveLength(2)
+            expect(result.ignoredBoxes[0]).toEqual({
+                left: 0,
+                top: 0,
+                right: 1170,
+                bottom: 141,
+            })
+            expect(result.ignoredBoxes[1]).toEqual({
+                left: 150,
+                top: 300,
+                right: 750,
+                bottom: 540,
+            })
+        })
+
+        it('should not scale ignoreRegions for native Android app', async () => {
+            const options = createPrepareIgnoreRectanglesOptions({
+                ignoreRegions: [{ x: 100, y: 200, width: 150, height: 75 }],
+                devicePixelRatio: 3,
+                isMobile: true,
+                isNativeContext: true,
+                isAndroid: true,
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            expect(result.ignoredBoxes).toHaveLength(1)
+            expect(result.ignoredBoxes[0]).toEqual({
+                left: 100,
+                top: 200,
+                right: 250,
+                bottom: 275,
+            })
+        })
+
+        it('should not scale ignoreRegions when not native context (e.g. web)', async () => {
+            const options = createPrepareIgnoreRectanglesOptions({
+                ignoreRegions: [{ x: 10, y: 20, width: 100, height: 50 }],
+                devicePixelRatio: 3,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: false,
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            expect(result.ignoredBoxes).toHaveLength(1)
+            expect(result.ignoredBoxes[0]).toEqual({
+                left: 10,
+                top: 20,
+                right: 110,
+                bottom: 70,
+            })
+        })
+
+        it('should add hybrid-app status bar fallback when statusBarAndAddressBar height is 0 (iOS)', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 375, height: 812 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 375, height: 0 },
+                bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: false,
+                isAndroidNativeWebScreenshot: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 3,
+                imageCompareOptions: {
+                    blockOutStatusBar: true,
+                },
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBox = result.ignoredBoxes.find(
+                (b: { top: number }) => b.top === 0
+            ) as { left: number; top: number; right: number; bottom: number }
+            expect(statusBarBox).toBeDefined()
+            expect(statusBarBox.left).toBe(0)
+            expect(statusBarBox.top).toBe(0)
+            expect(statusBarBox.right).toBe(1125)
+            expect(statusBarBox.bottom).toBe(132)
+        })
+
+        it('should add hybrid-app status bar fallback when isHybridApp is true (iOS)', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 390, height: 844 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 390, height: 47 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: false,
+                isAndroidNativeWebScreenshot: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 2,
+                isHybridApp: true,
+                imageCompareOptions: {
+                    blockOutStatusBar: true,
+                },
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBoxes = result.ignoredBoxes.filter(
+                (b: { top: number }) => b.top === 0
+            ) as Array<{ left: number; top: number; right: number; bottom: number }>
+            expect(statusBarBoxes.length).toBeGreaterThanOrEqual(1)
+        })
+
+        it('should add hybrid-app status bar fallback for Android when overlay reports zero', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 412, height: 869 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 412, height: 0 },
+                bottomBar: { y: 0, x: 0, width: 0, height: 0 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: true,
+                isAndroidNativeWebScreenshot: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 2,
+                imageCompareOptions: {
+                    blockOutStatusBar: true,
+                },
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBox = result.ignoredBoxes.find(
+                (b: { top: number }) => b.top === 0
+            ) as { left: number; top: number; right: number; bottom: number }
+            expect(statusBarBox).toBeDefined()
+            expect(statusBarBox.bottom).toBe(24)
+        })
+
+        it('should use device platformVersion for Android hybrid status bar fallback when in ANDROID_OFFSETS list', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 412, height: 869 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 412, height: 0 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 2,
+                imageCompareOptions: { blockOutStatusBar: true },
+                platformVersion: '12',
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBox = result.ignoredBoxes.find(
+                (b: { top: number }) => b.top === 0
+            ) as { left: number; top: number; right: number; bottom: number }
+            expect(statusBarBox).toBeDefined()
+            expect(statusBarBox.bottom).toBe(24)
+        })
+
+        it('should fall back to latest API level for Android when platformVersion not in ANDROID_OFFSETS', async () => {
+            const deviceRectangles = createDeviceRectanglesWithData({
+                screenSize: { width: 412, height: 869 },
+                statusBarAndAddressBar: { x: 0, y: 0, width: 412, height: 0 },
+            })
+            const options = createPrepareIgnoreRectanglesOptions({
+                deviceRectangles,
+                isMobile: true,
+                isNativeContext: false,
+                isAndroid: true,
+                isViewPortScreenshot: true,
+                devicePixelRatio: 2,
+                imageCompareOptions: { blockOutStatusBar: true },
+                platformVersion: '99',
+            })
+
+            const result = await prepareIgnoreRectangles(options)
+
+            expect(result.hasIgnoreRectangles).toBe(true)
+            const statusBarBox = result.ignoredBoxes.find(
+                (b: { top: number }) => b.top === 0
+            ) as { left: number; top: number; right: number; bottom: number }
+            expect(statusBarBox).toBeDefined()
+            expect(statusBarBox.bottom).toBe(24)
         })
     })
 })

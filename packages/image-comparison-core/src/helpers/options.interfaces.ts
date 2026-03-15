@@ -118,6 +118,12 @@ export interface ClassOptions {
      */
     hideScrollBars?: boolean;
 
+    /**
+     * Padding in device pixels added to each side of element ignore regions (default 1).
+     * Set to 0 to disable. Only applies to element screenshots.
+     */
+    ignoreRegionPadding?: number;
+
     // ================
     // Compare options
     // ================
@@ -355,6 +361,12 @@ export interface DefaultOptions {
      * Hide scrollbars in the screenshot.
      */
     hideScrollBars: boolean;
+
+    /**
+     * Padding in device pixels added to each side of element ignore regions (default 1).
+     * Set to 0 to disable. Only applies to element screenshots.
+     */
+    ignoreRegionPadding?: number;
 
     /**
      * Indicates whether the app is a hybrid (native + webview).

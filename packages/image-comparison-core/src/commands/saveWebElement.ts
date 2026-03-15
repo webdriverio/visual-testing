@@ -9,6 +9,7 @@ import type { ElementScreenshotDataOptions } from '../methods/screenshots.interf
 import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
+import { determineWebElementIgnoreRegions } from '../methods/rectangles.js'
 
 /**
  * Saves an image of an element
@@ -20,6 +21,7 @@ export default async function saveWebElement(
         folders,
         element,
         tag,
+        ignore,
         saveElementOptions,
     }: InternalSaveElementMethodOptions
 ): Promise<ScreenshotOutput> {
@@ -72,6 +74,28 @@ export default async function saveWebElement(
     const shouldUseBidi = canUseBidiScreenshot(browserInstance) && !isMobile && !enableLegacyScreenshotMethod
     const screenshotData = await takeElementScreenshot(browserInstance, elementScreenshotOptions, shouldUseBidi)
 
+    // 3b. Resolve ignore regions (element-local) while the DOM is still in screenshot state.
+    // determineWebElementIgnoreRegions returns device-pixel regions, or CSS-pixel regions when
+    // the element image is from the native driver on Android native web (see that function).
+    const ignoreRegionPadding = (getMethodOrWicOption(saveElementOptions.method, saveElementOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
+    const ignoreRegions = ignore && ignore.length > 0
+        ? await (async () => {
+            const rootElement = await (element as any as WebdriverIO.Element | Promise<WebdriverIO.Element>)
+
+            return determineWebElementIgnoreRegions(
+                {
+                    browserInstance,
+                    devicePixelRatio: devicePixelRatio || 1,
+                    rootElement: rootElement as WebdriverIO.Element,
+                    ignoreRegionPadding,
+                    isAndroidNativeWebScreenshot,
+                    isWebDriverElementScreenshot: screenshotData.isWebDriverElementScreenshot,
+                },
+                ignore,
+            )
+        })()
+        : undefined
+
     // 4. Return the data
     const afterOptions = buildAfterScreenshotOptions({
         base64Image: screenshotData.base64Image,
@@ -84,5 +108,10 @@ export default async function saveWebElement(
         wicOptions: saveElementOptions.wic
     })
 
-    return afterScreenshot(browserInstance, afterOptions)
+    const result = await afterScreenshot(browserInstance, afterOptions)
+
+    return {
+        ...result,
+        ...(ignoreRegions ? { ignoreRegions } : {}),
+    }
 }

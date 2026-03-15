@@ -244,7 +244,7 @@ export async function getInstanceData({
     const ltOptions = getLtOptions(requestedCapabilities)
     // @TODO: Figure this one out in the future when we know more about the Appium capabilities from LT
     // 20241216: LT doesn't have the option to take a ChromeDriver screenshot, so if it's Android it's always native
-    const nativeWebScreenshot = isAndroid && ltOptions || !!getRequestedAppiumCapability(requestedCapabilities, 'nativeWebScreenshot')
+    const nativeWebScreenshot = !!(isAndroid && ltOptions) || !!getRequestedAppiumCapability(requestedCapabilities, 'nativeWebScreenshot')
     const platformVersion = (rawPlatformVersion === undefined || rawPlatformVersion === '') ? NOT_KNOWN : rawPlatformVersion.toLowerCase()
     const {
         devicePixelRatio: mobileDevicePixelRatio,

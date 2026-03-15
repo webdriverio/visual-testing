@@ -70,7 +70,6 @@ function createCaps({
     mobileSpecs: string;
     build: string;
     deviceOrientation: DeviceOrientation;
-
 }): {
     'lt:options': {
         deviceName: string,
@@ -80,12 +79,6 @@ function createCaps({
         build: string,
         w3c: boolean,
         queueTimeout: number,
-        /**
-         * There are issues with the Chrome version on LT
-         * the installed versions sometimes give tabs as the first page.
-         * This should be fixed in the future and below is a workaround
-         */
-        chromeVersion: 126,
     },
     specs: string[];
     'wdio-ics:options': {
@@ -93,6 +86,9 @@ function createCaps({
         commands: string[];
     };
     'wdio:enforceWebDriverClassic': boolean;
+    'appium:chromeOptions': {
+        args: string[];
+    };
     } {
     const driverScreenshotType = 'NativeWebScreenshot'
     const adjustedDeviceName = deviceName !== '' ?
@@ -119,6 +115,13 @@ function createCaps({
                 .toLowerCase()}${driverScreenshotType}${platformVersion}`,
             commands: wdioIcsCommands,
         },
-        'wdio:enforceWebDriverClassic': true
+        'wdio:enforceWebDriverClassic': true,
+        'appium:chromeOptions': {
+            args: [
+                '--disable-features=StartSurfaceAndroid,GridTabSwitcherForTablets,TabGridLayout',
+                '--no-first-run',
+                '--disable-fre'
+            ]
+        }
     }
 }

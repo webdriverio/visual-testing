@@ -106,6 +106,7 @@ exports[`options > defaultOptions > should return the default options when no op
   "formatImageName": "{tag}-{browserName}-{width}x{height}-dpr-{dpr}",
   "fullPageScrollTimeout": 1500,
   "hideScrollBars": true,
+  "ignoreRegionPadding": 1,
   "isHybridApp": false,
   "savePerInstance": false,
   "tabbableOptions": {
@@ -161,6 +162,7 @@ exports[`options > defaultOptions > should return the provided options when opti
   "formatImageName": "{foo}-{bar}",
   "fullPageScrollTimeout": 12345,
   "hideScrollBars": true,
+  "ignoreRegionPadding": 1,
   "isHybridApp": false,
   "savePerInstance": true,
   "tabbableOptions": {

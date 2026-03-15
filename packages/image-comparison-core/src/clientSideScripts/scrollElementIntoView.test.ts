@@ -69,7 +69,8 @@ describe('scrollElementIntoView', () => {
         const result = scrollElementIntoView(mockElement, addressBarShadowPadding)
 
         expect(result).toBe(50)
-        expect(mockHtmlNode.scrollTop).toBe(90)
+        // currentPosition (50) + BCR.top (100) - padding (10) = 140
+        expect(mockHtmlNode.scrollTop).toBe(140)
     })
 
     it('should return current scroll position when body node has scroll', () => {
@@ -80,7 +81,8 @@ describe('scrollElementIntoView', () => {
         const result = scrollElementIntoView(mockElement, addressBarShadowPadding)
 
         expect(result).toBe(50)
-        expect(mockBodyNode.scrollTop).toBe(90)
+        // currentPosition (50) + BCR.top (100) - padding (10) = 140
+        expect(mockBodyNode.scrollTop).toBe(140)
     })
 
     it('should not scroll when neither html nor body is scrollable', () => {
