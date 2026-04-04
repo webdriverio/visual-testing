@@ -1,5 +1,12 @@
 # @wdio/visual-service
 
+## 9.2.1
+
+### Patch Changes
+
+- Updated dependencies [d5afb54]
+  - @wdio/image-comparison-core@1.2.1
+
 ## 9.2.0
 
 ### Minor Changes
