@@ -10,6 +10,7 @@
   # Committers: 1
 
   - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 - Updated dependencies [d5afb54]
   - @wdio/image-comparison-core@1.2.1
 
