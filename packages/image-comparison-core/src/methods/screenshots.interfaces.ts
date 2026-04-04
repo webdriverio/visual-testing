@@ -1,3 +1,4 @@
+import type { ChainablePromiseElement } from 'webdriverio'
 import type { DeviceRectangles, RectanglesOutput } from './rectangles.interfaces.js'
 
 // === UNIVERSAL BASE INTERFACES ===
@@ -250,7 +251,7 @@ export interface ElementScreenshotDataOptions extends
     /** Whether to automatically scroll the element into view. */
     autoElementScroll: boolean;
     /** The element to take a screenshot of. */
-    element: any;
+    element: HTMLElement | WebdriverIO.Element | ChainablePromiseElement;
     /** The inner height. */
     innerHeight?: number;
     /** Resize dimensions for the screenshot. */
