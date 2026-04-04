@@ -131,6 +131,22 @@ describe('takeElementScreenshot', () => {
             expect(executeMock).toHaveBeenCalledTimes(1)
             expect(waitForSpy).toHaveBeenCalledWith(100)
         })
+
+        it('should resolve a Promise-wrapped element (ChainablePromiseElement) before passing to browser.execute()', async () => {
+            const resolvedElement = { elementId: 'promise-element' }
+            const optionsWithPromiseElement = {
+                ...baseOptions,
+                autoElementScroll: true,
+                element: Promise.resolve(resolvedElement) as any,
+            }
+            executeMock.mockResolvedValueOnce(100)
+
+            await takeElementScreenshot(browserInstance, optionsWithPromiseElement, true)
+
+            expect(getElementRectMock).toHaveBeenCalledWith('promise-element')
+            // The resolved element (not the Promise) must be passed to browser.execute()
+            expect(executeMock.mock.calls[0][1]).toEqual(resolvedElement)
+        })
     })
 
     describe('Legacy screenshots', () => {
@@ -210,6 +226,25 @@ describe('takeElementScreenshot', () => {
             expect(result).toMatchSnapshot()
             expect(executeMock).toHaveBeenCalledTimes(1) // Only the scroll into view call
             expect(waitForSpy).toHaveBeenCalledWith(100)
+        })
+
+        it('should resolve a Promise-wrapped element (ChainablePromiseElement) before passing to browser.execute()', async () => {
+            const resolvedElement = { elementId: 'promise-element' }
+            const optionsWithPromiseElement = {
+                ...baseOptions,
+                autoElementScroll: true,
+                element: Promise.resolve(resolvedElement) as any,
+            }
+            executeMock.mockResolvedValueOnce(100)
+
+            await takeElementScreenshot(browserInstance, optionsWithPromiseElement, false)
+
+            // The resolved element (not the Promise) must be passed to browser.execute()
+            expect(executeMock.mock.calls[0][1]).toEqual(resolvedElement)
+            // And also passed to takeWebElementScreenshot
+            expect(takeWebElementScreenshotSpy).toHaveBeenCalledWith(
+                expect.objectContaining({ element: resolvedElement })
+            )
         })
 
         it('should enable fallback when resizeDimensions is provided', async () => {

@@ -25,19 +25,24 @@ async function takeBiDiElementScreenshot(
 ): Promise<ElementScreenshotData> {
     const isWebDriverElementScreenshot = false
 
+    // Fix #1129: scrollElementIntoView receives a promise
+    // The element might be a promise, so we need to resolve it before using it as a browser.execute() argument
+    // if we need to use it in browser.execute()
+    const element = await (options.element as unknown as WebdriverIO.Element | Promise<WebdriverIO.Element>)
+
     // Scroll the element into the viewport so any lazy‑load / intersection
     // observers are triggered. We always capture from the *document* origin,
     // so the clip coordinates are document‑relative and independent of scroll.
     let currentPosition: number | undefined
     if (options.autoElementScroll) {
-        currentPosition = await browserInstance.execute(scrollElementIntoView as any, options.element, options.addressBarShadowPadding)
+        currentPosition = await browserInstance.execute(scrollElementIntoView as any, element, options.addressBarShadowPadding)
         await waitFor(100)
     }
 
     // Get the element rect and clip the screenshot. WebDriver getElementRect
     // returns coordinates relative to the document origin, which matches the
     // BiDi `origin: 'document'` coordinate system.
-    const rect = await browserInstance.getElementRect!((await options.element as WebdriverIO.Element).elementId)
+    const rect = await browserInstance.getElementRect!(element.elementId)
     const clip = { x: Math.floor(rect.x), y: Math.floor(rect.y), width: Math.floor(rect.width), height: Math.floor(rect.height) }
     const base64Image = await takeBase64BiDiScreenshot({
         browserInstance,
@@ -63,10 +68,15 @@ async function takeWebDriverElementScreenshot(
     let base64Image: string
     let isWebDriverElementScreenshot = false
 
+    // Fix #1129: scrollElementIntoView receives a promise
+    // The element might be a promise, so we need to resolve it before using it as a browser.execute() argument
+    // if we need to use it in browser.execute()
+    const element = await (options.element as unknown as WebdriverIO.Element | Promise<WebdriverIO.Element>)
+
     // Scroll the element into top of the viewport and return the current scroll position
     let currentPosition: number | undefined
     if (options.autoElementScroll) {
-        currentPosition = await browserInstance.execute(scrollElementIntoView as any, options.element, options.addressBarShadowPadding)
+        currentPosition = await browserInstance.execute(scrollElementIntoView as any, element, options.addressBarShadowPadding)
         // We need to wait for the scroll to finish before taking the screenshot
         await waitFor(100)
     }
@@ -77,7 +87,7 @@ async function takeWebDriverElementScreenshot(
         browserInstance,
         devicePixelRatio: options.devicePixelRatio,
         deviceRectangles: options.deviceRectangles,
-        element: options.element,
+        element,
         initialDevicePixelRatio: options.initialDevicePixelRatio,
         isEmulated: options.isEmulated,
         innerHeight: options.innerHeight,
