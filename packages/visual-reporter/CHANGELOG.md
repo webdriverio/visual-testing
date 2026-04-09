@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- db33fa7: #### `@wdio/image-comparison-core` and `@wdio/ocr-service` — Security: update jimp (CVE in `file-type` transitive dep)
+- db33fa7: #### `@wdio/image-comparison-core` and `@wdio/ocr-service` Security: update jimp (CVE in `file-type` transitive dep)
 
   Bumped `jimp` to the latest version to resolve a reported vulnerability in its `file-type` transitive dependency (see [#1130](https://github.com/webdriverio/visual-testing/issues/1130), raised by [@denis-sokolov](https://github.com/denis-sokolov), thank you!).
 
