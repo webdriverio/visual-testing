@@ -24,6 +24,7 @@ export default async function checkWebElement(
     // 1. Extract common variables
     const commonCheckVariables = extractCommonCheckVariables({ folders, instanceData, wicOptions: checkElementOptions.wic })
     const {
+        biDiOrigin,
         disableBlinkingCursor,
         disableCSSAnimation,
         enableLayoutTesting,
@@ -40,6 +41,7 @@ export default async function checkWebElement(
     const saveElementOptions: SaveElementOptions = {
         wic: checkElementOptions.wic,
         method: {
+            biDiOrigin,
             disableBlinkingCursor,
             disableCSSAnimation,
             enableLayoutTesting,

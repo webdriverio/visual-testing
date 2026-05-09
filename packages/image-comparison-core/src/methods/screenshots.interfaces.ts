@@ -250,10 +250,14 @@ export interface ElementScreenshotDataOptions extends
     MobileCroppingOptions {
     /** Whether to automatically scroll the element into view. */
     autoElementScroll: boolean;
+    /** BiDi-only: coordinate origin for element screenshots ('document' | 'viewport'). */
+    biDiOrigin?: 'document' | 'viewport';
     /** The element to take a screenshot of. */
     element: HTMLElement | WebdriverIO.Element | ChainablePromiseElement;
-    /** The inner height. */
+    /** The inner height of the viewport. */
     innerHeight?: number;
+    /** The inner width of the viewport. */
+    innerWidth?: number;
     /** Resize dimensions for the screenshot. */
     resizeDimensions: any;
 }

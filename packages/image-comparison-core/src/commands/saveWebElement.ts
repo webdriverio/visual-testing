@@ -39,6 +39,7 @@ export default async function saveWebElement(
             window: {
                 devicePixelRatio,
                 innerHeight,
+                innerWidth,
                 isEmulated,
                 isLandscape,
             },
@@ -52,9 +53,11 @@ export default async function saveWebElement(
     } = enrichedInstanceData
 
     // 3. Take the screenshot
+    const biDiOrigin = saveElementOptions.method.biDiOrigin ?? 'document'
     const elementScreenshotOptions: ElementScreenshotDataOptions = {
         addressBarShadowPadding,
         autoElementScroll,
+        biDiOrigin,
         deviceName,
         devicePixelRatio: devicePixelRatio || 1,
         deviceRectangles: instanceData.deviceRectangles,
@@ -62,6 +65,7 @@ export default async function saveWebElement(
         isEmulated,
         initialDevicePixelRatio: initialDevicePixelRatio || 1,
         innerHeight,
+        innerWidth,
         isAndroidNativeWebScreenshot,
         isAndroidChromeDriverScreenshot,
         isAndroid,

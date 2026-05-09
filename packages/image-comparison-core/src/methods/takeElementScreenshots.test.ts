@@ -149,6 +149,93 @@ describe('takeElementScreenshot', () => {
         })
     })
 
+    describe('BiDi viewport screenshots', () => {
+        const vpOptions: ElementScreenshotDataOptions = {
+            ...baseOptions,
+            biDiOrigin: 'viewport',
+            innerWidth: 1280,
+            innerHeight: 720,
+        }
+
+        it('should take viewport screenshot when element is fully inside the viewport', async () => {
+            // element at (10, 20, 100x200) — fits in 1280x720 viewport
+            const result = await takeElementScreenshot(browserInstance, vpOptions, true)
+
+            expect(result).toEqual({
+                base64Image: 'bidi-screenshot-data',
+                isWebDriverElementScreenshot: false,
+            })
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith({
+                browserInstance,
+                origin: 'viewport',
+                clip: { x: 10, y: 20, width: 100, height: 200 },
+            })
+        })
+
+        it('should throw when element dimensions exceed the viewport', async () => {
+            getElementRectMock.mockResolvedValueOnce({ x: 0, y: 0, width: 1400, height: 800 })
+
+            const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
+            expect(err.message).toMatch(/element dimensions \(1400x800px\) exceed the viewport \(1280x720px\)/)
+            expect(err.message).toMatch(/biDiOrigin: 'document'/)
+            expect(err.message).toMatch(/composited layers/)
+        })
+
+        it('should throw when element is completely outside the viewport', async () => {
+            // element below the fold
+            getElementRectMock.mockResolvedValueOnce({ x: 0, y: 800, width: 100, height: 200 })
+
+            const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
+            expect(err.message).toMatch(/element is not in the viewport/)
+            expect(err.message).toMatch(/scrollIntoView/)
+            expect(err.message).toMatch(/autoElementScroll: true/)
+        })
+
+        it('should throw when element is partially outside the viewport but fits', async () => {
+            // element starts at x=-10, so it bleeds left of the viewport
+            getElementRectMock.mockResolvedValueOnce({ x: -10, y: 0, width: 100, height: 200 })
+
+            const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
+            expect(err.message).toMatch(/not fully visible in the viewport/)
+            expect(err.message).toMatch(/fits within the viewport/)
+            expect(err.message).toMatch(/autoElementScroll: true/)
+        })
+
+        it('should include element and viewport dimensions in the error messages', async () => {
+            getElementRectMock.mockResolvedValueOnce({ x: 0, y: 900, width: 200, height: 100 })
+
+            const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
+            expect(err.message).toMatch(/x=0, y=900, 200x100px/)
+            expect(err.message).toMatch(/viewport: 1280x720px/)
+        })
+
+        it('should scroll element into view before validating when autoElementScroll is true', async () => {
+            const vpScrollOptions: ElementScreenshotDataOptions = { ...vpOptions, autoElementScroll: true }
+            // After scroll, element is fully in viewport
+            executeMock.mockResolvedValueOnce(300) // previous scroll position
+
+            const result = await takeElementScreenshot(browserInstance, vpScrollOptions, true)
+
+            expect(result.base64Image).toBe('bidi-screenshot-data')
+            // scrollElementIntoView + scrollToPosition (restore)
+            expect(executeMock).toHaveBeenCalledTimes(2)
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(
+                expect.objectContaining({ origin: 'viewport' })
+            )
+        })
+
+        it('should use origin: document for the default (no biDiOrigin set)', async () => {
+            const defaultOptions = { ...vpOptions, biDiOrigin: undefined }
+
+            const result = await takeElementScreenshot(browserInstance, defaultOptions, true)
+
+            expect(result.base64Image).toBe('bidi-screenshot-data')
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(
+                expect.objectContaining({ origin: 'document' })
+            )
+        })
+    })
+
     describe('Legacy screenshots', () => {
         let logErrorSpy: ReturnType<typeof vi.spyOn>
 
