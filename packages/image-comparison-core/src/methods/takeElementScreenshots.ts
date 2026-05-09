@@ -108,7 +108,7 @@ async function takeBiDiElementScreenshotFromViewport(
         throw new Error(
             '[BiDi viewport screenshot] The element is not fully visible in the viewport ' +
             `(element: x=${elX}, y=${elY}, ${elW}x${elH}px; viewport: ${vpW}x${vpH}px). ` +
-            'The element fits within the viewport — scroll it fully into view by calling ' +
+            'The element fits within the viewport, scroll it fully into view by calling ' +
             '`element.scrollIntoView()` or setting `autoElementScroll: true`.'
         )
     }
