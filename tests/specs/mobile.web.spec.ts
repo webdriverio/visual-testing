@@ -239,7 +239,7 @@ const skipRules: SkipRule[] = [
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
     {
-        titleIncludes: 'should compare a screen successful for',
+        titleIncludes: 'compare a screen successful',
         deviceName: 'Pixel 9 Pro',
         platformName: 'Android',
         platformVersions: ['14'],
@@ -247,7 +247,7 @@ const skipRules: SkipRule[] = [
         reason: 'Full black screen',
     },
     {
-        titleIncludes: 'should compare a full page screenshot successful',
+        titleIncludes: 'compare a full page screenshot successful',
         deviceName: 'Pixel 9 Pro',
         platformName: 'Android',
         platformVersions: ['14'],
@@ -255,7 +255,7 @@ const skipRules: SkipRule[] = [
         reason: 'Full black screen',
     },
     {
-        titleIncludes: 'should compare a full page screenshot with ignore elements successful for',
+        titleIncludes: 'compare a full page screenshot with ignore elements successful',
         deviceName: 'Pixel 9 Pro',
         platformName: 'Android',
         platformVersions: ['14'],
@@ -263,7 +263,7 @@ const skipRules: SkipRule[] = [
         reason: 'Full black screen',
     },
     {
-        titleIncludes: 'should compare a full page screenshot with ignore elements successful for',
+        titleIncludes: 'compare a full page screenshot with ignore elements successful',
         deviceName: 'Galaxy Tab S8',
         platformName: 'Android',
         platformVersions: ['14'],
@@ -271,7 +271,7 @@ const skipRules: SkipRule[] = [
         reason: 'Full black screen',
     },
     {
-        titleIncludes: 'should compare a full page screenshot successful',
+        titleIncludes: 'compare a full page screenshot successful',
         deviceName: 'Galaxy Tab S8',
         platformName: 'Android',
         platformVersions: ['14'],
@@ -279,7 +279,7 @@ const skipRules: SkipRule[] = [
         reason: 'Full black screen',
     },
     {
-        titleIncludes: 'should compare a screen successful for',
+        titleIncludes: 'compare a screen successful',
         deviceName: 'Galaxy Tab S8',
         platformName: 'Android',
         platformVersions: ['14'],
@@ -297,22 +297,6 @@ const skipRules: SkipRule[] = [
     // iOS devices
     {
         titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'iPhone 13 mini',
-        platformName: 'iOS',
-        platformVersions: ['17.5'],
-        orientations: ['landscape'],
-        reason: 'Elements not visible in the screenshot, no value in testing',
-    },
-    {
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'iPhone 13 Pro',
-        platformName: 'iOS',
-        platformVersions: ['16.0'],
-        orientations: ['landscape'],
-        reason: 'Elements not visible in the screenshot, no value in testing',
-    },
-    {
-        titleIncludes: 'compare a screen with ignore elements',
         deviceName: 'iPhone 14 Pro',
         platformName: 'iOS',
         platformVersions: ['17.5'],
@@ -323,7 +307,15 @@ const skipRules: SkipRule[] = [
         titleIncludes: 'compare a screen with ignore elements',
         deviceName: 'iPhone 15 Pro Max',
         platformName: 'iOS',
-        platformVersions: ['18.0'],
+        platformVersions: ['18.5'],
+        orientations: ['landscape'],
+        reason: 'Elements not visible in the screenshot, no value in testing',
+    },
+    {
+        titleIncludes: 'compare a screen with ignore elements',
+        deviceName: 'iPhone 17 Pro Max',
+        platformName: 'iOS',
+        platformVersions: ['26.2'],
         orientations: ['landscape'],
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
