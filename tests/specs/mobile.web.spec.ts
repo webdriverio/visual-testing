@@ -196,7 +196,7 @@ describe('@wdio/visual-service mobile web', () => {
  ******************************************************************************************/
 
 interface SkipRule {
-    titleIncludes: string | string[]
+    titleIncludes: string
     deviceName: string
     platformName: 'Android' | 'iOS'
     platformVersions: string[]
@@ -204,29 +204,45 @@ interface SkipRule {
     reason: string
 }
 
-const skipRules: SkipRule[] = [
+type DeviceSkipTarget = {
+    deviceName: string
+    platformVersions: string[]
+}
+
+type SkipRuleEntryBase = {
+    titleIncludes: string
+    platformName: 'Android' | 'iOS'
+    reason: string
+}
+
+type SkipRuleEntry = SkipRuleEntryBase & (
+    | { deviceName: string, platformVersions: string[], orientations: ('landscape' | 'portrait')[] }
+    | { devices: DeviceSkipTarget[], orientations: ('landscape' | 'portrait')[] }
+)
+
+function expandSkipRules(entries: SkipRuleEntry[]): SkipRule[] {
+    return entries.flatMap(entry => {
+        if ('devices' in entry) {
+            const { devices, ...shared } = entry
+
+            return devices.map(({ deviceName, platformVersions }) => ({
+                ...shared,
+                deviceName,
+                platformVersions,
+            }))
+        }
+
+        return [entry]
+    })
+}
+
+const skipRules = expandSkipRules([
     // Android devices
-    {
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'Pixel 4',
-        platformName: 'Android',
-        platformVersions: ['11'],
-        orientations: ['landscape', 'portrait'],
-        reason: 'Elements not visible in the screenshot, no value in testing',
-    },
-    {
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'Pixel 4',
-        platformName: 'Android',
-        platformVersions: ['12', '13'],
-        orientations: ['landscape'],
-        reason: 'Elements not visible in the screenshot, no value in testing',
-    },
     {
         titleIncludes: 'compare a screen with ignore elements',
         deviceName: 'Pixel 9 Pro',
         platformName: 'Android',
-        platformVersions: ['14', '15'],
+        platformVersions: ['14', '15', '16'],
         orientations: ['landscape'],
         reason: 'Elements not visible in the screenshot, no value in testing',
     },
@@ -262,64 +278,19 @@ const skipRules: SkipRule[] = [
         orientations: ['landscape', 'portrait'],
         reason: 'Full black screen',
     },
-    {
-        titleIncludes: 'compare a full page screenshot with ignore elements successful',
-        deviceName: 'Galaxy Tab S8',
-        platformName: 'Android',
-        platformVersions: ['14'],
-        orientations: ['landscape', 'portrait'],
-        reason: 'Full black screen',
-    },
-    {
-        titleIncludes: 'compare a full page screenshot successful',
-        deviceName: 'Galaxy Tab S8',
-        platformName: 'Android',
-        platformVersions: ['14'],
-        orientations: ['landscape', 'portrait'],
-        reason: 'Full black screen',
-    },
-    {
-        titleIncludes: 'compare a screen successful',
-        deviceName: 'Galaxy Tab S8',
-        platformName: 'Android',
-        platformVersions: ['14'],
-        orientations: ['landscape', 'portrait'],
-        reason: 'Full black screen',
-    },
-    {
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'Galaxy Tab S8',
-        platformName: 'Android',
-        platformVersions: ['14'],
-        orientations: ['landscape', 'portrait'],
-        reason: 'Black screen',
-    },
     // iOS devices
     {
         titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'iPhone 14 Pro',
         platformName: 'iOS',
-        platformVersions: ['17.5'],
         orientations: ['landscape'],
         reason: 'Elements not visible in the screenshot, no value in testing',
+        devices: [
+            { deviceName: 'iPhone 14 Pro', platformVersions: ['17.5'] },
+            { deviceName: 'iPhone 15 Pro Max', platformVersions: ['18.5'] },
+            { deviceName: 'iPhone 17 Pro Max', platformVersions: ['26.2'] },
+        ],
     },
-    {
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'iPhone 15 Pro Max',
-        platformName: 'iOS',
-        platformVersions: ['18.5'],
-        orientations: ['landscape'],
-        reason: 'Elements not visible in the screenshot, no value in testing',
-    },
-    {
-        titleIncludes: 'compare a screen with ignore elements',
-        deviceName: 'iPhone 17 Pro Max',
-        platformName: 'iOS',
-        platformVersions: ['26.2'],
-        orientations: ['landscape'],
-        reason: 'Elements not visible in the screenshot, no value in testing',
-    },
-]
+])
 function skipTest({ test, deviceName, platformName, platformVersion, orientation }: {
     test: Mocha.Context
     deviceName: string
@@ -329,15 +300,13 @@ function skipTest({ test, deviceName, platformName, platformVersion, orientation
 }) {
     const { title } = test.test!
 
-    const matchedRule = skipRules.find(rule => {
-        const patterns = Array.isArray(rule.titleIncludes) ? rule.titleIncludes : [rule.titleIncludes]
-
-        return patterns.some(p => title.includes(p))
+    const matchedRule = skipRules.find(rule =>
+        title.includes(rule.titleIncludes)
             && rule.deviceName === deviceName
             && rule.platformName === platformName
             && rule.platformVersions.includes(platformVersion)
             && rule.orientations.includes(orientation as 'landscape' | 'portrait')
-    })
+    )
 
     if (matchedRule) {
         test.skip()
