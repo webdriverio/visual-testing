@@ -16,6 +16,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
   {
     "addressBarShadowPadding": 6,
     "autoElementScroll": true,
+    "biDiOrigin": "document",
     "deviceName": "desktop",
     "devicePixelRatio": 2,
     "deviceRectangles": {
@@ -71,6 +72,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
     },
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
+    "innerWidth": undefined,
     "isAndroid": false,
     "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
@@ -106,6 +108,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
   {
     "addressBarShadowPadding": 6,
     "autoElementScroll": true,
+    "biDiOrigin": "document",
     "deviceName": "desktop",
     "devicePixelRatio": 2,
     "deviceRectangles": {
@@ -161,6 +164,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
     },
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
+    "innerWidth": 1200,
     "isAndroid": false,
     "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
@@ -432,6 +436,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
   {
     "addressBarShadowPadding": 6,
     "autoElementScroll": true,
+    "biDiOrigin": "document",
     "deviceName": "desktop",
     "devicePixelRatio": 2,
     "deviceRectangles": {
@@ -487,6 +492,7 @@ exports[`saveWebElement > should call takeElementScreenshot with BiDi disabled w
     },
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
+    "innerWidth": undefined,
     "isAndroid": false,
     "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
@@ -866,6 +872,7 @@ exports[`saveWebElement > should call takeElementScreenshot with correct options
   {
     "addressBarShadowPadding": 6,
     "autoElementScroll": true,
+    "biDiOrigin": "document",
     "deviceName": "desktop",
     "devicePixelRatio": 2,
     "deviceRectangles": {
@@ -921,6 +928,7 @@ exports[`saveWebElement > should call takeElementScreenshot with correct options
     },
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
+    "innerWidth": undefined,
     "isAndroid": false,
     "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
@@ -1170,6 +1178,7 @@ exports[`saveWebElement > should handle NaN dimension values correctly 2`] = `
   {
     "addressBarShadowPadding": 6,
     "autoElementScroll": true,
+    "biDiOrigin": "document",
     "deviceName": "desktop",
     "devicePixelRatio": 1,
     "deviceRectangles": {
@@ -1225,6 +1234,7 @@ exports[`saveWebElement > should handle NaN dimension values correctly 2`] = `
     },
     "initialDevicePixelRatio": 1,
     "innerHeight": NaN,
+    "innerWidth": undefined,
     "isAndroid": false,
     "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
@@ -1524,6 +1534,7 @@ exports[`saveWebElement > should pass autoElementScroll option correctly 2`] = `
   {
     "addressBarShadowPadding": 6,
     "autoElementScroll": true,
+    "biDiOrigin": "document",
     "deviceName": "desktop",
     "devicePixelRatio": 2,
     "deviceRectangles": {
@@ -1579,6 +1590,7 @@ exports[`saveWebElement > should pass autoElementScroll option correctly 2`] = `
     },
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
+    "innerWidth": undefined,
     "isAndroid": false,
     "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,
@@ -1614,6 +1626,7 @@ exports[`saveWebElement > should pass resizeDimensions option correctly 2`] = `
   {
     "addressBarShadowPadding": 6,
     "autoElementScroll": true,
+    "biDiOrigin": "document",
     "deviceName": "desktop",
     "devicePixelRatio": 2,
     "deviceRectangles": {
@@ -1669,6 +1682,7 @@ exports[`saveWebElement > should pass resizeDimensions option correctly 2`] = `
     },
     "initialDevicePixelRatio": 2,
     "innerHeight": 900,
+    "innerWidth": undefined,
     "isAndroid": false,
     "isAndroidChromeDriverScreenshot": false,
     "isAndroidNativeWebScreenshot": false,

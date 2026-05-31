@@ -16,6 +16,16 @@ export interface SaveElementMethodOptions extends Partial<Folders>, BaseWebScree
      * @default undefined
      */
     resizeDimensions?: ResizeDimensions;
+    /**
+     * BiDi-only: which coordinate origin to use when capturing element screenshots via the BiDi protocol.
+     * - `'document'` (default): renders the document layout, works for any element position but
+     *   does NOT capture composited layers (scrollbars, fixed/sticky overlays, `will-change` elements).
+     * - `'viewport'`: captures the composited frame as painted, which includes scrollbars and overlays,
+     *   but requires the element to be fully visible in the viewport. Throws a descriptive error when the
+     *   element is outside, partially outside, or larger than the viewport.
+     * @default 'document'
+     */
+    biDiOrigin?: 'document' | 'viewport';
 }
 
 export interface CheckElementMethodOptions extends SaveElementMethodOptions, CheckMethodOptions { }

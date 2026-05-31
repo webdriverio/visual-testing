@@ -92,6 +92,7 @@ exports[`checkWebElement > should execute checkWebElement with basic options 2`]
     },
     "saveElementOptions": {
       "method": {
+        "biDiOrigin": undefined,
         "disableBlinkingCursor": false,
         "disableCSSAnimation": false,
         "enableLayoutTesting": false,
@@ -494,6 +495,7 @@ exports[`checkWebElement > should handle custom element options 1`] = `
     },
     "saveElementOptions": {
       "method": {
+        "biDiOrigin": undefined,
         "disableBlinkingCursor": true,
         "disableCSSAnimation": true,
         "enableLayoutTesting": true,
@@ -835,6 +837,7 @@ exports[`checkWebElement > should handle undefined method options with fallbacks
     },
     "saveElementOptions": {
       "method": {
+        "biDiOrigin": undefined,
         "disableBlinkingCursor": false,
         "disableCSSAnimation": false,
         "enableLayoutTesting": false,
