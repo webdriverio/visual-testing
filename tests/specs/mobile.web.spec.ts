@@ -127,6 +127,9 @@ describe('@wdio/visual-service mobile web', () => {
                     ignore: [
                         await $$('.feature_G9wp h3'),
                     ],
+                    // We need to add some padding to the ignore regions
+                    // to make sure that we cover the element that is being ignored.
+                    ignoreRegionPadding: 3,
                     // Don't comment this out, it's needed to hide the navbar
                     hideElements: [await $('nav.navbar')]
                 }
