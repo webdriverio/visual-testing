@@ -5,10 +5,11 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
     const nativeWebScreenshotPhones = (['landscape', 'portrait'] as DeviceOrientation[])
         .map((orientation) =>
-            ['11', '12', '13', '14', '15'].map(
+            ['14', '15', '16'].map(
                 (platformVersion) =>
                     createCaps({
                         platformVersion: platformVersion,
+                        deviceName: 'Pixel 9 Pro',
                         mobileSpecs,
                         build: buildName,
                         deviceOrientation: orientation,
@@ -17,24 +18,25 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
             )
         )
         .flat(1)
-    // We limit it to the latest 2 versions of Android Tablets that LT supports
-    const nativeWebScreenshotTablets = (['landscape', 'portrait'] as DeviceOrientation[])
-        .map((orientation) =>
-            ['13', '14'].map((platformVersion) => {
-                return createCaps({
-                    deviceName: 'Galaxy Tab S8',
-                    platformVersion: platformVersion,
-                    mobileSpecs,
-                    build: buildName,
-                    deviceOrientation: orientation,
-                    // @TODO: There are issues to get certain screenshots with nativeWebScreenshot in LANDSCAPE mode
-                    // - element screenshots are not perfect
-                    // - Fullpage screenshots have the address bar in the screenshot
-                    wdioIcsCommands: ['checkScreen', 'checkElement', 'checkFullPageScreen'],
-                })
-            })
-        )
-        .flat(1)
+    // Disabled for now, as we don't have proper support for Android Tablets, we only support latest -3
+    // // We limit it to the latest 2 versions of Android Tablets that LT supports
+    // const nativeWebScreenshotTablets = (['landscape', 'portrait'] as DeviceOrientation[])
+    //     .map((orientation) =>
+    //         ['13', '14'].map((platformVersion) => {
+    //             return createCaps({
+    //                 deviceName: 'Galaxy Tab S8',
+    //                 platformVersion: platformVersion,
+    //                 mobileSpecs,
+    //                 build: buildName,
+    //                 deviceOrientation: orientation,
+    //                 // @TODO: There are issues to get certain screenshots with nativeWebScreenshot in LANDSCAPE mode
+    //                 // - element screenshots are not perfect
+    //                 // - Fullpage screenshots have the address bar in the screenshot
+    //                 wdioIcsCommands: ['checkScreen', 'checkElement', 'checkFullPageScreen'],
+    //             })
+    //         })
+    //     )
+    //     .flat(1)
 
     return [
         /**
@@ -48,8 +50,9 @@ export function lambdaTestAndroidEmusWeb({ buildName }: { buildName: string }) {
         //  * Android Tablets
         //  * 20241216: LT doesn't have the option to take a ChromeDriver screenshot,
         //  * so if it's Android it's always native
+        //  * 20260531: Disabled for now, as we don't have proper support for Android Tablets, we only support latest -3
         //  */
-        ...nativeWebScreenshotTablets,
+        // ...nativeWebScreenshotTablets,
     ]
 }
 
@@ -93,7 +96,7 @@ function createCaps({
     const driverScreenshotType = 'NativeWebScreenshot'
     const adjustedDeviceName = deviceName !== '' ?
         deviceName :
-        Number(platformVersion) < 14 ? 'Pixel 4' : 'Pixel 9 Pro'
+        Number(platformVersion) > 16 ? 'Pixel 10 Pro' : 'Pixel 9 Pro'
 
     return {
         'lt:options': {
@@ -104,6 +107,7 @@ function createCaps({
             build,
             w3c: true,
             queueTimeout: 900,
+            ...(Number(platformVersion) > 14 ? { appiumVersion: '3.0.2' } : {}),
         },
         specs: [mobileSpecs],
         'wdio-ics:options': {
