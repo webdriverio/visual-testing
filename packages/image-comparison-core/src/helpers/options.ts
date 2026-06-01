@@ -106,6 +106,7 @@ export function screenMethodCompareOptions(
 export function methodCompareOptions(options: MethodImageCompareCompareOptions): MethodImageCompareCompareOptions {
     const compareOptionKeys: (keyof MethodImageCompareCompareOptions)[] = [
         'blockOut',
+        'compareEngine',
         'ignoreAlpha',
         'ignoreAntialiasing',
         'ignoreColors',

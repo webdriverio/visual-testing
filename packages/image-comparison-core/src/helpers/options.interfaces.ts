@@ -482,5 +482,12 @@ export interface CompareOptions {
      * Scale images to the same size before comparing them.
      */
     scaleImagesToSameSize: boolean;
+    /**
+     * The image comparison engine to use.
+     * 'pixelmatch' is a beta alternative that uses the YIQ color space and is
+     * more robust against font rendering noise and anti-aliasing differences.
+     * @default 'resemble'
+     */
+    compareEngine: 'resemble' | 'pixelmatch';
 }
 
