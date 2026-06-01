@@ -19,7 +19,7 @@ describe('createCompareReport', () => {
     const createMockData = (misMatchPercentage = 0): CompareData => ({
         misMatchPercentage,
         rawMisMatchPercentage: misMatchPercentage,
-        getBuffer: () => Buffer.from(''),
+        getBuffer: () => Promise.resolve(Buffer.from('')),
         diffBounds: { top: 0, left: 0, bottom: 0, right: 0 },
         analysisTime: 0,
         diffPixels: [],
@@ -144,7 +144,7 @@ describe('createJsonReportIfNeeded', () => {
     const createMockData = (misMatchPercentage = 0): CompareData => ({
         misMatchPercentage,
         rawMisMatchPercentage: misMatchPercentage,
-        getBuffer: () => Buffer.from(''),
+        getBuffer: () => Promise.resolve(Buffer.from('')),
         diffBounds: { top: 0, left: 0, bottom: 0, right: 0 },
         analysisTime: 0,
         diffPixels: [],

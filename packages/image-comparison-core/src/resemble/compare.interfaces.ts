@@ -6,7 +6,7 @@ export interface CompareData {
     /** The mismatch percentage like 0.12 */
     misMatchPercentage: number;
     /** The image buffer */
-    getBuffer: () => Buffer;
+    getBuffer: () => Promise<Buffer>;
     /** The bounds of the diff area */
     diffBounds: BaseBoundingBox;
     /** The analysis time in milliseconds */

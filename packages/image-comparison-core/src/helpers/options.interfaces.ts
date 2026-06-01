@@ -206,6 +206,15 @@ export interface ClassOptions {
     scaleImagesToSameSize?: boolean;
 
     /**
+     * The image comparison engine to use.
+     * 'pixelmatch' is a beta alternative that uses the YIQ color space and is
+     * more robust against font rendering noise and anti-aliasing differences.
+     * Prefer setting this inside compareOptions.
+     * @default 'resemble'
+     */
+    compareEngine?: 'resemble' | 'pixelmatch';
+
+    /**
      * Options object passed to the underlying image comparison engine.
      */
     compareOptions?: Partial<CompareOptions>;
@@ -488,6 +497,6 @@ export interface CompareOptions {
      * more robust against font rendering noise and anti-aliasing differences.
      * @default 'resemble'
      */
-    compareEngine: 'resemble' | 'pixelmatch';
+    compareEngine?: 'resemble' | 'pixelmatch';
 }
 

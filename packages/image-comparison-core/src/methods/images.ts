@@ -3,7 +3,8 @@ import { readFileSync, writeFileSync, promises as fsPromises, constants } from '
 import { dirname, join } from 'node:path'
 import { Jimp, JimpMime } from 'jimp'
 import logger from '@wdio/logger'
-import compareImages from '../resemble/compareImages.js'
+import compareImagesResemble from '../resemble/compareImages.js'
+import compareImagesPixelmatch from '../pixelmatch/compareImages.js'
 import { calculateDprData, getIosBezelImageNames, getBase64ScreenshotSize, prepareComparisonFilePaths, updateVisualBaseline } from '../helpers/utils.js'
 import { prepareIgnoreOptions } from '../helpers/options.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
@@ -446,7 +447,10 @@ export async function executeImageCompare(
     }
 
     // 5. Execute the compare and retrieve the data
-    const data: CompareData = await compareImages(readFileSync(baselineFilePath), actualImageBuffer, compareOptions)
+    const engineFn = imageCompareOptions.compareEngine === 'pixelmatch'
+        ? compareImagesPixelmatch
+        : compareImagesResemble
+    const data: CompareData = await engineFn(readFileSync(baselineFilePath), actualImageBuffer, compareOptions)
     const rawMisMatchPercentage = data.rawMisMatchPercentage
     const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage
