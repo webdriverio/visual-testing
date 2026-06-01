@@ -7,6 +7,7 @@ import * as rectangles from './rectangles.js'
 import * as processDiffPixels from './processDiffPixels.js'
 import * as createCompareReport from './createCompareReport.js'
 import * as compareImages from '../resemble/compareImages.js'
+import * as compareImagesPixelmatch from '../pixelmatch/compareImages.js'
 
 const log = logger('test')
 
@@ -80,6 +81,9 @@ vi.mock('./createCompareReport.js', () => ({
     createJsonReportIfNeeded: vi.fn()
 }))
 vi.mock('../resemble/compareImages.js', () => ({
+    default: vi.fn()
+}))
+vi.mock('../pixelmatch/compareImages.js', () => ({
     default: vi.fn()
 }))
 vi.mock('../helpers/constants.js', () => ({
@@ -217,14 +221,16 @@ describe('executeImageCompare', () => {
         })
         vi.mocked(createCompareReport.createCompareReport).mockReturnValue(undefined)
         vi.mocked(createCompareReport.createJsonReportIfNeeded).mockResolvedValue(undefined)
-        vi.mocked(compareImages.default).mockResolvedValue({
+        const mockCompareData = {
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
             analysisTime: 100,
             diffPixels: []
-        })
+        }
+        vi.mocked(compareImages.default).mockResolvedValue(mockCompareData)
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue(mockCompareData)
         vi.mocked(images.checkBaselineImageExists).mockResolvedValue(undefined)
         vi.mocked(images.removeDiffImageIfExists).mockResolvedValue(undefined)
         vi.mocked(images.saveBase64Image).mockResolvedValue(undefined)
@@ -266,6 +272,29 @@ describe('executeImageCompare', () => {
                 scaleToSameSize: true
             }
         )
+    })
+
+    it('should use the pixelmatch adapter when compareEngine is pixelmatch', async () => {
+        const pixelmatchOptions = {
+            ...mockOptions,
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    compareEngine: 'pixelmatch' as const
+                }
+            }
+        }
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: pixelmatchOptions,
+            testContext: mockTestContext
+        })
+
+        expect(compareImagesPixelmatch.default).toHaveBeenCalledTimes(1)
+        expect(compareImages.default).not.toHaveBeenCalled()
     })
 
     it('should handle mobile context with status/address/toolbar rectangles', async () => {

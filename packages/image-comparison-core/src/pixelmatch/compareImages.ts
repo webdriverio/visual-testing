@@ -1,4 +1,3 @@
-// @ts-ignore: pixelmatch does not ship type declarations
 import pixelmatch from 'pixelmatch'
 import { Jimp, JimpMime } from 'jimp'
 import type { CompareData, ComparisonOptions, ComparisonIgnoreOption } from '../resemble/compare.interfaces.js'

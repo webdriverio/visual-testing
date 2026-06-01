@@ -134,6 +134,9 @@ importers:
       jimp:
         specifier: ^1.6.1
         version: 1.6.1
+      pixelmatch:
+        specifier: ^5.3.0
+        version: 5.3.0
     devDependencies:
       webdriverio:
         specifier: ^9.27.0
