@@ -5,28 +5,18 @@ export function lambdaTestIosSimWeb({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
     const iOSDevices = [
         {
-            // 812
-            appiumVersion: '2.16.2',
-            deviceName: 'iPhone 13 mini',
-            platformVersion: '17.5',
-        },
-        {
-            // 844
-            appiumVersion: '2.16.2',
-            deviceName: 'iPhone 13 Pro',
-            platformVersion: '16.0',
-        },
-        {
-            // 852
-            appiumVersion: '2.16.2',
+            appiumVersion: '3.0.2',
             deviceName: 'iPhone 14 Pro',
             platformVersion: '17.5',
         },
         {
-            // 932
-            appiumVersion: '2.16.2',
+            appiumVersion: '3.0.2',
             deviceName: 'iPhone 15 Pro Max',
-            platformVersion: '18.0',
+            platformVersion: '18.5',
+        },
+        {
+            deviceName: 'iPhone 17 Pro Max',
+            platformVersion: '26.2',
         }
     ]
 
