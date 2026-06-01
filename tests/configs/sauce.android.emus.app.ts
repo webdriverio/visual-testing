@@ -8,11 +8,10 @@ export function sauceAndroidEmusApp({ buildName }: { buildName: string }) {
     )
         .map((orientation) =>
             [
-                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'11.0' },
-                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'12.0' },
-                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'13.0' },
-                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'14.0' },
-                { deviceName:'Google Pixel 4 XL GoogleAPI Emulator', platformVersion:'15.0' },
+            // @TODO: new list
+                { deviceName:'Google Pixel 8a Emulator', platformVersion:'14.0' },
+                { deviceName:'Google Pixel 8a Emulator', platformVersion:'15.0' },
+                { deviceName:'Google Pixel 8a Emulator', platformVersion:'16.0' },
             ].map(
                 (cap) =>
                     createCaps({
@@ -22,7 +21,8 @@ export function sauceAndroidEmusApp({ buildName }: { buildName: string }) {
                         mobileSpecs,
                         sauceOptions: {
                             build: buildName,
-                            deviceOrientation: orientation
+                            deviceOrientation: orientation,
+                            appiumVersion: '2.11.0',
                         },
                     })
             )
