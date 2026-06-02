@@ -40,6 +40,18 @@ function opaqueAlphaChannel(pixels: Buffer, totalPixels: number): void {
     }
 }
 
+// Pad a raw RGBA pixel buffer to a larger canvas size, placing the source at
+// position (0, 0) and filling the remaining area with opaque white.
+// This matches resemble's normalise() intent without using Jimp's contain()
+// which centers the image and shifts content by a pixel.
+function padToSize(src: Buffer, srcW: number, srcH: number, dstW: number, dstH: number): Buffer {
+    const dst = Buffer.alloc(dstW * dstH * 4, 255) // opaque white
+    for (let y = 0; y < srcH; y++) {
+        src.copy(dst, y * dstW * 4, y * srcW * 4, (y + 1) * srcW * 4)
+    }
+    return dst
+}
+
 function zeroIgnoredBoxes(
     pixels: Buffer,
     width: number,
@@ -78,21 +90,20 @@ export default async function compareImages(
         }
     }
 
-    // Normalize to the same canvas size by padding the smaller image.
-    // Resemble always does this; pixelmatch throws when byte lengths differ.
+    // Determine the target canvas size (max of both dimensions).
     const width = Math.max(img1.bitmap.width, img2.bitmap.width)
     const height = Math.max(img1.bitmap.height, img2.bitmap.height)
-    if (img1.bitmap.width < width || img1.bitmap.height < height) {
-        img1.contain({ w: width, h: height })
-    }
-    if (img2.bitmap.width < width || img2.bitmap.height < height) {
-        img2.contain({ w: width, h: height })
-    }
     const totalPixels = width * height
 
-    // Copy bitmap data into mutable buffers so transformations do not mutate the Jimp internals
-    const pixels1 = Buffer.from(img1.bitmap.data)
-    const pixels2 = Buffer.from(img2.bitmap.data)
+    // Copy bitmap data into mutable buffers, padding at (0,0) when sizes differ.
+    // Using padToSize instead of Jimp's contain() avoids centering which shifts
+    // content by a pixel and creates false diffs along the top edge.
+    const pixels1 = img1.bitmap.width === width && img1.bitmap.height === height
+        ? Buffer.from(img1.bitmap.data)
+        : padToSize(Buffer.from(img1.bitmap.data), img1.bitmap.width, img1.bitmap.height, width, height)
+    const pixels2 = img2.bitmap.width === width && img2.bitmap.height === height
+        ? Buffer.from(img2.bitmap.data)
+        : padToSize(Buffer.from(img2.bitmap.data), img2.bitmap.width, img2.bitmap.height, width, height)
 
     const ignoreList = resolveIgnoreList(options.ignore)
 
