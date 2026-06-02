@@ -75,8 +75,16 @@ export default async function compareImages(
         }
     }
 
-    const width = img1.bitmap.width
-    const height = img1.bitmap.height
+    // Normalize to the same canvas size by padding the smaller image.
+    // Resemble always does this; pixelmatch throws when byte lengths differ.
+    const width = Math.max(img1.bitmap.width, img2.bitmap.width)
+    const height = Math.max(img1.bitmap.height, img2.bitmap.height)
+    if (img1.bitmap.width < width || img1.bitmap.height < height) {
+        img1.contain({ w: width, h: height })
+    }
+    if (img2.bitmap.width < width || img2.bitmap.height < height) {
+        img2.contain({ w: width, h: height })
+    }
     const totalPixels = width * height
 
     // Copy bitmap data into mutable buffers so transformations do not mutate the Jimp internals

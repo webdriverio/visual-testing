@@ -12,6 +12,7 @@ vi.mock('jimp', () => {
             height,
         },
         resize: vi.fn(),
+        contain: vi.fn(),
         getBuffer: vi.fn().mockResolvedValue(Buffer.from('png-data')),
     })
 
@@ -258,11 +259,13 @@ describe('pixelmatch adapter - compareImages', () => {
             const smallImage = {
                 bitmap: { data: Buffer.alloc(50 * 50 * 4, 0), width: 50, height: 50 },
                 resize: vi.fn(),
+                contain: vi.fn(),
                 getBuffer: vi.fn().mockResolvedValue(Buffer.from('png')),
             }
             const largeImage = {
                 bitmap: { data: Buffer.alloc(100 * 100 * 4, 0), width: 100, height: 100 },
                 resize: vi.fn(),
+                contain: vi.fn(),
                 getBuffer: vi.fn().mockResolvedValue(Buffer.from('png')),
             }
 
@@ -285,6 +288,7 @@ describe('pixelmatch adapter - compareImages', () => {
             const img = {
                 bitmap: { data: Buffer.alloc(100 * 100 * 4, 0), width: 100, height: 100 },
                 resize: vi.fn(),
+                contain: vi.fn(),
                 getBuffer: vi.fn().mockResolvedValue(Buffer.from('png')),
             }
 
