@@ -40,7 +40,7 @@ describe('@wdio/visual-service desktop bidi emulated', () => {
                 ],
                 // Some padding to make sure that we cover the element,
                 // with BiDi we sometimes miss the element due to internal calculations
-                ignoreRegionPadding: 2,
+                ignoreRegionPadding: 4,
                 // Don't comment this out, it's needed to hide the navbar
                 hideElements: [await $('nav.navbar')]
             }

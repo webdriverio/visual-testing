@@ -22,6 +22,7 @@ build
 
 # folders
 .tmp
+.pixelmatch-tmp/
 /__snapshots__/
 .idea/
 localBaseline/

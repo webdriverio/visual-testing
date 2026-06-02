@@ -505,10 +505,14 @@ export async function determineWebElementIgnoreRegions(
     // to reduce 1px boundary differences on high-DPR / BiDi.
     let result = [...regions, ...regionsFromElements]
         .map((region: RectanglesOutput) => {
+            // Floor position (x/y) to include the start pixel, ceil size (width/height)
+            // to include the end pixel. Flooring size can lose 1px when CSS * DPR has
+            // a fractional part, causing the last row or column of an element to fall
+            // outside the ignored region.
             let x = Math.floor(region.x * devicePixelRatio)
             let y = Math.floor(region.y * devicePixelRatio)
-            let width = Math.floor(region.width * devicePixelRatio)
-            let height = Math.floor(region.height * devicePixelRatio)
+            let width = Math.ceil(region.width * devicePixelRatio)
+            let height = Math.ceil(region.height * devicePixelRatio)
             if (padding > 0) {
                 x = Math.max(0, x - padding)
                 y = Math.max(0, y - padding)
