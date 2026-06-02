@@ -83,13 +83,13 @@ describe('pixelmatch adapter - compareImages', () => {
     })
 
     describe('diffPixels and diffBounds', () => {
-        it('collects red pixels as diff pixel coordinates', async () => {
+        it('collects magenta pixels as diff pixel coordinates', async () => {
             pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array, width: number) => {
-                // Place a red pixel at x=5, y=3 (offset = (3*100 + 5) * 4 = 1220)
+                // Place a magenta pixel at x=5, y=3 (offset = (3*100 + 5) * 4 = 1220)
                 const pos = (3 * width + 5) * 4
                 output[pos] = 255
                 output[pos + 1] = 0
-                output[pos + 2] = 0
+                output[pos + 2] = 255
                 output[pos + 3] = 255
                 return 1
             })
@@ -100,13 +100,13 @@ describe('pixelmatch adapter - compareImages', () => {
             expect(result.diffPixels[0]).toEqual({ x: 5, y: 3 })
         })
 
-        it('does not count yellow anti-aliased pixels as diff pixels', async () => {
+        it('does not count grayscale matching pixels as diff pixels', async () => {
             pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array, width: number) => {
-                // Yellow pixel (AA marker)
+                // Grayscale pixel (matching pixel rendered at low opacity)
                 const pos = (2 * width + 10) * 4
-                output[pos] = 255
-                output[pos + 1] = 255
-                output[pos + 2] = 0
+                output[pos] = 200
+                output[pos + 1] = 200
+                output[pos + 2] = 200
                 output[pos + 3] = 255
                 return 0
             })
@@ -122,7 +122,7 @@ describe('pixelmatch adapter - compareImages', () => {
                     const pos = (y * width + x) * 4
                     output[pos] = 255
                     output[pos + 1] = 0
-                    output[pos + 2] = 0
+                    output[pos + 2] = 255
                     output[pos + 3] = 255
                 }
                 mark(10, 5)
@@ -178,7 +178,7 @@ describe('pixelmatch adapter - compareImages', () => {
             )
         })
 
-        it('passes threshold=0.1 and includeAA=false for ignore: antialiasing', async () => {
+        it('passes threshold=0.13 and includeAA=false for ignore: antialiasing', async () => {
             pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore: 'antialiasing' })
@@ -189,11 +189,11 @@ describe('pixelmatch adapter - compareImages', () => {
                 expect.anything(),
                 expect.any(Number),
                 expect.any(Number),
-                expect.objectContaining({ threshold: 0.1, includeAA: false })
+                expect.objectContaining({ threshold: 0.13, includeAA: false })
             )
         })
 
-        it('passes threshold=0.1 and includeAA=false when no ignore option is given', async () => {
+        it('passes threshold=0.13 and includeAA=false when no ignore option is given', async () => {
             pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
@@ -204,7 +204,7 @@ describe('pixelmatch adapter - compareImages', () => {
                 expect.anything(),
                 expect.any(Number),
                 expect.any(Number),
-                expect.objectContaining({ threshold: 0.1, includeAA: false })
+                expect.objectContaining({ threshold: 0.13, includeAA: false })
             )
         })
 

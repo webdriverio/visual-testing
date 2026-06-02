@@ -18,8 +18,11 @@ function toPixelmatchOptions(ignoreList: ComparisonIgnoreOption[]): { threshold:
         // 16/255 per channel in resemble maps roughly to ~6.3% of max YIQ distance
         return { threshold: 0.063, includeAA: false }
     }
-    // 'antialiasing', 'alpha', 'colors' and the default all use standard sensitivity
-    return { threshold: 0.1, includeAA: false }
+    // 'antialiasing', 'alpha', 'colors' and the default.
+    // Resemble's ignoreAntialiasing uses 32/255 per-channel tolerance which
+    // corresponds to ~0.13 in YIQ perceptual distance. Using 0.1 is stricter
+    // and causes invisible sub-pixel differences to register as failures.
+    return { threshold: 0.13, includeAA: false }
 }
 
 function grayscalePixels(pixels: Buffer, totalPixels: number): void {
@@ -112,14 +115,17 @@ export default async function compareImages(
     const { threshold, includeAA } = toPixelmatchOptions(ignoreList)
     const outputPixels = new Uint8Array(totalPixels * 4)
 
+    // Use resemble's magenta [255, 0, 255] for both diff and AA pixels so the
+    // diff image output is visually consistent with the resemble engine.
     const diffCount: number = pixelmatch(pixels1, pixels2, outputPixels, width, height, {
         threshold,
         includeAA,
+        diffColor: [255, 0, 255],
+        aaColor: [255, 0, 255],
     })
 
     // Collect diff pixel coordinates from the output buffer.
-    // pixelmatch draws actual diff pixels in red [255, 0, 0] and anti-aliased pixels
-    // in yellow [255, 255, 0]. Only count the red pixels as real differences.
+    // Both diff and AA pixels are drawn in magenta [255, 0, 255]; grayscale pixels are matches.
     const diffPixels: Array<{ x: number; y: number }> = []
     let left = width
     let top = height
@@ -127,7 +133,7 @@ export default async function compareImages(
     let bottom = 0
 
     for (let i = 0; i < outputPixels.length; i += 4) {
-        if (outputPixels[i] === 255 && outputPixels[i + 1] === 0 && outputPixels[i + 2] === 0) {
+        if (outputPixels[i] === 255 && outputPixels[i + 1] === 0 && outputPixels[i + 2] === 255) {
             const pixelIndex = i / 4
             const x = pixelIndex % width
             const y = Math.floor(pixelIndex / width)
