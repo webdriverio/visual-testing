@@ -447,9 +447,9 @@ export async function executeImageCompare(
     }
 
     // 5. Execute the compare and retrieve the data
-    const engineFn = imageCompareOptions.compareEngine === 'pixelmatch'
-        ? compareImagesPixelmatch
-        : compareImagesResemble
+    const engine = imageCompareOptions.compareEngine === 'pixelmatch' ? 'pixelmatch' : 'resemble'
+    log.info(`Using comparison engine: ${engine}`)
+    const engineFn = engine === 'pixelmatch' ? compareImagesPixelmatch : compareImagesResemble
     const data: CompareData = await engineFn(readFileSync(baselineFilePath), actualImageBuffer, compareOptions)
     const rawMisMatchPercentage = data.rawMisMatchPercentage
     const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage

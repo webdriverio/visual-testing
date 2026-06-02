@@ -60,6 +60,10 @@ export interface WicImageCompareOptions extends BaseImageCompareOptions, BaseMob
      * the higher the number the more pixels will be grouped, the lower the number the less pixels will be grouped due to accuracy.
      * Default is 5 pixels */
     diffPixelBoundingBoxProximity: number;
+    /** The image comparison engine to use.
+     * @default 'resemble'
+     */
+    compareEngine?: 'resemble' | 'pixelmatch';
 }
 
 export interface DefaultImageCompareCompareOptions extends MethodImageCompareCompareOptions {

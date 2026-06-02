@@ -62,11 +62,13 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
          * Compare options (merged sequentially):
          * 1. Default options (fallback)
          * 2. Root compareOptions (deprecated but supported)
-         * 3. User-provided compareOptions
+         * 3. Root-level compareEngine shorthand (convenience alias)
+         * 4. User-provided compareOptions (highest precedence)
          */
         compareOptions: {
             ...DEFAULT_COMPARE_OPTIONS,
             ...logAllDeprecatedCompareOptions(options),
+            ...(options.compareEngine ? { compareEngine: options.compareEngine } : {}),
             ...options.compareOptions,
         },
 
@@ -106,7 +108,6 @@ export function screenMethodCompareOptions(
 export function methodCompareOptions(options: MethodImageCompareCompareOptions): MethodImageCompareCompareOptions {
     const compareOptionKeys: (keyof MethodImageCompareCompareOptions)[] = [
         'blockOut',
-        'compareEngine',
         'ignoreAlpha',
         'ignoreAntialiasing',
         'ignoreColors',
