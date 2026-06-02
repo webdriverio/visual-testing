@@ -3,7 +3,6 @@ import { readFileSync, writeFileSync, promises as fsPromises, constants } from '
 import { dirname, join } from 'node:path'
 import { Jimp, JimpMime } from 'jimp'
 import logger from '@wdio/logger'
-import compareImagesResemble from '../resemble/compareImages.js'
 import compareImagesPixelmatch from '../pixelmatch/compareImages.js'
 import { calculateDprData, getIosBezelImageNames, getBase64ScreenshotSize, prepareComparisonFilePaths, updateVisualBaseline } from '../helpers/utils.js'
 import { prepareIgnoreOptions } from '../helpers/options.js'
@@ -26,7 +25,7 @@ import type {
 } from './images.interfaces.js'
 import type { IgnoreBoxes } from './rectangles.interfaces.js'
 import type { FullPageScreenshotsData } from './screenshots.interfaces.js'
-import type { CompareData, ComparisonOptions } from '../resemble/compare.interfaces.js'
+import type { CompareData, ComparisonOptions } from '../pixelmatch/compare.interfaces.js'
 import { generateAndSaveDiff } from './processDiffPixels.js'
 import { createJsonReportIfNeeded } from './createCompareReport.js'
 import { takeBase64Screenshot } from './screenshots.js'
@@ -447,10 +446,7 @@ export async function executeImageCompare(
     }
 
     // 5. Execute the compare and retrieve the data
-    const engine = imageCompareOptions.compareEngine === 'pixelmatch' ? 'pixelmatch' : 'resemble'
-    log.info(`Using comparison engine: ${engine}`)
-    const engineFn = engine === 'pixelmatch' ? compareImagesPixelmatch : compareImagesResemble
-    const data: CompareData = await engineFn(readFileSync(baselineFilePath), actualImageBuffer, compareOptions)
+    const data: CompareData = await compareImagesPixelmatch(readFileSync(baselineFilePath), actualImageBuffer, compareOptions)
     const rawMisMatchPercentage = data.rawMisMatchPercentage
     const reportMisMatchPercentage = imageCompareOptions.rawMisMatchPercentage
         ? rawMisMatchPercentage

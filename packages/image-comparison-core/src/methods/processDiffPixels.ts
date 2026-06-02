@@ -47,7 +47,7 @@
 import logger from '@wdio/logger'
 import type { Pixel, WicImageCompareOptions } from 'src/methods/images.interfaces.js'
 import type { BoundingBox, IgnoreBoxes } from './rectangles.interfaces.js'
-import type { CompareData } from '../resemble/compare.interfaces.js'
+import type { CompareData } from '../pixelmatch/compare.interfaces.js'
 import { saveBase64Image, addBlockOuts } from './images.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:pixelDiffProcessing')

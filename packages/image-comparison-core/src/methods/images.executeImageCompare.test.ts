@@ -6,7 +6,6 @@ import * as utils from '../helpers/utils.js'
 import * as rectangles from './rectangles.js'
 import * as processDiffPixels from './processDiffPixels.js'
 import * as createCompareReport from './createCompareReport.js'
-import * as compareImages from '../resemble/compareImages.js'
 import * as compareImagesPixelmatch from '../pixelmatch/compareImages.js'
 
 const log = logger('test')
@@ -79,9 +78,6 @@ vi.mock('./processDiffPixels.js', () => ({
 vi.mock('./createCompareReport.js', () => ({
     createCompareReport: vi.fn(),
     createJsonReportIfNeeded: vi.fn()
-}))
-vi.mock('../resemble/compareImages.js', () => ({
-    default: vi.fn()
 }))
 vi.mock('../pixelmatch/compareImages.js', () => ({
     default: vi.fn()
@@ -169,28 +165,6 @@ describe('executeImageCompare', () => {
     beforeEach(async () => {
         vi.clearAllMocks()
 
-        const jimp = await import('jimp')
-        const jimpReadMock = vi.mocked(jimp.Jimp.read)
-        const mockImage = {
-            composite: vi.fn().mockReturnThis(),
-            getBase64: vi.fn().mockResolvedValue('data:image/png;base64,mock-image-data'),
-            opacity: vi.fn().mockReturnThis(),
-            width: 100,
-            height: 200,
-            bitmap: { width: 100, height: 200 },
-            background: 0,
-            formats: [],
-            inspect: vi.fn().mockReturnValue('MockImage'),
-            toString: vi.fn().mockReturnValue('MockImage'),
-            scanIterator: vi.fn(),
-            scan: vi.fn(),
-            scanQuiet: vi.fn(),
-            scanIteratorQuiet: vi.fn(),
-            scanQuietIterator: vi.fn(),
-            scanQuietIteratorQuiet: vi.fn(),
-        } as any
-        jimpReadMock.mockResolvedValue(mockImage)
-
         vi.mocked(fsPromises.access).mockResolvedValue(undefined)
         vi.mocked(fsPromises.unlink).mockResolvedValue(undefined)
         vi.mocked(fsPromises.mkdir).mockResolvedValue(undefined)
@@ -229,7 +203,6 @@ describe('executeImageCompare', () => {
             analysisTime: 100,
             diffPixels: []
         }
-        vi.mocked(compareImages.default).mockResolvedValue(mockCompareData)
         vi.mocked(compareImagesPixelmatch.default).mockResolvedValue(mockCompareData)
         vi.mocked(images.checkBaselineImageExists).mockResolvedValue(undefined)
         vi.mocked(images.removeDiffImageIfExists).mockResolvedValue(undefined)
@@ -264,7 +237,7 @@ describe('executeImageCompare', () => {
             savePerInstance: false,
             fileName: 'test.png'
         })
-        expect(compareImages.default).toHaveBeenCalledWith(
+        expect(compareImagesPixelmatch.default).toHaveBeenCalledWith(
             Buffer.from('mock-image-data'),
             Buffer.from('mock-image-data'),
             {
@@ -272,29 +245,6 @@ describe('executeImageCompare', () => {
                 scaleToSameSize: true
             }
         )
-    })
-
-    it('should use the pixelmatch adapter when compareEngine is pixelmatch', async () => {
-        const pixelmatchOptions = {
-            ...mockOptions,
-            compareOptions: {
-                ...mockOptions.compareOptions,
-                wic: {
-                    ...mockOptions.compareOptions.wic,
-                    compareEngine: 'pixelmatch' as const
-                }
-            }
-        }
-
-        await executeImageCompare({
-            isViewPortScreenshot: true,
-            isNativeContext: false,
-            options: pixelmatchOptions,
-            testContext: mockTestContext
-        })
-
-        expect(compareImagesPixelmatch.default).toHaveBeenCalledTimes(1)
-        expect(compareImages.default).not.toHaveBeenCalled()
     })
 
     it('should handle mobile context with status/address/toolbar rectangles', async () => {
@@ -483,7 +433,7 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -585,7 +535,7 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0.123456,
             misMatchPercentage: 0.12,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -627,7 +577,7 @@ describe('executeImageCompare', () => {
                 autoSaveBaseline: false,
             }
         }
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -645,7 +595,7 @@ describe('executeImageCompare', () => {
         })
 
         expect(images.saveBase64Image).not.toHaveBeenCalled()
-        expect(compareImages.default).toHaveBeenCalledWith(
+        expect(compareImagesPixelmatch.default).toHaveBeenCalledWith(
             expect.any(Buffer),
             Buffer.from(base64Image, 'base64'),
             expect.any(Object),
@@ -702,7 +652,7 @@ describe('executeImageCompare', () => {
             return undefined
         })
 
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -740,7 +690,7 @@ describe('executeImageCompare', () => {
                 },
             },
         }
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -777,7 +727,7 @@ describe('executeImageCompare', () => {
                 },
             },
         }
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -813,7 +763,7 @@ describe('executeImageCompare', () => {
                 },
             },
         }
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0.05,
             misMatchPercentage: 0.05,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -849,7 +799,7 @@ describe('executeImageCompare', () => {
                 },
             },
         }
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0.2,
             misMatchPercentage: 0.2,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -879,7 +829,7 @@ describe('executeImageCompare', () => {
                 alwaysSaveActualImage: false,
             }
         }
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -959,7 +909,7 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(compareImages.default).toHaveBeenCalledWith(
+        expect(compareImagesPixelmatch.default).toHaveBeenCalledWith(
             expect.any(Buffer),
             expect.any(Buffer),
             {
@@ -1008,7 +958,7 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(compareImages.default).toHaveBeenCalledWith(
+        expect(compareImagesPixelmatch.default).toHaveBeenCalledWith(
             expect.any(Buffer),
             expect.any(Buffer),
             {
@@ -1041,7 +991,7 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext
         })
 
-        expect(compareImages.default).toHaveBeenCalledWith(
+        expect(compareImagesPixelmatch.default).toHaveBeenCalledWith(
             expect.any(Buffer),
             expect.any(Buffer),
             {
@@ -1086,7 +1036,7 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -1133,7 +1083,7 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -1179,7 +1129,7 @@ describe('executeImageCompare', () => {
             }
         }
 
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -1218,7 +1168,7 @@ describe('executeImageCompare', () => {
             return Promise.resolve()
         })
 
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
@@ -1261,7 +1211,7 @@ describe('executeImageCompare', () => {
 
         vi.mocked(images.checkBaselineImageExists).mockImplementation(checkBaselineImageExists)
 
-        vi.mocked(compareImages.default).mockResolvedValue({
+        vi.mocked(compareImagesPixelmatch.default).mockResolvedValue({
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),

@@ -1,6 +1,6 @@
 import pixelmatch from 'pixelmatch'
 import { Jimp, JimpMime } from 'jimp'
-import type { CompareData, ComparisonOptions, ComparisonIgnoreOption } from '../resemble/compare.interfaces.js'
+import type { CompareData, ComparisonOptions, ComparisonIgnoreOption } from './compare.interfaces.js'
 
 function resolveIgnoreList(ignore: ComparisonOptions['ignore']): ComparisonIgnoreOption[] {
     if (!ignore) {
@@ -42,8 +42,7 @@ function opaqueAlphaChannel(pixels: Buffer, totalPixels: number): void {
 
 // Pad a raw RGBA pixel buffer to a larger canvas size, placing the source at
 // position (0, 0) and filling the remaining area with opaque white.
-// This matches resemble's normalise() intent without using Jimp's contain()
-// which centers the image and shifts content by a pixel.
+// Pad source at (0, 0) and fill the remaining area with opaque white.
 function padToSize(src: Buffer, srcW: number, srcH: number, dstW: number, dstH: number): Buffer {
     const dst = Buffer.alloc(dstW * dstH * 4, 255) // opaque white
     for (let y = 0; y < srcH; y++) {
@@ -126,8 +125,7 @@ export default async function compareImages(
     const { threshold, includeAA } = toPixelmatchOptions(ignoreList)
     const outputPixels = new Uint8Array(totalPixels * 4)
 
-    // Use resemble's magenta [255, 0, 255] for both diff and AA pixels so the
-    // diff image output is visually consistent with the resemble engine.
+    // Use magenta [255, 0, 255] for both diff and AA pixels.
     const diffCount: number = pixelmatch(pixels1, pixels2, outputPixels, width, height, {
         threshold,
         includeAA,
