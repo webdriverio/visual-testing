@@ -1,5 +1,5 @@
 import pixelmatch from 'pixelmatch'
-import { Jimp, JimpMime } from 'jimp'
+import { decodeImage, resizeBilinear, encodeImage } from '../utils/imageUtils.js'
 import type { CompareData, ComparisonOptions, ComparisonIgnoreOption } from './compare.interfaces.js'
 
 function resolveIgnoreList(ignore: ComparisonOptions['ignore']): ComparisonIgnoreOption[] {
@@ -76,33 +76,32 @@ export default async function compareImages(
 ): Promise<CompareData> {
     const start = Date.now()
 
-    const img1 = await Jimp.read(image1)
-    const img2 = await Jimp.read(image2)
+    let img1 = decodeImage(image1)
+    let img2 = decodeImage(image2)
 
     if (options.scaleToSameSize) {
-        const size1 = img1.bitmap.width * img1.bitmap.height
-        const size2 = img2.bitmap.width * img2.bitmap.height
+        const size1 = img1.width * img1.height
+        const size2 = img2.width * img2.height
         if (size1 > size2) {
-            img2.resize({ w: img1.bitmap.width, h: img1.bitmap.height })
+            img2 = resizeBilinear(img2, img1.width, img1.height)
         } else if (size2 > size1) {
-            img1.resize({ w: img2.bitmap.width, h: img2.bitmap.height })
+            img1 = resizeBilinear(img1, img2.width, img2.height)
         }
     }
 
     // Determine the target canvas size (max of both dimensions).
-    const width = Math.max(img1.bitmap.width, img2.bitmap.width)
-    const height = Math.max(img1.bitmap.height, img2.bitmap.height)
+    const width = Math.max(img1.width, img2.width)
+    const height = Math.max(img1.height, img2.height)
     const totalPixels = width * height
 
-    // Copy bitmap data into mutable buffers, padding at (0,0) when sizes differ.
-    // Using padToSize instead of Jimp's contain() avoids centering which shifts
-    // content by a pixel and creates false diffs along the top edge.
-    const pixels1 = img1.bitmap.width === width && img1.bitmap.height === height
-        ? Buffer.from(img1.bitmap.data)
-        : padToSize(Buffer.from(img1.bitmap.data), img1.bitmap.width, img1.bitmap.height, width, height)
-    const pixels2 = img2.bitmap.width === width && img2.bitmap.height === height
-        ? Buffer.from(img2.bitmap.data)
-        : padToSize(Buffer.from(img2.bitmap.data), img2.bitmap.width, img2.bitmap.height, width, height)
+    // Copy bitmap data into mutable buffers, padding smaller images at (0,0)
+    // with opaque white so content is not shifted by centering.
+    const pixels1 = img1.width === width && img1.height === height
+        ? Buffer.from(img1.data)
+        : padToSize(Buffer.from(img1.data), img1.width, img1.height, width, height)
+    const pixels2 = img2.width === width && img2.height === height
+        ? Buffer.from(img2.data)
+        : padToSize(Buffer.from(img2.data), img2.width, img2.height, width, height)
 
     const ignoreList = resolveIgnoreList(options.ignore)
 
@@ -158,11 +157,7 @@ export default async function compareImages(
         ? { left, top, right, bottom }
         : { left: width, top: height, right: 0, bottom: 0 }
 
-    const getBuffer = async (): Promise<Buffer> => {
-        const diffImage = new Jimp({ width, height })
-        Buffer.from(outputPixels).copy(diffImage.bitmap.data)
-        return diffImage.getBuffer(JimpMime.png)
-    }
+    const getBuffer = async (): Promise<Buffer> => encodeImage({ data: outputPixels, width, height })
 
     const rawMisMatchPercentage = (diffCount / totalPixels) * 100
 

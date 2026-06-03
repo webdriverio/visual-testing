@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { readFileSync, writeFileSync, promises as fsPromises, constants } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { Jimp, JimpMime } from 'jimp'
+import { decodeImage, toBase64Png, createCanvas, cropImage, compositeImage, setOpacity, rotate90CW, rotate180 } from '../utils/imageUtils.js'
 import logger from '@wdio/logger'
 import compareImagesPixelmatch from '../pixelmatch/compareImages.js'
 import { calculateDprData, getIosBezelImageNames, getBase64ScreenshotSize, prepareComparisonFilePaths, updateVisualBaseline } from '../helpers/utils.js'
@@ -125,7 +125,7 @@ export async function getRotatedImageIfNeeded({ isWebDriverElementScreenshot, is
     const { height: screenshotHeight, width: screenshotWidth } = getBase64ScreenshotSize(base64Image)
     const isRotated = !isWebDriverElementScreenshot && isLandscape && screenshotHeight > screenshotWidth
 
-    return isRotated ? await rotateBase64Image({ base64Image, degrees: 90 }) : base64Image
+    return isRotated ? rotateBase64Image({ base64Image, degrees: 90 }) : base64Image
 }
 
 /**
@@ -214,11 +214,11 @@ export async function handleIOSBezelCorners({
             const topImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${topImageName}.png`), { encoding: 'base64' })
             const bottomImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${bottomImageName}.png`), { encoding: 'base64' })
 
-            const topBase64Image = isLandscape ? await rotateBase64Image({ base64Image: topImage, degrees: 90 }) : topImage
-            const bottomBase64Image = isLandscape ? await rotateBase64Image({ base64Image: bottomImage, degrees: 90 }) : bottomImage
+            const topBase64Image = isLandscape ? rotateBase64Image({ base64Image: topImage, degrees: 90 }) : topImage
+            const bottomBase64Image = isLandscape ? rotateBase64Image({ base64Image: bottomImage, degrees: 90 }) : bottomImage
 
-            image.composite(await Jimp.read(Buffer.from(topBase64Image, 'base64')), 0, 0)
-            image.composite(await Jimp.read(Buffer.from(bottomBase64Image, 'base64')),
+            compositeImage(image, decodeImage(Buffer.from(topBase64Image, 'base64')), 0, 0)
+            compositeImage(image, decodeImage(Buffer.from(bottomBase64Image, 'base64')),
                 isLandscape ? width - getBase64ScreenshotSize(bottomImage).height : 0,
                 isLandscape ? 0 : height - getBase64ScreenshotSize(bottomImage).height
             )
@@ -262,15 +262,14 @@ export async function cropAndConvertToDataURL({
     sourceY,
     width,
 }: CropAndConvertToDataURL): Promise<string> {
-    const image = await Jimp.read(Buffer.from(base64Image, 'base64'))
-    const croppedImage = image.crop({ x:sourceX, y:sourceY, w:width, h:height })
+    const image = decodeImage(Buffer.from(base64Image, 'base64'))
+    const croppedImage = cropImage(image, sourceX, sourceY, width, height)
 
     if (isIOS) {
         await handleIOSBezelCorners({ addIOSBezelCorners, image: croppedImage, deviceName, devicePixelRatio, height, isLandscape, width })
     }
 
-    const base64CroppedImage = await croppedImage.getBase64(JimpMime.png)
-    return base64CroppedImage.replace(/^data:image\/png;base64,/, '')
+    return toBase64Png(croppedImage)
 }
 
 /**
@@ -524,21 +523,21 @@ export async function makeFullPageBase64Image(
 ): Promise<string> {
     const amountOfScreenshots = screenshotsData.data.length
     const { fullPageHeight: canvasHeight, fullPageWidth: canvasWidth } = screenshotsData
-    const canvas = await new Jimp({ width: canvasWidth, height: canvasHeight })
+    const canvas = createCanvas(canvasWidth, canvasHeight)
 
     // Load all the images
     for (let i = 0; i < amountOfScreenshots; i++) {
         const currentScreenshot = screenshotsData.data[i].screenshot
         const { height: screenshotHeight, width: screenshotWidth } = getBase64ScreenshotSize(currentScreenshot, devicePixelRatio)
         const isRotated = isLandscape && screenshotHeight > screenshotWidth
-        const newBase64Image = isRotated ? await rotateBase64Image({ base64Image: currentScreenshot, degrees: 90 }) : currentScreenshot
+        const newBase64Image = isRotated ? rotateBase64Image({ base64Image: currentScreenshot, degrees: 90 }) : currentScreenshot
         const { canvasYPosition, imageHeight, imageXPosition, imageYPosition } = screenshotsData.data[i]
-        const image = await Jimp.read(Buffer.from(newBase64Image, 'base64'))
+        const image = decodeImage(Buffer.from(newBase64Image, 'base64'))
 
         // Clamp crop dimensions to fit within the actual image bounds
         // This is especially important for the last image where the calculated height might exceed available pixels
-        const actualImageWidth = image.bitmap.width
-        const actualImageHeight = image.bitmap.height
+        const actualImageWidth = image.width
+        const actualImageHeight = image.height
         const clampedCropX = Math.max(0, Math.min(imageXPosition, actualImageWidth - 1))
         const clampedCropY = Math.max(0, Math.min(imageYPosition, actualImageHeight - 1))
         // Ensure the cropped width matches the canvas width to avoid 1px gaps due to rounding
@@ -547,15 +546,10 @@ export async function makeFullPageBase64Image(
         const clampedCropWidth = Math.min(canvasWidth, maxAvailableWidth)
         const clampedCropHeight = Math.min(imageHeight, actualImageHeight - clampedCropY)
 
-        canvas.composite(
-            image.crop({ x: clampedCropX, y: clampedCropY, w: clampedCropWidth, h: clampedCropHeight }),
-            0,
-            canvasYPosition
-        )
+        compositeImage(canvas, cropImage(image, clampedCropX, clampedCropY, clampedCropWidth, clampedCropHeight), 0, canvasYPosition)
     }
 
-    const base64FullPageImage = await canvas.getBase64(JimpMime.png)
-    return base64FullPageImage.replace(/^data:image\/png;base64,/, '')
+    return toBase64Png(canvas)
 }
 
 /**
@@ -570,31 +564,27 @@ export async function saveBase64Image(base64Image: string, filePath: string) {
  * Create a canvas with the ignore boxes if they are present
  */
 export async function addBlockOuts(screenshot: string, ignoredBoxes: IgnoreBoxes[]): Promise<string> {
-    const image = await Jimp.read(Buffer.from(screenshot, 'base64'))
+    const image = decodeImage(Buffer.from(screenshot, 'base64'))
 
     // Loop over all ignored areas and add them to the current canvas
     for (const ignoredBox of ignoredBoxes) {
         const { right: ignoredBoxWidth, bottom: ignoredBoxHeight, left: x, top: y } = ignoredBox
-        const ignoreCanvas = new Jimp({ width: ignoredBoxWidth - x, height: ignoredBoxHeight - y, color: '#39aa56' })
-        ignoreCanvas.opacity(0.5)
-
-        image.composite(ignoreCanvas, x, y)
+        const ignoreCanvas = createCanvas(ignoredBoxWidth - x, ignoredBoxHeight - y, 57, 170, 86, 255)
+        setOpacity(ignoreCanvas, 0.5)
+        compositeImage(image, ignoreCanvas, x, y)
     }
 
-    const base64ImageWithBlockOuts = await image.getBase64(JimpMime.png)
-    return base64ImageWithBlockOuts.replace(/^data:image\/png;base64,/, '')
+    return toBase64Png(image)
 }
 
 /**
  * Rotate a base64 image
  * Tnx to https://gist.github.com/Zyndoras/6897abdf53adbedf02564808aaab94db
  */
-export async function rotateBase64Image({ base64Image, degrees }: RotateBase64ImageOptions): Promise<string> {
-    const image = await Jimp.read(Buffer.from(base64Image, 'base64'))
-    const rotatedImage = image.rotate(degrees)
-    const base64RotatedImage = await rotatedImage.getBase64(JimpMime.png)
-
-    return base64RotatedImage.replace(/^data:image\/png;base64,/, '')
+export function rotateBase64Image({ base64Image, degrees }: RotateBase64ImageOptions): string {
+    const image = decodeImage(Buffer.from(base64Image, 'base64'))
+    const rotated = degrees === 180 ? rotate180(image) : rotate90CW(image)
+    return toBase64Png(rotated)
 }
 
 /**

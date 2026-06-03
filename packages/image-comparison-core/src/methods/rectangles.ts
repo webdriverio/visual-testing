@@ -1,4 +1,5 @@
-import { Jimp } from 'jimp'
+import { readFileSync } from 'node:fs'
+import { decodeImage } from '../utils/imageUtils.js'
 import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
@@ -684,8 +685,8 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
             try {
                 // For iOS: block out home bar
                 if (!isAndroid && deviceRectangles.homeBar.height > 0) {
-                    const image = await Jimp.read(actualFilePath)
-                    const imageHeightDevicePixels = image.bitmap.height
+                    const image = decodeImage(readFileSync(actualFilePath))
+                    const imageHeightDevicePixels = image.height
                     const imageHeightCssPixels = imageHeightDevicePixels / devicePixelRatio
                     // Adjust home bar X position relative to the viewport (full page image only contains viewport)
                     const viewportXCssPixels = deviceRectangles.viewport.x
