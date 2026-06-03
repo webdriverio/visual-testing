@@ -198,6 +198,74 @@ describe('pixelmatch adapter - compareImages', () => {
         })
     })
 
+    describe('pixel transformations', () => {
+        it('grayscales both pixel arrays when ignore includes colors', async () => {
+            let capturedPixels1: Uint8Array | undefined
+
+            pixelmatchFn.mockImplementation((img1: Uint8Array) => {
+                capturedPixels1 = new Uint8Array(img1)
+                return 0
+            })
+
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore: 'colors' })
+
+            // After grayscale, R=G=B for every pixel (luma of 128,128,128 = 128)
+            expect(capturedPixels1![0]).toBe(capturedPixels1![1])
+            expect(capturedPixels1![1]).toBe(capturedPixels1![2])
+        })
+
+        it('sets all alpha channels to 255 when ignore includes alpha', async () => {
+            // Use image data with alpha < 255
+            decodeImageFn.mockReturnValue({
+                data: new Uint8Array(100 * 100 * 4).fill(0), // all zeros, including alpha
+                width: 100,
+                height: 100,
+            })
+            let capturedPixels1: Uint8Array | undefined
+
+            pixelmatchFn.mockImplementation((img1: Uint8Array) => {
+                capturedPixels1 = new Uint8Array(img1)
+                return 0
+            })
+
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore: 'alpha' })
+
+            // After opaqueAlphaChannel, every 4th byte should be 255
+            expect(capturedPixels1![3]).toBe(255)
+            expect(capturedPixels1![7]).toBe(255)
+        })
+
+        it('pads img2 to canvas size when img1 is larger', async () => {
+            decodeImageFn
+                .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4).fill(128), width: 100, height: 100 })
+                .mockReturnValueOnce({ data: new Uint8Array(50 * 50 * 4).fill(64), width: 50, height: 50 })
+            pixelmatchFn.mockImplementation(() => 0)
+
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
+
+            // Canvas is 100×100; img2 (50×50) is padded to fill it
+            expect(pixelmatchFn).toHaveBeenCalledWith(
+                expect.any(Object), expect.any(Object), expect.any(Uint8Array),
+                100, 100, expect.any(Object)
+            )
+        })
+
+        it('pads img1 to canvas size when img2 is larger', async () => {
+            decodeImageFn
+                .mockReturnValueOnce({ data: new Uint8Array(50 * 50 * 4).fill(64), width: 50, height: 50 })
+                .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4).fill(128), width: 100, height: 100 })
+            pixelmatchFn.mockImplementation(() => 0)
+
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
+
+            // Canvas is 100×100; img1 (50×50) is padded to fill it
+            expect(pixelmatchFn).toHaveBeenCalledWith(
+                expect.any(Object), expect.any(Object), expect.any(Uint8Array),
+                100, 100, expect.any(Object)
+            )
+        })
+    })
+
     describe('ignoredBoxes', () => {
         it('zeroes out the specified box regions in both pixel arrays before comparison', async () => {
             let capturedImg1: Uint8Array | undefined
@@ -228,6 +296,21 @@ describe('pixelmatch adapter - compareImages', () => {
             decodeImageFn
                 .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4), width: 100, height: 100 })
                 .mockReturnValueOnce({ data: new Uint8Array(50 * 50 * 4), width: 50, height: 50 })
+            pixelmatchFn.mockImplementation(() => 0)
+
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), { scaleToSameSize: true })
+
+            expect(resizeBilinearFn).toHaveBeenCalledTimes(1)
+            expect(resizeBilinearFn).toHaveBeenCalledWith(
+                expect.objectContaining({ width: 50, height: 50 }),
+                100, 100
+            )
+        })
+
+        it('resizes img1 when img2 is larger', async () => {
+            decodeImageFn
+                .mockReturnValueOnce({ data: new Uint8Array(50 * 50 * 4), width: 50, height: 50 })
+                .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4), width: 100, height: 100 })
             pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), { scaleToSameSize: true })

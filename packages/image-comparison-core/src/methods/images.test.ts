@@ -14,6 +14,7 @@ import {
     cropAndConvertToDataURL,
     makeCroppedBase64Image,
     makeFullPageBase64Image,
+    addBlockOuts,
     rotateBase64Image,
     takeResizedBase64Screenshot,
 } from './images.js'
@@ -310,6 +311,38 @@ describe('rotateBase64Image', () => {
         rotateBase64Image({ base64Image: 'differentImageData', degrees: 270 })
 
         expect(vi.mocked(imageUtils.rotate90CW)).toHaveBeenCalledTimes(1)
+    })
+})
+
+describe('addBlockOuts', () => {
+    afterEach(() => { vi.clearAllMocks() })
+
+    it('returns the image unchanged when there are no ignored boxes', async () => {
+        const result = await addBlockOuts('someBase64', [])
+
+        expect(vi.mocked(imageUtils.decodeImage)).toHaveBeenCalledTimes(1)
+        expect(vi.mocked(imageUtils.compositeImage)).not.toHaveBeenCalled()
+        expect(vi.mocked(imageUtils.toBase64Png)).toHaveBeenCalledTimes(1)
+        expect(result).toBe('croppedImageData')
+    })
+
+    it('creates a semi-transparent green overlay for each ignored box', async () => {
+        const boxes = [
+            { left: 10, top: 20, right: 110, bottom: 120 },
+            { left: 200, top: 50, right: 300, bottom: 150 },
+        ]
+
+        await addBlockOuts('someBase64', boxes)
+
+        expect(vi.mocked(imageUtils.createCanvas)).toHaveBeenCalledTimes(2)
+        // First box: width=100, height=100, green (#39aa56 = 57,170,86,255)
+        expect(vi.mocked(imageUtils.createCanvas)).toHaveBeenCalledWith(100, 100, 57, 170, 86, 255)
+        expect(vi.mocked(imageUtils.setOpacity)).toHaveBeenCalledTimes(2)
+        expect(vi.mocked(imageUtils.setOpacity)).toHaveBeenCalledWith(expect.any(Object), 0.5)
+        expect(vi.mocked(imageUtils.compositeImage)).toHaveBeenCalledTimes(2)
+        expect(vi.mocked(imageUtils.compositeImage)).toHaveBeenCalledWith(
+            expect.any(Object), expect.any(Object), 10, 20
+        )
     })
 })
 
