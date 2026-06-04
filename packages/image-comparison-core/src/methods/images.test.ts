@@ -36,6 +36,7 @@ vi.mock('../utils/imageUtils.js', () => ({
     setOpacity:     vi.fn(),
     toBase64Png:    vi.fn().mockReturnValue('croppedImageData'),
     rotate90CW:     vi.fn().mockImplementation(() => makeRawImage(800, 1000)),
+    rotate90CCW:    vi.fn().mockImplementation(() => makeRawImage(800, 1000)),
     rotate180:      vi.fn().mockImplementation(() => makeRawImage()),
     encodeImage:    vi.fn().mockReturnValue(Buffer.from('encoded')),
 }))
@@ -307,8 +308,15 @@ describe('rotateBase64Image', () => {
         expect(vi.mocked(imageUtils.rotate90CW)).not.toHaveBeenCalled()
     })
 
-    it('calls rotate90CW for any other degree value', () => {
+    it('calls rotate90CCW for 270 degrees', () => {
         rotateBase64Image({ base64Image: 'differentImageData', degrees: 270 })
+
+        expect(vi.mocked(imageUtils.rotate90CCW)).toHaveBeenCalledTimes(1)
+        expect(vi.mocked(imageUtils.rotate90CW)).not.toHaveBeenCalled()
+    })
+
+    it('calls rotate90CW for any other degree value', () => {
+        rotateBase64Image({ base64Image: 'differentImageData', degrees: 45 })
 
         expect(vi.mocked(imageUtils.rotate90CW)).toHaveBeenCalledTimes(1)
     })

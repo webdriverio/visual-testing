@@ -1,11 +1,14 @@
 import type { BaseBoundingBox, BaseCoordinates } from '../base.interfaces.js'
+import type { RawImage } from '../utils/imageUtils.js'
 
 export interface CompareData {
     /** The mismatch percentage like 0.12345567 */
     rawMisMatchPercentage: number;
     /** The mismatch percentage like 0.12 */
     misMatchPercentage: number;
-    /** The image buffer */
+    /** Raw RGBA pixel data of the diff composited on the actual screenshot, with dimensions */
+    getRawPixels: () => RawImage;
+    /** The diff image encoded as a PNG buffer */
     getBuffer: () => Promise<Buffer>;
     /** The bounds of the diff area */
     diffBounds: BaseBoundingBox;

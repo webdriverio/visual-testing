@@ -194,7 +194,7 @@ describe('compositeImage', () => {
     it('skips pixels outside the base bounds', () => {
         const base    = createCanvas(2, 2, 0, 0, 0, 255)
         const overlay = createCanvas(3, 3, 255, 0, 0, 255)
-        // Offset so overlay extends beyond base — should not throw
+        // Offset so overlay extends beyond base - should not throw
         expect(() => compositeImage(base, overlay, 1, 1)).not.toThrow()
     })
 })
@@ -234,7 +234,7 @@ describe('rotate90CW', () => {
             height: 1,
         }
         const rotated = rotate90CW(img)
-        // 90° CW: new 1x2 — top pixel comes from bottom-left of src (only 1 row, so left=red)
+        // 90° CW: new 1x2 - top pixel comes from bottom-left of src (only 1 row, so left=red)
         expect(rotated.width).toBe(1)
         expect(rotated.height).toBe(2)
         // top of rotated should be red (was left in src)
@@ -306,7 +306,7 @@ describe('setOpacity', () => {
     it('sets full opacity to 255', () => {
         const img = createCanvas(1, 1, 0, 0, 0, 128)
         setOpacity(img, 1)
-        expect(img.data[3]).toBe(128) // unchanged — 128 * 1 = 128
+        expect(img.data[3]).toBe(128) // unchanged - 128 * 1 = 128
     })
 
     it('sets zero opacity to 0', () => {

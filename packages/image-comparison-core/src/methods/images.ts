@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { readFileSync, writeFileSync, promises as fsPromises, constants } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { decodeImage, toBase64Png, createCanvas, cropImage, compositeImage, setOpacity, rotate90CW, rotate180 } from '../utils/imageUtils.js'
+import { decodeImage, toBase64Png, createCanvas, cropImage, compositeImage, setOpacity, rotate90CW, rotate90CCW, rotate180 } from '../utils/imageUtils.js'
 import logger from '@wdio/logger'
 import compareImagesPixelmatch from '../pixelmatch/compareImages.js'
 import { calculateDprData, getIosBezelImageNames, getBase64ScreenshotSize, prepareComparisonFilePaths, updateVisualBaseline } from '../helpers/utils.js'
@@ -214,8 +214,8 @@ export async function handleIOSBezelCorners({
             const topImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${topImageName}.png`), { encoding: 'base64' })
             const bottomImage = readFileSync(join(__dirname, '..', '..', 'assets', 'ios', `${bottomImageName}.png`), { encoding: 'base64' })
 
-            const topBase64Image = isLandscape ? rotateBase64Image({ base64Image: topImage, degrees: 90 }) : topImage
-            const bottomBase64Image = isLandscape ? rotateBase64Image({ base64Image: bottomImage, degrees: 90 }) : bottomImage
+            const topBase64Image = isLandscape ? rotateBase64Image({ base64Image: topImage, degrees: 270 }) : topImage
+            const bottomBase64Image = isLandscape ? rotateBase64Image({ base64Image: bottomImage, degrees: 270 }) : bottomImage
 
             compositeImage(image, decodeImage(Buffer.from(topBase64Image, 'base64')), 0, 0)
             compositeImage(image, decodeImage(Buffer.from(bottomBase64Image, 'base64')),
@@ -560,6 +560,11 @@ export async function saveBase64Image(base64Image: string, filePath: string) {
     await fsPromises.writeFile(filePath, Buffer.from(base64Image, 'base64'))
 }
 
+export async function savePngBuffer(buffer: Buffer, filePath: string): Promise<void> {
+    await fsPromises.mkdir(dirname(filePath), { recursive: true })
+    await fsPromises.writeFile(filePath, buffer)
+}
+
 /**
  * Create a canvas with the ignore boxes if they are present
  */
@@ -583,7 +588,7 @@ export async function addBlockOuts(screenshot: string, ignoredBoxes: IgnoreBoxes
  */
 export function rotateBase64Image({ base64Image, degrees }: RotateBase64ImageOptions): string {
     const image = decodeImage(Buffer.from(base64Image, 'base64'))
-    const rotated = degrees === 180 ? rotate180(image) : rotate90CW(image)
+    const rotated = degrees === 180 ? rotate180(image) : degrees === 270 ? rotate90CCW(image) : rotate90CW(image)
     return toBase64Png(rotated)
 }
 

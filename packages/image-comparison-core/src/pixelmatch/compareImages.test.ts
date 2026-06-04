@@ -69,6 +69,40 @@ describe('pixelmatch adapter - compareImages', () => {
 
             expect(Buffer.isBuffer(buf)).toBe(true)
         })
+
+        it('getRawPixels paints diff pixels magenta and keeps actual pixels for matches', async () => {
+            const actual = new Uint8Array(100 * 100 * 4).fill(200) // distinctive actual colour
+            decodeImageFn
+                .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4).fill(128), width: 100, height: 100 }) // baseline
+                .mockReturnValueOnce({ data: actual, width: 100, height: 100 }) // actual
+
+            pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array) => {
+                // Mark pixel at (0,0) as a diff (magenta)
+                output[0] = 255
+                output[1] = 0
+                output[2] = 255
+                output[3] = 255
+                // Pixel at (1,0) remains 0 - match
+                return 1
+            })
+
+            const result = await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
+            const raw = result.getRawPixels()
+
+            // Diff pixel → magenta
+            expect(raw.data[0]).toBe(255)
+            expect(raw.data[1]).toBe(0)
+            expect(raw.data[2]).toBe(255)
+            expect(raw.data[3]).toBe(255)
+
+            // Match pixel → actual screenshot value (200)
+            expect(raw.data[4]).toBe(200)
+            expect(raw.data[5]).toBe(200)
+            expect(raw.data[6]).toBe(200)
+
+            expect(raw.width).toBe(100)
+            expect(raw.height).toBe(100)
+        })
     })
 
     describe('diffPixels and diffBounds', () => {

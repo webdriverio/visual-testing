@@ -1,5 +1,5 @@
 import pixelmatch from 'pixelmatch'
-import { decodeImage, resizeBilinear, encodeImage } from '../utils/imageUtils.js'
+import { decodeImage, resizeBilinear, encodeImage, type RawImage } from '../utils/imageUtils.js'
 import type { CompareData, ComparisonOptions, ComparisonIgnoreOption } from './compare.interfaces.js'
 
 function resolveIgnoreList(ignore: ComparisonOptions['ignore']): ComparisonIgnoreOption[] {
@@ -103,6 +103,11 @@ export default async function compareImages(
         ? Buffer.from(img2.data)
         : padToSize(Buffer.from(img2.data), img2.width, img2.height, width, height)
 
+    // Snapshot the original actual pixels before any comparison transforms (grayscale,
+    // alpha-opaque, zero-out). The diff image uses this as its background so the real
+    // screenshot content is always visible, including inside blockout regions.
+    const displayPixels2 = Buffer.from(pixels2)
+
     const ignoreList = resolveIgnoreList(options.ignore)
 
     if (ignoreList.includes('colors')) {
@@ -157,13 +162,34 @@ export default async function compareImages(
         ? { left, top, right, bottom }
         : { left: width, top: height, right: 0, bottom: 0 }
 
-    const getBuffer = async (): Promise<Buffer> => encodeImage({ data: outputPixels, width, height })
+    // Single-pass blend: paint diff pixels (magenta) on top of the actual screenshot.
+    // pixels2 is already in memory and normalised to the canvas size, so no extra decode needed.
+    const getRawPixels = (): RawImage => {
+        const data = new Uint8Array(totalPixels * 4)
+        for (let i = 0; i < data.length; i += 4) {
+            if (outputPixels[i] === 255 && outputPixels[i + 1] === 0 && outputPixels[i + 2] === 255) {
+                data[i]     = 255
+                data[i + 1] = 0
+                data[i + 2] = 255
+                data[i + 3] = 255
+            } else {
+                data[i]     = displayPixels2[i]
+                data[i + 1] = displayPixels2[i + 1]
+                data[i + 2] = displayPixels2[i + 2]
+                data[i + 3] = displayPixels2[i + 3]
+            }
+        }
+        return { data, width, height }
+    }
+
+    const getBuffer = async (): Promise<Buffer> => encodeImage(getRawPixels())
 
     const rawMisMatchPercentage = (diffCount / totalPixels) * 100
 
     return {
         rawMisMatchPercentage,
         misMatchPercentage: Number(rawMisMatchPercentage.toFixed(2)),
+        getRawPixels,
         getBuffer,
         diffBounds,
         analysisTime: Date.now() - start,
