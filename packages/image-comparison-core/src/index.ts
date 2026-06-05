@@ -32,7 +32,7 @@ export type {
 export type { TestContext } from './methods/compareReport.interfaces.js'
 export type { Folders } from './base.interfaces.js'
 export type { InstanceData } from './methods/instanceData.interfaces.js'
-export type { DeviceRectangles } from './methods/rectangles.interfaces.js'
+export type { BoundingBox, DeviceRectangles, DiffChangeType, DiffRegion } from './methods/rectangles.interfaces.js'
 export type { ResultReport } from './methods/compareReport.interfaces.js'
 
 export {

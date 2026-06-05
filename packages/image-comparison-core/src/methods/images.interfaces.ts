@@ -1,4 +1,4 @@
-import type { RectanglesOutput, DeviceRectangles } from './rectangles.interfaces.js'
+import type { RectanglesOutput, DeviceRectangles, DiffRegion } from './rectangles.interfaces.js'
 import type { BaseCoordinates, BaseDeviceInfo, BaseDimensions, BaseImageCompareOptions, BaseMobileBlockOutOptions, Folders } from '../base.interfaces.js'
 import type { TestContext } from './compareReport.interfaces.js'
 import type { WicElement } from 'src/index.js'
@@ -56,6 +56,12 @@ export interface ImageCompareOptions {
 export interface WicImageCompareOptions extends BaseImageCompareOptions, BaseMobileBlockOutOptions {
     /** Create a json file with the diff data, this can be used to create a custom report. */
     createJsonReportFiles: boolean;
+    /** Mismatch percentage below which diff region analysis runs automatically (default 10).
+     *  Analysis always runs when createJsonReportFiles is true regardless of this value. */
+    diffAnalysisThreshold?: number;
+    /** When true, treat the comparison as 0% mismatch if every diff region has
+     *  isVisuallySignificant = false. The diff image is still saved for inspection. */
+    ignoreVisuallyInsignificantDiffs?: boolean;
     /** The proximity of the diff pixels to determine if a diff pixel is part of a group,
      * the higher the number the more pixels will be grouped, the lower the number the less pixels will be grouped due to accuracy.
      * Default is 5 pixels */
@@ -115,6 +121,8 @@ export interface ImageCompareResult {
     };
     /** The mismatch percentage */
     misMatchPercentage: number;
+    /** Per-region analysis of each visual difference found. Empty array when images match or diff exceeds diffAnalysisThreshold. */
+    diffBoundingBoxes: DiffRegion[];
 }
 
 export interface Pixel extends BaseCoordinates {}

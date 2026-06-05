@@ -46,10 +46,11 @@
 
 import logger from '@wdio/logger'
 import type { Pixel, WicImageCompareOptions } from 'src/methods/images.interfaces.js'
-import type { BoundingBox, IgnoreBoxes } from './rectangles.interfaces.js'
+import type { BoundingBox, DiffRegion, IgnoreBoxes } from './rectangles.interfaces.js'
 import type { CompareData } from '../pixelmatch/compare.interfaces.js'
 import { savePngBuffer } from './images.js'
 import { compositeImage, createCanvas, encodeImage, setOpacity } from '../utils/imageUtils.js'
+import { analyzeDiffRegions } from './analyzeDiffRegions.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:pixelDiffProcessing')
 
@@ -96,29 +97,34 @@ class DisjointSet {
     }
 }
 
-function mergeBoundingBoxes(boxes: BoundingBox[], proximity: number): BoundingBox[] {
-    log.info(`Merging bounding boxes started with a proximity of ${proximity} pixels`)
-    const merged: BoundingBox[] = []
+type RegionData = { box: BoundingBox; diffPixelCount: number }
 
-    while (boxes.length) {
-        const box = boxes.pop()!
+function mergeBoundingBoxes(regions: RegionData[], proximity: number): RegionData[] {
+    log.info(`Merging bounding boxes started with a proximity of ${proximity} pixels`)
+    const merged: RegionData[] = []
+
+    while (regions.length) {
+        const region = regions.pop()!
         let mergedWithAnotherBox = false
 
-        for (let i = 0; i < boxes.length; i++) {
-            const otherBox = boxes[i]
+        for (let i = 0; i < regions.length; i++) {
+            const other = regions[i]
 
             if (
-                box.left <= otherBox.right + proximity &&
-                box.right >= otherBox.left - proximity &&
-                box.top <= otherBox.bottom + proximity &&
-                box.bottom >= otherBox.top - proximity
+                region.box.left <= other.box.right + proximity &&
+                region.box.right >= other.box.left - proximity &&
+                region.box.top <= other.box.bottom + proximity &&
+                region.box.bottom >= other.box.top - proximity
             ) {
-                boxes.splice(i, 1)
-                boxes.push({
-                    left: Math.min(box.left, otherBox.left),
-                    top: Math.min(box.top, otherBox.top),
-                    right: Math.max(box.right, otherBox.right),
-                    bottom: Math.max(box.bottom, otherBox.bottom),
+                regions.splice(i, 1)
+                regions.push({
+                    box: {
+                        left: Math.min(region.box.left, other.box.left),
+                        top: Math.min(region.box.top, other.box.top),
+                        right: Math.max(region.box.right, other.box.right),
+                        bottom: Math.max(region.box.bottom, other.box.bottom),
+                    },
+                    diffPixelCount: region.diffPixelCount + other.diffPixelCount,
                 })
                 mergedWithAnotherBox = true
                 break
@@ -126,14 +132,14 @@ function mergeBoundingBoxes(boxes: BoundingBox[], proximity: number): BoundingBo
         }
 
         if (!mergedWithAnotherBox) {
-            merged.push(box)
+            merged.push(region)
         }
     }
 
     return merged
 }
 
-function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[] {
+function processDiffPixels(diffPixels: Pixel[], proximity: number): RegionData[] {
     log.info('Processing diff pixels started')
     log.info(`Processing ${diffPixels.length} diff pixels`)
 
@@ -160,13 +166,7 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[
         log.error('This likely indicates a major visual difference or an issue with the comparison.')
         log.error('Consider checking if the baseline image is correct or if there are major UI changes.')
 
-        // Return a single bounding box covering the entire image
-        return [{
-            left: 0,
-            top: 0,
-            right: maxX,
-            bottom: maxY
-        }]
+        return [{ box: { left: 0, top: 0, right: maxX, bottom: maxY }, diffPixelCount: diffPixels.length }]
     }
 
     const totalStartTime = Date.now()
@@ -215,8 +215,8 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[
         groups.get(root)?.push(pixelMap.get(key) as Pixel)
     }
 
-    // Calculate bounding boxes
-    const boundingBoxes: BoundingBox[] = []
+    // Calculate bounding boxes, preserving per-group pixel counts
+    const regions: RegionData[] = []
     for (const pixels of groups.values()) {
         let left = Infinity
         let top = Infinity
@@ -230,7 +230,7 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[
             if (pixel.y > bottom) {bottom = pixel.y}
         }
 
-        boundingBoxes.push({ left, top, right, bottom })
+        regions.push({ box: { left, top, right, bottom }, diffPixelCount: pixels.length })
     }
 
     log.info(`Grouping time: ${Date.now() - groupingStartTime}ms`)
@@ -241,36 +241,61 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): BoundingBox[
     log.info('Post-processing bounding boxes')
     const postProcessStartTime = Date.now()
 
-    const mergedBoxes = mergeBoundingBoxes(boundingBoxes, proximity)
+    const mergedRegions = mergeBoundingBoxes(regions, proximity)
 
     log.info(`Post-processing time: ${Date.now() - postProcessStartTime}ms`)
-    log.info(`Number merged: ${mergedBoxes.length}`)
+    log.info(`Number merged: ${mergedRegions.length}`)
 
-    return mergedBoxes
+    return mergedRegions
 }
 
 /**
  * Generate and save diff image with bounding boxes
  */
+function formatRegionSummary(regions: DiffRegion[]): string {
+    const lines = regions.map((r, i) => {
+        const type = r.changeType.padEnd(12)
+        const density = `${Math.round(r.density * 100)}%`.padStart(4)
+        const score = `${r.perceptualScore}/100`.padStart(8)
+        const flag = r.isVisuallySignificant ? 'SIGNIFICANT    ' : 'not significant'
+        return ` Region ${i + 1}: type=${type} | density=${density} | score=${score} | ${flag}`
+    })
+    return lines.join('\n')
+}
+
 export async function generateAndSaveDiff(
     data: CompareData,
     imageCompareOptions: WicImageCompareOptions,
     ignoredBoxes: IgnoreBoxes[],
     diffFilePath: string,
     rawMisMatchPercentage: number
-): Promise<{ diffBoundingBoxes: BoundingBox[]; storeDiffs: boolean }> {
-    const diffBoundingBoxes: BoundingBox[] = []
+): Promise<{ diffBoundingBoxes: DiffRegion[]; storeDiffs: boolean; allDiffsInsignificant: boolean }> {
     const saveAboveTolerance = imageCompareOptions.saveAboveTolerance ?? 0
     const storeDiffs = rawMisMatchPercentage > saveAboveTolerance || process.argv.includes('--store-diffs')
+
+    // Run analysis when the diff is in the "is this real?" band, or when JSON reports are enabled.
+    const diffAnalysisThreshold = imageCompareOptions.diffAnalysisThreshold ?? 10
+    const shouldRunAnalysis =
+        (rawMisMatchPercentage > 0 && rawMisMatchPercentage < diffAnalysisThreshold) ||
+        imageCompareOptions.createJsonReportFiles
+
+    let diffBoundingBoxes: DiffRegion[] = []
+    if (shouldRunAnalysis && data.diffPixels.length > 0) {
+        const regions = processDiffPixels(data.diffPixels, imageCompareOptions.diffPixelBoundingBoxProximity)
+        const actualPixels = data.getActualPixels()
+        const baselinePixels = data.getBaselinePixels()
+        diffBoundingBoxes = analyzeDiffRegions(regions, actualPixels.width, actualPixels.height, actualPixels, baselinePixels)
+    }
+
+    // allDiffsInsignificant is only true when analysis ran AND produced at least one region
+    const allDiffsInsignificant =
+        diffBoundingBoxes.length > 0 &&
+        diffBoundingBoxes.every(r => !r.isVisuallySignificant)
 
     if (storeDiffs) {
         const isDifference = rawMisMatchPercentage > saveAboveTolerance
         const isDifferenceMessage = 'WARNING:\n There was a difference. Saved the difference to'
         const debugMessage = 'INFO:\n Debug mode is enabled. Saved the debug file to:'
-
-        if (imageCompareOptions.createJsonReportFiles) {
-            diffBoundingBoxes.push(...processDiffPixels(data.diffPixels, imageCompareOptions.diffPixelBoundingBoxProximity))
-        }
 
         const rawDiff = data.getRawPixels()
 
@@ -284,17 +309,31 @@ export async function generateAndSaveDiff(
 
         await savePngBuffer(encodeImage(rawDiff), diffFilePath)
 
+        // Build the analysis block shown in the warning
+        let analysisBlock = ''
+        if (diffBoundingBoxes.length > 0) {
+            analysisBlock = `\n\n Diff analysis — ${diffBoundingBoxes.length} region(s):\n${formatRegionSummary(diffBoundingBoxes)}`
+            if (allDiffsInsignificant) {
+                if (imageCompareOptions.ignoreVisuallyInsignificantDiffs) {
+                    analysisBlock += '\n\n All diff regions are non-perceptible — result will be treated as 0% mismatch.'
+                } else {
+                    analysisBlock += '\n\n All diff regions appear to be rendering/anti-aliasing artifacts.'
+                    analysisBlock += '\n Enable \'ignoreVisuallyInsignificantDiffs: true\' to auto-pass these diffs.'
+                }
+            }
+        }
+
         log.warn(
             '\x1b[33m%s\x1b[0m',
             `
 #####################################################################################
  ${isDifference ? isDifferenceMessage : debugMessage}
- ${diffFilePath}
+ ${diffFilePath}${analysisBlock}
 #####################################################################################`,
         )
     }
 
-    return { diffBoundingBoxes, storeDiffs }
+    return { diffBoundingBoxes, storeDiffs, allDiffsInsignificant }
 }
 
 export { processDiffPixels }

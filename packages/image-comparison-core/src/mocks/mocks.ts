@@ -184,6 +184,7 @@ export const BASE_CHECK_OPTIONS = {
             blockOutStatusBar: false,
             blockOutToolBar: false,
             createJsonReportFiles: false,
+            diffAnalysisThreshold: 10,
             diffPixelBoundingBoxProximity: 5,
         },
         tabbableOptions: {

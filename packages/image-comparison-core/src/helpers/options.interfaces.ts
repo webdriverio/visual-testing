@@ -152,11 +152,29 @@ export interface ClassOptions {
     createJsonReportFiles?: boolean;
 
     /**
+     * Mismatch percentage below which diff region analysis runs automatically.
+     * Analysis always runs when `createJsonReportFiles` is `true` regardless of this value.
+     *
+     * @default 10
+     */
+    diffAnalysisThreshold?: number;
+
+    /**
      * Pixel proximity used to group diff pixels in JSON reports.
      *
      * @default 5
      */
     diffPixelBoundingBoxProximity?: number;
+
+    /**
+     * When `true`, treat the comparison as 0% mismatch if every diff region has
+     * `isVisuallySignificant = false` (i.e., all detected differences appear to be
+     * rendering / anti-aliasing artifacts that a human reviewer would not notice).
+     * The diff image is still saved for inspection when this option overrides the result.
+     *
+     * @default false
+     */
+    ignoreVisuallyInsignificantDiffs?: boolean;
 
     /**
      * Ignore alpha channel when comparing images.
@@ -426,6 +444,14 @@ export interface CompareOptions {
     createJsonReportFiles: boolean;
 
     /**
+     * Mismatch percentage below which diff region analysis runs automatically.
+     * Analysis always runs when `createJsonReportFiles` is `true` regardless of this value.
+     *
+     * @default 10
+     */
+    diffAnalysisThreshold?: number;
+
+    /**
      * Proximity of diff pixels used to group them in the JSON report.
      *
      * The higher the value, the more pixels will be grouped together. Lower values improve accuracy.
@@ -443,6 +469,12 @@ export interface CompareOptions {
      * Compare images and ignore anti-aliasing effects.
      */
     ignoreAntialiasing: boolean;
+
+    /**
+     * When `true`, treat the comparison as 0% mismatch if every diff region has
+     * `isVisuallySignificant = false`.
+     */
+    ignoreVisuallyInsignificantDiffs?: boolean;
 
     /**
      * Compare two black-and-white versions of the images, ignoring colors.

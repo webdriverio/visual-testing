@@ -452,7 +452,7 @@ export async function executeImageCompare(
         : Number(data.rawMisMatchPercentage.toFixed(3))
 
     // 6. Generate and save the diff when there is a diff
-    const { diffBoundingBoxes, storeDiffs } = await generateAndSaveDiff(
+    const { diffBoundingBoxes, storeDiffs, allDiffsInsignificant } = await generateAndSaveDiff(
         data,
         imageCompareOptions,
         ignoredBoxes,
@@ -488,7 +488,7 @@ export async function executeImageCompare(
         storeDiffs,
     })
 
-    // 8. Handle visual baseline update
+    // 8. Handle visual baseline update and insignificant-diff override
     let finalReportMisMatchPercentage = reportMisMatchPercentage
     if (updateVisualBaseline()) {
         await checkBaselineImageExists({
@@ -497,6 +497,8 @@ export async function executeImageCompare(
             updateBaseline: true,
             actualBase64Image: useBase64Image ? actualBase64Image : undefined,
         })
+        finalReportMisMatchPercentage = 0
+    } else if (imageCompareOptions.ignoreVisuallyInsignificantDiffs && allDiffsInsignificant) {
         finalReportMisMatchPercentage = 0
     }
 
@@ -510,6 +512,7 @@ export async function executeImageCompare(
                 ...(diffFilePath ? { diff: diffFilePath } : {}),
             },
             misMatchPercentage: finalReportMisMatchPercentage,
+            diffBoundingBoxes,
         }
         : finalReportMisMatchPercentage
 }

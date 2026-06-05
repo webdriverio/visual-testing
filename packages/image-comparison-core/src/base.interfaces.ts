@@ -130,6 +130,13 @@ export interface BaseImageCompareOptions {
      */
     saveAboveTolerance?: number;
     /**
+     * When true, treat the comparison as 0% mismatch if every diff region has
+     * isVisuallySignificant = false (rendering/anti-aliasing artifacts only).
+     * The diff image is still saved for inspection when this overrides the result.
+     * @default false
+     */
+    ignoreVisuallyInsignificantDiffs?: boolean;
+    /**
      * Scale images to same size before comparison
      * @default false
      */

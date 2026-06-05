@@ -103,9 +103,10 @@ export default async function compareImages(
         ? Buffer.from(img2.data)
         : padToSize(Buffer.from(img2.data), img2.width, img2.height, width, height)
 
-    // Snapshot the original actual pixels before any comparison transforms (grayscale,
-    // alpha-opaque, zero-out). The diff image uses this as its background so the real
-    // screenshot content is always visible, including inside blockout regions.
+    // Snapshot both images before any comparison transforms (grayscale, alpha-opaque,
+    // zero-out). The diff image uses displayPixels2 as its background. displayPixels1
+    // is exposed for per-region content analysis (added/removed/changed classification).
+    const displayPixels1 = Buffer.from(pixels1)
     const displayPixels2 = Buffer.from(pixels2)
 
     const ignoreList = resolveIgnoreList(options.ignore)
@@ -164,6 +165,18 @@ export default async function compareImages(
 
     // Single-pass blend: paint diff pixels (magenta) on top of the actual screenshot.
     // pixels2 is already in memory and normalised to the canvas size, so no extra decode needed.
+    const getActualPixels = (): RawImage => ({
+        data: new Uint8Array(displayPixels2.buffer, displayPixels2.byteOffset, displayPixels2.byteLength),
+        width,
+        height,
+    })
+
+    const getBaselinePixels = (): RawImage => ({
+        data: new Uint8Array(displayPixels1.buffer, displayPixels1.byteOffset, displayPixels1.byteLength),
+        width,
+        height,
+    })
+
     const getRawPixels = (): RawImage => {
         const data = new Uint8Array(totalPixels * 4)
         for (let i = 0; i < data.length; i += 4) {
@@ -190,6 +203,8 @@ export default async function compareImages(
         rawMisMatchPercentage,
         misMatchPercentage: Number(rawMisMatchPercentage.toFixed(2)),
         getRawPixels,
+        getActualPixels,
+        getBaselinePixels,
         getBuffer,
         diffBounds,
         analysisTime: Date.now() - start,

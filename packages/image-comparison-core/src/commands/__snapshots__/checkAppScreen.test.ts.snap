@@ -95,6 +95,7 @@ exports[`checkAppScreen > should create screenCompareOptions with correct struct
       "blockOutStatusBar": false,
       "blockOutToolBar": false,
       "createJsonReportFiles": false,
+      "diffAnalysisThreshold": 10,
       "diffPixelBoundingBoxProximity": 5,
       "hideElements": [
         {
@@ -239,6 +240,7 @@ exports[`checkAppScreen > should execute checkAppScreen with basic options 2`] =
           "blockOutStatusBar": false,
           "blockOutToolBar": false,
           "createJsonReportFiles": false,
+          "diffAnalysisThreshold": 10,
           "diffPixelBoundingBoxProximity": 5,
           "ignoreAlpha": false,
           "ignoreAntialiasing": false,
@@ -358,6 +360,7 @@ exports[`checkAppScreen > should handle Android device correctly 1`] = `
       "blockOutStatusBar": false,
       "blockOutToolBar": false,
       "createJsonReportFiles": false,
+      "diffAnalysisThreshold": 10,
       "diffPixelBoundingBoxProximity": 5,
       "hideElements": [],
       "ignore": [],
@@ -400,6 +403,7 @@ exports[`checkAppScreen > should handle Android device correctly 2`] = `
           "blockOutStatusBar": false,
           "blockOutToolBar": false,
           "createJsonReportFiles": false,
+          "diffAnalysisThreshold": 10,
           "diffPixelBoundingBoxProximity": 5,
           "ignoreAlpha": false,
           "ignoreAntialiasing": false,
@@ -611,6 +615,7 @@ exports[`checkAppScreen > should handle ignore regions and device blockouts 2`] 
       "blockOutStatusBar": false,
       "blockOutToolBar": false,
       "createJsonReportFiles": false,
+      "diffAnalysisThreshold": 10,
       "diffPixelBoundingBoxProximity": 5,
       "hideElements": [
         {
@@ -676,6 +681,7 @@ exports[`checkAppScreen > should handle ignore regions and device blockouts 3`] 
           "blockOutStatusBar": false,
           "blockOutToolBar": false,
           "createJsonReportFiles": false,
+          "diffAnalysisThreshold": 10,
           "diffPixelBoundingBoxProximity": 5,
           "ignoreAlpha": false,
           "ignoreAntialiasing": false,
@@ -815,6 +821,7 @@ exports[`checkAppScreen > should merge compare options correctly 1`] = `
           "blockOutStatusBar": false,
           "blockOutToolBar": false,
           "createJsonReportFiles": false,
+          "diffAnalysisThreshold": 10,
           "diffPixelBoundingBoxProximity": 5,
           "ignoreAlpha": true,
           "ignoreAntialiasing": true,
@@ -976,6 +983,7 @@ exports[`checkAppScreen > should spread hideElements and removeElements into ign
           "blockOutStatusBar": false,
           "blockOutToolBar": false,
           "createJsonReportFiles": false,
+          "diffAnalysisThreshold": 10,
           "diffPixelBoundingBoxProximity": 5,
           "ignoreAlpha": false,
           "ignoreAntialiasing": false,

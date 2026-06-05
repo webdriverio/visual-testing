@@ -202,9 +202,34 @@ export interface DetermineWebElementIgnoreRegionsOptions {
 export interface BoundingBox extends BaseBoundingBox { }
 export interface IgnoreBoxes extends BoundingBox { }
 
+export type DiffChangeType = 'added' | 'removed' | 'changed' | 'color-shift'
+
+export interface DiffRegion extends BoundingBox {
+    /** Number of diff pixels within this region */
+    diffPixelCount: number;
+    /** Ratio of diff pixels to total bounding-box area (0–1) */
+    density: number;
+    /** Bounding-box width / height */
+    aspectRatio: number;
+    /** Bounding-box area as a fraction of the full image area (0–1) */
+    relativeArea: number;
+    /** Horizontal center of the region, normalised to 0–1 */
+    centerX: number;
+    /** Vertical center of the region, normalised to 0–1 */
+    centerY: number;
+    /** Semantic classification of what changed */
+    changeType: DiffChangeType;
+    /** Luminance-weighted average colour delta across sampled diff pixels (0–100) */
+    meanColorDelta: number;
+    /** Overall human-visibility estimate (0–100) */
+    perceptualScore: number;
+    /** True when the change is likely noticeable to a human reviewer */
+    isVisuallySignificant: boolean;
+}
+
 export interface BoundingBoxes {
-    /** Areas where visual differences were detected */
-    diffBoundingBoxes: BoundingBox[];
+    /** Areas where visual differences were detected, enriched with analysis metadata */
+    diffBoundingBoxes: DiffRegion[];
     /** Areas to exclude from comparison analysis */
     ignoredBoxes: IgnoreBoxes[],
 }

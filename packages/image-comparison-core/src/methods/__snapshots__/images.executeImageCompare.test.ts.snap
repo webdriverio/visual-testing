@@ -8,6 +8,7 @@ exports[`executeImageCompare > should handle updateVisualBaseline flag 1`] = `0`
 
 exports[`executeImageCompare > should return all compare data when returnAllCompareData is true 1`] = `
 {
+  "diffBoundingBoxes": [],
   "fileName": "test.png",
   "folders": {
     "actual": "/mock/actual/test.png",
@@ -20,6 +21,7 @@ exports[`executeImageCompare > should return all compare data when returnAllComp
 
 exports[`executeImageCompare > should return all compare data when returnAllCompareData is true 2`] = `
 {
+  "diffBoundingBoxes": [],
   "fileName": "test.png",
   "folders": {
     "actual": "/mock/actual/test.png",

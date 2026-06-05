@@ -137,6 +137,7 @@ describe('executeImageCompare', () => {
                 rawMisMatchPercentage: false,
                 saveAboveTolerance: 0,
                 createJsonReportFiles: false,
+                diffAnalysisThreshold: 10,
                 diffPixelBoundingBoxProximity: 10,
                 returnAllCompareData: false
             },
@@ -191,7 +192,8 @@ describe('executeImageCompare', () => {
         vi.mocked(processDiffPixels.processDiffPixels).mockReturnValue([])
         vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
             diffBoundingBoxes: [],
-            storeDiffs: false
+            storeDiffs: false,
+            allDiffsInsignificant: false,
         })
         vi.mocked(createCompareReport.createCompareReport).mockReturnValue(undefined)
         vi.mocked(createCompareReport.createJsonReportIfNeeded).mockResolvedValue(undefined)
@@ -199,6 +201,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
             analysisTime: 100,
@@ -438,6 +442,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
             analysisTime: 100,
@@ -445,8 +451,9 @@ describe('executeImageCompare', () => {
         })
 
         vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
-            diffBoundingBoxes: [{ left: 5, top: 5, right: 15, bottom: 15 }],
-            storeDiffs: true
+            diffBoundingBoxes: [{ left: 5, top: 5, right: 15, bottom: 15 }] as any,
+            storeDiffs: true,
+            allDiffsInsignificant: false,
         })
 
         await executeImageCompare({
@@ -468,7 +475,7 @@ describe('executeImageCompare', () => {
         )
         expect(createCompareReport.createJsonReportIfNeeded).toHaveBeenCalledWith({
             boundingBoxes: {
-                diffBoundingBoxes: [{ left: 5, top: 5, right: 15, bottom: 15 }],
+                diffBoundingBoxes: [{ left: 5, top: 5, right: 15, bottom: 15 }] as any,
                 ignoredBoxes: []
             },
             data: expect.any(Object),
@@ -487,7 +494,7 @@ describe('executeImageCompare', () => {
                 saveAboveTolerance: 0.1
             }),
             testContext: mockTestContext,
-            storeDiffs: true
+            storeDiffs: true,
         })
     })
 
@@ -541,6 +548,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.123456,
             misMatchPercentage: 0.12,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
             analysisTime: 100,
@@ -584,6 +593,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
             analysisTime: 10,
@@ -660,6 +671,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
             analysisTime: 10,
@@ -699,6 +712,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
             analysisTime: 10,
@@ -737,6 +752,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
             analysisTime: 10,
@@ -774,6 +791,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.05,
             misMatchPercentage: 0.05,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
             analysisTime: 10,
@@ -811,6 +830,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.2,
             misMatchPercentage: 0.2,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
             analysisTime: 10,
@@ -842,6 +863,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
             analysisTime: 10,
@@ -1050,6 +1073,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
             analysisTime: 100,
@@ -1058,7 +1083,8 @@ describe('executeImageCompare', () => {
 
         vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
             diffBoundingBoxes: [],
-            storeDiffs: true
+            storeDiffs: true,
+            allDiffsInsignificant: false,
         })
 
         await executeImageCompare({
@@ -1098,6 +1124,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
             analysisTime: 100,
@@ -1106,7 +1134,8 @@ describe('executeImageCompare', () => {
 
         vi.mocked(processDiffPixels.generateAndSaveDiff).mockResolvedValue({
             diffBoundingBoxes: [],
-            storeDiffs: true
+            storeDiffs: true,
+            allDiffsInsignificant: false,
         })
 
         await executeImageCompare({
@@ -1145,6 +1174,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0.5,
             misMatchPercentage: 0.5,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 100, bottom: 200 },
             analysisTime: 100,
@@ -1185,6 +1216,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
             analysisTime: 10,
@@ -1229,6 +1262,8 @@ describe('executeImageCompare', () => {
             rawMisMatchPercentage: 0,
             misMatchPercentage: 0,
             getRawPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getActualPixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
+            getBaselinePixels: vi.fn().mockReturnValue({ data: new Uint8Array(4), width: 1, height: 1 }),
             getBuffer: vi.fn().mockResolvedValue(Buffer.from('diff-image-data')),
             diffBounds: { left: 0, top: 0, right: 0, bottom: 0 },
             analysisTime: 10,

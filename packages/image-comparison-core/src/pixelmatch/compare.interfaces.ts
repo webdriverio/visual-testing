@@ -8,6 +8,10 @@ export interface CompareData {
     misMatchPercentage: number;
     /** Raw RGBA pixel data of the diff composited on the actual screenshot, with dimensions */
     getRawPixels: () => RawImage;
+    /** Raw RGBA pixel data of the actual screenshot (image2) before any comparison transforms */
+    getActualPixels: () => RawImage;
+    /** Raw RGBA pixel data of the baseline (image1) before any comparison transforms */
+    getBaselinePixels: () => RawImage;
     /** The diff image encoded as a PNG buffer */
     getBuffer: () => Promise<Buffer>;
     /** The bounds of the diff area */

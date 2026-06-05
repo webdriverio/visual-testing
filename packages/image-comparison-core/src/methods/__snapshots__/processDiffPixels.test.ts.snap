@@ -3,16 +3,22 @@
 exports[`processDiffPixels > should create separate bounding boxes for distant pixels 1`] = `
 [
   {
-    "bottom": 20,
-    "left": 20,
-    "right": 23,
-    "top": 20,
+    "box": {
+      "bottom": 20,
+      "left": 20,
+      "right": 23,
+      "top": 20,
+    },
+    "diffPixelCount": 4,
   },
   {
-    "bottom": 0,
-    "left": 0,
-    "right": 3,
-    "top": 0,
+    "box": {
+      "bottom": 0,
+      "left": 0,
+      "right": 3,
+      "top": 0,
+    },
+    "diffPixelCount": 4,
   },
 ]
 `;
@@ -67,10 +73,13 @@ exports[`processDiffPixels > should create separate bounding boxes for distant p
 exports[`processDiffPixels > should handle a large number of pixels 1`] = `
 [
   {
-    "bottom": 99,
-    "left": 0,
-    "right": 9,
-    "top": 0,
+    "box": {
+      "bottom": 99,
+      "left": 0,
+      "right": 9,
+      "top": 0,
+    },
+    "diffPixelCount": 1000,
   },
 ]
 `;
@@ -147,10 +156,13 @@ exports[`processDiffPixels > should handle empty pixel array 2`] = `
 exports[`processDiffPixels > should handle maximum diff percentage threshold 1`] = `
 [
   {
-    "bottom": 99999,
-    "left": 0,
-    "right": 9,
-    "top": 0,
+    "box": {
+      "bottom": 99999,
+      "left": 0,
+      "right": 9,
+      "top": 0,
+    },
+    "diffPixelCount": 1000000,
   },
 ]
 `;
@@ -172,10 +184,13 @@ exports[`processDiffPixels > should handle maximum diff percentage threshold 2`]
 exports[`processDiffPixels > should handle maximum diff pixels threshold 1`] = `
 [
   {
-    "bottom": 599999,
-    "left": 0,
-    "right": 9,
-    "top": 0,
+    "box": {
+      "bottom": 599999,
+      "left": 0,
+      "right": 9,
+      "top": 0,
+    },
+    "diffPixelCount": 6000000,
   },
 ]
 `;
@@ -197,10 +212,13 @@ exports[`processDiffPixels > should handle maximum diff pixels threshold 2`] = `
 exports[`processDiffPixels > should handle pixels in a complex pattern 1`] = `
 [
   {
-    "bottom": 25,
-    "left": 0,
-    "right": 25,
-    "top": 0,
+    "box": {
+      "bottom": 25,
+      "left": 0,
+      "right": 25,
+      "top": 0,
+    },
+    "diffPixelCount": 108,
   },
 ]
 `;
@@ -255,10 +273,13 @@ exports[`processDiffPixels > should handle pixels in a complex pattern 2`] = `
 exports[`processDiffPixels > should handle two adjacent pixels to trigger equal rank union 1`] = `
 [
   {
-    "bottom": 0,
-    "left": 0,
-    "right": 1,
-    "top": 0,
+    "box": {
+      "bottom": 0,
+      "left": 0,
+      "right": 1,
+      "top": 0,
+    },
+    "diffPixelCount": 2,
   },
 ]
 `;
@@ -286,10 +307,13 @@ exports[`processDiffPixels > should handle two adjacent pixels to trigger equal 
 exports[`processDiffPixels > should merge nearby pixels into a single bounding box 1`] = `
 [
   {
-    "bottom": 0,
-    "left": 0,
-    "right": 3,
-    "top": 0,
+    "box": {
+      "bottom": 0,
+      "left": 0,
+      "right": 3,
+      "top": 0,
+    },
+    "diffPixelCount": 4,
   },
 ]
 `;
@@ -317,10 +341,13 @@ exports[`processDiffPixels > should merge nearby pixels into a single bounding b
 exports[`processDiffPixels > should process a single pixel 1`] = `
 [
   {
-    "bottom": 0,
-    "left": 0,
-    "right": 0,
-    "top": 0,
+    "box": {
+      "bottom": 0,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+    },
+    "diffPixelCount": 1,
   },
 ]
 `;
@@ -348,16 +375,22 @@ exports[`processDiffPixels > should process a single pixel 2`] = `
 exports[`processDiffPixels > should respect proximity parameter when merging boxes 1`] = `
 [
   {
-    "bottom": 6,
-    "left": 6,
-    "right": 9,
-    "top": 6,
+    "box": {
+      "bottom": 6,
+      "left": 6,
+      "right": 9,
+      "top": 6,
+    },
+    "diffPixelCount": 4,
   },
   {
-    "bottom": 0,
-    "left": 0,
-    "right": 3,
-    "top": 0,
+    "box": {
+      "bottom": 0,
+      "left": 0,
+      "right": 3,
+      "top": 0,
+    },
+    "diffPixelCount": 4,
   },
 ]
 `;

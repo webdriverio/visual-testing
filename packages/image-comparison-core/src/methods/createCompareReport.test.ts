@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { writeFileSync, readFileSync } from 'node:fs'
 import { createCompareReport, createJsonReportIfNeeded } from './createCompareReport.js'
 import type { CompareData } from '../pixelmatch/compare.interfaces.js'
-import type { BoundingBox, IgnoreBoxes } from './rectangles.interfaces.js'
+import type { IgnoreBoxes } from './rectangles.interfaces.js'
 import type { BaseDimensions } from '../base.interfaces.js'
 import { getBase64ScreenshotSize } from '../helpers/utils.js'
 
@@ -20,6 +20,8 @@ describe('createCompareReport', () => {
         misMatchPercentage,
         rawMisMatchPercentage: misMatchPercentage,
         getRawPixels: () => ({ data: new Uint8Array(4), width: 1, height: 1 }),
+        getActualPixels: () => ({ data: new Uint8Array(4), width: 1, height: 1 }),
+        getBaselinePixels: () => ({ data: new Uint8Array(4), width: 1, height: 1 }),
         getBuffer: () => Promise.resolve(Buffer.from('')),
         diffBounds: { top: 0, left: 0, bottom: 0, right: 0 },
         analysisTime: 0,
@@ -39,7 +41,7 @@ describe('createCompareReport', () => {
     })
 
     const createMockBoundingBoxes = () => ({
-        diffBoundingBoxes: [] as BoundingBox[],
+        diffBoundingBoxes: [] as any,
         ignoredBoxes: [] as IgnoreBoxes[],
     })
 
@@ -146,13 +148,15 @@ describe('createJsonReportIfNeeded', () => {
         misMatchPercentage,
         rawMisMatchPercentage: misMatchPercentage,
         getRawPixels: () => ({ data: new Uint8Array(4), width: 1, height: 1 }),
+        getActualPixels: () => ({ data: new Uint8Array(4), width: 1, height: 1 }),
+        getBaselinePixels: () => ({ data: new Uint8Array(4), width: 1, height: 1 }),
         getBuffer: () => Promise.resolve(Buffer.from('')),
         diffBounds: { top: 0, left: 0, bottom: 0, right: 0 },
         analysisTime: 0,
         diffPixels: [],
     })
     const createMockBoundingBoxes = () => ({
-        diffBoundingBoxes: [] as BoundingBox[],
+        diffBoundingBoxes: [] as any,
         ignoredBoxes: [] as IgnoreBoxes[],
     })
     const createTestContext = (options: {
