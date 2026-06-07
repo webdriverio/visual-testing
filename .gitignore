@@ -23,7 +23,6 @@ build
 # folders
 .tmp
 .pixelmatch-tmp/
-/*/*-pixelmatch/
 /__snapshots__/
 .idea/
 localBaseline/
