@@ -34,7 +34,8 @@ export const config: WebdriverIO.Config  = {
                 addIOSBezelCorners: true,
                 baselineFolder: join(
                     process.cwd(),
-                    './tests/lambdaTestBaseline/'
+                    // './tests/lambdaTestBaseline/'
+                    './tests/lambdaTestBaseline-pixelmatch/'
                 ),
                 formatImageName: '{tag}-{logName}-{width}x{height}',
                 screenshotPath: join(process.cwd(), '.tmp/'),
@@ -44,7 +45,7 @@ export const config: WebdriverIO.Config  = {
                 blockOutSideBar: true,
                 createJsonReportFiles: false,
                 rawMisMatchPercentage: !!process.env.RAW_MISMATCH || false,
-                enableLayoutTesting: true,
+                enableLayoutTesting: false,
                 ignoreAntialiasing: true,
                 alwaysSaveActualImage: false,
             } satisfies VisualServiceOptions,
