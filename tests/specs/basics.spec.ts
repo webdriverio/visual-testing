@@ -2,6 +2,8 @@ import { join } from 'node:path'
 import { browser, expect } from '@wdio/globals'
 import { fileExists } from '../helpers/fileExists.ts'
 
+const isBaselineSetup = process.env.BASELINE_SETUP === 'true'
+
 describe('@wdio/visual-service basics', () => {
     beforeEach(async () => {
         await browser.url('')
@@ -47,12 +49,14 @@ describe('@wdio/visual-service basics', () => {
 
     describe('check methods', () => {
         it('should fail comparing with a baseline', async () => {
-            const tag = 'examplePageFail'
+            if (!isBaselineSetup) {
+                await browser.execute(
+                    'arguments[0].innerHTML = "Test Demo Page";',
+                    await $('.hero__subtitle')
+                )
+            }
 
-            await browser.execute(
-                'arguments[0].innerHTML = "Test Demo Page";',
-                await $('.hero__subtitle')
-            )
+            const tag = 'examplePageFail'
 
             await expect(await browser.checkScreen(tag, { enableLayoutTesting: false })).toBeGreaterThan(0)
         })
