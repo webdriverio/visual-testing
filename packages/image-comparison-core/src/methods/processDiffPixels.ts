@@ -97,7 +97,7 @@ class DisjointSet {
     }
 }
 
-type RegionData = { box: BoundingBox; diffPixelCount: number }
+type RegionData = { box: BoundingBox; diffPixelCount: number; edgePixelRatio: number }
 
 function mergeBoundingBoxes(regions: RegionData[], proximity: number): RegionData[] {
     log.info(`Merging bounding boxes started with a proximity of ${proximity} pixels`)
@@ -117,6 +117,7 @@ function mergeBoundingBoxes(regions: RegionData[], proximity: number): RegionDat
                 region.box.bottom >= other.box.top - proximity
             ) {
                 regions.splice(i, 1)
+                const totalPixels = region.diffPixelCount + other.diffPixelCount
                 regions.push({
                     box: {
                         left: Math.min(region.box.left, other.box.left),
@@ -124,7 +125,11 @@ function mergeBoundingBoxes(regions: RegionData[], proximity: number): RegionDat
                         right: Math.max(region.box.right, other.box.right),
                         bottom: Math.max(region.box.bottom, other.box.bottom),
                     },
-                    diffPixelCount: region.diffPixelCount + other.diffPixelCount,
+                    diffPixelCount: totalPixels,
+                    edgePixelRatio: (
+                        region.edgePixelRatio * region.diffPixelCount +
+                        other.edgePixelRatio * other.diffPixelCount
+                    ) / totalPixels,
                 })
                 mergedWithAnotherBox = true
                 break
@@ -166,7 +171,7 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): RegionData[]
         log.error('This likely indicates a major visual difference or an issue with the comparison.')
         log.error('Consider checking if the baseline image is correct or if there are major UI changes.')
 
-        return [{ box: { left: 0, top: 0, right: maxX, bottom: maxY }, diffPixelCount: diffPixels.length }]
+        return [{ box: { left: 0, top: 0, right: maxX, bottom: maxY }, diffPixelCount: diffPixels.length, edgePixelRatio: 0 }]
     }
 
     const totalStartTime = Date.now()
@@ -215,22 +220,27 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): RegionData[]
         groups.get(root)?.push(pixelMap.get(key) as Pixel)
     }
 
-    // Calculate bounding boxes, preserving per-group pixel counts
+    // Calculate bounding boxes with per-group pixel counts and edge pixel ratio
+    const edgeDirections = [{ dx: 1, dy: 0 }, { dx: -1, dy: 0 }, { dx: 0, dy: 1 }, { dx: 0, dy: -1 }]
     const regions: RegionData[] = []
     for (const pixels of groups.values()) {
         let left = Infinity
         let top = Infinity
         let right = -Infinity
         let bottom = -Infinity
+        let edgeCount = 0
 
         for (const pixel of pixels) {
             if (pixel.x < left) {left = pixel.x}
             if (pixel.y < top) {top = pixel.y}
             if (pixel.x > right) {right = pixel.x}
             if (pixel.y > bottom) {bottom = pixel.y}
+            if (edgeDirections.some(({ dx, dy }) => !pixelMap.has(`${pixel.x + dx},${pixel.y + dy}`))) {
+                edgeCount++
+            }
         }
 
-        regions.push({ box: { left, top, right, bottom }, diffPixelCount: pixels.length })
+        regions.push({ box: { left, top, right, bottom }, diffPixelCount: pixels.length, edgePixelRatio: edgeCount / pixels.length })
     }
 
     log.info(`Grouping time: ${Date.now() - groupingStartTime}ms`)
@@ -255,10 +265,11 @@ function processDiffPixels(diffPixels: Pixel[], proximity: number): RegionData[]
 function formatRegionSummary(regions: DiffRegion[]): string {
     const lines = regions.map((r, i) => {
         const type = r.changeType.padEnd(12)
+        const pattern = r.diffPattern.padEnd(13)
         const density = `${Math.round(r.density * 100)}%`.padStart(4)
         const score = `${r.perceptualScore}/100`.padStart(8)
         const flag = r.isVisuallySignificant ? 'SIGNIFICANT    ' : 'not significant'
-        return ` Region ${i + 1}: type=${type} | density=${density} | score=${score} | ${flag}`
+        return ` Region ${i + 1}: type=${type} | pattern=${pattern} | density=${density} | score=${score} | ${flag}`
     })
     return lines.join('\n')
 }

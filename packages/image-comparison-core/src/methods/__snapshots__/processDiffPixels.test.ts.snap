@@ -10,6 +10,7 @@ exports[`processDiffPixels > should create separate bounding boxes for distant p
       "top": 20,
     },
     "diffPixelCount": 4,
+    "edgePixelRatio": 1,
   },
   {
     "box": {
@@ -19,6 +20,7 @@ exports[`processDiffPixels > should create separate bounding boxes for distant p
       "top": 0,
     },
     "diffPixelCount": 4,
+    "edgePixelRatio": 1,
   },
 ]
 `;
@@ -80,6 +82,7 @@ exports[`processDiffPixels > should handle a large number of pixels 1`] = `
       "top": 0,
     },
     "diffPixelCount": 1000,
+    "edgePixelRatio": 0,
   },
 ]
 `;
@@ -163,6 +166,7 @@ exports[`processDiffPixels > should handle maximum diff percentage threshold 1`]
       "top": 0,
     },
     "diffPixelCount": 1000000,
+    "edgePixelRatio": 0,
   },
 ]
 `;
@@ -191,6 +195,7 @@ exports[`processDiffPixels > should handle maximum diff pixels threshold 1`] = `
       "top": 0,
     },
     "diffPixelCount": 6000000,
+    "edgePixelRatio": 0,
   },
 ]
 `;
@@ -219,6 +224,7 @@ exports[`processDiffPixels > should handle pixels in a complex pattern 1`] = `
       "top": 0,
     },
     "diffPixelCount": 108,
+    "edgePixelRatio": 0.5555555555555556,
   },
 ]
 `;
@@ -280,6 +286,7 @@ exports[`processDiffPixels > should handle two adjacent pixels to trigger equal 
       "top": 0,
     },
     "diffPixelCount": 2,
+    "edgePixelRatio": 0,
   },
 ]
 `;
@@ -314,6 +321,7 @@ exports[`processDiffPixels > should merge nearby pixels into a single bounding b
       "top": 0,
     },
     "diffPixelCount": 4,
+    "edgePixelRatio": 0,
   },
 ]
 `;
@@ -348,6 +356,7 @@ exports[`processDiffPixels > should process a single pixel 1`] = `
       "top": 0,
     },
     "diffPixelCount": 1,
+    "edgePixelRatio": 0,
   },
 ]
 `;
@@ -382,6 +391,7 @@ exports[`processDiffPixels > should respect proximity parameter when merging box
       "top": 6,
     },
     "diffPixelCount": 4,
+    "edgePixelRatio": 1,
   },
   {
     "box": {
@@ -391,6 +401,7 @@ exports[`processDiffPixels > should respect proximity parameter when merging box
       "top": 0,
     },
     "diffPixelCount": 4,
+    "edgePixelRatio": 1,
   },
 ]
 `;

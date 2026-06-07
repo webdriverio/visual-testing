@@ -1,7 +1,7 @@
-import type { BoundingBox, DiffChangeType, DiffRegion } from './rectangles.interfaces.js'
+import type { BoundingBox, DiffChangeType, DiffPattern, DiffRegion } from './rectangles.interfaces.js'
 import type { RawImage } from '../utils/imageUtils.js'
 
-type RegionData = { box: BoundingBox; diffPixelCount: number }
+type RegionData = { box: BoundingBox; diffPixelCount: number; edgePixelRatio: number }
 
 const LW_R = 0.299
 const LW_G = 0.587
@@ -52,8 +52,22 @@ function sampleRegion(pixels: RawImage, box: BoundingBox, stride: number): Pixel
     return samples
 }
 
-const UNIFORM_STDDEV = 20  // luminance stddev below this → region is a uniform background
-const HUE_DIFF_THRESHOLD = 30  // circular hue angle difference above this → color-shift
+const UNIFORM_STDDEV = 20
+const HUE_DIFF_THRESHOLD = 30
+
+function classifyPattern(edgePixelRatio: number, density: number): DiffPattern {
+    if (edgePixelRatio > 0.85) { return 'edge-outline' }
+    if (edgePixelRatio < 0.35 && density > 0.30) { return 'solid-fill' }
+    return 'scattered'
+}
+
+function isSignificant(pattern: DiffPattern, meanColorDelta: number, relativeArea: number): boolean {
+    switch (pattern) {
+    case 'edge-outline': return meanColorDelta > 50
+    case 'solid-fill':   return true
+    case 'scattered':    return meanColorDelta > 20 && relativeArea > 0.002
+    }
+}
 
 export function analyzeDiffRegions(
     regions: RegionData[],
@@ -64,7 +78,7 @@ export function analyzeDiffRegions(
 ): DiffRegion[] {
     const imageArea = imageWidth * imageHeight
 
-    return regions.map(({ box, diffPixelCount }) => {
+    return regions.map(({ box, diffPixelCount, edgePixelRatio }) => {
         const w = box.right - box.left + 1
         const h = box.bottom - box.top + 1
         const boxArea = w * h
@@ -75,6 +89,9 @@ export function analyzeDiffRegions(
         const relativeArea = boxArea / imageArea
         const centerX = (box.left + box.right) / 2 / imageWidth
         const centerY = (box.top + box.bottom) / 2 / imageHeight
+
+        // --- Diff pattern ---
+        const diffPattern = classifyPattern(edgePixelRatio, density)
 
         // --- Pixel sampling ---
         const stride = boxArea > 500 ? 4 : 1
@@ -115,7 +132,7 @@ export function analyzeDiffRegions(
         const perceptualScore = Math.round(
             (density * 0.35 + (meanColorDelta / 100) * 0.45 + Math.min(relativeArea / 0.05, 1) * 0.20) * 100
         )
-        const isVisuallySignificant = perceptualScore > 15
+        const isVisuallySignificant = isSignificant(diffPattern, meanColorDelta, relativeArea)
 
         return {
             ...box,
@@ -125,6 +142,8 @@ export function analyzeDiffRegions(
             relativeArea,
             centerX,
             centerY,
+            edgePixelRatio,
+            diffPattern,
             changeType,
             meanColorDelta,
             perceptualScore,

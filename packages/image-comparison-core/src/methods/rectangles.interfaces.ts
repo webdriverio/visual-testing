@@ -203,6 +203,7 @@ export interface BoundingBox extends BaseBoundingBox { }
 export interface IgnoreBoxes extends BoundingBox { }
 
 export type DiffChangeType = 'added' | 'removed' | 'changed' | 'color-shift'
+export type DiffPattern = 'edge-outline' | 'solid-fill' | 'scattered'
 
 export interface DiffRegion extends BoundingBox {
     /** Number of diff pixels within this region */
@@ -217,6 +218,10 @@ export interface DiffRegion extends BoundingBox {
     centerX: number;
     /** Vertical center of the region, normalised to 0–1 */
     centerY: number;
+    /** Fraction of diff pixels that have at least one 4-connected non-diff neighbour (0–1) */
+    edgePixelRatio: number;
+    /** Geometric pattern of the diff pixel distribution */
+    diffPattern: DiffPattern;
     /** Semantic classification of what changed */
     changeType: DiffChangeType;
     /** Luminance-weighted average colour delta across sampled diff pixels (0–100) */
