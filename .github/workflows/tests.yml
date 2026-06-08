@@ -5,6 +5,9 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */2 * * *'  # Every 2 hours; controlled by ENABLE_SCHEDULED_TESTS + SCHEDULED_TESTS_UNTIL vars
 
 permissions:
   contents: read
@@ -115,15 +118,54 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
+  schedule-gate:
+    name: 🗓️ Schedule Gate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    outputs:
+      enabled: ${{ steps.check.outputs.enabled }}
+      branch: ${{ steps.check.outputs.branch }}
+    steps:
+      - name: Check ENABLE_SCHEDULED_TESTS and SCHEDULED_TESTS_UNTIL
+        id: check
+        run: |
+          if [[ "${{ vars.ENABLE_SCHEDULED_TESTS }}" != "true" ]]; then
+            echo "Scheduled tests disabled (ENABLE_SCHEDULED_TESTS != true)"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          until_date="${{ vars.SCHEDULED_TESTS_UNTIL }}"
+          if [[ -z "$until_date" ]]; then
+            echo "No expiry date set (SCHEDULED_TESTS_UNTIL is empty)"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          now=$(date -u +%s)
+          until=$(date -u -d "$until_date 23:59:59" +%s)
+          if (( now <= until )); then
+            echo "Schedule active until $until_date"
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "branch=${{ vars.SCHEDULED_TESTS_BRANCH || 'main' }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "Schedule window expired on $until_date"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
   ci-pr-desktop-web:
     name: 🔄 💻 CI PR Run Desktop Web Tests on LambdaTest
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]') ||
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ needs.schedule-gate.outputs.branch || github.ref }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -171,12 +213,18 @@ jobs:
   ci-pr-android-web:
     name: 🔄 🤖 🌐 CI PR Run Android Web Tests on LambdaTest
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]') ||
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ needs.schedule-gate.outputs.branch || github.ref }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -224,12 +272,18 @@ jobs:
   ci-pr-ios-web:
     name: 🔄 🍏 🌐 CI PR Run iOS Web Tests on LambdaTest
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]') ||
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ needs.schedule-gate.outputs.branch || github.ref }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -277,12 +331,18 @@ jobs:
   ci-pr-app:
     name: 🔄 📱 CI PR Run Mobile App Tests on Sauce
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]') ||
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ needs.schedule-gate.outputs.branch || github.ref }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -330,12 +390,18 @@ jobs:
   ci-pr-ocr:
     name: 🔄 📱 CI PR Run OCR Tests  on LambdaTest
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]') ||
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ needs.schedule-gate.outputs.branch || github.ref }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
