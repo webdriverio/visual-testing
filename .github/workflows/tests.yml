@@ -6,6 +6,11 @@ on:
       - main
   pull_request:
   workflow_dispatch:
+    inputs:
+      enable_schedule:
+        description: 'Enable scheduled tests (every 2h for 1 week from today)'
+        type: boolean
+        default: false
   schedule:
     - cron: '0 */2 * * *'  # Every 2 hours; controlled by ENABLE_SCHEDULED_TESTS + SCHEDULED_TESTS_UNTIL vars
 
@@ -117,6 +122,26 @@ jobs:
             !.tmp/saveActual/
             !.tmp/testDiff/
             !.next/
+
+  configure-schedule:
+    name: ⚙️ Configure Schedule
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    permissions:
+      actions: write
+    steps:
+      - name: Enable or disable scheduled tests
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ "${{ inputs.enable_schedule }}" == "true" ]]; then
+            gh variable set ENABLE_SCHEDULED_TESTS --body "true" --repo "${{ github.repository }}"
+            gh variable set SCHEDULED_TESTS_UNTIL --body "$(date -u -d '+7 days' '+%Y-%m-%d')" --repo "${{ github.repository }}"
+            echo "Scheduled tests enabled until $(date -u -d '+7 days' '+%Y-%m-%d')"
+          else
+            gh variable set ENABLE_SCHEDULED_TESTS --body "false" --repo "${{ github.repository }}"
+            echo "Scheduled tests disabled"
+          fi
 
   schedule-gate:
     name: 🗓️ Schedule Gate
