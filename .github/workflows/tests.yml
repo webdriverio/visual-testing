@@ -8,9 +8,8 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to run tests against'
+        description: 'Branch to run tests against (leave empty to use the selected branch above)'
         type: string
-        default: 'main'
   schedule:
     - cron: "0 */2 * * *" # Every 2 hours; stop by disabling the workflow or letting SCHEDULED_TESTS_UNTIL expire
 
