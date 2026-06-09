@@ -1,130 +1,63 @@
-name: tests
+name: scheduled tests
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run tests against'
+        type: string
+        required: true
+        default: 'main'
+  schedule:
+    - cron: '0 */2 * * *'  # Every 2 hours; disable via GitHub UI or let SCHEDULED_TESTS_UNTIL expire
 
 permissions:
   contents: read
-  pull-requests: read
 
 env:
   PNPM_VERSION: 9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7
 
 jobs:
-  dependency-check:
-    name: 🔎 📦 Dependency Check
+  schedule-gate:
+    name: 🗓️ Schedule Gate
     runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
     outputs:
-      run_unit_tests: ${{ steps.set-vars.outputs.run_unit_tests }}
-      run_web_tests: ${{ steps.set-vars.outputs.run_web_tests }}
+      enabled: ${{ steps.check.outputs.enabled }}
     steps:
-      - name: 🧐 Determine Job to Run
-        id: set-vars
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
+      - name: Check SCHEDULED_TESTS_UNTIL
+        id: check
         run: |
-          echo "$PR_TITLE" | grep -qE '@typescript-eslint|vitest|eslint|@types|@tsconfig|ts-node|jsdom|typescript' && echo "run_unit_tests=true" >> "$GITHUB_OUTPUT"
-          if echo "$PR_TITLE" | grep -qE 'copyfiles|rimraf|saucelabs|lambdatest|webdriverio'; then
-            echo "run_web_tests=true" >> "$GITHUB_OUTPUT"
-          elif echo "$PR_TITLE" | grep -q '@wdio/' && ! echo "$PR_TITLE" | grep -q '@wdio/appium-service'; then
-            echo "run_web_tests=true" >> "$GITHUB_OUTPUT"
+          until_date="${{ vars.SCHEDULED_TESTS_UNTIL }}"
+          if [[ -z "$until_date" ]]; then
+            echo "SCHEDULED_TESTS_UNTIL not set — skipping"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          now=$(date -u +%s)
+          until=$(date -u -d "$until_date 23:59:59" +%s)
+          if (( now <= until )); then
+            echo "Schedule active until $until_date"
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Schedule window expired on $until_date"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
 
-  ci-dependency-unit-test:
-    name: 🧪 CI Dependency Update Run Unit Tests
-    needs: dependency-check
-    if: needs.dependency-check.outputs.run_unit_tests == 'true'
+  scheduled-desktop-web:
+    name: 🗓️ 💻 Scheduled Desktop Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-
-      - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
-
-      - name: 🏗️ Build
-        working-directory: ./
-        run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        run: pnpm test
-
-  ci-dependency-web:
-    name: 🌐 CI Dependency Update Run Desktop Web Tests on LambdaTest
-    needs: dependency-check
-    if: needs.dependency-check.outputs.run_web_tests == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout Repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-
-      - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
-
-      - name: 🏗️ Build
-        working-directory: ./
-        run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
-
-      - name: 🖥️ 🌐 Run Desktop Web e2e tests
-        working-directory: ./
-        env:
-          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
-          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
-          BUILD_PREFIX: true
-        run: pnpm test.lambdatest.desktop --maxConcurrency=7
-
-      - name: 📤 Upload artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: failure()
-        with:
-          name: dependency-update-desktop-web-logs
-          path: |
-            logs/*.log
-            .tmp/
-            !.tmp/checkActual/
-            !.tmp/saveActual/
-            !.tmp/testDiff/
-            !.next/
-
-  ci-pr-desktop-web:
-    name: 🔄 💻 CI PR Run Desktop Web Tests on LambdaTest
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
-    steps:
-      - name: ⬇️ Checkout Repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+          ref: ${{ inputs.branch || vars.SCHEDULED_TESTS_BRANCH || 'main' }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -160,7 +93,7 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
         with:
-          name: ci-pr-desktop-web-logs
+          name: scheduled-desktop-web-logs
           path: |
             logs/*.log
             .tmp/
@@ -169,15 +102,20 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
-  ci-pr-android-web:
-    name: 🔄 🤖 🌐 CI PR Run Android Web Tests on LambdaTest
+  scheduled-android-web:
+    name: 🗓️ 🤖 🌐 Scheduled Android Web Tests on LambdaTest
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.branch || vars.SCHEDULED_TESTS_BRANCH || 'main' }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -213,7 +151,7 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
         with:
-          name: ci-pr-android-web-logs
+          name: scheduled-android-web-logs
           path: |
             logs/*.log
             .tmp/
@@ -222,15 +160,20 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
-  ci-pr-ios-web:
-    name: 🔄 🍏 🌐 CI PR Run iOS Web Tests on LambdaTest
+  scheduled-ios-web:
+    name: 🗓️ 🍏 🌐 Scheduled iOS Web Tests on LambdaTest
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.branch || vars.SCHEDULED_TESTS_BRANCH || 'main' }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -266,7 +209,7 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
         with:
-          name: ci-pr-ios-web-logs
+          name: scheduled-ios-web-logs
           path: |
             logs/*.log
             .tmp/
@@ -275,15 +218,20 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
-  ci-pr-app:
-    name: 🔄 📱 CI PR Run Mobile App Tests on Sauce
+  scheduled-app:
+    name: 🗓️ 📱 Scheduled Mobile App Tests on Sauce
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.branch || vars.SCHEDULED_TESTS_BRANCH || 'main' }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -319,7 +267,7 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
         with:
-          name: ci-pr-mobile-app-logs
+          name: scheduled-mobile-app-logs
           path: |
             logs/*.log
             .tmp/
@@ -328,15 +276,20 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
-  ci-pr-ocr:
-    name: 🔄 📱 CI PR Run OCR Tests  on LambdaTest
+  scheduled-ocr:
+    name: 🗓️ 🔎 Scheduled OCR Tests on LambdaTest
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+    needs: [schedule-gate]
+    if: >-
+      always() && (
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'schedule' && needs.schedule-gate.outputs.enabled == 'true')
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.branch || vars.SCHEDULED_TESTS_BRANCH || 'main' }}
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -372,7 +325,7 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
         with:
-          name: ci-pr-ocr-logs
+          name: scheduled-ocr-logs
           path: |
             logs/*.log
             .tmp/
