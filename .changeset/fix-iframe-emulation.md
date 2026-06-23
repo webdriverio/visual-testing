@@ -1,5 +1,6 @@
 ---
 "@wdio/image-comparison-core": patch
+"@wdio/visual-service": patch
 ---
 
 fix: prevent false emulation detection when checkElement is called inside an iframe after switchFrame
