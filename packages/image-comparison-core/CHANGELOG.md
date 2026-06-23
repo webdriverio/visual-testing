@@ -1,5 +1,15 @@
 # @wdio/image-comparison-core
 
+## 1.2.4
+
+### Patch Changes
+
+- 60997df: fix: prevent false emulation detection when checkElement is called inside an iframe after switchFrame
+
+  ### Committers: 1
+
+  - Taro.Nonoyama([@n2-freevas](https://github.com/n2-freevas))
+
 ## 1.2.3
 
 ### Patch Changes
