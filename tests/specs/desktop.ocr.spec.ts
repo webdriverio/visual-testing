@@ -70,8 +70,11 @@ describe('@wdio/visual-service:ocr desktop', () => {
     })
 
     it(`should click on a button based on text inside of a haystack of coordinates on ${environment}`, async function () {
+        // Scope the haystack to the single "Why WebdriverIO?" button. The full button
+        // row is a very wide, short strip which defeats Tesseract's automatic page
+        // segmentation, so we crop tightly around the button instead.
         await driver.ocrClickOnText({
-            haystack: { height: 44, width: 1108, x: 129, y: 590 },
+            haystack: { height: 44, width: 200, x: 470, y: 590 },
             text: 'WebdriverIO?',
             // With the default contrast of 0.25, the text is not found
             contrast: 0.5,
