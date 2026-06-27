@@ -168,6 +168,33 @@ describe('getScreenDimensions', () => {
         expect(dimensions.dimensions.window.screenHeight).toBe(1800)
     })
 
+    it('should not detect emulation when running inside an iframe', () => {
+        const originalSelf = window.self
+        Object.defineProperty(window, 'self', {
+            value: {} as Window,
+            configurable: true,
+            writable: true,
+        })
+
+        Object.defineProperty(window, 'devicePixelRatio', { value: 3, configurable: true })
+        Object.defineProperty(window, 'innerWidth', { value: 50, configurable: true })
+        Object.defineProperty(window, 'innerHeight', { value: 100, configurable: true })
+        Object.defineProperty(window, 'matchMedia', {
+            value: vi.fn().mockImplementation(() => ({ matches: false })),
+            ...CONFIGURABLE,
+        })
+
+        const dimensions = getScreenDimensions(false)
+
+        Object.defineProperty(window, 'self', {
+            value: originalSelf,
+            configurable: true,
+            writable: true,
+        })
+
+        expect(dimensions.dimensions.window.isEmulated).toBe(false)
+    })
+
     it('should handle zero devicePixelRatio', () => {
         Object.defineProperty(window, 'devicePixelRatio', { value: 0, configurable: true })
         Object.defineProperty(window, 'innerWidth', { value: 1920, configurable: true })

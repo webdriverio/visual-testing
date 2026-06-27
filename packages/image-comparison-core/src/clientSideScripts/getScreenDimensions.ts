@@ -10,8 +10,10 @@ export default function getScreenDimensions(isMobile: boolean): ScreenDimensions
     const dpr = window.devicePixelRatio || 1
     const minEdge = Math.min(width, height)
     const maxEdge = Math.max(width, height)
+    const isInIframe = window.self !== window.top
     const isLikelyEmulated =
         !isMobile &&              // Only check for emulated on desktop
+        !isInIframe &&            // Skip emulation detection inside iframes
         dpr >= 2 &&               // High-DPI signal
         minEdge <= 800 &&         // Catch phones/tablets in portrait/landscape
         maxEdge <= 1280 &&        // Conservative max for emulated tablet sizes
