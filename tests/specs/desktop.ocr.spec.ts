@@ -63,6 +63,7 @@ describe('@wdio/visual-service:ocr desktop', () => {
             text: 'WebdriverIO?',
             relativePosition: {
                 left: 150,
+                above: 10,
             }
         })
 
