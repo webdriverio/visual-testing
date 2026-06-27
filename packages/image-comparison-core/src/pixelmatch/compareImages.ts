@@ -1,6 +1,6 @@
 import pixelmatch from 'pixelmatch'
-import { Jimp, JimpMime } from 'jimp'
-import type { CompareData, ComparisonOptions, ComparisonIgnoreOption } from '../resemble/compare.interfaces.js'
+import { decodeImage, resizeBilinear, encodeImage, type RawImage } from '../utils/imageUtils.js'
+import type { CompareData, ComparisonOptions, ComparisonIgnoreOption } from './compare.interfaces.js'
 
 function resolveIgnoreList(ignore: ComparisonOptions['ignore']): ComparisonIgnoreOption[] {
     if (!ignore) {
@@ -42,8 +42,7 @@ function opaqueAlphaChannel(pixels: Buffer, totalPixels: number): void {
 
 // Pad a raw RGBA pixel buffer to a larger canvas size, placing the source at
 // position (0, 0) and filling the remaining area with opaque white.
-// This matches resemble's normalise() intent without using Jimp's contain()
-// which centers the image and shifts content by a pixel.
+// Pad source at (0, 0) and fill the remaining area with opaque white.
 function padToSize(src: Buffer, srcW: number, srcH: number, dstW: number, dstH: number): Buffer {
     const dst = Buffer.alloc(dstW * dstH * 4, 255) // opaque white
     for (let y = 0; y < srcH; y++) {
@@ -77,33 +76,37 @@ export default async function compareImages(
 ): Promise<CompareData> {
     const start = Date.now()
 
-    const img1 = await Jimp.read(image1)
-    const img2 = await Jimp.read(image2)
+    let img1 = decodeImage(image1)
+    let img2 = decodeImage(image2)
 
     if (options.scaleToSameSize) {
-        const size1 = img1.bitmap.width * img1.bitmap.height
-        const size2 = img2.bitmap.width * img2.bitmap.height
+        const size1 = img1.width * img1.height
+        const size2 = img2.width * img2.height
         if (size1 > size2) {
-            img2.resize({ w: img1.bitmap.width, h: img1.bitmap.height })
+            img2 = resizeBilinear(img2, img1.width, img1.height)
         } else if (size2 > size1) {
-            img1.resize({ w: img2.bitmap.width, h: img2.bitmap.height })
+            img1 = resizeBilinear(img1, img2.width, img2.height)
         }
     }
 
     // Determine the target canvas size (max of both dimensions).
-    const width = Math.max(img1.bitmap.width, img2.bitmap.width)
-    const height = Math.max(img1.bitmap.height, img2.bitmap.height)
+    const width = Math.max(img1.width, img2.width)
+    const height = Math.max(img1.height, img2.height)
     const totalPixels = width * height
 
-    // Copy bitmap data into mutable buffers, padding at (0,0) when sizes differ.
-    // Using padToSize instead of Jimp's contain() avoids centering which shifts
-    // content by a pixel and creates false diffs along the top edge.
-    const pixels1 = img1.bitmap.width === width && img1.bitmap.height === height
-        ? Buffer.from(img1.bitmap.data)
-        : padToSize(Buffer.from(img1.bitmap.data), img1.bitmap.width, img1.bitmap.height, width, height)
-    const pixels2 = img2.bitmap.width === width && img2.bitmap.height === height
-        ? Buffer.from(img2.bitmap.data)
-        : padToSize(Buffer.from(img2.bitmap.data), img2.bitmap.width, img2.bitmap.height, width, height)
+    // Copy bitmap data into mutable buffers, padding smaller images at (0,0)
+    // with opaque white so content is not shifted by centering.
+    const pixels1 = img1.width === width && img1.height === height
+        ? Buffer.from(img1.data)
+        : padToSize(Buffer.from(img1.data), img1.width, img1.height, width, height)
+    const pixels2 = img2.width === width && img2.height === height
+        ? Buffer.from(img2.data)
+        : padToSize(Buffer.from(img2.data), img2.width, img2.height, width, height)
+
+    // Snapshot the original actual pixels before any comparison transforms (grayscale,
+    // alpha-opaque, zero-out). The diff image uses this as its background so the real
+    // screenshot content is always visible, including inside blockout regions.
+    const displayPixels2 = Buffer.from(pixels2)
 
     const ignoreList = resolveIgnoreList(options.ignore)
 
@@ -126,8 +129,7 @@ export default async function compareImages(
     const { threshold, includeAA } = toPixelmatchOptions(ignoreList)
     const outputPixels = new Uint8Array(totalPixels * 4)
 
-    // Use resemble's magenta [255, 0, 255] for both diff and AA pixels so the
-    // diff image output is visually consistent with the resemble engine.
+    // Use magenta [255, 0, 255] for both diff and AA pixels.
     const diffCount: number = pixelmatch(pixels1, pixels2, outputPixels, width, height, {
         threshold,
         includeAA,
@@ -160,17 +162,34 @@ export default async function compareImages(
         ? { left, top, right, bottom }
         : { left: width, top: height, right: 0, bottom: 0 }
 
-    const getBuffer = async (): Promise<Buffer> => {
-        const diffImage = new Jimp({ width, height })
-        Buffer.from(outputPixels).copy(diffImage.bitmap.data)
-        return diffImage.getBuffer(JimpMime.png)
+    // Single-pass blend: paint diff pixels (magenta) on top of the actual screenshot.
+    // pixels2 is already in memory and normalised to the canvas size, so no extra decode needed.
+    const getRawPixels = (): RawImage => {
+        const data = new Uint8Array(totalPixels * 4)
+        for (let i = 0; i < data.length; i += 4) {
+            if (outputPixels[i] === 255 && outputPixels[i + 1] === 0 && outputPixels[i + 2] === 255) {
+                data[i]     = 255
+                data[i + 1] = 0
+                data[i + 2] = 255
+                data[i + 3] = 255
+            } else {
+                data[i]     = displayPixels2[i]
+                data[i + 1] = displayPixels2[i + 1]
+                data[i + 2] = displayPixels2[i + 2]
+                data[i + 3] = displayPixels2[i + 3]
+            }
+        }
+        return { data, width, height }
     }
+
+    const getBuffer = async (): Promise<Buffer> => encodeImage(getRawPixels())
 
     const rawMisMatchPercentage = (diffCount / totalPixels) * 100
 
     return {
         rawMisMatchPercentage,
         misMatchPercentage: Number(rawMisMatchPercentage.toFixed(2)),
+        getRawPixels,
         getBuffer,
         diffBounds,
         analysisTime: Date.now() - start,

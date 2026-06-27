@@ -136,7 +136,7 @@ export interface PrepareIgnoreRectanglesOptions {
 }
 
 export interface PreparedIgnoreRectangles {
-    /** The final ignored boxes ready for resemble comparison */
+    /** The final ignored boxes for image comparison */
     ignoredBoxes: any[];
     /** Whether any ignore rectangles were found */
     hasIgnoreRectangles: boolean;

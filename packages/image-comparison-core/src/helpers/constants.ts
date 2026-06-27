@@ -7,7 +7,6 @@ export const DEFAULT_COMPARE_OPTIONS = {
     blockOutSideBar: true,
     blockOutStatusBar: true,
     blockOutToolBar: true,
-    compareEngine: 'resemble' as const,
     createJsonReportFiles: false,
     diffPixelBoundingBoxProximity: 5,
     ignoreAlpha: false,

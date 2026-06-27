@@ -34,7 +34,7 @@
     "watch:tsc": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "jimp": "^1.6.1",
+    "fast-png": "^8.0.0",
     "pixelmatch": "^7.2.0",
     "@wdio/logger": "^9.18.0",
     "@wdio/types": "^9.27.0"
