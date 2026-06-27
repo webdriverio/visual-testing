@@ -108,27 +108,32 @@ export const ANDROID_OFFSETS = {
 //   On the other hand, one pixel is the equivalent of 0.75 points.
 //------------------------------------------------------------------
 // iPhones
-// 6/7/8/SE/2020:                                667
-// 6/7/8/Plus:                                   736
-// X|XS|11Pro|12Mini|13Mini (notch):             812
-// 12|12Pro|13|13Pro|14 (notch):                 844
-// 14Pro (notch):                                852
-// XSMax|XR|11|11ProMax (notch):                 896
-// 12ProMax|13ProMax|14Plus (notch):             926
-// 14ProMax (notch):                             932
+// 6/6s/7/8/SE 2nd/SE 3rd:                      667
+// 6/6s/7/8 Plus:                               736
+// X/XS/11 Pro/12 mini/13 mini:                 812
+// 12/12 Pro/13/13 Pro/14/16e/17e:              844
+// 14 Pro/15/15 Pro/16:                         852
+// 16 Pro/17/17 Pro:                            874
+// XR/XS Max/11/11 Pro Max:                     896
+// Air:                                         912
+// 12 Pro Max/13 Pro Max/14 Plus:               926
+// 14 Pro Max/15 Plus/15 Pro Max/16 Plus:       932
+// 16 Pro Max/17 Pro Max:                       956
 //------------------------------------------------------------------
 // iPads
-// 9.7|Air 1/2|Mini 1/2/3/4/2019|Pro 9.7:       1024
-// 10.2 1/2019/2020/2021                        1080
-// Pro 10.5/2017/2019:                          1112
-// Mini 2021 (notch):                           1133
-// Air 2020/2022 (notch):                       1180
-// Pro 11 2018/2021 (notch):                    1194
-// Pro 12.9 2017 (no notch)/2018/2021 (notch):  1366
+// 9.7/5th/6th/Air 1/2/Mini 1-4/2019/Pro 9.7:   1024
+// 10.2 7th/8th/9th:                            1080
+// Pro 10.5/Air 3rd (2019):                     1112
+// Mini 6th/7th:                                1133
+// Air 4th/5th/10th/11th/Air 6th/7th/8th 11":   1180
+// Pro 11" 1st-4th (2018-2022):                 1194
+// Pro 11" M4/M5 7th/8th:                       1210
+// Pro 12.9" 2017-2022/Air 13" M2/M3/M4:        1366
+// Pro 13" M4/M5 7th/8th:                       1376
 //------------------------------------------------------------------
 export const IOS_OFFSETS: IosOffsets = {
     IPHONE: {
-        // 6/7/8/SE/2020
+        // iPhone 6/6s/7/8, iPhone SE 2nd gen, iPhone SE 3rd gen
         667: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -143,7 +148,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 0, y: 0, height: 0, width: 0 },
             },
         },
-        // 6/7/8/Plus
+        // iPhone 6/6s/7/8 Plus
         736: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -158,7 +163,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 0, y: 0, height: 0, width: 0 },
             },
         },
-        // X|XS|11Pro|12Mini|13Mini (notch)
+        // iPhone X/XS, iPhone 11 Pro, iPhone 12 mini, iPhone 13 mini
         812: {
             LANDSCAPE: {
                 SAFE_AREA: 44,
@@ -173,7 +178,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 118, y: 796, height: 9, width: 137 },
             },
         },
-        // 12|12Pro|13|13Pro|14 (notch)
+        // iPhone 12/12 Pro, iPhone 13/13 Pro, iPhone 14, iPhone 16e, iPhone 17e
         844: {
             LANDSCAPE: {
                 SAFE_AREA: 47,
@@ -188,7 +193,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 124, y: 829, height: 9, width: 143 },
             },
         },
-        // 14Pro|15|16 (dynamic island)
+        // iPhone 14 Pro, iPhone 15/15 Pro, iPhone 16
         852: {
             LANDSCAPE: {
                 SAFE_AREA: 59,
@@ -203,7 +208,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 125, y: 837, height: 9, width: 143 },
             },
         },
-        // 16 Pro (dynamic island)
+        // iPhone 16 Pro, iPhone 17/17 Pro
         874: {
             LANDSCAPE: {
                 SAFE_AREA: 50,
@@ -218,7 +223,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 129, y: 861, height: 9, width: 152 },
             },
         },
-        // XSMax|XR|11|11ProMax (notch)
+        // iPhone XR, iPhone XS Max, iPhone 11, iPhone 11 Pro Max
         896: {
             LANDSCAPE: {
                 SAFE_AREA: 48,
@@ -233,7 +238,22 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 131, y: 881, height: 9, width: 152 },
             },
         },
-        // 12ProMax|13ProMax|14Plus (notch)
+        // iPhone Air
+        912: {
+            LANDSCAPE: {
+                SAFE_AREA: 68,
+                STATUS_BAR: 0,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 338, y: 405, height: 9, width: 237 },
+            },
+            PORTRAIT: {
+                SAFE_AREA: 68,
+                STATUS_BAR: 68,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 134, y: 897, height: 9, width: 152 },
+            },
+        },
+        // iPhone 12 Pro Max, iPhone 13 Pro Max, iPhone 14 Plus
         926: {
             LANDSCAPE: {
                 SAFE_AREA: 47,
@@ -248,7 +268,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 136, y: 911, height: 9, width: 156 },
             },
         },
-        // 14ProMax|16 Plus (notch)
+        // iPhone 14 Pro Max, iPhone 15 Plus, iPhone 15 Pro Max, iPhone 16 Plus
         932: {
             LANDSCAPE: {
                 SAFE_AREA: 59,
@@ -263,7 +283,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 137, y: 917, height: 9, width: 158 },
             },
         },
-        // 16 Pro Max (dynamic island)
+        // iPhone 16 Pro Max, iPhone 17 Pro Max
         956: {
             LANDSCAPE: {
                 SAFE_AREA: 50,
@@ -280,7 +300,7 @@ export const IOS_OFFSETS: IosOffsets = {
         },
     },
     IPAD: {
-        // 9.7|Air 1/2|Mini 1/2/3/4/2019|Pro 9.7
+        // iPad 9.7/5th/6th, iPad Air 1/2, iPad mini 1-4/2019, iPad Pro 9.7, iPad Pro 12.9" (all gens), iPad Air 13" M2/M3/M4
         1024: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -295,7 +315,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 0, y: 0, height: 0, width: 0 },
             },
         },
-        // 10.2 1/2019/2020/2021
+        // iPad 10.2" 7th/8th/9th gen
         1080: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -310,7 +330,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 0, y: 0, height: 0, width: 0 },
             },
         },
-        // Pro 10.5/2017/2019
+        // iPad Pro 10.5", iPad Air 3rd gen (2019)
         1112: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -325,8 +345,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 0, y: 0, height: 0, width: 0 },
             },
         },
-        // With Home bar
-        // Mini 2021
+        // iPad mini 6th/7th gen
         1133: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -341,7 +360,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 234, y: 1118, height: 9, width: 276 },
             },
         },
-        // Air 2020/2022
+        // iPad Air 4th/5th gen, iPad 10th/11th gen, iPad Air 6th/7th/8th gen 11"
         1180: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -356,7 +375,7 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 272, y: 1165, height: 9, width: 276 },
             },
         },
-        // Pro 11 2018/2021
+        // iPad Pro 11" 1st-4th gen (2018-2022)
         1194: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -371,7 +390,22 @@ export const IOS_OFFSETS: IosOffsets = {
                 HOME_BAR: { x: 279, y: 1179, height: 9, width: 276 },
             },
         },
-        // Pro 12.9 2017/2018/2021
+        // iPad Pro 11" M4/M5 (7th/8th gen)
+        1210: {
+            LANDSCAPE: {
+                SAFE_AREA: 0,
+                STATUS_BAR: 24,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 444, y: 819, height: 9, width: 322 },
+            },
+            PORTRAIT: {
+                SAFE_AREA: 0,
+                STATUS_BAR: 24,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 279, y: 1195, height: 9, width: 276 },
+            },
+        },
+        // iPad Pro 12.9" 2017-2022, iPad Air 13" M2/M3/M4
         1366: {
             LANDSCAPE: {
                 SAFE_AREA: 0,
@@ -386,6 +420,21 @@ export const IOS_OFFSETS: IosOffsets = {
                 STATUS_BAR: 24,
                 ADDRESS_BAR: 50,
                 HOME_BAR: { x: 352, y: 1351, height: 9, width: 320 },
+            },
+        },
+        // iPad Pro 13" M4/M5 (7th/8th gen)
+        1376: {
+            LANDSCAPE: {
+                SAFE_AREA: 0,
+                STATUS_BAR: 24,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 512, y: 1017, height: 9, width: 353 },
+            },
+            PORTRAIT: {
+                SAFE_AREA: 0,
+                STATUS_BAR: 24,
+                ADDRESS_BAR: 50,
+                HOME_BAR: { x: 355, y: 1361, height: 9, width: 323 },
             },
         },
     },
