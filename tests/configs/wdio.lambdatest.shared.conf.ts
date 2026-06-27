@@ -44,7 +44,6 @@ export const config: WebdriverIO.Config  = {
                 blockOutSideBar: true,
                 createJsonReportFiles: false,
                 rawMisMatchPercentage: !!process.env.RAW_MISMATCH || false,
-                enableLayoutTesting: true,
                 ignoreAntialiasing: true,
                 alwaysSaveActualImage: false,
             } satisfies VisualServiceOptions,
