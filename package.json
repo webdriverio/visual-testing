@@ -13,7 +13,7 @@
     "build": "pnpm run -r build",
     "build:reporter": "node ./packages/visual-reporter/dist/cli.js --jsonOutput=.tmp/actual/output.json --reportFolder=.tmp/ --logLevel=debug",
     "clean": "rimraf coverage dist .tmp **/dist",
-    "release": "run-s build && changeset publish",
+    "release": "run-s build && changeset publish --tag legacy",
     "test": "run-s test:*",
     "test:lint": "rimraf .eslintcache && eslint packages tests",
     "test:unit": "vitest --coverage --run",

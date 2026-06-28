@@ -17,10 +17,10 @@ on:
         default: "packages/visual-service"
         type: choice
         options:
+          - packages/image-comparison-core
           - packages/ocr-service
           - packages/visual-reporter
           - packages/visual-service
-          - packages/webdriver-image-comparison
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
