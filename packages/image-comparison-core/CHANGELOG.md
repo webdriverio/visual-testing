@@ -1,5 +1,15 @@
 # @wdio/image-comparison-core
 
+## 1.3.0
+
+### Minor Changes
+
+- 10d34d6: chore: refresh @wdio/\* deps for the v9 maintenance line
+
+  ### Committers: 1
+
+  - Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+
 ## 1.2.4
 
 ### Patch Changes
