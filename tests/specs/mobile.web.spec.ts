@@ -145,18 +145,17 @@ describe('@wdio/visual-service mobile web', () => {
             skipTest({ test: this, deviceName, platformName, platformVersion, orientation })
             this.retries(2)
 
-            // This is normally a bad practice, but a mobile full page screenshot is normally around 4M pixels
-            // We're accepting 0.05%, which is 2000 pixels, to be a max difference
+            // This is normally a bad practice but for now we're accepting this because the difference is 9-10 times caused by a small 1px shift or font rendering issues
             const result = await browser.checkFullPageScreen('fullPage', {
                 fullPageScrollTimeout: 1500,
                 hideAfterFirstScroll: [
                     await $('nav.navbar'),
                 ],
             }) as number
-            if (result > 0 && result < 0.05) {
+            if (result > 0 && result < 0.01) {
                 console.log(`\n\n\nFull page layout screenshot for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
             }
-            await expect(result < 0.05 ? 0 : result).toEqual(0)
+            await expect(result < 0.01 ? 0 : result).toEqual(0)
         })
 
         it(`should compare a full page screenshot with ignore elements successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function() {
@@ -172,22 +171,26 @@ describe('@wdio/visual-service mobile web', () => {
                 })
             })
 
-            await expect(browser).toMatchFullPageSnapshot(
-                'ignoredElementsFullPageScreenshot',
-                {
-                    // Block 2
-                    ignore: [
-                        await $$('.feature_G9wp h3'),
-                    ],
-                    // We need to add some padding to the ignore regions
-                    // to make sure that we cover the element that is being ignored.
-                    ignoreRegionPadding: 5,
-                    fullPageScrollTimeout: 1500,
-                    hideAfterFirstScroll: [
-                        await $('nav.navbar'),
-                    ],
-                }
-            )
+            // This is normally a bad practice but for now we're accepting this because the difference is 9-10 times caused by a small 1px shift or font rendering issues
+            const result = await browser.checkFullPageScreen('ignoredElementsFullPageScreenshot', {
+                // Block 2
+                ignore: [
+                    await $$('.feature_G9wp h3'),
+                ],
+                // We need to add some padding to the ignore regions
+                // to make sure that we cover the element that is being ignored.
+                ignoreRegionPadding: 5,
+                fullPageScrollTimeout: 1500,
+                hideAfterFirstScroll: [
+                    await $('nav.navbar'),
+                ],
+            }) as number
+
+            if (result > 0 && result < 0.01) {
+                console.log(`\n\n\nFull page layout screenshot for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
+            }
+
+            await expect(result < 0.01 ? 0 : result).toEqual(0)
         })
     }
 })
