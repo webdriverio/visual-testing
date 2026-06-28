@@ -154,7 +154,7 @@ jobs:
           LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
           LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.lambdatest.desktop --maxConcurrency=4
+        run: pnpm test.lambdatest.desktop --maxConcurrency=3
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

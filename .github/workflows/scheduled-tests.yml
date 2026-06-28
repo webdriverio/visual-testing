@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to run tests against'
+        description: "Branch to run tests against"
         type: string
         required: true
-        default: 'main'
+        default: "main"
   schedule:
-    - cron: '0 */2 * * *'  # Every 2 hours; disable via GitHub UI or let SCHEDULED_TESTS_UNTIL expire
+    - cron: "0 */2 * * *" # Every 2 hours; disable via GitHub UI or let SCHEDULED_TESTS_UNTIL expire
 
 permissions:
   contents: read
@@ -87,7 +87,7 @@ jobs:
           LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
           LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.lambdatest.desktop --maxConcurrency=4
+        run: pnpm test.lambdatest.desktop --maxConcurrency=3
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -203,7 +203,7 @@ jobs:
           LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
           LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
           BUILD_PREFIX: true
-        run: pnpm test.lambdatest.sims.web --maxConcurrency=6
+        run: pnpm test.lambdatest.sims.web --maxConcurrency=4
 
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

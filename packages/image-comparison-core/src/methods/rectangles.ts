@@ -1,4 +1,5 @@
-import { Jimp } from 'jimp'
+import { readFileSync } from 'node:fs'
+import { decodeImage } from '../utils/imageUtils.js'
 import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
@@ -505,10 +506,14 @@ export async function determineWebElementIgnoreRegions(
     // to reduce 1px boundary differences on high-DPR / BiDi.
     let result = [...regions, ...regionsFromElements]
         .map((region: RectanglesOutput) => {
+            // Floor position (x/y) to include the start pixel, ceil size (width/height)
+            // to include the end pixel. Flooring size can lose 1px when CSS * DPR has
+            // a fractional part, causing the last row or column of an element to fall
+            // outside the ignored region.
             let x = Math.floor(region.x * devicePixelRatio)
             let y = Math.floor(region.y * devicePixelRatio)
-            let width = Math.floor(region.width * devicePixelRatio)
-            let height = Math.floor(region.height * devicePixelRatio)
+            let width = Math.ceil(region.width * devicePixelRatio)
+            let height = Math.ceil(region.height * devicePixelRatio)
             if (padding > 0) {
                 x = Math.max(0, x - padding)
                 y = Math.max(0, y - padding)
@@ -667,10 +672,8 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
         }
 
         if (webStatusAddressToolBarOptions.length > 0) {
-            // There's an issue with the resemble lib when all the rectangles are 0,0,0,0, it will see this as a full
-            // blockout of the image and the comparison will succeed with 0 % difference.
-            // Additionally, rectangles with either width or height equal to 0 will result in an entire axis being ignored
-            // due to how resemble handles falsy values. Filter those out up front.
+            // Filter out zero-dimension rectangles: a 0,0,0,0 rect would block out the entire image,
+            // and rects with width or height of 0 produce undefined axis behaviour. Remove them upfront.
             webStatusAddressToolBarOptions = webStatusAddressToolBarOptions
                 .filter((rectangle) => !(rectangle.x === 0 && rectangle.y === 0 && rectangle.width === 0 && rectangle.height === 0))
                 .filter((rectangle) => rectangle.width > 0 && rectangle.height > 0)
@@ -682,8 +685,8 @@ export async function prepareIgnoreRectangles(options: PrepareIgnoreRectanglesOp
             try {
                 // For iOS: block out home bar
                 if (!isAndroid && deviceRectangles.homeBar.height > 0) {
-                    const image = await Jimp.read(actualFilePath)
-                    const imageHeightDevicePixels = image.bitmap.height
+                    const image = decodeImage(readFileSync(actualFilePath))
+                    const imageHeightDevicePixels = image.height
                     const imageHeightCssPixels = imageHeightDevicePixels / devicePixelRatio
                     // Adjust home bar X position relative to the viewport (full page image only contains viewport)
                     const viewportXCssPixels = deviceRectangles.viewport.x

@@ -11,7 +11,7 @@ import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareO
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeScreenshot.interfaces.js'
 import type { AfterScreenshotOptions } from './afterScreenshot.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
-import type { ComparisonIgnoreOption } from '../resemble/compare.interfaces.js'
+import type { ComparisonIgnoreOption } from '../pixelmatch/compare.interfaces.js'
 import {
     logAllDeprecatedCompareOptions,
     isStorybook,
@@ -58,12 +58,6 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         waitForFontsLoaded: options.waitForFontsLoaded ?? true,
         alwaysSaveActualImage: options.alwaysSaveActualImage ?? true,
 
-        /**
-         * Compare options (merged sequentially):
-         * 1. Default options (fallback)
-         * 2. Root compareOptions (deprecated but supported)
-         * 3. User-provided compareOptions
-         */
         compareOptions: {
             ...DEFAULT_COMPARE_OPTIONS,
             ...logAllDeprecatedCompareOptions(options),
@@ -270,13 +264,10 @@ export function buildAfterScreenshotOptions({
     return afterOptions
 }
 
-/**
- * Prepare ignore options for resemble.js comparison
- */
 export function prepareIgnoreOptions(imageCompareOptions: MethodImageCompareCompareOptions): ComparisonIgnoreOption[] {
-    const resembleIgnoreDefaults: ComparisonIgnoreOption[] = ['alpha', 'antialiasing', 'colors', 'less', 'nothing']
+    const ignoreDefaults: ComparisonIgnoreOption[] = ['alpha', 'antialiasing', 'colors', 'less', 'nothing']
 
-    return resembleIgnoreDefaults.filter((option) =>
+    return ignoreDefaults.filter((option) =>
         Object.keys(imageCompareOptions).find(
             (key: keyof typeof imageCompareOptions) => key.toLowerCase().includes(option) && imageCompareOptions[key],
         ),

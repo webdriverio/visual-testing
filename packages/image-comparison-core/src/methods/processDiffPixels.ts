@@ -47,8 +47,9 @@
 import logger from '@wdio/logger'
 import type { Pixel, WicImageCompareOptions } from 'src/methods/images.interfaces.js'
 import type { BoundingBox, IgnoreBoxes } from './rectangles.interfaces.js'
-import type { CompareData } from '../resemble/compare.interfaces.js'
-import { saveBase64Image, addBlockOuts } from './images.js'
+import type { CompareData } from '../pixelmatch/compare.interfaces.js'
+import { savePngBuffer } from './images.js'
+import { compositeImage, createCanvas, encodeImage, setOpacity } from '../utils/imageUtils.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:pixelDiffProcessing')
 
@@ -271,7 +272,17 @@ export async function generateAndSaveDiff(
             diffBoundingBoxes.push(...processDiffPixels(data.diffPixels, imageCompareOptions.diffPixelBoundingBoxProximity))
         }
 
-        await saveBase64Image(await addBlockOuts(Buffer.from(await data.getBuffer()).toString('base64'), ignoredBoxes), diffFilePath)
+        const rawDiff = data.getRawPixels()
+
+        if (ignoredBoxes.length > 0) {
+            for (const box of ignoredBoxes) {
+                const overlay = createCanvas(box.right - box.left, box.bottom - box.top, 57, 170, 86, 255)
+                setOpacity(overlay, 0.5)
+                compositeImage(rawDiff, overlay, box.left, box.top)
+            }
+        }
+
+        await savePngBuffer(encodeImage(rawDiff), diffFilePath)
 
         log.warn(
             '\x1b[33m%s\x1b[0m',

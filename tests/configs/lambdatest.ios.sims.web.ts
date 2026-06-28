@@ -36,6 +36,7 @@ export function lambdaTestIosSimWeb({ buildName }: { buildName: string }) {
                         deviceOrientation:orientation,
                         w3c: true,
                         queueTimeout: 900,
+                        idleTimeout: 90,
                     },
                     'wdio-ics:options': {
                         logName: `${deviceName

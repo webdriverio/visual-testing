@@ -82,6 +82,7 @@ function createCaps({
         build: string,
         w3c: boolean,
         queueTimeout: number,
+        idleTimeout: number,
     },
     specs: string[];
     'wdio-ics:options': {
@@ -107,6 +108,7 @@ function createCaps({
             build,
             w3c: true,
             queueTimeout: 900,
+            idleTimeout: 90,
             ...(Number(platformVersion) > 14 ? { appiumVersion: '3.0.2' } : {}),
         },
         specs: [mobileSpecs],
