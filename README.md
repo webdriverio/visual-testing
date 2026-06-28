@@ -2,8 +2,44 @@
 
 For documentation on visual testing with WebdriverIO, please refer to the [docs](https://webdriver.io/docs/visual-testing). This project contains all relevant modules for running visual tests with WebdriverIO. Within the `./packages` directory you will find:
 
--   `@wdio/visual-testing`: the WebdriverIO service for integrating visual testing
--   `webdriver-image-comparison`: An image compare module that can be used for different NodeJS Test automation frameworks that support the WebDriver protocol
+-   `@wdio/visual-service`: the WebdriverIO service for integrating visual testing
+-   `@wdio/image-comparison-core`: the core image comparison engine used by the service
+-   `@wdio/ocr-service`: the WebdriverIO service for OCR-based testing
+-   `@wdio/visual-reporter`: the HTML report generator for visual testing results
+
+## Versions & Support
+
+| Version | npm tag | Status | Supported until |
+|---|---|---|---|
+| **v10** — `@wdio/visual-service@10` / `@wdio/image-comparison-core@2` | `latest` | ✅ Active development | — |
+| **v9** — `@wdio/visual-service@9` / `@wdio/image-comparison-core@1` | `legacy` | 🛠️ Maintenance (critical fixes only) | 12 months after the v10 release |
+
+> [!IMPORTANT]
+> **v10 replaces the image comparison engine** (resemble.js → [pixelmatch](https://github.com/mapbox/pixelmatch)). The public API is unchanged, but mismatch percentages differ slightly, so you need to **re-accept your baselines once** after upgrading.
+
+### Staying on v9
+
+v9 receives **critical bug and security fixes only** for **12 months** after the v10 release. Pin it with a semver range, which always resolves to the v9 line regardless of npm tags:
+
+```sh
+npm install @wdio/visual-service@^9
+```
+
+Once v9 maintenance releases are published, they are also available under the `legacy` tag:
+
+```sh
+npm install @wdio/visual-service@legacy
+```
+
+Installing without a version (`npm install @wdio/visual-service`) always gives you the latest **v10**.
+
+### Upgrading from v9 to v10
+
+1. Install the latest: `npm install @wdio/visual-service@latest`.
+2. Re-run your suite once and re-accept the baselines so they are regenerated with the new engine.
+3. No code changes are required — `checkScreen`, `checkElement`, `checkFullPageScreen` and the matchers keep the same signatures and `ignore` options.
+
+When v9 reaches end of life it will be marked deprecated on npm.
 
 ## Storybook Runner (BETA)
 
