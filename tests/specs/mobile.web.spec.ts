@@ -35,13 +35,12 @@ describe('@wdio/visual-service mobile web', () => {
             skipTest({ test: this, deviceName, platformName, platformVersion, orientation })
             this.retries(2)
 
-            // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
-            // We're accepting 0.05%, which is 500 pixels, to be a max difference
+            // This is normally a bad practice but for now we're accepting this because the difference is 9-10 times caused by a small 1px shift or font rendering issues
             const result = await browser.checkScreen('screenshot') as number
-            if (result > 0 && result < 0.05) {
+            if (result > 0 && result < 0.01) {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
             }
-            await expect(result < 0.05 ? 0 : result).toEqual(0)
+            await expect(result < 0.01 ? 0 : result).toEqual(0)
 
             const newOrientation = orientation.toUpperCase() === 'LANDSCAPE' ? 'PORTRAIT' : 'LANDSCAPE'
 
@@ -49,12 +48,12 @@ describe('@wdio/visual-service mobile web', () => {
             await browser.setOrientation(newOrientation)
             await browser.pause(2000)
             const newResult = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}`) as number
-            if (newResult > 0 && result < 0.05) {
+            if (newResult > 0 && result < 0.01) {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
             }
             // Before the expect we need to revert the orientation otherwise the next test will not start in the default orientation
             await browser.setOrientation(orientation)
-            await expect(newResult < 0.05 ? 0 : newResult).toEqual(0)
+            await expect(newResult < 0.01 ? 0 : newResult).toEqual(0)
         })
 
         it(`should compare a screen with ignore elements successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
@@ -70,8 +69,7 @@ describe('@wdio/visual-service mobile web', () => {
                 })
             })
 
-            // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
-            // We're accepting 0.05%, which is 500 pixels, to be a max difference
+            // This is normally a bad practice but for now we're accepting this because the difference is 9-10 times caused by a small 1px shift or font rendering issues
             const result = await browser.checkScreen(
                 'ignoredElementsScreenshot', {
                     // Block 2
@@ -79,10 +77,10 @@ describe('@wdio/visual-service mobile web', () => {
                         await $$('.getStarted_Sjon'),
                     ],
                 }) as number
-            if (result > 0 && result < 0.05) {
+            if (result > 0 && result < 0.01) {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
             }
-            await expect(result < 0.05 ? 0 : result).toEqual(0)
+            await expect(result < 0.01 ? 0 : result).toEqual(0)
         })
     }
 
