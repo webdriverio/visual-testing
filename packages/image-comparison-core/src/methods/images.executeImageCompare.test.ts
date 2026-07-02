@@ -897,6 +897,34 @@ describe('executeImageCompare', () => {
         })
     })
 
+    it('should pass antialiasing ignore when ignoreAntialiasing is enabled', async () => {
+        const optionsWithAntialiasing = {
+            ...mockOptions,
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                method: {
+                    ignoreAntialiasing: true,
+                }
+            }
+        }
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithAntialiasing,
+            testContext: mockTestContext
+        })
+
+        expect(compareImagesPixelmatch.default).toHaveBeenCalledWith(
+            expect.any(Buffer),
+            expect.any(Buffer),
+            {
+                ignore: ['antialiasing'],
+                scaleToSameSize: true
+            }
+        )
+    })
+
     it('should handle ignore options from compareOptions', async () => {
         const optionsWithIgnore = {
             ...mockOptions,

@@ -95,8 +95,8 @@ export interface BaseImageCompareOptions {
      */
     ignoreAlpha?: boolean;
     /**
-     * Compare images and discard anti aliasing
-     * @default false
+     * Compare images and forgive anti-aliasing differences
+     * @default true
      */
     ignoreAntialiasing?: boolean;
     /**

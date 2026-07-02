@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions } from './options.js'
+import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions, prepareIgnoreOptions } from './options.js'
 import type { ClassOptions } from './options.interfaces.js'
 import type { ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
@@ -470,6 +470,24 @@ describe('options', () => {
             expect(result.fileName.isMobile).toBe(true)
             expect(result.fileName.deviceName).toBe('iPhone')
             expect(result.platformName).toBe('iOS')
+        })
+    })
+
+    describe('prepareIgnoreOptions', () => {
+        it('includes antialiasing when ignoreAntialiasing is true', () => {
+            expect(prepareIgnoreOptions({ ignoreAntialiasing: true })).toEqual(['antialiasing'])
+        })
+
+        it('omits antialiasing when ignoreAntialiasing is false', () => {
+            expect(prepareIgnoreOptions({ ignoreAntialiasing: false })).toEqual([])
+        })
+
+        it('collects multiple enabled ignore flags', () => {
+            expect(prepareIgnoreOptions({
+                ignoreAlpha: true,
+                ignoreAntialiasing: true,
+                ignoreLess: true,
+            })).toEqual(['alpha', 'antialiasing', 'less'])
         })
     })
 })
