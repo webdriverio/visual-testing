@@ -15,7 +15,7 @@ exports[`BaseClass > initializes default options correctly 1`] = `
     "createJsonReportFiles": false,
     "diffPixelBoundingBoxProximity": 5,
     "ignoreAlpha": false,
-    "ignoreAntialiasing": false,
+    "ignoreAntialiasing": true,
     "ignoreColors": false,
     "ignoreLess": false,
     "ignoreNothing": false,

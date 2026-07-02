@@ -14,15 +14,22 @@ function toPixelmatchOptions(ignoreList: ComparisonIgnoreOption[]): { threshold:
     if (ignoreList.includes('nothing')) {
         return { threshold: 0, includeAA: true }
     }
-    if (ignoreList.includes('less')) {
-        // 16/255 per channel in resemble maps roughly to ~6.3% of max YIQ distance
-        return { threshold: 0.063, includeAA: false }
+
+    const forgivesAA = ignoreList.includes('antialiasing')
+    const threshold = ignoreList.includes('less')
+        ? 0.063
+        : forgivesAA
+            // Resemble's ignoreAntialiasing uses 32/255 per-channel tolerance which
+            // corresponds to ~0.13 in YIQ perceptual distance.
+            ? 0.13
+            // Default strict tolerance: 16/255 per channel maps to ~6.3% of max YIQ distance.
+            : 0.063
+
+    return {
+        threshold,
+        // pixelmatch includeAA=true disables AA forgiveness; false enables it.
+        includeAA: !forgivesAA,
     }
-    // 'antialiasing', 'alpha', 'colors' and the default.
-    // Resemble's ignoreAntialiasing uses 32/255 per-channel tolerance which
-    // corresponds to ~0.13 in YIQ perceptual distance. Using 0.1 is stricter
-    // and causes invisible sub-pixel differences to register as failures.
-    return { threshold: 0.13, includeAA: false }
 }
 
 function grayscalePixels(pixels: Buffer, totalPixels: number): void {

@@ -164,7 +164,9 @@ export interface ClassOptions {
     ignoreAlpha?: boolean;
 
     /**
-     * Ignore anti-aliasing when comparing images.
+     * Forgive anti-aliasing differences when comparing images.
+     * Defaults to `true` so sub-pixel rendering noise is ignored out of the box.
+     * Set to `false` for strict pixel comparison where AA pixels count as mismatches.
      */
     ignoreAntialiasing?: boolean;
 
@@ -440,7 +442,7 @@ export interface CompareOptions {
     ignoreAlpha: boolean;
 
     /**
-     * Compare images and ignore anti-aliasing effects.
+     * Forgive anti-aliasing differences when comparing images.
      */
     ignoreAntialiasing: boolean;
 

@@ -10,7 +10,7 @@ export const DEFAULT_COMPARE_OPTIONS = {
     createJsonReportFiles: false,
     diffPixelBoundingBoxProximity: 5,
     ignoreAlpha: false,
-    ignoreAntialiasing: false,
+    ignoreAntialiasing: true,
     ignoreColors: false,
     ignoreLess: false,
     ignoreNothing: false,
