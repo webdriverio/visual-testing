@@ -925,6 +925,40 @@ describe('executeImageCompare', () => {
         )
     })
 
+    it('should resolve ignoreLess over default antialiasing via last-wins preset order', async () => {
+        const { resolveComparePreset } = await import('../helpers/options.js')
+        const optionsWithIgnoreLess = {
+            ...mockOptions,
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                method: {
+                    ignoreAntialiasing: true,
+                    ignoreLess: true,
+                }
+            }
+        }
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithIgnoreLess,
+            testContext: mockTestContext
+        })
+
+        expect(compareImagesPixelmatch.default).toHaveBeenCalledWith(
+            expect.any(Buffer),
+            expect.any(Buffer),
+            {
+                ignore: ['antialiasing', 'less'],
+                scaleToSameSize: true
+            }
+        )
+        expect(resolveComparePreset(['antialiasing', 'less'])).toEqual({
+            threshold: 0.063,
+            includeAA: true,
+        })
+    })
+
     it('should handle ignore options from compareOptions', async () => {
         const optionsWithIgnore = {
             ...mockOptions,
