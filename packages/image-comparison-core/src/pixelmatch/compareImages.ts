@@ -1,4 +1,5 @@
 import pixelmatch from 'pixelmatch'
+import { resolveComparePreset } from '../helpers/options.js'
 import { decodeImage, resizeBilinear, encodeImage, type RawImage } from '../utils/imageUtils.js'
 import type { CompareData, ComparisonOptions, ComparisonIgnoreOption } from './compare.interfaces.js'
 
@@ -8,28 +9,6 @@ function resolveIgnoreList(ignore: ComparisonOptions['ignore']): ComparisonIgnor
     }
 
     return Array.isArray(ignore) ? ignore : [ignore]
-}
-
-function toPixelmatchOptions(ignoreList: ComparisonIgnoreOption[]): { threshold: number; includeAA: boolean } {
-    if (ignoreList.includes('nothing')) {
-        return { threshold: 0, includeAA: true }
-    }
-
-    const forgivesAA = ignoreList.includes('antialiasing')
-    const threshold = ignoreList.includes('less')
-        ? 0.063
-        : forgivesAA
-            // Resemble's ignoreAntialiasing uses 32/255 per-channel tolerance which
-            // corresponds to ~0.13 in YIQ perceptual distance.
-            ? 0.13
-            // Default strict tolerance: 16/255 per channel maps to ~6.3% of max YIQ distance.
-            : 0.063
-
-    return {
-        threshold,
-        // pixelmatch includeAA=true disables AA forgiveness; false enables it.
-        includeAA: !forgivesAA,
-    }
 }
 
 function grayscalePixels(pixels: Buffer, totalPixels: number): void {
@@ -133,7 +112,7 @@ export default async function compareImages(
         zeroIgnoredBoxes(pixels2, width, ignoredBoxes)
     }
 
-    const { threshold, includeAA } = toPixelmatchOptions(ignoreList)
+    const { threshold, includeAA } = resolveComparePreset(ignoreList)
     const outputPixels = new Uint8Array(totalPixels * 4)
 
     // Use magenta [255, 0, 255] for both diff and AA pixels.

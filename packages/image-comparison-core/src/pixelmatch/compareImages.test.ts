@@ -169,39 +169,21 @@ describe('pixelmatch adapter - compareImages', () => {
     })
 
     describe('ignore option mapping', () => {
-        it('passes threshold=0 and includeAA=true for ignore: nothing', async () => {
+        it.each([
+            ['nothing', { threshold: 0, includeAA: true }],
+            ['less', { threshold: 0.063, includeAA: true }],
+            ['antialiasing', { threshold: 0.13, includeAA: false }],
+            ['alpha', { threshold: 0.063, includeAA: true }],
+            ['colors', { threshold: 0.063, includeAA: true }],
+        ] as const)('passes preset settings for ignore: %s', async (ignore, expected) => {
             pixelmatchFn.mockImplementation(() => 0)
 
-            await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore: 'nothing' })
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore })
 
             expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.anything(), expect.anything(), expect.anything(),
                 expect.any(Number), expect.any(Number),
-                expect.objectContaining({ threshold: 0, includeAA: true })
-            )
-        })
-
-        it('passes threshold=0.063 and includeAA=true for ignore: less', async () => {
-            pixelmatchFn.mockImplementation(() => 0)
-
-            await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore: 'less' })
-
-            expect(pixelmatchFn).toHaveBeenCalledWith(
-                expect.anything(), expect.anything(), expect.anything(),
-                expect.any(Number), expect.any(Number),
-                expect.objectContaining({ threshold: 0.063, includeAA: true })
-            )
-        })
-
-        it('passes threshold=0.13 and includeAA=false for ignore: antialiasing', async () => {
-            pixelmatchFn.mockImplementation(() => 0)
-
-            await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore: 'antialiasing' })
-
-            expect(pixelmatchFn).toHaveBeenCalledWith(
-                expect.anything(), expect.anything(), expect.anything(),
-                expect.any(Number), expect.any(Number),
-                expect.objectContaining({ threshold: 0.13, includeAA: false })
+                expect.objectContaining(expected)
             )
         })
 
@@ -217,7 +199,7 @@ describe('pixelmatch adapter - compareImages', () => {
             )
         })
 
-        it('accepts ignore as an array and uses less threshold with antialiasing forgiveness', async () => {
+        it('uses last-wins preset when ignoreLess follows ignoreAntialiasing', async () => {
             pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
@@ -227,14 +209,30 @@ describe('pixelmatch adapter - compareImages', () => {
             expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.anything(), expect.anything(), expect.anything(),
                 expect.any(Number), expect.any(Number),
-                expect.objectContaining({ threshold: 0.063, includeAA: false })
+                expect.objectContaining({ threshold: 0.063, includeAA: true })
             )
         })
 
-        it('passes threshold=0.063 and includeAA=true for ignore: alpha without antialiasing', async () => {
+        it('uses last-wins preset when ignoreNothing follows other flags', async () => {
             pixelmatchFn.mockImplementation(() => 0)
 
-            await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore: 'alpha' })
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
+                ignore: ['antialiasing', 'less', 'nothing']
+            })
+
+            expect(pixelmatchFn).toHaveBeenCalledWith(
+                expect.anything(), expect.anything(), expect.anything(),
+                expect.any(Number), expect.any(Number),
+                expect.objectContaining({ threshold: 0, includeAA: true })
+            )
+        })
+
+        it('uses last-wins preset when ignoreLess follows ignoreAlpha', async () => {
+            pixelmatchFn.mockImplementation(() => 0)
+
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
+                ignore: ['alpha', 'less']
+            })
 
             expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.anything(), expect.anything(), expect.anything(),

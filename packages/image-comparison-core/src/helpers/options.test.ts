@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions, prepareIgnoreOptions } from './options.js'
+import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions, prepareIgnoreOptions, resolveActiveIgnorePreset, resolveComparePreset } from './options.js'
 import type { ClassOptions } from './options.interfaces.js'
 import type { ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
@@ -488,6 +488,44 @@ describe('options', () => {
                 ignoreAntialiasing: true,
                 ignoreLess: true,
             })).toEqual(['alpha', 'antialiasing', 'less'])
+        })
+    })
+
+    describe('resolveActiveIgnorePreset', () => {
+        it.each([
+            [['alpha'], 'alpha'],
+            [['antialiasing'], 'antialiasing'],
+            [['colors'], 'colors'],
+            [['less'], 'less'],
+            [['nothing'], 'nothing'],
+            [[], null],
+        ] as const)('returns %s for ignore list %j', (ignoreList, expected) => {
+            expect(resolveActiveIgnorePreset([...ignoreList])).toBe(expected)
+        })
+
+        it('uses last-wins order matching prepareIgnoreOptions', () => {
+            expect(resolveActiveIgnorePreset(['antialiasing', 'less'])).toBe('less')
+            expect(resolveActiveIgnorePreset(['alpha', 'antialiasing', 'colors', 'less', 'nothing'])).toBe('nothing')
+        })
+    })
+
+    describe('resolveComparePreset', () => {
+        it.each([
+            [['nothing'], { threshold: 0, includeAA: true }],
+            [['less'], { threshold: 0.063, includeAA: true }],
+            [['antialiasing'], { threshold: 0.13, includeAA: false }],
+            [['alpha'], { threshold: 0.063, includeAA: true }],
+            [['colors'], { threshold: 0.063, includeAA: true }],
+            [[], { threshold: 0.063, includeAA: true }],
+        ] as const)('maps ignore list %j to pixelmatch settings', (ignoreList, expected) => {
+            expect(resolveComparePreset([...ignoreList])).toEqual(expected)
+        })
+
+        it('applies last-wins preset for multi-flag lists', () => {
+            expect(resolveComparePreset(['antialiasing', 'less'])).toEqual({
+                threshold: 0.063,
+                includeAA: true,
+            })
         })
     })
 })

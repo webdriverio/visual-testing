@@ -264,10 +264,53 @@ export function buildAfterScreenshotOptions({
     return afterOptions
 }
 
-export function prepareIgnoreOptions(imageCompareOptions: MethodImageCompareCompareOptions): ComparisonIgnoreOption[] {
-    const ignoreDefaults: ComparisonIgnoreOption[] = ['alpha', 'antialiasing', 'colors', 'less', 'nothing']
+/** Resemble last-wins order, must match `prepareIgnoreOptions` filter order. */
+export const IGNORE_PRESET_ORDER: ComparisonIgnoreOption[] = ['alpha', 'antialiasing', 'colors', 'less', 'nothing']
 
-    return ignoreDefaults.filter((option) =>
+const COMPARE_PRESET_SETTINGS: Record<ComparisonIgnoreOption, { threshold: number; includeAA: boolean }> = {
+    nothing: { threshold: 0, includeAA: true },
+    less: { threshold: 0.063, includeAA: true },
+    antialiasing: {
+        // Resemble's ignoreAntialiasing uses 32/255 per-channel tolerance (~0.13 YIQ).
+        threshold: 0.13,
+        includeAA: false,
+    },
+    alpha: { threshold: 0.063, includeAA: true },
+    colors: { threshold: 0.063, includeAA: true },
+}
+
+/**
+ * Returns the active resemble preset from an ignore list using last-wins semantics.
+ */
+export function resolveActiveIgnorePreset(ignoreList: ComparisonIgnoreOption[]): ComparisonIgnoreOption | null {
+    let activePreset: ComparisonIgnoreOption | null = null
+
+    for (const preset of IGNORE_PRESET_ORDER) {
+        if (ignoreList.includes(preset)) {
+            activePreset = preset
+        }
+    }
+
+    return activePreset
+}
+
+/**
+ * Maps an ignore list to pixelmatch threshold and AA settings via resemble last-wins presets.
+ * An empty list yields the strict preset (e.g. `ignoreAntialiasing: false` with no other flags).
+ */
+export function resolveComparePreset(ignoreList: ComparisonIgnoreOption[]): { threshold: number; includeAA: boolean } {
+    const activePreset = resolveActiveIgnorePreset(ignoreList)
+
+    if (activePreset) {
+        return COMPARE_PRESET_SETTINGS[activePreset]
+    }
+
+    // Default strict tolerance: 16/255 per channel (~6.3% of max YIQ distance).
+    return { threshold: 0.063, includeAA: true }
+}
+
+export function prepareIgnoreOptions(imageCompareOptions: MethodImageCompareCompareOptions): ComparisonIgnoreOption[] {
+    return IGNORE_PRESET_ORDER.filter((option) =>
         Object.keys(imageCompareOptions).find(
             (key: keyof typeof imageCompareOptions) => key.toLowerCase().includes(option) && imageCompareOptions[key],
         ),
