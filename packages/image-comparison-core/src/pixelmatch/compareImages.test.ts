@@ -243,7 +243,12 @@ describe('pixelmatch adapter - compareImages', () => {
     })
 
     describe('pixel transformations', () => {
-        it('grayscales both pixel arrays when ignore includes colors', async () => {
+        it('grayscales both pixel arrays with resemble luma when ignore includes colors', async () => {
+            decodeImageFn.mockReturnValue({
+                data: Uint8Array.from([180, 60, 60, 255]),
+                width: 1,
+                height: 1,
+            })
             let capturedPixels1: Uint8Array | undefined
 
             pixelmatchFn.mockImplementation((img1: Uint8Array) => {
@@ -253,9 +258,9 @@ describe('pixelmatch adapter - compareImages', () => {
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore: 'colors' })
 
-            // After grayscale, R=G=B for every pixel (luma of 128,128,128 = 128)
-            expect(capturedPixels1![0]).toBe(capturedPixels1![1])
-            expect(capturedPixels1![1]).toBe(capturedPixels1![2])
+            expect(capturedPixels1![0]).toBe(96)
+            expect(capturedPixels1![1]).toBe(96)
+            expect(capturedPixels1![2]).toBe(96)
         })
 
         it('sets all alpha channels to 255 when ignore includes alpha', async () => {

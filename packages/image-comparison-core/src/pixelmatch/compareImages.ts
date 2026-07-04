@@ -1,5 +1,6 @@
 import pixelmatch from 'pixelmatch'
 import { resolveComparePreset } from '../helpers/options.js'
+import { applyResembleGrayscale } from './compareBrightness.js'
 import { decodeImage, resizeBilinear, encodeImage, type RawImage } from '../utils/imageUtils.js'
 import type { CompareData, ComparisonOptions, ComparisonIgnoreOption } from './compare.interfaces.js'
 
@@ -9,15 +10,6 @@ function resolveIgnoreList(ignore: ComparisonOptions['ignore']): ComparisonIgnor
     }
 
     return Array.isArray(ignore) ? ignore : [ignore]
-}
-
-function grayscalePixels(pixels: Buffer, totalPixels: number): void {
-    for (let i = 0; i < totalPixels * 4; i += 4) {
-        const luma = Math.round(0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2])
-        pixels[i] = luma
-        pixels[i + 1] = luma
-        pixels[i + 2] = luma
-    }
 }
 
 function opaqueAlphaChannel(pixels: Buffer, totalPixels: number): void {
@@ -97,8 +89,8 @@ export default async function compareImages(
     const ignoreList = resolveIgnoreList(options.ignore)
 
     if (ignoreList.includes('colors')) {
-        grayscalePixels(pixels1, totalPixels)
-        grayscalePixels(pixels2, totalPixels)
+        applyResembleGrayscale(pixels1, totalPixels)
+        applyResembleGrayscale(pixels2, totalPixels)
     }
 
     if (ignoreList.includes('alpha')) {
