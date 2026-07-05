@@ -90,27 +90,36 @@ export interface BaseMobileWebScreenshotOptions {
 
 export interface BaseImageCompareOptions {
     /**
-     * Compare images and discard alpha
+     * Ignore alpha-channel differences during comparison.
+     * Preprocessing sets all alpha values to opaque before pixelmatch runs.
+     * Preset: strict threshold (~16/255), AA not forgiven.
      * @default false
      */
     ignoreAlpha?: boolean;
     /**
-     * Compare images and forgive anti-aliasing differences
+     * Forgive anti-aliased pixels during comparison (pixelmatch `includeAA: false`).
+     * Preset: relaxed threshold (~32/255), AA forgiven.
+     * When combined with other ignore flags, last-wins order applies
+     * (`alpha` → `antialiasing` → `colors` → `less` → `nothing`).
      * @default true
      */
     ignoreAntialiasing?: boolean;
     /**
-     * Compare images in black and white mode
+     * Compare brightness only, ignoring hue differences.
+     * Preprocessing converts both images to grayscale using resemble luma (`0.3/0.59/0.11`).
+     * Preset: strict threshold (~16/255), AA not forgiven.
      * @default false
      */
     ignoreColors?: boolean;
     /**
-     * Compare with reduced color sensitivity
+     * Use a relaxed RGB tolerance (~16/255 per channel in YIQ space).
+     * Preset: strict threshold, AA not forgiven (does not inherit default AA forgiveness).
      * @default false
      */
     ignoreLess?: boolean;
     /**
-     * Compare with maximum sensitivity
+     * Use zero tolerance — any pixel difference counts as a mismatch.
+     * Preset: threshold `0`, AA not forgiven.
      * @default false
      */
     ignoreNothing?: boolean;

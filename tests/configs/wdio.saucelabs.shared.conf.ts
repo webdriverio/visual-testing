@@ -49,7 +49,6 @@ export const config: WebdriverIO.Config  = {
                 createJsonReportFiles: true,
                 rawMisMatchPercentage: !!process.env.RAW_MISMATCH || false,
                 enableLayoutTesting: true,
-                ignoreAntialiasing: true,
             } satisfies VisualServiceOptions,
         ],
     ],
