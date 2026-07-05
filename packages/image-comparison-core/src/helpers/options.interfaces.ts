@@ -159,31 +159,38 @@ export interface ClassOptions {
     diffPixelBoundingBoxProximity?: number;
 
     /**
-     * Ignore alpha channel when comparing images.
+     * Ignore alpha-channel differences during comparison.
+     * Preprocessing sets all alpha values to opaque before pixelmatch runs.
+     * Preset: strict threshold (~16/255), AA not forgiven.
      */
     ignoreAlpha?: boolean;
 
     /**
-     * Forgive anti-aliasing differences when comparing images.
+     * Forgive anti-aliased pixels during comparison (pixelmatch `includeAA: false`).
+     * Preset: relaxed threshold (~32/255), AA forgiven.
+     * When combined with other ignore flags, last-wins order applies
+     * (`alpha` → `antialiasing` → `colors` → `less` → `nothing`).
      * Defaults to `true` so sub-pixel rendering noise is ignored out of the box.
-     * Set to `false` for strict pixel comparison where AA pixels count as mismatches.
+     * Set to `false` for strict comparison where AA pixels count as mismatches.
      */
     ignoreAntialiasing?: boolean;
 
     /**
-     * Compare two images in black and white only.
+     * Compare brightness only, ignoring hue differences.
+     * Preprocessing converts both images to grayscale using resemble luma (`0.3/0.59/0.11`).
+     * Preset: strict threshold (~16/255), AA not forgiven.
      */
     ignoreColors?: boolean;
 
     /**
-     * Compare images with reduced sensitivity.
-     * red = 16, green = 16, blue = 16, alpha = 16, minBrightness = 16, maxBrightness = 240
+     * Use a relaxed RGB tolerance (~16/255 per channel in YIQ space).
+     * Preset: strict threshold, AA not forgiven (does not inherit default AA forgiveness).
      */
     ignoreLess?: boolean;
 
     /**
-     * Compare images with full sensitivity.
-     * red = 0, green = 0, blue = 0, alpha = 0, minBrightness = 0, maxBrightness = 255
+     * Use zero tolerance — any pixel difference counts as a mismatch.
+     * Preset: threshold `0`, AA not forgiven.
      */
     ignoreNothing?: boolean;
 
@@ -437,29 +444,36 @@ export interface CompareOptions {
     diffPixelBoundingBoxProximity: number;
 
     /**
-     * Compare images and discard the alpha channel.
+     * Ignore alpha-channel differences during comparison.
+     * Preprocessing sets all alpha values to opaque before pixelmatch runs.
+     * Preset: strict threshold (~16/255), AA not forgiven.
      */
     ignoreAlpha: boolean;
 
     /**
-     * Forgive anti-aliasing differences when comparing images.
+     * Forgive anti-aliased pixels during comparison (pixelmatch `includeAA: false`).
+     * Preset: relaxed threshold (~32/255), AA forgiven.
+     * When combined with other ignore flags, last-wins order applies
+     * (`alpha` → `antialiasing` → `colors` → `less` → `nothing`).
      */
     ignoreAntialiasing: boolean;
 
     /**
-     * Compare two black-and-white versions of the images, ignoring colors.
+     * Compare brightness only, ignoring hue differences.
+     * Preprocessing converts both images to grayscale using resemble luma (`0.3/0.59/0.11`).
+     * Preset: strict threshold (~16/255), AA not forgiven.
      */
     ignoreColors: boolean;
 
     /**
-     * Use a less sensitive comparison setting:
-     * red = 16, green = 16, blue = 16, alpha = 16, minBrightness = 16, maxBrightness = 240
+     * Use a relaxed RGB tolerance (~16/255 per channel in YIQ space).
+     * Preset: strict threshold, AA not forgiven (does not inherit default AA forgiveness).
      */
     ignoreLess: boolean;
 
     /**
-     * Use the most sensitive comparison setting:
-     * red = 0, green = 0, blue = 0, alpha = 0, minBrightness = 0, maxBrightness = 255
+     * Use zero tolerance — any pixel difference counts as a mismatch.
+     * Preset: threshold `0`, AA not forgiven.
      */
     ignoreNothing: boolean;
 
