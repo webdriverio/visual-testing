@@ -12,6 +12,7 @@ import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeSc
 import type { AfterScreenshotOptions } from './afterScreenshot.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
 import type { ComparisonIgnoreOption } from '../pixelmatch/compare.interfaces.js'
+import logger from '@wdio/logger'
 import {
     logAllDeprecatedCompareOptions,
     isStorybook,
@@ -19,6 +20,8 @@ import {
     createConditionalProperty,
     getMethodOrWicOption,
 } from './utils.js'
+
+const log = logger('@wdio/visual-service:@wdio/image-comparison-core:options')
 
 /**
  * Determine the default options by merging user options with sensible defaults
@@ -267,6 +270,14 @@ export function buildAfterScreenshotOptions({
 /** Resemble last-wins order, must match `prepareIgnoreOptions` filter order. */
 export const IGNORE_PRESET_ORDER: ComparisonIgnoreOption[] = ['alpha', 'antialiasing', 'colors', 'less', 'nothing']
 
+const IGNORE_PRESET_OPTION_NAMES: Record<ComparisonIgnoreOption, string> = {
+    alpha: 'ignoreAlpha',
+    antialiasing: 'ignoreAntialiasing',
+    colors: 'ignoreColors',
+    less: 'ignoreLess',
+    nothing: 'ignoreNothing',
+}
+
 const COMPARE_PRESET_SETTINGS: Record<ComparisonIgnoreOption, { threshold: number; includeAA: boolean }> = {
     nothing: { threshold: 0, includeAA: true },
     less: { threshold: 0.063, includeAA: true },
@@ -314,6 +325,27 @@ export function prepareIgnoreOptions(imageCompareOptions: MethodImageCompareComp
         Object.keys(imageCompareOptions).find(
             (key: keyof typeof imageCompareOptions) => key.toLowerCase().includes(option) && imageCompareOptions[key],
         ),
+    )
+}
+
+/**
+ * Logs a warning when multiple ignore* flags are enabled. Only the last preset in
+ * resemble order is applied for threshold and AA settings.
+ */
+export function warnOnMultipleIgnorePresets(ignoreList: ComparisonIgnoreOption[]): void {
+    if (ignoreList.length < 2) {
+        return
+    }
+
+    const activePreset = resolveActiveIgnorePreset(ignoreList)
+    const enabledOptions = ignoreList.map((preset) => IGNORE_PRESET_OPTION_NAMES[preset]).join(', ')
+    const activeOption = activePreset ? IGNORE_PRESET_OPTION_NAMES[activePreset] : 'none'
+
+    log.warn(
+        'Multiple ignore* compare options are enabled (%s). Only one preset is applied per comparison.\n' +
+        '  Active: %s (last-wins order: ignoreAlpha → ignoreAntialiasing → ignoreColors → ignoreLess → ignoreNothing).',
+        enabledOptions,
+        activeOption,
     )
 }
 

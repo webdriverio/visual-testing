@@ -1,11 +1,20 @@
-import { describe, it, expect } from 'vitest'
-import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions, prepareIgnoreOptions, resolveActiveIgnorePreset, resolveComparePreset } from './options.js'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { join } from 'node:path'
+import logger from '@wdio/logger'
+import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions, prepareIgnoreOptions, resolveActiveIgnorePreset, resolveComparePreset, warnOnMultipleIgnorePresets } from './options.js'
 import type { ClassOptions } from './options.interfaces.js'
 import type { ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
 import type { BeforeScreenshotResult } from './beforeScreenshot.interfaces.js'
 
+const log = logger('test')
+
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
+
 describe('options', () => {
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
     describe('defaultOptions', () => {
         it('should return the default options when no options are provided', () => {
             expect(defaultOptions({})).toMatchSnapshot()
@@ -526,6 +535,24 @@ describe('options', () => {
                 threshold: 0.063,
                 includeAA: true,
             })
+        })
+    })
+
+    describe('warnOnMultipleIgnorePresets', () => {
+        it('does not warn when a single ignore preset is enabled', () => {
+            warnOnMultipleIgnorePresets(['antialiasing'])
+
+            expect(log.warn).not.toHaveBeenCalled()
+        })
+
+        it('warns with the active preset when multiple ignore flags are enabled', () => {
+            warnOnMultipleIgnorePresets(['antialiasing', 'less'])
+
+            expect(log.warn).toHaveBeenCalledWith(
+                expect.stringContaining('Multiple ignore* compare options are enabled'),
+                'ignoreAntialiasing, ignoreLess',
+                'ignoreLess',
+            )
         })
     })
 })

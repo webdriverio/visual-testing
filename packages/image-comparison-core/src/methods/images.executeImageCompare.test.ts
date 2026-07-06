@@ -959,6 +959,35 @@ describe('executeImageCompare', () => {
         })
     })
 
+    it('should warn when multiple ignore options are enabled', async () => {
+        const optionsWithIgnoreLess = {
+            ...mockOptions,
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    ignoreAntialiasing: true,
+                },
+                method: {
+                    ignoreLess: true,
+                }
+            }
+        }
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: optionsWithIgnoreLess,
+            testContext: mockTestContext
+        })
+
+        expect(log.warn).toHaveBeenCalledWith(
+            expect.stringContaining('Multiple ignore* compare options are enabled'),
+            'ignoreAntialiasing, ignoreLess',
+            'ignoreLess',
+        )
+    })
+
     it('should handle ignore options from compareOptions', async () => {
         const optionsWithIgnore = {
             ...mockOptions,
