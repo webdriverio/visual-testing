@@ -2,6 +2,18 @@ import type { IosOffsets } from './constants.interfaces.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import type { TestContext } from 'src/methods/compareReport.interfaces.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
+import type { ResolvedPixelmatchOptions } from '../pixelmatch/compare.interfaces.js'
+
+export const DEFAULT_PIXELMATCH_OPTIONS: ResolvedPixelmatchOptions = {
+    threshold: 0.1,
+    includeAA: false,
+    diffColor: [255, 0, 255],
+    aaColor: [255, 0, 255],
+    diffColorAlt: [255, 0, 255],
+    alpha: 0.1,
+    diffMask: false,
+    checkerboard: true,
+}
 
 export const DEFAULT_COMPARE_OPTIONS = {
     blockOutSideBar: true,

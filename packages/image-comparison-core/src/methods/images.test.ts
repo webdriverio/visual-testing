@@ -63,15 +63,19 @@ vi.mock('../helpers/utils.js', () => ({
     updateVisualBaseline: vi.fn(),
     calculateDprData: vi.fn(),
 }))
-vi.mock('../helpers/constants.js', () => ({
-    DEFAULT_RESIZE_DIMENSIONS: { top: 0, right: 0, bottom: 0, left: 0 },
-    supportedIosBezelDevices: [
-        'iphonex', 'iphonexs', 'iphonexsmax', 'iphonexr', 'iphone11', 'iphone11pro', 'iphone11promax',
-        'iphone12', 'iphone12mini', 'iphone12pro', 'iphone12promax', 'iphone13', 'iphone13mini',
-        'iphone13pro', 'iphone13promax', 'iphone14', 'iphone14plus', 'iphone14pro', 'iphone14promax',
-        'iphone15', 'ipadmini', 'ipadair', 'ipadpro11', 'ipadpro129'
-    ],
-}))
+vi.mock('../helpers/constants.js', async (importOriginal) => {
+    const actual = await importOriginal() as Record<string, unknown>
+    return {
+        ...actual,
+        DEFAULT_RESIZE_DIMENSIONS: { top: 0, right: 0, bottom: 0, left: 0 },
+        supportedIosBezelDevices: [
+            'iphonex', 'iphonexs', 'iphonexsmax', 'iphonexr', 'iphone11', 'iphone11pro', 'iphone11promax',
+            'iphone12', 'iphone12mini', 'iphone12pro', 'iphone12promax', 'iphone13', 'iphone13mini',
+            'iphone13pro', 'iphone13promax', 'iphone14', 'iphone14plus', 'iphone14pro', 'iphone14promax',
+            'iphone15', 'ipadmini', 'ipadair', 'ipadpro11', 'ipadpro129'
+        ],
+    }
+})
 vi.mock('./rectangles.js', () => ({
     isWdioElement: vi.fn(),
     determineStatusAddressToolBarRectangles: vi.fn(),

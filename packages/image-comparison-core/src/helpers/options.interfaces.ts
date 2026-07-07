@@ -1,4 +1,5 @@
 import type { TabbableOptions } from '../commands/tabbable.interfaces.js'
+import type { PixelmatchCompareOptions } from '../pixelmatch/compare.interfaces.js'
 
 export interface ClassOptions {
     // ==================
@@ -216,6 +217,7 @@ export interface ClassOptions {
 
     /**
      * Options object passed to the underlying image comparison engine.
+     * Use either `ignore*` preset flags or a `pixelmatch` object — not both.
      */
     compareOptions?: Partial<CompareOptions>;
 
@@ -409,7 +411,7 @@ export interface DefaultOptions {
     alwaysSaveActualImage: boolean;
 }
 
-export interface CompareOptions {
+export interface SharedServiceCompareOptions {
     /**
      * Automatically block out the side bar for iPads in landscape mode during comparisons.
      * Prevents failures caused by the tab/private/bookmark native component.
@@ -444,6 +446,34 @@ export interface CompareOptions {
     diffPixelBoundingBoxProximity: number;
 
     /**
+     * Return the raw mismatch percentage as a decimal (e.g., `0.12345678`), instead of a rounded value (e.g., `0.12`).
+     */
+    rawMisMatchPercentage: boolean;
+
+    /**
+     * Return all comparison data, not just the mismatch percentage.
+     */
+    returnAllCompareData: boolean;
+
+    /**
+     * Mismatch percentage threshold above which the image with differences will be saved.
+     * When undefined, actual images won't be saved (respects alwaysSaveActualImage: false).
+     * Matchers set this value internally based on the expected threshold.
+     */
+    saveAboveTolerance?: number;
+
+    /**
+     * Scale images to the same size before comparing them.
+     */
+    scaleImagesToSameSize: boolean;
+}
+
+/**
+ * ignore* preset mode — maps to resemble-style presets.
+ * Cannot be combined with `pixelmatch` on the same options object.
+ */
+export interface IgnorePresetCompareOptions {
+    /**
      * Ignore alpha-channel differences during comparison.
      * Preprocessing sets all alpha values to opaque before pixelmatch runs.
      * Preset: strict threshold (~16/255), AA not forgiven.
@@ -477,26 +507,23 @@ export interface CompareOptions {
      */
     ignoreNothing: boolean;
 
-    /**
-     * Return the raw mismatch percentage as a decimal (e.g., `0.12345678`), instead of a rounded value (e.g., `0.12`).
-     */
-    rawMisMatchPercentage: boolean;
-
-    /**
-     * Return all comparison data, not just the mismatch percentage.
-     */
-    returnAllCompareData: boolean;
-
-    /**
-     * Mismatch percentage threshold above which the image with differences will be saved.
-     * When undefined, actual images won't be saved (respects alwaysSaveActualImage: false).
-     * Matchers set this value internally based on the expected threshold.
-     */
-    saveAboveTolerance?: number;
-
-    /**
-     * Scale images to the same size before comparing them.
-     */
-    scaleImagesToSameSize: boolean;
+    /** @deprecated Use preset mode without `pixelmatch`, or direct mode with `pixelmatch` only. */
+    pixelmatch?: never;
 }
+
+/**
+ * Direct pixelmatch mode — full control over threshold, AA, and diff colours.
+ * Omit all `ignore*` keys; cannot be combined with preset mode on the same options object.
+ */
+export interface PixelmatchModeCompareOptions {
+    /**
+     * Direct pixelmatch comparison settings.
+     * Mutually exclusive with all `ignore*` options.
+     */
+    pixelmatch: PixelmatchCompareOptions;
+}
+
+export type ExclusiveCompareOptions = IgnorePresetCompareOptions | PixelmatchModeCompareOptions
+
+export type CompareOptions = SharedServiceCompareOptions & ExclusiveCompareOptions
 

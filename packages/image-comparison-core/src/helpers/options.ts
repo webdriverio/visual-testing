@@ -1,17 +1,18 @@
 import {
     DEFAULT_COMPARE_OPTIONS,
     DEFAULT_FORMAT_STRING,
+    DEFAULT_PIXELMATCH_OPTIONS,
     DEFAULT_SHADOW,
     DEFAULT_TABBABLE_OPTIONS,
     FULL_PAGE_SCROLL_TIMEOUT,
     STORYBOOK_FORMAT_STRING,
 } from './constants.js'
-import type { ClassOptions, DefaultOptions } from './options.interfaces.js'
+import type { ClassOptions, CompareOptions, DefaultOptions } from './options.interfaces.js'
 import type { MethodImageCompareCompareOptions, ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 import type { BeforeScreenshotOptions, BeforeScreenshotResult } from './beforeScreenshot.interfaces.js'
 import type { AfterScreenshotOptions } from './afterScreenshot.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
-import type { ComparisonIgnoreOption } from '../pixelmatch/compare.interfaces.js'
+import type { ComparisonIgnoreOption, PixelmatchCompareOptions, ResolvedPixelmatchOptions } from '../pixelmatch/compare.interfaces.js'
 import logger from '@wdio/logger'
 import {
     logAllDeprecatedCompareOptions,
@@ -22,6 +23,95 @@ import {
 } from './utils.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:options')
+
+const IGNORE_OPTION_KEYS = [
+    'ignoreAlpha',
+    'ignoreAntialiasing',
+    'ignoreColors',
+    'ignoreLess',
+    'ignoreNothing',
+] as const
+
+const {
+    ignoreAlpha: _ignoreAlpha,
+    ignoreAntialiasing: _ignoreAntialiasing,
+    ignoreColors: _ignoreColors,
+    ignoreLess: _ignoreLess,
+    ignoreNothing: _ignoreNothing,
+    ...SHARED_COMPARE_DEFAULTS
+} = DEFAULT_COMPARE_OPTIONS
+
+export class CompareOptionsConflictError extends Error {
+    constructor(context: string, presentIgnoreKeys: string[]) {
+        super(
+            'Cannot combine ignore* options with pixelmatch options.\n' +
+            `Present ignore keys: ${presentIgnoreKeys.join(', ')} (values are ignored).\n` +
+            'Use either ignore* (preset mode) or pixelmatch (direct mode), not both.\n' +
+            `Context: ${context}`,
+        )
+        this.name = 'CompareOptionsConflictError'
+    }
+}
+
+export function hasIgnoreOptionKeys(options: object): boolean {
+    return IGNORE_OPTION_KEYS.some((key) => key in options)
+}
+
+export function hasPixelmatchOptions(options: { pixelmatch?: PixelmatchCompareOptions }): boolean {
+    return options.pixelmatch !== undefined && Object.keys(options.pixelmatch).length > 0
+}
+
+type CompareModeOptions = Partial<Record<(typeof IGNORE_OPTION_KEYS)[number], unknown>> & {
+    pixelmatch?: PixelmatchCompareOptions
+}
+
+export function assertExclusiveCompareMode(
+    options: CompareModeOptions,
+    context: string,
+): void {
+    if (hasIgnoreOptionKeys(options) && hasPixelmatchOptions(options)) {
+        const presentIgnoreKeys = IGNORE_OPTION_KEYS.filter((key) => key in options)
+        throw new CompareOptionsConflictError(context, presentIgnoreKeys)
+    }
+}
+
+export function resolvePixelmatchOptions(userOptions: PixelmatchCompareOptions): ResolvedPixelmatchOptions {
+    return {
+        threshold: userOptions.threshold ?? DEFAULT_PIXELMATCH_OPTIONS.threshold,
+        includeAA: userOptions.includeAA ?? DEFAULT_PIXELMATCH_OPTIONS.includeAA,
+        diffColor: userOptions.diffColor ?? DEFAULT_PIXELMATCH_OPTIONS.diffColor,
+        aaColor: userOptions.aaColor ?? DEFAULT_PIXELMATCH_OPTIONS.aaColor,
+        diffColorAlt: userOptions.diffColorAlt ?? DEFAULT_PIXELMATCH_OPTIONS.diffColorAlt,
+        alpha: userOptions.alpha ?? DEFAULT_PIXELMATCH_OPTIONS.alpha,
+        diffMask: userOptions.diffMask ?? DEFAULT_PIXELMATCH_OPTIONS.diffMask,
+        checkerboard: userOptions.checkerboard ?? DEFAULT_PIXELMATCH_OPTIONS.checkerboard,
+    }
+}
+
+function buildCompareOptions(options: ClassOptions): CompareOptions {
+    const deprecatedCompareOptions = logAllDeprecatedCompareOptions(options)
+    const userCompareOptions = options.compareOptions ?? {}
+    const mergedUserCompareOptions = {
+        ...deprecatedCompareOptions,
+        ...userCompareOptions,
+    }
+
+    assertExclusiveCompareMode(mergedUserCompareOptions, 'compareOptions')
+
+    if (hasPixelmatchOptions(mergedUserCompareOptions)) {
+        return {
+            ...SHARED_COMPARE_DEFAULTS,
+            ...mergedUserCompareOptions,
+            pixelmatch: mergedUserCompareOptions.pixelmatch,
+        } as CompareOptions
+    }
+
+    return {
+        ...DEFAULT_COMPARE_OPTIONS,
+        ...deprecatedCompareOptions,
+        ...userCompareOptions,
+    } as CompareOptions
+}
 
 /**
  * Determine the default options by merging user options with sensible defaults
@@ -61,11 +151,7 @@ export function defaultOptions(options: ClassOptions): DefaultOptions {
         waitForFontsLoaded: options.waitForFontsLoaded ?? true,
         alwaysSaveActualImage: options.alwaysSaveActualImage ?? true,
 
-        compareOptions: {
-            ...DEFAULT_COMPARE_OPTIONS,
-            ...logAllDeprecatedCompareOptions(options),
-            ...options.compareOptions,
-        },
+        compareOptions: buildCompareOptions(options),
 
         /**
          * Tabbable options with deep merging
@@ -101,7 +187,7 @@ export function screenMethodCompareOptions(
  * Determine the method compare options with improved type safety
  */
 export function methodCompareOptions(options: MethodImageCompareCompareOptions): MethodImageCompareCompareOptions {
-    const compareOptionKeys: (keyof MethodImageCompareCompareOptions)[] = [
+    const compareOptionKeys = [
         'blockOut',
         'ignoreAlpha',
         'ignoreAntialiasing',
@@ -112,11 +198,12 @@ export function methodCompareOptions(options: MethodImageCompareCompareOptions):
         'returnAllCompareData',
         'saveAboveTolerance',
         'scaleImagesToSameSize',
-    ]
+        'pixelmatch',
+    ] as const
 
     return compareOptionKeys.reduce((result, key) => {
         if (key in options && options[key] !== undefined) {
-            result[key] = options[key] as any // Type assertion needed due to union types
+            result[key] = options[key] as never
         }
         return result
     }, {} as MethodImageCompareCompareOptions)

@@ -82,9 +82,13 @@ vi.mock('./createCompareReport.js', () => ({
 vi.mock('../pixelmatch/compareImages.js', () => ({
     default: vi.fn()
 }))
-vi.mock('../helpers/constants.js', () => ({
-    DEFAULT_RESIZE_DIMENSIONS: { top: 0, right: 0, bottom: 0, left: 0 }
-}))
+vi.mock('../helpers/constants.js', async (importOriginal) => {
+    const actual = await importOriginal() as Record<string, unknown>
+    return {
+        ...actual,
+        DEFAULT_RESIZE_DIMENSIONS: { top: 0, right: 0, bottom: 0, left: 0 },
+    }
+})
 vi.mock('process', () => ({
     argv: ['node', 'test.js']
 }))
@@ -1335,5 +1339,66 @@ describe('executeImageCompare', () => {
         })).rejects.toThrow(/If you need the actual image to create a baseline, please set alwaysSaveActualImage to true/)
 
         expect(images.saveBase64Image).not.toHaveBeenCalled()
+    })
+
+    it('should pass resolved pixelmatch options when configured at method level', async () => {
+        const pixelmatchOptions = {
+            ...mockOptions,
+            compareOptions: {
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    scaleImagesToSameSize: false,
+                },
+                method: {
+                    pixelmatch: { threshold: 0.05, includeAA: true },
+                },
+            },
+        }
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: pixelmatchOptions,
+            testContext: mockTestContext,
+        })
+
+        expect(compareImagesPixelmatch.default).toHaveBeenCalledWith(
+            expect.any(Buffer),
+            expect.any(Buffer),
+            {
+                pixelmatch: expect.objectContaining({
+                    threshold: 0.05,
+                    includeAA: true,
+                }),
+                scaleToSameSize: false,
+            },
+        )
+        expect(log.warn).not.toHaveBeenCalledWith(
+            expect.stringContaining('Multiple ignore* compare options are enabled'),
+            expect.anything(),
+            expect.anything(),
+        )
+    })
+
+    it('should throw when service ignore* and method pixelmatch are combined', async () => {
+        const conflictingOptions = {
+            ...mockOptions,
+            compareOptions: {
+                wic: {
+                    ...mockOptions.compareOptions.wic,
+                    ignoreLess: true,
+                },
+                method: {
+                    pixelmatch: { threshold: 0.05 },
+                },
+            },
+        }
+
+        await expect(executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: conflictingOptions,
+            testContext: { ...mockTestContext, commandName: 'checkScreen' },
+        })).rejects.toThrow(/Context: checkScreen/)
     })
 })
