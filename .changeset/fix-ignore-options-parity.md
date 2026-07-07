@@ -10,12 +10,12 @@ After v10 switched to pixelmatch, the public `ignore*` API did not fully match r
 **What changed**
 
 - Multiple `ignore*` flags now follow resemble last-wins ordering (`ignoreAlpha` → `ignoreAntialiasing` → `ignoreColors` → `ignoreLess` → `ignoreNothing`) instead of composing independently
-- `ignoreLess`, `ignoreAlpha`, `ignoreColors`, and `ignoreNothing` now apply their own threshold and AA rules when active — they no longer inherit default `ignoreAntialiasing: true` forgiveness
+- `ignoreLess`, `ignoreAlpha`, `ignoreColors`, and `ignoreNothing` now apply their own threshold and AA rules when active; they no longer inherit default `ignoreAntialiasing: true` forgiveness
 - `ignoreColors` now compares brightness only using resemble luma weights (`0.3/0.59/0.11`), matching resemble v9 behaviour
 - Added golden fixture parity tests for all ignore modes
 - JSDoc and README document preset mapping, last-wins semantics, and default vs resemble v9
 - Logs a WDIO warning when multiple `ignore*` flags are enabled, naming which option wins
-- Adds `compareOptions.pixelmatch` as a direct alternative to `ignore*` presets (mutually exclusive — combining both throws)
+- Adds `compareOptions.pixelmatch` as a direct alternative to `ignore*` presets (mutually exclusive per options object; method overrides strip the opposing mode)
 
 **Preset reference**
 
@@ -29,7 +29,7 @@ After v10 switched to pixelmatch, the public `ignore*` API did not fully match r
 
 **Direct pixelmatch mode (new)**
 
-Use `compareOptions.pixelmatch` at service level or on `check*` method options for full control over pixelmatch settings. Do not combine with any `ignore*` keys on the same options object.
+Use `compareOptions.pixelmatch` at service level or on `check*` method options. Do not combine with any `ignore*` keys on the **same** options object. Method options can override service compare mode per check (opposing keys stripped, warning logged).
 
 Service config:
 
@@ -47,7 +47,7 @@ services: [
 ]
 ```
 
-Method override:
+Method override (overrides service preset for that check):
 
 ```js
 await browser.checkScreen('homepage', {
@@ -55,7 +55,15 @@ await browser.checkScreen('homepage', {
 })
 ```
 
-Invalid, throws even when `ignoreLess` is `false`:
+Per-check preset override when service uses pixelmatch:
+
+```js
+await browser.checkScreen('homepage', {
+  ignoreLess: true,
+})
+```
+
+Invalid on a **single** options object,  throws even when `ignoreLess` is `false`:
 
 ```js
 compareOptions: {
@@ -72,7 +80,7 @@ See [pixelmatch](https://github.com/mapbox/pixelmatch) for option details.
 - Set `ignoreAntialiasing: false` when you need strict comparison where anti-aliased pixels count as differences
 - Multi-flag combos now match resemble v9 last-wins behaviour; review tests if you combine ignore flags
 - `ignoreColors` results may differ slightly from v10 but align with resemble v9
-- Use `compareOptions.pixelmatch` for direct pixelmatch control instead of `ignore*` presets; do not combine both on the same config
+- Use `compareOptions.pixelmatch` for direct pixelmatch control; method options can override service mode per check (opposing keys are stripped, warning logged)
 
 ### Committers: 1
 

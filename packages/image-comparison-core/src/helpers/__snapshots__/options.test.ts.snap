@@ -236,6 +236,23 @@ exports[`options > methodCompareOptions > should return the provided options whe
 }
 `;
 
+exports[`options > resolveEffectiveCompareOptions > strips ignore* when method sets pixelmatch 1`] = `
+{
+  "blockOutSideBar": true,
+  "pixelmatch": {
+    "threshold": 0.05,
+  },
+  "scaleImagesToSameSize": false,
+}
+`;
+
+exports[`options > resolveEffectiveCompareOptions > strips pixelmatch when method sets ignore* 1`] = `
+{
+  "ignoreLess": true,
+  "scaleImagesToSameSize": true,
+}
+`;
+
 exports[`options > resolvePixelmatchOptions > applies defaults for unset fields 1`] = `
 {
   "aaColor": [

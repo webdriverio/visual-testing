@@ -105,6 +105,7 @@ vi.mock('./images.js', async () => {
 
 import { executeImageCompare, checkBaselineImageExists } from './images.js'
 import * as images from './images.js'
+import { CompareOptionsConflictError } from '../helpers/options.js'
 
 describe('executeImageCompare', () => {
     const mockDeviceRectangles = {
@@ -1363,22 +1364,51 @@ describe('executeImageCompare', () => {
         })
 
         expect(vi.mocked(compareImagesPixelmatch.default).mock.calls[0]?.[2]).toMatchSnapshot()
-        expect(log.warn).not.toHaveBeenCalledWith(
-            expect.stringContaining('Multiple ignore* compare options are enabled'),
-            expect.anything(),
-            expect.anything(),
+        expect(log.warn).toHaveBeenCalledWith(
+            expect.stringContaining('Method compare options override service compare mode'),
+            'test',
+            expect.any(String),
+            expect.any(String),
         )
     })
 
-    it('should throw when service ignore* and method pixelmatch are combined', async () => {
-        const conflictingOptions = {
+    it('should use preset mode when method ignore* overrides service pixelmatch', async () => {
+        const presetOverrideOptions = {
             ...mockOptions,
             compareOptions: {
                 wic: {
                     ...mockOptions.compareOptions.wic,
-                    ignoreLess: true,
+                    pixelmatch: { threshold: 0.1 },
                 },
                 method: {
+                    ignoreLess: true,
+                },
+            },
+        }
+
+        await executeImageCompare({
+            isViewPortScreenshot: true,
+            isNativeContext: false,
+            options: presetOverrideOptions,
+            testContext: { ...mockTestContext, commandName: 'checkElement' },
+        })
+
+        expect(vi.mocked(compareImagesPixelmatch.default).mock.calls[0]?.[2]).toMatchSnapshot()
+        expect(log.warn).toHaveBeenCalledWith(
+            expect.stringContaining('Method compare options override service compare mode'),
+            'checkElement',
+            expect.stringContaining('pixelmatch'),
+            expect.stringContaining('preset'),
+        )
+    })
+
+    it('should throw when method options combine ignore* with pixelmatch', async () => {
+        const conflictingMethodOptions = {
+            ...mockOptions,
+            compareOptions: {
+                ...mockOptions.compareOptions,
+                method: {
+                    ignoreLess: true,
                     pixelmatch: { threshold: 0.05 },
                 },
             },
@@ -1387,8 +1417,8 @@ describe('executeImageCompare', () => {
         await expect(executeImageCompare({
             isViewPortScreenshot: true,
             isNativeContext: false,
-            options: conflictingOptions,
+            options: conflictingMethodOptions,
             testContext: { ...mockTestContext, commandName: 'checkScreen' },
-        })).rejects.toThrow(/Context: checkScreen/)
+        })).rejects.toThrow(CompareOptionsConflictError)
     })
 })

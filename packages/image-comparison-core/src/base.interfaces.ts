@@ -120,7 +120,7 @@ export interface BaseImageCompareOptions {
      */
     ignoreLess?: boolean;
     /**
-     * Use zero tolerance — any pixel difference counts as a mismatch.
+     * Use zero tolerance: any pixel difference counts as a mismatch.
      * Preset: threshold `0`, AA not forgiven.
      * @default false
      */

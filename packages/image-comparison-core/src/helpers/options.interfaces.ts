@@ -190,7 +190,7 @@ export interface ClassOptions {
     ignoreLess?: boolean;
 
     /**
-     * Use zero tolerance — any pixel difference counts as a mismatch.
+     * Use zero tolerance: any pixel difference counts as a mismatch.
      * Preset: threshold `0`, AA not forgiven.
      */
     ignoreNothing?: boolean;
@@ -217,7 +217,7 @@ export interface ClassOptions {
 
     /**
      * Options object passed to the underlying image comparison engine.
-     * Use either `ignore*` preset flags or a `pixelmatch` object — not both.
+     * Use either `ignore*` preset flags or a `pixelmatch` object, not both.
      */
     compareOptions?: Partial<CompareOptions>;
 
@@ -469,7 +469,7 @@ export interface SharedServiceCompareOptions {
 }
 
 /**
- * ignore* preset mode — maps to resemble-style presets.
+ * ignore* preset mode. Maps to resemble-style presets.
  * Cannot be combined with `pixelmatch` on the same options object.
  */
 export interface IgnorePresetCompareOptions {
@@ -502,7 +502,7 @@ export interface IgnorePresetCompareOptions {
     ignoreLess: boolean;
 
     /**
-     * Use zero tolerance — any pixel difference counts as a mismatch.
+     * Use zero tolerance: any pixel difference counts as a mismatch.
      * Preset: threshold `0`, AA not forgiven.
      */
     ignoreNothing: boolean;
@@ -512,7 +512,7 @@ export interface IgnorePresetCompareOptions {
 }
 
 /**
- * Direct pixelmatch mode — full control over threshold, AA, and diff colours.
+ * Direct pixelmatch mode: full control over threshold, AA, and diff colours.
  * Omit all `ignore*` keys; cannot be combined with preset mode on the same options object.
  */
 export interface PixelmatchModeCompareOptions {
@@ -523,7 +523,9 @@ export interface PixelmatchModeCompareOptions {
     pixelmatch: PixelmatchCompareOptions;
 }
 
+/** Preset or direct pixelmatch compare mode, mutually exclusive per options object. */
 export type ExclusiveCompareOptions = IgnorePresetCompareOptions | PixelmatchModeCompareOptions
 
+/** Service compare options: shared fields plus either preset or direct pixelmatch mode. */
 export type CompareOptions = SharedServiceCompareOptions & ExclusiveCompareOptions
 

@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
-import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions, prepareIgnoreOptions, resolveActiveIgnorePreset, resolveComparePreset, warnOnMultipleIgnorePresets, assertExclusiveCompareMode, hasPixelmatchOptions, resolvePixelmatchOptions, CompareOptionsConflictError } from './options.js'
+import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions, prepareIgnoreOptions, resolveActiveIgnorePreset, resolveComparePreset, warnOnMultipleIgnorePresets, assertExclusiveCompareMode, hasPixelmatchOptions, resolvePixelmatchOptions, CompareOptionsConflictError, resolveEffectiveCompareOptions, getCompareMode, methodSetsCompareMode, stripIgnoreOptionKeys, stripPixelmatchOptions } from './options.js'
+import type { CompareModeOptions } from './options.js'
 import type { ClassOptions } from './options.interfaces.js'
 import type { ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
@@ -621,6 +622,90 @@ describe('options', () => {
                     pixelmatch: { threshold: 0.063 },
                 } as ClassOptions['compareOptions'],
             })).toThrow(CompareOptionsConflictError)
+        })
+    })
+
+    describe('resolveEffectiveCompareOptions', () => {
+        const wicPreset = {
+            ignoreAntialiasing: true,
+            scaleImagesToSameSize: false,
+            blockOutSideBar: true,
+        }
+        const wicPixelmatch = {
+            pixelmatch: { threshold: 0.1, includeAA: false },
+            scaleImagesToSameSize: true,
+        }
+
+        it('strips ignore* when method sets pixelmatch', () => {
+            const result = resolveEffectiveCompareOptions(wicPreset, {
+                pixelmatch: { threshold: 0.05 },
+            }, 'checkScreen')
+
+            expect(result).toMatchSnapshot()
+            expect(result).not.toHaveProperty('ignoreAntialiasing')
+            expect(getCompareMode(result)).toBe('pixelmatch')
+        })
+
+        it('strips pixelmatch when method sets ignore*', () => {
+            const result = resolveEffectiveCompareOptions(wicPixelmatch, {
+                ignoreLess: true,
+            }, 'checkElement')
+
+            expect(result).toMatchSnapshot()
+            expect(result).not.toHaveProperty('pixelmatch')
+            expect(getCompareMode(result)).toBe('preset')
+        })
+
+        it('merges shared keys with method winning when method sets no compare mode', () => {
+            const result = resolveEffectiveCompareOptions(wicPreset, {
+                scaleImagesToSameSize: true,
+            }, 'checkScreen')
+
+            expect(result.scaleImagesToSameSize).toBe(true)
+            expect(result.ignoreAntialiasing).toBe(true)
+        })
+
+        it('throws when method options combine ignore* with pixelmatch', () => {
+            expect(() => resolveEffectiveCompareOptions(wicPreset, {
+                ignoreLess: true,
+                pixelmatch: { threshold: 0.05 },
+            }, 'checkScreen')).toThrow(CompareOptionsConflictError)
+        })
+
+        it('warns when method overrides service compare mode', () => {
+            resolveEffectiveCompareOptions(wicPreset, {
+                pixelmatch: { threshold: 0.05 },
+            }, 'checkScreen')
+
+            expect(log.warn).toHaveBeenCalledWith(
+                expect.stringContaining('Method compare options override service compare mode'),
+                'checkScreen',
+                expect.stringContaining('preset'),
+                expect.stringContaining('pixelmatch'),
+            )
+        })
+    })
+
+    describe('compare mode helpers', () => {
+        it('identifies when method sets compare mode', () => {
+            expect(methodSetsCompareMode({ pixelmatch: { threshold: 0.1 } })).toBe(true)
+            expect(methodSetsCompareMode({ ignoreLess: true })).toBe(true)
+            expect(methodSetsCompareMode({ scaleImagesToSameSize: true } as CompareModeOptions)).toBe(false)
+        })
+
+        it('strips ignore* and pixelmatch keys', () => {
+            expect(stripIgnoreOptionKeys({
+                ignoreLess: true,
+                pixelmatch: { threshold: 0.1 },
+                scaleImagesToSameSize: true,
+            })).toEqual({
+                pixelmatch: { threshold: 0.1 },
+                scaleImagesToSameSize: true,
+            })
+            expect(stripPixelmatchOptions({
+                ignoreLess: true,
+                pixelmatch: { threshold: 0.1 },
+            })).toEqual({ ignoreLess: true })
         })
     })
 })

@@ -13,6 +13,9 @@ function resolveIgnoreList(ignore: ComparisonOptions['ignore']): ComparisonIgnor
     return Array.isArray(ignore) ? ignore : [ignore]
 }
 
+/**
+ * Returns whether a pixelmatch output buffer pixel is a diff, AA, or alt highlight.
+ */
 function isHighlightedPixel(
     output: Uint8Array,
     offset: number,

@@ -57,3 +57,12 @@ exports[`executeImageCompare > should return all compare data when returnAllComp
   "misMatchPercentage": 0.5,
 }
 `;
+
+exports[`executeImageCompare > should use preset mode when method ignore* overrides service pixelmatch 1`] = `
+{
+  "ignore": [
+    "less",
+  ],
+  "scaleToSameSize": true,
+}
+`;

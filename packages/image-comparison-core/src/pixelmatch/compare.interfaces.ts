@@ -48,7 +48,7 @@ export interface PixelmatchCompareOptions {
     aaColor?: [number, number, number];
     /** `[R,G,B]` added vs removed regions. @default magenta */
     diffColorAlt?: [number, number, number];
-    /** Diff blend opacity — distinct from `ignoreAlpha`. @default 0.1 */
+    /** Diff blend opacity, distinct from `ignoreAlpha`. @default 0.1 */
     alpha?: number;
     /** When true, use pixelmatch diff output directly instead of compositing on the screenshot. @default false */
     diffMask?: boolean;

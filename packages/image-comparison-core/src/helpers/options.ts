@@ -70,8 +70,125 @@ export function hasPixelmatchOptions(options: { pixelmatch?: PixelmatchCompareOp
     return options.pixelmatch !== undefined && Object.keys(options.pixelmatch).length > 0
 }
 
-type CompareModeOptions = Partial<Record<(typeof IGNORE_OPTION_KEYS)[number], unknown>> & {
+type CompareMode = 'preset' | 'pixelmatch'
+
+/**
+ * Compare options shape used for preset vs pixelmatch mode detection and stripping.
+ */
+export type CompareModeOptions = Partial<Record<(typeof IGNORE_OPTION_KEYS)[number], unknown>> & {
     pixelmatch?: PixelmatchCompareOptions
+}
+
+/**
+ * Returns the compare mode implied by an options object.
+ */
+export function getCompareMode(options: CompareModeOptions): CompareMode {
+    return hasPixelmatchOptions(options) ? 'pixelmatch' : 'preset'
+}
+
+/**
+ * Returns whether method options set compare mode (ignore* or pixelmatch).
+ */
+export function methodSetsCompareMode(method: CompareModeOptions): boolean {
+    return hasPixelmatchOptions(method) || hasIgnoreOptionKeys(method)
+}
+
+/**
+ * Removes all ignore* keys from a compare options object.
+ */
+export function stripIgnoreOptionKeys<T extends CompareModeOptions>(options: T): Omit<T, (typeof IGNORE_OPTION_KEYS)[number]> {
+    const result = { ...options }
+
+    for (const key of IGNORE_OPTION_KEYS) {
+        delete result[key]
+    }
+
+    return result
+}
+
+/**
+ * Removes pixelmatch settings from a compare options object.
+ */
+export function stripPixelmatchOptions<T extends CompareModeOptions>(options: T): Omit<T, 'pixelmatch'> {
+    const { pixelmatch: _pixelmatch, ...rest } = options
+    return rest
+}
+
+/**
+ * Builds a human-readable compare mode label for log output.
+ */
+function describeCompareMode(options: CompareModeOptions, mode: CompareMode): string {
+    if (mode === 'pixelmatch') {
+        const threshold = options.pixelmatch?.threshold
+        return threshold !== undefined ? `pixelmatch (threshold: ${threshold})` : 'pixelmatch'
+    }
+
+    const enabledIgnoreKeys = IGNORE_OPTION_KEYS.filter((key) => key in options)
+    return enabledIgnoreKeys.length > 0 ? `preset (${enabledIgnoreKeys.join(', ')})` : 'preset'
+}
+
+/**
+ * Logs a warning when method options override the service compare mode.
+ */
+export function warnOnMethodCompareModeOverride(
+    wic: CompareModeOptions,
+    method: CompareModeOptions,
+    commandName: string,
+): void {
+    const serviceMode = getCompareMode(wic)
+    const methodMode = getCompareMode(method)
+
+    log.warn(
+        'Method compare options override service compare mode for %s.\n' +
+        '  Service: %s\n' +
+        '  Method:  %s',
+        commandName,
+        describeCompareMode(wic, serviceMode),
+        describeCompareMode(method, methodMode),
+    )
+}
+
+/**
+ * Merges service and method compare options; method wins and strips the opposing compare mode.
+ */
+export function resolveEffectiveCompareOptions<W extends object, M extends object>(
+    wic: W,
+    method: M,
+    commandName: string,
+): W & M {
+    assertExclusiveCompareMode(method as CompareModeOptions, commandName)
+
+    const wicMode = getCompareMode(wic as CompareModeOptions)
+    const methodMode = hasPixelmatchOptions(method as CompareModeOptions)
+        ? 'pixelmatch'
+        : hasIgnoreOptionKeys(method)
+            ? 'preset'
+            : null
+    const merged = { ...wic, ...method } as W & M
+
+    if (methodMode === 'pixelmatch') {
+        if (wicMode === 'preset') {
+            warnOnMethodCompareModeOverride(wic as CompareModeOptions, method as CompareModeOptions, commandName)
+        }
+
+        return {
+            ...stripIgnoreOptionKeys(merged as CompareModeOptions),
+            pixelmatch: {
+                ...(wic as CompareModeOptions).pixelmatch,
+                ...(method as CompareModeOptions).pixelmatch,
+            },
+        } as unknown as W & M
+    }
+
+    if (methodMode === 'preset') {
+        if (wicMode === 'pixelmatch') {
+            warnOnMethodCompareModeOverride(wic as CompareModeOptions, method as CompareModeOptions, commandName)
+        }
+
+        return stripPixelmatchOptions(merged as CompareModeOptions) as unknown as W & M
+    }
+
+    return merged
 }
 
 /**

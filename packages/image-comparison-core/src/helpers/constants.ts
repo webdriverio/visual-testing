@@ -4,6 +4,7 @@ import type { TestContext } from 'src/methods/compareReport.interfaces.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 import type { ResolvedPixelmatchOptions } from '../pixelmatch/compare.interfaces.js'
 
+/** Default pixelmatch settings used when direct compare mode fields are unset. */
 export const DEFAULT_PIXELMATCH_OPTIONS: ResolvedPixelmatchOptions = {
     threshold: 0.1,
     includeAA: false,
