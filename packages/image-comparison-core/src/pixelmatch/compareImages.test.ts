@@ -405,20 +405,7 @@ describe('pixelmatch adapter - compareImages', () => {
                 },
             })
 
-            expect(pixelmatchFn).toHaveBeenCalledWith(
-                expect.anything(), expect.anything(), expect.anything(),
-                expect.any(Number), expect.any(Number),
-                expect.objectContaining({
-                    threshold: 0.05,
-                    includeAA: true,
-                    diffColor: [255, 0, 0],
-                    aaColor: [0, 255, 0],
-                    diffColorAlt: [0, 0, 255],
-                    alpha: 0.2,
-                    diffMask: false,
-                    checkerboard: false,
-                }),
-            )
+            expect(pixelmatchFn.mock.calls[0]?.[5]).toMatchSnapshot()
         })
 
         it('uses custom diffColor for diff pixel detection and compositing', async () => {
@@ -449,11 +436,10 @@ describe('pixelmatch adapter - compareImages', () => {
             })
             const raw = result.getRawPixels()
 
-            expect(result.diffPixels).toHaveLength(1)
-            expect(raw.data[0]).toBe(255)
-            expect(raw.data[1]).toBe(0)
-            expect(raw.data[2]).toBe(0)
-            expect(raw.data[4]).toBe(200)
+            expect({
+                diffPixelCount: result.diffPixels.length,
+                highlightedPixels: [raw.data[0], raw.data[1], raw.data[2], raw.data[4]],
+            }).toMatchSnapshot()
         })
 
         it('uses pixelmatch output directly when diffMask is true', async () => {
@@ -479,10 +465,7 @@ describe('pixelmatch adapter - compareImages', () => {
             })
             const raw = result.getRawPixels()
 
-            expect(raw.data[0]).toBe(10)
-            expect(raw.data[1]).toBe(20)
-            expect(raw.data[2]).toBe(30)
-            expect(raw.data[3]).toBe(128)
+            expect(Array.from(raw.data.slice(0, 4))).toMatchSnapshot()
         })
     })
 })

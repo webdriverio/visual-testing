@@ -1362,17 +1362,7 @@ describe('executeImageCompare', () => {
             testContext: mockTestContext,
         })
 
-        expect(compareImagesPixelmatch.default).toHaveBeenCalledWith(
-            expect.any(Buffer),
-            expect.any(Buffer),
-            {
-                pixelmatch: expect.objectContaining({
-                    threshold: 0.05,
-                    includeAA: true,
-                }),
-                scaleToSameSize: false,
-            },
-        )
+        expect(vi.mocked(compareImagesPixelmatch.default).mock.calls[0]?.[2]).toMatchSnapshot()
         expect(log.warn).not.toHaveBeenCalledWith(
             expect.stringContaining('Multiple ignore* compare options are enabled'),
             expect.anything(),

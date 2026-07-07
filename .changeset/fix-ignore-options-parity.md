@@ -1,6 +1,6 @@
 ---
-"@wdio/image-comparison-core": patch
-"@wdio/visual-service": patch
+"@wdio/image-comparison-core": minor
+"@wdio/visual-service": minor
 ---
 
 fix: ignore* option parity with resemble (pixelmatch)
@@ -26,6 +26,45 @@ After v10 switched to pixelmatch, the public `ignore*` API did not fully match r
 | `ignoreColors` | ~16/255 | no (brightness only) |
 | `ignoreAlpha` | ~16/255 | no |
 | `ignoreAntialiasing` (default) | ~32/255 | yes |
+
+**Direct pixelmatch mode (new)**
+
+Use `compareOptions.pixelmatch` at service level or on `check*` method options for full control over pixelmatch settings. Do not combine with any `ignore*` keys on the same options object.
+
+Service config:
+
+```js
+// wdio.conf.js
+services: [
+  ['visual', {
+    compareOptions: {
+      pixelmatch: {
+        threshold: 0.063,
+        includeAA: true,
+      },
+    },
+  }],
+]
+```
+
+Method override:
+
+```js
+await browser.checkScreen('homepage', {
+  pixelmatch: { threshold: 0.05 },
+})
+```
+
+Invalid, throws even when `ignoreLess` is `false`:
+
+```js
+compareOptions: {
+  ignoreLess: false,
+  pixelmatch: { threshold: 0.063 },
+}
+```
+
+See [pixelmatch](https://github.com/mapbox/pixelmatch) for option details.
 
 **Migration**
 

@@ -41,6 +41,9 @@ const {
     ...SHARED_COMPARE_DEFAULTS
 } = DEFAULT_COMPARE_OPTIONS
 
+/**
+ * Thrown when ignore* preset keys and a non-empty pixelmatch object appear on the same options.
+ */
 export class CompareOptionsConflictError extends Error {
     constructor(context: string, presentIgnoreKeys: string[]) {
         super(
@@ -53,10 +56,16 @@ export class CompareOptionsConflictError extends Error {
     }
 }
 
+/**
+ * Returns whether the options object contains any ignore* keys (values are ignored).
+ */
 export function hasIgnoreOptionKeys(options: object): boolean {
     return IGNORE_OPTION_KEYS.some((key) => key in options)
 }
 
+/**
+ * Returns whether the options object contains a non-empty pixelmatch settings object.
+ */
 export function hasPixelmatchOptions(options: { pixelmatch?: PixelmatchCompareOptions }): boolean {
     return options.pixelmatch !== undefined && Object.keys(options.pixelmatch).length > 0
 }
@@ -65,6 +74,9 @@ type CompareModeOptions = Partial<Record<(typeof IGNORE_OPTION_KEYS)[number], un
     pixelmatch?: PixelmatchCompareOptions
 }
 
+/**
+ * Throws when ignore* keys and pixelmatch options are both present on the same object.
+ */
 export function assertExclusiveCompareMode(
     options: CompareModeOptions,
     context: string,
@@ -75,6 +87,9 @@ export function assertExclusiveCompareMode(
     }
 }
 
+/**
+ * Merges user pixelmatch settings with library defaults for direct comparison mode.
+ */
 export function resolvePixelmatchOptions(userOptions: PixelmatchCompareOptions): ResolvedPixelmatchOptions {
     return {
         threshold: userOptions.threshold ?? DEFAULT_PIXELMATCH_OPTIONS.threshold,
@@ -88,6 +103,9 @@ export function resolvePixelmatchOptions(userOptions: PixelmatchCompareOptions):
     }
 }
 
+/**
+ * Builds normalized compare options, branching preset vs direct pixelmatch mode.
+ */
 function buildCompareOptions(options: ClassOptions): CompareOptions {
     const deprecatedCompareOptions = logAllDeprecatedCompareOptions(options)
     const userCompareOptions = options.compareOptions ?? {}

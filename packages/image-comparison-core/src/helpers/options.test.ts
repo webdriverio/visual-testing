@@ -564,11 +564,12 @@ describe('options', () => {
             }, 'compareOptions')).toThrow(CompareOptionsConflictError)
         })
 
-        it('throws regardless of ignore* value', () => {
+        it('throws with a descriptive error message', () => {
             expect(() => assertExclusiveCompareMode({
                 ignoreAntialiasing: false,
+                ignoreLess: true,
                 pixelmatch: { includeAA: true },
-            }, 'checkScreen')).toThrow(/Context: checkScreen/)
+            }, 'checkScreen')).toThrowErrorMatchingSnapshot()
         })
 
         it('does not throw when only ignore* keys are present', () => {
@@ -580,7 +581,7 @@ describe('options', () => {
         })
 
         it('ignores empty pixelmatch object', () => {
-            expect(hasPixelmatchOptions({ pixelmatch: {} })).toBe(false)
+            expect(hasPixelmatchOptions({ pixelmatch: {} })).toMatchSnapshot()
             expect(() => assertExclusiveCompareMode({
                 ignoreAntialiasing: true,
                 pixelmatch: {},
@@ -590,16 +591,7 @@ describe('options', () => {
 
     describe('resolvePixelmatchOptions', () => {
         it('applies defaults for unset fields', () => {
-            expect(resolvePixelmatchOptions({})).toEqual({
-                threshold: 0.1,
-                includeAA: false,
-                diffColor: [255, 0, 255],
-                aaColor: [255, 0, 255],
-                diffColorAlt: [255, 0, 255],
-                alpha: 0.1,
-                diffMask: false,
-                checkerboard: true,
-            })
+            expect(resolvePixelmatchOptions({})).toMatchSnapshot()
         })
 
         it('preserves user overrides', () => {
@@ -607,11 +599,7 @@ describe('options', () => {
                 threshold: 0.05,
                 diffColor: [255, 0, 0],
                 diffMask: true,
-            })).toMatchObject({
-                threshold: 0.05,
-                diffColor: [255, 0, 0],
-                diffMask: true,
-            })
+            })).toMatchSnapshot()
         })
     })
 
@@ -623,13 +611,7 @@ describe('options', () => {
                 },
             })
 
-            expect(result.compareOptions).toMatchObject({
-                pixelmatch: { threshold: 0.063 },
-                blockOutSideBar: true,
-                scaleImagesToSameSize: false,
-            })
-            expect(result.compareOptions).not.toHaveProperty('ignoreAlpha')
-            expect(result.compareOptions).not.toHaveProperty('ignoreAntialiasing')
+            expect(result.compareOptions).toMatchSnapshot()
         })
 
         it('throws when service compareOptions combine ignore* with pixelmatch', () => {
