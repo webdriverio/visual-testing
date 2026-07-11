@@ -339,7 +339,7 @@ export function updateVisualBaseline() {
  * and returns non-undefined ones to be added back to the config
  */
 export function logAllDeprecatedCompareOptions(options: ClassOptions) {
-    const deprecatedKeys: (keyof CompareOptions)[] = [
+    const deprecatedKeys = [
         'blockOutSideBar',
         'blockOutStatusBar',
         'blockOutToolBar',
@@ -354,7 +354,7 @@ export function logAllDeprecatedCompareOptions(options: ClassOptions) {
         'returnAllCompareData',
         'saveAboveTolerance',
         'scaleImagesToSameSize',
-    ]
+    ] as const satisfies readonly (keyof ClassOptions)[]
     const foundDeprecatedKeys = deprecatedKeys.filter((key) => key in options)
 
     if (foundDeprecatedKeys.length > 0) {
@@ -365,8 +365,9 @@ export function logAllDeprecatedCompareOptions(options: ClassOptions) {
     }
 
     return foundDeprecatedKeys.reduce<Partial<CompareOptions>>((acc, key) => {
-        if (options[key] !== undefined) {
-            acc[key] = options[key] as any
+        const value = options[key]
+        if (value !== undefined) {
+            (acc as Record<string, unknown>)[key] = value
         }
         return acc
     }, {})

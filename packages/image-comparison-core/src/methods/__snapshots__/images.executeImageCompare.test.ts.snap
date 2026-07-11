@@ -6,6 +6,34 @@ exports[`executeImageCompare > should handle rawMisMatchPercentage option 1`] = 
 
 exports[`executeImageCompare > should handle updateVisualBaseline flag 1`] = `0`;
 
+exports[`executeImageCompare > should pass resolved pixelmatch options when configured at method level 1`] = `
+{
+  "pixelmatch": {
+    "aaColor": [
+      255,
+      0,
+      255,
+    ],
+    "alpha": 0.1,
+    "checkerboard": true,
+    "diffColor": [
+      255,
+      0,
+      255,
+    ],
+    "diffColorAlt": [
+      255,
+      0,
+      255,
+    ],
+    "diffMask": false,
+    "includeAA": true,
+    "threshold": 0.05,
+  },
+  "scaleToSameSize": false,
+}
+`;
+
 exports[`executeImageCompare > should return all compare data when returnAllCompareData is true 1`] = `
 {
   "fileName": "test.png",
@@ -27,5 +55,14 @@ exports[`executeImageCompare > should return all compare data when returnAllComp
     "diff": "/mock/diff/test.png",
   },
   "misMatchPercentage": 0.5,
+}
+`;
+
+exports[`executeImageCompare > should use preset mode when method ignore* overrides service pixelmatch 1`] = `
+{
+  "ignore": [
+    "less",
+  ],
+  "scaleToSameSize": true,
 }
 `;

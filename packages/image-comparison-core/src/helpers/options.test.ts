@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { join } from 'node:path'
 import logger from '@wdio/logger'
-import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions, prepareIgnoreOptions, resolveActiveIgnorePreset, resolveComparePreset, warnOnMultipleIgnorePresets } from './options.js'
+import { defaultOptions, methodCompareOptions, screenMethodCompareOptions, createBeforeScreenshotOptions, buildAfterScreenshotOptions, prepareIgnoreOptions, resolveActiveIgnorePreset, resolveComparePreset, warnOnMultipleIgnorePresets, assertExclusiveCompareMode, hasPixelmatchOptions, resolvePixelmatchOptions, CompareOptionsConflictError, resolveEffectiveCompareOptions, getCompareMode, methodSetsCompareMode, stripIgnoreOptionKeys, stripPixelmatchOptions } from './options.js'
+import type { CompareModeOptions } from './options.js'
 import type { ClassOptions } from './options.interfaces.js'
 import type { ScreenMethodImageCompareCompareOptions } from '../methods/images.interfaces.js'
 import type { InstanceData } from '../methods/instanceData.interfaces.js'
@@ -553,6 +554,158 @@ describe('options', () => {
                 'ignoreAntialiasing, ignoreLess',
                 'ignoreLess',
             )
+        })
+    })
+
+    describe('assertExclusiveCompareMode', () => {
+        it('throws when ignore* keys and non-empty pixelmatch are both present', () => {
+            expect(() => assertExclusiveCompareMode({
+                ignoreLess: false,
+                pixelmatch: { threshold: 0.063 },
+            }, 'compareOptions')).toThrow(CompareOptionsConflictError)
+        })
+
+        it('throws with a descriptive error message', () => {
+            expect(() => assertExclusiveCompareMode({
+                ignoreAntialiasing: false,
+                ignoreLess: true,
+                pixelmatch: { includeAA: true },
+            }, 'checkScreen')).toThrowErrorMatchingSnapshot()
+        })
+
+        it('does not throw when only ignore* keys are present', () => {
+            expect(() => assertExclusiveCompareMode({ ignoreLess: true }, 'compareOptions')).not.toThrow()
+        })
+
+        it('does not throw when only pixelmatch is present', () => {
+            expect(() => assertExclusiveCompareMode({ pixelmatch: { threshold: 0.05 } }, 'compareOptions')).not.toThrow()
+        })
+
+        it('ignores empty pixelmatch object', () => {
+            expect(hasPixelmatchOptions({ pixelmatch: {} })).toMatchSnapshot()
+            expect(() => assertExclusiveCompareMode({
+                ignoreAntialiasing: true,
+                pixelmatch: {},
+            }, 'compareOptions')).not.toThrow()
+        })
+    })
+
+    describe('resolvePixelmatchOptions', () => {
+        it('applies defaults for unset fields', () => {
+            expect(resolvePixelmatchOptions({})).toMatchSnapshot()
+        })
+
+        it('preserves user overrides', () => {
+            expect(resolvePixelmatchOptions({
+                threshold: 0.05,
+                diffColor: [255, 0, 0],
+                diffMask: true,
+            })).toMatchSnapshot()
+        })
+    })
+
+    describe('defaultOptions pixelmatch mode', () => {
+        it('omits ignore* defaults when pixelmatch mode is configured', () => {
+            const result = defaultOptions({
+                compareOptions: {
+                    pixelmatch: { threshold: 0.063 },
+                },
+            })
+
+            expect(result.compareOptions).toMatchSnapshot()
+        })
+
+        it('throws when service compareOptions combine ignore* with pixelmatch', () => {
+            expect(() => defaultOptions({
+                compareOptions: {
+                    ignoreLess: false,
+                    pixelmatch: { threshold: 0.063 },
+                } as ClassOptions['compareOptions'],
+            })).toThrow(CompareOptionsConflictError)
+        })
+    })
+
+    describe('resolveEffectiveCompareOptions', () => {
+        const wicPreset = {
+            ignoreAntialiasing: true,
+            scaleImagesToSameSize: false,
+            blockOutSideBar: true,
+        }
+        const wicPixelmatch = {
+            pixelmatch: { threshold: 0.1, includeAA: false },
+            scaleImagesToSameSize: true,
+        }
+
+        it('strips ignore* when method sets pixelmatch', () => {
+            const result = resolveEffectiveCompareOptions(wicPreset, {
+                pixelmatch: { threshold: 0.05 },
+            }, 'checkScreen')
+
+            expect(result).toMatchSnapshot()
+            expect(result).not.toHaveProperty('ignoreAntialiasing')
+            expect(getCompareMode(result)).toBe('pixelmatch')
+        })
+
+        it('strips pixelmatch when method sets ignore*', () => {
+            const result = resolveEffectiveCompareOptions(wicPixelmatch, {
+                ignoreLess: true,
+            }, 'checkElement')
+
+            expect(result).toMatchSnapshot()
+            expect(result).not.toHaveProperty('pixelmatch')
+            expect(getCompareMode(result)).toBe('preset')
+        })
+
+        it('merges shared keys with method winning when method sets no compare mode', () => {
+            const result = resolveEffectiveCompareOptions(wicPreset, {
+                scaleImagesToSameSize: true,
+            }, 'checkScreen')
+
+            expect(result.scaleImagesToSameSize).toBe(true)
+            expect(result.ignoreAntialiasing).toBe(true)
+        })
+
+        it('throws when method options combine ignore* with pixelmatch', () => {
+            expect(() => resolveEffectiveCompareOptions(wicPreset, {
+                ignoreLess: true,
+                pixelmatch: { threshold: 0.05 },
+            }, 'checkScreen')).toThrow(CompareOptionsConflictError)
+        })
+
+        it('warns when method overrides service compare mode', () => {
+            resolveEffectiveCompareOptions(wicPreset, {
+                pixelmatch: { threshold: 0.05 },
+            }, 'checkScreen')
+
+            expect(log.warn).toHaveBeenCalledWith(
+                expect.stringContaining('Method compare options override service compare mode'),
+                'checkScreen',
+                expect.stringContaining('preset'),
+                expect.stringContaining('pixelmatch'),
+            )
+        })
+    })
+
+    describe('compare mode helpers', () => {
+        it('identifies when method sets compare mode', () => {
+            expect(methodSetsCompareMode({ pixelmatch: { threshold: 0.1 } })).toBe(true)
+            expect(methodSetsCompareMode({ ignoreLess: true })).toBe(true)
+            expect(methodSetsCompareMode({ scaleImagesToSameSize: true } as CompareModeOptions)).toBe(false)
+        })
+
+        it('strips ignore* and pixelmatch keys', () => {
+            expect(stripIgnoreOptionKeys({
+                ignoreLess: true,
+                pixelmatch: { threshold: 0.1 },
+                scaleImagesToSameSize: true,
+            })).toEqual({
+                pixelmatch: { threshold: 0.1 },
+                scaleImagesToSameSize: true,
+            })
+            expect(stripPixelmatchOptions({
+                ignoreLess: true,
+                pixelmatch: { threshold: 0.1 },
+            })).toEqual({ ignoreLess: true })
         })
     })
 })

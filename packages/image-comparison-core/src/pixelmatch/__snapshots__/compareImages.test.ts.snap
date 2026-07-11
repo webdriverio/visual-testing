@@ -1,0 +1,47 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`pixelmatch adapter - compareImages > direct pixelmatch mode > forwards resolved pixelmatch settings to pixelmatch 1`] = `
+{
+  "aaColor": [
+    0,
+    255,
+    0,
+  ],
+  "alpha": 0.2,
+  "checkerboard": false,
+  "diffColor": [
+    255,
+    0,
+    0,
+  ],
+  "diffColorAlt": [
+    0,
+    0,
+    255,
+  ],
+  "diffMask": false,
+  "includeAA": true,
+  "threshold": 0.05,
+}
+`;
+
+exports[`pixelmatch adapter - compareImages > direct pixelmatch mode > uses custom diffColor for diff pixel detection and compositing 1`] = `
+{
+  "diffPixelCount": 1,
+  "highlightedPixels": [
+    255,
+    0,
+    0,
+    200,
+  ],
+}
+`;
+
+exports[`pixelmatch adapter - compareImages > direct pixelmatch mode > uses pixelmatch output directly when diffMask is true 1`] = `
+[
+  10,
+  20,
+  30,
+  128,
+]
+`;

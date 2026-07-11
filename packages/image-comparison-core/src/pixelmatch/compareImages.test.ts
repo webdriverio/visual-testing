@@ -387,4 +387,85 @@ describe('pixelmatch adapter - compareImages', () => {
             expect(resizeBilinearFn).not.toHaveBeenCalled()
         })
     })
+
+    describe('direct pixelmatch mode', () => {
+        it('forwards resolved pixelmatch settings to pixelmatch', async () => {
+            pixelmatchFn.mockImplementation(() => 0)
+
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
+                pixelmatch: {
+                    threshold: 0.05,
+                    includeAA: true,
+                    diffColor: [255, 0, 0],
+                    aaColor: [0, 255, 0],
+                    diffColorAlt: [0, 0, 255],
+                    alpha: 0.2,
+                    diffMask: false,
+                    checkerboard: false,
+                },
+            })
+
+            expect(pixelmatchFn.mock.calls[0]?.[5]).toMatchSnapshot()
+        })
+
+        it('uses custom diffColor for diff pixel detection and compositing', async () => {
+            const actual = new Uint8Array(100 * 100 * 4).fill(200)
+            decodeImageFn
+                .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4).fill(128), width: 100, height: 100 })
+                .mockReturnValueOnce({ data: actual, width: 100, height: 100 })
+
+            pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array) => {
+                output[0] = 255
+                output[1] = 0
+                output[2] = 0
+                output[3] = 255
+                return 1
+            })
+
+            const result = await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
+                pixelmatch: {
+                    threshold: 0.1,
+                    includeAA: false,
+                    diffColor: [255, 0, 0],
+                    aaColor: [255, 0, 0],
+                    diffColorAlt: [255, 0, 0],
+                    alpha: 0.1,
+                    diffMask: false,
+                    checkerboard: true,
+                },
+            })
+            const raw = result.getRawPixels()
+
+            expect({
+                diffPixelCount: result.diffPixels.length,
+                highlightedPixels: [raw.data[0], raw.data[1], raw.data[2], raw.data[4]],
+            }).toMatchSnapshot()
+        })
+
+        it('uses pixelmatch output directly when diffMask is true', async () => {
+            pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array) => {
+                output[0] = 10
+                output[1] = 20
+                output[2] = 30
+                output[3] = 128
+                return 1
+            })
+
+            const result = await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
+                pixelmatch: {
+                    threshold: 0.1,
+                    includeAA: false,
+                    diffColor: [10, 20, 30],
+                    aaColor: [10, 20, 30],
+                    diffColorAlt: [10, 20, 30],
+                    alpha: 0.1,
+                    diffMask: true,
+                    checkerboard: true,
+                },
+            })
+            const raw = result.getRawPixels()
+
+            expect(Array.from(raw.data.slice(0, 4))).toMatchSnapshot()
+        })
+    })
 })

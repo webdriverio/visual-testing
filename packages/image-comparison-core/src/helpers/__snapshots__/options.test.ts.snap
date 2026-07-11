@@ -1,5 +1,14 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`options > assertExclusiveCompareMode > ignores empty pixelmatch object 1`] = `false`;
+
+exports[`options > assertExclusiveCompareMode > throws with a descriptive error message 1`] = `
+[CompareOptionsConflictError: Cannot combine ignore* options with pixelmatch options.
+Present ignore keys: ignoreAntialiasing, ignoreLess (values are ignored).
+Use either ignore* (preset mode) or pixelmatch (direct mode), not both.
+Context: checkScreen]
+`;
+
 exports[`options > buildAfterScreenshotOptions > should build options for native commands (no enriched data) 1`] = `
 {
   "actualFolder": "/test/actual",
@@ -187,6 +196,22 @@ exports[`options > defaultOptions > should return the provided options when opti
 }
 `;
 
+exports[`options > defaultOptions pixelmatch mode > omits ignore* defaults when pixelmatch mode is configured 1`] = `
+{
+  "blockOutSideBar": true,
+  "blockOutStatusBar": true,
+  "blockOutToolBar": true,
+  "createJsonReportFiles": false,
+  "diffPixelBoundingBoxProximity": 5,
+  "pixelmatch": {
+    "threshold": 0.063,
+  },
+  "rawMisMatchPercentage": false,
+  "returnAllCompareData": false,
+  "scaleImagesToSameSize": false,
+}
+`;
+
 exports[`options > methodCompareOptions > should not return the method options when no options are provided 1`] = `{}`;
 
 exports[`options > methodCompareOptions > should return the provided options when options are provided 1`] = `
@@ -208,6 +233,73 @@ exports[`options > methodCompareOptions > should return the provided options whe
   "returnAllCompareData": true,
   "saveAboveTolerance": 12,
   "scaleImagesToSameSize": true,
+}
+`;
+
+exports[`options > resolveEffectiveCompareOptions > strips ignore* when method sets pixelmatch 1`] = `
+{
+  "blockOutSideBar": true,
+  "pixelmatch": {
+    "threshold": 0.05,
+  },
+  "scaleImagesToSameSize": false,
+}
+`;
+
+exports[`options > resolveEffectiveCompareOptions > strips pixelmatch when method sets ignore* 1`] = `
+{
+  "ignoreLess": true,
+  "scaleImagesToSameSize": true,
+}
+`;
+
+exports[`options > resolvePixelmatchOptions > applies defaults for unset fields 1`] = `
+{
+  "aaColor": [
+    255,
+    0,
+    255,
+  ],
+  "alpha": 0.1,
+  "checkerboard": true,
+  "diffColor": [
+    255,
+    0,
+    255,
+  ],
+  "diffColorAlt": [
+    255,
+    0,
+    255,
+  ],
+  "diffMask": false,
+  "includeAA": false,
+  "threshold": 0.1,
+}
+`;
+
+exports[`options > resolvePixelmatchOptions > preserves user overrides 1`] = `
+{
+  "aaColor": [
+    255,
+    0,
+    255,
+  ],
+  "alpha": 0.1,
+  "checkerboard": true,
+  "diffColor": [
+    255,
+    0,
+    0,
+  ],
+  "diffColorAlt": [
+    255,
+    0,
+    255,
+  ],
+  "diffMask": true,
+  "includeAA": false,
+  "threshold": 0.05,
 }
 `;
 

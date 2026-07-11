@@ -5,7 +5,7 @@ import { decodeImage, toBase64Png, createCanvas, cropImage, compositeImage, setO
 import logger from '@wdio/logger'
 import compareImagesPixelmatch from '../pixelmatch/compareImages.js'
 import { calculateDprData, getIosBezelImageNames, getBase64ScreenshotSize, prepareComparisonFilePaths, updateVisualBaseline } from '../helpers/utils.js'
-import { prepareIgnoreOptions, warnOnMultipleIgnorePresets } from '../helpers/options.js'
+import { prepareIgnoreOptions, warnOnMultipleIgnorePresets, hasPixelmatchOptions, resolvePixelmatchOptions, resolveEffectiveCompareOptions } from '../helpers/options.js'
 import { DEFAULT_RESIZE_DIMENSIONS, supportedIosBezelDevices } from '../helpers/constants.js'
 import { isWdioElement, prepareIgnoreRectangles } from './rectangles.js'
 import type {
@@ -357,8 +357,11 @@ export async function executeImageCompare(
         isMobile,
         savePerInstance,
     } = folderOptions
-    const imageCompareOptions = { ...options.compareOptions.wic, ...options.compareOptions.method }
-
+    const imageCompareOptions = resolveEffectiveCompareOptions(
+        options.compareOptions.wic,
+        options.compareOptions.method,
+        testContext.commandName,
+    )
     // 1a. Disable JSON reports if alwaysSaveActualImage is false (JSON reports need the actual file to exist)
     if (!alwaysSaveActualImage && imageCompareOptions.createJsonReportFiles) {
         log.warn(
@@ -414,9 +417,13 @@ export async function executeImageCompare(
     await removeDiffImageIfExists(diffFilePath)
 
     // 4. Prepare the compare
-    // 4a.Determine the ignore options
-    const ignore = prepareIgnoreOptions(imageCompareOptions)
-    warnOnMultipleIgnorePresets(ignore)
+    const usePixelmatchMode = hasPixelmatchOptions(imageCompareOptions)
+
+    // 4a. Determine the ignore options (preset mode only)
+    const ignore = usePixelmatchMode ? [] : prepareIgnoreOptions(imageCompareOptions)
+    if (!usePixelmatchMode) {
+        warnOnMultipleIgnorePresets(ignore)
+    }
 
     // 4b. Determine the ignore rectangles for the block outs
     const { ignoredBoxes } = await prepareIgnoreRectangles({
@@ -440,7 +447,9 @@ export async function executeImageCompare(
     })
 
     const compareOptions: ComparisonOptions = {
-        ignore,
+        ...(usePixelmatchMode
+            ? { pixelmatch: resolvePixelmatchOptions(imageCompareOptions.pixelmatch!) }
+            : { ignore }),
         ...(ignoredBoxes.length > 0 ? { output: { ignoredBoxes } } : {}),
         scaleToSameSize: imageCompareOptions.scaleImagesToSameSize,
     }

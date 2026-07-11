@@ -1,3 +1,5 @@
+import type { PixelmatchCompareOptions } from './pixelmatch/compare.interfaces.js'
+
 export interface Folders {
     /** The actual folder where the current screenshots need to be saved */
     actualFolder: string;
@@ -118,7 +120,7 @@ export interface BaseImageCompareOptions {
      */
     ignoreLess?: boolean;
     /**
-     * Use zero tolerance — any pixel difference counts as a mismatch.
+     * Use zero tolerance: any pixel difference counts as a mismatch.
      * Preset: threshold `0`, AA not forgiven.
      * @default false
      */
@@ -143,6 +145,11 @@ export interface BaseImageCompareOptions {
      * @default false
      */
     scaleImagesToSameSize?: boolean;
+    /**
+     * Direct pixelmatch comparison settings.
+     * Mutually exclusive with all `ignore*` options on the same object.
+     */
+    pixelmatch?: PixelmatchCompareOptions;
 }
 
 export interface BaseMobileBlockOutOptions {

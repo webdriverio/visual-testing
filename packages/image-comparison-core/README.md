@@ -29,12 +29,12 @@ No config change is needed if you rely on forgiving comparison behaviour.
 
 | Option | Preprocessing | pixelmatch threshold | AA forgiven |
 |---|---|---|---|
-| *(none, `ignoreAntialiasing: false`)* | — | ~16/255 (`0.063`) | no |
-| `ignoreAntialiasing` | — | ~32/255 (`0.13`) | yes |
-| `ignoreLess` | — | ~16/255 (`0.063`) | no |
+| *(none, `ignoreAntialiasing: false`)* | - | ~16/255 (`0.063`) | no |
+| `ignoreAntialiasing` | - | ~32/255 (`0.13`) | yes |
+| `ignoreLess` | - | ~16/255 (`0.063`) | no |
 | `ignoreAlpha` | alpha → opaque | ~16/255 (`0.063`) | no |
 | `ignoreColors` | resemble luma grayscale | ~16/255 (`0.063`) | no |
-| `ignoreNothing` | — | `0` | no |
+| `ignoreNothing` | - | `0` | no |
 
 Thresholds are calibrated to resemble outcomes; the underlying algorithm is YIQ perceptual distance, not resemble's RGB math.
 
@@ -44,6 +44,8 @@ When multiple `ignore*` flags are enabled, the active preset is the **last** one
 
 `alpha` → `antialiasing` → `colors` → `less` → `nothing`
 
-Example: `ignoreLess: true` with the default `ignoreAntialiasing: true` resolves to the `ignoreLess` preset — strict AA, not forgiving.
+Example: `ignoreLess: true` with the default `ignoreAntialiasing: true` resolves to the `ignoreLess` preset (strict AA, not forgiving).
 
 Golden fixture tests documenting expected pass/fail behaviour live in [`tests/fixtures/ignore-options/`](./tests/fixtures/ignore-options/).
+
+Comparison uses [pixelmatch](https://github.com/mapbox/pixelmatch).
