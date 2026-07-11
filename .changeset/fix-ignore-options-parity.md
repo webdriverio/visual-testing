@@ -7,15 +7,15 @@ fix: ignore* option parity with resemble (pixelmatch)
 
 After v10 switched to pixelmatch, the public `ignore*` API did not fully match resemble.js preset behaviour. Combined modes such as `ignoreLess` with the default `ignoreAntialiasing: true` still inherited AA forgiveness, and `ignoreColors` used BT.601 grayscale instead of resemble brightness-only comparison.
 
+This release also adds `compareOptions.pixelmatch` so you can pass pixelmatch settings directly instead of using `ignore*` presets.
+
 **What changed**
 
 - Multiple `ignore*` flags now follow resemble last-wins ordering (`ignoreAlpha` → `ignoreAntialiasing` → `ignoreColors` → `ignoreLess` → `ignoreNothing`) instead of composing independently
 - `ignoreLess`, `ignoreAlpha`, `ignoreColors`, and `ignoreNothing` now apply their own threshold and AA rules when active; they no longer inherit default `ignoreAntialiasing: true` forgiveness
 - `ignoreColors` now compares brightness only using resemble luma weights (`0.3/0.59/0.11`), matching resemble v9 behaviour
-- Added golden fixture parity tests for all ignore modes
-- JSDoc and README document preset mapping, last-wins semantics, and default vs resemble v9
-- Logs a WDIO warning when multiple `ignore*` flags are enabled, naming which option wins
-- Adds `compareOptions.pixelmatch` as a direct alternative to `ignore*` presets (mutually exclusive per options object; method overrides strip the opposing mode)
+- WDIO logs a warning when multiple `ignore*` flags are enabled, naming which preset wins
+- New `compareOptions.pixelmatch` object for direct pixelmatch control (`threshold`, `includeAA`, `diffColor`, `aaColor`, `diffColorAlt`, `alpha`, `diffMask`, `checkerboard`)
 
 **Preset reference**
 
@@ -27,9 +27,9 @@ After v10 switched to pixelmatch, the public `ignore*` API did not fully match r
 | `ignoreAlpha` | ~16/255 | no |
 | `ignoreAntialiasing` (default) | ~32/255 | yes |
 
-**Direct pixelmatch mode (new)**
+**Using `compareOptions.pixelmatch`**
 
-Use `compareOptions.pixelmatch` at service level or on `check*` method options. Do not combine with any `ignore*` keys on the **same** options object. Method options can override service compare mode per check (opposing keys stripped, warning logged).
+Set it in your service config or on a single `check*` call. Do not put `ignore*` keys and `pixelmatch` on the same options object; that throws, even when an `ignore*` flag is `false`. Service config and method options are separate objects, so a method call can override the service compare mode for that check (a warning is logged when the mode switches).
 
 Service config:
 
@@ -47,7 +47,7 @@ services: [
 ]
 ```
 
-Method override (overrides service preset for that check):
+Method override when the service uses `ignore*` presets:
 
 ```js
 await browser.checkScreen('homepage', {
@@ -55,7 +55,7 @@ await browser.checkScreen('homepage', {
 })
 ```
 
-Per-check preset override when service uses pixelmatch:
+Method override when the service uses `pixelmatch`:
 
 ```js
 await browser.checkScreen('homepage', {
@@ -63,7 +63,7 @@ await browser.checkScreen('homepage', {
 })
 ```
 
-Invalid on a **single** options object,  throws even when `ignoreLess` is `false`:
+Invalid (throws):
 
 ```js
 compareOptions: {
@@ -74,14 +74,10 @@ compareOptions: {
 
 See [pixelmatch](https://github.com/mapbox/pixelmatch) for option details.
 
-**Migration**
+**What you need to do**
 
-- No action needed if you use a single ignore flag or rely on defaults (`ignoreAntialiasing: true`), behaviour is unchanged for typical users
-- Set `ignoreAntialiasing: false` when you need strict comparison where anti-aliased pixels count as differences
-- Multi-flag combos now match resemble v9 last-wins behaviour; review tests if you combine ignore flags
-- `ignoreColors` results may differ slightly from v10 but align with resemble v9
-- Use `compareOptions.pixelmatch` for direct pixelmatch control; method options can override service mode per check (opposing keys are stripped, warning logged)
-
-### Committers: 1
-
-- Wim Selles ([@wswebcreation](https://github.com/wswebcreation))
+- No change needed if you use a single `ignore*` flag or rely on defaults (`ignoreAntialiasing: true`)
+- Set `ignoreAntialiasing: false` when anti-aliased pixels should count as differences
+- If you combine multiple `ignore*` flags, review your tests; last-wins ordering now matches resemble v9
+- If you use `ignoreColors`, results may differ slightly from early v10 but align with resemble v9
+- To tune pixelmatch directly, add `compareOptions.pixelmatch` in your service config or pass `pixelmatch` on individual `check*` calls
