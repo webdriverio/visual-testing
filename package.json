@@ -86,7 +86,7 @@
     "rimraf": "^6.1.3",
     "saucelabs": "^9.0.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vitest": "^3.2.7",
     "webdriverio": "^9.29.1",
     "wdio-lambdatest-service": "^4.0.1"
