@@ -34,8 +34,8 @@
     "watch:tsc": "pnpm run build:tsc -w"
   },
   "dependencies": {
+    "@blazediff/core": "^1.9.3",
     "fast-png": "^8.0.0",
-    "pixelmatch": "^7.2.0",
     "@wdio/logger": "^9.29.1",
     "@wdio/types": "^9.29.1"
   },

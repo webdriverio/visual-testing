@@ -1,4 +1,4 @@
-import pixelmatch from 'pixelmatch'
+import { diff } from '@blazediff/core'
 import { resolveComparePreset } from '../helpers/options.js'
 import { DEFAULT_PIXELMATCH_OPTIONS } from '../helpers/constants.js'
 import { applyResembleGrayscale } from './compareBrightness.js'
@@ -140,7 +140,7 @@ export default async function compareImages(
 
     const outputPixels = new Uint8Array(totalPixels * 4)
 
-    const diffCount: number = pixelmatch(pixels1, pixels2, outputPixels, width, height, {
+    const diffCount: number = diff(pixels1, pixels2, outputPixels, width, height, {
         threshold: resolvedPixelmatch.threshold,
         includeAA: resolvedPixelmatch.includeAA,
         diffColor: resolvedPixelmatch.diffColor,
