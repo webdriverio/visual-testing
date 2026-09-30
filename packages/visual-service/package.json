@@ -31,5 +31,11 @@
     "@wdio/types": "^9.29.1",
     "expect-webdriverio": "^5.7.0",
     "@wdio/image-comparison-core": "workspace:*"
+  },
+  "devDependencies": {
+    "webdriverio": "^9.29.1"
+  },
+  "peerDependencies": {
+    "webdriverio": "^9.0.0"
   }
 }

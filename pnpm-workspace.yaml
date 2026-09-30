@@ -1,7 +1,12 @@
-# pnpm-workspace.yaml
 packages:
-    - "packages/image-comparison-core"
-    - "packages/visual-service"
-    - "packages/ocr-service"
-    - "packages/visual-reporter"
-    - "packages/visual-remix-reporter"
+  - packages/*
+
+# edgedriver/geckodriver: WebdriverIO downloads the drivers at runtime.
+# Others only print messages or run version checks.
+allowBuilds:
+  edgedriver: false
+  esbuild: true
+  geckodriver: false
+  protobufjs: false
+  tesseract.js: false
+  unrs-resolver: false

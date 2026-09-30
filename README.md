@@ -579,7 +579,7 @@ To create a PR for this project and start contributing follow this step-by-step 
     ```sh
     $ cd visual-testing
     $ corepack enable
-    $ pnpm pnpm.install.workaround
+    $ pnpm install
     ```
 
 -   Run the watch mode that will automatically transpile the code
