@@ -65,6 +65,14 @@ jobs:
       # ========================================
       # Alpha Release Steps
       # ========================================
+      - name: 🚫 Block Alpha in Changesets Pre Mode
+        if: github.event.inputs.release_type == 'alpha'
+        run: |
+          if [[ -f .changeset/pre.json ]]; then
+            echo "Changesets pre mode is active: use the production release type, it publishes prerelease versions."
+            exit 1
+          fi
+
       - name: 🔄 Validate Package Directory
         if: github.event.inputs.release_type == 'alpha'
         run: |

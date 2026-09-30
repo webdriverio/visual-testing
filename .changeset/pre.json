@@ -1,0 +1,11 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "@wdio/image-comparison-core": "2.1.0",
+    "@wdio/ocr-service": "2.2.10",
+    "@wdio/visual-reporter": "0.4.15",
+    "@wdio/visual-service": "10.1.0"
+  },
+  "changesets": []
+}
