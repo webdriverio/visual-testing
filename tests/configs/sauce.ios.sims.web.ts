@@ -185,6 +185,6 @@ function createCaps({
         'sauce:options': {
             ...sauceOptions,
         },
-        specs: [mobileSpecs],
+        'wdio:specs': [mobileSpecs],
     }
 }

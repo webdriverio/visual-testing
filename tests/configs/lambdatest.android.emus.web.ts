@@ -84,7 +84,7 @@ function createCaps({
         queueTimeout: number,
         idleTimeout: number,
     },
-    specs: string[];
+    'wdio:specs': string[];
     'wdio-ics:options': {
         logName: string;
         commands: string[];
@@ -111,7 +111,7 @@ function createCaps({
             idleTimeout: 90,
             ...(Number(platformVersion) > 14 ? { appiumVersion: '3.0.2' } : {}),
         },
-        specs: [mobileSpecs],
+        'wdio:specs': [mobileSpecs],
         'wdio-ics:options': {
             logName: `Emulator${adjustedDeviceName.replace(
                 /(\s+|\(+|\)+|Emulator)/g,

@@ -61,7 +61,7 @@ function createCaps({
         commands: string[];
     };
     'sauce:options': SauceDeviceOptions;
-    specs: string[];
+    'wdio:specs': string[];
 } {
     return {
         platformName: 'Android',
@@ -85,6 +85,6 @@ function createCaps({
             ...sauceOptions,
             appiumVersion: '2.0.0',
         },
-        specs: [mobileSpecs],
+        'wdio:specs': [mobileSpecs],
     }
 }

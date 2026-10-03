@@ -33,7 +33,7 @@ export function sauceDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [basicSpecs],
+            'wdio:specs': [basicSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
             'wdio-ics:options': {
@@ -44,7 +44,7 @@ export function sauceDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [checkMethodFolderSpecs],
+            'wdio:specs': [checkMethodFolderSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
             'wdio-ics:options': {
@@ -55,7 +55,7 @@ export function sauceDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [saveMethodFolderSpecs],
+            'wdio:specs': [saveMethodFolderSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
             'wdio-ics:options': {
@@ -70,7 +70,7 @@ export function sauceDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
             'wdio-ics:options': {
@@ -81,7 +81,7 @@ export function sauceDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest-1',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
             'wdio-ics:options': {
@@ -92,7 +92,7 @@ export function sauceDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest-2',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             ...chromeOptions,
             'wdio-ics:options': {
@@ -103,7 +103,7 @@ export function sauceDesktopBrowsers({
             browserName: 'firefox',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'Firefox latest',
@@ -116,7 +116,7 @@ export function sauceDesktopBrowsers({
             browserName: 'firefox',
             browserVersion: 'latest-1',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'Firefox latest-1',
@@ -129,7 +129,7 @@ export function sauceDesktopBrowsers({
             browserName: 'firefox',
             browserVersion: 'latest-2',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'Firefox latest-2',
@@ -142,7 +142,7 @@ export function sauceDesktopBrowsers({
             browserName: 'MicrosoftEdge',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest',
@@ -158,7 +158,7 @@ export function sauceDesktopBrowsers({
             browserName: 'MicrosoftEdge',
             browserVersion: 'latest-1',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest-1',
@@ -174,7 +174,7 @@ export function sauceDesktopBrowsers({
             browserName: 'MicrosoftEdge',
             browserVersion: 'latest-2',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest-2',
@@ -194,7 +194,7 @@ export function sauceDesktopBrowsers({
             browserName: 'safari',
             browserVersion: '14',
             platformName: 'macOS 11.00',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'BigSurSafari14',
@@ -204,7 +204,7 @@ export function sauceDesktopBrowsers({
             browserName: 'safari',
             browserVersion: '15',
             platformName: 'macOS 12',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'macOS12-15',
@@ -214,7 +214,7 @@ export function sauceDesktopBrowsers({
             browserName: 'safari',
             browserVersion: '16',
             platformName: 'macOS 12',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'macOS12-16',
@@ -224,7 +224,7 @@ export function sauceDesktopBrowsers({
             browserName: 'safari',
             browserVersion: '17',
             platformName: 'macOS 13',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserSauceOptions,
             'wdio-ics:options': {
                 logName: 'macOS13-17',
