@@ -37,7 +37,7 @@ vi.mock('@wdio/globals', () => ({
     })),
     browser: {
         url: vi.fn().mockResolvedValue(true),
-        executeAsync: vi.fn().mockResolvedValue(true),
+        execute: vi.fn().mockResolvedValue(true),
         waitUntil: vi.fn(),
     },
 }))
@@ -526,7 +526,7 @@ describe('Storybook utils', () => {
             expect(mockBrowser.url).toHaveBeenCalledWith('http://localhost:6006/iframe.html?id=example-component')
             expect(mock$).toHaveBeenCalledWith('.storybook-component')
             expect(mock$.mock.results[0].value.waitForDisplayed).toHaveBeenCalled()
-            expect(mockBrowser.executeAsync).toHaveBeenCalled()
+            expect(mockBrowser.execute).toHaveBeenCalled()
         })
 
         it('should go to the correct URL when given additionalSearchParams', async () => {

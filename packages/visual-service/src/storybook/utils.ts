@@ -259,7 +259,8 @@ export async function waitForStorybookComponentToBeLoaded(
         baseUrl.search = searchParams.toString()
         await browser.url(baseUrl.toString())
         await $(clipSelector as string).waitForDisplayed()
-        await browser.executeAsync(async (timeout, done) => {
+        // `executeAsync` is removed in WebdriverIO v10, `execute` awaits the returned promise in v9 and v10
+        await browser.execute(async (timeout) => {
             let timedOut = false
 
             const timeoutPromise = new Promise((_resolve, reject) => {
@@ -296,9 +297,8 @@ export async function waitForStorybookComponentToBeLoaded(
 
             try {
                 await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise])
-                done()
             } catch (error) {
-                done(error)
+                return error
             }
         }, timeout)
     } else {
