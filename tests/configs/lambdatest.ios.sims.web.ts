@@ -46,7 +46,7 @@ export function lambdaTestIosSimWeb({ buildName }: { buildName: string }) {
                             .replace(/(\s+|\(+|\)+|Simulator)/g, ''),
                         commands: ['checkScreen', 'checkElement', 'checkFullPageScreen'],
                     },
-                    specs: [mobileSpecs],
+                    'wdio:specs': [mobileSpecs],
                 }))
             )
             .flat(1),
