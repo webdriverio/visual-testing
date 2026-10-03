@@ -6,7 +6,8 @@ import { createOcrDir } from '../src/utils/index.js'
 import { CONTRAST, SUPPORTED_LANGUAGES } from '../src/utils/constants.js'
 import ocrGetText from '../src/commands/ocrGetText.js'
 
-vi.mock('../src/utils/index.js', () => ({
+vi.mock('../src/utils/index.js', async (importOriginal) => ({
+    ...await importOriginal<object>(),
     createOcrDir: vi.fn(),
 }))
 vi.mock('../src/utils/tesseract.js', () => ({

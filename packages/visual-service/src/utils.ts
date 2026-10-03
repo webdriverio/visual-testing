@@ -273,11 +273,25 @@ export async function getInstanceData({
 }
 
 /**
+ * WebdriverIO v10 renamed `isMultiremote` to `isMultiRemote`, check both so v9 and v10 are supported
+ */
+export function isMultiRemoteBrowser(
+    browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+): browser is WebdriverIO.MultiRemoteBrowser {
+    const { isMultiRemote, isMultiremote } = browser as { isMultiRemote?: boolean, isMultiremote?: boolean }
+    return Boolean(isMultiRemote ?? isMultiremote)
+}
+
+/**
  * Traverse up the scope chain until browser element was reached
  */
 export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browser): WebdriverIO.Browser {
-    const elemObject = elem as WebdriverIO.Element
-    return (elemObject as WebdriverIO.Element).parent ? getBrowserObject(elemObject.parent) : elem as WebdriverIO.Browser
+    // With WebdriverIO v10 the parent can also be a browsing context, which holds the browser in `browser`
+    const { parent, browser } = elem as { parent?: WebdriverIO.Element | WebdriverIO.Browser, browser?: WebdriverIO.Browser }
+    if (parent) {
+        return getBrowserObject(parent)
+    }
+    return browser ?? elem as WebdriverIO.Browser
 }
 
 /**

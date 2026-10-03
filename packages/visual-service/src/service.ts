@@ -22,6 +22,7 @@ import {
     getFolders,
     getInstanceData,
     getNativeContext,
+    isMultiRemoteBrowser,
 } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -77,11 +78,11 @@ export default class WdioImageComparisonService extends BaseClass {
     ) {
         this.#browser = browser
 
-        if (!this.#browser.isMultiremote) {
+        if (!isMultiRemoteBrowser(browser)) {
             log.info('Adding commands to global browser')
-            await this.#addCommandsToBrowser(this.#browser)
+            await this.#addCommandsToBrowser(browser)
         } else {
-            await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiremoteCapabilities)
+            await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiRemoteCapabilities)
         }
         // There is an issue with the emulation mode for Chrome or Edge with WebdriverIO v9
         // It doesn't set the correct emulation mode for the browser based on the capabilities
@@ -136,7 +137,7 @@ export default class WdioImageComparisonService extends BaseClass {
         return baselineFolder
     }
 
-    async #extendMultiremoteBrowser (capabilities: Capabilities.RequestedMultiremoteCapabilities) {
+    async #extendMultiremoteBrowser (capabilities: Capabilities.RequestedMultiRemoteCapabilities) {
         const browser = this.#browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
 
@@ -572,7 +573,7 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     async #setEmulation(browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser, capabilities: WebdriverIO.Capabilities) {
-        if (browser.isMultiremote) {
+        if (isMultiRemoteBrowser(browser)) {
             const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
             for (const browserInstance of Object.values(multiremoteBrowser)) {
                 await this.#setEmulationForBrowser(browserInstance, browserInstance.capabilities)

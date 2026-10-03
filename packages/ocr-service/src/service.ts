@@ -2,7 +2,7 @@ import logger from '@wdio/logger'
 import type { Capabilities } from '@wdio/types'
 import { isSystemTesseractAvailable } from './utils/tesseract.js'
 import { CONTRAST, DEFAULT_IMAGES_FOLDER, SUPPORTED_LANGUAGES } from './utils/constants.js'
-import { createOcrDir } from './utils/index.js'
+import { createOcrDir, isMultiRemoteBrowser } from './utils/index.js'
 import type { OcrOptions } from './types.js'
 import ocrGetText from './commands/ocrGetText.js'
 import ocrGetElementPositionByText from './commands/ocrGetElementPositionByText.js'
@@ -48,15 +48,15 @@ export default class WdioOcrService {
     ) {
         this._browser = browser
 
-        if (!this._browser.isMultiremote) {
+        if (!isMultiRemoteBrowser(browser)) {
             log.info('Adding commands to global browser')
-            await this.#addCommandsToBrowser(this._browser)
+            await this.#addCommandsToBrowser(browser)
         } else {
-            await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiremoteCapabilities)
+            await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiRemoteCapabilities)
         }
     }
 
-    async #extendMultiremoteBrowser (capabilities: Capabilities.RequestedMultiremoteCapabilities) {
+    async #extendMultiremoteBrowser (capabilities: Capabilities.RequestedMultiRemoteCapabilities) {
         const browser = this._browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
         const self = this
