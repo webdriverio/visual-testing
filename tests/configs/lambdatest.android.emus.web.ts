@@ -75,6 +75,7 @@ function createCaps({
     deviceOrientation: DeviceOrientation;
 }): {
     'lt:options': {
+        appiumVersion: string,
         deviceName: string,
         platformName: string,
         platformVersion: string,
@@ -109,7 +110,8 @@ function createCaps({
             w3c: true,
             queueTimeout: 900,
             idleTimeout: 90,
-            ...(Number(platformVersion) > 14 ? { appiumVersion: '3.0.2' } : {}),
+            // WebdriverIO v10 requires Appium 3
+            appiumVersion: '3.0.2',
         },
         'wdio:specs': [mobileSpecs],
         'wdio-ics:options': {

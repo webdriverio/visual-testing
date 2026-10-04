@@ -15,6 +15,7 @@ export function lambdaTestIosSimWeb({ buildName }: { buildName: string }) {
             platformVersion: '18.5',
         },
         {
+            appiumVersion: '3.0.2',
             deviceName: 'iPhone 17 Pro Max',
             platformVersion: '26.2',
         }
@@ -28,7 +29,8 @@ export function lambdaTestIosSimWeb({ buildName }: { buildName: string }) {
             .map((orientation) => iOSDevices
                 .map(({ appiumVersion, deviceName, platformVersion }) => ({
                     'lt:options': {
-                        ...(appiumVersion ? { appiumVersion } : {}),
+                        // WebdriverIO v10 requires Appium 3
+                        appiumVersion,
                         deviceName,
                         platformName: 'ios',
                         platformVersion,
