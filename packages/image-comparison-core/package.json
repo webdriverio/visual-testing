@@ -36,8 +36,8 @@
   "dependencies": {
     "fast-png": "^8.0.0",
     "pixelmatch": "^7.2.0",
-    "@wdio/logger": "^9.32.0 || ^10.0.0-0 || ^10.0.0",
-    "@wdio/types": "^9.32.0 || ^10.0.0-0 || ^10.0.0"
+    "@wdio/logger": "^9.29.1 || ^10.0.0-0",
+    "@wdio/types": "^9.29.1 || ^10.0.0-0"
   },
   "devDependencies": {
     "webdriverio": "^10.0.0-0 || ^10.0.0"
