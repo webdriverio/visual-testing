@@ -352,6 +352,14 @@ describe('Storybook utils', () => {
             expect(result).toMatchSnapshot()
         })
 
+        it('generates a non-strict `$` query for the clip selector (WebdriverIO v10 strict selectors)', () => {
+            const testArgs = commonSetup('mocha', [], true)
+            // @ts-ignore
+            const result = itFunction(testArgs)
+
+            expect(result).toContain("await expect($('#id', { strict: false })).toMatchElementSnapshot(")
+        })
+
         it('generates correct test code with a custom stories baseline folder', () => {
             const testArgs = commonSetup('mocha', [])
             const getStoriesBaselinePath = (category: string, component: string) => `${category}__${component}`
@@ -524,7 +532,8 @@ describe('Storybook utils', () => {
 
             // Assertions
             expect(mockBrowser.url).toHaveBeenCalledWith('http://localhost:6006/iframe.html?id=example-component')
-            expect(mock$).toHaveBeenCalledWith('.storybook-component')
+            // A custom clip selector can match more than one element, WebdriverIO v10 `$` would then throw
+            expect(mock$).toHaveBeenCalledWith('.storybook-component', { strict: false })
             expect(mock$.mock.results[0].value.waitForDisplayed).toHaveBeenCalled()
             expect(mockBrowser.execute).toHaveBeenCalled()
         })

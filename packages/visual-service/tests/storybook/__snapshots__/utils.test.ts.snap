@@ -195,7 +195,7 @@ exports[`Storybook utils > itFunction > generates correct test code with for a c
             storybookUrl: 'http://storybook.com/',
             additionalSearchParams: new URLSearchParams('foo=bar'),
         });
-        await expect($('#id')).toMatchElementSnapshot('category-component--story1-element', {"ignoreLess":true,"actualFolder":"actual/category/component/","baselineFolder":"baseline/category/component/","diffFolder":"diff/category/component/"})
+        await expect($('#id', { strict: false })).toMatchElementSnapshot('category-component--story1-element', {"ignoreLess":true,"actualFolder":"actual/category/component/","baselineFolder":"baseline/category/component/","diffFolder":"diff/category/component/"})
     });
     "
 `;
