@@ -2,8 +2,9 @@ name: tests
 
 on:
   push:
+    # Every branch: the jobs that need no cloud credentials run on each push, also in forks
     branches:
-      - main
+      - "**"
   pull_request:
     paths-ignore:
       - "**/*.md"
@@ -12,6 +13,13 @@ on:
 permissions:
   contents: read
   pull-requests: read
+
+# One run per pull request and one run per branch push: a new commit cancels the run of the previous commit.
+# The pull request run and the push run of the same branch are in different groups, they run different jobs.
+# Runs on `main` are not cancelled, so each merged commit is tested.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
   PNPM_VERSION: 9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7
@@ -44,6 +52,8 @@ jobs:
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -74,6 +84,8 @@ jobs:
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -119,15 +131,56 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
-  ci-pr-desktop-web:
-    name: 🔄 💻 CI PR Run Desktop Web Tests on LambdaTest
+  unit-test:
+    name: 🧪 Lint and unit tests
     runs-on: ubuntu-latest
+    # No cloud credentials needed, so run on every push (also in forks). For a pull request, run only when it
+    # comes from a fork: for a branch of this repository, the push run already reports on the same commit.
     if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository)
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm pnpm.install.workaround
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🧪 Run linting and unit tests
+        working-directory: ./
+        run: pnpm test
+
+  ci-pr-desktop-web:
+    name: 🔄 💻 CI PR Run Desktop Web Tests on LambdaTest
+    runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
+    if: |
+      github.event_name == 'pull_request' &&
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -174,13 +227,19 @@ jobs:
             !.next/
 
   ci-pr-local-chrome:
-    name: 🔄 💻 CI PR Run WebdriverIO v10 Tests on local headless Chrome
+    name: 💻 Run WebdriverIO v10 Tests on local headless Chrome
     runs-on: ubuntu-latest
-    # No cloud credentials needed, so this job also runs for pull requests from forks
-    if: github.event_name == 'pull_request'
+    # No cloud credentials needed, so run on every push (also in forks). For a pull request, run only when it
+    # comes from a fork: for a branch of this repository, the push run already reports on the same commit.
+    if: |
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository)
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -217,12 +276,16 @@ jobs:
   ci-pr-android-web:
     name: 🔄 🤖 🌐 CI PR Run Android Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
       github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -271,12 +334,16 @@ jobs:
   ci-pr-ios-web:
     name: 🔄 🍏 🌐 CI PR Run iOS Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
       github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -325,12 +392,16 @@ jobs:
   ci-pr-app:
     name: 🔄 📱 CI PR Run Mobile App Tests on Sauce
     runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
       github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -379,12 +450,16 @@ jobs:
   ci-pr-ocr:
     name: 🔄 📱 CI PR Run OCR Tests  on LambdaTest
     runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
       github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
