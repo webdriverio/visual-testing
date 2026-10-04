@@ -110,6 +110,7 @@ jobs:
         if: failure()
         with:
           name: dependency-update-desktop-web-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
@@ -163,6 +164,7 @@ jobs:
         if: failure()
         with:
           name: ci-pr-desktop-web-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
@@ -216,6 +218,7 @@ jobs:
         if: failure()
         with:
           name: ci-pr-android-web-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
@@ -269,6 +272,7 @@ jobs:
         if: failure()
         with:
           name: ci-pr-ios-web-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
@@ -322,6 +326,7 @@ jobs:
         if: failure()
         with:
           name: ci-pr-mobile-app-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
@@ -375,6 +380,7 @@ jobs:
         if: failure()
         with:
           name: ci-pr-ocr-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/

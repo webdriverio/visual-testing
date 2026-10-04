@@ -94,6 +94,7 @@ jobs:
         if: failure()
         with:
           name: scheduled-desktop-web-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
@@ -152,6 +153,7 @@ jobs:
         if: failure()
         with:
           name: scheduled-android-web-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
@@ -210,6 +212,7 @@ jobs:
         if: failure()
         with:
           name: scheduled-ios-web-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
@@ -268,6 +271,7 @@ jobs:
         if: failure()
         with:
           name: scheduled-mobile-app-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
@@ -326,6 +330,7 @@ jobs:
         if: failure()
         with:
           name: scheduled-ocr-logs
+          include-hidden-files: true
           path: |
             logs/*.log
             .tmp/
