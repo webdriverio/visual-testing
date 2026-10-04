@@ -78,12 +78,12 @@ All the options: [service options](https://webdriver.io/docs/visual-testing/serv
 
 ### WebdriverIO compatibility
 
-The versions in the table above are the versions of the visual testing packages, not of WebdriverIO. From the first release after 10.1.0, `@wdio/visual-service` supports WebdriverIO v9 and WebdriverIO v10.
+The versions in the table above are the versions of the visual testing packages, not of WebdriverIO. From version 10.2.0, `@wdio/visual-service` supports WebdriverIO v9 and WebdriverIO v10.
 
 | Package | WebdriverIO v9 (9.29.1 and later) | WebdriverIO v10 |
 |---|---|---|
-| `@wdio/visual-service` | v9 and v10 | v10, from the first release after 10.1.0 |
-| `@wdio/ocr-service` | v2 | v2, from the first release after 2.2.10 |
+| `@wdio/visual-service` | v9 and v10 | 10.2.0 and later |
+| `@wdio/ocr-service` | v2 | 2.3.0 and later |
 
 > [!NOTE]
 > WebdriverIO v10 needs Node.js 22.19 or later. WebdriverIO v9 needs Node.js 18.20 or later.
