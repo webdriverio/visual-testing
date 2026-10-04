@@ -207,6 +207,65 @@ describe('@wdio/visual-service', () => {
             })
         })
 
+        describe('mobile emulation with mobileEmulation.deviceName', () => {
+            const createBrowser = (emulate: ReturnType<typeof vi.fn>) => ({
+                addCommand: vi.fn(),
+                capabilities: { 'goog:chromeOptions': { mobileEmulation: { deviceName: 'iPhone 12 Pro' } } },
+                requestedCapabilities: {},
+                on: vi.fn(),
+                // A string script is the device pixel ratio of the instance data, a function reads the emulated device
+                execute: vi.fn((script: unknown) => Promise.resolve(
+                    typeof script === 'function' ? { width: 390, height: 844, devicePixelRatio: 3 } : 1
+                )),
+                isBidi: true,
+                getWindowHandle: vi.fn().mockResolvedValue('context-id'),
+                emulate,
+                browsingContextSetViewport: vi.fn(),
+            } as any as WebdriverIO.Browser)
+
+            it('sets the viewport of the device that the browser emulates when emulate("device") fails (WebdriverIO v10)', async () => {
+                const browser = createBrowser(vi.fn().mockRejectedValue(
+                    new Error('WebDriver Bidi command "emulation.setTextLayoutModeOverride" failed with error: unknown command')
+                ))
+
+                await service.before(browser.capabilities as WebdriverIO.Capabilities, [], browser)
+
+                expect(browser.browsingContextSetViewport).toHaveBeenCalledWith({
+                    context: 'context-id',
+                    devicePixelRatio: 3,
+                    viewport: { width: 390, height: 844 },
+                })
+            })
+
+            it('reads the emulated device before emulate("device"), which removes it when it fails (WebdriverIO v10)', async () => {
+                const browser = createBrowser(vi.fn().mockRejectedValue(new Error('unknown command')))
+                // After a failed `emulate('device')`, the browser no longer emulates the device
+                let deviceReads = 0
+                vi.mocked(browser.execute).mockImplementation(((script: unknown) => Promise.resolve(
+                    typeof script !== 'function' ? 1 : (deviceReads++ === 0 && vi.mocked(browser.emulate).mock.calls.length === 0
+                        ? { width: 390, height: 844, devicePixelRatio: 3 }
+                        : { width: 800, height: 600, devicePixelRatio: 1 })
+                )) as any)
+
+                await service.before(browser.capabilities as WebdriverIO.Capabilities, [], browser)
+
+                expect(browser.browsingContextSetViewport).toHaveBeenCalledWith({
+                    context: 'context-id',
+                    devicePixelRatio: 3,
+                    viewport: { width: 390, height: 844 },
+                })
+            })
+
+            it('keeps the emulation of emulate("device") when it works (WebdriverIO v9)', async () => {
+                const browser = createBrowser(vi.fn().mockResolvedValue(() => {}))
+
+                await service.before(browser.capabilities as WebdriverIO.Capabilities, [], browser)
+
+                expect(browser.emulate).toHaveBeenCalledWith('device', 'iPhone 12 Pro')
+                expect(browser.browsingContextSetViewport).not.toHaveBeenCalled()
+            })
+        })
+
         describe('mobile emulation for multiremote browsers', () => {
             const mobileEmulationCapabilities = {
                 'goog:chromeOptions': {

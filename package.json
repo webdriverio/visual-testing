@@ -24,6 +24,7 @@
     "test.local.desktop": "wdio tests/configs/wdio.local.desktop.conf.ts",
     "test.local.chrome.v10": "wdio tests/configs/wdio.local.chrome.v10.conf.ts",
     "test.local.chrome.v10.jasmine": "wdio tests/configs/wdio.local.chrome.v10.jasmine.conf.ts",
+    "test.local.chrome.v10.emulation": "wdio tests/configs/wdio.local.chrome.v10.emulation.conf.ts",
     "test.local.emus.app": "wdio tests/configs/wdio.local.android.emus.app.conf.ts",
     "test.local.emus.web": "wdio tests/configs/wdio.local.android.emus.web.conf.ts",
     "test.local.sims.app": "wdio tests/configs/wdio.local.ios.sims.app.conf.ts",

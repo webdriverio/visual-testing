@@ -577,7 +577,29 @@ export default class WdioImageComparisonService extends BaseClass {
         const { deviceName, deviceMetrics } = mobileEmulation
 
         if (deviceName) {
-            await (browserInstance.emulate as any)('device', deviceName)
+            // The browser already emulates the device, but a BiDi screenshot only has the device pixel ratio
+            // of the device after the viewport is set. Read the device first: when `emulate('device')` fails,
+            // it puts back the previous state, which also removes the emulation of the browser
+            const { width, height, devicePixelRatio } = await browserInstance.execute(() => ({
+                width: window.screen.width,
+                height: window.screen.height,
+                devicePixelRatio: window.devicePixelRatio,
+            }))
+
+            try {
+                await (browserInstance.emulate as any)('device', deviceName)
+                return
+            } catch (error) {
+                // WebdriverIO v10 emulates a device with WebDriver BiDi emulation commands that not all browsers support,
+                // for example `emulation.setTextLayoutModeOverride` in Chrome 154
+                log.info(`Could not emulate the device "${deviceName}" with \`emulate('device')\`, using the device that the browser emulates: ${error}`)
+            }
+
+            await browserInstance.browsingContextSetViewport({
+                context: await browserInstance.getWindowHandle(),
+                devicePixelRatio,
+                viewport: { width, height },
+            })
             return
         }
 
