@@ -99,12 +99,12 @@ export const config: WebdriverIO.Config  = {
     before: async () => {
         // Set the default screensize
         //Note: browser.setWindowSize does not execute on each browser unlike some of the other commands.
-        if (!multiremotebrowser.chromeBrowserOne.isMobile) {
-            await multiremotebrowser.chromeBrowserOne.setWindowSize(1366, 768)
+        if (!multiRemoteBrowser.getInstance('chromeBrowserOne').isMobile) {
+            await multiRemoteBrowser.getInstance('chromeBrowserOne').setWindowSize(1366, 768)
         }
 
-        if (!multiremotebrowser.chromeBrowserTwo.isMobile) {
-            await multiremotebrowser.chromeBrowserTwo.setWindowSize(1366, 768)
+        if (!multiRemoteBrowser.getInstance('chromeBrowserTwo').isMobile) {
+            await multiRemoteBrowser.getInstance('chromeBrowserTwo').setWindowSize(1366, 768)
         }
     },
 }

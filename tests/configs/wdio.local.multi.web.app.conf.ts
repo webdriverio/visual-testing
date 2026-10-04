@@ -101,8 +101,8 @@ export const config: Options.Testrunner = {
     before: async () => {
         // Set the default screensize
         //Note: browser.setWindowSize does not execute on each browser unlike some of the other commands.
-        if (multiremotebrowser.chromeBrowserOne) {
-            await multiremotebrowser.chromeBrowserOne.setWindowSize(1366, 768)
+        if (multiRemoteBrowser.instances.includes('chromeBrowserOne')) {
+            await multiRemoteBrowser.getInstance('chromeBrowserOne').setWindowSize(1366, 768)
         }
     },
 }
