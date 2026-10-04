@@ -29,6 +29,11 @@ The versions in the table above are the versions of the visual testing packages,
 > [!NOTE]
 > WebdriverIO v10 needs Node.js 22.19 or later. WebdriverIO v9 needs Node.js 18.20 or later.
 
+#### Upgrading to WebdriverIO v10
+
+-   **Strict `$()`**: in WebdriverIO v10, `$()` throws a `StrictSelectorError` when the selector finds more than one element. This applies to elements in `ignore` and to `checkElement()` / `toMatchElementSnapshot()`. Use `$$()` to use all the elements, `$(selector, { strict: false })` to use the first one, or a more specific selector. `hideElements` and `removeElements` are not affected.
+-   **Elements in a frame**: in a WebDriver BiDi session, an element screenshot of an element in a frame is not supported. With WebdriverIO v9 `switchFrame()`, the image is moved by the position of the frame. With WebdriverIO v10 `context.frame()`, the command fails. With WebDriver Classic (`'wdio:enforceWebDriverClassic': true`), it works with WebdriverIO v9 and v10. See [#1228](https://github.com/webdriverio/visual-testing/issues/1228).
+
 ### Staying on v9
 
 v9 receives **critical bug and security fixes only** for **12 months** after the v10 release. Pin it with a semver range, which always resolves to the v9 line regardless of npm tags:

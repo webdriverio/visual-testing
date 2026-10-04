@@ -22,7 +22,11 @@ feat: support WebdriverIO v10 (keep WebdriverIO v9 support)
 
 **Known limits**
 
-- An element screenshot of an element in a frame from `browser.context.frame()` (v10) is not supported.
+- In a WebDriver BiDi session, an element screenshot of an element in a frame is not supported: with WebdriverIO v9 `switchFrame()` the image is moved by the position of the frame, and with v10 `context.frame()` the command fails. With WebDriver Classic (`'wdio:enforceWebDriverClassic': true`), it works with v9 and v10. See #1228.
+
+**Upgrading to WebdriverIO v10**
+
+- In WebdriverIO v10, `$()` throws a `StrictSelectorError` when the selector finds more than one element. This applies to elements in `ignore` and to `checkElement()` / `toMatchElementSnapshot()`. Use `$$()`, `$(selector, { strict: false })` or a more specific selector. `hideElements` and `removeElements` are not affected.
 
 ### Committers: 1
 
