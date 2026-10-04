@@ -139,6 +139,81 @@ describe('@wdio/visual-service', () => {
             expect(browserInstance.addCommand).toHaveBeenCalledTimes(commands.length * 2)
         })
 
+        describe('mobile emulation for multiremote browsers', () => {
+            const mobileEmulationCapabilities = {
+                'goog:chromeOptions': {
+                    mobileEmulation: { deviceMetrics: { width: 390, height: 844, pixelRatio: 3 } },
+                },
+            }
+            const multiremoteCapabilities = {
+                chrome: { capabilities: mobileEmulationCapabilities },
+                firefox: { capabilities: mobileEmulationCapabilities },
+            } as any
+
+            function createInstance() {
+                return {
+                    addCommand: vi.fn(),
+                    capabilities: mobileEmulationCapabilities,
+                    requestedCapabilities: {},
+                    on: vi.fn(),
+                    execute: vi.fn().mockResolvedValue(1),
+                    isBidi: true,
+                    getWindowHandle: vi.fn().mockResolvedValue('context-id'),
+                    browsingContextSetViewport: vi.fn(),
+                } as any as WebdriverIO.Browser
+            }
+
+            it('sets the emulation on each instance of a WebdriverIO v10 multiremote browser', async () => {
+                const instances: Record<string, WebdriverIO.Browser> = {
+                    chrome: createInstance(),
+                    firefox: createInstance(),
+                }
+                // WebdriverIO v10 does not store the instances as properties of the multiremote browser
+                const multiremoteBrowser = {
+                    isMultiRemote: true,
+                    instances: ['chrome', 'firefox'],
+                    getInstance: vi.fn((name: string) => instances[name]),
+                    addCommand: vi.fn(),
+                    capabilities: {},
+                    requestedCapabilities: {},
+                    on: vi.fn(),
+                } as any as WebdriverIO.MultiRemoteBrowser
+
+                await service.before(multiremoteCapabilities, [], multiremoteBrowser)
+
+                for (const instance of Object.values(instances)) {
+                    expect(instance.browsingContextSetViewport).toHaveBeenCalledWith({
+                        context: 'context-id',
+                        devicePixelRatio: 3,
+                        viewport: { width: 390, height: 844 },
+                    })
+                }
+            })
+
+            it('sets the emulation on each instance of a WebdriverIO v9 multiremote browser', async () => {
+                const instances: Record<string, WebdriverIO.Browser> = {
+                    chrome: createInstance(),
+                    firefox: createInstance(),
+                }
+                const multiremoteBrowser = {
+                    isMultiremote: true,
+                    instances: ['chrome', 'firefox'],
+                    getInstance: vi.fn((name: string) => instances[name]),
+                    addCommand: vi.fn(),
+                    capabilities: {},
+                    requestedCapabilities: {},
+                    on: vi.fn(),
+                    ...instances,
+                } as any as WebdriverIO.MultiRemoteBrowser
+
+                await service.before(multiremoteCapabilities, [], multiremoteBrowser)
+
+                for (const instance of Object.values(instances)) {
+                    expect(instance.browsingContextSetViewport).toHaveBeenCalledTimes(1)
+                }
+            })
+        })
+
         it('should register custom matchers', async () => {
             const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
             const browser = {
