@@ -171,9 +171,11 @@ jobs:
   ci-pr-desktop-web:
     name: 🔄 💻 CI PR Run Desktop Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
       github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -274,9 +276,11 @@ jobs:
   ci-pr-android-web:
     name: 🔄 🤖 🌐 CI PR Run Android Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
       github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -330,9 +334,11 @@ jobs:
   ci-pr-ios-web:
     name: 🔄 🍏 🌐 CI PR Run iOS Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
       github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -386,9 +392,11 @@ jobs:
   ci-pr-app:
     name: 🔄 📱 CI PR Run Mobile App Tests on Sauce
     runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
       github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -442,9 +450,11 @@ jobs:
   ci-pr-ocr:
     name: 🔄 📱 CI PR Run OCR Tests  on LambdaTest
     runs-on: ubuntu-latest
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
       github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
