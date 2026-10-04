@@ -746,6 +746,40 @@ describe('rectangles', () => {
             expect(mockGetElementRect).toHaveBeenCalledWith('element1')
         })
 
+        it('should handle a WebdriverIO v10 element array and a not awaited $$ result', async () => {
+            // In WebdriverIO v10 `$$()` returns an `ElementArray`: a real array with extra properties,
+            // and the not awaited result is a thenable that resolves to it
+            class ElementArray extends Array<WebdriverIO.Element> {
+                selector = '.feature h3'
+                foundWith = '$$'
+                parent = {}
+                props = []
+            }
+            const elementArray = ElementArray.from([
+                { elementId: 'element1', selector: '.feature h3' },
+                { elementId: 'element2', selector: '.feature h3' },
+            ] as WebdriverIO.Element[]) as ElementArray
+            const chainableElementArray = { then: (resolve: (value: ElementArray) => void) => resolve(elementArray) }
+
+            mockGetElementRect
+                .mockResolvedValueOnce({ x: 1, y: 2, width: 3, height: 4 })
+                .mockResolvedValueOnce({ x: 5, y: 6, width: 7, height: 8 })
+                .mockResolvedValueOnce({ x: 1, y: 2, width: 3, height: 4 })
+                .mockResolvedValueOnce({ x: 5, y: 6, width: 7, height: 8 })
+
+            const result = await determineIgnoreRegions(mockBrowserInstance, [elementArray, chainableElementArray] as any)
+
+            expect(result).toEqual([
+                { x: 1, y: 2, width: 3, height: 4 },
+                { x: 5, y: 6, width: 7, height: 8 },
+                { x: 1, y: 2, width: 3, height: 4 },
+                { x: 5, y: 6, width: 7, height: 8 },
+            ])
+            expect(mockGetElementRect).toHaveBeenCalledTimes(4)
+            expect(mockGetElementRect).toHaveBeenNthCalledWith(1, 'element1')
+            expect(mockGetElementRect).toHaveBeenNthCalledWith(2, 'element2')
+        })
+
         it('should handle empty arrays', async () => {
             const result = await determineIgnoreRegions(mockBrowserInstance, [])
 

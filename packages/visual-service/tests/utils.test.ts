@@ -708,6 +708,25 @@ describe('utils', () => {
             const childElement = createElementMock(parentElement)
             expect(getBrowserObject(childElement)).toBe(browserMock)
         })
+
+        // WebdriverIO v10: elements found from a browsing context (`browser.url()`, `context.frame()`)
+        // have the context as parent, and the context holds the browser in `browser`
+        const topLevelContextMock = { browser: browserMock, isFrame: false } as any as WebdriverIO.Browser
+        const frameContextMock = { browser: browserMock, isFrame: true, parent: topLevelContextMock } as any as WebdriverIO.Browser
+
+        it('should return the browser object when passed a WebdriverIO v10 browsing context', () => {
+            expect(getBrowserObject(topLevelContextMock)).toBe(browserMock)
+        })
+
+        it('should return the browser object for an element found from a WebdriverIO v10 browsing context', () => {
+            const element = createElementMock(topLevelContextMock)
+            expect(getBrowserObject(element)).toBe(browserMock)
+        })
+
+        it('should return the browser object for an element found in a WebdriverIO v10 frame', () => {
+            const element = createElementMock(frameContextMock)
+            expect(getBrowserObject(element)).toBe(browserMock)
+        })
     })
 
     describe('isMultiRemoteBrowser', () => {
