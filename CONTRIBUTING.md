@@ -200,7 +200,12 @@ This project uses [changesets](https://github.com/changesets/changesets) to auto
 
 ## Testing
 
-Several tests need to be executed to be able to test the module. When adding a PR all tests must at least pass the local tests. Each PR is automatically tested against Sauce Labs, see [our GitHub Actions pipeline](https://github.com/webdriverio/visual-testing/actions/workflows/tests.yml). Before approving a PR the core contributors will test the PR against emulators/simulators / real devices.
+Several tests need to be executed to be able to test the module. When adding a PR all tests must at least pass the local tests. GitHub Actions tests each PR automatically:
+
+-   [`checks`](https://github.com/webdriverio/visual-testing/actions/workflows/checks.yml): lint, unit tests and the WebdriverIO v10 tests on local headless Chrome (Mocha and Jasmine). It runs for every PR, also from forks, and for every push to `main`.
+-   [`e2e`](https://github.com/webdriverio/visual-testing/actions/workflows/e2e.yml): the tests on LambdaTest and Sauce Labs. These jobs need the cloud credentials, so they do not run for PRs from forks.
+
+Before approving a PR the core contributors will test the PR against emulators/simulators / real devices.
 
 ### Local Testing
 
@@ -222,6 +227,15 @@ pnpm run test.local.desktop
 
 This will run all tests on a local machine on Chrome.
 
+#### WebdriverIO v10 tests on local headless Chrome
+
+These are the tests of the `checks` workflow. They create their baselines in the same run, so `test.local.init` is not needed:
+
+```sh
+pnpm run test.local.chrome.v10
+pnpm run test.local.chrome.v10.jasmine
+```
+
 ### Local Storybook Runner Testing (Beta)
 
 First, a local baseline needs to be created. This can be done with:
@@ -241,16 +255,19 @@ pnpm run test.local.desktop.storybook -- --browsers=chrome,firefox,edge,safari
 > [!NOTE]
 > Make sure you have the browsers you want to run on installed on your local machine
 
-### CI testing with Sauce Labs (not needed for a PR)
+### CI testing with LambdaTest and Sauce Labs (not needed for a PR)
 
-The command below is used to test the build on GitHub Actions, it can only be used there and not for local development.
+The `e2e` workflow uses the commands below. They need the cloud credentials, so they can only be used there and not for local development:
 
+```sh
+pnpm run test.lambdatest.desktop
+pnpm run test.lambdatest.emu.web
+pnpm run test.lambdatest.sims.web
+pnpm run test.ocr.lambdatest.desktop
+pnpm run test.saucelabs.app
 ```
-$ pnpm run test.saucelabs
-```
 
-It will test against a lot of configurations that can be found [here](./tests/configs/wdio.saucelabs.web.conf.ts).
-All PRs are automatically checked against Sauce Labs.
+The configurations are in [`tests/configs`](./tests/configs), for example [`wdio.lambdatest.web.conf.ts`](./tests/configs/wdio.lambdatest.web.conf.ts) and [`wdio.saucelabs.app.conf.ts`](./tests/configs/wdio.saucelabs.app.conf.ts).
 
 ## Releasing
 
