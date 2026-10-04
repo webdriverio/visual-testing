@@ -124,7 +124,8 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                         orientation: orientation,
                         mobileSpecs,
                         sauceOptions: {
-                            appiumVersion: '2.1.3',
+                            // Sauce Labs has no Appium 3 for these devices (2026-10-04), so this is the newest Appium 2 version they support
+                            appiumVersion: '2.11.3',
                             build: buildName,
                             deviceOrientation: orientation,
                         },

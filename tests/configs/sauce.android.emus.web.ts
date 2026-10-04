@@ -183,7 +183,8 @@ function createCaps({
             ...sauceOptions,
             // Sauce Labs uses lowercase values, `appium:orientation` uses uppercase values
             deviceOrientation: sauceOptions.deviceOrientation?.toLowerCase() as DeviceOrientation | undefined,
-            appiumVersion: '2.0.0',
+            // Sauce Labs has no Appium 3 for these devices (2026-10-04), so this is the newest Appium 2 version they support
+            appiumVersion: '2.11.0',
         },
         'wdio:specs': [mobileSpecs],
         // @ts-ignore
