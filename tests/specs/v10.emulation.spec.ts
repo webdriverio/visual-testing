@@ -25,7 +25,7 @@ describe('@wdio/visual-service with Chrome mobile emulation (WebdriverIO v10)', 
 
     it('takes the screenshot with the device pixel ratio of the device', async () => {
         await browser.url(fixture('page-a.html'))
-        const { fileName, path } = await browser.saveScreen('v10-emulation-dpr')
+        const { fileName, path } = await browser.saveScreen('v10-emulation-dpr') as { fileName: string, path: string }
         // The width of a PNG is at byte 16 of the file
         const imageWidth = readFileSync(join(path, fileName)).readUInt32BE(16)
 
