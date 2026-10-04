@@ -574,8 +574,10 @@ export default class WdioImageComparisonService extends BaseClass {
 
     async #setEmulation(browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser, capabilities: WebdriverIO.Capabilities) {
         if (isMultiRemoteBrowser(browser)) {
-            const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-            for (const browserInstance of Object.values(multiremoteBrowser)) {
+            // WebdriverIO v10 no longer stores the instances as properties of the multiremote browser,
+            // `instances` and `getInstance` are available in v9 and v10
+            for (const browserName of browser.instances) {
+                const browserInstance = browser.getInstance(browserName)
                 await this.#setEmulationForBrowser(browserInstance, browserInstance.capabilities)
             }
             return

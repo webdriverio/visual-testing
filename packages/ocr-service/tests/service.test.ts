@@ -211,6 +211,29 @@ describe('WdioOcrService', () => {
             expect(firefoxInstance.addCommand).toHaveBeenCalled()
         })
 
+        it('should add OCR commands to WebdriverIO v10 multiremote browsers (isMultiRemote)', async () => {
+            const logSpy = vi.spyOn(log, 'info')
+            browser = createBrowser(true)
+            // WebdriverIO v10 renamed `isMultiremote` to `isMultiRemote`
+            delete browser.isMultiremote
+            browser.isMultiRemote = true
+            browser.capabilities = {
+                myChromeBrowser: {
+                    capabilities: { browserName: 'chrome' }
+                },
+                myFirefoxBrowser: {
+                    capabilities: { browserName: 'firefox' }
+                }
+            }
+            await service.before(browser.capabilities as any, [], browser)
+            expect(logSpy).toHaveBeenCalledWith('Adding commands to Multi Browser: myChromeBrowser, myFirefoxBrowser')
+
+            // @ts-ignore
+            expect(browser.getInstance('myChromeBrowser').addCommand).toHaveBeenCalled()
+            // @ts-ignore
+            expect(browser.getInstance('myFirefoxBrowser').addCommand).toHaveBeenCalled()
+        })
+
         // We're not going to check all methods that are added to the multie remote browser here, just check how complex it
         // already is to mock the browser instances. So we're stopping here.
     })

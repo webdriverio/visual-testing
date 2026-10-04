@@ -77,6 +77,18 @@ describe('custom visual matcher', () => {
         expect(browser.checkElement).toBeCalledTimes(1)
     })
 
+    it('toMatchElementSnapshot with an element found from a WebdriverIO v10 browsing context', async () => {
+        // In WebdriverIO v10 the parent of the element is the browsing context, which holds the browser in `browser`
+        const browsingContext = { browser, isFrame: false }
+        const element = { elementId: 'element-id', selector: '#logo', parent: browsingContext } as any as WebdriverIO.Element
+
+        await expect(toMatchElementSnapshot(element, 'foo', 123, {})).resolves.toEqual({
+            pass: true,
+            message: expect.any(Function)
+        })
+        expect(browser.checkElement).toHaveBeenCalledWith(element, 'foo', expect.any(Object))
+    })
+
     it('toMatchTabbablePageSnapshot', async () => {
         await expect(toMatchTabbablePageSnapshot(browser, 'foo', 123, {})).resolves.toEqual({
             pass: true,
