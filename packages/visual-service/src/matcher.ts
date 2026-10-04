@@ -145,7 +145,10 @@ function parseMatcherParams (
  * Give a clear error when the service could not add its commands, for example when its setup failed
  */
 function assertVisualCommand (browser: unknown, command: string) {
-    if (typeof (browser as Record<string, unknown> | undefined)?.[command] !== 'function') {
+    // A WebdriverIO browser can be an object or a function
+    const canHaveCommands = (typeof browser === 'object' && browser !== null) || typeof browser === 'function'
+    const visualCommand = canHaveCommands && command in browser ? Reflect.get(browser, command) : undefined
+    if (typeof visualCommand !== 'function') {
         throw new Error(`The visual service did not add the "${command}" command to this session. See the earlier error of @wdio/visual-service in the log.`)
     }
 }

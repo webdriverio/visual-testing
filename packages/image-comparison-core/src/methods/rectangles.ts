@@ -280,6 +280,13 @@ export async function getRegionsFromElements(browserInstance: WebdriverIO.Browse
  * Translate ignores to regions
  */
 /**
+ * Check that a scope (an element, a browsing context or a browser) can find elements with `$$`
+ */
+function canQueryElements(scope: unknown): scope is Pick<WebdriverIO.Browser, '$$'> {
+    return typeof scope === 'object' && scope !== null && '$$' in scope && typeof scope.$$ === 'function'
+}
+
+/**
  * Get fresh references of elements
  *
  * Browsers can invalidate element references when the DOM is mutated (e.g. by beforeScreenshot CSS/style injection).
@@ -289,7 +296,8 @@ export async function getRegionsFromElements(browserInstance: WebdriverIO.Browse
  * An element without a string or function selector (for example from a custom strategy) is used as it is.
  */
 export async function getFreshElements(browserInstance: WebdriverIO.Browser, elements: WebdriverIO.Element[]): Promise<WebdriverIO.Element[]> {
-    const queries = new Map<unknown, Map<unknown, WebdriverIO.Element[]>>()
+    // A WebdriverIO v10 `$$` result is an ElementArray (async array methods), only its indexes are read here
+    const queries = new Map<unknown, Map<unknown, ArrayLike<WebdriverIO.Element>>>()
     const runningIndexes = new Map<unknown, Map<unknown, number>>()
     const freshElements: WebdriverIO.Element[] = []
 
@@ -300,12 +308,13 @@ export async function getFreshElements(browserInstance: WebdriverIO.Browser, ele
             continue
         }
 
-        const parent = element.parent as { $$?: unknown } | undefined
-        const scope = (parent && typeof parent.$$ === 'function' ? parent : browserInstance) as WebdriverIO.Browser
-        const scopeQueries = queries.get(scope) ?? new Map<unknown, WebdriverIO.Element[]>()
+        const scope = canQueryElements(element.parent) ? element.parent : browserInstance
+        const scopeQueries = queries.get(scope) ?? new Map<unknown, ArrayLike<WebdriverIO.Element>>()
         queries.set(scope, scopeQueries)
-        if (!scopeQueries.has(selector)) {
-            scopeQueries.set(selector, await scope.$$(selector as string) as unknown as WebdriverIO.Element[])
+        let freshList = scopeQueries.get(selector)
+        if (!freshList) {
+            freshList = await scope.$$(selector)
+            scopeQueries.set(selector, freshList)
         }
 
         let index = element.index
@@ -316,7 +325,7 @@ export async function getFreshElements(browserInstance: WebdriverIO.Browser, ele
             scopeIndexes.set(selector, index + 1)
         }
 
-        freshElements.push(scopeQueries.get(selector)![index] ?? element)
+        freshElements.push(freshList[index] ?? element)
     }
 
     return freshElements

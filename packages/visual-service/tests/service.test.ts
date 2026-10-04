@@ -189,7 +189,9 @@ describe('@wdio/visual-service', () => {
                 vi.mocked(getMobileViewPortPosition).mockResolvedValue(structuredClone(DEVICE_RECTANGLES))
             })
 
-            it.each(['v9', 'v10'] as const)('uses the context manager of each multiremote instance for its own commands (WebdriverIO %s)', async (version) => {
+            const versions: Array<'v9' | 'v10'> = ['v9', 'v10']
+
+            it.each(versions)('uses the context manager of each multiremote instance for its own commands (WebdriverIO %s)', async (version) => {
                 const { browser, instances } = createMultiRemoteBrowser(version)
                 // Mocked BaseClass does not set defaultOptions/folders; set them so the command can run
                 ;(service as any).defaultOptions = {}

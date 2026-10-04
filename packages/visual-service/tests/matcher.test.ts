@@ -98,14 +98,24 @@ describe('custom visual matcher', () => {
     })
 
     describe('when the visual service did not add its commands', () => {
-        it.each([
+        const pageMatchers: Array<[string, typeof toMatchScreenSnapshot | typeof toMatchFullPageSnapshot | typeof toMatchTabbablePageSnapshot, string]> = [
             ['toMatchScreenSnapshot', toMatchScreenSnapshot, 'checkScreen'],
             ['toMatchFullPageSnapshot', toMatchFullPageSnapshot, 'checkFullPageScreen'],
             ['toMatchTabbablePageSnapshot', toMatchTabbablePageSnapshot, 'checkTabbablePage'],
-        ] as const)('%s gives a clear error', async (_, matcher, command) => {
+        ]
+
+        it.each(pageMatchers)('%s gives a clear error', async (_, matcher, command) => {
             await expect(matcher({} as any, 'tag')).rejects.toThrow(
                 `The visual service did not add the "${command}" command to this session`
             )
+        })
+
+        it('accepts a browser that is a function, as a WebdriverIO browser can be', async () => {
+            const functionBrowser = Object.assign(() => {}, {
+                checkScreen: vi.fn().mockResolvedValue({ misMatchPercentage: 0, folders }),
+            })
+
+            await expect(toMatchScreenSnapshot(functionBrowser as any, 'tag')).resolves.toMatchObject({ pass: true })
         })
 
         it('toMatchElementSnapshot gives a clear error', async () => {
