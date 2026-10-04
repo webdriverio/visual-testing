@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  wdio-lambdatest-service@4.0.1:
+    hash: i5rfvq3f2h27rqtzavtidjxwhq
+    path: patches/wdio-lambdatest-service@4.0.1.patch
+
 importers:
 
   .:
@@ -118,7 +123,7 @@ importers:
         version: 3.2.7(@types/debug@4.1.12)(@types/node@24.0.14)(@vitest/ui@3.2.7)(jsdom@26.1.0)
       wdio-lambdatest-service:
         specifier: ^4.0.1
-        version: 4.0.1(@wdio/cli@10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0))(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
+        version: 4.0.1(patch_hash=i5rfvq3f2h27rqtzavtidjxwhq)(@wdio/cli@10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0))(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       webdriverio:
         specifier: ^10.0.0-0 || ^10.0.0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
@@ -16770,7 +16775,7 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-lambdatest-service@4.0.1(@wdio/cli@10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0))(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)):
+  wdio-lambdatest-service@4.0.1(patch_hash=i5rfvq3f2h27rqtzavtidjxwhq)(@wdio/cli@10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0))(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.9
       '@wdio/cli': 10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0)
