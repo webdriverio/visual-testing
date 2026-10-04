@@ -3,7 +3,7 @@ import logger from '@wdio/logger'
 import { expect as wdioExpect } from '@wdio/globals'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import VisualService from '../src/index.js'
-import { saveScreen } from '@wdio/image-comparison-core'
+import { checkScreen, DEVICE_RECTANGLES, getMobileScreenSize, getMobileViewPortPosition, saveScreen } from '@wdio/image-comparison-core'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
@@ -17,6 +17,9 @@ vi.mock('@wdio/image-comparison-core', () => ({
     saveScreen: vi.fn(),
     saveTabbablePage: vi.fn(),
     checkTabbablePage: vi.fn(),
+    getMobileScreenSize: vi.fn(),
+    getMobileViewPortPosition: vi.fn(),
+    IOS_OFFSETS: {},
     DEFAULT_TEST_CONTEXT: {},
     FOLDERS: { ACTUAL: 'actual', DIFF: 'diff', TEMP_FULL_SCREEN: 'tempFullScreen', DEFAULT: { BASE: './__snapshots__/', SCREENSHOTS: '.tmp/' } },
     NOT_KNOWN: 'not_known',
@@ -139,6 +142,132 @@ describe('@wdio/visual-service', () => {
             expect(browserInstance.addCommand).toHaveBeenCalledTimes(commands.length * 2)
         })
 
+        describe('multiremote browser with a web session and a native app session', () => {
+            const createInstance = (props: Record<string, unknown>) => {
+                const instance: Record<string, any> = {
+                    addCommand: vi.fn((name: string, fn: (...args: unknown[]) => unknown) => {
+                        instance[name] = fn
+                    }),
+                    on: vi.fn(),
+                    execute: vi.fn().mockResolvedValue(1),
+                    ...props,
+                }
+                return instance
+            }
+            const createMultiRemoteBrowser = (version: 'v9' | 'v10') => {
+                const instances: Record<string, Record<string, any>> = {
+                    webInstance: createInstance({
+                        isMobile: false,
+                        capabilities: { browserName: 'chrome' },
+                        requestedCapabilities: { browserName: 'chrome' },
+                    }),
+                    // The native app session is the last instance
+                    appInstance: createInstance({
+                        isMobile: true,
+                        isAndroid: true,
+                        capabilities: { platformName: 'Android' },
+                        requestedCapabilities: { platformName: 'Android', 'appium:app': '/path/to/app.apk' },
+                    }),
+                }
+                return {
+                    instances,
+                    browser: {
+                        // WebdriverIO v9 has `isMultiremote` and the instances as properties, v10 has `isMultiRemote`
+                        ...(version === 'v10' ? { isMultiRemote: true } : { isMultiremote: true, ...instances }),
+                        instances: Object.keys(instances),
+                        getInstance: (name: string) => instances[name],
+                        addCommand: vi.fn(),
+                        capabilities: {},
+                        requestedCapabilities: {},
+                        on: vi.fn(),
+                    } as any as WebdriverIO.MultiRemoteBrowser,
+                }
+            }
+
+            beforeEach(() => {
+                vi.mocked(getMobileScreenSize).mockResolvedValue({ height: 2856, width: 1280 })
+                vi.mocked(getMobileViewPortPosition).mockResolvedValue(structuredClone(DEVICE_RECTANGLES))
+            })
+
+            const versions: Array<'v9' | 'v10'> = ['v9', 'v10']
+
+            it.each(versions)('uses the context manager of each multiremote instance for its own commands (WebdriverIO %s)', async (version) => {
+                const { browser, instances } = createMultiRemoteBrowser(version)
+                // Mocked BaseClass does not set defaultOptions/folders; set them so the command can run
+                ;(service as any).defaultOptions = {}
+                ;(service as any).folders = { baselineFolder: './__snapshots__/' }
+
+                await service.before({
+                    webInstance: { capabilities: {} },
+                    appInstance: { capabilities: {} },
+                } as any, [], browser)
+                await instances.webInstance.checkScreen('web-tag')
+                await instances.appInstance.checkScreen('app-tag')
+
+                expect(vi.mocked(checkScreen).mock.calls[0][0]).toMatchObject({ tag: 'web-tag', isNativeContext: false })
+                expect(vi.mocked(checkScreen).mock.calls[1][0]).toMatchObject({ tag: 'app-tag', isNativeContext: true })
+            })
+        })
+
+        describe('mobile emulation with mobileEmulation.deviceName', () => {
+            const createBrowser = (emulate: ReturnType<typeof vi.fn>) => ({
+                addCommand: vi.fn(),
+                capabilities: { 'goog:chromeOptions': { mobileEmulation: { deviceName: 'iPhone 12 Pro' } } },
+                requestedCapabilities: {},
+                on: vi.fn(),
+                // A string script is the device pixel ratio of the instance data, a function reads the emulated device
+                execute: vi.fn((script: unknown) => Promise.resolve(
+                    typeof script === 'function' ? { width: 390, height: 844, devicePixelRatio: 3 } : 1
+                )),
+                isBidi: true,
+                getWindowHandle: vi.fn().mockResolvedValue('context-id'),
+                emulate,
+                browsingContextSetViewport: vi.fn(),
+            } as any as WebdriverIO.Browser)
+
+            it('sets the viewport of the device that the browser emulates when emulate("device") fails (WebdriverIO v10)', async () => {
+                const browser = createBrowser(vi.fn().mockRejectedValue(
+                    new Error('WebDriver Bidi command "emulation.setTextLayoutModeOverride" failed with error: unknown command')
+                ))
+
+                await service.before(browser.capabilities as WebdriverIO.Capabilities, [], browser)
+
+                expect(browser.browsingContextSetViewport).toHaveBeenCalledWith({
+                    context: 'context-id',
+                    devicePixelRatio: 3,
+                    viewport: { width: 390, height: 844 },
+                })
+            })
+
+            it('reads the emulated device before emulate("device"), which removes it when it fails (WebdriverIO v10)', async () => {
+                const browser = createBrowser(vi.fn().mockRejectedValue(new Error('unknown command')))
+                // After a failed `emulate('device')`, the browser no longer emulates the device
+                let deviceReads = 0
+                vi.mocked(browser.execute).mockImplementation(((script: unknown) => Promise.resolve(
+                    typeof script !== 'function' ? 1 : (deviceReads++ === 0 && vi.mocked(browser.emulate).mock.calls.length === 0
+                        ? { width: 390, height: 844, devicePixelRatio: 3 }
+                        : { width: 800, height: 600, devicePixelRatio: 1 })
+                )) as any)
+
+                await service.before(browser.capabilities as WebdriverIO.Capabilities, [], browser)
+
+                expect(browser.browsingContextSetViewport).toHaveBeenCalledWith({
+                    context: 'context-id',
+                    devicePixelRatio: 3,
+                    viewport: { width: 390, height: 844 },
+                })
+            })
+
+            it('keeps the emulation of emulate("device") when it works (WebdriverIO v9)', async () => {
+                const browser = createBrowser(vi.fn().mockResolvedValue(() => {}))
+
+                await service.before(browser.capabilities as WebdriverIO.Capabilities, [], browser)
+
+                expect(browser.emulate).toHaveBeenCalledWith('device', 'iPhone 12 Pro')
+                expect(browser.browsingContextSetViewport).not.toHaveBeenCalled()
+            })
+        })
+
         describe('mobile emulation for multiremote browsers', () => {
             const mobileEmulationCapabilities = {
                 'goog:chromeOptions': {
@@ -228,6 +357,27 @@ describe('@wdio/visual-service', () => {
             await service.before({}, [], browser)
 
             expect(wdioExpect.extend).toBeCalledTimes(1)
+        })
+
+        it('adds the matchers and logs a clear error when the setup fails', async () => {
+            const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
+            const setupError = new Error('WebDriver Bidi command "script.callFunction" failed with error: unknown command')
+            const browser = {
+                isMultiremote: false,
+                addCommand: vi.fn(),
+                capabilities: {},
+                requestedCapabilities: {},
+                on: vi.fn(),
+                execute: vi.fn().mockRejectedValue(setupError),
+            } as any as WebdriverIO.Browser
+
+            await expect(service.before({}, [], browser)).rejects.toThrow(setupError)
+
+            expect(wdioExpect.extend).toBeCalledTimes(1)
+            expect(vi.mocked(log.error)).toHaveBeenCalledWith(
+                expect.stringContaining('The visual service setup failed for this session')
+            )
+            expect(vi.mocked(log.error)).toHaveBeenCalledWith(expect.stringContaining(setupError.message))
         })
 
         it('should register custom matchers with Jasmine when Jasmine is the framework', async () => {

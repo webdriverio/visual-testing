@@ -14,12 +14,16 @@ feat: support WebdriverIO v10 (keep WebdriverIO v9 support)
 - `expect-webdriverio` is no longer a dependency of `@wdio/visual-service`. The service uses only its `ExpectWebdriverIO` types, which your `@wdio/globals` gives. This removes a second `expect-webdriverio` copy and peer dependency warnings (for example with pnpm).
 - Multiremote: the services read `isMultiRemote` (v10) and `isMultiremote` (v9). Before, a multiremote session on v10 did not get the visual and OCR commands.
 - Multiremote mobile emulation is set on each instance with `instances` and `getInstance()`, which are available in v9 and v10.
+- Multiremote: the commands of each instance (for example `browser.getInstance('chrome').checkScreen()`) use the context of that instance. Before, all instances used the context of the last instance, so with a web instance and a native app instance, the web check ran as a native app check and saved a `...-NaNxNaN.png` file.
+- Chrome and Edge `mobileEmulation.deviceName` in a WebDriver BiDi session: in v10, `emulate('device')` can fail (for example `emulation.setTextLayoutModeOverride` is not supported by Chrome 154), and the service setup then stopped, so the visual matchers were missing. The service now sets the viewport and the device pixel ratio of the device that the browser emulates, so the screenshots keep the resolution of the device. In v9 nothing changes.
 - Storybook: the loader uses `execute()` with an `async` function, because v10 removed `executeAsync()`. The clip selector uses `$(selector, { strict: false })`, because `$` is strict in v10.
 - Element screenshots: the service gets the browser of an element whose parent is a v10 browsing context.
 - Appium `mobile:` commands use `executeScript()`. In a WebDriver BiDi session (Appium 3, required by v10), `execute()` runs the script as page JavaScript.
 - Jasmine: the visual matchers (`toMatchScreenSnapshot` and the others) now work with `framework: 'jasmine'`, in WebdriverIO v9 and v10. Before, they were never added, because the Jasmine `expect` has no `extend()`. The service now adds them as Jasmine async matchers.
 - When the matchers cannot be added, the warning now gives the reason. Before, it always said "Expect package not found".
+- When the service cannot add its commands (for example when a WebDriver command of its setup fails), the visual matchers are still added, the service logs the reason, and a matcher fails with `The visual service did not add the "checkScreen" command to this session`. Before, the only error was `expect(...).toMatchScreenSnapshot is not a function`.
 - When an ignored element was not found, the error now shows the selector and the reason, for example `element "~button-LOGIN" could not be found: StrictSelectorError: ...`. Before, it showed the element as JSON.
+- `ignore` elements: before the comparison, each element is found again in its own scope (the element or browsing context it was found from) and at its own index. Before, the service searched the whole page with the selector and took the elements in order, so an element of a filtered `$$().filter()` list, of a chained `$('form').$$('input')` query or of a frame could be replaced by another element with the same selector.
 
 **Known limits**
 

@@ -1,8 +1,9 @@
 import { join } from 'node:path'
 import type {
-    DeviceOrientation,
     ExtendedSauceLabsCapabilities,
+    SauceWebDeviceOrientation,
 } from '../types/types.ts'
+import { toSauceLabsDeviceOrientation } from '../helpers/sauceDeviceOrientation.ts'
 
 export function sauceIosSimWeb({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
@@ -70,7 +71,7 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
     ]
 
     return [
-        ...(['PORTRAIT'] as DeviceOrientation[])
+        ...(['PORTRAIT'] satisfies SauceWebDeviceOrientation[])
             .map((orientation) =>
                 iOS15Devices.map((device) =>
                     createCaps({
@@ -92,7 +93,7 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                 )
             )
             .flat(1),
-        ...(['PORTRAIT'] as DeviceOrientation[])
+        ...(['PORTRAIT'] satisfies SauceWebDeviceOrientation[])
             .map((orientation) =>
                 iOS16Devices.map((device) =>
                     createCaps({
@@ -114,7 +115,7 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                 )
             )
             .flat(1),
-        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
+        ...(['LANDSCAPE', 'PORTRAIT'] satisfies SauceWebDeviceOrientation[])
             .map((orientation) =>
                 iOS17Devices.map((device) =>
                     createCaps({
@@ -123,7 +124,8 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                         orientation: orientation,
                         mobileSpecs,
                         sauceOptions: {
-                            appiumVersion: '2.1.3',
+                            // Sauce Labs has no Appium 3 for these devices (2026-10-04), so this is the newest Appium 2 version they support
+                            appiumVersion: '2.11.3',
                             build: buildName,
                             deviceOrientation: orientation,
                         },
@@ -154,7 +156,7 @@ function createCaps({
     appiumVersion?: string,
     deviceName: string,
     mobileSpecs: string,
-    orientation: DeviceOrientation,
+    orientation: SauceWebDeviceOrientation,
     platformVersion: string,
     sauceOptions: ExtendedSauceLabsCapabilities,
 }) {
@@ -184,6 +186,7 @@ function createCaps({
         },
         'sauce:options': {
             ...sauceOptions,
+            deviceOrientation: toSauceLabsDeviceOrientation(sauceOptions.deviceOrientation),
         },
         'wdio:specs': [mobileSpecs],
     }
