@@ -282,7 +282,7 @@ importers:
     dependencies:
       '@wdio/globals':
         specifier: ^9.29.1 || ^10.0.0-0
-        version: 10.0.0-alpha.150(expect-webdriverio@7.0.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
+        version: 10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       '@wdio/image-comparison-core':
         specifier: workspace:*
         version: link:../image-comparison-core
@@ -292,9 +292,10 @@ importers:
       '@wdio/types':
         specifier: ^9.29.1 || ^10.0.0-0
         version: 10.0.0-alpha.150
+    devDependencies:
       expect-webdriverio:
-        specifier: ^5.7.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
-        version: 7.0.1(@wdio/globals@10.0.0-alpha.150)(@wdio/logger@9.29.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
+        specifier: ^8.0.0-0
+        version: 8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
 
 packages:
 
@@ -2526,9 +2527,6 @@ packages:
   '@vitest/pretty-format@3.2.7':
     resolution: {integrity: sha512-KUHlwqVu0sRlhCdyPdQ/wBoTfRahjUky1MubOmYw9fWfIZy1gNoHpuaaQBPAaMaVYdQYHJLurzj8ECCj5OwTqA==}
 
-  '@vitest/pretty-format@4.1.11':
-    resolution: {integrity: sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==}
-
   '@vitest/pretty-format@5.0.3':
     resolution: {integrity: sha512-3hr5eV5z2ff0l2Q1vaKQbB4j3M3tElw8stDokEOTqXJB3Es5VrT8gBRIMY59gGuFp8Y61sWlWFK1aNUH5dHDYw==}
 
@@ -2537,9 +2535,6 @@ packages:
 
   '@vitest/snapshot@3.2.7':
     resolution: {integrity: sha512-7C+MwShwtBSI5Buwoyg3s/iY1eHL9PKAf+O1wVh/TdnjXUtkoL/9YQtre90i4MtNXM6edP1wJ2zOBpfCyhIS7g==}
-
-  '@vitest/snapshot@4.1.11':
-    resolution: {integrity: sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==}
 
   '@vitest/snapshot@5.0.3':
     resolution: {integrity: sha512-SK4YTg9jL+jwakHIZxfciuvyOQsbY15AueR3USGtsXzmy+3FbJgqjAbC+ac20mRLwfEDtO5sfTqK6bUCDTRVPA==}
@@ -2554,9 +2549,6 @@ packages:
 
   '@vitest/utils@3.2.7':
     resolution: {integrity: sha512-x6BDOd7dyo3PFLY3I9/HJ25X/6OurhGXk2/B9gOZNPF7XDVjeBK4k01lQE5uvDpbuheErh91qYuE1E2OEjK3Rw==}
-
-  '@vitest/utils@4.1.11':
-    resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
 
   '@vitest/utils@5.0.3':
     resolution: {integrity: sha512-77fDTZv8eu1CzlIfgPU2yrl5MXSUaUAOvgdZEeVm3X3WIxUubIX2SforqS6176lT32HCF6uBVMYVqfHxw7o6eg==}
@@ -4125,14 +4117,6 @@ packages:
   expect-type@1.2.1:
     resolution: {integrity: sha512-/kP8CAwxzLVEeFrMm4kMmy4CCDlpipyA7MYLVrdJIkV0fYF0UaigQHRsxHiuY/GEea+bh4KSv3TIlgr+2UL6bw==}
     engines: {node: '>=12.0.0'}
-
-  expect-webdriverio@7.0.1:
-    resolution: {integrity: sha512-Pr/nx+5gsKBsbQPG12wgmaCTD+Zv9etM1gDsVueZ5hDQptfjrhWsdm/v4oQoUPladYQqEoGjKYeh6ivyCuyW0w==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      '@wdio/globals': ^9.23.0
-      '@wdio/logger': ^9.0.0
-      webdriverio: ^9.31.5
 
   expect-webdriverio@8.0.0-alpha.3:
     resolution: {integrity: sha512-kqQKGhRSZhUWzJSv6RRSE27Tk0xh2boP5wXVzh84HS79rSH61YXxiJMTJmPVjr1tQXcrFWfsiCxed60NnYjuXg==}
@@ -10470,10 +10454,6 @@ snapshots:
     dependencies:
       tinyrainbow: 2.0.0
 
-  '@vitest/pretty-format@4.1.11':
-    dependencies:
-      tinyrainbow: 3.2.0
-
   '@vitest/pretty-format@5.0.3':
     dependencies:
       tinyrainbow: 3.2.0
@@ -10487,13 +10467,6 @@ snapshots:
   '@vitest/snapshot@3.2.7':
     dependencies:
       '@vitest/pretty-format': 3.2.7
-      magic-string: 0.30.21
-      pathe: 2.0.3
-
-  '@vitest/snapshot@4.1.11':
-    dependencies:
-      '@vitest/pretty-format': 4.1.11
-      '@vitest/utils': 4.1.11
       magic-string: 0.30.21
       pathe: 2.0.3
 
@@ -10524,12 +10497,6 @@ snapshots:
       '@vitest/pretty-format': 3.2.7
       loupe: 3.1.4
       tinyrainbow: 2.0.0
-
-  '@vitest/utils@4.1.11':
-    dependencies:
-      '@vitest/pretty-format': 4.1.11
-      convert-source-map: 2.0.0
-      tinyrainbow: 3.2.0
 
   '@vitest/utils@5.0.3':
     dependencies:
@@ -10668,11 +10635,6 @@ snapshots:
       '@wdio/reporter': 10.0.0-alpha.150
       '@wdio/types': 10.0.0-alpha.150
       chalk: 5.6.2
-
-  '@wdio/globals@10.0.0-alpha.150(expect-webdriverio@7.0.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))':
-    dependencies:
-      expect-webdriverio: 7.0.1(@wdio/globals@10.0.0-alpha.150)(@wdio/logger@9.29.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
-      webdriverio: 10.0.0-alpha.150(yauzl@3.4.0)
 
   '@wdio/globals@10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))':
     dependencies:
@@ -12647,16 +12609,6 @@ snapshots:
   exit-hook@4.0.0: {}
 
   expect-type@1.2.1: {}
-
-  expect-webdriverio@7.0.1(@wdio/globals@10.0.0-alpha.150)(@wdio/logger@9.29.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)):
-    dependencies:
-      '@vitest/snapshot': 4.1.11
-      '@wdio/globals': 10.0.0-alpha.150(expect-webdriverio@7.0.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
-      '@wdio/logger': 9.29.1
-      deep-eql: 5.0.2
-      expect: 30.5.2
-      jest-matcher-utils: 30.5.2
-      webdriverio: 10.0.0-alpha.150(yauzl@3.4.0)
 
   expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)):
     dependencies:

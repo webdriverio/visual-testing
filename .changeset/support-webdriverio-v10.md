@@ -10,7 +10,8 @@ feat: support WebdriverIO v10 (keep WebdriverIO v9 support)
 
 **What changed**
 
-- The `@wdio/globals`, `@wdio/logger` and `@wdio/types` dependencies accept v9 and v10. `expect-webdriverio` (types only) accepts v5 to v8.
+- The `@wdio/globals`, `@wdio/logger` and `@wdio/types` dependencies accept v9 and v10.
+- `expect-webdriverio` is no longer a dependency of `@wdio/visual-service`. The service uses only its `ExpectWebdriverIO` types, which your `@wdio/globals` gives. This removes a second `expect-webdriverio` copy and peer dependency warnings (for example with pnpm).
 - Multiremote: the services read `isMultiRemote` (v10) and `isMultiremote` (v9). Before, a multiremote session on v10 did not get the visual and OCR commands.
 - Multiremote mobile emulation is set on each instance with `instances` and `getInstance()`, which are available in v9 and v10.
 - Storybook: the loader uses `execute()` with an `async` function, because v10 removed `executeAsync()`. The clip selector uses `$(selector, { strict: false })`, because `$` is strict in v10.
