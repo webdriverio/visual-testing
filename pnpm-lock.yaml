@@ -61,6 +61,9 @@ importers:
       '@wdio/globals':
         specifier: ^10.0.0-0 || ^10.0.0
         version: 10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
+      '@wdio/jasmine-framework':
+        specifier: ^10.0.0-0 || ^10.0.0
+        version: 10.0.0-alpha.150(@wdio/runner@10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0))(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0)
       '@wdio/local-runner':
         specifier: ^10.0.0-0 || ^10.0.0
         version: 10.0.0-alpha.150(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0)
@@ -1572,6 +1575,9 @@ packages:
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}
     engines: {node: '>=8'}
 
+  '@jasminejs/reporters@1.1.0':
+    resolution: {integrity: sha512-JIrlfaf9c6m0+GtBAgZdcFB6RIRbFBbXxZDZ0WOewq4cLIEcVKEe0RgI1FA77M39FNzeSMTAm+LK/kcQVIkfGQ==}
+
   '@jest/diff-sequences@30.5.0':
     resolution: {integrity: sha512-OsqBjHXCn8cadasoAZBP6nWYvMsRhpMzGXTpxJ5aO04NlbdhIz+FVe3q49l0AwVhsz/cEmIpBes6gAFl1/dWQg==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
@@ -2225,6 +2231,9 @@ packages:
   '@types/istanbul-reports@3.0.4':
     resolution: {integrity: sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ==}
 
+  '@types/jasmine@6.0.0':
+    resolution: {integrity: sha512-18lgGsLmEh3VJk9eZ5wAjTISxdqzl6YOwu8UdMpolajN57QOCNbl+AbHUd+Yu9ItrsFdB+c8LSZSGNg8nHaguw==}
+
   '@types/jsdom@21.1.7':
     resolution: {integrity: sha512-yOriVnggzrnQ3a9OKOCxaVuSug3w3/SbOj5i7VwXWZEyUNl3bLF9V3MfxGbZKuwqJOQyRfqXyROBB1CoZLFWzA==}
 
@@ -2595,6 +2604,13 @@ packages:
     peerDependencies:
       expect-webdriverio: ^8.0.0-alpha.2
       webdriverio: ^9.32.0
+
+  '@wdio/jasmine-framework@10.0.0-alpha.150':
+    resolution: {integrity: sha512-MicsRQVYLYspyfkh2FiXswr1PuLG4DoBzLHMN8rKtOmFtEOW7PNA+x3oYzeHSUfvlzVBWxasJZSFg6QVQMzb3g==}
+    engines: {node: '>=22.19.0'}
+    peerDependencies:
+      '@wdio/runner': ^9.31.2
+      webdriverio: ^10.0.0-alpha.0
 
   '@wdio/local-runner@10.0.0-alpha.150':
     resolution: {integrity: sha512-ttEhbflmPAeBkw8gi1ngIS2r49aaUP2zpsWfHE7nVry/6S4i8HQBdafyVB+gBvoTB6wzAUYo3sEYOemPuZ+9Kw==}
@@ -5045,6 +5061,13 @@ packages:
   jake@10.9.4:
     resolution: {integrity: sha512-wpHYzhxiVQL+IV05BLE2Xn34zW1S223hvjtqk0+gsPrwd/8JNLXJgZZM/iPFsYc1xyphF+6M6EvdE5E9MBGkDA==}
     engines: {node: '>=10'}
+    hasBin: true
+
+  jasmine-core@6.3.0:
+    resolution: {integrity: sha512-eMm5qBovNjNoGOcgE/W207+wrcK5zrQv0Rg/rWGboUJUmZp0dFCpHTyjpuDAfCwRCqg7f9U2q2jtv/aUuzdCQg==}
+
+  jasmine@6.3.0:
+    resolution: {integrity: sha512-u6L7yYtrtS1JALlp7f4k7Wz7o7ZKXauSKKkXc0L3qUkKrdaxYvNiMHhHp5gtTuVZZXVihXRxS7bWwDBX1wJ7EQ==}
     hasBin: true
 
   javascript-stringify@2.1.0:
@@ -9228,6 +9251,8 @@ snapshots:
 
   '@istanbuljs/schema@0.1.3': {}
 
+  '@jasminejs/reporters@1.1.0': {}
+
   '@jest/diff-sequences@30.5.0': {}
 
   '@jest/expect-utils@30.5.2':
@@ -10102,6 +10127,8 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-report': 3.0.3
 
+  '@types/jasmine@6.0.0': {}
+
   '@types/jsdom@21.1.7':
     dependencies:
       '@types/node': 24.0.14
@@ -10655,6 +10682,23 @@ snapshots:
     dependencies:
       expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       webdriverio: 10.0.0-alpha.150(yauzl@3.4.0)
+
+  '@wdio/jasmine-framework@10.0.0-alpha.150(@wdio/runner@10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0))(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0)':
+    dependencies:
+      '@types/jasmine': 6.0.0
+      '@types/node': 22.20.5
+      '@wdio/globals': 10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
+      '@wdio/logger': 10.0.0-alpha.150
+      '@wdio/runner': 10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0)
+      '@wdio/types': 10.0.0-alpha.150
+      '@wdio/utils': 10.0.0-alpha.150(yauzl@3.4.0)
+      jasmine: 6.3.0
+      webdriverio: 10.0.0-alpha.150(yauzl@3.4.0)
+    transitivePeerDependencies:
+      - expect-webdriverio
+      - proxy-agent
+      - supports-color
+      - yauzl
 
   '@wdio/local-runner@10.0.0-alpha.150(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0)':
     dependencies:
@@ -13608,6 +13652,14 @@ snapshots:
       async: 3.2.6
       filelist: 1.0.4
       picocolors: 1.1.1
+
+  jasmine-core@6.3.0: {}
+
+  jasmine@6.3.0:
+    dependencies:
+      '@jasminejs/reporters': 1.1.0
+      glob: 13.0.6
+      jasmine-core: 6.3.0
 
   javascript-stringify@2.1.0: {}
 
