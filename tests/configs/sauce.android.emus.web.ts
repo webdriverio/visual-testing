@@ -1,10 +1,11 @@
 import { join } from 'node:path'
-import type { DeviceOrientation, ExtendedSauceLabsCapabilities } from '../types/types.ts'
+import type { Capabilities } from '@wdio/types'
+import type { DeviceOrientation, ExtendedSauceLabsCapabilities, SauceWebDeviceOrientation } from '../types/types.ts'
 
 export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
     const chromeDriverPhones = (
-        ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
+        ['LANDSCAPE', 'PORTRAIT'] as SauceWebDeviceOrientation[]
     )
         .map((orientation) =>
             ['10.0', '11.0', '12.0', '13.0', '14.0'].map(
@@ -23,7 +24,7 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
         )
         .flat(1)
     const nativeWebScreenshotPhones = (
-        ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
+        ['LANDSCAPE', 'PORTRAIT'] as SauceWebDeviceOrientation[]
     )
         .map((orientation) =>
             ['10.0', '11.0', '12.0', '13.0', '14.0'].map(
@@ -49,7 +50,7 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
         )
         .flat(1)
     const chromeDriverTablets = (
-        ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
+        ['LANDSCAPE', 'PORTRAIT'] as SauceWebDeviceOrientation[]
     )
         .map((orientation) =>
             ['10.0', '11.0', '12.0', '13.0'].map(
@@ -79,7 +80,7 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
         )
         .flat(1)
     // There is no Android 10 for Tablets
-    const nativeWebScreenshotTablets = (['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
+    const nativeWebScreenshotTablets = (['LANDSCAPE', 'PORTRAIT'] as SauceWebDeviceOrientation[])
         .map((orientation) =>
             ['10.0', '11.0', '12.0', '13.0'].map((platformVersion) => {
                 const tabletTypesByVersion: Record<string, string> = {
@@ -155,7 +156,7 @@ function createCaps({
         logName: string;
         commands: string[];
     };
-    'sauce:options': ExtendedSauceLabsCapabilities;
+    'sauce:options': Capabilities.SauceLabsCapabilities;
     'wdio:specs': string[];
 } {
     const driverScreenshotType = nativeWebScreenshot
@@ -180,6 +181,8 @@ function createCaps({
         },
         'sauce:options': {
             ...sauceOptions,
+            // Sauce Labs uses lowercase values, `appium:orientation` uses uppercase values
+            deviceOrientation: sauceOptions.deviceOrientation?.toLowerCase() as DeviceOrientation | undefined,
             appiumVersion: '2.0.0',
         },
         'wdio:specs': [mobileSpecs],

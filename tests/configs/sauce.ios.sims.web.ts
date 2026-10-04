@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import type {
     DeviceOrientation,
     ExtendedSauceLabsCapabilities,
+    SauceWebDeviceOrientation,
 } from '../types/types.ts'
 
 export function sauceIosSimWeb({ buildName }: { buildName: string }) {
@@ -70,7 +71,7 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
     ]
 
     return [
-        ...(['PORTRAIT'] as DeviceOrientation[])
+        ...(['PORTRAIT'] as SauceWebDeviceOrientation[])
             .map((orientation) =>
                 iOS15Devices.map((device) =>
                     createCaps({
@@ -92,7 +93,7 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                 )
             )
             .flat(1),
-        ...(['PORTRAIT'] as DeviceOrientation[])
+        ...(['PORTRAIT'] as SauceWebDeviceOrientation[])
             .map((orientation) =>
                 iOS16Devices.map((device) =>
                     createCaps({
@@ -114,7 +115,7 @@ export function sauceIosSimWeb({ buildName }: { buildName: string }) {
                 )
             )
             .flat(1),
-        ...(['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
+        ...(['LANDSCAPE', 'PORTRAIT'] as SauceWebDeviceOrientation[])
             .map((orientation) =>
                 iOS17Devices.map((device) =>
                     createCaps({
@@ -154,7 +155,7 @@ function createCaps({
     appiumVersion?: string,
     deviceName: string,
     mobileSpecs: string,
-    orientation: DeviceOrientation,
+    orientation: SauceWebDeviceOrientation,
     platformVersion: string,
     sauceOptions: ExtendedSauceLabsCapabilities,
 }) {
@@ -184,6 +185,8 @@ function createCaps({
         },
         'sauce:options': {
             ...sauceOptions,
+            // Sauce Labs uses lowercase values, `appium:orientation` uses uppercase values
+            deviceOrientation: sauceOptions.deviceOrientation?.toLowerCase() as DeviceOrientation | undefined,
         },
         'wdio:specs': [mobileSpecs],
     }

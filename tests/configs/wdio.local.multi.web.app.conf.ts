@@ -1,4 +1,3 @@
-import type { Options } from '@wdio/types'
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 import type { VisualServiceOptions } from '@wdio/visual-service'
@@ -9,7 +8,7 @@ console.log(join(
     'android.wdio.native.app.v1.0.8.apk'
 ),)
 
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.MultiRemoteConfig = {
     ...sharedConfig,
     // ============
     // Capabilities

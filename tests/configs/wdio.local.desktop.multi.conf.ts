@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 import type { VisualServiceOptions } from '@wdio/visual-service'
 
-export const config: WebdriverIO.Config  = {
+export const config: WebdriverIO.MultiRemoteConfig = {
     ...sharedConfig,
     // ============
     // Capabilities
