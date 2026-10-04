@@ -711,6 +711,50 @@ describe('rectangles', () => {
 
             expect(() => splitIgnores(items)).toThrow('Invalid elements or regions')
         })
+
+        // An element that WebdriverIO could not find has an `error` and no `elementId`.
+        // `JSON.stringify` of an `Error` is `{}`, so the message must use the selector and the error message.
+        const notFoundElement = (selector: string, error: unknown) => ({
+            selector,
+            error,
+            parent: { sessionId: 'session-id', capabilities: { platformName: 'iOS', 'appium:deviceName': 'iPhone 8' } },
+        })
+
+        it('should name the selector and the error of an element that was not found', () => {
+            const items = [notFoundElement('~button-LOGIN', new Error('no such element: An element could not be located'))]
+
+            expect(() => splitIgnores(items)).toThrow(
+                'Invalid elements or regions: element "~button-LOGIN" could not be found: no such element: An element could not be located'
+            )
+            expect(() => splitIgnores(items)).not.toThrow(/capabilities|sessionId/)
+        })
+
+        it('should name the selector and the error of an element in a $$ list that was not found', () => {
+            const validElement = { elementId: 'element1', selector: '#test1' }
+            const items = [[validElement, notFoundElement('#missing', new Error('no such element'))]]
+
+            expect(() => splitIgnores(items)).toThrow(
+                'Invalid elements or regions: element "#missing" could not be found: no such element'
+            )
+        })
+
+        it('should show a WebdriverIO v10 strict selector error', () => {
+            const strictError = new Error('strict mode violation: `$("~button-LOGIN")` resolved to 2 elements, expected 1.')
+            strictError.name = 'StrictSelectorError'
+            const items = [notFoundElement('~button-LOGIN', strictError)]
+
+            expect(() => splitIgnores(items)).toThrow(
+                'element "~button-LOGIN" could not be found: StrictSelectorError: strict mode violation: `$("~button-LOGIN")` resolved to 2 elements, expected 1.'
+            )
+        })
+
+        it('should show an element error that is not an Error object', () => {
+            const items = [notFoundElement('#test', 'element not found')]
+
+            expect(() => splitIgnores(items)).toThrow(
+                'Invalid elements or regions: element "#test" could not be found: element not found'
+            )
+        })
     })
 
     describe('determineIgnoreRegions', () => {

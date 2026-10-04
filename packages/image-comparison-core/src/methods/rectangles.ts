@@ -203,8 +203,30 @@ export function validateIgnoreRegion(x: unknown) {
  * Format the error message
  */
 export function formatErrorMessage(item:unknown, message:string) {
+    const notFoundMessage = formatNotFoundElementMessage(item)
+    if (notFoundMessage) {
+        return notFoundMessage
+    }
+
     const formattedItem = isObject(item) ? JSON.stringify(item) : item
     return `${formattedItem} ${message}`
+}
+
+/**
+ * An element that WebdriverIO could not find has an `error` and no `elementId`. `JSON.stringify` of an `Error`
+ * is `{}`, so name the selector and the reason instead, for example a WebdriverIO v10 `StrictSelectorError`
+ */
+function formatNotFoundElementMessage(item:unknown) {
+    if (!isObject(item) || !('error' in (item as object)) || !('selector' in (item as object))) {
+        return undefined
+    }
+
+    const { selector, error } = item as { selector: unknown, error: unknown }
+    const reason = error instanceof Error
+        ? `${error.name && error.name !== 'Error' ? `${error.name}: ` : ''}${error.message}`
+        : String(error)
+
+    return `element "${String(selector)}" could not be found: ${reason}`
 }
 
 /**
