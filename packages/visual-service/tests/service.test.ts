@@ -3,7 +3,7 @@ import logger from '@wdio/logger'
 import { expect as wdioExpect } from '@wdio/globals'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import VisualService from '../src/index.js'
-import { saveScreen } from '@wdio/image-comparison-core'
+import { checkScreen, DEVICE_RECTANGLES, getMobileScreenSize, getMobileViewPortPosition, saveScreen } from '@wdio/image-comparison-core'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
@@ -17,6 +17,9 @@ vi.mock('@wdio/image-comparison-core', () => ({
     saveScreen: vi.fn(),
     saveTabbablePage: vi.fn(),
     checkTabbablePage: vi.fn(),
+    getMobileScreenSize: vi.fn(),
+    getMobileViewPortPosition: vi.fn(),
+    IOS_OFFSETS: {},
     DEFAULT_TEST_CONTEXT: {},
     FOLDERS: { ACTUAL: 'actual', DIFF: 'diff', TEMP_FULL_SCREEN: 'tempFullScreen', DEFAULT: { BASE: './__snapshots__/', SCREENSHOTS: '.tmp/' } },
     NOT_KNOWN: 'not_known',
@@ -137,6 +140,71 @@ describe('@wdio/visual-service', () => {
                 expect(browserInstance.addCommand).toHaveBeenCalledWith(command, expect.any(Function))
             })
             expect(browserInstance.addCommand).toHaveBeenCalledTimes(commands.length * 2)
+        })
+
+        describe('multiremote browser with a web session and a native app session', () => {
+            const createInstance = (props: Record<string, unknown>) => {
+                const instance: Record<string, any> = {
+                    addCommand: vi.fn((name: string, fn: (...args: unknown[]) => unknown) => {
+                        instance[name] = fn
+                    }),
+                    on: vi.fn(),
+                    execute: vi.fn().mockResolvedValue(1),
+                    ...props,
+                }
+                return instance
+            }
+            const createMultiRemoteBrowser = (version: 'v9' | 'v10') => {
+                const instances: Record<string, Record<string, any>> = {
+                    webInstance: createInstance({
+                        isMobile: false,
+                        capabilities: { browserName: 'chrome' },
+                        requestedCapabilities: { browserName: 'chrome' },
+                    }),
+                    // The native app session is the last instance
+                    appInstance: createInstance({
+                        isMobile: true,
+                        isAndroid: true,
+                        capabilities: { platformName: 'Android' },
+                        requestedCapabilities: { platformName: 'Android', 'appium:app': '/path/to/app.apk' },
+                    }),
+                }
+                return {
+                    instances,
+                    browser: {
+                        // WebdriverIO v9 has `isMultiremote` and the instances as properties, v10 has `isMultiRemote`
+                        ...(version === 'v10' ? { isMultiRemote: true } : { isMultiremote: true, ...instances }),
+                        instances: Object.keys(instances),
+                        getInstance: (name: string) => instances[name],
+                        addCommand: vi.fn(),
+                        capabilities: {},
+                        requestedCapabilities: {},
+                        on: vi.fn(),
+                    } as any as WebdriverIO.MultiRemoteBrowser,
+                }
+            }
+
+            beforeEach(() => {
+                vi.mocked(getMobileScreenSize).mockResolvedValue({ height: 2856, width: 1280 })
+                vi.mocked(getMobileViewPortPosition).mockResolvedValue(structuredClone(DEVICE_RECTANGLES))
+            })
+
+            it.each(['v9', 'v10'] as const)('uses the context manager of each multiremote instance for its own commands (WebdriverIO %s)', async (version) => {
+                const { browser, instances } = createMultiRemoteBrowser(version)
+                // Mocked BaseClass does not set defaultOptions/folders; set them so the command can run
+                ;(service as any).defaultOptions = {}
+                ;(service as any).folders = { baselineFolder: './__snapshots__/' }
+
+                await service.before({
+                    webInstance: { capabilities: {} },
+                    appInstance: { capabilities: {} },
+                } as any, [], browser)
+                await instances.webInstance.checkScreen('web-tag')
+                await instances.appInstance.checkScreen('app-tag')
+
+                expect(vi.mocked(checkScreen).mock.calls[0][0]).toMatchObject({ tag: 'web-tag', isNativeContext: false })
+                expect(vi.mocked(checkScreen).mock.calls[1][0]).toMatchObject({ tag: 'app-tag', isNativeContext: true })
+            })
         })
 
         describe('mobile emulation for multiremote browsers', () => {
