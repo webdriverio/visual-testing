@@ -357,6 +357,27 @@ describe('@wdio/visual-service', () => {
             expect(wdioExpect.extend).toBeCalledTimes(1)
         })
 
+        it('adds the matchers and logs a clear error when the command setup fails', async () => {
+            const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
+            const setupError = new Error('WebDriver Bidi command "script.callFunction" failed with error: unknown command')
+            const browser = {
+                isMultiremote: false,
+                addCommand: vi.fn(),
+                capabilities: {},
+                requestedCapabilities: {},
+                on: vi.fn(),
+                execute: vi.fn().mockRejectedValue(setupError),
+            } as any as WebdriverIO.Browser
+
+            await expect(service.before({}, [], browser)).rejects.toThrow(setupError)
+
+            expect(wdioExpect.extend).toBeCalledTimes(1)
+            expect(vi.mocked(log.error)).toHaveBeenCalledWith(
+                expect.stringContaining('The visual service could not add its commands to this session')
+            )
+            expect(vi.mocked(log.error)).toHaveBeenCalledWith(expect.stringContaining(setupError.message))
+        })
+
         it('should register custom matchers with Jasmine when Jasmine is the framework', async () => {
             // With Jasmine, the global `expect` has no `extend()` and the Jasmine adapter does not see matchers added later
             const jasmineEnv = { beforeAll: vi.fn(), addAsyncMatchers: vi.fn() }

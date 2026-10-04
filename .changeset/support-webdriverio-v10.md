@@ -20,6 +20,7 @@ feat: support WebdriverIO v10 (keep WebdriverIO v9 support)
 - Appium `mobile:` commands use `executeScript()`. In a WebDriver BiDi session (Appium 3, required by v10), `execute()` runs the script as page JavaScript.
 - Jasmine: the visual matchers (`toMatchScreenSnapshot` and the others) now work with `framework: 'jasmine'`, in WebdriverIO v9 and v10. Before, they were never added, because the Jasmine `expect` has no `extend()`. The service now adds them as Jasmine async matchers.
 - When the matchers cannot be added, the warning now gives the reason. Before, it always said "Expect package not found".
+- When the service cannot add its commands (for example when a WebDriver command of its setup fails), the visual matchers are still added, the service logs the reason, and a matcher fails with `The visual service did not add the "checkScreen" command to this session`. Before, the only error was `expect(...).toMatchScreenSnapshot is not a function`.
 - When an ignored element was not found, the error now shows the selector and the reason, for example `element "~button-LOGIN" could not be found: StrictSelectorError: ...`. Before, it showed the element as JSON.
 
 **Known limits**

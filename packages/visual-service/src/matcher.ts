@@ -141,6 +141,15 @@ function parseMatcherParams (
     return { expectedResult, options }
 }
 
+/**
+ * Give a clear error when the service could not add its commands, for example when its setup failed
+ */
+function assertVisualCommand (browser: unknown, command: string) {
+    if (typeof (browser as Record<string, unknown> | undefined)?.[command] !== 'function') {
+        throw new Error(`The visual service did not add the "${command}" command to this session. See the earlier error of @wdio/visual-service in the log.`)
+    }
+}
+
 export async function toMatchScreenSnapshot (
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
@@ -148,6 +157,7 @@ export async function toMatchScreenSnapshot (
     optionsOrUndefined?: WdioCheckScreenMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    assertVisualCommand(browser, 'checkScreen')
     const result = await browser.checkScreen(tag, options) as ImageCompareResult
     return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }
@@ -159,6 +169,7 @@ export async function toMatchFullPageSnapshot (
     optionsOrUndefined?: WdioCheckFullPageMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    assertVisualCommand(browser, 'checkFullPageScreen')
     const result = await browser.checkFullPageScreen(tag, options) as ImageCompareResult
     return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }
@@ -171,6 +182,7 @@ export async function toMatchElementSnapshot (
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
     const browser = getBrowserObject(await element)
+    assertVisualCommand(browser, 'checkElement')
     const result = await browser.checkElement(await element, tag, options) as ImageCompareResult
     return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }
@@ -182,6 +194,7 @@ export async function toMatchTabbablePageSnapshot (
     optionsOrUndefined?: WdioCheckFullPageMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    assertVisualCommand(browser, 'checkTabbablePage')
     const result = await browser.checkTabbablePage(tag, options) as ImageCompareResult
     return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }

@@ -97,6 +97,27 @@ describe('custom visual matcher', () => {
         expect(browser.checkTabbablePage).toBeCalledTimes(1)
     })
 
+    describe('when the visual service did not add its commands', () => {
+        it.each([
+            ['toMatchScreenSnapshot', toMatchScreenSnapshot, 'checkScreen'],
+            ['toMatchFullPageSnapshot', toMatchFullPageSnapshot, 'checkFullPageScreen'],
+            ['toMatchTabbablePageSnapshot', toMatchTabbablePageSnapshot, 'checkTabbablePage'],
+        ] as const)('%s gives a clear error', async (_, matcher, command) => {
+            await expect(matcher({} as any, 'tag')).rejects.toThrow(
+                `The visual service did not add the "${command}" command to this session`
+            )
+        })
+
+        it('toMatchElementSnapshot gives a clear error', async () => {
+            // The browser of the element has no `checkElement` command
+            const element = { parent: {} } as any as WebdriverIO.Element
+
+            await expect(toMatchElementSnapshot(element, 'tag')).rejects.toThrow(
+                'The visual service did not add the "checkElement" command to this session'
+            )
+        })
+    })
+
     it('should throw an error if tag is missing', async () => {
         // @ts-expect-error test invalid input
         await expect(toMatchScreenSnapshot(browser)).rejects.toThrow(/tag as a string/)

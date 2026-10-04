@@ -78,20 +78,25 @@ export default class WdioImageComparisonService extends BaseClass {
         browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     ) {
         this.#browser = browser
-
-        if (!isMultiRemoteBrowser(browser)) {
-            log.info('Adding commands to global browser')
-            await this.#addCommandsToBrowser(browser)
-        } else {
-            await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiRemoteCapabilities)
-        }
-        // There is an issue with the emulation mode for Chrome or Edge with WebdriverIO v9
-        // It doesn't set the correct emulation mode for the browser based on the capabilities
-        // So we need to set the emulation mode manually
-        // this is a temporary fix until the issue is fixed in WebdriverIO v9 and enough users have upgraded to the latest version
-        await this.#setEmulation(this.#browser, capabilities)
-
+        // Add the matchers first, so that a setup error below does not hide them behind `is not a function`
         this.#addMatchers()
+
+        try {
+            if (!isMultiRemoteBrowser(browser)) {
+                log.info('Adding commands to global browser')
+                await this.#addCommandsToBrowser(browser)
+            } else {
+                await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiRemoteCapabilities)
+            }
+            // There is an issue with the emulation mode for Chrome or Edge with WebdriverIO v9
+            // It doesn't set the correct emulation mode for the browser based on the capabilities
+            // So we need to set the emulation mode manually
+            // this is a temporary fix until the issue is fixed in WebdriverIO v9 and enough users have upgraded to the latest version
+            await this.#setEmulation(this.#browser, capabilities)
+        } catch (error) {
+            log.error(`The visual service could not add its commands to this session, so the check and save commands and the visual matchers do not work: ${error}`)
+            throw error
+        }
     }
 
     /**
