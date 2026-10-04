@@ -30,6 +30,7 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
+import { addJasmineMatchers, getJasmineEnv } from './jasmine.js'
 import { waitForStorybookComponentToBeLoaded } from './storybook/utils.js'
 import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 import type { CommandMap, VisualServiceOptions } from './types.js'
@@ -90,19 +91,31 @@ export default class WdioImageComparisonService extends BaseClass {
         // this is a temporary fix until the issue is fixed in WebdriverIO v9 and enough users have upgraded to the latest version
         await this.#setEmulation(this.#browser, capabilities)
 
-        /**
-         * add custom matcher for visual comparison when expect has been added.
-         * this is not the case in standalone mode
-         */
+        this.#addMatchers()
+    }
+
+    /**
+     * add custom matcher for visual comparison when expect has been added.
+     * this is not the case in standalone mode
+     */
+    #addMatchers() {
+        const matchers = {
+            toMatchScreenSnapshot,
+            toMatchFullPageSnapshot,
+            toMatchElementSnapshot,
+            toMatchTabbablePageSnapshot,
+        }
+
         try {
-            expect.extend({
-                toMatchScreenSnapshot,
-                toMatchFullPageSnapshot,
-                toMatchElementSnapshot,
-                toMatchTabbablePageSnapshot,
-            })
-        } catch (_err) {
-            log.warn('Expect package not found. This means that the custom matchers `toMatchScreenSnapshot|toMatchFullPageSnapshot|toMatchElementSnapshot|toMatchTabbablePageSnapshot` are not added and can not be used. Please make sure to add it to your `package.json` if you want to use the Visual custom matchers.')
+            const jasmineEnv = getJasmineEnv()
+            if (jasmineEnv) {
+                addJasmineMatchers(jasmineEnv, matchers)
+                return
+            }
+
+            expect.extend(matchers)
+        } catch (err) {
+            log.warn(`The custom matchers \`${Object.keys(matchers).join('|')}\` could not be added and can not be used. Use the \`check*\` methods instead. ${err}`)
         }
     }
 
