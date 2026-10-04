@@ -14,6 +14,13 @@ permissions:
   contents: read
   pull-requests: read
 
+# One run per pull request and one run per branch push: a new commit cancels the run of the previous commit.
+# The pull request run and the push run of the same branch are in different groups, they run different jobs.
+# Runs on `main` are not cancelled, so each merged commit is tested.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 env:
   PNPM_VERSION: 9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7
 
