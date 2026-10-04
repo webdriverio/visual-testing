@@ -1,181 +1,39 @@
-name: tests
+name: e2e
 
+# Jobs that need the cloud credentials (LambdaTest, Sauce Labs): pull requests only
 on:
-  push:
-    # Every branch: the jobs that need no cloud credentials run on each push, also in forks
-    branches:
-      - "**"
   pull_request:
     paths-ignore:
       - "**/*.md"
-  workflow_dispatch:
 
 permissions:
   contents: read
   pull-requests: read
 
-# One run per pull request and one run per branch push: a new commit cancels the run of the previous commit.
-# The pull request run and the push run of the same branch are in different groups, they run different jobs.
-# Runs on `main` are not cancelled, so each merged commit is tested.
+# One run per pull request: a new commit cancels the run of the previous commit
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 env:
   PNPM_VERSION: 9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7
 
 jobs:
-  dependency-check:
-    name: 🔎 📦 Dependency Check
-    runs-on: ubuntu-latest
-    outputs:
-      run_unit_tests: ${{ steps.set-vars.outputs.run_unit_tests }}
-      run_web_tests: ${{ steps.set-vars.outputs.run_web_tests }}
-    steps:
-      - name: 🧐 Determine Job to Run
-        id: set-vars
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-        run: |
-          echo "$PR_TITLE" | grep -qE '@typescript-eslint|vitest|eslint|@types|@tsconfig|ts-node|jsdom|typescript' && echo "run_unit_tests=true" >> "$GITHUB_OUTPUT"
-          if echo "$PR_TITLE" | grep -qE 'copyfiles|rimraf|saucelabs|lambdatest|webdriverio'; then
-            echo "run_web_tests=true" >> "$GITHUB_OUTPUT"
-          elif echo "$PR_TITLE" | grep -q '@wdio/' && ! echo "$PR_TITLE" | grep -q '@wdio/appium-service'; then
-            echo "run_web_tests=true" >> "$GITHUB_OUTPUT"
-          fi
-
-  ci-dependency-unit-test:
-    name: 🧪 CI Dependency Update Run Unit Tests
-    needs: dependency-check
-    if: needs.dependency-check.outputs.run_unit_tests == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout Repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-
-      - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
-
-      - name: 🏗️ Build
-        working-directory: ./
-        run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        run: pnpm test
-
-  ci-dependency-web:
-    name: 🌐 CI Dependency Update Run Desktop Web Tests on LambdaTest
-    needs: dependency-check
-    if: needs.dependency-check.outputs.run_web_tests == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout Repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-
-      - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
-
-      - name: 🏗️ Build
-        working-directory: ./
-        run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
-
-      - name: 🖥️ 🌐 Run Desktop Web e2e tests
-        working-directory: ./
-        env:
-          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
-          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
-          BUILD_PREFIX: true
-        run: pnpm test.lambdatest.desktop --maxConcurrency=7
-
-      - name: 📤 Upload artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: failure()
-        with:
-          name: dependency-update-desktop-web-logs
-          include-hidden-files: true
-          path: |
-            logs/*.log
-            .tmp/
-            !.tmp/checkActual/
-            !.tmp/saveActual/
-            !.tmp/testDiff/
-            !.next/
-
-  unit-test:
-    name: 🧪 Lint and unit tests
-    runs-on: ubuntu-latest
-    # No cloud credentials needed, so run on every push (also in forks). For a pull request, run only when it
-    # comes from a fork: for a branch of this repository, the push run already reports on the same commit.
-    if: |
-      github.event_name == 'push' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository)
-    steps:
-      - name: ⬇️ Checkout Repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-
-      - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
-
-      - name: 🏗️ Build
-        working-directory: ./
-        run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
-
   ci-pr-desktop-web:
     name: 🔄 💻 CI PR Run Desktop Web Tests on LambdaTest
     runs-on: ubuntu-latest
-    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks.
+    # For Dependabot, run only when the update can change the desktop e2e results.
     if: |
-      github.event_name == 'pull_request' &&
-      github.actor != 'dependabot[bot]' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.pull_request.head.repo.full_name == github.repository && (
+        github.actor != 'dependabot[bot]' ||
+        contains(github.event.pull_request.title, 'copyfiles') ||
+        contains(github.event.pull_request.title, 'rimraf') ||
+        contains(github.event.pull_request.title, 'saucelabs') ||
+        contains(github.event.pull_request.title, 'lambdatest') ||
+        contains(github.event.pull_request.title, 'webdriverio') ||
+        (contains(github.event.pull_request.title, '@wdio/') && !contains(github.event.pull_request.title, '@wdio/appium-service'))
+      )
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -199,10 +57,6 @@ jobs:
       - name: 🏗️ Build
         working-directory: ./
         run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
 
       - name: 🖥️ 🌐 Run Desktop Web e2e tests
         working-directory: ./
@@ -226,59 +80,11 @@ jobs:
             !.tmp/testDiff/
             !.next/
 
-  ci-pr-local-chrome:
-    name: 💻 Run WebdriverIO v10 Tests on local headless Chrome
-    runs-on: ubuntu-latest
-    # No cloud credentials needed, so run on every push (also in forks). For a pull request, run only when it
-    # comes from a fork: for a branch of this repository, the push run already reports on the same commit.
-    if: |
-      github.event_name == 'push' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository)
-    steps:
-      - name: ⬇️ Checkout Repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-
-      - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
-
-      - name: 🏗️ Build
-        working-directory: ./
-        run: pnpm build
-
-      - name: 💻 Run WebdriverIO v10 e2e tests on local headless Chrome
-        working-directory: ./
-        run: pnpm test.local.chrome.v10
-
-      - name: 📤 Upload artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: failure()
-        with:
-          name: ci-pr-local-chrome-logs
-          include-hidden-files: true
-          path: |
-            logs/*.log
-            .tmp/v10-e2e/
-
   ci-pr-android-web:
     name: 🔄 🤖 🌐 CI PR Run Android Web Tests on LambdaTest
     runs-on: ubuntu-latest
     # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
-      github.event_name == 'pull_request' &&
       github.actor != 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository
     steps:
@@ -304,10 +110,6 @@ jobs:
       - name: 🏗️ Build
         working-directory: ./
         run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
 
       - name: 🤖 🌐 Run Android Web e2e tests
         working-directory: ./
@@ -336,7 +138,6 @@ jobs:
     runs-on: ubuntu-latest
     # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
-      github.event_name == 'pull_request' &&
       github.actor != 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository
     steps:
@@ -362,10 +163,6 @@ jobs:
       - name: 🏗️ Build
         working-directory: ./
         run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
 
       - name: 🍏 🌐 Run iOS Web e2e tests
         working-directory: ./
@@ -394,7 +191,6 @@ jobs:
     runs-on: ubuntu-latest
     # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
-      github.event_name == 'pull_request' &&
       github.actor != 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository
     steps:
@@ -420,10 +216,6 @@ jobs:
       - name: 🏗️ Build
         working-directory: ./
         run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
 
       - name: 😶‍🌫️ 📱 Run App e2e tests
         working-directory: ./
@@ -452,7 +244,6 @@ jobs:
     runs-on: ubuntu-latest
     # Needs the cloud credentials, which GitHub does not give to pull requests from forks
     if: |
-      github.event_name == 'pull_request' &&
       github.actor != 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository
     steps:
@@ -478,10 +269,6 @@ jobs:
       - name: 🏗️ Build
         working-directory: ./
         run: pnpm build
-
-      - name: 🧪 Run linting and unit tests
-        working-directory: ./
-        run: pnpm test
 
       - name: 😶‍🌫️ 🔎 Run OCR e2e tests
         working-directory: ./
