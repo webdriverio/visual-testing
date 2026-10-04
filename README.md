@@ -17,6 +17,18 @@ For documentation on visual testing with WebdriverIO, please refer to the [docs]
 > [!IMPORTANT]
 > **v10 replaces the image comparison engine** (resemble.js → [pixelmatch](https://github.com/mapbox/pixelmatch)). The public API is unchanged, but mismatch percentages differ slightly, so you need to **re-accept your baselines once** after upgrading.
 
+### WebdriverIO compatibility
+
+The versions in the table above are the versions of the visual testing packages, not of WebdriverIO. From the first release after 10.1.0, `@wdio/visual-service` supports WebdriverIO v9 and WebdriverIO v10.
+
+| Package | WebdriverIO v9 (9.29.1 and later) | WebdriverIO v10 |
+|---|---|---|
+| `@wdio/visual-service` | v9 and v10 | v10, from the first release after 10.1.0 |
+| `@wdio/ocr-service` | v2 | v2, from the first release after 2.2.10 |
+
+> [!NOTE]
+> WebdriverIO v10 needs Node.js 22.19 or later. WebdriverIO v9 needs Node.js 18.20 or later.
+
 ### Staying on v9
 
 v9 receives **critical bug and security fixes only** for **12 months** after the v10 release. Pin it with a semver range, which always resolves to the v9 line regardless of npm tags:
