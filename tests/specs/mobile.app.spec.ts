@@ -22,6 +22,8 @@ describe('@wdio/visual-service mobile app', () => {
     ) {
         it(`should compare a screen successful for '${deviceName}' in ${orientation}-mode`, async () => {
             await $('~Login').click()
+            // Wait for the login form, the ignored elements below are only found when it is displayed
+            await $('~button-LOGIN').waitForDisplayed()
             const result = await driver.checkScreen('app-forms', {
                 ignore: [
                     $('~button-LOGIN'),
