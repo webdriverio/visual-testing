@@ -50,37 +50,37 @@ importers:
         specifier: ^3.2.7
         version: 3.2.7(vitest@3.2.7)
       '@wdio/appium-service':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
       '@wdio/browserstack-service':
         specifier: ^9.39.3
         version: 9.39.3(@wdio/cli@10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0))
       '@wdio/cli':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0)
       '@wdio/globals':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       '@wdio/jasmine-framework':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(@wdio/runner@10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0))(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0)
       '@wdio/local-runner':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0)
       '@wdio/mocha-framework':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
       '@wdio/sauce-service':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
       '@wdio/shared-store-service':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
       '@wdio/spec-reporter':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150
       '@wdio/types':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150
       cross-env:
         specifier: ^7.0.3
@@ -95,7 +95,7 @@ importers:
         specifier: ^56.0.1
         version: 56.0.1(eslint@9.39.5(jiti@2.6.1))
       eslint-plugin-wdio:
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(eslint@9.39.5(jiti@2.6.1))(globals@15.15.0)
       husky:
         specifier: ^9.1.7
@@ -128,16 +128,16 @@ importers:
         specifier: ^4.0.1
         version: 4.0.1(patch_hash=i5rfvq3f2h27rqtzavtidjxwhq)(@wdio/cli@10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0))(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       webdriverio:
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
 
   packages/image-comparison-core:
     dependencies:
       '@wdio/logger':
-        specifier: ^9.32.0 || ^10.0.0-0 || ^10.0.0
-        version: 10.0.0-alpha.150
+        specifier: ^9.29.1 || ^10.0.0-0
+        version: 9.29.1
       '@wdio/types':
-        specifier: ^9.32.0 || ^10.0.0-0 || ^10.0.0
+        specifier: ^9.29.1 || ^10.0.0-0
         version: 10.0.0-alpha.150
       fast-png:
         specifier: ^8.0.0
@@ -147,7 +147,7 @@ importers:
         version: 7.2.0
     devDependencies:
       webdriverio:
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
 
   packages/ocr-service:
@@ -156,13 +156,13 @@ importers:
         specifier: 7.10.1
         version: 7.10.1(@types/node@24.10.1)
       '@wdio/globals':
-        specifier: ^9.32.0 || ^10.0.0-0 || ^10.0.0
+        specifier: ^9.29.1 || ^10.0.0-0
         version: 10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       '@wdio/logger':
-        specifier: ^9.32.0 || ^10.0.0-0 || ^10.0.0
-        version: 10.0.0-alpha.150
+        specifier: ^9.29.1 || ^10.0.0-0
+        version: 9.29.1
       '@wdio/types':
-        specifier: ^9.32.0 || ^10.0.0-0 || ^10.0.0
+        specifier: ^9.29.1 || ^10.0.0-0
         version: 10.0.0-alpha.150
       fuse.js:
         specifier: ^7.4.2
@@ -281,20 +281,20 @@ importers:
   packages/visual-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^9.32.0 || ^10.0.0-0 || ^10.0.0
+        specifier: ^9.29.1 || ^10.0.0-0
         version: 10.0.0-alpha.150(expect-webdriverio@7.0.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       '@wdio/image-comparison-core':
         specifier: workspace:*
         version: link:../image-comparison-core
       '@wdio/logger':
-        specifier: ^9.32.0 || ^10.0.0-0 || ^10.0.0
-        version: 10.0.0-alpha.150
+        specifier: ^9.29.1 || ^10.0.0-0
+        version: 9.29.1
       '@wdio/types':
-        specifier: ^9.32.0 || ^10.0.0-0 || ^10.0.0
+        specifier: ^9.29.1 || ^10.0.0-0
         version: 10.0.0-alpha.150
       expect-webdriverio:
-        specifier: ^7.0.1 || ^8.0.0-0 || ^8.0.0
-        version: 7.0.1(@wdio/globals@10.0.0-alpha.150)(@wdio/logger@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
+        specifier: ^5.7.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
+        version: 7.0.1(@wdio/globals@10.0.0-alpha.150)(@wdio/logger@9.29.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
 
 packages:
 
@@ -2778,10 +2778,6 @@ packages:
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
-
-  ansi-regex@6.1.0:
-    resolution: {integrity: sha512-7HSX4QQb4CspciLpVFwyRe79O3xsIZDDLER21kERQ71oaPodF8jL725AgJMFAYbooIqolJoRLuM81SpeUkpkvA==}
-    engines: {node: '>=12'}
 
   ansi-regex@6.2.2:
     resolution: {integrity: sha512-Bq3SmSpyFHaWjPk8If9yc6svM8c56dB5BAtW4Qbw5jHTwwXXcTLoRMkpDJp6VL0XzlWaCHTXrkFURMYmD0sLqg==}
@@ -10675,7 +10671,7 @@ snapshots:
 
   '@wdio/globals@10.0.0-alpha.150(expect-webdriverio@7.0.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))':
     dependencies:
-      expect-webdriverio: 7.0.1(@wdio/globals@10.0.0-alpha.150)(@wdio/logger@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
+      expect-webdriverio: 7.0.1(@wdio/globals@10.0.0-alpha.150)(@wdio/logger@9.29.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       webdriverio: 10.0.0-alpha.150(yauzl@3.4.0)
 
   '@wdio/globals@10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))':
@@ -10991,8 +10987,6 @@ snapshots:
   ansi-colors@4.1.3: {}
 
   ansi-regex@5.0.1: {}
-
-  ansi-regex@6.1.0: {}
 
   ansi-regex@6.2.2: {}
 
@@ -12654,11 +12648,11 @@ snapshots:
 
   expect-type@1.2.1: {}
 
-  expect-webdriverio@7.0.1(@wdio/globals@10.0.0-alpha.150)(@wdio/logger@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)):
+  expect-webdriverio@7.0.1(@wdio/globals@10.0.0-alpha.150)(@wdio/logger@9.29.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)):
     dependencies:
       '@vitest/snapshot': 4.1.11
       '@wdio/globals': 10.0.0-alpha.150(expect-webdriverio@7.0.1)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
-      '@wdio/logger': 10.0.0-alpha.150
+      '@wdio/logger': 9.29.1
       deep-eql: 5.0.2
       expect: 30.5.2
       jest-matcher-utils: 30.5.2
@@ -15988,7 +15982,7 @@ snapshots:
     dependencies:
       emoji-regex: 10.4.0
       get-east-asian-width: 1.3.0
-      strip-ansi: 7.1.0
+      strip-ansi: 7.1.2
 
   string-width@8.1.0:
     dependencies:
@@ -16069,7 +16063,7 @@ snapshots:
 
   strip-ansi@7.1.0:
     dependencies:
-      ansi-regex: 6.1.0
+      ansi-regex: 6.2.2
 
   strip-ansi@7.1.2:
     dependencies:

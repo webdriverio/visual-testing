@@ -230,6 +230,37 @@ describe('@wdio/visual-service', () => {
             expect(wdioExpect.extend).toBeCalledTimes(1)
         })
 
+        it('should register custom matchers with Jasmine when Jasmine is the framework', async () => {
+            // With Jasmine, the global `expect` has no `extend()` and the Jasmine adapter does not see matchers added later
+            const jasmineEnv = { beforeAll: vi.fn(), addAsyncMatchers: vi.fn() }
+            ;(globalThis as { jasmine?: unknown }).jasmine = { getEnv: () => jasmineEnv }
+            const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
+            const browser = {
+                isMultiremote: false,
+                addCommand: vi.fn(),
+                capabilities: {},
+                requestedCapabilities: {},
+                on: vi.fn(),
+                execute: vi.fn().mockResolvedValue(1),
+            } as any as WebdriverIO.Browser
+
+            try {
+                await service.before({}, [], browser)
+            } finally {
+                delete (globalThis as { jasmine?: unknown }).jasmine
+            }
+
+            expect(wdioExpect.extend).not.toHaveBeenCalled()
+            expect(jasmineEnv.beforeAll).toHaveBeenCalledTimes(1)
+            jasmineEnv.beforeAll.mock.calls[0][0]()
+            expect(Object.keys(jasmineEnv.addAsyncMatchers.mock.calls[0][0])).toEqual([
+                'toMatchScreenSnapshot',
+                'toMatchFullPageSnapshot',
+                'toMatchElementSnapshot',
+                'toMatchTabbablePageSnapshot',
+            ])
+        })
+
         it('should fail registering custom matchers', async () => {
             const extendMock = vi.fn(() => {
                 throw new Error('Expect package not found')
@@ -247,7 +278,9 @@ describe('@wdio/visual-service', () => {
 
             await service.before({}, [], browser)
 
-            expect(log.warn).toMatchSnapshot()
+            expect(vi.mocked(log.warn).mock.calls).toEqual([[
+                'The custom matchers `toMatchScreenSnapshot|toMatchFullPageSnapshot|toMatchElementSnapshot|toMatchTabbablePageSnapshot` could not be added and can not be used. Use the `check*` methods instead. Error: Expect package not found',
+            ]])
         })
 
         it('should pass alwaysSaveActualImage: true to core for direct saveScreen calls when config is false', async () => {
