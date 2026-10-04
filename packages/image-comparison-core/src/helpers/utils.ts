@@ -386,14 +386,14 @@ export async function getMobileScreenSize({
 
     try {
         if (isIOS) {
-            ({ screenSize: { height, width } } = (await browserInstance.execute('mobile: deviceScreenInfo')) as {
+            ({ screenSize: { height, width } } = (await browserInstance.executeScript('mobile: deviceScreenInfo', [])) as {
                 statusBarSize: BaseDimensions,
                 scale: number,
                 screenSize: BaseDimensions,
             })
             // It's Android
         } else {
-            const { realDisplaySize } = (await browserInstance.execute('mobile: deviceInfo')) as { realDisplaySize: string }
+            const { realDisplaySize } = (await browserInstance.executeScript('mobile: deviceInfo', [])) as { realDisplaySize: string }
 
             if (!realDisplaySize || !/^\d+x\d+$/.test(realDisplaySize)) {
                 throw new Error(`Invalid realDisplaySize format. Expected 'widthxheight', got "${realDisplaySize}"`)
@@ -468,15 +468,19 @@ export async function loadBase64Html({ browserInstance, isIOS }: LoadBase64HtmlO
 
 /**
  * Execute a native click
+ *
+ * `mobile:` commands use `executeScript`, the WebDriver Classic command, and not `execute`.
+ * In a WebDriver BiDi session `execute` runs the script as page JavaScript with `script.callFunction`,
+ * where a `mobile:` command does not exist.
  */
 export async function executeNativeClick({ browserInstance, isIOS, x, y }: ExecuteNativeClickOptions): Promise<void> {
     if (isIOS) {
-        return browserInstance.execute('mobile: tap', { x, y })
+        return browserInstance.executeScript('mobile: tap', [{ x, y }])
     }
 
     try {
         // The `clickGesture` is not working on Appium 1, only on Appium 2
-        await browserInstance.execute('mobile: clickGesture', { x, y })
+        await browserInstance.executeScript('mobile: clickGesture', [{ x, y }])
     } catch (error: unknown) {
         if (
             error instanceof Error &&
@@ -485,7 +489,7 @@ export async function executeNativeClick({ browserInstance, isIOS, x, y }: Execu
             log.warn(
                 'Error executing `clickGesture`, falling back to `doubleClickGesture`. This likely means you are using Appium 1. Is this intentional?'
             )
-            await browserInstance.execute('mobile: doubleClickGesture', { x, y })
+            await browserInstance.executeScript('mobile: doubleClickGesture', [{ x, y }])
         } else {
             throw error
         }
@@ -623,7 +627,7 @@ async function dismissAndroidStartSurface({
     browserInstance: WebdriverIO.Browser
 }): Promise<void> {
     try {
-        await browserInstance.execute('mobile: pressKey', { keycode: 4 })
+        await browserInstance.executeScript('mobile: pressKey', [{ keycode: 4 }])
         await waitFor(1500)
     } catch (error) {
         log.warn('Failed to dismiss Chrome Start Surface via Back button', error)
