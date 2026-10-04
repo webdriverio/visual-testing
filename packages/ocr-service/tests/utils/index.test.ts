@@ -1,6 +1,6 @@
 import { mkdirSync } from 'node:fs'
 import { describe, it, expect, vi } from 'vitest'
-import { adjustElementBbox, createOcrDir, determineClickPoint, getDprPositions, getBase64ScreenshotSize, isRectanglesObject } from '../../src/utils/index.js'
+import { adjustElementBbox, createOcrDir, determineClickPoint, getDprPositions, getBase64ScreenshotSize, isMultiRemoteBrowser, isRectanglesObject } from '../../src/utils/index.js'
 import type { RectReturn } from '../../src/types.js'
 
 vi.mock('node:fs', () => ({
@@ -104,5 +104,27 @@ describe('isRectanglesObject', () => {
 
         const result = isRectanglesObject(rect)
         expect(result).toBe(false)
+    })
+})
+
+describe('isMultiRemoteBrowser', () => {
+    it('should return true for a WebdriverIO v10 multiremote browser (isMultiRemote)', () => {
+        expect(isMultiRemoteBrowser({ isMultiRemote: true } as any)).toBe(true)
+    })
+
+    it('should return true for a WebdriverIO v9 multiremote browser (isMultiremote)', () => {
+        expect(isMultiRemoteBrowser({ isMultiremote: true } as any)).toBe(true)
+    })
+
+    it('should return false for a WebdriverIO v10 single browser', () => {
+        expect(isMultiRemoteBrowser({ isMultiRemote: false } as any)).toBe(false)
+    })
+
+    it('should return false for a WebdriverIO v9 single browser', () => {
+        expect(isMultiRemoteBrowser({ isMultiremote: false } as any)).toBe(false)
+    })
+
+    it('should return false when neither flag is set', () => {
+        expect(isMultiRemoteBrowser({} as any)).toBe(false)
     })
 })
