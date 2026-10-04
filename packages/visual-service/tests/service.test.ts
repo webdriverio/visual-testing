@@ -359,7 +359,7 @@ describe('@wdio/visual-service', () => {
             expect(wdioExpect.extend).toBeCalledTimes(1)
         })
 
-        it('adds the matchers and logs a clear error when the command setup fails', async () => {
+        it('adds the matchers and logs a clear error when the setup fails', async () => {
             const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
             const setupError = new Error('WebDriver Bidi command "script.callFunction" failed with error: unknown command')
             const browser = {
@@ -375,7 +375,7 @@ describe('@wdio/visual-service', () => {
 
             expect(wdioExpect.extend).toBeCalledTimes(1)
             expect(vi.mocked(log.error)).toHaveBeenCalledWith(
-                expect.stringContaining('The visual service could not add its commands to this session')
+                expect.stringContaining('The visual service setup failed for this session')
             )
             expect(vi.mocked(log.error)).toHaveBeenCalledWith(expect.stringContaining(setupError.message))
         })

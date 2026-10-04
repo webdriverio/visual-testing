@@ -94,7 +94,7 @@ export default class WdioImageComparisonService extends BaseClass {
             // this is a temporary fix until the issue is fixed in WebdriverIO v9 and enough users have upgraded to the latest version
             await this.#setEmulation(this.#browser, capabilities)
         } catch (error) {
-            log.error(`The visual service could not add its commands to this session, so the check and save commands and the visual matchers do not work: ${error}`)
+            log.error(`The visual service setup failed for this session, so the check and save commands and the visual matchers can fail: ${error}`)
             throw error
         }
     }
