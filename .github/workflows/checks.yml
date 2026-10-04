@@ -1,0 +1,97 @@
+name: checks
+
+# Jobs that need no cloud credentials: every pull request (also from forks) and every push to `main`
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+# One run per pull request and per branch: a new commit cancels the run of the previous commit.
+# Runs on `main` are not cancelled, so each merged commit is tested.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  PNPM_VERSION: 9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7
+
+jobs:
+  unit-test:
+    name: 🧪 Lint and unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm pnpm.install.workaround
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🧪 Run linting and unit tests
+        working-directory: ./
+        run: pnpm test
+
+  local-chrome:
+    name: 💻 Run WebdriverIO v10 Tests on local headless Chrome
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm pnpm.install.workaround
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 💻 Run WebdriverIO v10 e2e tests on local headless Chrome
+        working-directory: ./
+        run: pnpm test.local.chrome.v10
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: failure()
+        with:
+          name: ci-pr-local-chrome-logs
+          include-hidden-files: true
+          path: |
+            logs/*.log
+            .tmp/v10-e2e/
