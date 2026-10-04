@@ -22,6 +22,7 @@ feat: support WebdriverIO v10 (keep WebdriverIO v9 support)
 - When the matchers cannot be added, the warning now gives the reason. Before, it always said "Expect package not found".
 - When the service cannot add its commands (for example when a WebDriver command of its setup fails), the visual matchers are still added, the service logs the reason, and a matcher fails with `The visual service did not add the "checkScreen" command to this session`. Before, the only error was `expect(...).toMatchScreenSnapshot is not a function`.
 - When an ignored element was not found, the error now shows the selector and the reason, for example `element "~button-LOGIN" could not be found: StrictSelectorError: ...`. Before, it showed the element as JSON.
+- `ignore` elements: before the comparison, each element is found again in its own scope (the element or browsing context it was found from) and at its own index. Before, the service searched the whole page with the selector and took the elements in order, so an element of a filtered `$$().filter()` list, of a chained `$('form').$$('input')` query or of a frame could be replaced by another element with the same selector.
 
 **Known limits**
 

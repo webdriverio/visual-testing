@@ -10,6 +10,7 @@ import {
     determineWebElementIgnoreRegions,
     splitIgnores,
     determineDeviceBlockOuts,
+    getFreshElements,
     prepareIgnoreRectangles
 } from './rectangles.js'
 import { IMAGE_STRING } from '../mocks/image.js'
@@ -1769,5 +1770,70 @@ describe('rectangles', () => {
             expect(statusBarBox).toBeDefined()
             expect(statusBarBox.bottom).toBe(24)
         })
+    })
+})
+
+describe('getFreshElements', () => {
+    const createElement = (props: Record<string, unknown>) => ({ elementId: 'stale', ...props }) as unknown as WebdriverIO.Element
+    let browserInstance: WebdriverIO.Browser
+
+    beforeEach(() => {
+        browserInstance = { $$: vi.fn() } as unknown as WebdriverIO.Browser
+    })
+
+    it('returns the elements of a filtered $$ list at their own index', async () => {
+        const fresh = ['a', 'b', 'c'].map((elementId) => ({ elementId }))
+        vi.mocked(browserInstance.$$).mockResolvedValue(fresh as any)
+
+        const result = await getFreshElements(browserInstance, [
+            createElement({ selector: 'li', index: 0 }),
+            createElement({ selector: 'li', index: 2 }),
+        ])
+
+        expect(result).toEqual([fresh[0], fresh[2]])
+        expect(browserInstance.$$).toHaveBeenCalledTimes(1)
+    })
+
+    it('queries a chained element in its parent', async () => {
+        const fresh = [{ elementId: 'input-in-form' }]
+        const parent = { $$: vi.fn().mockResolvedValue(fresh) }
+
+        const result = await getFreshElements(browserInstance, [createElement({ selector: 'input', parent })])
+
+        expect(parent.$$).toHaveBeenCalledWith('input')
+        expect(browserInstance.$$).not.toHaveBeenCalled()
+        expect(result).toEqual([fresh[0]])
+    })
+
+    it('keeps an element without a usable selector', async () => {
+        const customStrategy = createElement({ selector: { strategy: 'byTestId' } })
+        const noSelector = createElement({ selector: undefined })
+
+        const result = await getFreshElements(browserInstance, [customStrategy, noSelector])
+
+        expect(result[0]).toBe(customStrategy)
+        expect(result[1]).toBe(noSelector)
+        expect(browserInstance.$$).not.toHaveBeenCalled()
+    })
+
+    it('uses a running index for elements without index', async () => {
+        const fresh = ['a', 'b'].map((elementId) => ({ elementId }))
+        vi.mocked(browserInstance.$$).mockResolvedValue(fresh as any)
+
+        const result = await getFreshElements(browserInstance, [
+            createElement({ selector: '.hero' }),
+            createElement({ selector: '.hero' }),
+        ])
+
+        expect(result).toEqual([fresh[0], fresh[1]])
+    })
+
+    it('keeps the element when the new query finds fewer elements', async () => {
+        vi.mocked(browserInstance.$$).mockResolvedValue([] as any)
+        const element = createElement({ selector: '.gone', index: 1 })
+
+        const result = await getFreshElements(browserInstance, [element])
+
+        expect(result[0]).toBe(element)
     })
 })
