@@ -50,37 +50,37 @@ importers:
         specifier: ^3.2.7
         version: 3.2.7(vitest@3.2.7)
       '@wdio/appium-service':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
       '@wdio/browserstack-service':
         specifier: ^9.39.3
         version: 9.39.3(@wdio/cli@10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0))
       '@wdio/cli':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0)
       '@wdio/globals':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       '@wdio/jasmine-framework':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(@wdio/runner@10.0.0-alpha.150(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0))(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0)
       '@wdio/local-runner':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))(yauzl@3.4.0)
       '@wdio/mocha-framework':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
       '@wdio/sauce-service':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
       '@wdio/shared-store-service':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
       '@wdio/spec-reporter':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150
       '@wdio/types':
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150
       cross-env:
         specifier: ^7.0.3
@@ -95,7 +95,7 @@ importers:
         specifier: ^56.0.1
         version: 56.0.1(eslint@9.39.5(jiti@2.6.1))
       eslint-plugin-wdio:
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(eslint@9.39.5(jiti@2.6.1))(globals@15.15.0)
       husky:
         specifier: ^9.1.7
@@ -128,7 +128,7 @@ importers:
         specifier: ^4.0.1
         version: 4.0.1(patch_hash=i5rfvq3f2h27rqtzavtidjxwhq)(@wdio/cli@10.0.0-alpha.150(@types/node@24.0.14)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0)))(yauzl@3.4.0))(@wdio/types@10.0.0-alpha.150)(webdriverio@10.0.0-alpha.150(yauzl@3.4.0))
       webdriverio:
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
 
   packages/image-comparison-core:
@@ -147,7 +147,7 @@ importers:
         version: 7.2.0
     devDependencies:
       webdriverio:
-        specifier: ^10.0.0-0 || ^10.0.0
+        specifier: ^10.0.0-0
         version: 10.0.0-alpha.150(yauzl@3.4.0)
 
   packages/ocr-service:
