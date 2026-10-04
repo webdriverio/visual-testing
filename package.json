@@ -91,5 +91,10 @@
     "webdriverio": "^10.0.0-0 || ^10.0.0",
     "wdio-lambdatest-service": "^4.0.1"
   },
-  "packageManager": "pnpm@9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7"
+  "packageManager": "pnpm@9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7",
+  "pnpm": {
+    "patchedDependencies": {
+      "wdio-lambdatest-service@4.0.1": "patches/wdio-lambdatest-service@4.0.1.patch"
+    }
+  }
 }
