@@ -1,4 +1,4 @@
-# WebdriverIO Visual Testing 🔎 [![tests](https://github.com/webdriverio/visual-testing/actions/workflows/tests.yml/badge.svg)](https://github.com/webdriverio/visual-testing/actions/workflows/tests.yml) [![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
+# WebdriverIO Visual Testing 🔎 [![checks](https://github.com/webdriverio/visual-testing/actions/workflows/checks.yml/badge.svg)](https://github.com/webdriverio/visual-testing/actions/workflows/checks.yml) [![Build Status](https://app.eu-central-1.saucelabs.com/buildstatus/wdio-image-comparison-service)](https://app.eu-central-1.saucelabs.com/u/wdio-image-comparison-service)
 
 For documentation on visual testing with WebdriverIO, please refer to the [docs](https://webdriver.io/docs/visual-testing). This project contains all relevant modules for running visual tests with WebdriverIO. Within the `./packages` directory you will find:
 
