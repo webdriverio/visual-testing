@@ -7,6 +7,65 @@ For documentation on visual testing with WebdriverIO, please refer to the [docs]
 -   `@wdio/ocr-service`: the WebdriverIO service for OCR-based testing
 -   `@wdio/visual-reporter`: the HTML report generator for visual testing results
 
+## Quick start
+
+```sh
+npm install --save-dev @wdio/visual-service
+```
+
+```js
+// wdio.conf.js
+export const config = {
+    // ...
+    services: [
+        ['visual', {
+            // optional, these are the defaults
+            baselineFolder: './__snapshots__/', // next to the spec file
+            screenshotPath: '.tmp/',            // actual and diff images
+            autoSaveBaseline: true,             // save a missing baseline and let the test pass
+        }],
+    ],
+}
+```
+
+```js
+// test.spec.js
+describe('Visual', () => {
+    it('matches the baseline', async () => {
+        await browser.url('https://webdriver.io')
+
+        // Matchers: the second argument is the maximum mismatch percentage (default 0)
+        await expect(browser).toMatchScreenSnapshot('homepage', 0.2)
+        await expect(browser).toMatchFullPageSnapshot('fullPage', 0.2, {
+            hideElements: [await $('.navbar')],
+        })
+        await expect($('.navbar__logo')).toMatchElementSnapshot('logo')
+
+        // Methods: return the mismatch percentage
+        expect(await browser.checkElement(await $('.navbar__logo'), 'logo')).toEqual(0)
+    })
+})
+```
+
+Run the tests with `--update-visual-baseline` to replace the baselines with the actual images.
+
+### API
+
+| Method | Matcher | Captures |
+|---|---|---|
+| `checkScreen(tag, options?)` | `toMatchScreenSnapshot(tag, expected?, options?)` | the viewport |
+| `checkElement(element, tag, options?)` | `toMatchElementSnapshot(tag, expected?, options?)` | one element |
+| `checkFullPageScreen(tag, options?)` | `toMatchFullPageSnapshot(tag, expected?, options?)` | the full page |
+| `checkTabbablePage(tag, options?)` | `toMatchTabbablePageSnapshot(tag, expected?, options?)` | the full page with the tab order |
+
+-   `check*` compares with the baseline and returns the mismatch percentage. `save*` (`saveScreen`, `saveElement`, `saveFullPageScreen`, `saveTabbablePage`) only saves the image.
+-   `expected` is the maximum mismatch percentage (default `0`) or an asymmetric matcher, for example `expect.closeTo(0, 2)`.
+-   Frequent method options: `hideElements` and `removeElements` (elements), `ignore` (elements or regions) and `blockOut` (regions) to not compare a part, `hideScrollBars`, `disableCSSAnimation`.
+
+`@wdio/ocr-service` adds `ocrGetText`, `ocrClickOnText`, `ocrSetValue`, `ocrWaitForTextDisplayed` and `ocrGetElementPositionByText`.
+
+All the options: [service options](https://webdriver.io/docs/visual-testing/service-options), [method options](https://webdriver.io/docs/visual-testing/method-options), [OCR service](https://webdriver.io/docs/ocr-testing/getting-started).
+
 ## Versions & Support
 
 | Version | npm tag | Status | Supported until |
