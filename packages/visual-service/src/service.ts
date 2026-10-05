@@ -23,6 +23,7 @@ import {
     getInstanceData,
     getNativeContext,
     isMultiRemoteBrowser,
+    isMultiRemoteElement,
 } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -161,11 +162,15 @@ export default class WdioImageComparisonService extends BaseClass {
 
         /**
          * Add all the commands to the global browser object that will execute
-         * on each browser in the Multi Remote
-         * Start with the page commands
+         * on each browser in the Multi Remote.
+         * The multiremote `addCommand()` of WebdriverIO also adds the command to each instance,
+         * so add them before the commands of each instance, which then replace them on the instances
          */
         for (const [commandName, command] of Object.entries(pageCommands)) {
             this.#addMultiremoteCommand(browser, browserNames, commandName as keyof CommandMap, command)
+        }
+        for (const [commandName, command] of Object.entries(elementCommands)) {
+            this.#addMultiremoteElementCommand(browser, browserNames, commandName as keyof CommandMap, command)
         }
 
         /**
@@ -180,14 +185,6 @@ export default class WdioImageComparisonService extends BaseClass {
             this._contextManagers?.set(browserName, contextManager)
 
             await this.#addCommandsToBrowser(browserInstance, contextManager)
-        }
-
-        /**
-         * Add all the element commands to the global browser object that will execute
-         * on each browser in the Multi Remote
-         */
-        for (const [commandName, command] of Object.entries(elementCommands)) {
-            this.#addMultiremoteElementCommand(browser, browserNames, commandName as keyof CommandMap, command)
         }
     }
 
@@ -404,7 +401,8 @@ export default class WdioImageComparisonService extends BaseClass {
                                 instanceData: updatedInstanceData,
                                 folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
                                 tag,
-                                element,
+                                // The element of a multiremote element for this browser, the multiremote element is not an element of this browser
+                                element: isMultiRemoteElement(element) ? element.getInstance(browserName) : element,
                                 [elementOptionsKey]: {
                                     wic: self.defaultOptions,
                                     method: elementOptions,
