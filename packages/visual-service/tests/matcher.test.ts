@@ -77,12 +77,55 @@ describe('custom visual matcher', () => {
         expect(browser.checkElement).toBeCalledTimes(1)
     })
 
+    it('toMatchElementSnapshot with an element found from a WebdriverIO v10 browsing context', async () => {
+        // In WebdriverIO v10 the parent of the element is the browsing context, which holds the browser in `browser`
+        const browsingContext = { browser, isFrame: false }
+        const element = { elementId: 'element-id', selector: '#logo', parent: browsingContext } as any as WebdriverIO.Element
+
+        await expect(toMatchElementSnapshot(element, 'foo', 123, {})).resolves.toEqual({
+            pass: true,
+            message: expect.any(Function)
+        })
+        expect(browser.checkElement).toHaveBeenCalledWith(element, 'foo', expect.any(Object))
+    })
+
     it('toMatchTabbablePageSnapshot', async () => {
         await expect(toMatchTabbablePageSnapshot(browser, 'foo', 123, {})).resolves.toEqual({
             pass: true,
             message: expect.any(Function)
         })
         expect(browser.checkTabbablePage).toBeCalledTimes(1)
+    })
+
+    describe('when the visual service did not add its commands', () => {
+        const pageMatchers: Array<[string, typeof toMatchScreenSnapshot | typeof toMatchFullPageSnapshot | typeof toMatchTabbablePageSnapshot, string]> = [
+            ['toMatchScreenSnapshot', toMatchScreenSnapshot, 'checkScreen'],
+            ['toMatchFullPageSnapshot', toMatchFullPageSnapshot, 'checkFullPageScreen'],
+            ['toMatchTabbablePageSnapshot', toMatchTabbablePageSnapshot, 'checkTabbablePage'],
+        ]
+
+        it.each(pageMatchers)('%s gives a clear error', async (_, matcher, command) => {
+            await expect(matcher({} as any, 'tag')).rejects.toThrow(
+                `The visual service did not add the "${command}" command to this session`
+            )
+        })
+
+        it('accepts a browser that is a function, as a WebdriverIO browser can be', async () => {
+            const functionBrowser = Object.assign(() => {}, {
+                checkScreen: vi.fn().mockResolvedValue({ misMatchPercentage: 0, folders }),
+            })
+
+            await expect(toMatchScreenSnapshot(functionBrowser as any, 'tag')).resolves.toMatchObject({ pass: true })
+        })
+
+        it('toMatchElementSnapshot gives a clear error', async () => {
+            // The browser of the element has no `checkElement` command
+            const element = { parent: {} } as any as WebdriverIO.Element
+
+            await expect(toMatchElementSnapshot(element, 'tag')).rejects.toThrow(
+                'The visual service did not add the "checkElement" command to this session'
+            )
+        })
     })
 
     it('should throw an error if tag is missing', async () => {

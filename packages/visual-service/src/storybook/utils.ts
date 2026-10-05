@@ -198,7 +198,7 @@ export function itFunction({ additionalSearchParams, clip, clipSelector, compare
             additionalSearchParams: new URLSearchParams('${additionalSearchParams.toString()}'),
         });
         ${clip
-        ? `await expect($('${clipSelector}')).toMatchElementSnapshot('${id}-element', ${JSON.stringify(checkMethodOptions)})`
+        ? `await expect($('${clipSelector}', { strict: false })).toMatchElementSnapshot('${id}-element', ${JSON.stringify(checkMethodOptions)})`
         : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(checkMethodOptions)})`}
     });
     `
@@ -258,8 +258,11 @@ export async function waitForStorybookComponentToBeLoaded(
         }
         baseUrl.search = searchParams.toString()
         await browser.url(baseUrl.toString())
-        await $(clipSelector as string).waitForDisplayed()
-        await browser.executeAsync(async (timeout, done) => {
+        // A custom clip selector can match more than one element. WebdriverIO v10 `$` is strict and would throw,
+        // `strict: false` keeps the v9 behavior (first match) and is ignored by v9
+        await $(clipSelector as string, { strict: false }).waitForDisplayed()
+        // `executeAsync` is removed in WebdriverIO v10, `execute` awaits the returned promise in v9 and v10
+        await browser.execute(async (timeout) => {
             let timedOut = false
 
             const timeoutPromise = new Promise((_resolve, reject) => {
@@ -296,9 +299,8 @@ export async function waitForStorybookComponentToBeLoaded(
 
             try {
                 await Promise.race([Promise.all([...imgPromises, ...bgImagePromises]), timeoutPromise])
-                done()
             } catch (error) {
-                done(error)
+                return error
             }
         }, timeout)
     } else {

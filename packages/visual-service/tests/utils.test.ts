@@ -7,6 +7,7 @@ import {
     getNativeContext,
     enrichTestContext,
     getLtOptions,
+    isMultiRemoteBrowser,
 } from '../src/utils.js'
 
 // Import the functions we need to spy on
@@ -706,6 +707,47 @@ describe('utils', () => {
             // @ts-ignore
             const childElement = createElementMock(parentElement)
             expect(getBrowserObject(childElement)).toBe(browserMock)
+        })
+
+        // WebdriverIO v10: elements found from a browsing context (`browser.url()`, `context.frame()`)
+        // have the context as parent, and the context holds the browser in `browser`
+        const topLevelContextMock = { browser: browserMock, isFrame: false } as any as WebdriverIO.Browser
+        const frameContextMock = { browser: browserMock, isFrame: true, parent: topLevelContextMock } as any as WebdriverIO.Browser
+
+        it('should return the browser object when passed a WebdriverIO v10 browsing context', () => {
+            expect(getBrowserObject(topLevelContextMock)).toBe(browserMock)
+        })
+
+        it('should return the browser object for an element found from a WebdriverIO v10 browsing context', () => {
+            const element = createElementMock(topLevelContextMock)
+            expect(getBrowserObject(element)).toBe(browserMock)
+        })
+
+        it('should return the browser object for an element found in a WebdriverIO v10 frame', () => {
+            const element = createElementMock(frameContextMock)
+            expect(getBrowserObject(element)).toBe(browserMock)
+        })
+    })
+
+    describe('isMultiRemoteBrowser', () => {
+        it('should return true for a WebdriverIO v10 multiremote browser (isMultiRemote)', () => {
+            expect(isMultiRemoteBrowser({ isMultiRemote: true } as any)).toBe(true)
+        })
+
+        it('should return true for a WebdriverIO v9 multiremote browser (isMultiremote)', () => {
+            expect(isMultiRemoteBrowser({ isMultiremote: true } as any)).toBe(true)
+        })
+
+        it('should return false for a WebdriverIO v10 single browser', () => {
+            expect(isMultiRemoteBrowser({ isMultiRemote: false } as any)).toBe(false)
+        })
+
+        it('should return false for a WebdriverIO v9 single browser', () => {
+            expect(isMultiRemoteBrowser({ isMultiremote: false } as any)).toBe(false)
+        })
+
+        it('should return false when neither flag is set', () => {
+            expect(isMultiRemoteBrowser({} as any)).toBe(false)
         })
     })
 

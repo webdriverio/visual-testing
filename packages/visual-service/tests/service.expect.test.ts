@@ -47,6 +47,8 @@ describe('@wdio/visual-service', () => {
         await service.before({}, [], browser)
         // expect(log.warn).toBeCalledTimes(1)
         expect(logWarnMock.mock.calls[0][0])
-            .toContain('Expect package not found. This means that the custom matchers `toMatchScreenSnapshot|toMatchFullPageSnapshot|toMatchElementSnapshot|toMatchTabbablePageSnapshot` are not added and can not be used. Please make sure to add it to your `package.json` if you want to use the Visual custom matchers.')
+            .toContain('The custom matchers `toMatchScreenSnapshot|toMatchFullPageSnapshot|toMatchElementSnapshot|toMatchTabbablePageSnapshot` could not be added and can not be used. Use the `check*` methods instead.')
+        // the reason, for example no `expect` in standalone mode
+        expect(logWarnMock.mock.calls[0][0]).toContain('Error: ')
     })
 })

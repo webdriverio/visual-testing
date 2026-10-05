@@ -26,10 +26,12 @@
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "@wdio/globals": "^9.29.1",
-    "@wdio/logger": "^9.29.1",
-    "@wdio/types": "^9.29.1",
-    "expect-webdriverio": "^5.7.0",
+    "@wdio/globals": "^9.29.1 || ^10.0.0-0",
+    "@wdio/logger": "^9.29.1 || ^10.0.0-0",
+    "@wdio/types": "^9.29.1 || ^10.0.0-0",
     "@wdio/image-comparison-core": "workspace:*"
+  },
+  "devDependencies": {
+    "expect-webdriverio": "^8.0.0-0"
   }
 }

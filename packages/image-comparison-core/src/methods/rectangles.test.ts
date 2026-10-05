@@ -10,6 +10,7 @@ import {
     determineWebElementIgnoreRegions,
     splitIgnores,
     determineDeviceBlockOuts,
+    getFreshElements,
     prepareIgnoreRectangles
 } from './rectangles.js'
 import { IMAGE_STRING } from '../mocks/image.js'
@@ -711,6 +712,50 @@ describe('rectangles', () => {
 
             expect(() => splitIgnores(items)).toThrow('Invalid elements or regions')
         })
+
+        // An element that WebdriverIO could not find has an `error` and no `elementId`.
+        // `JSON.stringify` of an `Error` is `{}`, so the message must use the selector and the error message.
+        const notFoundElement = (selector: string, error: unknown) => ({
+            selector,
+            error,
+            parent: { sessionId: 'session-id', capabilities: { platformName: 'iOS', 'appium:deviceName': 'iPhone 8' } },
+        })
+
+        it('should name the selector and the error of an element that was not found', () => {
+            const items = [notFoundElement('~button-LOGIN', new Error('no such element: An element could not be located'))]
+
+            expect(() => splitIgnores(items)).toThrow(
+                'Invalid elements or regions: element "~button-LOGIN" could not be found: no such element: An element could not be located'
+            )
+            expect(() => splitIgnores(items)).not.toThrow(/capabilities|sessionId/)
+        })
+
+        it('should name the selector and the error of an element in a $$ list that was not found', () => {
+            const validElement = { elementId: 'element1', selector: '#test1' }
+            const items = [[validElement, notFoundElement('#missing', new Error('no such element'))]]
+
+            expect(() => splitIgnores(items)).toThrow(
+                'Invalid elements or regions: element "#missing" could not be found: no such element'
+            )
+        })
+
+        it('should show a WebdriverIO v10 strict selector error', () => {
+            const strictError = new Error('strict mode violation: `$("~button-LOGIN")` resolved to 2 elements, expected 1.')
+            strictError.name = 'StrictSelectorError'
+            const items = [notFoundElement('~button-LOGIN', strictError)]
+
+            expect(() => splitIgnores(items)).toThrow(
+                'element "~button-LOGIN" could not be found: StrictSelectorError: strict mode violation: `$("~button-LOGIN")` resolved to 2 elements, expected 1.'
+            )
+        })
+
+        it('should show an element error that is not an Error object', () => {
+            const items = [notFoundElement('#test', 'element not found')]
+
+            expect(() => splitIgnores(items)).toThrow(
+                'Invalid elements or regions: element "#test" could not be found: element not found'
+            )
+        })
     })
 
     describe('determineIgnoreRegions', () => {
@@ -744,6 +789,40 @@ describe('rectangles', () => {
                 { x: 50, y: 60, width: 200, height: 250 }
             ])
             expect(mockGetElementRect).toHaveBeenCalledWith('element1')
+        })
+
+        it('should handle a WebdriverIO v10 element array and a not awaited $$ result', async () => {
+            // In WebdriverIO v10 `$$()` returns an `ElementArray`: a real array with extra properties,
+            // and the not awaited result is a thenable that resolves to it
+            class ElementArray extends Array<WebdriverIO.Element> {
+                selector = '.feature h3'
+                foundWith = '$$'
+                parent = {}
+                props = []
+            }
+            const elementArray = ElementArray.from([
+                { elementId: 'element1', selector: '.feature h3' },
+                { elementId: 'element2', selector: '.feature h3' },
+            ] as WebdriverIO.Element[]) as ElementArray
+            const chainableElementArray = { then: (resolve: (value: ElementArray) => void) => resolve(elementArray) }
+
+            mockGetElementRect
+                .mockResolvedValueOnce({ x: 1, y: 2, width: 3, height: 4 })
+                .mockResolvedValueOnce({ x: 5, y: 6, width: 7, height: 8 })
+                .mockResolvedValueOnce({ x: 1, y: 2, width: 3, height: 4 })
+                .mockResolvedValueOnce({ x: 5, y: 6, width: 7, height: 8 })
+
+            const result = await determineIgnoreRegions(mockBrowserInstance, [elementArray, chainableElementArray] as any)
+
+            expect(result).toEqual([
+                { x: 1, y: 2, width: 3, height: 4 },
+                { x: 5, y: 6, width: 7, height: 8 },
+                { x: 1, y: 2, width: 3, height: 4 },
+                { x: 5, y: 6, width: 7, height: 8 },
+            ])
+            expect(mockGetElementRect).toHaveBeenCalledTimes(4)
+            expect(mockGetElementRect).toHaveBeenNthCalledWith(1, 'element1')
+            expect(mockGetElementRect).toHaveBeenNthCalledWith(2, 'element2')
         })
 
         it('should handle empty arrays', async () => {
@@ -1691,5 +1770,70 @@ describe('rectangles', () => {
             expect(statusBarBox).toBeDefined()
             expect(statusBarBox.bottom).toBe(24)
         })
+    })
+})
+
+describe('getFreshElements', () => {
+    const createElement = (props: Record<string, unknown>) => ({ elementId: 'stale', ...props }) as unknown as WebdriverIO.Element
+    let browserInstance: WebdriverIO.Browser
+
+    beforeEach(() => {
+        browserInstance = { $$: vi.fn() } as unknown as WebdriverIO.Browser
+    })
+
+    it('returns the elements of a filtered $$ list at their own index', async () => {
+        const fresh = ['a', 'b', 'c'].map((elementId) => ({ elementId }))
+        vi.mocked(browserInstance.$$).mockResolvedValue(fresh as any)
+
+        const result = await getFreshElements(browserInstance, [
+            createElement({ selector: 'li', index: 0 }),
+            createElement({ selector: 'li', index: 2 }),
+        ])
+
+        expect(result).toEqual([fresh[0], fresh[2]])
+        expect(browserInstance.$$).toHaveBeenCalledTimes(1)
+    })
+
+    it('queries a chained element in its parent', async () => {
+        const fresh = [{ elementId: 'input-in-form' }]
+        const parent = { $$: vi.fn().mockResolvedValue(fresh) }
+
+        const result = await getFreshElements(browserInstance, [createElement({ selector: 'input', parent })])
+
+        expect(parent.$$).toHaveBeenCalledWith('input')
+        expect(browserInstance.$$).not.toHaveBeenCalled()
+        expect(result).toEqual([fresh[0]])
+    })
+
+    it('keeps an element without a usable selector', async () => {
+        const customStrategy = createElement({ selector: { strategy: 'byTestId' } })
+        const noSelector = createElement({ selector: undefined })
+
+        const result = await getFreshElements(browserInstance, [customStrategy, noSelector])
+
+        expect(result[0]).toBe(customStrategy)
+        expect(result[1]).toBe(noSelector)
+        expect(browserInstance.$$).not.toHaveBeenCalled()
+    })
+
+    it('uses a running index for elements without index', async () => {
+        const fresh = ['a', 'b'].map((elementId) => ({ elementId }))
+        vi.mocked(browserInstance.$$).mockResolvedValue(fresh as any)
+
+        const result = await getFreshElements(browserInstance, [
+            createElement({ selector: '.hero' }),
+            createElement({ selector: '.hero' }),
+        ])
+
+        expect(result).toEqual([fresh[0], fresh[1]])
+    })
+
+    it('keeps the element when the new query finds fewer elements', async () => {
+        vi.mocked(browserInstance.$$).mockResolvedValue([] as any)
+        const element = createElement({ selector: '.gone', index: 1 })
+
+        const result = await getFreshElements(browserInstance, [element])
+
+        expect(result[0]).toBe(element)
     })
 })

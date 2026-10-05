@@ -1,10 +1,12 @@
 import { join } from 'node:path'
-import type { DeviceOrientation, ExtendedSauceLabsCapabilities } from '../types/types.ts'
+import type { Capabilities } from '@wdio/types'
+import type { ExtendedSauceLabsCapabilities, SauceWebDeviceOrientation } from '../types/types.ts'
+import { toSauceLabsDeviceOrientation } from '../helpers/sauceDeviceOrientation.ts'
 
 export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
     const mobileSpecs = join(process.cwd(), './tests/specs/mobile.web.spec.ts')
     const chromeDriverPhones = (
-        ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
+        ['LANDSCAPE', 'PORTRAIT'] satisfies SauceWebDeviceOrientation[]
     )
         .map((orientation) =>
             ['10.0', '11.0', '12.0', '13.0', '14.0'].map(
@@ -23,7 +25,7 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
         )
         .flat(1)
     const nativeWebScreenshotPhones = (
-        ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
+        ['LANDSCAPE', 'PORTRAIT'] satisfies SauceWebDeviceOrientation[]
     )
         .map((orientation) =>
             ['10.0', '11.0', '12.0', '13.0', '14.0'].map(
@@ -49,7 +51,7 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
         )
         .flat(1)
     const chromeDriverTablets = (
-        ['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[]
+        ['LANDSCAPE', 'PORTRAIT'] satisfies SauceWebDeviceOrientation[]
     )
         .map((orientation) =>
             ['10.0', '11.0', '12.0', '13.0'].map(
@@ -79,7 +81,7 @@ export function sauceAndroidEmusWeb({ buildName }: { buildName: string }) {
         )
         .flat(1)
     // There is no Android 10 for Tablets
-    const nativeWebScreenshotTablets = (['LANDSCAPE', 'PORTRAIT'] as DeviceOrientation[])
+    const nativeWebScreenshotTablets = (['LANDSCAPE', 'PORTRAIT'] satisfies SauceWebDeviceOrientation[])
         .map((orientation) =>
             ['10.0', '11.0', '12.0', '13.0'].map((platformVersion) => {
                 const tabletTypesByVersion: Record<string, string> = {
@@ -155,8 +157,8 @@ function createCaps({
         logName: string;
         commands: string[];
     };
-    'sauce:options': ExtendedSauceLabsCapabilities;
-    specs: string[];
+    'sauce:options': Capabilities.SauceLabsCapabilities;
+    'wdio:specs': string[];
 } {
     const driverScreenshotType = nativeWebScreenshot
         ? 'NativeWebScreenshot'
@@ -180,9 +182,11 @@ function createCaps({
         },
         'sauce:options': {
             ...sauceOptions,
-            appiumVersion: '2.0.0',
+            deviceOrientation: toSauceLabsDeviceOrientation(sauceOptions.deviceOrientation),
+            // Sauce Labs has no Appium 3 for these devices (2026-10-04), so this is the newest Appium 2 version they support
+            appiumVersion: '2.11.0',
         },
-        specs: [mobileSpecs],
+        'wdio:specs': [mobileSpecs],
         // @ts-ignore
         'wdio:enforceWebDriverClassic': true
     }

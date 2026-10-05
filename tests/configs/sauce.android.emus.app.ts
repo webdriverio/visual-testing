@@ -61,7 +61,7 @@ function createCaps({
         commands: string[];
     };
     'sauce:options': SauceDeviceOptions;
-    specs: string[];
+    'wdio:specs': string[];
 } {
     return {
         platformName: 'Android',
@@ -83,8 +83,9 @@ function createCaps({
         },
         'sauce:options': {
             ...sauceOptions,
-            appiumVersion: '2.0.0',
+            // Sauce Labs has no Appium 3 for these devices (2026-10-04), so this is the newest Appium 2 version they support
+            appiumVersion: '2.11.0',
         },
-        specs: [mobileSpecs],
+        'wdio:specs': [mobileSpecs],
     }
 }

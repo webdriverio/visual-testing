@@ -22,6 +22,7 @@ import {
     getFolders,
     getInstanceData,
     getNativeContext,
+    isMultiRemoteBrowser,
 } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -29,6 +30,7 @@ import {
     toMatchElementSnapshot,
     toMatchTabbablePageSnapshot
 } from './matcher.js'
+import { addJasmineMatchers, getJasmineEnv } from './jasmine.js'
 import { waitForStorybookComponentToBeLoaded } from './storybook/utils.js'
 import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 import type { CommandMap, VisualServiceOptions } from './types.js'
@@ -76,32 +78,49 @@ export default class WdioImageComparisonService extends BaseClass {
         browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
     ) {
         this.#browser = browser
+        // Add the matchers first, so that a setup error below does not hide them behind `is not a function`
+        this.#addMatchers()
 
-        if (!this.#browser.isMultiremote) {
-            log.info('Adding commands to global browser')
-            await this.#addCommandsToBrowser(this.#browser)
-        } else {
-            await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiremoteCapabilities)
-        }
-        // There is an issue with the emulation mode for Chrome or Edge with WebdriverIO v9
-        // It doesn't set the correct emulation mode for the browser based on the capabilities
-        // So we need to set the emulation mode manually
-        // this is a temporary fix until the issue is fixed in WebdriverIO v9 and enough users have upgraded to the latest version
-        await this.#setEmulation(this.#browser, capabilities)
-
-        /**
-         * add custom matcher for visual comparison when expect has been added.
-         * this is not the case in standalone mode
-         */
         try {
-            expect.extend({
-                toMatchScreenSnapshot,
-                toMatchFullPageSnapshot,
-                toMatchElementSnapshot,
-                toMatchTabbablePageSnapshot,
-            })
-        } catch (_err) {
-            log.warn('Expect package not found. This means that the custom matchers `toMatchScreenSnapshot|toMatchFullPageSnapshot|toMatchElementSnapshot|toMatchTabbablePageSnapshot` are not added and can not be used. Please make sure to add it to your `package.json` if you want to use the Visual custom matchers.')
+            if (!isMultiRemoteBrowser(browser)) {
+                log.info('Adding commands to global browser')
+                await this.#addCommandsToBrowser(browser)
+            } else {
+                await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiRemoteCapabilities)
+            }
+            // There is an issue with the emulation mode for Chrome or Edge with WebdriverIO v9
+            // It doesn't set the correct emulation mode for the browser based on the capabilities
+            // So we need to set the emulation mode manually
+            // this is a temporary fix until the issue is fixed in WebdriverIO v9 and enough users have upgraded to the latest version
+            await this.#setEmulation(this.#browser, capabilities)
+        } catch (error) {
+            log.error(`The visual service setup failed for this session, so the check and save commands and the visual matchers can fail: ${error}`)
+            throw error
+        }
+    }
+
+    /**
+     * add custom matcher for visual comparison when expect has been added.
+     * this is not the case in standalone mode
+     */
+    #addMatchers() {
+        const matchers = {
+            toMatchScreenSnapshot,
+            toMatchFullPageSnapshot,
+            toMatchElementSnapshot,
+            toMatchTabbablePageSnapshot,
+        }
+
+        try {
+            const jasmineEnv = getJasmineEnv()
+            if (jasmineEnv) {
+                addJasmineMatchers(jasmineEnv, matchers)
+                return
+            }
+
+            expect.extend(matchers)
+        } catch (err) {
+            log.warn(`The custom matchers \`${Object.keys(matchers).join('|')}\` could not be added and can not be used. Use the \`check*\` methods instead. ${err}`)
         }
     }
 
@@ -136,7 +155,7 @@ export default class WdioImageComparisonService extends BaseClass {
         return baselineFolder
     }
 
-    async #extendMultiremoteBrowser (capabilities: Capabilities.RequestedMultiremoteCapabilities) {
+    async #extendMultiremoteBrowser (capabilities: Capabilities.RequestedMultiRemoteCapabilities) {
         const browser = this.#browser as WebdriverIO.MultiRemoteBrowser
         const browserNames = Object.keys(capabilities)
 
@@ -160,7 +179,7 @@ export default class WdioImageComparisonService extends BaseClass {
 
             this._contextManagers?.set(browserName, contextManager)
 
-            await this.#addCommandsToBrowser(browserInstance)
+            await this.#addCommandsToBrowser(browserInstance, contextManager)
         }
 
         /**
@@ -174,25 +193,27 @@ export default class WdioImageComparisonService extends BaseClass {
 
     /**
      * Add commands to the "normal" browser object
+     * The commands of a browser use the context manager of that browser. In a multiremote session,
+     * each instance has its own context manager, so a web instance and a native app instance do not mix
      */
-    async #addCommandsToBrowser(browserInstance: WebdriverIO.Browser) {
-        this._contextManager = new ContextManager(browserInstance);
+    async #addCommandsToBrowser(browserInstance: WebdriverIO.Browser, contextManager = new ContextManager(browserInstance)) {
+        this._contextManager = contextManager;
         (browserInstance as any).visualService = this
         const instanceData = await getInstanceData({
             browserInstance,
-            initialDeviceRectangles: this._contextManager.getViewportContext(),
-            isNativeContext: this._contextManager.isNativeContext,
+            initialDeviceRectangles: contextManager.getViewportContext(),
+            isNativeContext: contextManager.isNativeContext,
         })
 
         // Update the context manager with the current viewport
-        this._contextManager.setViewPortContext(instanceData.deviceRectangles)
+        contextManager.setViewPortContext(instanceData.deviceRectangles)
 
         for (const [commandName, command] of Object.entries(elementCommands)) {
-            this.#addElementCommand(browserInstance, commandName as keyof CommandMap, command, instanceData)
+            this.#addElementCommand(browserInstance, commandName as keyof CommandMap, command, instanceData, contextManager)
         }
 
         for (const [commandName, command] of Object.entries(pageCommands)) {
-            this.#addPageCommand(browserInstance, commandName as keyof CommandMap, command, instanceData)
+            this.#addPageCommand(browserInstance, commandName as keyof CommandMap, command, instanceData, contextManager)
         }
     }
 
@@ -204,6 +225,7 @@ export default class WdioImageComparisonService extends BaseClass {
         commandName: K,
         command: CommandMap[K],
         initialInstanceData: InstanceData,
+        contextManager: ContextManager,
     ) {
         log.info(`Adding element command "${commandName}" to browser object`)
 
@@ -221,13 +243,13 @@ export default class WdioImageComparisonService extends BaseClass {
                 const wrapped = wrapWithContext({
                     browserInstance,
                     command,
-                    contextManager: self.contextManager,
+                    contextManager,
                     getArgs: () => {
                         const updatedInstanceData = {
                             ...initialInstanceData,
-                            deviceRectangles: self.contextManager.getViewportContext(),
+                            deviceRectangles: contextManager.getViewportContext(),
                         }
-                        const isCurrentContextNative = self.contextManager.isNativeContext
+                        const isCurrentContextNative = contextManager.isNativeContext
 
                         // save* methods should always save files, regardless of alwaysSaveActualImage config
                         const isSaveCommand = commandName === 'saveElement'
@@ -269,6 +291,7 @@ export default class WdioImageComparisonService extends BaseClass {
         commandName: K,
         command: CommandMap[K],
         initialInstanceData: InstanceData,
+        contextManager: ContextManager,
     ) {
         log.info(`Adding browser command "${commandName}" to browser object`)
 
@@ -292,13 +315,13 @@ export default class WdioImageComparisonService extends BaseClass {
                 const wrapped = wrapWithContext({
                     browserInstance,
                     command,
-                    contextManager: self.contextManager,
+                    contextManager,
                     getArgs: () => {
                         const updatedInstanceData = {
                             ...initialInstanceData,
-                            deviceRectangles: self.contextManager.getViewportContext()
+                            deviceRectangles: contextManager.getViewportContext()
                         }
-                        const isCurrentContextNative = self.contextManager.isNativeContext
+                        const isCurrentContextNative = contextManager.isNativeContext
 
                         // save* methods should always save files, regardless of alwaysSaveActualImage config
                         const isSaveCommand = commandName === 'saveScreen' || commandName === 'saveFullPageScreen' || commandName === 'saveTabbablePage'
@@ -559,7 +582,29 @@ export default class WdioImageComparisonService extends BaseClass {
         const { deviceName, deviceMetrics } = mobileEmulation
 
         if (deviceName) {
-            await (browserInstance.emulate as any)('device', deviceName)
+            // The browser already emulates the device, but a BiDi screenshot only has the device pixel ratio
+            // of the device after the viewport is set. Read the device first: when `emulate('device')` fails,
+            // it puts back the previous state, which also removes the emulation of the browser
+            const { width, height, devicePixelRatio } = await browserInstance.execute(() => ({
+                width: window.screen.width,
+                height: window.screen.height,
+                devicePixelRatio: window.devicePixelRatio,
+            }))
+
+            try {
+                await (browserInstance.emulate as any)('device', deviceName)
+                return
+            } catch (error) {
+                // WebdriverIO v10 emulates a device with WebDriver BiDi emulation commands that not all browsers support,
+                // for example `emulation.setTextLayoutModeOverride` in Chrome 154
+                log.info(`Could not emulate the device "${deviceName}" with \`emulate('device')\`, using the device that the browser emulates: ${error}`)
+            }
+
+            await browserInstance.browsingContextSetViewport({
+                context: await browserInstance.getWindowHandle(),
+                devicePixelRatio,
+                viewport: { width, height },
+            })
             return
         }
 
@@ -572,9 +617,11 @@ export default class WdioImageComparisonService extends BaseClass {
     }
 
     async #setEmulation(browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser, capabilities: WebdriverIO.Capabilities) {
-        if (browser.isMultiremote) {
-            const multiremoteBrowser = browser as WebdriverIO.MultiRemoteBrowser
-            for (const browserInstance of Object.values(multiremoteBrowser)) {
+        if (isMultiRemoteBrowser(browser)) {
+            // WebdriverIO v10 no longer stores the instances as properties of the multiremote browser,
+            // `instances` and `getInstance` are available in v9 and v10
+            for (const browserName of browser.instances) {
+                const browserInstance = browser.getInstance(browserName)
                 await this.#setEmulationForBrowser(browserInstance, browserInstance.capabilities)
             }
             return

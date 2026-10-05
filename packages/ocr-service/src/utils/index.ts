@@ -56,3 +56,13 @@ export function isRectanglesObject(obj: WebdriverIO.Element | ChainablePromiseEl
            typeof obj === 'object' &&
            properties.every(prop => typeof (obj as any)[prop] === 'number' && !isNaN((obj as any)[prop]) && (obj as any)[prop] >= 0)
 }
+
+/**
+ * WebdriverIO v10 renamed `isMultiremote` to `isMultiRemote`, check both so v9 and v10 are supported
+ */
+export function isMultiRemoteBrowser(
+    browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+): browser is WebdriverIO.MultiRemoteBrowser {
+    const { isMultiRemote, isMultiremote } = browser as { isMultiRemote?: boolean, isMultiremote?: boolean }
+    return Boolean(isMultiRemote ?? isMultiremote)
+}

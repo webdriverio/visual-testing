@@ -203,8 +203,30 @@ export function validateIgnoreRegion(x: unknown) {
  * Format the error message
  */
 export function formatErrorMessage(item:unknown, message:string) {
+    const notFoundMessage = formatNotFoundElementMessage(item)
+    if (notFoundMessage) {
+        return notFoundMessage
+    }
+
     const formattedItem = isObject(item) ? JSON.stringify(item) : item
     return `${formattedItem} ${message}`
+}
+
+/**
+ * An element that WebdriverIO could not find has an `error` and no `elementId`. `JSON.stringify` of an `Error`
+ * is `{}`, so name the selector and the reason instead, for example a WebdriverIO v10 `StrictSelectorError`
+ */
+function formatNotFoundElementMessage(item:unknown) {
+    if (!isObject(item) || !('error' in (item as object)) || !('selector' in (item as object))) {
+        return undefined
+    }
+
+    const { selector, error } = item as { selector: unknown, error: unknown }
+    const reason = error instanceof Error
+        ? `${error.name && error.name !== 'Error' ? `${error.name}: ` : ''}${error.message}`
+        : String(error)
+
+    return `element "${String(selector)}" could not be found: ${reason}`
 }
 
 /**
@@ -257,6 +279,58 @@ export async function getRegionsFromElements(browserInstance: WebdriverIO.Browse
 /**
  * Translate ignores to regions
  */
+/**
+ * Check that a scope (an element, a browsing context or a browser) can find elements with `$$`
+ */
+function canQueryElements(scope: unknown): scope is Pick<WebdriverIO.Browser, '$$'> {
+    return typeof scope === 'object' && scope !== null && '$$' in scope && typeof scope.$$ === 'function'
+}
+
+/**
+ * Get fresh references of elements
+ *
+ * Browsers can invalidate element references when the DOM is mutated (e.g. by beforeScreenshot CSS/style injection).
+ * Each element is found again with `$$` in its own scope (the element or browsing context it was found from, else the
+ * browser) and at its own index, so an element of a filtered `$$` list, of a chained query or of a frame is found again,
+ * not another element with the same selector. An element without `index` uses a running index for its selector.
+ * An element without a string or function selector (for example from a custom strategy) is used as it is.
+ */
+export async function getFreshElements(browserInstance: WebdriverIO.Browser, elements: WebdriverIO.Element[]): Promise<WebdriverIO.Element[]> {
+    // A WebdriverIO v10 `$$` result is an ElementArray (async array methods), only its indexes are read here
+    const queries = new Map<unknown, Map<unknown, ArrayLike<WebdriverIO.Element>>>()
+    const runningIndexes = new Map<unknown, Map<unknown, number>>()
+    const freshElements: WebdriverIO.Element[] = []
+
+    for (const element of elements) {
+        const { selector } = element
+        if (typeof selector !== 'string' && typeof selector !== 'function') {
+            freshElements.push(element)
+            continue
+        }
+
+        const scope = canQueryElements(element.parent) ? element.parent : browserInstance
+        const scopeQueries = queries.get(scope) ?? new Map<unknown, ArrayLike<WebdriverIO.Element>>()
+        queries.set(scope, scopeQueries)
+        let freshList = scopeQueries.get(selector)
+        if (!freshList) {
+            freshList = await scope.$$(selector)
+            scopeQueries.set(selector, freshList)
+        }
+
+        let index = element.index
+        if (typeof index !== 'number') {
+            const scopeIndexes = runningIndexes.get(scope) ?? new Map<unknown, number>()
+            runningIndexes.set(scope, scopeIndexes)
+            index = scopeIndexes.get(selector) ?? 0
+            scopeIndexes.set(selector, index + 1)
+        }
+
+        freshElements.push(freshList[index] ?? element)
+    }
+
+    return freshElements
+}
+
 export async function determineIgnoreRegions(
     browserInstance: WebdriverIO.Browser,
     ignores: (ElementIgnore | ElementIgnore[])[],
@@ -301,28 +375,10 @@ export async function determineWebScreenIgnoreRegions(
         return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
     }
     // Browsers can invalidate element references when the DOM is mutated
-    // (e.g. by beforeScreenshot CSS/style injection). Re-query via $$ to
-    // get fresh refs. Use $$ per unique selector so multiple elements
-    // sharing the same selector (e.g. from a $$ call) each resolve to
-    // the correct match by index.
+    // (e.g. by beforeScreenshot CSS/style injection), so get fresh refs.
     const regionsFromElements: RectanglesOutput[] = []
-    const selectorCache = new Map<string, WebdriverIO.Element[]>()
-    const selectorIndex = new Map<string, number>()
 
-    for (const element of elements) {
-        const selector = element.selector as string
-
-        if (!selectorCache.has(selector)) {
-            const fresh = await browserInstance.$$(selector)
-            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
-            selectorIndex.set(selector, 0)
-        }
-
-        const idx = selectorIndex.get(selector)!
-        const cached = selectorCache.get(selector)!
-        const el = idx < cached.length ? cached[idx] : element
-        selectorIndex.set(selector, idx + 1)
-
+    for (const el of await getFreshElements(browserInstance, elements)) {
         const bcr = await browserInstance.execute(rawBcr, el as any) as RectanglesOutput
         regionsFromElements.push(bcr)
     }
@@ -392,23 +448,8 @@ export async function determineWebFullPageIgnoreRegions(
     }
 
     const regionsFromElements: RectanglesOutput[] = []
-    const selectorCache = new Map<string, WebdriverIO.Element[]>()
-    const selectorIndex = new Map<string, number>()
 
-    for (const element of elements) {
-        const selector = element.selector as string
-
-        if (!selectorCache.has(selector)) {
-            const fresh = await browserInstance.$$(selector)
-            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
-            selectorIndex.set(selector, 0)
-        }
-
-        const idx = selectorIndex.get(selector)!
-        const cached = selectorCache.get(selector)!
-        const el = idx < cached.length ? cached[idx] : element
-        selectorIndex.set(selector, idx + 1)
-
+    for (const el of await getFreshElements(browserInstance, elements)) {
         const bcr = await browserInstance.execute(rawDocumentBcr, el as any) as RectanglesOutput
         regionsFromElements.push(bcr)
     }
@@ -477,23 +518,8 @@ export async function determineWebElementIgnoreRegions(
     }
 
     const regionsFromElements: RectanglesOutput[] = []
-    const selectorCache = new Map<string, WebdriverIO.Element[]>()
-    const selectorIndex = new Map<string, number>()
 
-    for (const element of elements) {
-        const selector = element.selector as string
-
-        if (!selectorCache.has(selector)) {
-            const fresh = await browserInstance.$$(selector)
-            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
-            selectorIndex.set(selector, 0)
-        }
-
-        const idx = selectorIndex.get(selector)!
-        const cached = selectorCache.get(selector)!
-        const el = idx < cached.length ? cached[idx] : element
-        selectorIndex.set(selector, idx + 1)
-
+    for (const el of await getFreshElements(browserInstance, elements)) {
         const bcr = await browserInstance.execute(rawRelativeBcr, el as any, rootElement as any) as RectanglesOutput
         regionsFromElements.push(bcr)
     }
