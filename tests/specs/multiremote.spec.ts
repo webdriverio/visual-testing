@@ -97,6 +97,12 @@ describe('@wdio/visual-service check that multi remote is working', () => {
             expect(results).toEqual({ chromeBrowserOne: 0, chromeBrowserTwo: 0 })
         })
 
+        it('runs the multiremote element command with a multiremote element that is not awaited', async () => {
+            const results = await multiRemoteBrowser.checkElement(multiRemoteBrowser.$(selector), 'multiremote-check-element-not-awaited', {})
+
+            expect(results).toEqual({ chromeBrowserOne: 0, chromeBrowserTwo: 0 })
+        })
+
         it('runs the element command of one instance on that instance only', async () => {
             const imageData = await getChromeBrowserTwo().saveElement(await getChromeBrowserTwo().$(selector), 'instance-save-element')
 
