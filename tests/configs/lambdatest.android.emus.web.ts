@@ -75,7 +75,7 @@ function createCaps({
     deviceOrientation: DeviceOrientation;
 }): {
     'lt:options': {
-        appiumVersion: string,
+        appiumVersion?: string,
         deviceName: string,
         platformName: string,
         platformVersion: string,
@@ -110,8 +110,9 @@ function createCaps({
             w3c: true,
             queueTimeout: 900,
             idleTimeout: 90,
-            // WebdriverIO v10 requires Appium 3
-            appiumVersion: '3.0.2',
+            // LambdaTest cannot start an Android 14 session with Appium 3.0.2, so Android 14 uses the
+            // default Appium of LambdaTest. The tests pass on it with WebdriverIO v10
+            ...(Number(platformVersion) > 14 ? { appiumVersion: '3.0.2' } : {}),
         },
         'wdio:specs': [mobileSpecs],
         'wdio-ics:options': {
