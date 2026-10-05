@@ -282,6 +282,25 @@ export function isMultiRemoteBrowser(
     return Boolean(isMultiRemote ?? isMultiremote)
 }
 
+interface MultiRemoteElement {
+    instances: string[]
+    getInstance: (instanceName: string) => WebdriverIO.Element
+}
+
+/**
+ * A multiremote element (`multiRemoteBrowser.$()`) has no `parent`, it holds the element of each instance.
+ * `getInstance()` gives that element in WebdriverIO v9 and v10, and its parent is the browser of the instance
+ */
+export function isMultiRemoteElement(element: unknown): element is MultiRemoteElement {
+    if ((typeof element !== 'object' && typeof element !== 'function') || element === null) {
+        return false
+    }
+    const isMultiRemote = Reflect.get(element, 'isMultiRemote') ?? Reflect.get(element, 'isMultiremote')
+    return isMultiRemote === true
+        && Array.isArray(Reflect.get(element, 'instances'))
+        && typeof Reflect.get(element, 'getInstance') === 'function'
+}
+
 /**
  * Traverse up the scope chain until browser element was reached
  */

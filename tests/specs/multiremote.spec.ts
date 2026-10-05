@@ -78,4 +78,30 @@ describe('@wdio/visual-service check that multi remote is working', () => {
             expect(fileExists(filePath)).toBe(true)
         }
     })
+
+    // https://github.com/webdriverio/visual-testing/issues/1238
+    describe('element commands and matchers', () => {
+        const selector = '.hero__title-logo'
+
+        it('compares a multiremote element on each instance with the matcher', async () => {
+            await expect(multiRemoteBrowser.$(selector)).toMatchElementSnapshot('multiremote-element', 0)
+        })
+
+        it('compares the element of one instance with the matcher', async () => {
+            await expect(getChromeBrowserOne().$(selector)).toMatchElementSnapshot('instance-element', 0)
+        })
+
+        it('runs the multiremote element command on each instance with the element of that instance', async () => {
+            const results = await multiRemoteBrowser.checkElement(await multiRemoteBrowser.$(selector), 'multiremote-check-element', {})
+
+            expect(results).toEqual({ chromeBrowserOne: 0, chromeBrowserTwo: 0 })
+        })
+
+        it('runs the element command of one instance on that instance only', async () => {
+            const imageData = await getChromeBrowserTwo().saveElement(await getChromeBrowserTwo().$(selector), 'instance-save-element')
+
+            // The multiremote command gives the image data of each instance, the command of an instance gives one
+            expect(imageData.fileName).toBe(`instance-save-element-chrome-latest-two-${resolution}.png`)
+        })
+    })
 })

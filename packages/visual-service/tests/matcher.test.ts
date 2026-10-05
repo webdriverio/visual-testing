@@ -89,6 +89,62 @@ describe('custom visual matcher', () => {
         expect(browser.checkElement).toHaveBeenCalledWith(element, 'foo', expect.any(Object))
     })
 
+    describe('toMatchElementSnapshot with a multiremote element', () => {
+        // `multiRemoteBrowser.$()` gives an element without `parent`, `getInstance()` gives the element of each
+        // instance, and the parent of that element is the browser of the instance
+        const createMultiRemoteElement = (version: 'v9' | 'v10', misMatchPercentages = { chrome: 0, firefox: 0 }) => {
+            const instanceBrowsers = {
+                chrome: { checkElement: vi.fn().mockResolvedValue({ misMatchPercentage: misMatchPercentages.chrome, folders }) },
+                firefox: { checkElement: vi.fn().mockResolvedValue({ misMatchPercentage: misMatchPercentages.firefox, folders }) },
+            }
+            const instanceElements: Record<string, { elementId: string, parent: object }> = {
+                chrome: { elementId: 'chrome-element', parent: instanceBrowsers.chrome },
+                firefox: { elementId: 'firefox-element', parent: instanceBrowsers.firefox },
+            }
+            const element = {
+                // WebdriverIO v9 has `isMultiremote` and the elements as properties, v10 has `isMultiRemote`
+                ...(version === 'v10' ? { isMultiRemote: true } : { isMultiremote: true, ...instanceElements }),
+                selector: '#purplebox',
+                instances: Object.keys(instanceElements),
+                getInstance: (instanceName: string) => instanceElements[instanceName],
+            } as any as WebdriverIO.Element
+
+            return { element, instanceBrowsers, instanceElements }
+        }
+
+        it.each(['v9', 'v10'] satisfies Array<'v9' | 'v10'>)('compares the element on each instance (WebdriverIO %s)', async (version) => {
+            const { element, instanceBrowsers, instanceElements } = createMultiRemoteElement(version)
+
+            await expect(toMatchElementSnapshot(element, 'purplebox', 0, {})).resolves.toEqual({
+                pass: true,
+                message: expect.any(Function)
+            })
+            expect(instanceBrowsers.chrome.checkElement).toHaveBeenCalledTimes(1)
+            expect(instanceBrowsers.chrome.checkElement).toHaveBeenCalledWith(instanceElements.chrome, 'purplebox', expect.any(Object))
+            expect(instanceBrowsers.firefox.checkElement).toHaveBeenCalledTimes(1)
+            expect(instanceBrowsers.firefox.checkElement).toHaveBeenCalledWith(instanceElements.firefox, 'purplebox', expect.any(Object))
+        })
+
+        it('fails with the message of each instance that does not match', async () => {
+            const { element } = createMultiRemoteElement('v10', { chrome: 0, firefox: 5 })
+
+            const result = await toMatchElementSnapshot(element, 'purplebox', 1, {})
+
+            expect(result.pass).toBe(false)
+            expect(result.message()).toContain('Instance "firefox":\nExpected image mismatch percentage to be at most 1%, but was 5%.')
+            expect(result.message()).not.toContain('Instance "chrome"')
+        })
+
+        it('gives a clear error when the browser of an instance has no checkElement command', async () => {
+            const { element, instanceElements } = createMultiRemoteElement('v10')
+            instanceElements.firefox.parent = {}
+
+            await expect(toMatchElementSnapshot(element, 'purplebox')).rejects.toThrow(
+                'The visual service did not add the "checkElement" command to this session'
+            )
+        })
+    })
+
     it('toMatchTabbablePageSnapshot', async () => {
         await expect(toMatchTabbablePageSnapshot(browser, 'foo', 123, {})).resolves.toEqual({
             pass: true,
