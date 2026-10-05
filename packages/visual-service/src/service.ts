@@ -370,6 +370,8 @@ export default class WdioImageComparisonService extends BaseClass {
             ) {
                 const returnData: Record<string, any> = {}
                 const elementOptionsKey = commandName === 'saveElement' ? 'saveElementOptions' : 'checkElementOptions'
+                // Await the element first: on a not awaited element (`multiRemoteBrowser.$()`), a property is a chained command
+                const resolvedElement = await element
 
                 for (const browserName of browserNames) {
                     const browserInstance = browser.getInstance(browserName)
@@ -402,7 +404,7 @@ export default class WdioImageComparisonService extends BaseClass {
                                 folders: getFolders(elementOptions, self.folders, self.#getBaselineFolder()),
                                 tag,
                                 // The element of a multiremote element for this browser, the multiremote element is not an element of this browser
-                                element: isMultiRemoteElement(element) ? element.getInstance(browserName) : element,
+                                element: isMultiRemoteElement(resolvedElement) ? resolvedElement.getInstance(browserName) : resolvedElement,
                                 [elementOptionsKey]: {
                                     wic: self.defaultOptions,
                                     method: elementOptions,

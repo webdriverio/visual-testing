@@ -311,6 +311,23 @@ describe('@wdio/visual-service', () => {
                 expect(firefoxArgs.browserInstance).toBe(instances.firefox)
                 expect(firefoxArgs.element).toBe(instanceElements.firefox)
             })
+
+            it.each(versions)('gives the element of each instance when the multiremote element is not awaited (WebdriverIO %s)', async (version) => {
+                const { browser, browserMock, instanceElements, multiRemoteElement } = createMultiRemoteBrowser(version)
+                // `multiRemoteBrowser.$()` without `await`: as in the chainable of WebdriverIO, a property is a chained command
+                const notAwaitedElement = {
+                    isMultiRemote: vi.fn(),
+                    isMultiremote: vi.fn(),
+                    then: (resolve: (element: typeof multiRemoteElement) => void) => resolve(multiRemoteElement),
+                }
+
+                await service.before(multiremoteCapabilities, [], browser)
+                await browserMock.checkElement(notAwaitedElement, 'purplebox')
+
+                const [[chromeArgs], [firefoxArgs]] = vi.mocked(checkElement).mock.calls
+                expect(chromeArgs.element).toBe(instanceElements.chrome)
+                expect(firefoxArgs.element).toBe(instanceElements.firefox)
+            })
         })
 
         describe('mobile emulation with mobileEmulation.deviceName', () => {

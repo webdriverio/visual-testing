@@ -140,10 +140,10 @@ importers:
   packages/image-comparison-core:
     dependencies:
       '@wdio/logger':
-        specifier: ^9.29.1 || ^10.0.0-0
+        specifier: ^9.29.1 || ^10.0.0
         version: 10.0.0
       '@wdio/types':
-        specifier: ^9.29.1 || ^10.0.0-0
+        specifier: ^9.29.1 || ^10.0.0
         version: 10.0.0
       fast-png:
         specifier: ^8.0.0
@@ -162,13 +162,13 @@ importers:
         specifier: 7.10.1
         version: 7.10.1(@types/node@26.6.4)
       '@wdio/globals':
-        specifier: ^9.29.1 || ^10.0.0-0
+        specifier: ^9.29.1 || ^10.0.0
         version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(yauzl@3.4.0)))(webdriverio@10.0.0(yauzl@3.4.0))
       '@wdio/logger':
-        specifier: ^9.29.1 || ^10.0.0-0
+        specifier: ^9.29.1 || ^10.0.0
         version: 10.0.0
       '@wdio/types':
-        specifier: ^9.29.1 || ^10.0.0-0
+        specifier: ^9.29.1 || ^10.0.0
         version: 10.0.0
       fuse.js:
         specifier: ^7.4.2
@@ -287,16 +287,16 @@ importers:
   packages/visual-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^9.29.1 || ^10.0.0-0
+        specifier: ^9.29.1 || ^10.0.0
         version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(yauzl@3.4.0)))(webdriverio@10.0.0(yauzl@3.4.0))
       '@wdio/image-comparison-core':
         specifier: workspace:*
         version: link:../image-comparison-core
       '@wdio/logger':
-        specifier: ^9.29.1 || ^10.0.0-0
+        specifier: ^9.29.1 || ^10.0.0
         version: 10.0.0
       '@wdio/types':
-        specifier: ^9.29.1 || ^10.0.0-0
+        specifier: ^9.29.1 || ^10.0.0
         version: 10.0.0
     devDependencies:
       expect-webdriverio:
@@ -2635,10 +2635,6 @@ packages:
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
-
-  ansi-regex@6.2.2:
-    resolution: {integrity: sha512-Bq3SmSpyFHaWjPk8If9yc6svM8c56dB5BAtW4Qbw5jHTwwXXcTLoRMkpDJp6VL0XzlWaCHTXrkFURMYmD0sLqg==}
-    engines: {node: '>=12'}
 
   ansi-regex@6.4.0:
     resolution: {integrity: sha512-KzTVk2tCWAHtYrvvvaP8bJKJq2pVinhLcGEQdtLIYPbmNGNyYe8QwNaTUYQp2J7/vIsUKt5QCqAfUkYyG9DkOw==}
@@ -10746,8 +10742,6 @@ snapshots:
 
   ansi-regex@5.0.1: {}
 
-  ansi-regex@6.2.2: {}
-
   ansi-regex@6.4.0: {}
 
   ansi-styles@4.3.0:
@@ -14460,7 +14454,7 @@ snapshots:
       log-symbols: 7.0.1
       stdin-discarder: 0.2.2
       string-width: 8.1.0
-      strip-ansi: 7.1.2
+      strip-ansi: 7.2.0
 
   os-name@6.1.0:
     dependencies:
@@ -15753,11 +15747,11 @@ snapshots:
 
   strip-ansi@7.1.0:
     dependencies:
-      ansi-regex: 6.2.2
+      ansi-regex: 6.4.0
 
   strip-ansi@7.1.2:
     dependencies:
-      ansi-regex: 6.2.2
+      ansi-regex: 6.4.0
 
   strip-ansi@7.2.0:
     dependencies:
