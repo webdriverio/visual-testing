@@ -1,5 +1,13 @@
 # @wdio/ocr-service
 
+## 2.3.1
+
+### Patch Changes
+
+- 525a75a: chore: accept the WebdriverIO 10 releases instead of the 10.0.0 prereleases
+
+  The `@wdio/globals`, `@wdio/logger` and `@wdio/types` ranges change from `^9.29.1 || ^10.0.0-0` to `^9.29.1 || ^10.0.0`. WebdriverIO 10.0.0 is released, so the alpha versions are no longer accepted. WebdriverIO v9 (9.29.1 and later) is still supported.
+
 ## 2.3.0
 
 ### Minor Changes

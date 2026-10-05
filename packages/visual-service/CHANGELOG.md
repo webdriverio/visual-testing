@@ -1,5 +1,24 @@
 # @wdio/visual-service
 
+## 10.2.1
+
+### Patch Changes
+
+- 525a75a: fix: the element commands and `toMatchElementSnapshot` in a multiremote session (#1238)
+
+  In a multiremote session, `checkElement`, `saveElement` and `toMatchElementSnapshot` failed. They now work with WebdriverIO v9 and v10.
+
+  - `toMatchElementSnapshot` on a multiremote element (`expect(multiRemoteBrowser.$('#el')).toMatchElementSnapshot('tag')`) compares the element on each instance and gives the result of each instance, as `toMatchScreenSnapshot` does on the multiremote browser. Before, it failed with `The visual service did not add the "checkElement" command to this session`.
+  - `checkElement` and `saveElement` on an instance (`multiRemoteBrowser.getInstance('chrome').checkElement(element, 'tag')`), and `toMatchElementSnapshot` on the element of an instance, run on that instance only. Before, the command also ran on the other instances with the element of this instance, and failed with `no such node`.
+  - `multiRemoteBrowser.checkElement()` and `multiRemoteBrowser.saveElement()` with a multiremote element give the element of each instance to the command of that instance. Before, they failed with `Unsupported type: function`. The types of these two commands now accept a multiremote element.
+
+- 525a75a: chore: accept the WebdriverIO 10 releases instead of the 10.0.0 prereleases
+
+  The `@wdio/globals`, `@wdio/logger` and `@wdio/types` ranges change from `^9.29.1 || ^10.0.0-0` to `^9.29.1 || ^10.0.0`. WebdriverIO 10.0.0 is released, so the alpha versions are no longer accepted. WebdriverIO v9 (9.29.1 and later) is still supported.
+
+- Updated dependencies [525a75a]
+  - @wdio/image-comparison-core@2.1.2
+
 ## 10.2.0
 
 ### Minor Changes
