@@ -8,6 +8,7 @@ import {
     enrichTestContext,
     getLtOptions,
     isMultiRemoteBrowser,
+    isMultiRemoteElement,
 } from '../src/utils.js'
 
 // Import the functions we need to spy on
@@ -748,6 +749,33 @@ describe('utils', () => {
 
         it('should return false when neither flag is set', () => {
             expect(isMultiRemoteBrowser({} as any)).toBe(false)
+        })
+    })
+
+    describe('isMultiRemoteElement', () => {
+        // `multiRemoteBrowser.$()` gives an element without `parent`, `getInstance()` gives the element of each instance
+        const getInstance = (instanceName: string) => ({ elementId: `${instanceName}-element` })
+
+        it('should return true for a WebdriverIO v10 multiremote element (isMultiRemote)', () => {
+            expect(isMultiRemoteElement({ isMultiRemote: true, instances: ['chrome'], getInstance })).toBe(true)
+        })
+
+        it('should return true for a WebdriverIO v9 multiremote element (isMultiremote)', () => {
+            expect(isMultiRemoteElement({ isMultiremote: true, instances: ['chrome'], getInstance })).toBe(true)
+        })
+
+        it('should return false for the element of one instance', () => {
+            expect(isMultiRemoteElement({ isMultiRemote: false, elementId: 'chrome-element', parent: {} })).toBe(false)
+        })
+
+        it('should return false for a multiremote object without getInstance', () => {
+            expect(isMultiRemoteElement({ isMultiRemote: true, instances: ['chrome'] })).toBe(false)
+        })
+
+        it('should return false for a value that is not an object', () => {
+            expect(isMultiRemoteElement(undefined)).toBe(false)
+            expect(isMultiRemoteElement(null)).toBe(false)
+            expect(isMultiRemoteElement('element')).toBe(false)
         })
     })
 

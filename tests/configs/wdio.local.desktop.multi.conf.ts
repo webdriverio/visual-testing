@@ -84,7 +84,8 @@ export const config: WebdriverIO.MultiRemoteConfig = {
                 baselineFolder: join(process.cwd(), './localBaseline/'),
                 formatImageName: '{tag}-{logName}-{width}x{height}',
                 screenshotPath: join(process.cwd(), '.tmp/'),
-                autoSaveBaseline: false,
+                // CI has no baselines, the check commands and the matchers create them in the same run
+                autoSaveBaseline: true,
                 savePerInstance: true,
                 blockOutStatusBar: true,
                 blockOutToolBar: true,

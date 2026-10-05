@@ -92,7 +92,25 @@ declare global {
             ): Promise<void>;
         }
         interface Browser extends BaseBrowser {}
-        interface MultiRemoteBrowser extends BaseBrowser {}
+        interface MultiRemoteBrowser extends BaseBrowser {
+            /**
+             * Saves an image of an element on each instance, with the element of that instance when it is a multiremote element
+             */
+            saveElement(
+                element: WicElement | MultiRemoteElement,
+                tag: string,
+                saveElementOptions?: WdioSaveElementMethodOptions
+            ): Promise<Output>;
+
+            /**
+             * Compare an image of an element on each instance, with the element of that instance when it is a multiremote element
+             */
+            checkElement(
+                element: WicElement | MultiRemoteElement,
+                tag: string,
+                checkElementOptions?: WdioCheckElementMethodOptions
+            ): Promise<Result>;
+        }
         interface Element {}
         interface Capabilities {
             'wdio-ics:options'?: WdioIcsOptions;

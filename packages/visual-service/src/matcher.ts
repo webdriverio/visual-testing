@@ -1,6 +1,6 @@
 import type { ImageCompareResult } from '@wdio/image-comparison-core'
 
-import { getBrowserObject } from './utils.js'
+import { getBrowserObject, isMultiRemoteElement } from './utils.js'
 import type {
     WdioCheckFullPageMethodOptions,
     WdioCheckElementMethodOptions,
@@ -58,10 +58,12 @@ function isMultiremoteResult(
     return typeof result === 'object' && Object.values(result)[0]?.misMatchPercentage !== undefined
 }
 
-function compareResult (result: ImageCompareResult, expected: number | ExpectWebdriverIO.PartialMatcher<number>) {
-    const isMultiremote = isMultiremoteResult(result)
-    const results = isMultiremote
-        ? Object.entries(result as unknown as Record<string, ImageCompareResult>).map(([instanceName, instanceResult]) => ({
+function compareResult (
+    result: ImageCompareResult | Record<string, ImageCompareResult>,
+    expected: number | ExpectWebdriverIO.PartialMatcher<number>
+) {
+    const results = isMultiremoteResult(result)
+        ? Object.entries(result).map(([instanceName, instanceResult]) => ({
             instanceName,
             result: instanceResult,
         }))
@@ -184,10 +186,25 @@ export async function toMatchElementSnapshot (
     optionsOrUndefined?: WdioCheckElementMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
-    const browser = getBrowserObject(await element)
-    assertVisualCommand(browser, 'checkElement')
-    const result = await browser.checkElement(await element, tag, options) as ImageCompareResult
+    const resolvedElement = await element
+
+    // A multiremote element has no parent, so compare the element of each instance with the browser of that instance
+    if (isMultiRemoteElement(resolvedElement)) {
+        const results: Record<string, ImageCompareResult> = {}
+        for (const instanceName of resolvedElement.instances) {
+            results[instanceName] = await checkElementOfBrowser(resolvedElement.getInstance(instanceName), tag, options)
+        }
+        return compareResult(results, expectedResult || DEFAULT_EXPECTED_RESULT)
+    }
+
+    const result = await checkElementOfBrowser(resolvedElement, tag, options)
     return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
+}
+
+async function checkElementOfBrowser (element: WebdriverIO.Element, tag: string, options: WdioCheckElementMethodOptions) {
+    const browser = getBrowserObject(element)
+    assertVisualCommand(browser, 'checkElement')
+    return await browser.checkElement(element, tag, options) as ImageCompareResult
 }
 
 export async function toMatchTabbablePageSnapshot (
