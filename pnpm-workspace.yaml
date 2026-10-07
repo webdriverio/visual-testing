@@ -1,7 +1,46 @@
-# pnpm-workspace.yaml
 packages:
-    - "packages/image-comparison-core"
-    - "packages/visual-service"
-    - "packages/ocr-service"
-    - "packages/visual-reporter"
-    - "packages/visual-remix-reporter"
+  - packages/*
+
+# TEMPORARY, remove after 2026-10-08 06:00 UTC: pnpm 9 added rollup 4.64.1 (published 2026-10-07)
+# to the lockfile, and pnpm 11 refuses packages that are less than 1 day old (`minimumReleaseAge`).
+# Only this exact version is excluded from the rule.
+minimumReleaseAgeExclude:
+  - '@rollup/rollup-android-arm-eabi@4.64.1'
+  - '@rollup/rollup-android-arm64@4.64.1'
+  - '@rollup/rollup-darwin-arm64@4.64.1'
+  - '@rollup/rollup-darwin-x64@4.64.1'
+  - '@rollup/rollup-freebsd-arm64@4.64.1'
+  - '@rollup/rollup-freebsd-x64@4.64.1'
+  - '@rollup/rollup-linux-arm-gnueabihf@4.64.1'
+  - '@rollup/rollup-linux-arm-musleabihf@4.64.1'
+  - '@rollup/rollup-linux-arm64-gnu@4.64.1'
+  - '@rollup/rollup-linux-arm64-musl@4.64.1'
+  - '@rollup/rollup-linux-loong64-gnu@4.64.1'
+  - '@rollup/rollup-linux-loong64-musl@4.64.1'
+  - '@rollup/rollup-linux-ppc64-gnu@4.64.1'
+  - '@rollup/rollup-linux-ppc64-musl@4.64.1'
+  - '@rollup/rollup-linux-riscv64-gnu@4.64.1'
+  - '@rollup/rollup-linux-riscv64-musl@4.64.1'
+  - '@rollup/rollup-linux-s390x-gnu@4.64.1'
+  - '@rollup/rollup-linux-x64-gnu@4.64.1'
+  - '@rollup/rollup-linux-x64-musl@4.64.1'
+  - '@rollup/rollup-openbsd-x64@4.64.1'
+  - '@rollup/rollup-openharmony-arm64@4.64.1'
+  - '@rollup/rollup-win32-arm64-msvc@4.64.1'
+  - '@rollup/rollup-win32-ia32-msvc@4.64.1'
+  - '@rollup/rollup-win32-x64-gnu@4.64.1'
+  - '@rollup/rollup-win32-x64-msvc@4.64.1'
+  - 'rollup@4.64.1'
+
+patchedDependencies:
+  wdio-lambdatest-service@4.0.1: patches/wdio-lambdatest-service@4.0.1.patch
+
+# edgedriver/geckodriver: WebdriverIO downloads the drivers at runtime.
+# Others only print messages or run version checks.
+allowBuilds:
+  edgedriver: false
+  esbuild: true
+  geckodriver: false
+  protobufjs: false
+  tesseract.js: false
+  unrs-resolver: false

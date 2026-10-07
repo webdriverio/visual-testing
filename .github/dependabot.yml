@@ -5,3 +5,7 @@ updates:
   schedule:
     interval: weekly
   open-pull-requests-limit: 10
+  # pnpm 11 refuses packages published less than 1 day ago (`minimumReleaseAge`),
+  # so only propose versions that are at least 1 day old
+  cooldown:
+    default-days: 1

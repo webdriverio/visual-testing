@@ -5,6 +5,10 @@
   "license": "MIT",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22.19.0",
+    "pnpm": ">=11"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/webdriverio-community/visual-testing.git"
@@ -50,13 +54,13 @@
     "test.lambdatest.web": "wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
     "test.lambdatest.emu.web": "cross-env LT_ENV=emu wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
     "test.lambdatest.sims.web": "cross-env LT_ENV=sims wdio ./tests/configs/wdio.lambdatest.web.conf.ts",
-    "pnpm.install.workaround": "pnpm install --shamefully-hoist",
     "update.packages": "node ./scripts/update.packages.mjs",
     "prepare": "husky",
     "watch": "pnpm run -r --parallel watch"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
+    "@inquirer/prompts": "^7.10.1",
     "@tsconfig/node20": "^20.1.9",
     "@types/eslint": "^9.6.1",
     "@types/inquirer": "^9.0.10",
@@ -98,10 +102,5 @@
     "webdriverio": "^10.0.0",
     "wdio-lambdatest-service": "^4.0.1"
   },
-  "packageManager": "pnpm@9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7",
-  "pnpm": {
-    "patchedDependencies": {
-      "wdio-lambdatest-service@4.0.1": "patches/wdio-lambdatest-service@4.0.1.patch"
-    }
-  }
+  "packageManager": "pnpm@11.28.2+sha512.755ce2fe3c05bfd7bb412b42aff3c5c55cd38c529c6eca810475497ae36746c571e4b6e1814e6e7e4b97d7ee864b8a0e44673c3b297a50e0ac28771c5ce15d27"
 }

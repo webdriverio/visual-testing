@@ -81,10 +81,6 @@ Removing dependencies in visual-service...
 Removing dependencies in webdriver-image-comparison...
 ? Would you like reinstall the dependencies? yes
 Installing dependencies in /Users/wswebcreation/Git/wdio/visual-testing...
-
-> @wdio/visual-testing-monorepo@ pnpm.install.workaround /Users/wswebcreation/Git/wdio/visual-testing
-> pnpm install --shamefully-hoist
-
 Scope: all 5 workspace projects
 Lockfile is up to date, resolution step is skipped
 Packages: +1274
@@ -175,7 +171,7 @@ To create a PR for this project and start contributing follow this step-by-step 
     ```sh
     $ cd visual-testing
     $ corepack enable
-    $ pnpm pnpm.install.workaround
+    $ pnpm install
     ```
 
 -   Run the watch mode that will automatically transpile the code
