@@ -140,10 +140,10 @@ importers:
   packages/image-comparison-core:
     dependencies:
       '@wdio/logger':
-        specifier: ^9.29.1 || ^10.0.0
+        specifier: ^10.0.0
         version: 10.0.0
       '@wdio/types':
-        specifier: ^9.29.1 || ^10.0.0
+        specifier: ^10.0.0
         version: 10.0.0
       fast-png:
         specifier: ^8.0.0
@@ -162,13 +162,13 @@ importers:
         specifier: 7.10.1
         version: 7.10.1(@types/node@26.6.4)
       '@wdio/globals':
-        specifier: ^9.29.1 || ^10.0.0
+        specifier: ^10.0.0
         version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(yauzl@3.4.0)))(webdriverio@10.0.0(yauzl@3.4.0))
       '@wdio/logger':
-        specifier: ^9.29.1 || ^10.0.0
+        specifier: ^10.0.0
         version: 10.0.0
       '@wdio/types':
-        specifier: ^9.29.1 || ^10.0.0
+        specifier: ^10.0.0
         version: 10.0.0
       fuse.js:
         specifier: ^7.4.2
@@ -287,16 +287,16 @@ importers:
   packages/visual-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^9.29.1 || ^10.0.0
+        specifier: ^10.0.0
         version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(yauzl@3.4.0)))(webdriverio@10.0.0(yauzl@3.4.0))
       '@wdio/image-comparison-core':
         specifier: workspace:*
         version: link:../image-comparison-core
       '@wdio/logger':
-        specifier: ^9.29.1 || ^10.0.0
+        specifier: ^10.0.0
         version: 10.0.0
       '@wdio/types':
-        specifier: ^9.29.1 || ^10.0.0
+        specifier: ^10.0.0
         version: 10.0.0
     devDependencies:
       expect-webdriverio:

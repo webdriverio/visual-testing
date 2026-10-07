@@ -70,7 +70,8 @@ All the options: [service options](https://webdriver.io/docs/visual-testing/serv
 
 | Version | npm tag | Status | Supported until |
 |---|---|---|---|
-| **v10** — `@wdio/visual-service@10` / `@wdio/image-comparison-core@2` | `latest` | ✅ Active development | — |
+| **v11** — `@wdio/visual-service@11` / `@wdio/image-comparison-core@3` | `next` | 🚧 Prerelease, WebdriverIO v10 only | — |
+| **v10** — `@wdio/visual-service@10` / `@wdio/image-comparison-core@2` | `latest` (`legacy-v10` after the v11 release) | 🛠️ Maintenance for WebdriverIO v9 users (fixes backported on request) | — |
 | **v9** — `@wdio/visual-service@9` / `@wdio/image-comparison-core@1` | `legacy` | 🛠️ Maintenance (critical fixes only) | 12 months after the v10 release |
 
 > [!IMPORTANT]
@@ -78,12 +79,12 @@ All the options: [service options](https://webdriver.io/docs/visual-testing/serv
 
 ### WebdriverIO compatibility
 
-The versions in the table above are the versions of the visual testing packages, not of WebdriverIO. From version 10.2.0, `@wdio/visual-service` supports WebdriverIO v9 and WebdriverIO v10.
+The versions in the table above are the versions of the visual testing packages, not of WebdriverIO. From version 10.2.0, `@wdio/visual-service` supports WebdriverIO v9 and WebdriverIO v10. From version 11, it supports only WebdriverIO v10.
 
 | Package | WebdriverIO v9 (9.29.1 and later) | WebdriverIO v10 |
 |---|---|---|
-| `@wdio/visual-service` | v9 and v10 | 10.2.0 and later |
-| `@wdio/ocr-service` | v2 | 2.3.0 and later |
+| `@wdio/visual-service` | v9 and v10 | 10.2.0 and later, v11 |
+| `@wdio/ocr-service` | v2 | 2.3.0 and later, v3 |
 
 > [!NOTE]
 > WebdriverIO v10 needs Node.js 22.19 or later. WebdriverIO v9 needs Node.js 18.20 or later.

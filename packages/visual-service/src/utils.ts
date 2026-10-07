@@ -273,13 +273,34 @@ export async function getInstanceData({
 }
 
 /**
- * WebdriverIO v10 renamed `isMultiremote` to `isMultiRemote`, check both so v9 and v10 are supported
+ * Tells a multiremote browser apart from a single browser
  */
 export function isMultiRemoteBrowser(
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
 ): browser is WebdriverIO.MultiRemoteBrowser {
-    const { isMultiRemote, isMultiremote } = browser as { isMultiRemote?: boolean, isMultiremote?: boolean }
-    return Boolean(isMultiRemote ?? isMultiremote)
+    return browser.isMultiRemote === true
+}
+
+/**
+ * WebdriverIO brands its objects with their role: `'browser'`, `'element'`, `'element-array'`, `'mock'` or
+ * `'browsing-context'`. `Symbol.for()` gives the same symbol in every copy of WebdriverIO, so no import is needed.
+ * See https://github.com/webdriverio/webdriverio/pull/15812
+ */
+const WDIO_KIND: unique symbol = Symbol.for('wdio.kind')
+
+/**
+ * Tells if a value is a WebdriverIO object with this kind
+ */
+function isWdioKind(value: unknown, kind: string): value is object {
+    return (typeof value === 'object' || typeof value === 'function') && value !== null
+        && WDIO_KIND in value && value[WDIO_KIND] === kind
+}
+
+/**
+ * The kind of a multiremote browser is also `'browser'`, so check `isMultiRemote` too
+ */
+function isSingleBrowser(value: unknown): value is WebdriverIO.Browser {
+    return isWdioKind(value, 'browser') && !('isMultiRemote' in value && value.isMultiRemote === true)
 }
 
 interface MultiRemoteElement {
@@ -289,28 +310,28 @@ interface MultiRemoteElement {
 
 /**
  * A multiremote element (`multiRemoteBrowser.$()`) has no `parent`, it holds the element of each instance.
- * `getInstance()` gives that element in WebdriverIO v9 and v10, and its parent is the browser of the instance
+ * `getInstance()` gives that element, and its parent is the browser of the instance.
+ * The kind does not tell if an element is multiremote, so check `isMultiRemote` too
  */
 export function isMultiRemoteElement(element: unknown): element is MultiRemoteElement {
-    if ((typeof element !== 'object' && typeof element !== 'function') || element === null) {
-        return false
-    }
-    const isMultiRemote = Reflect.get(element, 'isMultiRemote') ?? Reflect.get(element, 'isMultiremote')
-    return isMultiRemote === true
-        && Array.isArray(Reflect.get(element, 'instances'))
-        && typeof Reflect.get(element, 'getInstance') === 'function'
+    return isWdioKind(element, 'element') && 'isMultiRemote' in element && element.isMultiRemote === true
 }
 
 /**
- * Traverse up the scope chain until browser element was reached
+ * Traverse up the scope chain until the browser is reached.
+ * In WebdriverIO v10 the parent of an element can also be a browsing context, which holds the browser in `browser`
  */
-export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browser): WebdriverIO.Browser {
-    // With WebdriverIO v10 the parent can also be a browsing context, which holds the browser in `browser`
-    const { parent, browser } = elem as { parent?: WebdriverIO.Element | WebdriverIO.Browser, browser?: WebdriverIO.Browser }
-    if (parent) {
-        return getBrowserObject(parent)
+export function getBrowserObject(elem: unknown): WebdriverIO.Browser {
+    if (isSingleBrowser(elem)) {
+        return elem
     }
-    return browser ?? elem as WebdriverIO.Browser
+    if (isWdioKind(elem, 'browsing-context') && 'browser' in elem) {
+        return getBrowserObject(elem.browser)
+    }
+    if (isWdioKind(elem, 'element') && 'parent' in elem) {
+        return getBrowserObject(elem.parent)
+    }
+    throw new Error('Could not find the browser of this element. Use an element of WebdriverIO v10, for example from `browser.$()`.')
 }
 
 /**
