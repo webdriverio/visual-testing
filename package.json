@@ -61,7 +61,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
     "@inquirer/prompts": "^7.10.1",
-    "@tsconfig/node20": "^20.1.9",
+    "@tsconfig/node20": "^20.1.10",
     "@types/eslint": "^9.6.1",
     "@types/inquirer": "^9.0.10",
     "@types/jsdom": "~30.0.0",
