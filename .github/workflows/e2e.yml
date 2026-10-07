@@ -22,18 +22,22 @@ jobs:
   ci-pr-desktop-web:
     name: 🔄 💻 CI PR Run Desktop Web Tests on LambdaTest
     runs-on: ubuntu-latest
-    # Needs the cloud credentials, which GitHub does not give to pull requests from forks.
-    # For Dependabot, run only when the update can change the desktop e2e results.
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot.
+    # The intent is to also run this job on the Dependabot updates that can change the desktop e2e results.
+    # This needs the Dependabot secrets LAMBDATEST_USERNAME and LAMBDATEST_ACCESS_KEY, which only a repository
+    # admin can add. Without them, the job always fails and blocks the auto-merge, so Dependabot is skipped.
+    # When an admin adds these secrets, replace the condition with:
+    #   github.event.pull_request.head.repo.full_name == github.repository && (
+    #     github.actor != 'dependabot[bot]' ||
+    #     contains(github.event.pull_request.title, 'copyfiles') ||
+    #     contains(github.event.pull_request.title, 'rimraf') ||
+    #     contains(github.event.pull_request.title, 'lambdatest') ||
+    #     contains(github.event.pull_request.title, 'webdriverio') ||
+    #     (contains(github.event.pull_request.title, '@wdio/') && !contains(github.event.pull_request.title, '@wdio/appium-service'))
+    #   )
     if: |
-      github.event.pull_request.head.repo.full_name == github.repository && (
-        github.actor != 'dependabot[bot]' ||
-        contains(github.event.pull_request.title, 'copyfiles') ||
-        contains(github.event.pull_request.title, 'rimraf') ||
-        contains(github.event.pull_request.title, 'saucelabs') ||
-        contains(github.event.pull_request.title, 'lambdatest') ||
-        contains(github.event.pull_request.title, 'webdriverio') ||
-        (contains(github.event.pull_request.title, '@wdio/') && !contains(github.event.pull_request.title, '@wdio/appium-service'))
-      )
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -83,7 +87,7 @@ jobs:
   ci-pr-android-web:
     name: 🔄 🤖 🌐 CI PR Run Android Web Tests on LambdaTest
     runs-on: ubuntu-latest
-    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
     if: |
       github.actor != 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository
@@ -136,7 +140,7 @@ jobs:
   ci-pr-ios-web:
     name: 🔄 🍏 🌐 CI PR Run iOS Web Tests on LambdaTest
     runs-on: ubuntu-latest
-    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
     if: |
       github.actor != 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository
@@ -189,7 +193,7 @@ jobs:
   ci-pr-app:
     name: 🔄 📱 CI PR Run Mobile App Tests on Sauce
     runs-on: ubuntu-latest
-    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
     if: |
       github.actor != 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository
@@ -242,7 +246,7 @@ jobs:
   ci-pr-ocr:
     name: 🔄 📱 CI PR Run OCR Tests  on LambdaTest
     runs-on: ubuntu-latest
-    # Needs the cloud credentials, which GitHub does not give to pull requests from forks
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
     if: |
       github.actor != 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository
