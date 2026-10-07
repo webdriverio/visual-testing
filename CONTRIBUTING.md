@@ -202,7 +202,7 @@ This project uses [changesets](https://github.com/changesets/changesets) to auto
 
 Several tests need to be executed to be able to test the module. When adding a PR all tests must at least pass the local tests. GitHub Actions tests each PR automatically:
 
--   [`checks`](https://github.com/webdriverio/visual-testing/actions/workflows/checks.yml): lint, unit tests and the WebdriverIO v10 tests on local headless Chrome (Mocha and Jasmine). It runs for every PR, also from forks, and for every push to `main`.
+-   [`checks`](https://github.com/webdriverio/visual-testing/actions/workflows/checks.yml): lint, unit tests and the WebdriverIO v10 tests on local headless Chrome (Mocha and Jasmine). It runs for every PR, also from forks, and for every push to `main` and to the maintenance branches (`v9`, `v10`, ...).
 -   [`e2e`](https://github.com/webdriverio/visual-testing/actions/workflows/e2e.yml): the tests on LambdaTest and Sauce Labs. These jobs need the cloud credentials, so they do not run for PRs from forks.
 
 Before approving a PR the core contributors will test the PR against emulators/simulators / real devices.
