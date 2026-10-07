@@ -6,6 +6,8 @@ import VisualService from '../src/index.js'
 import { checkElement, checkScreen, DEVICE_RECTANGLES, getMobileScreenSize, getMobileViewPortPosition, saveScreen } from '@wdio/image-comparison-core'
 
 const log = logger('test')
+// WebdriverIO brands its objects with their kind, see `isWdioKind()` in `src/utils.ts`
+const WDIO_KIND = Symbol.for('wdio.kind')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('@wdio/image-comparison-core', () => ({
     BaseClass: class {},
@@ -246,6 +248,7 @@ describe('@wdio/visual-service', () => {
                     firefox: { elementId: 'firefox-element' },
                 }
                 const multiRemoteElement = {
+                    [WDIO_KIND]: 'element',
                     isMultiRemote: true,
                     selector: '#purplebox',
                     instances: Object.keys(instanceElements),

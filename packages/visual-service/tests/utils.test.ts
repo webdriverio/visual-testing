@@ -14,6 +14,9 @@ import {
 // Import the functions we need to spy on
 import * as imageComparisonCore from '@wdio/image-comparison-core'
 
+// WebdriverIO brands its objects with their kind, see `isWdioKind()` in `src/utils.ts`
+const WDIO_KIND = Symbol.for('wdio.kind')
+
 const DEVICE_RECTANGLES = {
     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
     homeBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -673,60 +676,47 @@ describe('utils', () => {
     })
 
     describe('getBrowserObject', () => {
-        function createElementMock(parent: WebdriverIO.Browser): WebdriverIO.Element {
-            // @ts-expect-error
-            return {
-                isMultiRemote: false,
-                sessionId: 'mock-session-id',
-                elementId: 'mock-element-id',
-                ELEMENT: 'mock-ELEMENT',
-                selector: 'mock-selector',
-                parent: parent,
-                capabilities: {},
-                requestedCapabilities: {},
-            } as WebdriverIO.Element
-        }
-        const browserMock = {
-            isMultiRemote: false,
-            sessionId: 'mock-session-id',
-            capabilities: {},
-            requestedCapabilities: {},
-            options: {},
-        } as WebdriverIO.Browser
+        const browserMock = { [WDIO_KIND]: 'browser', isMultiRemote: false, sessionId: 'mock-session-id' }
+        const createElementMock = (parent: object) => ({ [WDIO_KIND]: 'element', isMultiRemote: false, elementId: 'mock-element-id', parent })
 
         it('should return the browser object when passed a browser object', () => {
             expect(getBrowserObject(browserMock)).toBe(browserMock)
         })
 
         it('should return the browser object when passed an element with the browser as its parent', () => {
-            const elementWithBrowserParent = createElementMock(browserMock)
-            expect(getBrowserObject(elementWithBrowserParent)).toBe(browserMock)
+            expect(getBrowserObject(createElementMock(browserMock))).toBe(browserMock)
         })
 
         it('should return the browser object for a nested element structure', () => {
-            const parentElement = createElementMock(browserMock)
-            // @ts-ignore
-            const childElement = createElementMock(parentElement)
+            const childElement = createElementMock(createElementMock(browserMock))
             expect(getBrowserObject(childElement)).toBe(browserMock)
         })
 
         // WebdriverIO v10: elements found from a browsing context (`browser.url()`, `context.frame()`)
         // have the context as parent, and the context holds the browser in `browser`
-        const topLevelContextMock = { browser: browserMock, isFrame: false } as any as WebdriverIO.Browser
-        const frameContextMock = { browser: browserMock, isFrame: true, parent: topLevelContextMock } as any as WebdriverIO.Browser
+        const topLevelContextMock = { [WDIO_KIND]: 'browsing-context', browser: browserMock, isFrame: false }
+        const frameContextMock = { [WDIO_KIND]: 'browsing-context', browser: browserMock, isFrame: true, parent: topLevelContextMock }
 
         it('should return the browser object when passed a WebdriverIO v10 browsing context', () => {
             expect(getBrowserObject(topLevelContextMock)).toBe(browserMock)
         })
 
         it('should return the browser object for an element found from a WebdriverIO v10 browsing context', () => {
-            const element = createElementMock(topLevelContextMock)
-            expect(getBrowserObject(element)).toBe(browserMock)
+            expect(getBrowserObject(createElementMock(topLevelContextMock))).toBe(browserMock)
         })
 
         it('should return the browser object for an element found in a WebdriverIO v10 frame', () => {
-            const element = createElementMock(frameContextMock)
-            expect(getBrowserObject(element)).toBe(browserMock)
+            expect(getBrowserObject(createElementMock(frameContextMock))).toBe(browserMock)
+        })
+
+        it('should not return a multiremote browser, which is also of kind "browser"', () => {
+            const multiRemoteBrowser = { [WDIO_KIND]: 'browser', isMultiRemote: true }
+            expect(() => getBrowserObject(createElementMock(multiRemoteBrowser))).toThrow('Could not find the browser of this element')
+        })
+
+        it('should throw for an object that is not a WebdriverIO object', () => {
+            expect(() => getBrowserObject({ parent: browserMock })).toThrow('Could not find the browser of this element')
+            expect(() => getBrowserObject(undefined)).toThrow('Could not find the browser of this element')
         })
     })
 
@@ -749,15 +739,16 @@ describe('utils', () => {
         const getInstance = (instanceName: string) => ({ elementId: `${instanceName}-element` })
 
         it('should return true for a multiremote element', () => {
-            expect(isMultiRemoteElement({ isMultiRemote: true, instances: ['chrome'], getInstance })).toBe(true)
+            expect(isMultiRemoteElement({ [WDIO_KIND]: 'element', isMultiRemote: true, instances: ['chrome'], getInstance })).toBe(true)
         })
 
         it('should return false for the element of one instance', () => {
-            expect(isMultiRemoteElement({ isMultiRemote: false, elementId: 'chrome-element', parent: {} })).toBe(false)
+            expect(isMultiRemoteElement({ [WDIO_KIND]: 'element', isMultiRemote: false, elementId: 'chrome-element', parent: {} })).toBe(false)
         })
 
-        it('should return false for a multiremote object without getInstance', () => {
-            expect(isMultiRemoteElement({ isMultiRemote: true, instances: ['chrome'] })).toBe(false)
+        it('should return false for an object without the WebdriverIO element kind', () => {
+            expect(isMultiRemoteElement({ isMultiRemote: true, instances: ['chrome'], getInstance })).toBe(false)
+            expect(isMultiRemoteElement({ [WDIO_KIND]: 'browser', isMultiRemote: true, instances: ['chrome'], getInstance })).toBe(false)
         })
 
         it('should return false for a value that is not an object', () => {

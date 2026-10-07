@@ -4,6 +4,9 @@ import {
     toMatchElementSnapshot, toMatchTabbablePageSnapshot
 } from '../src/matcher.js'
 
+// WebdriverIO brands its objects with their kind, see `isWdioKind()` in `src/utils.ts`
+const WDIO_KIND = Symbol.for('wdio.kind')
+
 const folders = {
     baseline: 'foo',
     actual: 'bar',
@@ -15,6 +18,7 @@ let multiremoteBrowser = {} as any as WebdriverIO.MultiRemoteBrowser
 describe('custom visual matcher', () => {
     beforeEach(() => {
         browser = {
+            [WDIO_KIND]: 'browser',
             checkScreen: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders }),
             checkFullPageScreen: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders }),
             checkElement: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders }),
@@ -79,8 +83,8 @@ describe('custom visual matcher', () => {
 
     it('toMatchElementSnapshot with an element found from a WebdriverIO v10 browsing context', async () => {
         // In WebdriverIO v10 the parent of the element is the browsing context, which holds the browser in `browser`
-        const browsingContext = { browser, isFrame: false }
-        const element = { elementId: 'element-id', selector: '#logo', parent: browsingContext } as any as WebdriverIO.Element
+        const browsingContext = { [WDIO_KIND]: 'browsing-context', browser, isFrame: false }
+        const element = { [WDIO_KIND]: 'element', elementId: 'element-id', selector: '#logo', parent: browsingContext } as any as WebdriverIO.Element
 
         await expect(toMatchElementSnapshot(element, 'foo', 123, {})).resolves.toEqual({
             pass: true,
@@ -94,14 +98,15 @@ describe('custom visual matcher', () => {
         // instance, and the parent of that element is the browser of the instance
         const createMultiRemoteElement = (misMatchPercentages = { chrome: 0, firefox: 0 }) => {
             const instanceBrowsers = {
-                chrome: { checkElement: vi.fn().mockResolvedValue({ misMatchPercentage: misMatchPercentages.chrome, folders }) },
-                firefox: { checkElement: vi.fn().mockResolvedValue({ misMatchPercentage: misMatchPercentages.firefox, folders }) },
+                chrome: { [WDIO_KIND]: 'browser', checkElement: vi.fn().mockResolvedValue({ misMatchPercentage: misMatchPercentages.chrome, folders }) },
+                firefox: { [WDIO_KIND]: 'browser', checkElement: vi.fn().mockResolvedValue({ misMatchPercentage: misMatchPercentages.firefox, folders }) },
             }
-            const instanceElements: Record<string, { elementId: string, parent: object }> = {
-                chrome: { elementId: 'chrome-element', parent: instanceBrowsers.chrome },
-                firefox: { elementId: 'firefox-element', parent: instanceBrowsers.firefox },
+            const instanceElements: Record<string, { [WDIO_KIND]: string, elementId: string, parent: object }> = {
+                chrome: { [WDIO_KIND]: 'element', elementId: 'chrome-element', parent: instanceBrowsers.chrome },
+                firefox: { [WDIO_KIND]: 'element', elementId: 'firefox-element', parent: instanceBrowsers.firefox },
             }
             const element = {
+                [WDIO_KIND]: 'element',
                 isMultiRemote: true,
                 selector: '#purplebox',
                 instances: Object.keys(instanceElements),
@@ -136,7 +141,7 @@ describe('custom visual matcher', () => {
 
         it('gives a clear error when the browser of an instance has no checkElement command', async () => {
             const { element, instanceElements } = createMultiRemoteElement()
-            instanceElements.firefox.parent = {}
+            instanceElements.firefox.parent = { [WDIO_KIND]: 'browser' }
 
             await expect(toMatchElementSnapshot(element, 'purplebox')).rejects.toThrow(
                 'The visual service did not add the "checkElement" command to this session'
@@ -175,7 +180,7 @@ describe('custom visual matcher', () => {
 
         it('toMatchElementSnapshot gives a clear error', async () => {
             // The browser of the element has no `checkElement` command
-            const element = { parent: {} } as any as WebdriverIO.Element
+            const element = { [WDIO_KIND]: 'element', parent: { [WDIO_KIND]: 'browser' } } as any as WebdriverIO.Element
 
             await expect(toMatchElementSnapshot(element, 'tag')).rejects.toThrow(
                 'The visual service did not add the "checkElement" command to this session'
