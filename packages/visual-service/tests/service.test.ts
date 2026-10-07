@@ -88,7 +88,7 @@ describe('@wdio/visual-service', () => {
                 on: vi.fn()
             }
             browser = {
-                isMultiremote: false,
+                isMultiRemote: false,
                 addCommand: vi.fn((name, fn) => {
                     // @ts-expect-error
                     browser[name] = fn
@@ -122,7 +122,7 @@ describe('@wdio/visual-service', () => {
         })
 
         it('adds command to multiremote browser in before hook', async () => {
-            browser.isMultiremote = true
+            browser.isMultiRemote = true
             // @ts-expect-error
             browser.getInstances = vi.fn().mockReturnValue(['chrome', 'firefox'])
             // @ts-expect-error
@@ -154,7 +154,7 @@ describe('@wdio/visual-service', () => {
                 }
                 return instance
             }
-            const createMultiRemoteBrowser = (version: 'v9' | 'v10') => {
+            const createMultiRemoteBrowser = () => {
                 const instances: Record<string, Record<string, any>> = {
                     webInstance: createInstance({
                         isMobile: false,
@@ -172,8 +172,7 @@ describe('@wdio/visual-service', () => {
                 return {
                     instances,
                     browser: {
-                        // WebdriverIO v9 has `isMultiremote` and the instances as properties, v10 has `isMultiRemote`
-                        ...(version === 'v10' ? { isMultiRemote: true } : { isMultiremote: true, ...instances }),
+                        isMultiRemote: true,
                         instances: Object.keys(instances),
                         getInstance: (name: string) => instances[name],
                         addCommand: vi.fn(),
@@ -189,10 +188,8 @@ describe('@wdio/visual-service', () => {
                 vi.mocked(getMobileViewPortPosition).mockResolvedValue(structuredClone(DEVICE_RECTANGLES))
             })
 
-            const versions: Array<'v9' | 'v10'> = ['v9', 'v10']
-
-            it.each(versions)('uses the context manager of each multiremote instance for its own commands (WebdriverIO %s)', async (version) => {
-                const { browser, instances } = createMultiRemoteBrowser(version)
+            it('uses the context manager of each multiremote instance for its own commands', async () => {
+                const { browser, instances } = createMultiRemoteBrowser()
                 // Mocked BaseClass does not set defaultOptions/folders; set them so the command can run
                 ;(service as any).defaultOptions = {}
                 ;(service as any).folders = { baselineFolder: './__snapshots__/' }
@@ -223,17 +220,16 @@ describe('@wdio/visual-service', () => {
                 }
                 return instance
             }
-            const createMultiRemoteBrowser = (version: 'v9' | 'v10') => {
+            const createMultiRemoteBrowser = () => {
                 const instances: Record<string, Record<string, any>> = {
                     chrome: createInstance('chrome'),
                     firefox: createInstance('firefox'),
                 }
                 const browser: Record<string, any> = {
-                    // WebdriverIO v9 has `isMultiremote` and the instances as properties, v10 has `isMultiRemote`
-                    ...(version === 'v10' ? { isMultiRemote: true } : { isMultiremote: true, ...instances }),
+                    isMultiRemote: true,
                     instances: Object.keys(instances),
                     getInstance: (name: string) => instances[name],
-                    // As in WebdriverIO v9 and v10, the multiremote `addCommand()` also adds the command to each instance
+                    // The multiremote `addCommand()` also adds the command to each instance
                     addCommand: vi.fn((name: string, fn: (...args: unknown[]) => unknown) => {
                         for (const instance of Object.values(instances)) {
                             instance.addCommand(name, fn)
@@ -250,7 +246,7 @@ describe('@wdio/visual-service', () => {
                     firefox: { elementId: 'firefox-element' },
                 }
                 const multiRemoteElement = {
-                    ...(version === 'v10' ? { isMultiRemote: true } : { isMultiremote: true, ...instanceElements }),
+                    isMultiRemote: true,
                     selector: '#purplebox',
                     instances: Object.keys(instanceElements),
                     getInstance: (name: string) => instanceElements[name],
@@ -269,7 +265,6 @@ describe('@wdio/visual-service', () => {
                 chrome: { capabilities: {} },
                 firefox: { capabilities: {} },
             } as any
-            const versions: Array<'v9' | 'v10'> = ['v9', 'v10']
 
             beforeEach(() => {
                 // Mocked BaseClass does not set defaultOptions/folders; set them so the command can run
@@ -277,8 +272,8 @@ describe('@wdio/visual-service', () => {
                 ;(service as any).folders = { baselineFolder: './__snapshots__/' }
             })
 
-            it.each(versions)('runs the element command of an instance on that instance only (WebdriverIO %s)', async (version) => {
-                const { browser, instances, instanceElements } = createMultiRemoteBrowser(version)
+            it('runs the element command of an instance on that instance only', async () => {
+                const { browser, instances, instanceElements } = createMultiRemoteBrowser()
 
                 await service.before(multiremoteCapabilities, [], browser)
                 await instances.chrome.checkElement(instanceElements.chrome, 'purplebox')
@@ -288,8 +283,8 @@ describe('@wdio/visual-service', () => {
                 expect(vi.mocked(checkElement).mock.calls[0][0].element).toBe(instanceElements.chrome)
             })
 
-            it.each(versions)('runs the page command of an instance on that instance only (WebdriverIO %s)', async (version) => {
-                const { browser, instances } = createMultiRemoteBrowser(version)
+            it('runs the page command of an instance on that instance only', async () => {
+                const { browser, instances } = createMultiRemoteBrowser()
 
                 await service.before(multiremoteCapabilities, [], browser)
                 await instances.firefox.checkScreen('homepage')
@@ -298,8 +293,8 @@ describe('@wdio/visual-service', () => {
                 expect(vi.mocked(checkScreen).mock.calls[0][0].browserInstance).toBe(instances.firefox)
             })
 
-            it.each(versions)('gives the element of each instance to the multiremote element command (WebdriverIO %s)', async (version) => {
-                const { browser, browserMock, instances, instanceElements, multiRemoteElement } = createMultiRemoteBrowser(version)
+            it('gives the element of each instance to the multiremote element command', async () => {
+                const { browser, browserMock, instances, instanceElements, multiRemoteElement } = createMultiRemoteBrowser()
 
                 await service.before(multiremoteCapabilities, [], browser)
                 await browserMock.checkElement(multiRemoteElement, 'purplebox')
@@ -312,12 +307,11 @@ describe('@wdio/visual-service', () => {
                 expect(firefoxArgs.element).toBe(instanceElements.firefox)
             })
 
-            it.each(versions)('gives the element of each instance when the multiremote element is not awaited (WebdriverIO %s)', async (version) => {
-                const { browser, browserMock, instanceElements, multiRemoteElement } = createMultiRemoteBrowser(version)
+            it('gives the element of each instance when the multiremote element is not awaited', async () => {
+                const { browser, browserMock, instanceElements, multiRemoteElement } = createMultiRemoteBrowser()
                 // `multiRemoteBrowser.$()` without `await`: as in the chainable of WebdriverIO, a property is a chained command
                 const notAwaitedElement = {
                     isMultiRemote: vi.fn(),
-                    isMultiremote: vi.fn(),
                     then: (resolve: (element: typeof multiRemoteElement) => void) => resolve(multiRemoteElement),
                 }
 
@@ -346,7 +340,7 @@ describe('@wdio/visual-service', () => {
                 browsingContextSetViewport: vi.fn(),
             } as any as WebdriverIO.Browser)
 
-            it('sets the viewport of the device that the browser emulates when emulate("device") fails (WebdriverIO v10)', async () => {
+            it('sets the viewport of the device that the browser emulates when emulate("device") fails', async () => {
                 const browser = createBrowser(vi.fn().mockRejectedValue(
                     new Error('WebDriver Bidi command "emulation.setTextLayoutModeOverride" failed with error: unknown command')
                 ))
@@ -360,7 +354,7 @@ describe('@wdio/visual-service', () => {
                 })
             })
 
-            it('reads the emulated device before emulate("device"), which removes it when it fails (WebdriverIO v10)', async () => {
+            it('reads the emulated device before emulate("device"), which removes it when it fails', async () => {
                 const browser = createBrowser(vi.fn().mockRejectedValue(new Error('unknown command')))
                 // After a failed `emulate('device')`, the browser no longer emulates the device
                 let deviceReads = 0
@@ -379,7 +373,7 @@ describe('@wdio/visual-service', () => {
                 })
             })
 
-            it('keeps the emulation of emulate("device") when it works (WebdriverIO v9)', async () => {
+            it('keeps the emulation of emulate("device") when it works', async () => {
                 const browser = createBrowser(vi.fn().mockResolvedValue(() => {}))
 
                 await service.before(browser.capabilities as WebdriverIO.Capabilities, [], browser)
@@ -413,7 +407,7 @@ describe('@wdio/visual-service', () => {
                 } as any as WebdriverIO.Browser
             }
 
-            it('sets the emulation on each instance of a WebdriverIO v10 multiremote browser', async () => {
+            it('sets the emulation on each instance of a multiremote browser', async () => {
                 const instances: Record<string, WebdriverIO.Browser> = {
                     chrome: createInstance(),
                     firefox: createInstance(),
@@ -439,35 +433,12 @@ describe('@wdio/visual-service', () => {
                     })
                 }
             })
-
-            it('sets the emulation on each instance of a WebdriverIO v9 multiremote browser', async () => {
-                const instances: Record<string, WebdriverIO.Browser> = {
-                    chrome: createInstance(),
-                    firefox: createInstance(),
-                }
-                const multiremoteBrowser = {
-                    isMultiremote: true,
-                    instances: ['chrome', 'firefox'],
-                    getInstance: vi.fn((name: string) => instances[name]),
-                    addCommand: vi.fn(),
-                    capabilities: {},
-                    requestedCapabilities: {},
-                    on: vi.fn(),
-                    ...instances,
-                } as any as WebdriverIO.MultiRemoteBrowser
-
-                await service.before(multiremoteCapabilities, [], multiremoteBrowser)
-
-                for (const instance of Object.values(instances)) {
-                    expect(instance.browsingContextSetViewport).toHaveBeenCalledTimes(1)
-                }
-            })
         })
 
         it('should register custom matchers', async () => {
             const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
             const browser = {
-                isMultiremote: false,
+                isMultiRemote: false,
                 addCommand: vi.fn(),
                 capabilities: {},
                 requestedCapabilities: {},
@@ -484,7 +455,7 @@ describe('@wdio/visual-service', () => {
             const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
             const setupError = new Error('WebDriver Bidi command "script.callFunction" failed with error: unknown command')
             const browser = {
-                isMultiremote: false,
+                isMultiRemote: false,
                 addCommand: vi.fn(),
                 capabilities: {},
                 requestedCapabilities: {},
@@ -507,7 +478,7 @@ describe('@wdio/visual-service', () => {
             ;(globalThis as { jasmine?: unknown }).jasmine = { getEnv: () => jasmineEnv }
             const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
             const browser = {
-                isMultiremote: false,
+                isMultiRemote: false,
                 addCommand: vi.fn(),
                 capabilities: {},
                 requestedCapabilities: {},
@@ -539,7 +510,7 @@ describe('@wdio/visual-service', () => {
             vi.mocked(wdioExpect.extend).mockImplementationOnce(extendMock)
             const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
             const browser = {
-                isMultiremote: false,
+                isMultiRemote: false,
                 addCommand: vi.fn(),
                 capabilities: {},
                 requestedCapabilities: {},
@@ -561,7 +532,7 @@ describe('@wdio/visual-service', () => {
             ;(service as any).defaultOptions = { alwaysSaveActualImage: false }
             ;(service as any).folders = { baselineFolder: './__snapshots__/' }
             const browser = {
-                isMultiremote: false,
+                isMultiRemote: false,
                 addCommand: vi.fn((name, fn) => {
                     (browser as any)[name] = fn
                 }),
@@ -590,7 +561,7 @@ describe('@wdio/visual-service', () => {
             ;(service as any).defaultOptions = {}
             ;(service as any).folders = { baselineFolder: normalize('./__snapshots__/') }
             const browser = {
-                isMultiremote: false,
+                isMultiRemote: false,
                 addCommand: vi.fn((name, fn) => {
                     (browser as any)[name] = fn
                 }),

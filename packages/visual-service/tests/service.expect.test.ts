@@ -37,7 +37,7 @@ describe('@wdio/visual-service', () => {
         const logWarnMock = vi.spyOn(log, 'warn')
         const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
         const browser = {
-            isMultiremote: false,
+            isMultiRemote: false,
             addCommand: vi.fn(),
             capabilities: {},
             requestedCapabilities: {},

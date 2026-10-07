@@ -50,7 +50,7 @@ interface Browser {
     capabilities: Record<string, any>;
     requestedCapabilities: Record<string, any>;
     instances: Record<string, BrowserInstance>;
-    isMultiremote: boolean;
+    isMultiRemote: boolean;
     getInstance: (name: string) => BrowserInstance;
     getInstances: () => string[];
     [key: string]: any;  // Adding index signature
@@ -71,7 +71,7 @@ function createBrowser(isMultiRemote = false): WebdriverIO.Browser | WebdriverIO
         capabilities: {},
         requestedCapabilities: {},
         instances: {},
-        isMultiremote:isMultiRemote,
+        isMultiRemote,
         getInstance: vi.fn(name => {
             return browser.instances[name]
         }),
@@ -184,7 +184,6 @@ describe('WdioOcrService', () => {
         it('should add OCR commands to multiremote browsers correctly', async () => {
             const logSpy = vi.spyOn(log, 'info')
             browser = createBrowser(true)
-            browser.isMultiremote = true
             browser.capabilities = {
                 myChromeBrowser: {
                     capabilities: { browserName: 'chrome' }
@@ -209,29 +208,6 @@ describe('WdioOcrService', () => {
             const firefoxInstance = browser.getInstance('myFirefoxBrowser')
             expect(chromeInstance.addCommand).toHaveBeenCalled()
             expect(firefoxInstance.addCommand).toHaveBeenCalled()
-        })
-
-        it('should add OCR commands to WebdriverIO v10 multiremote browsers (isMultiRemote)', async () => {
-            const logSpy = vi.spyOn(log, 'info')
-            browser = createBrowser(true)
-            // WebdriverIO v10 renamed `isMultiremote` to `isMultiRemote`
-            delete browser.isMultiremote
-            browser.isMultiRemote = true
-            browser.capabilities = {
-                myChromeBrowser: {
-                    capabilities: { browserName: 'chrome' }
-                },
-                myFirefoxBrowser: {
-                    capabilities: { browserName: 'firefox' }
-                }
-            }
-            await service.before(browser.capabilities as any, [], browser)
-            expect(logSpy).toHaveBeenCalledWith('Adding commands to Multi Browser: myChromeBrowser, myFirefoxBrowser')
-
-            // @ts-ignore
-            expect(browser.getInstance('myChromeBrowser').addCommand).toHaveBeenCalled()
-            // @ts-ignore
-            expect(browser.getInstance('myFirefoxBrowser').addCommand).toHaveBeenCalled()
         })
 
         // We're not going to check all methods that are added to the multie remote browser here, just check how complex it

@@ -108,23 +108,15 @@ describe('isRectanglesObject', () => {
 })
 
 describe('isMultiRemoteBrowser', () => {
-    it('should return true for a WebdriverIO v10 multiremote browser (isMultiRemote)', () => {
+    it('should return true for a multiremote browser', () => {
         expect(isMultiRemoteBrowser({ isMultiRemote: true } as any)).toBe(true)
     })
 
-    it('should return true for a WebdriverIO v9 multiremote browser (isMultiremote)', () => {
-        expect(isMultiRemoteBrowser({ isMultiremote: true } as any)).toBe(true)
-    })
-
-    it('should return false for a WebdriverIO v10 single browser', () => {
+    it('should return false for a single browser', () => {
         expect(isMultiRemoteBrowser({ isMultiRemote: false } as any)).toBe(false)
     })
 
-    it('should return false for a WebdriverIO v9 single browser', () => {
-        expect(isMultiRemoteBrowser({ isMultiremote: false } as any)).toBe(false)
-    })
-
-    it('should return false when neither flag is set', () => {
+    it('should return false when the flag is not set', () => {
         expect(isMultiRemoteBrowser({} as any)).toBe(false)
     })
 })

@@ -259,9 +259,9 @@ export async function waitForStorybookComponentToBeLoaded(
         baseUrl.search = searchParams.toString()
         await browser.url(baseUrl.toString())
         // A custom clip selector can match more than one element. WebdriverIO v10 `$` is strict and would throw,
-        // `strict: false` keeps the v9 behavior (first match) and is ignored by v9
+        // `strict: false` uses the first match
         await $(clipSelector as string, { strict: false }).waitForDisplayed()
-        // `executeAsync` is removed in WebdriverIO v10, `execute` awaits the returned promise in v9 and v10
+        // `executeAsync` is removed in WebdriverIO v10, `execute` awaits the returned promise
         await browser.execute(async (timeout) => {
             let timedOut = false
 

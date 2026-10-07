@@ -676,7 +676,7 @@ describe('utils', () => {
         function createElementMock(parent: WebdriverIO.Browser): WebdriverIO.Element {
             // @ts-expect-error
             return {
-                isMultiremote: false,
+                isMultiRemote: false,
                 sessionId: 'mock-session-id',
                 elementId: 'mock-element-id',
                 ELEMENT: 'mock-ELEMENT',
@@ -687,7 +687,7 @@ describe('utils', () => {
             } as WebdriverIO.Element
         }
         const browserMock = {
-            isMultiremote: false,
+            isMultiRemote: false,
             sessionId: 'mock-session-id',
             capabilities: {},
             requestedCapabilities: {},
@@ -731,23 +731,15 @@ describe('utils', () => {
     })
 
     describe('isMultiRemoteBrowser', () => {
-        it('should return true for a WebdriverIO v10 multiremote browser (isMultiRemote)', () => {
+        it('should return true for a multiremote browser', () => {
             expect(isMultiRemoteBrowser({ isMultiRemote: true } as any)).toBe(true)
         })
 
-        it('should return true for a WebdriverIO v9 multiremote browser (isMultiremote)', () => {
-            expect(isMultiRemoteBrowser({ isMultiremote: true } as any)).toBe(true)
-        })
-
-        it('should return false for a WebdriverIO v10 single browser', () => {
+        it('should return false for a single browser', () => {
             expect(isMultiRemoteBrowser({ isMultiRemote: false } as any)).toBe(false)
         })
 
-        it('should return false for a WebdriverIO v9 single browser', () => {
-            expect(isMultiRemoteBrowser({ isMultiremote: false } as any)).toBe(false)
-        })
-
-        it('should return false when neither flag is set', () => {
+        it('should return false when the flag is not set', () => {
             expect(isMultiRemoteBrowser({} as any)).toBe(false)
         })
     })
@@ -756,12 +748,8 @@ describe('utils', () => {
         // `multiRemoteBrowser.$()` gives an element without `parent`, `getInstance()` gives the element of each instance
         const getInstance = (instanceName: string) => ({ elementId: `${instanceName}-element` })
 
-        it('should return true for a WebdriverIO v10 multiremote element (isMultiRemote)', () => {
+        it('should return true for a multiremote element', () => {
             expect(isMultiRemoteElement({ isMultiRemote: true, instances: ['chrome'], getInstance })).toBe(true)
-        })
-
-        it('should return true for a WebdriverIO v9 multiremote element (isMultiremote)', () => {
-            expect(isMultiRemoteElement({ isMultiremote: true, instances: ['chrome'], getInstance })).toBe(true)
         })
 
         it('should return false for the element of one instance', () => {

@@ -89,10 +89,9 @@ export default class WdioImageComparisonService extends BaseClass {
             } else {
                 await this.#extendMultiremoteBrowser(capabilities as Capabilities.RequestedMultiRemoteCapabilities)
             }
-            // There is an issue with the emulation mode for Chrome or Edge with WebdriverIO v9
-            // It doesn't set the correct emulation mode for the browser based on the capabilities
+            // In a WebDriver BiDi session, WebdriverIO does not set the emulation of the `mobileEmulation` capability
+            // of Chrome or Edge, and the screenshots do not have the device pixel ratio of the device without it.
             // So we need to set the emulation mode manually
-            // this is a temporary fix until the issue is fixed in WebdriverIO v9 and enough users have upgraded to the latest version
             await this.#setEmulation(this.#browser, capabilities)
         } catch (error) {
             log.error(`The visual service setup failed for this session, so the check and save commands and the visual matchers can fail: ${error}`)
@@ -618,8 +617,7 @@ export default class WdioImageComparisonService extends BaseClass {
 
     async #setEmulation(browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser, capabilities: WebdriverIO.Capabilities) {
         if (isMultiRemoteBrowser(browser)) {
-            // WebdriverIO v10 no longer stores the instances as properties of the multiremote browser,
-            // `instances` and `getInstance` are available in v9 and v10
+            // WebdriverIO v10 does not store the instances as properties of the multiremote browser
             for (const browserName of browser.instances) {
                 const browserInstance = browser.getInstance(browserName)
                 await this.#setEmulationForBrowser(browserInstance, browserInstance.capabilities)
