@@ -291,12 +291,10 @@ interface MultiRemoteElement {
  * `getInstance()` gives that element, and its parent is the browser of the instance
  */
 export function isMultiRemoteElement(element: unknown): element is MultiRemoteElement {
-    if ((typeof element !== 'object' && typeof element !== 'function') || element === null) {
-        return false
-    }
-    return Reflect.get(element, 'isMultiRemote') === true
-        && Array.isArray(Reflect.get(element, 'instances'))
-        && typeof Reflect.get(element, 'getInstance') === 'function'
+    return (typeof element === 'object' || typeof element === 'function') && element !== null
+        && 'isMultiRemote' in element && element.isMultiRemote === true
+        && 'instances' in element && Array.isArray(element.instances)
+        && 'getInstance' in element && typeof element.getInstance === 'function'
 }
 
 /**
