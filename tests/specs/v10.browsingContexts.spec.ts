@@ -8,6 +8,8 @@ const fixture = (name: string) => pathToFileURL(join(process.cwd(), 'tests/fixtu
  * WebdriverIO v10 behavior that unit tests cannot cover, see the v10 migration guide:
  * - `browser.newWindow()` returns a browsing context and no longer switches to it
  * - in a WebDriver BiDi session, frames are reached with `context.frame()`, `switchFrame` throws
+ * - an element command finds a stale element again (with its index in a `$$` list), so an ignore element is
+ *   found again after the DOM is rendered again
  *
  * The baselines are created in the same run, so no committed baseline is needed.
  */
@@ -22,6 +24,25 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
 
         expect(await browser.getUrl()).toContain('page-a.html')
         expect(await browser.checkScreen('v10-page-a')).toBe(0)
+    })
+
+    it('ignores the element of a $$ list at its own index after the DOM is rendered again (stale element)', async () => {
+        await browser.url(fixture('boxes.html'))
+        // creates the baseline of the 3 boxes
+        await browser.checkScreen('v10-stale-ignore')
+
+        const second = (await $$('.box'))[1]
+        // The same markup again gives new DOM nodes, so the reference of `second` is stale.
+        // Only the second box changes, so only an ignore region on the second box hides the change.
+        await browser.execute(() => {
+            document.body.innerHTML = document.body.innerHTML
+            document.querySelectorAll<HTMLElement>('.box')[1].style.background = '#d32f2f'
+        })
+
+        // control: without an ignore region, the change is found
+        expect(await browser.checkScreen('v10-stale-ignore')).toBeGreaterThan(0)
+        // WebdriverIO finds the stale element again at index 1, so the change of the second box is ignored
+        expect(await browser.checkScreen('v10-stale-ignore', { ignore: [second] })).toBe(0)
     })
 
     // Known gap, not supported yet: the element rect comes from WebDriver Classic `getElementRect`, which cannot
