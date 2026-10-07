@@ -269,12 +269,28 @@ pnpm run test.saucelabs.app
 
 The configurations are in [`tests/configs`](./tests/configs), for example [`wdio.lambdatest.web.conf.ts`](./tests/configs/wdio.lambdatest.web.conf.ts) and [`wdio.saucelabs.app.conf.ts`](./tests/configs/wdio.saucelabs.app.conf.ts).
 
+## Branches and versions
+
+The versions below are the versions of `@wdio/visual-service`.
+
+| Branch | Service version | WebdriverIO | npm tag | Status |
+| --- | --- | --- | --- | --- |
+| `main` | v11 (prerelease) | v10 | `next` | Development of the next major version |
+| `v10` | v10 | v9 and v10 | `latest`, `legacy-v10` after the v11 release | Maintenance for WebdriverIO v9 users: fixes are backported on request only |
+| `v9` | v9 | v9 | `legacy` | Maintenance until the end of its year of maintenance (June 2027) |
+
+-   Open your PR against `main`, unless a maintainer asks you to backport a fix to a maintenance branch.
+-   A backport is a separate PR against the maintenance branch, with its own changeset.
+-   `main` is in [changesets prerelease mode](https://github.com/changesets/changesets/blob/main/docs/prereleases.md) (`.changeset/pre.json`): a release from `main` publishes `-next.N` versions with the `next` npm tag. The v11 release exits this mode (`pnpm changeset pre exit`).
+
 ## Releasing
 
 To release a version of any of the packages listed above, do the following:
 
--   trigger the [release pipeline](https://github.com/webdriverio/visual-testing/actions/workflows/release.yml)
+-   trigger the [release pipeline](https://github.com/webdriverio/visual-testing/actions/workflows/release.yml) on the branch to release (`main`, `v10` or `v9`)
 -   a release PR is generated, have this be reviewed and approved by another WebdriverIO member
 -   merge the PR
--   trigger the [release pipeline](https://github.com/webdriverio/visual-testing/actions/workflows/release.yml) again
+-   trigger the [release pipeline](https://github.com/webdriverio/visual-testing/actions/workflows/release.yml) again on the same branch
 -   a new version should be released 🎉
+
+While `main` is in prerelease mode, use the `production` release type: it publishes the prerelease versions. The `alpha` release type is blocked.
