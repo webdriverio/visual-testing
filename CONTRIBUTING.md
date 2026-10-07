@@ -96,7 +96,7 @@ devDependencies:
 
 -   @changesets/cli 2.27.8
 -   @inquirer/prompts 5.5.0
--   @tsconfig/node20 20.1.4
+-   @tsconfig/node22 22.0.6
 -   @types/eslint 9.6.1
 -   @types/jsdom 21.1.7
 -   @types/node 20.16.4
