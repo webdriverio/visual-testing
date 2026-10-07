@@ -16,7 +16,7 @@ import {
     DEFAULT_TEST_CONTEXT,
 } from '@wdio/image-comparison-core'
 import type { InstanceData, TestContext } from '@wdio/image-comparison-core'
-import { SevereServiceError } from 'webdriverio'
+import { deviceDescriptorsSource, SevereServiceError, type DeviceName } from 'webdriverio'
 import {
     enrichTestContext,
     getFolders,
@@ -40,6 +40,14 @@ import { ContextManager } from './contextManager.js'
 import { wrapWithContext } from './wrapWithContext.js'
 
 const log = logger('@wdio/visual-service')
+
+/**
+ * Tells if WebdriverIO knows this device, so `emulate('device', name)` accepts it
+ */
+function isDeviceName(name: string): name is DeviceName {
+    return Object.prototype.hasOwnProperty.call(deviceDescriptorsSource, name)
+}
+
 const elementCommands = { saveElement, checkElement }
 const pageCommands = {
     saveScreen,
@@ -590,13 +598,17 @@ export default class WdioImageComparisonService extends BaseClass {
                 devicePixelRatio: window.devicePixelRatio,
             }))
 
-            try {
-                await (browserInstance.emulate as any)('device', deviceName)
-                return
-            } catch (error) {
-                // WebdriverIO v10 emulates a device with WebDriver BiDi emulation commands that not all browsers support,
-                // for example `emulation.setTextLayoutModeOverride` in Chrome 154
-                log.info(`Could not emulate the device "${deviceName}" with \`emulate('device')\`, using the device that the browser emulates: ${error}`)
+            if (isDeviceName(deviceName)) {
+                try {
+                    await browserInstance.emulate('device', deviceName)
+                    return
+                } catch (error) {
+                    // WebdriverIO v10 emulates a device with WebDriver BiDi emulation commands that not all browsers support,
+                    // for example `emulation.setTextLayoutModeOverride` in Chrome 154
+                    log.info(`Could not emulate the device "${deviceName}" with \`emulate('device')\`, using the device that the browser emulates: ${error}`)
+                }
+            } else {
+                log.info(`WebdriverIO does not know the device "${deviceName}" for \`emulate('device')\`, using the device that the browser emulates`)
             }
 
             await browserInstance.browsingContextSetViewport({

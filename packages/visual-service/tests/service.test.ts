@@ -328,9 +328,9 @@ describe('@wdio/visual-service', () => {
         })
 
         describe('mobile emulation with mobileEmulation.deviceName', () => {
-            const createBrowser = (emulate: ReturnType<typeof vi.fn>) => ({
+            const createBrowser = (emulate: ReturnType<typeof vi.fn>, deviceName = 'iPhone 12 Pro') => ({
                 addCommand: vi.fn(),
-                capabilities: { 'goog:chromeOptions': { mobileEmulation: { deviceName: 'iPhone 12 Pro' } } },
+                capabilities: { 'goog:chromeOptions': { mobileEmulation: { deviceName } } },
                 requestedCapabilities: {},
                 on: vi.fn(),
                 // A string script is the device pixel ratio of the instance data, a function reads the emulated device
@@ -383,6 +383,20 @@ describe('@wdio/visual-service', () => {
 
                 expect(browser.emulate).toHaveBeenCalledWith('device', 'iPhone 12 Pro')
                 expect(browser.browsingContextSetViewport).not.toHaveBeenCalled()
+            })
+
+            it('sets the viewport of the device that the browser emulates when WebdriverIO does not know the device', async () => {
+                // Chrome knows more devices than `emulate('device')` of WebdriverIO
+                const browser = createBrowser(vi.fn(), 'Not A WebdriverIO Device')
+
+                await service.before(browser.capabilities as WebdriverIO.Capabilities, [], browser)
+
+                expect(browser.emulate).not.toHaveBeenCalled()
+                expect(browser.browsingContextSetViewport).toHaveBeenCalledWith({
+                    context: 'context-id',
+                    devicePixelRatio: 3,
+                    viewport: { width: 390, height: 844 },
+                })
             })
         })
 
