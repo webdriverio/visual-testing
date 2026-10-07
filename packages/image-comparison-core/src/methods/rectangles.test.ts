@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import { join } from 'node:path'
 import {
     determineElementRectangles,
@@ -10,11 +11,17 @@ import {
     determineWebElementIgnoreRegions,
     splitIgnores,
     determineDeviceBlockOuts,
-    getFreshElements,
     prepareIgnoreRectangles
 } from './rectangles.js'
 import { IMAGE_STRING } from '../mocks/image.js'
-import type { ElementRectanglesOptions, ScreenRectanglesOptions, StatusAddressToolBarRectanglesOptions, DeviceRectangles, DetermineDeviceBlockOutsOptions, PrepareIgnoreRectanglesOptions } from './rectangles.interfaces.js'
+import type { ElementRectanglesOptions, ScreenRectanglesOptions, StatusAddressToolBarRectanglesOptions, DeviceRectangles, DetermineDeviceBlockOutsOptions, PrepareIgnoreRectanglesOptions, RectanglesOutput } from './rectangles.interfaces.js'
+
+/**
+ * An ignore element: its `execute` element command gives this rectangle (CSS pixels)
+ */
+function createIgnoreElement(selector: string, rectangle: RectanglesOutput) {
+    return mock<WebdriverIO.Element>({ elementId: `${selector}-id`, selector, execute: vi.fn().mockResolvedValue(rectangle) })
+}
 
 vi.mock('@wdio/globals', () => ({
     browser: {
@@ -857,21 +864,20 @@ describe('rectangles', () => {
         })
 
         it('should resolve elements via raw BCR on desktop and apply DPR', async () => {
-            const mockElement = { elementId: 'el1', selector: '.nav' } as WebdriverIO.Element
-            const freshElement = { elementId: 'el1-fresh', selector: '.nav' } as unknown as WebdriverIO.Element
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
-            mockExecute.mockResolvedValueOnce({ x: 10, y: 20, width: 200, height: 50 })
+            const mockElement = createIgnoreElement('.nav', { x: 10, y: 20, width: 200, height: 50 })
 
             const result = await determineWebScreenIgnoreRegions(desktopOptions, [mockElement])
 
-            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.nav')
-            expect(mockExecute).toHaveBeenCalledOnce()
+            // `execute` is an element command, so WebdriverIO finds a stale element again; no new query is needed
+            expect(mockElement.execute).toHaveBeenCalledOnce()
+            expect(mockBrowserInstance.$$).not.toHaveBeenCalled()
+            expect(mockExecute).not.toHaveBeenCalled()
             expect(result).toEqual([
                 { x: 20, y: 40, width: 400, height: 100 },
             ])
         })
 
-        it('should add DPR-scaled viewport offset on iOS and re-query elements via $$', async () => {
+        it('should add DPR-scaled viewport offset on iOS', async () => {
             const iosDeviceRectangles = {
                 ...baseDeviceRectangles,
                 viewport: { y: 94, x: 0, width: 390, height: 650 },
@@ -882,15 +888,10 @@ describe('rectangles', () => {
                 deviceRectangles: iosDeviceRectangles,
                 isIOS: true,
             }
-            const mockElement = { elementId: 'el1', selector: '.hero' } as WebdriverIO.Element
-            const freshElement = { elementId: 'el1-fresh', selector: '.hero' } as unknown as WebdriverIO.Element
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
-            mockExecute.mockResolvedValueOnce({ x: 0, y: 100, width: 390, height: 200 })
+            const mockElement = createIgnoreElement('.hero', { x: 0, y: 100, width: 390, height: 200 })
 
             const result = await determineWebScreenIgnoreRegions(iosOptions, [mockElement])
 
-            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.hero')
-            expect(mockBrowserInstance.$).not.toHaveBeenCalled()
             expect(result).toEqual([
                 { x: 0, y: 582, width: 1170, height: 600 },
             ])
@@ -907,27 +908,16 @@ describe('rectangles', () => {
                 deviceRectangles: iosDeviceRectangles,
                 isIOS: true,
             }
-            const el1 = { elementId: 'a', selector: '.card' } as WebdriverIO.Element
-            const el2 = { elementId: 'b', selector: '.card' } as WebdriverIO.Element
-            const el3 = { elementId: 'c', selector: '.card' } as WebdriverIO.Element
-
-            const fresh1 = { elementId: 'f1', selector: '.card' } as unknown as WebdriverIO.Element
-            const fresh2 = { elementId: 'f2', selector: '.card' } as unknown as WebdriverIO.Element
-            const fresh3 = { elementId: 'f3', selector: '.card' } as unknown as WebdriverIO.Element
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([fresh1, fresh2, fresh3] as any)
-
-            mockExecute
-                .mockResolvedValueOnce({ x: 0, y: 100, width: 390, height: 50 })
-                .mockResolvedValueOnce({ x: 0, y: 200, width: 390, height: 50 })
-                .mockResolvedValueOnce({ x: 0, y: 300, width: 390, height: 50 })
+            const el1 = createIgnoreElement('.card', { x: 0, y: 100, width: 390, height: 50 })
+            const el2 = createIgnoreElement('.card', { x: 0, y: 200, width: 390, height: 50 })
+            const el3 = createIgnoreElement('.card', { x: 0, y: 300, width: 390, height: 50 })
 
             const result = await determineWebScreenIgnoreRegions(iosOptions, [[el1, el2, el3]])
 
-            // $$ called once for the shared selector, not $ three times
-            expect(mockBrowserInstance.$$).toHaveBeenCalledTimes(1)
-            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.card')
-            // execute called with each fresh element
-            expect(mockExecute).toHaveBeenCalledTimes(3)
+            // Each element gives its own rectangle with its own `execute` command
+            for (const element of [el1, el2, el3]) {
+                expect(element.execute).toHaveBeenCalledOnce()
+            }
             // Each region has different y (viewport offset 94 added)
             expect(result).toEqual([
                 { x: 0, y: 194, width: 390, height: 50 },
@@ -950,9 +940,7 @@ describe('rectangles', () => {
                 isAndroid: true,
                 isAndroidNativeWebScreenshot: true,
             }
-            const mockElement = { elementId: 'el1', selector: '#header' } as WebdriverIO.Element
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
-            mockExecute.mockResolvedValueOnce({ x: 0, y: 0, width: 412, height: 64 })
+            const mockElement = createIgnoreElement('#header', { x: 0, y: 0, width: 412, height: 64 })
 
             const result = await determineWebScreenIgnoreRegions(androidOptions, [mockElement])
 
@@ -970,9 +958,7 @@ describe('rectangles', () => {
                 isAndroid: true,
                 isAndroidNativeWebScreenshot: false,
             }
-            const mockElement = { elementId: 'el1', selector: '#header' } as WebdriverIO.Element
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
-            mockExecute.mockResolvedValueOnce({ x: 0, y: 0, width: 412, height: 64 })
+            const mockElement = createIgnoreElement('#header', { x: 0, y: 0, width: 412, height: 64 })
 
             const result = await determineWebScreenIgnoreRegions(androidChromeOptions, [mockElement])
 
@@ -994,10 +980,8 @@ describe('rectangles', () => {
         })
 
         it('should handle mixed elements and regions with DPR applied to both', async () => {
-            const mockElement = { elementId: 'el1', selector: '.ad' } as WebdriverIO.Element
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
+            const mockElement = createIgnoreElement('.ad', { x: 10, y: 20, width: 300, height: 80 })
             const region = { x: 500, y: 0, width: 200, height: 90 }
-            mockExecute.mockResolvedValueOnce({ x: 10, y: 20, width: 300, height: 80 })
 
             const result = await determineWebScreenIgnoreRegions(desktopOptions, [mockElement, region])
 
@@ -1015,10 +999,7 @@ describe('rectangles', () => {
         })
 
         it('should handle chainable promise elements', async () => {
-            const chainableElement = Promise.resolve({ elementId: 'el1', selector: '.footer' } as WebdriverIO.Element)
-            const freshElement = { elementId: 'el1-fresh', selector: '.footer' } as unknown as WebdriverIO.Element
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
-            mockExecute.mockResolvedValueOnce({ x: 0, y: 900, width: 1200, height: 100 })
+            const chainableElement = Promise.resolve(createIgnoreElement('.footer', { x: 0, y: 900, width: 1200, height: 100 }))
 
             const result = await determineWebScreenIgnoreRegions(desktopOptions, [chainableElement as any])
 
@@ -1028,10 +1009,8 @@ describe('rectangles', () => {
         })
 
         it('should use floor/ceil rounding on sub-pixel BCR values to fully cover elements', async () => {
-            const mockElement = { elementId: 'el1', selector: '.banner' } as WebdriverIO.Element
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([mockElement] as any)
             // Sub-pixel BCR values that would lose precision if rounded independently
-            mockExecute.mockResolvedValueOnce({ x: 0.33, y: 50.67, width: 412.5, height: 64.33 })
+            const mockElement = createIgnoreElement('.banner', { x: 0.33, y: 50.67, width: 412.5, height: 64.33 })
 
             const opts = { ...desktopOptions, devicePixelRatio: 3 }
             const result = await determineWebScreenIgnoreRegions(opts, [mockElement])
@@ -1096,16 +1075,13 @@ describe('rectangles', () => {
         })
 
         it('should resolve elements via document BCR (BCR + scroll) and apply DPR', async () => {
-            const mockElement = { elementId: 'el1', selector: '.nav' } as WebdriverIO.Element
-            const freshElement = { elementId: 'el1-fresh', selector: '.nav' } as unknown as WebdriverIO.Element
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshElement] as any)
             // rawDocumentBcr returns getBoundingClientRect() + (scrollX, scrollY) = document-relative CSS pixels
-            mockExecute.mockResolvedValueOnce({ x: 10, y: 1200, width: 200, height: 50 })
+            const mockElement = createIgnoreElement('.nav', { x: 10, y: 1200, width: 200, height: 50 })
 
             const result = await determineWebFullPageIgnoreRegions(fullPageOptions, [mockElement])
 
-            expect(mockBrowserInstance.$$).toHaveBeenCalledWith('.nav')
-            expect(mockExecute).toHaveBeenCalledOnce()
+            expect(mockElement.execute).toHaveBeenCalledOnce()
+            expect(mockBrowserInstance.$$).not.toHaveBeenCalled()
             // Document CSS (10, 1200, 200, 50) × DPR 2 → device pixels (20, 2400, 400, 100)
             expect(result).toEqual([
                 { x: 20, y: 2400, width: 400, height: 100 },
@@ -1164,13 +1140,9 @@ describe('rectangles', () => {
 
     describe('determineWebElementIgnoreRegions', () => {
         it('should resolve element-local regions and apply DPR', async () => {
-            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
-            const childElement = { elementId: 'child', selector: '.child' } as WebdriverIO.Element
-            const freshChild = { elementId: 'child-fresh', selector: '.child' } as unknown as WebdriverIO.Element
-
-            vi.mocked(mockBrowserInstance.$$).mockResolvedValueOnce([freshChild] as any)
+            const rootElement = createIgnoreElement('.root', { x: 0, y: 0, width: 0, height: 0 })
             // Simulate already-relative BCR from execute: (20,30,100,40)
-            mockExecute.mockResolvedValueOnce({ x: 20, y: 30, width: 100, height: 40 })
+            const childElement = createIgnoreElement('.child', { x: 20, y: 30, width: 100, height: 40 })
 
             const result = await determineWebElementIgnoreRegions({
                 browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
@@ -1179,6 +1151,8 @@ describe('rectangles', () => {
                 ignoreRegionPadding: 0,
             }, [childElement])
 
+            // The script gets the root element as its second argument
+            expect(childElement.execute).toHaveBeenCalledWith(expect.any(Function), rootElement)
             // CSS: (20,30,100,40) × DPR(2) → (40,60,200,80)
             expect(result).toEqual([
                 { x: 40, y: 60, width: 200, height: 80 },
@@ -1770,70 +1744,5 @@ describe('rectangles', () => {
             expect(statusBarBox).toBeDefined()
             expect(statusBarBox.bottom).toBe(24)
         })
-    })
-})
-
-describe('getFreshElements', () => {
-    const createElement = (props: Record<string, unknown>) => ({ elementId: 'stale', ...props }) as unknown as WebdriverIO.Element
-    let browserInstance: WebdriverIO.Browser
-
-    beforeEach(() => {
-        browserInstance = { $$: vi.fn() } as unknown as WebdriverIO.Browser
-    })
-
-    it('returns the elements of a filtered $$ list at their own index', async () => {
-        const fresh = ['a', 'b', 'c'].map((elementId) => ({ elementId }))
-        vi.mocked(browserInstance.$$).mockResolvedValue(fresh as any)
-
-        const result = await getFreshElements(browserInstance, [
-            createElement({ selector: 'li', index: 0 }),
-            createElement({ selector: 'li', index: 2 }),
-        ])
-
-        expect(result).toEqual([fresh[0], fresh[2]])
-        expect(browserInstance.$$).toHaveBeenCalledTimes(1)
-    })
-
-    it('queries a chained element in its parent', async () => {
-        const fresh = [{ elementId: 'input-in-form' }]
-        const parent = { $$: vi.fn().mockResolvedValue(fresh) }
-
-        const result = await getFreshElements(browserInstance, [createElement({ selector: 'input', parent })])
-
-        expect(parent.$$).toHaveBeenCalledWith('input')
-        expect(browserInstance.$$).not.toHaveBeenCalled()
-        expect(result).toEqual([fresh[0]])
-    })
-
-    it('keeps an element without a usable selector', async () => {
-        const customStrategy = createElement({ selector: { strategy: 'byTestId' } })
-        const noSelector = createElement({ selector: undefined })
-
-        const result = await getFreshElements(browserInstance, [customStrategy, noSelector])
-
-        expect(result[0]).toBe(customStrategy)
-        expect(result[1]).toBe(noSelector)
-        expect(browserInstance.$$).not.toHaveBeenCalled()
-    })
-
-    it('uses a running index for elements without index', async () => {
-        const fresh = ['a', 'b'].map((elementId) => ({ elementId }))
-        vi.mocked(browserInstance.$$).mockResolvedValue(fresh as any)
-
-        const result = await getFreshElements(browserInstance, [
-            createElement({ selector: '.hero' }),
-            createElement({ selector: '.hero' }),
-        ])
-
-        expect(result).toEqual([fresh[0], fresh[1]])
-    })
-
-    it('keeps the element when the new query finds fewer elements', async () => {
-        vi.mocked(browserInstance.$$).mockResolvedValue([] as any)
-        const element = createElement({ selector: '.gone', index: 1 })
-
-        const result = await getFreshElements(browserInstance, [element])
-
-        expect(result[0]).toBe(element)
     })
 })
