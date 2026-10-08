@@ -3,7 +3,7 @@ import { defineConfig, coverageConfigDefaults, defaultExclude } from 'vitest/con
 export default defineConfig({
     test: {
         include: ['./packages/**/(tests|src)/**/*.test.ts'],
-        reporters: ['default', ['html', { outputFile: '.vitest-ui/index.html' }]],
+        reporters: ['default', ['html', { outputDir: '.vitest-ui' }]],
         coverage: {
             // Vitest 4 removed `coverage.all`: without `include`, only the files that the tests load are reported
             include: ['packages/*/src/**/*.{ts,tsx}'],
