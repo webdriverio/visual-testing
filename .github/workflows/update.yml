@@ -71,7 +71,10 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 30 # seconds
           running-workflow-name: dependencies # wait for all checks except this one
-          allowed-conclusions: success,skipped # all other checks must pass; being skipped or canceled is not sufficient
+          # all other checks must pass. `neutral` is allowed: CodeQL default setup does not analyze commits pushed by
+          # Dependabot, so its `CodeQL` check ends as `neutral` ("configurations not found"), which is not a failure.
+          # `main` is analyzed after the merge. Canceled or failed checks (also a CodeQL finding) still block it.
+          allowed-conclusions: success,skipped,neutral
 
       # Auto-merge Dependabot PRs
       # Don't merge updates to GitHub Actions versions automatically.
