@@ -8,6 +8,8 @@ const fixture = (name: string) => pathToFileURL(join(process.cwd(), 'tests/fixtu
  * WebdriverIO v10 behavior that unit tests cannot cover, see the v10 migration guide:
  * - `browser.newWindow()` returns a browsing context and no longer switches to it
  * - in a WebDriver BiDi session, frames are reached with `context.frame()`, `switchFrame` throws
+ * - an element command finds a stale element again (with its index in a `$$` list), so an ignore element is
+ *   found again after the DOM is rendered again
  *
  * The baselines are created in the same run, so no committed baseline is needed.
  */
@@ -18,10 +20,37 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         await browser.checkScreen('v10-page-a')
 
         // v10: the new tab is returned and the browser stays on page A
-        await browser.newWindow(fixture('page-b.html'), { type: 'tab' })
+        const pageB = await browser.newWindow(fixture('page-b.html'), { type: 'tab' })
 
-        expect(await browser.getUrl()).toContain('page-a.html')
-        expect(await browser.checkScreen('v10-page-a')).toBe(0)
+        try {
+            expect(await browser.getUrl()).toContain('page-a.html')
+            expect(await browser.checkScreen('v10-page-a')).toBe(0)
+        } finally {
+            // Close the new tab. On Linux headless Chrome, page A is then in a background tab, and a screenshot
+            // of it hangs (`browsingContext.captureScreenshot` timeout) when the page changes in a later test
+            if ('closeWindow' in pageB) {
+                await pageB.closeWindow()
+            }
+        }
+    })
+
+    it('ignores the element of a $$ list at its own index after the DOM is rendered again (stale element)', async () => {
+        await browser.url(fixture('boxes.html'))
+        // creates the baseline of the 3 boxes
+        await browser.checkScreen('v10-stale-ignore')
+
+        const second = (await $$('.box'))[1]
+        // The same markup again gives new DOM nodes, so the reference of `second` is stale.
+        // Only the second box changes, so only an ignore region on the second box hides the change.
+        await browser.execute(() => {
+            document.body.innerHTML = document.body.innerHTML
+            document.querySelectorAll<HTMLElement>('.box')[1].style.background = '#d32f2f'
+        })
+
+        // control: without an ignore region, the change is found
+        expect(await browser.checkScreen('v10-stale-ignore')).toBeGreaterThan(0)
+        // WebdriverIO finds the stale element again at index 1, so the change of the second box is ignored
+        expect(await browser.checkScreen('v10-stale-ignore', { ignore: [second] })).toBe(0)
     })
 
     // Known gap, not supported yet: the element rect comes from WebDriver Classic `getElementRect`, which cannot

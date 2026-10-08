@@ -131,6 +131,9 @@ importers:
       vitest:
         specifier: ^3.2.7
         version: 3.2.7(@types/debug@4.1.12)(@types/node@24.0.14)(@vitest/ui@3.2.7)(jiti@2.7.0)(jsdom@30.1.2)(supports-color@8.1.1)(tsx@4.23.15)(yaml@2.8.1)
+      vitest-mock-extended:
+        specifier: ^3.1.1
+        version: 3.1.1(typescript@5.9.3)(vitest@3.2.7)
       wdio-lambdatest-service:
         specifier: ^4.0.1
         version: 4.0.1(patch_hash=07d272cca35a334e8835c85beb552eb4f8cdb6e76edba1cab0289e9c092dbf1b)(@wdio/cli@10.0.0(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(supports-color@8.1.1)(yauzl@3.4.0)))(supports-color@8.1.1)(yauzl@3.4.0))(@wdio/types@10.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(supports-color@8.1.1)(yauzl@3.4.0))
@@ -7112,6 +7115,14 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  ts-essentials@10.2.1:
+    resolution: {integrity: sha512-+Id1fRkuir+CsgK2x04/icS2b4V1hQmq7ObzIrDjhN0ozfRYivnP7aaKMVJfLApQm0trjR39A6NIMVchiB9Erw==}
+    peerDependencies:
+      typescript: '>=4.5.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   ts-node@10.9.2:
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
@@ -7488,6 +7499,12 @@ packages:
         optional: true
       yaml:
         optional: true
+
+  vitest-mock-extended@3.1.1:
+    resolution: {integrity: sha512-IQBKkEYB5BW4eJ+8JHZRzrLkKIJu5zkLJsU6u8vB+skSXbES+Di86nrUIbXwEQivDXcR4APMZFSvt398+iqKYA==}
+    peerDependencies:
+      typescript: 3.x || 4.x || 5.x || 6.x
+      vitest: '>=3.0.0'
 
   vitest@3.2.7:
     resolution: {integrity: sha512-KrxIJ62Fd89gfysR4WotlgZABiz2dqFPgqGzX7s+CwsqLFomRH7777ZcrOD6+WVAh7khPQP41A+BKbpcJFrdEg==}
@@ -15949,6 +15966,10 @@ snapshots:
     dependencies:
       typescript: 5.9.3
 
+  ts-essentials@10.2.1(typescript@5.9.3):
+    optionalDependencies:
+      typescript: 5.9.3
+
   ts-node@10.9.2(@types/node@24.0.14)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
@@ -16373,6 +16394,12 @@ snapshots:
       jiti: 2.7.0
       tsx: 4.23.15
       yaml: 2.8.1
+
+  vitest-mock-extended@3.1.1(typescript@5.9.3)(vitest@3.2.7):
+    dependencies:
+      ts-essentials: 10.2.1(typescript@5.9.3)
+      typescript: 5.9.3
+      vitest: 3.2.7(@types/debug@4.1.12)(@types/node@24.0.14)(@vitest/ui@3.2.7)(jiti@2.7.0)(jsdom@30.1.2)(supports-color@8.1.1)(tsx@4.23.15)(yaml@2.8.1)
 
   vitest@3.2.7(@types/debug@4.1.12)(@types/node@24.0.14)(@vitest/ui@3.2.7)(jiti@2.7.0)(jsdom@30.1.2)(supports-color@8.1.1)(tsx@4.23.15)(yaml@2.8.1):
     dependencies:
