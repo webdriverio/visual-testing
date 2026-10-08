@@ -45,6 +45,9 @@ Compare the `fileName` of two runs (`returnAllCompareData: true`).
 - The LambdaTest configs set `autoSaveBaseline: !process.env.CI`: in CI a
   missing baseline fails. A new file name (new device, OS, viewport) must never
   pass without a comparison.
+- The Sauce Labs configs still use the default (`true`): there, a new file name
+  passes by saving a baseline. Do not treat a green Sauce Labs run as proof
+  that a new file name was compared.
 - A spec that checks something else than the image (for example the folder
   options in `checkMethodsFolders.spec.ts`) saves its own baseline first with
   the matching `save*` command.

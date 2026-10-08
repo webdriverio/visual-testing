@@ -99,7 +99,9 @@ Mock the browser in unit tests; do not start a browser.
   repository, not for forks or Dependabot.
 - [`scheduled-tests`](.github/workflows/scheduled-tests.yml): the same cloud
   jobs, on a schedule or by hand. For a PR from a fork, set the `branch` input
-  to `refs/pull/<number>/head`.
+  to `refs/pull/<number>/head` — only after a maintainer reviewed and trusts
+  the exact commit: the run gives the cloud credentials to that code. Never
+  start it for a fork without that review.
 - [`release`](.github/workflows/release.yml): manual, see
   [visual-testing-release](.agents/skills/visual-testing-release/SKILL.md).
 
@@ -107,9 +109,9 @@ Mock the browser in unit tests; do not start a browser.
 
 - The local suites make their baselines in the same run. Never commit
   `localBaseline/` or `.tmp/`.
-- The cloud runs compare with committed baselines. In CI a missing baseline
-  fails (`autoSaveBaseline` is off), so a new file name never passes without a
-  comparison.
+- The cloud runs compare with committed baselines. LambdaTest turns off
+  `autoSaveBaseline` in CI, so a missing baseline fails. Sauce Labs leaves it
+  on, so a new file name can pass by saving a baseline without a comparison.
 - Add or update cloud baselines only from CI runs, and look at each image
   before the commit. See
   [visual-testing-baselines](.agents/skills/visual-testing-baselines/SKILL.md).

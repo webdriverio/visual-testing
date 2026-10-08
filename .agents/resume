@@ -12,8 +12,9 @@ fi
 
 EXPECTED_NODE="$(tr -d 'v[:space:]' < .nvmrc)"
 ACTUAL_NODE="$(node -p "process.versions.node")"
-if (( ${ACTUAL_NODE%%.*} < 22 )); then
-    echo "Node $ACTUAL_NODE is too old. Run .agents/setup" >&2
+MIN_NODE="$(node -p "require('./package.json').engines.node.replace(/^>=\\s*/, '')")"
+if ! node -e "const p = (v) => v.split('.').map(Number); const a = p(process.versions.node); const b = p(process.argv[1]); process.exit((a[0] - b[0] || a[1] - b[1] || a[2] - b[2]) < 0 ? 1 : 0)" "$MIN_NODE"; then
+    echo "Node $ACTUAL_NODE is too old (package.json#engines: >=$MIN_NODE). Run .agents/setup" >&2
     exit 1
 fi
 if [[ "${ACTUAL_NODE%%.*}" != "${EXPECTED_NODE%%.*}" ]]; then
@@ -33,7 +34,7 @@ for pkg in packages/*/; do
 done
 
 HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
-STAMP="packages/visual-service/dist/.agent-rev"
+STAMP="node_modules/.cache/visual-testing-agent-rev"
 if [[ ! -f "$STAMP" ]] || [[ "$(cat "$STAMP")" != "$HEAD" ]]; then
     echo "Checkout moved since last .agents/setup (stale node_modules or packages/*/dist). Run .agents/setup" >&2
     exit 1

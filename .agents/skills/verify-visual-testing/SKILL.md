@@ -41,7 +41,9 @@ the fix. Report both results.
 ## Linux Docker check (CI-only failures)
 
 GitHub runs the local suites on `ubuntu-latest`. To reproduce a Linux-only
-failure on another OS:
+failure on another OS, first commit your change (a work-in-progress commit is
+fine): `git archive HEAD` copies only committed files, so an uncommitted fix or
+a new test file would be missing and the container would test the old code.
 
 ```sh
 W=/tmp/vt-linux && rm -rf $W && mkdir -p $W && git archive HEAD | tar -x -C $W
@@ -53,7 +55,7 @@ docker run --rm --platform linux/amd64 --shm-size=2g -v $W:/work -w /work \
 ```
 
 - Do not mount the checkout itself: `node_modules` from macOS do not work in
-  Linux. Use `git archive` (or `git stash create` for uncommitted changes).
+  Linux.
 - Use `--platform linux/amd64` on Apple Silicon: Chrome for Testing has no
   Linux arm64 build.
 - The container has other fonts than the GitHub runner (the runner uses
@@ -71,6 +73,11 @@ The `e2e` workflow runs the cloud jobs only for branches in this repository.
   [`scheduled-tests`](../../../.github/workflows/scheduled-tests.yml) workflow
   by hand (`Use workflow from: main`) with the `branch` input set to
   `refs/pull/<number>/head`.
+  **Security:** this run gives the cloud credentials to the code of that ref,
+  so a test in it can read and send them. Do it only after a maintainer
+  reviewed and trusts the exact commit. `refs/pull/<number>/head` moves when
+  the author pushes again: check the commit in the log of the checkout step.
+  An agent must never start this run for a fork on its own.
 - LambdaTest and Sauce Labs limit parallel sessions. Other cloud runs at the
   same time make yours wait.
 - Cloud devices can be in different states between sessions (for example the
