@@ -51,19 +51,6 @@ describe('@wdio/visual-service mobile web', () => {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
             }
             await expect(result < 0.05 ? 0 : result).toEqual(0)
-
-            const newOrientation = orientation.toUpperCase() === 'LANDSCAPE' ? 'PORTRAIT' : 'LANDSCAPE'
-
-            await browser.pause(2000)
-            await browser.setOrientation(newOrientation)
-            await browser.pause(2000)
-            const newResult = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}${viewportTag}`) as number
-            if (newResult > 0 && result < 0.05) {
-                console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
-            }
-            // Before the expect we need to revert the orientation otherwise the next test will not start in the default orientation
-            await browser.setOrientation(orientation)
-            await expect(newResult < 0.05 ? 0 : newResult).toEqual(0)
         })
 
         it(`should compare a screen with ignore elements successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
@@ -199,6 +186,30 @@ describe('@wdio/visual-service mobile web', () => {
             )
         })
     }
+
+    // The rotation is the last test: on Android 16 the system bars can change after a rotation (for example an
+    // opaque status bar), and that would change the screenshots of the tests after it.
+    if (
+        wdioIcsCommands.length === 0 ||
+        wdioIcsCommands.includes('checkScreen')
+    ) {
+        it(`should compare a screen after an orientation change for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
+            skipTest({ test: this, deviceName, platformName, platformVersion, orientation })
+            this.retries(2)
+
+            const newOrientation = orientation.toUpperCase() === 'LANDSCAPE' ? 'PORTRAIT' : 'LANDSCAPE'
+
+            await browser.setOrientation(newOrientation)
+            await browser.pause(2000)
+            const result = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}${viewportTag}`) as number
+            if (result > 0 && result < 0.05) {
+                console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
+            }
+            // Before the expect we need to revert the orientation otherwise a retry will not start in the default orientation
+            await browser.setOrientation(orientation)
+            await expect(result < 0.05 ? 0 : result).toEqual(0)
+        })
+    }
 })
 
 /******************************************************************************************
@@ -268,6 +279,14 @@ const skipRules = expandSkipRules([
     },
     {
         titleIncludes: 'compare a screen successful',
+        deviceName: 'Pixel 9 Pro',
+        platformName: 'Android',
+        platformVersions: ['14'],
+        orientations: ['landscape', 'portrait'],
+        reason: 'Full black screen',
+    },
+    {
+        titleIncludes: 'compare a screen after an orientation change',
         deviceName: 'Pixel 9 Pro',
         platformName: 'Android',
         platformVersions: ['14'],
