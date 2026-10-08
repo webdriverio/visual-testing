@@ -43,7 +43,7 @@ function evaluateResult(
                 `\nBaseline: ${result.folders.baseline}\n` +
                 `Actual Screenshot: ${result.folders.actual}\n` +
                 `Difference: ${result.folders.diff}\n` +
-                '\nFor guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/visual-testing/faq#my-visual-tests-fail-with-a-difference-how-can-i-update-my-baseline'
+                '\nFor guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/visual-testing/faq'
         }
     }
 
