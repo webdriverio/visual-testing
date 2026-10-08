@@ -118,7 +118,5 @@ jobs:
           include-hidden-files: true
           path: |
             logs/*.log
-            .tmp/v10-e2e/
-            .tmp/actual/
-            .tmp/diff/
+            .tmp/
             localBaseline/
