@@ -20,10 +20,18 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         await browser.checkScreen('v10-page-a')
 
         // v10: the new tab is returned and the browser stays on page A
-        await browser.newWindow(fixture('page-b.html'), { type: 'tab' })
+        const pageB = await browser.newWindow(fixture('page-b.html'), { type: 'tab' })
 
-        expect(await browser.getUrl()).toContain('page-a.html')
-        expect(await browser.checkScreen('v10-page-a')).toBe(0)
+        try {
+            expect(await browser.getUrl()).toContain('page-a.html')
+            expect(await browser.checkScreen('v10-page-a')).toBe(0)
+        } finally {
+            // Close the new tab. On Linux headless Chrome, page A is then in a background tab, and a screenshot
+            // of it hangs (`browsingContext.captureScreenshot` timeout) when the page changes in a later test
+            if ('closeWindow' in pageB) {
+                await pageB.closeWindow()
+            }
+        }
     })
 
     it('ignores the element of a $$ list at its own index after the DOM is rendered again (stale element)', async () => {
