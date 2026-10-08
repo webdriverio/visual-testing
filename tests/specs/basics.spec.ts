@@ -57,8 +57,12 @@ describe('@wdio/visual-service basics', () => {
             }
 
             const tag = 'examplePageFail'
+            const result = await browser.checkScreen(tag, { enableLayoutTesting: false })
 
-            await expect(await browser.checkScreen(tag, { enableLayoutTesting: false })).toBeGreaterThan(0)
+            // The setup run only saves the baseline, without the change
+            if (!isBaselineSetup) {
+                await expect(result).toBeGreaterThan(0)
+            }
         })
     })
 })

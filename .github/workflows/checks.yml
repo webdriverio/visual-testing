@@ -95,6 +95,21 @@ jobs:
         working-directory: ./
         run: pnpm test.local.chrome.v10.emulation
 
+      # The baselines of these specs are not in git: the setup run saves them, then the real run compares
+      - name: 💻 Save the baselines of the desktop e2e tests on local headless Chrome
+        working-directory: ./
+        run: pnpm test.local.desktop
+        env:
+          BASELINE_SETUP: "true"
+
+      - name: 💻 Run the desktop e2e tests on local headless Chrome
+        working-directory: ./
+        run: pnpm test.local.desktop
+
+      - name: 💻 Run the OCR e2e tests on local headless Chrome
+        working-directory: ./
+        run: pnpm test.ocr.local.desktop
+
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
@@ -105,3 +120,5 @@ jobs:
             logs/*.log
             .tmp/v10-e2e/
             .tmp/actual/
+            .tmp/diff/
+            localBaseline/
