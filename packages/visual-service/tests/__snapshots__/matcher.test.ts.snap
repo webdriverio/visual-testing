@@ -8,7 +8,7 @@ Baseline: foo
 Actual Screenshot: bar
 Difference: baz
 
-For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html"
+For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/visual-testing/faq"
 `;
 
 exports[`custom visual matcher > should allow asymmetric matchers 1`] = `"Expected image to match with the given asymmetric matcher but did not pass!"`;
@@ -22,7 +22,7 @@ Baseline: baseline/android/Gmail-1344x2992-3.png
 Actual Screenshot: actual/android/Gmail-1344x2992-3.png
 Difference: diff/android/Gmail-1344x2992-3.png
 
-For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html
+For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/visual-testing/faq
 
 Instance "iosDevice":
 Expected image mismatch percentage to be at most 25%, but was 26%.
@@ -32,5 +32,5 @@ Baseline: baseline/ios/Contacts-1344x2992-3.png
 Actual Screenshot: actual/ios/Contacts-1344x2992-3.png
 Difference: diff/ios/Contacts-1344x2992-3.png
 
-For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html"
+For guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/visual-testing/faq"
 `;
