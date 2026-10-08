@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Bootstrap a checkout so coding agents match CI (Node from .nvmrc, pinned pnpm).
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+if ! command -v node >/dev/null 2>&1; then
+    echo "node is not on PATH. Install Node $(tr -d '[:space:]' < .nvmrc) (see .nvmrc)." >&2
+    exit 1
+fi
+
+EXPECTED_NODE="$(tr -d 'v[:space:]' < .nvmrc)"
+ACTUAL_NODE="$(node -p "process.versions.node")"
+ACTUAL_MAJOR="${ACTUAL_NODE%%.*}"
+EXPECTED_MAJOR="${EXPECTED_NODE%%.*}"
+MIN_NODE="$(node -p "require('./package.json').engines.node.replace(/^>=\\s*/, '')")"
+if ! node -e "const p = (v) => v.split('.').map(Number); const a = p(process.versions.node); const b = p(process.argv[1]); process.exit((a[0] - b[0] || a[1] - b[1] || a[2] - b[2]) < 0 ? 1 : 0)" "$MIN_NODE"; then
+    echo "Node $ACTUAL_NODE is too old. Install Node $EXPECTED_NODE (see .nvmrc) or at least Node $MIN_NODE (package.json#engines)." >&2
+    exit 1
+fi
+if [[ "$ACTUAL_MAJOR" != "$EXPECTED_MAJOR" ]]; then
+    echo "Warning: Node $ACTUAL_NODE; CI uses .nvmrc ($EXPECTED_NODE). Prefer: nvm install && nvm use" >&2
+fi
+
+if ! command -v pnpm >/dev/null 2>&1; then
+    echo "pnpm is not on PATH. Run 'corepack enable' (pnpm is pinned in package.json#packageManager)." >&2
+    exit 1
+fi
+
+HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+# Outside packages/*/dist: every package build deletes its dist folder first
+STAMP="node_modules/.cache/visual-testing-agent-rev"
+need_install=0
+need_build=0
+
+if [[ ! -d node_modules ]]; then
+    need_install=1
+fi
+for pkg in packages/*/; do
+    if [[ ! -d "${pkg}dist" ]]; then
+        need_build=1
+    fi
+done
+if [[ ! -f "$STAMP" ]] || [[ "$(cat "$STAMP")" != "$HEAD" ]]; then
+    need_install=1
+    need_build=1
+fi
+
+if (( need_install )); then
+    pnpm install --frozen-lockfile
+fi
+if (( need_build )); then
+    pnpm build
+fi
+mkdir -p "$(dirname "$STAMP")"
+printf '%s\n' "$HEAD" > "$STAMP"
+
+echo "visual-testing agent setup ok (node $ACTUAL_NODE, pnpm $(pnpm --version))."
