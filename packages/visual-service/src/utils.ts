@@ -1,3 +1,4 @@
+import logger from '@wdio/logger'
 import type { Capabilities } from '@wdio/types'
 import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from '@wdio/image-comparison-core'
 import type { Folders, InstanceData, TestContext } from '@wdio/image-comparison-core'
@@ -9,6 +10,8 @@ import type {
     MobileInstanceData,
     WdioIcsOptions,
 } from './types.js'
+
+const log = logger('@wdio/visual-service')
 
 /**
  * Get the folders data
@@ -414,3 +417,55 @@ export function enrichTestContext(
     }
 }
 
+/**
+ * Chromium-based browsers (Chrome, Chromium, Edge)
+ */
+function isChromium(browserInstance: WebdriverIO.Browser): boolean {
+    const browserName = (browserInstance.capabilities.browserName ?? '').toLowerCase()
+    return ['chrome', 'chromium', 'edge'].some((name) => browserName.includes(name))
+}
+
+/**
+ * Bring a page that is in a background tab to the front before a check or save command.
+ *
+ * Why: in a WebDriver BiDi session with a Chromium-based browser on Linux, a page in a background tab (for example
+ * after `browser.newWindow()`, which in WebdriverIO v10 does not switch to the new tab) has 2 problems:
+ * - it reports `window.outerHeight` = `window.innerHeight`, and the desktop file name uses the outer size, so the
+ *   check uses another file name, saves a new baseline (`autoSaveBaseline`) and passes without a comparison;
+ * - when the page had no new frame for about 300 ms, `browsingContext.captureScreenshot` (CDP `Page.captureScreenshot`)
+ *   never returns, until the `bidiResponseTimeout` (180 seconds by default). This is a Chromium bug: it also
+ *   happens with CDP only, see https://issues.chromium.org/issues/571157133
+ * Chrome on macOS and Firefox (BiDi) do not have these problems.
+ *
+ * A WebDriver Classic screenshot does not have them either, because ChromeDriver brings the tab to the front first
+ * (`ActivateWebView` in `ExecuteScreenshot`). The BiDi `browsingContext.captureScreenshot` does not, so do the same
+ * here with `browsingContext.activate` (CDP `Page.bringToFront`). Side effect: the tab of the page comes to the front.
+ *
+ * Scope: BiDi sessions of Chromium-based desktop browsers, and only when the page is hidden. It is not limited to
+ * Linux: the browser can run on another OS than the test runner (grid, cloud), the hang is also reported on macOS
+ * with other Chrome versions, and Windows was not tested. It never fails the command.
+ *
+ * Reports:
+ * - Chromium bug: https://issues.chromium.org/issues/571157133
+ * - WebDriver BiDi spec (what `browsingContext.captureScreenshot` must do for a hidden page):
+ *   https://github.com/w3c/webdriver-bidi/issues/1176
+ * When Chromium fixes the bug, limit this to the older Chrome versions or remove it.
+ */
+export async function activateHiddenBrowsingContext(browserInstance: WebdriverIO.Browser, isNativeContext: boolean): Promise<void> {
+    if (!browserInstance.isBidi || browserInstance.isMobile || isNativeContext || !isChromium(browserInstance)) {
+        return
+    }
+
+    try {
+        const isHidden = await browserInstance.execute(() => document.visibilityState === 'hidden')
+        if (!isHidden) {
+            return
+        }
+
+        const context = await browserInstance.getWindowHandle()
+        log.info(`The page is in a background tab, activating the browsing context "${context}" before the screenshot`)
+        await browserInstance.browsingContextActivate({ context })
+    } catch (error) {
+        log.warn(`Could not bring the page in a background tab to the front, the screenshot can fail: ${error}`)
+    }
+}

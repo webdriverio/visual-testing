@@ -16,15 +16,23 @@ const fixture = (name: string) => pathToFileURL(join(process.cwd(), 'tests/fixtu
 describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
     it('captures the page that the browser commands act on after newWindow()', async () => {
         await browser.url(fixture('page-a.html'))
-        // creates the baseline of page A
-        await browser.checkScreen('v10-page-a')
+        // creates the baseline of page A; returnAllCompareData also returns the file name
+        const baseline = await browser.checkScreen('v10-page-a', { returnAllCompareData: true })
+        expect(baseline).toHaveProperty('fileName')
 
         // v10: the new tab is returned and the browser stays on page A
         const pageB = await browser.newWindow(fixture('page-b.html'), { type: 'tab' })
 
         try {
             expect(await browser.getUrl()).toContain('page-a.html')
-            expect(await browser.checkScreen('v10-page-a')).toBe(0)
+            // Chrome brings the new tab to the front, so page A is now in a background tab. In a BiDi session the
+            // service activates the browsing context of the browser (page A) before the check, as a WebDriver Classic
+            // screenshot does. Page B is blue, so a screenshot of page B would not match the red page A
+            const result = await browser.checkScreen('v10-page-a', { returnAllCompareData: true })
+            expect(await browser.execute(() => document.visibilityState)).toBe('visible')
+            // the same file name, folders and mismatch (0) as the baseline: a different file name would save a new
+            // baseline and pass without comparing
+            expect(result).toEqual(baseline)
         } finally {
             // Close the new tab. On Linux headless Chrome, page A is then in a background tab, and a screenshot
             // of it hangs (`browsingContext.captureScreenshot` timeout) when the page changes in a later test

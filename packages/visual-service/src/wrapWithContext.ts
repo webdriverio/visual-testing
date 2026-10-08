@@ -1,6 +1,6 @@
 import type { InstanceData } from '@wdio/image-comparison-core'
 import type { WrapWithContextOptions } from './types.js'
-import { getInstanceData } from './utils.js'
+import { activateHiddenBrowsingContext, getInstanceData } from './utils.js'
 
 /**
  * Wrap the command with the context manager
@@ -11,6 +11,9 @@ export function wrapWithContext<T extends (...args: any[]) => any>(opts: WrapWit
     const { browserInstance, command, contextManager, getArgs } = opts
 
     return async function (this: WebdriverIO.Browser): Promise<ReturnType<T>> {
+        // Before the command reads the page size and takes the screenshot
+        await activateHiddenBrowsingContext(browserInstance, contextManager.isNativeContext)
+
         if (contextManager.needsUpdate) {
             const instanceData: InstanceData = await getInstanceData({
                 browserInstance,
