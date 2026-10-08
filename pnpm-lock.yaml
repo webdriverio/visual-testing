@@ -199,22 +199,22 @@ importers:
     devDependencies:
       '@remix-run/dev':
         specifier: ^2.17.5
-        version: 2.17.5(@remix-run/react@2.17.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3))(@remix-run/serve@2.17.5(supports-color@8.1.1)(typescript@6.0.3))(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@6.0.3))(typescript@6.0.3)(vite@5.4.21(@types/node@24.10.1))
+        version: 2.17.5(@remix-run/react@2.17.5(react-dom@18.3.1(react@19.3.0))(react@19.3.0)(typescript@6.0.3))(@remix-run/serve@2.17.5(supports-color@8.1.1)(typescript@6.0.3))(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@6.0.3))(typescript@6.0.3)(vite@5.4.21(@types/node@24.10.1))
       '@remix-run/node':
         specifier: ^2.17.5
         version: 2.17.5(typescript@6.0.3)
       '@remix-run/react':
         specifier: ^2.17.5
-        version: 2.17.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)
+        version: 2.17.5(react-dom@18.3.1(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
       '@remix-run/serve':
         specifier: ^2.17.5
         version: 2.17.5(supports-color@8.1.1)(typescript@6.0.3)
       '@types/react':
-        specifier: ^18.3.31
-        version: 18.3.31
+        specifier: ^19.3.0
+        version: 19.3.0
       '@types/react-dom':
         specifier: ^18.3.7
-        version: 18.3.7(@types/react@18.3.31)
+        version: 18.3.7(@types/react@19.3.0)
       autoprefixer:
         specifier: ^10.6.1
         version: 10.6.1(postcss@8.5.29)
@@ -225,17 +225,17 @@ importers:
         specifier: ^8.5.28
         version: 8.5.29
       react:
-        specifier: ^18.3.1
-        version: 18.3.1
+        specifier: ^19.3.0
+        version: 19.3.0
       react-dom:
         specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
+        version: 18.3.1(react@19.3.0)
       react-icons:
         specifier: ^5.7.0
-        version: 5.7.0(react@18.3.1)
+        version: 5.7.0(react@19.3.0)
       react-select:
         specifier: ^5.10.2
-        version: 5.10.2(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)
+        version: 5.10.2(@types/react@19.3.0)(react-dom@18.3.1(react@19.3.0))(react@19.3.0)(supports-color@8.1.1)
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -2425,9 +2425,6 @@ packages:
     resolution: {integrity: sha512-EULJ8LApcVEPbrfND0cRQqutIOdiIgJ1Mgrhpy755r14xMohPTEpkV/k28SJvuOs9bHRFW8x+KeDAEPiGQPB9Q==}
     deprecated: This is a stub types definition. parse-path provides its own type definitions, so you do not need this installed.
 
-  '@types/prop-types@15.7.14':
-    resolution: {integrity: sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==}
-
   '@types/react-dom@18.3.7':
     resolution: {integrity: sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==}
     peerDependencies:
@@ -2438,8 +2435,8 @@ packages:
     peerDependencies:
       '@types/react': '*'
 
-  '@types/react@18.3.31':
-    resolution: {integrity: sha512-vfEqpXTvwT91yhmwdfouStN2hSKwTvyRs8qpLfADyrq/kxDw0hZM7Wk9Ug1FELj8hIby+S/+kQCSRFF32nv2Qw==}
+  '@types/react@19.3.0':
+    resolution: {integrity: sha512-N0rFCuH9YoxG9/m61l9MfpJKfmLOVU0em7ipIz6TRgSSkvReLB9vL85GB+yr8Bs5leqpvg96JSwF4ZS1s4viQg==}
 
   '@types/sinonjs__fake-timers@8.1.5':
     resolution: {integrity: sha512-mQkU2jY8jJEF7YHjHvsQO8+3ughTL1mcnn96igfhONmR+fUPSKIkefQYpSe8bsly2Ep7oQbn/6VG5/9/0qcArQ==}
@@ -5857,8 +5854,8 @@ packages:
       react: '>=16.6.0'
       react-dom: '>=16.6.0'
 
-  react@18.3.1:
-    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
+  react@19.3.0:
+    resolution: {integrity: sha512-E8LUcbtBWt20bbl2YoHfx4ZDBdxVTfOKtCZn9cDSJ4l6/nuoApcpIBcj47t2wZoVX8g2ZHuMHbiShgCR1T5Sog==}
     engines: {node: '>=0.10.0'}
 
   read-package-json-fast@6.0.0:
@@ -7679,19 +7676,19 @@ snapshots:
 
   '@emotion/memoize@0.9.0': {}
 
-  '@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1)(supports-color@8.1.1)':
+  '@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1)':
     dependencies:
       '@babel/runtime': 7.27.6
       '@emotion/babel-plugin': 11.13.5(supports-color@8.1.1)
       '@emotion/cache': 11.14.0
       '@emotion/serialize': 1.3.3
-      '@emotion/use-insertion-effect-with-fallbacks': 1.2.0(react@18.3.1)
+      '@emotion/use-insertion-effect-with-fallbacks': 1.2.0(react@19.3.0)
       '@emotion/utils': 1.4.2
       '@emotion/weak-memoize': 0.4.0
       hoist-non-react-statics: 3.3.2
-      react: 18.3.1
+      react: 19.3.0
     optionalDependencies:
-      '@types/react': 18.3.31
+      '@types/react': 19.3.0
     transitivePeerDependencies:
       - supports-color
 
@@ -7707,9 +7704,9 @@ snapshots:
 
   '@emotion/unitless@0.10.0': {}
 
-  '@emotion/use-insertion-effect-with-fallbacks@1.2.0(react@18.3.1)':
+  '@emotion/use-insertion-effect-with-fallbacks@1.2.0(react@19.3.0)':
     dependencies:
-      react: 18.3.1
+      react: 19.3.0
 
   '@emotion/utils@1.4.2': {}
 
@@ -9082,7 +9079,7 @@ snapshots:
       proxy-agent: 8.0.2(supports-color@8.1.1)
       yauzl: 3.4.0
 
-  '@remix-run/dev@2.17.5(@remix-run/react@2.17.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3))(@remix-run/serve@2.17.5(supports-color@8.1.1)(typescript@6.0.3))(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@6.0.3))(typescript@6.0.3)(vite@5.4.21(@types/node@24.10.1))':
+  '@remix-run/dev@2.17.5(@remix-run/react@2.17.5(react-dom@18.3.1(react@19.3.0))(react@19.3.0)(typescript@6.0.3))(@remix-run/serve@2.17.5(supports-color@8.1.1)(typescript@6.0.3))(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@6.0.3))(typescript@6.0.3)(vite@5.4.21(@types/node@24.10.1))':
     dependencies:
       '@babel/core': 7.28.4(supports-color@8.1.1)
       '@babel/generator': 7.28.3
@@ -9095,7 +9092,7 @@ snapshots:
       '@mdx-js/mdx': 2.3.0(supports-color@8.1.1)
       '@npmcli/package-json': 4.0.1
       '@remix-run/node': 2.17.5(typescript@6.0.3)
-      '@remix-run/react': 2.17.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)
+      '@remix-run/react': 2.17.5(react-dom@18.3.1(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
       '@remix-run/router': 1.23.3
       '@remix-run/server-runtime': 2.17.5(typescript@6.0.3)
       '@types/mdx': 2.0.13
@@ -9180,14 +9177,14 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
-  '@remix-run/react@2.17.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)':
+  '@remix-run/react@2.17.5(react-dom@18.3.1(react@19.3.0))(react@19.3.0)(typescript@6.0.3)':
     dependencies:
       '@remix-run/router': 1.23.3
       '@remix-run/server-runtime': 2.17.5(typescript@6.0.3)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-router: 6.30.4(react@18.3.1)
-      react-router-dom: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 19.3.0
+      react-dom: 18.3.1(react@19.3.0)
+      react-router: 6.30.4(react@19.3.0)
+      react-router-dom: 6.30.4(react-dom@18.3.1(react@19.3.0))(react@19.3.0)
       turbo-stream: 2.4.1
     optionalDependencies:
       typescript: 6.0.3
@@ -9456,19 +9453,16 @@ snapshots:
     dependencies:
       parse-path: 7.1.0
 
-  '@types/prop-types@15.7.14': {}
-
-  '@types/react-dom@18.3.7(@types/react@18.3.31)':
+  '@types/react-dom@18.3.7(@types/react@19.3.0)':
     dependencies:
-      '@types/react': 18.3.31
+      '@types/react': 19.3.0
 
-  '@types/react-transition-group@4.4.12(@types/react@18.3.31)':
+  '@types/react-transition-group@4.4.12(@types/react@19.3.0)':
     dependencies:
-      '@types/react': 18.3.31
+      '@types/react': 19.3.0
 
-  '@types/react@18.3.31':
+  '@types/react@19.3.0':
     dependencies:
-      '@types/prop-types': 15.7.14
       csstype: 3.2.3
 
   '@types/sinonjs__fake-timers@8.1.5': {}
@@ -13563,15 +13557,15 @@ snapshots:
       defu: 6.1.7
       destr: 2.0.5
 
-  react-dom@18.3.1(react@18.3.1):
+  react-dom@18.3.1(react@19.3.0):
     dependencies:
       loose-envify: 1.4.0
-      react: 18.3.1
+      react: 19.3.0
       scheduler: 0.23.2
 
-  react-icons@5.7.0(react@18.3.1):
+  react-icons@5.7.0(react@19.3.0):
     dependencies:
-      react: 18.3.1
+      react: 19.3.0
 
   react-is@16.13.1: {}
 
@@ -13581,47 +13575,45 @@ snapshots:
 
   react-refresh@0.14.2: {}
 
-  react-router-dom@6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-router-dom@6.30.4(react-dom@18.3.1(react@19.3.0))(react@19.3.0):
     dependencies:
       '@remix-run/router': 1.23.3
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-router: 6.30.4(react@18.3.1)
+      react: 19.3.0
+      react-dom: 18.3.1(react@19.3.0)
+      react-router: 6.30.4(react@19.3.0)
 
-  react-router@6.30.4(react@18.3.1):
+  react-router@6.30.4(react@19.3.0):
     dependencies:
       '@remix-run/router': 1.23.3
-      react: 18.3.1
+      react: 19.3.0
 
-  react-select@5.10.2(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1):
+  react-select@5.10.2(@types/react@19.3.0)(react-dom@18.3.1(react@19.3.0))(react@19.3.0)(supports-color@8.1.1):
     dependencies:
       '@babel/runtime': 7.27.6
       '@emotion/cache': 11.14.0
-      '@emotion/react': 11.14.0(@types/react@18.3.31)(react@18.3.1)(supports-color@8.1.1)
+      '@emotion/react': 11.14.0(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1)
       '@floating-ui/dom': 1.7.1
-      '@types/react-transition-group': 4.4.12(@types/react@18.3.31)
+      '@types/react-transition-group': 4.4.12(@types/react@19.3.0)
       memoize-one: 6.0.0
       prop-types: 15.8.1
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-transition-group: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      use-isomorphic-layout-effect: 1.2.1(@types/react@18.3.31)(react@18.3.1)
+      react: 19.3.0
+      react-dom: 18.3.1(react@19.3.0)
+      react-transition-group: 4.4.5(react-dom@18.3.1(react@19.3.0))(react@19.3.0)
+      use-isomorphic-layout-effect: 1.2.1(@types/react@19.3.0)(react@19.3.0)
     transitivePeerDependencies:
       - '@types/react'
       - supports-color
 
-  react-transition-group@4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-transition-group@4.4.5(react-dom@18.3.1(react@19.3.0))(react@19.3.0):
     dependencies:
       '@babel/runtime': 7.27.6
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.3.0
+      react-dom: 18.3.1(react@19.3.0)
 
-  react@18.3.1:
-    dependencies:
-      loose-envify: 1.4.0
+  react@19.3.0: {}
 
   read-package-json-fast@6.0.0:
     dependencies:
@@ -14617,11 +14609,11 @@ snapshots:
 
   urlpattern-polyfill@10.1.0: {}
 
-  use-isomorphic-layout-effect@1.2.1(@types/react@18.3.31)(react@18.3.1):
+  use-isomorphic-layout-effect@1.2.1(@types/react@19.3.0)(react@19.3.0):
     dependencies:
-      react: 18.3.1
+      react: 19.3.0
     optionalDependencies:
-      '@types/react': 18.3.31
+      '@types/react': 19.3.0
 
   userhome@1.0.1: {}
 
