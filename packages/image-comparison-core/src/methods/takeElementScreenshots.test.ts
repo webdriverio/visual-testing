@@ -121,6 +121,16 @@ describe('takeElementScreenshot', () => {
             expect(waitForSpy).toHaveBeenCalledWith(100)
         })
 
+        it('should restore scroll to position 0 when the page was at the top', async () => {
+            const optionsWithScroll = { ...baseOptions, autoElementScroll: true }
+            executeMock.mockResolvedValueOnce(0) // previous scroll position at the top
+
+            await takeElementScreenshot(browserInstance, optionsWithScroll, true)
+
+            expect(executeMock).toHaveBeenCalledTimes(2)
+            expect(executeMock.mock.calls[1][1]).toBe(0)
+        })
+
         it('should not restore scroll when autoElementScroll is enabled but no previous position', async () => {
             const optionsWithScroll = { ...baseOptions, autoElementScroll: true }
             executeMock.mockResolvedValueOnce(undefined) // no previous position
@@ -224,6 +234,16 @@ describe('takeElementScreenshot', () => {
             )
         })
 
+        it('should restore scroll to position 0 in viewport mode when the page was at the top', async () => {
+            const vpScrollOptions: ElementScreenshotDataOptions = { ...vpOptions, autoElementScroll: true }
+            executeMock.mockResolvedValueOnce(0) // previous scroll position at the top
+
+            await takeElementScreenshot(browserInstance, vpScrollOptions, true)
+
+            expect(executeMock).toHaveBeenCalledTimes(2)
+            expect(executeMock.mock.calls[1][1]).toBe(0)
+        })
+
         it('should use origin: document for the default (no biDiOrigin set)', async () => {
             const defaultOptions = { ...vpOptions, biDiOrigin: undefined }
 
@@ -302,6 +322,16 @@ describe('takeElementScreenshot', () => {
             // Second call for scrolling back to original position
             expect(executeMock.mock.calls[1]).toMatchSnapshot()
             expect(waitForSpy).toHaveBeenCalledWith(100)
+        })
+
+        it('should scroll back to position 0 when the page was at the top', async () => {
+            const optionsWithScroll = { ...baseOptions, autoElementScroll: true }
+            executeMock.mockResolvedValueOnce(0) // previous scroll position at the top
+
+            await takeElementScreenshot(browserInstance, optionsWithScroll, false)
+
+            expect(executeMock).toHaveBeenCalledTimes(2)
+            expect(executeMock.mock.calls[1][1]).toBe(0)
         })
 
         it('should not scroll back when autoElementScroll is enabled but no current position', async () => {

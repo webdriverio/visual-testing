@@ -51,7 +51,7 @@ async function takeBiDiElementScreenshot(
         clip,
     })
 
-    if (options.autoElementScroll && currentPosition) {
+    if (options.autoElementScroll && typeof currentPosition === 'number') {
         await browserInstance.execute(scrollToPosition, currentPosition)
     }
 
@@ -120,7 +120,7 @@ async function takeBiDiElementScreenshotFromViewport(
         clip,
     })
 
-    if (options.autoElementScroll && currentPosition) {
+    if (options.autoElementScroll && typeof currentPosition === 'number') {
         await browserInstance.execute(scrollToPosition, currentPosition)
     }
 
@@ -179,7 +179,7 @@ async function takeWebDriverElementScreenshot(
     // When the screenshot has been taken and the element position has been determined,
     // we can scroll back to the original position
     // We don't need to wait for the scroll here because we don't take a screenshot after this
-    if (options.autoElementScroll && currentPosition) {
+    if (options.autoElementScroll && typeof currentPosition === 'number') {
         await browserInstance.execute(scrollToPosition, currentPosition)
     }
 
