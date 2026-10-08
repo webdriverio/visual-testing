@@ -3,7 +3,6 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "baseUrl": "."
   },
   "include": ["./src/**/*", "../ocr-service/src/cli.ts"]
 }

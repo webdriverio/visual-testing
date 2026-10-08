@@ -3,8 +3,8 @@
   "compilerOptions": {
     "noEmit": false,
     "outDir": "./dist",
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "target": "ES6",
     "rootDir": "./scripts",
     "jsx": "preserve"
