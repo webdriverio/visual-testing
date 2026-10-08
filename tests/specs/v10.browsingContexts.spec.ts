@@ -4,6 +4,25 @@ import { browser, expect } from '@wdio/globals'
 
 const fixture = (name: string) => pathToFileURL(join(process.cwd(), 'tests/fixtures/v10', name)).href
 
+interface CompareResult {
+    fileName: string
+    misMatchPercentage: number
+}
+
+function isCompareResult(result: unknown): result is CompareResult {
+    return typeof result === 'object' && result !== null
+        && 'fileName' in result && typeof result.fileName === 'string'
+        && 'misMatchPercentage' in result && typeof result.misMatchPercentage === 'number'
+}
+
+async function checkPageA(): Promise<CompareResult> {
+    const result = await browser.checkScreen('v10-page-a', { returnAllCompareData: true })
+    if (!isCompareResult(result)) {
+        throw new Error(`checkScreen did not return the compare data: ${JSON.stringify(result)}`)
+    }
+    return result
+}
+
 /**
  * WebdriverIO v10 behavior that unit tests cannot cover, see the v10 migration guide:
  * - `browser.newWindow()` returns a browsing context and no longer switches to it
@@ -17,14 +36,19 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
     it('captures the page that the browser commands act on after newWindow()', async () => {
         await browser.url(fixture('page-a.html'))
         // creates the baseline of page A
-        await browser.checkScreen('v10-page-a')
+        const baseline = await checkPageA()
 
         // v10: the new tab is returned and the browser stays on page A
         const pageB = await browser.newWindow(fixture('page-b.html'), { type: 'tab' })
 
         try {
             expect(await browser.getUrl()).toContain('page-a.html')
-            expect(await browser.checkScreen('v10-page-a')).toBe(0)
+            // Chrome brings the new tab to the front, so page A is now in a background tab. Page B is blue, so a
+            // screenshot of the tab in front would not match the red page A
+            const result = await checkPageA()
+            // the same baseline file: a different file name would save a new baseline and pass without comparing
+            expect(result.fileName).toBe(baseline.fileName)
+            expect(result.misMatchPercentage).toBe(0)
         } finally {
             // Close the new tab. On Linux headless Chrome, page A is then in a background tab, and a screenshot
             // of it hangs (`browsingContext.captureScreenshot` timeout) when the page changes in a later test
