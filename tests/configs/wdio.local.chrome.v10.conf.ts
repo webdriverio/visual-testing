@@ -27,9 +27,7 @@ export const config: WebdriverIO.Config = {
         'visual',
         {
             baselineFolder,
-            // No {width}x{height}: a tab in the background reports another window size (outerHeight), so a
-            // check in a background tab would get another file name and save a new baseline instead of comparing
-            formatImageName: '{tag}-{logName}',
+            formatImageName: '{tag}-{logName}-{width}x{height}',
             screenshotPath: join(process.cwd(), '.tmp/v10-e2e/'),
             savePerInstance: true,
             autoSaveBaseline: true,
