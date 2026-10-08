@@ -410,9 +410,9 @@ exports[`checkWebScreen > should handle all method options correctly 1`] = `
         "hideElements": [
           {
             "elementId": "hide-element",
-            "getLocation": [MockFunction spy],
-            "getSize": [MockFunction spy],
-            "isDisplayed": [MockFunction spy],
+            "getLocation": [MockFunction],
+            "getSize": [MockFunction],
+            "isDisplayed": [MockFunction],
             "selector": "#hide-element",
           },
         ],
@@ -421,9 +421,9 @@ exports[`checkWebScreen > should handle all method options correctly 1`] = `
         "removeElements": [
           {
             "elementId": "remove-element",
-            "getLocation": [MockFunction spy],
-            "getSize": [MockFunction spy],
-            "isDisplayed": [MockFunction spy],
+            "getLocation": [MockFunction],
+            "getSize": [MockFunction],
+            "isDisplayed": [MockFunction],
             "selector": "#remove-element",
           },
         ],
@@ -656,9 +656,9 @@ exports[`checkWebScreen > should handle hideElements and removeElements correctl
         "hideElements": [
           {
             "elementId": "test-element",
-            "getLocation": [MockFunction spy],
-            "getSize": [MockFunction spy],
-            "isDisplayed": [MockFunction spy],
+            "getLocation": [MockFunction],
+            "getSize": [MockFunction],
+            "isDisplayed": [MockFunction],
             "selector": "#test-element",
           },
         ],
@@ -667,9 +667,9 @@ exports[`checkWebScreen > should handle hideElements and removeElements correctl
         "removeElements": [
           {
             "elementId": "test-element",
-            "getLocation": [MockFunction spy],
-            "getSize": [MockFunction spy],
-            "isDisplayed": [MockFunction spy],
+            "getLocation": [MockFunction],
+            "getSize": [MockFunction],
+            "isDisplayed": [MockFunction],
             "selector": "#test-element",
           },
         ],

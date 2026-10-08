@@ -5,16 +5,19 @@ import { DEFAULT_FUZZY_OPTIONS } from '../../src/utils/constants.js'
 
 vi.mock('fuse.js', () => {
     return {
-        default: vi.fn().mockImplementation((items, { score = 0.5 }) => ({
-            search: vi.fn().mockImplementation(pattern =>
-                items.filter(item => item.text.includes(pattern)).map(item => ({ item, score, }))
-            ),
-            setCollection: vi.fn(),
-            add: vi.fn(),
-            remove: vi.fn(),
-            removeAt: vi.fn(),
-            getIndex: vi.fn()
-        }))
+        // A function (not an arrow function), because the code calls it with `new`
+        default: vi.fn().mockImplementation(function (items, { score = 0.5 }) {
+            return {
+                search: vi.fn().mockImplementation(pattern =>
+                    items.filter(item => item.text.includes(pattern)).map(item => ({ item, score, }))
+                ),
+                setCollection: vi.fn(),
+                add: vi.fn(),
+                remove: vi.fn(),
+                removeAt: vi.fn(),
+                getIndex: vi.fn()
+            }
+        })
     }
 })
 
@@ -99,14 +102,16 @@ describe('fuzzyFind', () => {
     it('adjusts low scores to zero', () => {
         const pattern = 'relevant'
 
-        vi.mocked(Fuse).mockImplementationOnce(() => ({
-            search: vi.fn().mockReturnValue([{ item: { text: 'relevant' }, score: 1e-11 }]),
-            setCollection: vi.fn(),
-            add: vi.fn(),
-            remove: vi.fn(),
-            removeAt: vi.fn(),
-            getIndex: vi.fn()
-        }))
+        vi.mocked(Fuse).mockImplementationOnce(function () {
+            return {
+                search: vi.fn().mockReturnValue([{ item: { text: 'relevant' }, score: 1e-11 }]),
+                setCollection: vi.fn(),
+                add: vi.fn(),
+                remove: vi.fn(),
+                removeAt: vi.fn(),
+                getIndex: vi.fn()
+            }
+        })
 
         const results = fuzzyFind({
             textArray,

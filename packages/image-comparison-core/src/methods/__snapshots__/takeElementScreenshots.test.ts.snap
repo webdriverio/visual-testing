@@ -2,7 +2,7 @@
 
 exports[`takeElementScreenshot > BiDi screenshots > should scroll element into view when autoElementScroll is enabled 1`] = `
 [
-  [MockFunction spy],
+  [MockFunction],
   {
     "elementId": "test-element",
   },
@@ -12,7 +12,7 @@ exports[`takeElementScreenshot > BiDi screenshots > should scroll element into v
 
 exports[`takeElementScreenshot > BiDi screenshots > should scroll element into view when autoElementScroll is enabled 2`] = `
 [
-  [MockFunction spy],
+  [MockFunction],
   100,
 ]
 `;
@@ -61,7 +61,7 @@ exports[`takeElementScreenshot > Legacy screenshots > should enable fallback whe
 
 exports[`takeElementScreenshot > Legacy screenshots > should handle auto scroll when enabled 1`] = `
 [
-  [MockFunction spy],
+  [MockFunction],
   {
     "elementId": "test-element",
   },
@@ -71,7 +71,7 @@ exports[`takeElementScreenshot > Legacy screenshots > should handle auto scroll 
 
 exports[`takeElementScreenshot > Legacy screenshots > should handle auto scroll when enabled 2`] = `
 [
-  [MockFunction spy],
+  [MockFunction],
   100,
 ]
 `;

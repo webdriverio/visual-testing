@@ -11,10 +11,10 @@ exports[`checkTabbablePage > should execute checkTabbablePage with basic options
 `;
 
 exports[`checkTabbablePage > should execute checkTabbablePage with basic options 2`] = `
-[MockFunction spy] {
+[MockFunction] {
   "calls": [
     [
-      [MockFunction spy],
+      [MockFunction],
       {
         "circle": {
           "backgroundColor": "red",
@@ -33,7 +33,7 @@ exports[`checkTabbablePage > should execute checkTabbablePage with basic options
       },
     ],
     [
-      [MockFunction spy],
+      [MockFunction],
       "wic-tabbable-canvas",
     ],
   ],
@@ -54,10 +54,10 @@ exports[`checkTabbablePage > should execute checkTabbablePage with basic options
 [
   {
     "browserInstance": {
-      "execute": [MockFunction spy] {
+      "execute": [MockFunction] {
         "calls": [
           [
-            [MockFunction spy],
+            [MockFunction],
             {
               "circle": {
                 "backgroundColor": "red",
@@ -76,7 +76,7 @@ exports[`checkTabbablePage > should execute checkTabbablePage with basic options
             },
           ],
           [
-            [MockFunction spy],
+            [MockFunction],
             "wic-tabbable-canvas",
           ],
         ],
@@ -260,10 +260,10 @@ exports[`checkTabbablePage > should handle Android device correctly 1`] = `
 [
   {
     "browserInstance": {
-      "execute": [MockFunction spy] {
+      "execute": [MockFunction] {
         "calls": [
           [
-            [MockFunction spy],
+            [MockFunction],
             {
               "circle": {
                 "backgroundColor": "red",
@@ -282,7 +282,7 @@ exports[`checkTabbablePage > should handle Android device correctly 1`] = `
             },
           ],
           [
-            [MockFunction spy],
+            [MockFunction],
             "wic-tabbable-canvas",
           ],
         ],
@@ -463,10 +463,10 @@ exports[`checkTabbablePage > should handle Android device correctly 1`] = `
 `;
 
 exports[`checkTabbablePage > should handle custom tabbable options 1`] = `
-[MockFunction spy] {
+[MockFunction] {
   "calls": [
     [
-      [MockFunction spy],
+      [MockFunction],
       {
         "circle": {
           "backgroundColor": "yellow",
@@ -485,7 +485,7 @@ exports[`checkTabbablePage > should handle custom tabbable options 1`] = `
       },
     ],
     [
-      [MockFunction spy],
+      [MockFunction],
       "wic-tabbable-canvas",
     ],
   ],
@@ -503,10 +503,10 @@ exports[`checkTabbablePage > should handle custom tabbable options 1`] = `
 `;
 
 exports[`checkTabbablePage > should handle default tabbable options 1`] = `
-[MockFunction spy] {
+[MockFunction] {
   "calls": [
     [
-      [MockFunction spy],
+      [MockFunction],
       {
         "circle": {
           "backgroundColor": "red",
@@ -525,7 +525,7 @@ exports[`checkTabbablePage > should handle default tabbable options 1`] = `
       },
     ],
     [
-      [MockFunction spy],
+      [MockFunction],
       "wic-tabbable-canvas",
     ],
   ],
@@ -546,10 +546,10 @@ exports[`checkTabbablePage > should handle hybrid app options correctly 1`] = `
 [
   {
     "browserInstance": {
-      "execute": [MockFunction spy] {
+      "execute": [MockFunction] {
         "calls": [
           [
-            [MockFunction spy],
+            [MockFunction],
             {
               "circle": {
                 "backgroundColor": "red",
@@ -568,7 +568,7 @@ exports[`checkTabbablePage > should handle hybrid app options correctly 1`] = `
             },
           ],
           [
-            [MockFunction spy],
+            [MockFunction],
             "wic-tabbable-canvas",
           ],
         ],
