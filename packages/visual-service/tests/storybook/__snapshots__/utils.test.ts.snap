@@ -9,7 +9,7 @@ exports[`Storybook utils > capabilitiesErrorMessage > should throw an error when
 exports[`Storybook utils > capabilitiesErrorMessage > should throw an error when unsupported devices are provided 1`] = `"No capabilities were added. Please ensure that the devices 'iPhone 14,Unknown Device' are supported."`;
 
 exports[`Storybook utils > checkStorybookIsRunning > should throw an error if storybook is not running 1`] = `
-[MockFunction spy] {
+[MockFunction] {
   "calls": [
     [
       "It seems that the Storybook instance is not running at: https://not.running.it. Are you sure it's running?",
@@ -94,7 +94,7 @@ describe(\`Special\`Characters\`, () => {
 `;
 
 exports[`Storybook utils > createStorybookCapabilities > logs an error if capabilities are not an array 1`] = `
-[MockFunction spy] {
+[MockFunction] {
   "calls": [
     [
       "The capabilities are not an array",
@@ -229,7 +229,7 @@ exports[`Storybook utils > itFunction > generates correct test code with mocha f
 `;
 
 exports[`Storybook utils > parseSkipStories > logs an error and returns an array if skipStories is an invalid regex string 1`] = `
-[MockFunction spy] {
+[MockFunction] {
   "calls": [
     [
       "Invalid regular expression:",

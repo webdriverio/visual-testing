@@ -1,17 +1,16 @@
 // @vitest-environment jsdom
 
-import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
+import { describe, it, expect, afterEach, vi } from 'vitest'
 import waitForFonts from './waitForFonts.js'
 
 describe('waitForFontsLoaded', () => {
-    let originalDocument: Document
-
-    beforeEach(() => {
-        originalDocument = { ...document }
-    })
+    // jsdom has no `document.fonts`, and `document` itself cannot be replaced, so only `fonts` is defined
+    function setFontsReady(ready: Promise<void>) {
+        Object.defineProperty(document, 'fonts', { value: { ready }, configurable: true })
+    }
 
     afterEach(() => {
-        document = originalDocument
+        Reflect.deleteProperty(document, 'fonts')
         vi.restoreAllMocks()
     })
 
@@ -20,10 +19,7 @@ describe('waitForFontsLoaded', () => {
             setTimeout(resolve, 1000)
         })
 
-        global.document = {
-            ...originalDocument,
-            fonts: { ready: mockReady } as unknown as FontFaceSet,
-        } as Document
+        setFontsReady(mockReady)
 
         await expect(waitForFonts()).resolves.toBe('All fonts have loaded')
     })
@@ -33,10 +29,7 @@ describe('waitForFontsLoaded', () => {
             setTimeout(reject, 12000)
         })
 
-        global.document = {
-            ...originalDocument,
-            fonts: { ready: mockReady } as unknown as FontFaceSet,
-        } as Document
+        setFontsReady(mockReady)
 
         vi.useFakeTimers()
         const promise = waitForFonts()

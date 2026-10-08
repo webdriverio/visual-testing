@@ -14,7 +14,10 @@ vi.mock('../src/storybook/hooks.js', () => ({
 }))
 
 vi.mock('../src/reporter.js', () => ({
-    default: vi.fn().mockImplementation(() => ({ generate: vi.fn() })),
+    // A function (not an arrow function), because the code calls it with `new`
+    default: vi.fn().mockImplementation(function () {
+        return { generate: vi.fn() }
+    }),
 }))
 
 describe('VisualLauncher', () => {

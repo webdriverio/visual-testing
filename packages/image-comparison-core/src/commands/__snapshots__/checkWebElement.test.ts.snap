@@ -503,9 +503,9 @@ exports[`checkWebElement > should handle custom element options 1`] = `
         "hideElements": [
           {
             "elementId": "hide-element",
-            "getLocation": [MockFunction spy],
-            "getSize": [MockFunction spy],
-            "isDisplayed": [MockFunction spy],
+            "getLocation": [MockFunction],
+            "getSize": [MockFunction],
+            "isDisplayed": [MockFunction],
             "selector": "#hide-element",
           },
         ],
@@ -514,9 +514,9 @@ exports[`checkWebElement > should handle custom element options 1`] = `
         "removeElements": [
           {
             "elementId": "remove-element",
-            "getLocation": [MockFunction spy],
-            "getSize": [MockFunction spy],
-            "isDisplayed": [MockFunction spy],
+            "getLocation": [MockFunction],
+            "getSize": [MockFunction],
+            "isDisplayed": [MockFunction],
             "selector": "#remove-element",
           },
         ],

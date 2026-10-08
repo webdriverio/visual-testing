@@ -5,6 +5,8 @@ export default defineConfig({
         include: ['./packages/**/(tests|src)/**/*.test.ts'],
         reporters: ['default', ['html', { outputFile: '.vitest-ui/index.html' }]],
         coverage: {
+            // Vitest 4 removed `coverage.all`: without `include`, only the files that the tests load are reported
+            include: ['packages/*/src/**/*.{ts,tsx}'],
             thresholds: {
                 lines: 50,
                 statements: 50,
