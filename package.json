@@ -98,7 +98,7 @@
     "saucelabs": "^9.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.7",
+    "vitest": "^5.0.3",
     "vitest-mock-extended": "^3.1.1",
     "webdriverio": "^10.0.0",
     "wdio-lambdatest-service": "^4.0.1"
