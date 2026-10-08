@@ -18,7 +18,7 @@ import type {
     StatusAddressToolBarRectangles,
     StatusAddressToolBarRectanglesOptions,
 } from './rectangles.interfaces.js'
-import type { ElementIgnore } from 'src/commands/element.interfaces.js'
+import type { ElementIgnore } from '../commands/element.interfaces.js'
 
 /**
  * Determine the element rectangles on the page / screenshot
