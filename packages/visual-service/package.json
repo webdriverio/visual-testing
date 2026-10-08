@@ -18,6 +18,9 @@
   ],
   "exports": "./dist/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "run-s clean build:*",
