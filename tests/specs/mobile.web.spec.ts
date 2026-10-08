@@ -16,10 +16,19 @@ describe('@wdio/visual-service mobile web', () => {
     const platformVersion = lt?.platformVersion || bs?.osVersion || appium?.platformVersion || caps.platformVersion
     const orientation = (lt?.deviceOrientation || bs?.deviceOrientation || appium?.orientation || caps.orientation || 'PORTRAIT').toLowerCase()
 
+    // Android emulators can start in gesture or in 3-button navigation. The navigation bar changes the viewport and
+    // thus the layout of the page, but not the screen size in the file name. The viewport at the start of the session
+    // goes in the tag (for example `-vp426x823`), so each navigation mode has its own baselines.
+    let viewportTag = ''
+
     beforeEach(async () => {
         await browser.url('')
         await $('.hero__title-logo').waitForDisplayed()
         await browser.pause(3000)
+
+        if (platformName === 'Android' && !viewportTag) {
+            viewportTag = `-vp${await browser.execute(() => `${window.innerWidth}x${window.innerHeight}`)}`
+        }
     })
 
     // Refresh after each test to reset DOM modifications and scroll position.
@@ -37,7 +46,7 @@ describe('@wdio/visual-service mobile web', () => {
 
             // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
-            const result = await browser.checkScreen('screenshot') as number
+            const result = await browser.checkScreen(`screenshot${viewportTag}`) as number
             if (result > 0 && result < 0.05) {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
             }
@@ -48,7 +57,7 @@ describe('@wdio/visual-service mobile web', () => {
             await browser.pause(2000)
             await browser.setOrientation(newOrientation)
             await browser.pause(2000)
-            const newResult = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}`) as number
+            const newResult = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}${viewportTag}`) as number
             if (newResult > 0 && result < 0.05) {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
             }
@@ -73,7 +82,7 @@ describe('@wdio/visual-service mobile web', () => {
             // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
             const result = await browser.checkScreen(
-                'ignoredElementsScreenshot', {
+                `ignoredElementsScreenshot${viewportTag}`, {
                     // Block 2
                     ignore: [
                         await $$('.getStarted_Sjon'),
@@ -97,7 +106,7 @@ describe('@wdio/visual-service mobile web', () => {
             await expect(
                 await browser.checkElement(
                     await $('.hero__title-logo'),
-                    'wdioLogo',
+                    `wdioLogo${viewportTag}`,
                     {
                         removeElements: [await $('nav.navbar')]
                     }
@@ -121,7 +130,7 @@ describe('@wdio/visual-service mobile web', () => {
             })
 
             await expect($('.features_vqN4')).toMatchElementSnapshot(
-                'ignoredElementsElementScreenshot',
+                `ignoredElementsElementScreenshot${viewportTag}`,
                 {
                     // Block 2
                     ignore: [
@@ -147,7 +156,7 @@ describe('@wdio/visual-service mobile web', () => {
 
             // This is normally a bad practice, but a mobile full page screenshot is normally around 4M pixels
             // We're accepting 0.05%, which is 2000 pixels, to be a max difference
-            const result = await browser.checkFullPageScreen('fullPage', {
+            const result = await browser.checkFullPageScreen(`fullPage${viewportTag}`, {
                 fullPageScrollTimeout: 1500,
                 hideAfterFirstScroll: [
                     await $('nav.navbar'),
@@ -173,7 +182,7 @@ describe('@wdio/visual-service mobile web', () => {
             })
 
             await expect(browser).toMatchFullPageSnapshot(
-                'ignoredElementsFullPageScreenshot',
+                `ignoredElementsFullPageScreenshot${viewportTag}`,
                 {
                     // Block 2
                     ignore: [
