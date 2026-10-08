@@ -17,6 +17,9 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "homepage": "https://webdriver.io/docs/visual-testing",
   "repository": {
     "type": "git",
