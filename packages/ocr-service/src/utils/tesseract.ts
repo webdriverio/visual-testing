@@ -73,12 +73,9 @@ export async function getNodeOcrData(options: TessaractDataOptions): Promise<Get
         worker = await createWorker(language)
         await worker.setParameters({
             tessedit_pageseg_mode: PSM.AUTO,
-            tessjs_create_tsv: '0',
-            tessjs_create_box: '0',
-            tessjs_create_unlv: '0',
-            tessjs_create_osd: '0',
         })
-        const { data: { text, hocr } } = await worker.recognize(filePath)
+        // Since tesseract.js 6 only `text` is on by default; the words and their positions come from `hocr`
+        const { data: { text, hocr } } = await worker.recognize(filePath, {}, { text: true, hocr: true })
         const formatedText = text.replace(/[\r\n]{2,}/g, ' ').replace(/\s{2,}/g, ' ').trim()
         await worker.terminate()
 

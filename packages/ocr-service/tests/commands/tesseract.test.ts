@@ -185,7 +185,8 @@ describe('getNodeOcrData', () => {
 
         expect(createWorker).toHaveBeenCalledWith(mockLanguage)
         expect(workerMock.setParameters).toHaveBeenCalled()
-        expect(workerMock.recognize).toHaveBeenCalledWith(mockFilePath)
+        // tesseract.js 6+ returns only `text` unless the other outputs are asked for
+        expect(workerMock.recognize).toHaveBeenCalledWith(mockFilePath, {}, { text: true, hocr: true })
         expect(workerMock.terminate).toHaveBeenCalled()
         expect(result.text).toBe('Extracted text')
         expect(result.words.length).toBeGreaterThan(0)
