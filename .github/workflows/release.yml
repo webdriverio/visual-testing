@@ -25,7 +25,6 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NPM_CONFIG_PROVENANCE: true
 
 jobs:
@@ -129,9 +128,11 @@ jobs:
       - name: 📣 Create Release Pull Request or Publish to npm
         if: github.event.inputs.release_type == 'production'
         id: changesets
-        uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
+        # changesets/action v2 is for Changesets CLI v3. The git identity set above is kept, and the release commit and
+        # tags are pushed with the GitHub API. The `github-token` input defaults to `github.token`; v2 refuses a
+        # different GITHUB_TOKEN environment variable, so do not set one in this workflow.
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm release
-          setupGitUser: false
-          commit: "chore: release [skip ci]"
+          publish-script: pnpm release
+          commit-message: "chore: release [skip ci]"

@@ -278,6 +278,7 @@ The versions below are the versions of `@wdio/visual-service`.
 -   Open your PR against `main`, unless a maintainer asks you to backport a fix to a maintenance branch.
 -   A backport is a separate PR against the maintenance branch, with its own changeset.
 -   `main` is in [changesets prerelease mode](https://github.com/changesets/changesets/blob/main/docs/prereleases.md) (`.changeset/pre.json`): a release from `main` publishes `-next.N` versions with the `next` npm tag. The v11 release exits this mode (`pnpm changeset pre exit`).
+-   After a prerelease, its changesets move to `.changeset/pre/` (Changesets v3). They are used again for the changelog of the final release, so edit or delete one there only when it no longer applies.
 
 ## Releasing
 
