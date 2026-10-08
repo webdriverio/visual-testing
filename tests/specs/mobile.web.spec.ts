@@ -16,9 +16,11 @@ describe('@wdio/visual-service mobile web', () => {
     const platformVersion = lt?.platformVersion || bs?.osVersion || appium?.platformVersion || caps.platformVersion
     const orientation = (lt?.deviceOrientation || bs?.deviceOrientation || appium?.orientation || caps.orientation || 'PORTRAIT').toLowerCase()
 
-    // Android emulators can start in gesture or in 3-button navigation. The navigation bar changes the viewport and
-    // thus the layout of the page, but not the screen size in the file name. The viewport at the start of the session
-    // goes in the tag (for example `-vp426x823`), so each navigation mode has its own baselines.
+    // The Android 15 and 16 emulators on LambdaTest start in one of two states: Chrome draws into the display cutout
+    // area (426x848 in portrait, 952x322 in landscape), or the window leaves it out (an opaque status bar in portrait,
+    // a narrower page in landscape: 426x823, 903x322). This changes the viewport and thus the layout of the page, but
+    // not the screen size in the file name. The viewport at the start of the session goes in the tag
+    // (for example `-vp426x823`), so each state has its own baselines.
     let viewportTag = ''
 
     beforeEach(async () => {
