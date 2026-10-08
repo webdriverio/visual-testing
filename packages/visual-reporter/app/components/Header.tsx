@@ -7,11 +7,11 @@ const Header = ({
     handleSelectedOptions,
     instanceData,
 }: {
-  handleSelectedOptions: (
-    selectedOptions: string[] | keyof SelectedOptions | string,
-    type: string
-  ) => void;
-  instanceData: SnapshotInstanceData;
+    handleSelectedOptions: (
+        selectedOptions: string[] | keyof SelectedOptions | string,
+        type: string
+    ) => void;
+    instanceData: SnapshotInstanceData;
 }) => {
     return (
         <nav className={styles.navbarContainer}>

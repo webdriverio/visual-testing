@@ -289,7 +289,7 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
 
             // There could be some elements above this largest element,
             // add that on top
-            return pageHeight + largestNodeElement?.getBoundingClientRect().top!
+            return pageHeight + (largestNodeElement?.getBoundingClientRect().top ?? 0)
         }
 
         // The scrollHeight is good enough

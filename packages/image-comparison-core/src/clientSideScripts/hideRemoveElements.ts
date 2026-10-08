@@ -56,7 +56,11 @@ export default function hideRemoveElements(
         // @ts-ignore
         el.style[prop] = hideRemove ? value : ''
 
-        hideRemove ? el.style.setProperty(prop, value, 'important') : el.style.removeProperty(prop)
+        if (hideRemove) {
+            el.style.setProperty(prop, value, 'important')
+        } else {
+            el.style.removeProperty(prop)
+        }
     }
 
     // Stupid TypeScript =)

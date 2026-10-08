@@ -45,6 +45,10 @@
     "curly": ["error", "all"],
     "unicorn/prefer-node-protocol": "error",
     "unicorn/prefer-ternary": "error",
+    "unicorn/no-thenable": "off",
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/no-useless-spread": "off",
+    "typescript/no-this-alias": "off",
 
     "no-unused-vars": "off",
     "typescript/no-unused-vars": [

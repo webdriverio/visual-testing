@@ -45,7 +45,7 @@ function sortMethods(methodA: MethodData, methodB: MethodData): number {
     const platformVersionA = methodA.instanceData.platform.version || ''
     const platformVersionB = methodB.instanceData.platform.version || ''
     const platformVersionCompare =
-    platformVersionA.localeCompare(platformVersionB)
+        platformVersionA.localeCompare(platformVersionB)
     if (platformVersionCompare !== 0) {return platformVersionCompare}
 
     const browserNameA = methodA.instanceData.browser?.name || ''

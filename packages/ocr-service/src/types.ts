@@ -43,7 +43,7 @@ export type WaitForTextDisplayedOptions = GetElementPositionByTextOptions & {
 }
 
 export type ClickOnTextOptions = GetElementPositionByTextOptions & {
-    clickDuration?: Number;
+    clickDuration?: number;
     relativePosition?: RelativePosition;
 }
 
@@ -80,7 +80,7 @@ export type OcrWaitForTextDisplayedOptions = OcrGetElementPositionByTextOptions 
 }
 
 export type OcrClickOnTextOptions = OcrGetElementPositionByTextOptions & {
-    clickDuration?: Number;
+    clickDuration?: number;
 }
 
 export type OcrSetValueOptions = OcrClickOnTextOptions & {
@@ -139,20 +139,20 @@ export type FuzzyFindOptions = {
     pattern: string;
     searchOptions?: FuzzySearchOptions;
     textArray: {
-      /**
+        /**
        * the matched string
        */
-      text: string;
-      /**
+        text: string;
+        /**
        * The original position
        */
-      originalPosition: Rectangles;
-      /**
+        originalPosition: Rectangles;
+        /**
        * The position after DPR check
        * screenshots for iOS are with DPR
        * position on the screen for iOS is smaller
        */
-      dprPosition: Rectangles;
+        dprPosition: Rectangles;
     }[];
 }
 
@@ -317,7 +317,7 @@ export type TargetOptions = {
  * xml2js Nodejs Tessaract Types
  */
 export type UnprocessedNodejsBlock = {
-     p?: UnprocessedNodejsParagraph[];
+    p?: UnprocessedNodejsParagraph[];
 }
 
 export type UnprocessedNodejsParagraph = {

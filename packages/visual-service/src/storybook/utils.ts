@@ -198,8 +198,8 @@ export function itFunction({ additionalSearchParams, clip, clipSelector, compare
             additionalSearchParams: new URLSearchParams('${additionalSearchParams.toString()}'),
         });
         ${clip
-        ? `await expect($('${clipSelector}', { strict: false })).toMatchElementSnapshot('${id}-element', ${JSON.stringify(checkMethodOptions)})`
-        : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(checkMethodOptions)})`}
+            ? `await expect($('${clipSelector}', { strict: false })).toMatchElementSnapshot('${id}-element', ${JSON.stringify(checkMethodOptions)})`
+            : `await expect(browser).toMatchScreenSnapshot('${id}', ${JSON.stringify(checkMethodOptions)})`}
     });
     `
     return it
@@ -473,11 +473,11 @@ export function createStorybookCapabilities(
         },
     }
     interface CapabilityMap {
-            chrome: typeof chromeCapability;
-            edge: typeof edgeCapability;
-            firefox: typeof firefoxCapability;
-            safari: typeof safariCapability;
-        }
+        chrome: typeof chromeCapability;
+        edge: typeof edgeCapability;
+        firefox: typeof firefoxCapability;
+        safari: typeof safariCapability;
+    }
     const capabilityMap: CapabilityMap = {
         chrome: chromeCapability,
         edge: edgeCapability,

@@ -28,7 +28,7 @@ function checkFolderExists(folderPath: string): void {
 /**
  * Gets the destination folder path by appending the subfolder and last folder of the file path.
  */
-function getDestinationFolder({ filePath, subFolder = '' }: { filePath: string, subFolder?: string}): string {
+function getDestinationFolder({ filePath, subFolder = '' }: { filePath: string, subFolder?: string }): string {
     const directoryPath = dirname(filePath)
     const lastFolder = directoryPath.split(sep).pop() || ''
     return join(reportPath, subFolder, lastFolder)
@@ -37,7 +37,7 @@ function getDestinationFolder({ filePath, subFolder = '' }: { filePath: string, 
 /**
  * Constructs the full destination file path by joining the destination folder and the base name of the file.
  */
-function getDestinationFilePath({ filePath, subFolder }: { filePath: string, subFolder?: string}): string {
+function getDestinationFilePath({ filePath, subFolder }: { filePath: string, subFolder?: string }): string {
     const baseName = basename(filePath)
     const destinationFolder = getDestinationFolder({ filePath, subFolder })
     return join(destinationFolder, baseName)
@@ -47,7 +47,7 @@ function getDestinationFilePath({ filePath, subFolder }: { filePath: string, sub
  * Copies a file to the specified destination folder.
  * Ensures the destination folder exists before copying the file.
  */
-function copyFileToReportFolder({ filePath, destinationFolder }: { filePath: string, destinationFolder: string}): void {
+function copyFileToReportFolder({ filePath, destinationFolder }: { filePath: string, destinationFolder: string }): void {
     try {
         const reporterFolder = join(reporterBasePath, destinationFolder)
         checkFolderExists(reporterFolder!)

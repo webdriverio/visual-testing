@@ -35,7 +35,7 @@ let browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 
-type CommandFunction = (name: string, fn: (...args: any[]) => any) => void;
+type CommandFunction = (name: string, fn: (...args: any[]) => any) => void
 interface BrowserInstance {
     commands: Record<string, (...args: any[]) => any>;
     addCommand: CommandFunction;
