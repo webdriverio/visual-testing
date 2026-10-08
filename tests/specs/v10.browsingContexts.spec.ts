@@ -43,9 +43,11 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
 
         try {
             expect(await browser.getUrl()).toContain('page-a.html')
-            // Chrome brings the new tab to the front, so page A is now in a background tab. Page B is blue, so a
-            // screenshot of the tab in front would not match the red page A
+            // Chrome brings the new tab to the front, so page A is now in a background tab. In a BiDi session the
+            // service activates the browsing context of the browser (page A) before the check, as a WebDriver Classic
+            // screenshot does. Page B is blue, so a screenshot of page B would not match the red page A
             const result = await checkPageA()
+            expect(await browser.execute(() => document.visibilityState)).toBe('visible')
             // the same baseline file: a different file name would save a new baseline and pass without comparing
             expect(result.fileName).toBe(baseline.fileName)
             expect(result.misMatchPercentage).toBe(0)

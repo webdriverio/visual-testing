@@ -1,3 +1,4 @@
+import logger from '@wdio/logger'
 import type { Capabilities } from '@wdio/types'
 import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from '@wdio/image-comparison-core'
 import type { Folders, InstanceData, TestContext } from '@wdio/image-comparison-core'
@@ -9,6 +10,8 @@ import type {
     MobileInstanceData,
     WdioIcsOptions,
 } from './types.js'
+
+const log = logger('@wdio/visual-service')
 
 /**
  * Get the folders data
@@ -414,3 +417,27 @@ export function enrichTestContext(
     }
 }
 
+/**
+ * In a WebDriver BiDi session, a page in a background tab (for example after `browser.newWindow()`, which does not
+ * switch to the new tab) reports another window size, which changes the file name, and its screenshot can hang until
+ * the `bidiResponseTimeout`. A WebDriver Classic screenshot brings the tab to the front (ChromeDriver), so do the same:
+ * activate the browsing context of the browser when its page is hidden.
+ */
+export async function activateHiddenBrowsingContext(browserInstance: WebdriverIO.Browser, isNativeContext: boolean): Promise<void> {
+    if (!browserInstance.isBidi || browserInstance.isMobile || isNativeContext) {
+        return
+    }
+
+    const isHidden = await browserInstance.execute(() => document.visibilityState === 'hidden')
+    if (!isHidden) {
+        return
+    }
+
+    const context = await browserInstance.getWindowHandle()
+    try {
+        log.info(`The page is in a background tab, activating the browsing context "${context}" before the screenshot`)
+        await browserInstance.browsingContextActivate({ context })
+    } catch (error) {
+        log.warn(`Could not activate the browsing context "${context}" of the page in a background tab, the screenshot can fail: ${error}`)
+    }
+}

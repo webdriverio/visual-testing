@@ -1,5 +1,7 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import {
+    activateHiddenBrowsingContext,
     getBrowserObject,
     getDevicePixelRatio, getFolders,
     getInstanceData,
@@ -755,6 +757,52 @@ describe('utils', () => {
             expect(isMultiRemoteElement(undefined)).toBe(false)
             expect(isMultiRemoteElement(null)).toBe(false)
             expect(isMultiRemoteElement('element')).toBe(false)
+        })
+    })
+
+    describe('activateHiddenBrowsingContext', () => {
+        const createBrowser = ({ isBidi = true, isMobile = false, isHidden = true } = {}) => mock<WebdriverIO.Browser>({
+            isBidi,
+            isMobile,
+            execute: vi.fn().mockResolvedValue(isHidden),
+            getWindowHandle: vi.fn().mockResolvedValue('context-a'),
+            browsingContextActivate: vi.fn().mockResolvedValue({}),
+        })
+
+        it('should activate the browsing context when the page is in a background tab', async () => {
+            const browser = createBrowser()
+
+            await activateHiddenBrowsingContext(browser, false)
+
+            expect(browser.browsingContextActivate).toHaveBeenCalledWith({ context: 'context-a' })
+        })
+
+        it('should not activate the browsing context when the page is visible', async () => {
+            const browser = createBrowser({ isHidden: false })
+
+            await activateHiddenBrowsingContext(browser, false)
+
+            expect(browser.browsingContextActivate).not.toHaveBeenCalled()
+        })
+
+        it('should do nothing in a WebDriver Classic session, on mobile or in a native context', async () => {
+            const browsers = [createBrowser({ isBidi: false }), createBrowser({ isMobile: true }), createBrowser()]
+
+            await activateHiddenBrowsingContext(browsers[0], false)
+            await activateHiddenBrowsingContext(browsers[1], false)
+            await activateHiddenBrowsingContext(browsers[2], true)
+
+            for (const browser of browsers) {
+                expect(browser.execute).not.toHaveBeenCalled()
+                expect(browser.browsingContextActivate).not.toHaveBeenCalled()
+            }
+        })
+
+        it('should not fail when the browser cannot activate the browsing context', async () => {
+            const browser = createBrowser()
+            vi.mocked(browser.browsingContextActivate).mockRejectedValue(new Error('unknown command'))
+
+            await expect(activateHiddenBrowsingContext(browser, false)).resolves.toBeUndefined()
         })
     })
 

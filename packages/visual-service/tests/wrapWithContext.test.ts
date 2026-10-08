@@ -21,7 +21,7 @@ describe('wrapWithContext', () => {
 
     it('should call command directly when no update is needed', async () => {
         const wrapper = wrapWithContext({
-            browser: mockBrowser,
+            browserInstance: mockBrowser,
             command: mockCommand,
             contextManager: mockContextManager,
             getArgs: () => ['arg1']
@@ -45,7 +45,7 @@ describe('wrapWithContext', () => {
         } as any)
 
         const wrapper = wrapWithContext({
-            browser: mockBrowser,
+            browserInstance: mockBrowser,
             command: mockCommand,
             contextManager: mockContextManager,
             getArgs: () => ['arg2']
@@ -58,5 +58,27 @@ describe('wrapWithContext', () => {
         expect(mockCommand).toHaveBeenCalledWith('arg2')
 
         getInstanceDataMock.mockRestore()
+    })
+
+    it('should activate a browsing context in a background tab before the command', async () => {
+        const calls: string[] = []
+        const activateMock = vi.spyOn(utilsModule, 'activateHiddenBrowsingContext').mockImplementation(async () => {
+            calls.push('activate')
+        })
+        mockCommand.mockImplementation(() => calls.push('command'))
+
+        const wrapper = wrapWithContext({
+            browserInstance: mockBrowser,
+            command: mockCommand,
+            contextManager: mockContextManager,
+            getArgs: () => ['arg3']
+        })
+
+        await wrapper.call(mockBrowser)
+
+        expect(activateMock).toHaveBeenCalledWith(mockBrowser, false)
+        expect(calls).toEqual(['activate', 'command'])
+
+        activateMock.mockRestore()
     })
 })
