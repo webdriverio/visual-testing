@@ -8,7 +8,7 @@ import PlatformIcon from './PlatformIcon.js'
 import Overlay from './Overlay.js'
 
 interface MethodItemProps {
-  data: MethodData;
+    data: MethodData;
 }
 
 const MethodItem: React.FC<MethodItemProps> = ({ data }) => {
@@ -41,7 +41,7 @@ const MethodItem: React.FC<MethodItemProps> = ({ data }) => {
     const notKnown = 'not-known'
     const browserName = browser?.name || notKnown
     const browserVersion =
-    browser?.version === 'not-known' ? notKnown : browser?.version
+        browser?.version === 'not-known' ? notKnown : browser?.version
     const device = deviceName || notKnown
     const platformVersion = platform.version || notKnown
     const imagePath = parseFloat(misMatchPercentage) > 0

@@ -51,7 +51,8 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         // The same markup again gives new DOM nodes, so the reference of `second` is stale.
         // Only the second box changes, so only an ignore region on the second box hides the change.
         await browser.execute(() => {
-            document.body.innerHTML = document.body.innerHTML
+            const markup = document.body.innerHTML
+            document.body.innerHTML = markup
             document.querySelectorAll<HTMLElement>('.box')[1].style.background = '#d32f2f'
         })
 

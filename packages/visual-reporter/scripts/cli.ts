@@ -61,13 +61,9 @@ async function main() {
             }
         }
     } else {
-        try {
-            const fileContent = JSON.parse(readFileSync(filePath, 'utf8'))
-            if (!validateOutputJson(fileContent)) {
-                throw new Error(`❌ The provided output.json file in '${filePath}'is not valid.`)
-            }
-        } catch (error) {
-            throw error
+        const fileContent = JSON.parse(readFileSync(filePath, 'utf8'))
+        if (!validateOutputJson(fileContent)) {
+            throw new Error(`❌ The provided output.json file in '${filePath}'is not valid.`)
         }
     }
 

@@ -2,11 +2,11 @@ import { FaEdge, FaSafari, FaFirefox, FaChrome } from 'react-icons/fa6'
 import { FaQuestionCircle } from 'react-icons/fa'
 import React from 'react'
 
-export type BrowserName = 'chrome' | 'firefox' | 'microsoftedge' | 'safari';
+export type BrowserName = 'chrome' | 'firefox' | 'microsoftedge' | 'safari'
 
 const browserIcons: Record<
-  BrowserName,
-  React.ComponentType<React.ComponentProps<'svg'>>
+    BrowserName,
+    React.ComponentType<React.ComponentProps<'svg'>>
 > = {
     chrome: FaChrome,
     firefox: FaFirefox,
@@ -15,10 +15,10 @@ const browserIcons: Record<
 }
 
 interface AllowedIconProps {
-  color?: string;
-  size?: string | number;
-  className?: string;
-  style?: React.CSSProperties;
+    color?: string;
+    size?: string | number;
+    className?: string;
+    style?: React.CSSProperties;
 }
 
 const normalizeBrowserName = (name: string): BrowserName | undefined => {
@@ -33,9 +33,9 @@ const normalizeBrowserName = (name: string): BrowserName | undefined => {
 }
 
 interface BrowserIconProps
-  extends AllowedIconProps,
+    extends AllowedIconProps,
     React.ComponentProps<'svg'> {
-  browserName: string;
+    browserName: string;
 }
 
 const BrowserIcon: React.FC<BrowserIconProps> = ({ browserName, ...props }) => {

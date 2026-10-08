@@ -4,8 +4,8 @@ import MethodItem from './MethodItem.js'
 import styles from './Test.module.css'
 
 interface TestProps {
-  test: string;
-  data: MethodData[];
+    test: string;
+    data: MethodData[];
 }
 
 const Test: React.FC<TestProps> = ({ test, data }) => {

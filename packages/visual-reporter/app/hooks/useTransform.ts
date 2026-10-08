@@ -3,8 +3,8 @@ import { useCallback, useState } from 'react'
 export const useTransform = (
     initialTransform = { x: 0, y: 0, scale: 1 },
     externalSetTransform?: React.Dispatch<
-    React.SetStateAction<{ x: number; y: number; scale: number }>
-  >
+        React.SetStateAction<{ x: number; y: number; scale: number }>
+    >
 ) => {
     const [internalTransform, setInternalTransform] = useState(initialTransform)
     const setTransform = externalSetTransform || setInternalTransform

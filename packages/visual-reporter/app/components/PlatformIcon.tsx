@@ -8,11 +8,11 @@ import {
 import { FaQuestionCircle } from 'react-icons/fa'
 import React from 'react'
 
-export type PlatformName = 'android' | 'ios' | 'linux' | 'osx' | 'windows';
+export type PlatformName = 'android' | 'ios' | 'linux' | 'osx' | 'windows'
 
 const platformIcons: Record<
-  PlatformName,
-  React.ComponentType<React.ComponentProps<'svg'>>
+    PlatformName,
+    React.ComponentType<React.ComponentProps<'svg'>>
 > = {
     android: FaAndroid,
     ios: FaApple,
@@ -22,10 +22,10 @@ const platformIcons: Record<
 }
 
 interface AllowedIconProps {
-  color?: string;
-  size?: string | number;
-  className?: string;
-  style?: React.CSSProperties;
+    color?: string;
+    size?: string | number;
+    className?: string;
+    style?: React.CSSProperties;
 }
 
 const normalizePlatformName = (name: string): PlatformName | undefined => {
@@ -42,9 +42,9 @@ const normalizePlatformName = (name: string): PlatformName | undefined => {
 }
 
 interface PlatformIconProps
-  extends AllowedIconProps,
+    extends AllowedIconProps,
     React.ComponentProps<'svg'> {
-  platformName: string;
+    platformName: string;
 }
 
 const PlatformIcon: React.FC<PlatformIconProps> = ({

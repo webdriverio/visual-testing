@@ -94,7 +94,7 @@ function createCaps({
     'appium:chromeOptions': {
         args: string[];
     };
-    } {
+} {
     const driverScreenshotType = 'NativeWebScreenshot'
     const adjustedDeviceName = deviceName !== '' ?
         deviceName :

@@ -34,7 +34,7 @@ export const useChangeNavigation = (
             if (!canvas) {return}
 
             const { width: canvasWidth, height: canvasHeight } =
-        canvas.getBoundingClientRect()
+                canvas.getBoundingClientRect()
 
             const image = new Image()
             image.src = actualImagePath
@@ -55,13 +55,13 @@ export const useChangeNavigation = (
 
                 const maxDimension = Math.max(imageWidth, imageHeight)
                 const scale =
-          maxDimension > 3000
-              ? 8
-              : maxDimension > 2000
-                  ? 6
-                  : maxDimension > 1000
-                      ? 4
-                      : 2
+                    maxDimension > 3000
+                        ? 8
+                        : maxDimension > 2000
+                            ? 6
+                            : maxDimension > 1000
+                                ? 4
+                                : 2
                 const drawX = (canvasWidth - drawWidth * scale) / 2
                 const drawY = (canvasHeight - drawHeight * scale) / 2
 

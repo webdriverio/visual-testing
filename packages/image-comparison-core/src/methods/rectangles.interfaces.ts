@@ -77,7 +77,7 @@ export interface StatusAddressToolBarRectanglesOptions {
     isViewPortScreenshot: boolean;
 }
 
-export type StatusAddressToolBarRectangles = Array<RectanglesOutput>;
+export type StatusAddressToolBarRectangles = Array<RectanglesOutput>
 
 export interface ElementRectangles {
     /** The browser instance */

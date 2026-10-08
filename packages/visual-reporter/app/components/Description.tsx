@@ -4,8 +4,8 @@ import styles from './Description.module.css'
 import type { TestData } from '../types/index.js'
 
 interface DescriptionProps {
-  description: string;
-  data: TestData[];
+    description: string;
+    data: TestData[];
 }
 
 const Description: React.FC<DescriptionProps> = ({ description, data }) => {

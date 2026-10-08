@@ -48,7 +48,7 @@ export function getBase64ScreenshotSize(screenshot: string, devicePixelRation = 
 /**
  * Get the device pixel ratio
  */
-export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {height:number, width: number}): number {
+export function getDevicePixelRatio(screenshot: string, deviceScreenSize: { height:number, width: number }): number {
     const screenshotSize = getBase64ScreenshotSize(screenshot)
     const devicePixelRatio = Math.round(screenshotSize.width / deviceScreenSize.width) === Math.round(screenshotSize.height / deviceScreenSize.height)
         ? Math.round(screenshotSize.width / deviceScreenSize.width)
@@ -343,7 +343,7 @@ export function getBrowserObject(elem: unknown): WebdriverIO.Browser {
 const appiumKeys = ['app', 'bundleId', 'appPackage', 'appActivity', 'appWaitActivity', 'appWaitPackage'] as const
 type AppiumKeysType = typeof appiumKeys[number]
 export function getNativeContext({ capabilities, isMobile }:
-    { capabilities: WebdriverIO.Capabilities, isMobile: boolean }
+{ capabilities: WebdriverIO.Capabilities, isMobile: boolean }
 ): boolean {
     if (!capabilities || typeof capabilities !== 'object' || !isMobile) {
         return false
@@ -352,7 +352,7 @@ export function getNativeContext({ capabilities, isMobile }:
     const isAppiumAppCapPresent = (capabilities: Capabilities.RequestedStandaloneCapabilities) => {
         return appiumKeys.some((key) => (
             (capabilities as Capabilities.AppiumCapabilities)[key as keyof Capabilities.AppiumCapabilities] !== undefined ||
-            (capabilities as Capabilities.AppiumCapabilities)[`appium:${key}`as keyof Capabilities.AppiumCapabilities] !== undefined ||
+            (capabilities as Capabilities.AppiumCapabilities)[`appium:${key}` as keyof Capabilities.AppiumCapabilities] !== undefined ||
             (capabilities as WebdriverIO.Capabilities)['appium:options']?.[key as AppiumKeysType] !== undefined ||
             (capabilities as WebdriverIO.Capabilities)['lt:options']?.[key as AppiumKeysType] !== undefined
         ))

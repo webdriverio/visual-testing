@@ -43,7 +43,7 @@ vi.mock('../clientSideScripts/hideRemoveElements.js', () => ({
 describe('screenshots', () => {
     const createMockBrowserInstance = (
         { takeScreenshot = SMALL_IMAGE_STRING, takeElementScreenshot = SMALL_IMAGE_STRING }:
-            { takeScreenshot?: string, takeElementScreenshot?: string } = {}
+        { takeScreenshot?: string, takeElementScreenshot?: string } = {}
     ) => {
         return {
             takeScreenshot: vi.fn().mockResolvedValue(takeScreenshot),

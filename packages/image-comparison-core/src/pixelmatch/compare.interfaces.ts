@@ -27,14 +27,14 @@ type Box = {
     right: number;
     /** Bottom boundary of the box */
     bottom: number;
-};
+}
 
 type OutputSettings = {
     /** Box area to ignore during comparison */
     ignoredBoxes?: Box[] | undefined;
-};
+}
 
-export type ComparisonIgnoreOption = 'nothing' | 'less' | 'antialiasing' | 'colors' | 'alpha';
+export type ComparisonIgnoreOption = 'nothing' | 'less' | 'antialiasing' | 'colors' | 'alpha'
 
 /** User-facing pixelmatch options nested under `compareOptions.pixelmatch`. */
 export interface PixelmatchCompareOptions {
