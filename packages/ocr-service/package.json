@@ -31,7 +31,7 @@
     "watch": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "@inquirer/prompts": "7.10.1",
+    "@inquirer/prompts": "8.7.3",
     "@wdio/globals": "^10.0.0",
     "@wdio/logger": "^10.0.0",
     "@wdio/types": "^10.0.0",
