@@ -45,6 +45,10 @@ export const config: WebdriverIO.Config  = {
                 createJsonReportFiles: false,
                 rawMisMatchPercentage: !!process.env.RAW_MISMATCH || false,
                 alwaysSaveActualImage: false,
+                // In CI a missing baseline must fail: a new file name (for example a new Android viewport) would
+                // otherwise save the current screenshot as its baseline and pass without a comparison.
+                // To collect new baselines from CI, upload `tests/lambdaTestBaseline/` in a temporary commit.
+                autoSaveBaseline: !process.env.CI,
             } satisfies VisualServiceOptions,
         ],
     ],

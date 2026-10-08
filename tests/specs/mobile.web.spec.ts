@@ -16,10 +16,21 @@ describe('@wdio/visual-service mobile web', () => {
     const platformVersion = lt?.platformVersion || bs?.osVersion || appium?.platformVersion || caps.platformVersion
     const orientation = (lt?.deviceOrientation || bs?.deviceOrientation || appium?.orientation || caps.orientation || 'PORTRAIT').toLowerCase()
 
+    // The Android 15 and 16 emulators on LambdaTest start in one of two states: Chrome draws into the display cutout
+    // area (426x848 in portrait, 952x322 in landscape), or the window leaves it out (an opaque status bar in portrait,
+    // a narrower page in landscape: 426x823, 903x322). This changes the viewport and thus the layout of the page, but
+    // not the screen size in the file name. The viewport at the start of the session goes in the tag
+    // (for example `-vp426x823`), so each state has its own baselines.
+    let viewportTag = ''
+
     beforeEach(async () => {
         await browser.url('')
         await $('.hero__title-logo').waitForDisplayed()
         await browser.pause(3000)
+
+        if (platformName === 'Android' && !viewportTag) {
+            viewportTag = `-vp${await browser.execute(() => `${window.innerWidth}x${window.innerHeight}`)}`
+        }
     })
 
     // Refresh after each test to reset DOM modifications and scroll position.
@@ -37,24 +48,11 @@ describe('@wdio/visual-service mobile web', () => {
 
             // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
-            const result = await browser.checkScreen('screenshot') as number
+            const result = await browser.checkScreen(`screenshot${viewportTag}`) as number
             if (result > 0 && result < 0.05) {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
             }
             await expect(result < 0.05 ? 0 : result).toEqual(0)
-
-            const newOrientation = orientation.toUpperCase() === 'LANDSCAPE' ? 'PORTRAIT' : 'LANDSCAPE'
-
-            await browser.pause(2000)
-            await browser.setOrientation(newOrientation)
-            await browser.pause(2000)
-            const newResult = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}`) as number
-            if (newResult > 0 && result < 0.05) {
-                console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
-            }
-            // Before the expect we need to revert the orientation otherwise the next test will not start in the default orientation
-            await browser.setOrientation(orientation)
-            await expect(newResult < 0.05 ? 0 : newResult).toEqual(0)
         })
 
         it(`should compare a screen with ignore elements successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
@@ -73,7 +71,7 @@ describe('@wdio/visual-service mobile web', () => {
             // This is normally a bad practice, but a mobile screenshot is normally around 1M pixels
             // We're accepting 0.05%, which is 500 pixels, to be a max difference
             const result = await browser.checkScreen(
-                'ignoredElementsScreenshot', {
+                `ignoredElementsScreenshot${viewportTag}`, {
                     // Block 2
                     ignore: [
                         await $$('.getStarted_Sjon'),
@@ -97,7 +95,7 @@ describe('@wdio/visual-service mobile web', () => {
             await expect(
                 await browser.checkElement(
                     await $('.hero__title-logo'),
-                    'wdioLogo',
+                    `wdioLogo${viewportTag}`,
                     {
                         removeElements: [await $('nav.navbar')]
                     }
@@ -121,7 +119,7 @@ describe('@wdio/visual-service mobile web', () => {
             })
 
             await expect($('.features_vqN4')).toMatchElementSnapshot(
-                'ignoredElementsElementScreenshot',
+                `ignoredElementsElementScreenshot${viewportTag}`,
                 {
                     // Block 2
                     ignore: [
@@ -147,7 +145,7 @@ describe('@wdio/visual-service mobile web', () => {
 
             // This is normally a bad practice, but a mobile full page screenshot is normally around 4M pixels
             // We're accepting 0.05%, which is 2000 pixels, to be a max difference
-            const result = await browser.checkFullPageScreen('fullPage', {
+            const result = await browser.checkFullPageScreen(`fullPage${viewportTag}`, {
                 fullPageScrollTimeout: 1500,
                 hideAfterFirstScroll: [
                     await $('nav.navbar'),
@@ -173,7 +171,7 @@ describe('@wdio/visual-service mobile web', () => {
             })
 
             await expect(browser).toMatchFullPageSnapshot(
-                'ignoredElementsFullPageScreenshot',
+                `ignoredElementsFullPageScreenshot${viewportTag}`,
                 {
                     // Block 2
                     ignore: [
@@ -188,6 +186,30 @@ describe('@wdio/visual-service mobile web', () => {
                     ],
                 }
             )
+        })
+    }
+
+    // The rotation is the last test: on Android 16 the system bars can change after a rotation (for example an
+    // opaque status bar), and that would change the screenshots of the tests after it.
+    if (
+        wdioIcsCommands.length === 0 ||
+        wdioIcsCommands.includes('checkScreen')
+    ) {
+        it(`should compare a screen after an orientation change for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function () {
+            skipTest({ test: this, deviceName, platformName, platformVersion, orientation })
+            this.retries(2)
+
+            const newOrientation = orientation.toUpperCase() === 'LANDSCAPE' ? 'PORTRAIT' : 'LANDSCAPE'
+
+            await browser.setOrientation(newOrientation)
+            await browser.pause(2000)
+            const result = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}${viewportTag}`) as number
+            if (result > 0 && result < 0.05) {
+                console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
+            }
+            // Before the expect we need to revert the orientation otherwise a retry will not start in the default orientation
+            await browser.setOrientation(orientation)
+            await expect(result < 0.05 ? 0 : result).toEqual(0)
         })
     }
 })
@@ -264,6 +286,24 @@ const skipRules = expandSkipRules([
         platformVersions: ['14'],
         orientations: ['landscape', 'portrait'],
         reason: 'Full black screen',
+    },
+    {
+        titleIncludes: 'compare a screen after an orientation change',
+        deviceName: 'Pixel 9 Pro',
+        platformName: 'Android',
+        platformVersions: ['14'],
+        orientations: ['landscape', 'portrait'],
+        reason: 'Full black screen',
+    },
+    {
+        titleIncludes: 'compare a screen after an orientation change',
+        deviceName: 'Pixel 9 Pro',
+        platformName: 'Android',
+        platformVersions: ['16'],
+        orientations: ['landscape', 'portrait'],
+        // TODO: find a better solution, for example wait until the viewport is stable after the rotation,
+        // or add the viewport after the rotation to the tag
+        reason: 'The display cutout state after a rotation changes between sessions, so the screenshot changes',
     },
     {
         titleIncludes: 'compare a full page screenshot successful',
