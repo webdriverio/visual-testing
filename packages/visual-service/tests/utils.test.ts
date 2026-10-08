@@ -761,9 +761,10 @@ describe('utils', () => {
     })
 
     describe('activateHiddenBrowsingContext', () => {
-        const createBrowser = ({ isBidi = true, isMobile = false, isHidden = true } = {}) => mock<WebdriverIO.Browser>({
+        const createBrowser = ({ isBidi = true, isMobile = false, isHidden = true, browserName = 'chrome' } = {}) => mock<WebdriverIO.Browser>({
             isBidi,
             isMobile,
+            capabilities: { browserName },
             execute: vi.fn().mockResolvedValue(isHidden),
             getWindowHandle: vi.fn().mockResolvedValue('context-a'),
             browsingContextActivate: vi.fn().mockResolvedValue({}),
@@ -798,11 +799,38 @@ describe('utils', () => {
             }
         })
 
+        it('should activate the browsing context in Edge and Chromium too', async () => {
+            for (const browserName of ['MicrosoftEdge', 'msedge', 'chromium', 'chrome-headless-shell']) {
+                const browser = createBrowser({ browserName })
+
+                await activateHiddenBrowsingContext(browser, false)
+
+                expect(browser.browsingContextActivate).toHaveBeenCalledWith({ context: 'context-a' })
+            }
+        })
+
+        it('should do nothing in a browser that is not based on Chromium', async () => {
+            const browser = createBrowser({ browserName: 'firefox' })
+
+            await activateHiddenBrowsingContext(browser, false)
+
+            expect(browser.execute).not.toHaveBeenCalled()
+            expect(browser.browsingContextActivate).not.toHaveBeenCalled()
+        })
+
         it('should not fail when the browser cannot activate the browsing context', async () => {
             const browser = createBrowser()
             vi.mocked(browser.browsingContextActivate).mockRejectedValue(new Error('unknown command'))
 
             await expect(activateHiddenBrowsingContext(browser, false)).resolves.toBeUndefined()
+        })
+
+        it('should not fail when the visibility of the page cannot be read', async () => {
+            const browser = createBrowser()
+            vi.mocked(browser.execute).mockRejectedValue(new Error('no such frame'))
+
+            await expect(activateHiddenBrowsingContext(browser, false)).resolves.toBeUndefined()
+            expect(browser.browsingContextActivate).not.toHaveBeenCalled()
         })
     })
 
