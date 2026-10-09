@@ -98,4 +98,4 @@ You can find a workflow [here](../../.github/workflows/deploy-visual-reporter.ym
 https://github.com/user-attachments/assets/9cdfec36-e1ff-4b48-a842-23f3f7d5768e
 
 > [!NOTE]
-> Created with a [Remix](https://remix.run/) project .
+> Created with [React Router](https://reactrouter.com/) (framework mode, as a static single-page app).
