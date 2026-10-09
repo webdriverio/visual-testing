@@ -48,8 +48,7 @@ export const config: WebdriverIO.Config  = {
                 // In CI a missing baseline must fail: a new file name (for example a new Android viewport) would
                 // otherwise save the current screenshot as its baseline and pass without a comparison.
                 // To collect new baselines from CI, upload `tests/lambdaTestBaseline/` in a temporary commit.
-                // TEMPORARY: save the new rotated Android baselines in CI, remove before merge
-                autoSaveBaseline: true,
+                autoSaveBaseline: !process.env.CI,
             } satisfies VisualServiceOptions,
         ],
     ],
