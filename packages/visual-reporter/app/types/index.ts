@@ -124,7 +124,7 @@ export interface CanvasTransform {
 
 export interface CanvasDrawingProps {
     imageRef: React.RefObject<HTMLImageElement>
-    canvasRef: React.RefObject<HTMLCanvasElement>
+    canvasRef: React.RefObject<HTMLCanvasElement | null>
     transform: CanvasTransform
     diffBoxes: BoundingBox[]
     highlightedBox: BoundingBox | null
