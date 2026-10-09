@@ -218,6 +218,14 @@ jobs:
           BUILD_PREFIX: true
         run: pnpm test.saucelabs.app --maxConcurrency=20
 
+      # TEMPORARY (remove before merge): collects the Sauce Labs baselines that the run saved (autoSaveBaseline)
+      - name: 📤 Upload the Sauce Labs baselines
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: ci-pr-app-baselines
+          path: tests/sauceLabsBaseline/
+
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
