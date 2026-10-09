@@ -11,8 +11,27 @@ if ! adb shell pm list packages | grep -q 'com.android.chrome'; then
 fi
 
 mkdir -p logs
-# Appium downloads the chromedriver that matches the Chrome version of the emulator
-appium --port 4723 --allow-insecure 'uiautomator2:chromedriver_autodownload' --log logs/appium.log &
+# Appium downloads the chromedriver that matches the Chrome version of the emulator.
+# Its output goes to a file (uploaded when the job fails), not to the job log.
+appium --port 4723 --allow-insecure 'uiautomator2:chromedriver_autodownload' > logs/appium.log 2>&1 &
+APPIUM_PID=$!
+
+cleanup() {
+    kill "$APPIUM_PID" 2> /dev/null || true
+    # When the action stops the emulator, it waits for all emulator processes, but the emulator leaves its
+    # crashpad_handler processes running, so the job hangs (ReactiveCircus/android-emulator-runner#385).
+    # Kill them after the emulator stopped.
+    (
+        sleep 30
+        for _ in $(seq 1 12); do
+            pgrep -x crashpad_handler > /dev/null || break
+            pkill -9 -x crashpad_handler || true
+            sleep 5
+        done
+    ) > /dev/null 2>&1 &
+}
+trap cleanup EXIT
+
 for _ in $(seq 1 60); do
     curl -sf http://127.0.0.1:4723/status > /dev/null && break
     sleep 1
