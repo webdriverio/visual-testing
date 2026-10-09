@@ -20,12 +20,13 @@ cleanup() {
     kill "$APPIUM_PID" 2> /dev/null || true
     # When the action stops the emulator, it waits for all emulator processes, but the emulator leaves its
     # crashpad_handler processes running, so the job hangs (ReactiveCircus/android-emulator-runner#385).
-    # Kill them after the emulator stopped.
+    # Kill them after the emulator stopped. Linux cuts process names to 15 characters ("crashpad_handle"),
+    # so match the command line (-f) with the path of the executable.
     (
         sleep 30
         for _ in $(seq 1 12); do
-            pgrep -x crashpad_handler > /dev/null || break
-            pkill -9 -x crashpad_handler || true
+            pgrep -f '/crashpad_handler' > /dev/null || break
+            pkill -9 -f '/crashpad_handler' || true
             sleep 5
         done
     ) > /dev/null 2>&1 &
