@@ -23,6 +23,7 @@
     "lint:fix": "oxlint --fix packages tests",
     "test:types": "tsc -p tests/tsconfig.json --noEmit",
     "test:unit": "vitest --coverage --run",
+    "test:unit:report": "cross-env VITEST_HTML_REPORT=true vitest --coverage --run",
     "test:unit:ui": "vitest --coverage --ui",
     "test:unit:watch": "vitest --coverage --watch",
     "test.local.init": "rimraf localBaseline && SAVE_ACTUAL=true wdio ./tests/configs/wdio.local.init.conf.ts",
