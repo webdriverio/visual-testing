@@ -118,6 +118,10 @@ Installing without a version (`npm install @wdio/visual-service`) always gives y
 
 When v9 reaches end of life it will be marked deprecated on npm.
 
+### Upgrading from v10 to v11
+
+v11 supports only WebdriverIO v10 and uses a new color difference metric (pixelmatch 8), so mismatch percentages can differ a little. See the [v11 migration guide](./docs/v11-migration.md).
+
 ## Storybook Runner (BETA)
 
 <details>
@@ -235,11 +239,11 @@ This is the selector that will be used:
 
 -   **Type:** `string`
 -   **Mandatory:** No
--   **Default:** You can select from the [`deviceDescriptors.ts`](./packages/service/src/storybook/deviceDescriptors.ts)
+-   **Default:** You can select from the [`deviceDescriptors.ts`](./packages/visual-service/src/storybook/deviceDescriptors.ts)
 -   **Example:** `npx wdio tests/configs/wdio.local.desktop.storybook.conf.ts --storybook --devices="iPhone 14 Pro Max","Pixel 3 XL"`
 -   **NOTE:** Only available through the CLI
 
-It will use the provided devices that match the [`deviceDescriptors.ts`](./packages/service/src/storybook/deviceDescriptors.ts) to take component screenshots
+It will use the provided devices that match the [`deviceDescriptors.ts`](./packages/visual-service/src/storybook/deviceDescriptors.ts) to take component screenshots
 
 > [!NOTE]
 >
