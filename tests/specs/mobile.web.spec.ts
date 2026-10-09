@@ -301,16 +301,6 @@ const skipRules = expandSkipRules([
         reason: 'Full black screen',
     },
     {
-        titleIncludes: 'compare a screen after an orientation change',
-        deviceName: 'Pixel 9 Pro',
-        platformName: 'Android',
-        platformVersions: ['16'],
-        orientations: ['landscape', 'portrait'],
-        // TODO: find a better solution, for example wait until the viewport is stable after the rotation,
-        // or add the viewport after the rotation to the tag
-        reason: 'The display cutout state after a rotation changes between sessions, so the screenshot changes',
-    },
-    {
         titleIncludes: 'compare a full page screenshot successful',
         deviceName: 'Pixel 9 Pro',
         platformName: 'Android',
