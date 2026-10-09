@@ -52,22 +52,26 @@ function padToSize(src: Buffer, srcW: number, srcH: number, dstW: number, dstH: 
     return dst
 }
 
-function zeroIgnoredBoxes(
-    pixels: Buffer,
+/**
+ * One byte per pixel, 1 inside an ignored box: pixelmatch skips those pixels. The images are not changed, so the
+ * pixels next to an ignored box keep their real neighbours for the anti-aliasing detection.
+ */
+function createIgnoreMask(
     width: number,
+    height: number,
     boxes: Array<{ left: number; top: number; right: number; bottom: number }>
-): void {
+): Uint8Array {
+    const mask = new Uint8Array(width * height)
     for (const box of boxes) {
-        for (let y = box.top; y <= box.bottom; y++) {
-            for (let x = box.left; x <= box.right; x++) {
-                const offset = (y * width + x) * 4
-                pixels[offset] = 0
-                pixels[offset + 1] = 0
-                pixels[offset + 2] = 0
-                pixels[offset + 3] = 0
+        const left = Math.max(0, box.left)
+        const right = Math.min(width - 1, box.right)
+        for (let y = Math.max(0, box.top); y <= Math.min(height - 1, box.bottom); y++) {
+            if (right >= left) {
+                mask.fill(1, y * width + left, y * width + right + 1)
             }
         }
     }
+    return mask
 }
 
 export default async function compareImages(
@@ -123,10 +127,7 @@ export default async function compareImages(
     }
 
     const ignoredBoxes = options.output?.ignoredBoxes ?? []
-    if (ignoredBoxes.length > 0) {
-        zeroIgnoredBoxes(pixels1, width, ignoredBoxes)
-        zeroIgnoredBoxes(pixels2, width, ignoredBoxes)
-    }
+    const ignoreMask = ignoredBoxes.length > 0 ? createIgnoreMask(width, height, ignoredBoxes) : undefined
 
     const resolvedPixelmatch: ResolvedPixelmatchOptions = pixelmatchSettings ?? {
         ...resolveComparePreset(ignoreList),
@@ -149,6 +150,7 @@ export default async function compareImages(
         alpha: resolvedPixelmatch.alpha,
         diffMask: resolvedPixelmatch.diffMask,
         ...(resolvedPixelmatch.checkerboard !== undefined ? { checkerboard: resolvedPixelmatch.checkerboard } : {}),
+        ...(ignoreMask ? { ignoreMask } : {}),
     })
 
     const { diffColor, aaColor, diffColorAlt, diffMask } = resolvedPixelmatch
