@@ -18,9 +18,10 @@ describe('@wdio/visual-service mobile web', () => {
 
     // The Android 15 and 16 emulators on LambdaTest start in one of two states: Chrome draws into the display cutout
     // area (426x848 in portrait, 952x322 in landscape), or the window leaves it out (an opaque status bar in portrait,
-    // a narrower page in landscape: 426x823, 903x322). This changes the viewport and thus the layout of the page, but
-    // not the screen size in the file name. The viewport at the start of the session goes in the tag
-    // (for example `-vp426x823`), so each state has its own baselines.
+    // a narrower page in landscape: 426x823, 903x322). Android 16 also started once in portrait with 426x827.
+    // This changes the viewport and thus the layout of the page, but not the screen size in the file name.
+    // The viewport at the start of the session goes in the tag (for example `-vp426x823`), so each state has its
+    // own baselines. A rotation can also end in either state, so the rotated screenshot gets its own tag (see below).
     let viewportTag = ''
 
     beforeEach(async () => {
