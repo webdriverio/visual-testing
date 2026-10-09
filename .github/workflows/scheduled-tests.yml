@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: "Branch to run tests against"
+        description: "Branch of this repository, or refs/pull/<number>/head for a PR from a fork (only after reviewing that commit: the run gets the cloud credentials)"
         type: string
         required: true
         default: "main"
@@ -18,6 +18,8 @@ jobs:
   schedule-gate:
     name: 🗓️ Schedule Gate
     runs-on: ubuntu-latest
+    # A few seconds. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 5
     if: github.event_name == 'schedule'
     outputs:
       enabled: ${{ steps.check.outputs.enabled }}
@@ -44,6 +46,8 @@ jobs:
   scheduled-desktop-web:
     name: 🗓️ 💻 Scheduled Desktop Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Usually 2-3 minutes. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 20
     needs: [schedule-gate]
     if: >-
       always() && (
@@ -101,6 +105,8 @@ jobs:
   scheduled-android-web:
     name: 🗓️ 🤖 🌐 Scheduled Android Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Usually 5-17 minutes; failing checks with retries can take 30+. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
     needs: [schedule-gate]
     if: >-
       always() && (
@@ -158,6 +164,8 @@ jobs:
   scheduled-ios-web:
     name: 🗓️ 🍏 🌐 Scheduled iOS Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Usually 5-17 minutes; failing checks with retries can take 30+. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
     needs: [schedule-gate]
     if: >-
       always() && (
@@ -215,6 +223,8 @@ jobs:
   scheduled-app:
     name: 🗓️ 📱 Scheduled Mobile App Tests on Sauce
     runs-on: ubuntu-latest
+    # Usually 5-17 minutes; failing checks with retries can take 30+. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
     needs: [schedule-gate]
     if: >-
       always() && (
@@ -272,6 +282,8 @@ jobs:
   scheduled-ocr:
     name: 🗓️ 🔎 Scheduled OCR Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Usually 2-3 minutes. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 20
     needs: [schedule-gate]
     if: >-
       always() && (

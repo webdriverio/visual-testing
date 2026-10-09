@@ -19,6 +19,8 @@ jobs:
   ci-pr-desktop-web:
     name: 🔄 💻 CI PR Run Desktop Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Usually 2-3 minutes. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 20
     # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot.
     # The intent is to also run this job on the Dependabot updates that can change the desktop e2e results.
     # This needs the Dependabot secrets LAMBDATEST_USERNAME and LAMBDATEST_ACCESS_KEY, which only a repository
@@ -82,6 +84,8 @@ jobs:
   ci-pr-android-web:
     name: 🔄 🤖 🌐 CI PR Run Android Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Usually 5-17 minutes; failing checks with retries can take 30+. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
     # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
     if: |
       github.actor != 'dependabot[bot]' &&
@@ -133,6 +137,8 @@ jobs:
   ci-pr-ios-web:
     name: 🔄 🍏 🌐 CI PR Run iOS Web Tests on LambdaTest
     runs-on: ubuntu-latest
+    # Usually 5-17 minutes; failing checks with retries can take 30+. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
     # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
     if: |
       github.actor != 'dependabot[bot]' &&
@@ -184,6 +190,8 @@ jobs:
   ci-pr-app:
     name: 🔄 📱 CI PR Run Mobile App Tests on Sauce
     runs-on: ubuntu-latest
+    # Usually 5-17 minutes; failing checks with retries can take 30+. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
     # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
     if: |
       github.actor != 'dependabot[bot]' &&
@@ -235,6 +243,8 @@ jobs:
   ci-pr-ocr:
     name: 🔄 📱 CI PR Run OCR Tests  on LambdaTest
     runs-on: ubuntu-latest
+    # Usually 2-3 minutes. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 20
     # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
     if: |
       github.actor != 'dependabot[bot]' &&
