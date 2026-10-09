@@ -24,7 +24,7 @@ Always run `pnpm build` first: the e2e configs use `packages/*/dist`.
 | Web commands, screenshots, compare logic, matchers | The local Chrome suites: `pnpm test.local.chrome.v10` (Mocha), `.jasmine`, `.emulation`, `pnpm test.local.desktop.multi` | A unit test |
 | The desktop specs (`basics`, `desktop*`, `matcher`, check/save folders) | `BASELINE_SETUP=true pnpm test.local.desktop`, then `pnpm test.local.desktop` | The real run without the setup run (the baselines are missing) |
 | OCR | `pnpm test.ocr.local.desktop` (a local page with a committed font, also in `checks`), and the cloud OCR job for the website spec | A unit test with a mocked tesseract |
-| Mobile web or native app | A local emulator or simulator suite (`test.local.emus.web`, `test.local.emus.app`, `test.local.sims.web`, `test.local.sims.app`, `test.local.multi.web.app`), or a cloud run | A desktop browser with mobile emulation |
+| Mobile web or native app | A local emulator or simulator suite (`test.local.emus.web`, `test.local.emus.app`, `test.local.sims.web`, `test.local.sims.app`, `test.local.multi.web.app`; the Android configs read `ANDROID_AVD` and `ANDROID_PLATFORM_VERSION`), or a cloud run. The `android emulator` workflow runs `test.local.emus.web` in CI | A desktop browser with mobile emulation |
 | A failure that happens only in CI on Linux | The Docker check below | A macOS run |
 | Cloud configs, cloud baselines, a device or OS version | A cloud run (below) | A local run |
 

@@ -74,7 +74,9 @@ jobs:
           api-level: 35
           target: google_apis
           arch: x86_64
-          profile: pixel_8_pro
+          # The cmdline-tools of the runner image do not know the newest Pixel profiles
+          profile: pixel_6
+          pre-emulator-launch-script: avdmanager list device -c | tr '\n' ' '
           avd-name: ci_android_35
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
           disable-animations: true
