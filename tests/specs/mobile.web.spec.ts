@@ -203,7 +203,12 @@ describe('@wdio/visual-service mobile web', () => {
 
             await browser.setOrientation(newOrientation)
             await browser.pause(2000)
-            const result = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}${viewportTag}`) as number
+            // On Android the display state after the rotation does not always follow the state at the start of the session
+            // (LambdaTest Android 16: the rotated page is 952 or 903 pixels wide), so the tag has the viewport after the rotation
+            const rotatedViewportTag = platformName === 'Android'
+                ? `-vp${await browser.execute(() => `${window.innerWidth}x${window.innerHeight}`)}`
+                : ''
+            const result = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}${rotatedViewportTag}`) as number
             if (result > 0 && result < 0.05) {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
             }
