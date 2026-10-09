@@ -120,6 +120,14 @@ jobs:
           BUILD_PREFIX: true
         run: pnpm test.lambdatest.emu.web --maxConcurrency=6
 
+      # TEMPORARY: collect the new rotated Android baselines, remove before merge
+      - name: 📤 Upload the Android baselines
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: ci-pr-android-web-baselines
+          path: tests/lambdaTestBaseline/pixel_9_pro/
+
       - name: 📤 Upload artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
