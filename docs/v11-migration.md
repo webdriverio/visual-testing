@@ -116,3 +116,7 @@ You do not need to change anything for these, but you can notice them:
   knows; for other names, the viewport of the emulated device is used without a failed call first.
 - **`ignore` elements:** an element is found again only when its reference is stale, not for every check.
 - **Matcher messages:** the documentation link in the message of a failed visual matcher works again.
+- **iOS, first Safari start:** on a new simulator or device (for example in CI), iOS 26 shows a Safari tip that
+  took the tap the service uses to measure the viewport. Full page screenshots of that session then failed with
+  "Negative scroll position detected". The service now measures again when the tap did not reach the page, as it
+  already did on Android.
