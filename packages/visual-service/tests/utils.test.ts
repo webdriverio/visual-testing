@@ -1,5 +1,7 @@
+import { join } from 'node:path'
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import { mock } from 'vitest-mock-extended'
+import logger from '@wdio/logger'
 import {
     activateHiddenBrowsingContext,
     getBrowserObject,
@@ -11,7 +13,11 @@ import {
     getLtOptions,
     isMultiRemoteBrowser,
     isMultiRemoteElement,
+    warnIfBiDiScriptsFailOnAndroid,
 } from '../src/utils.js'
+
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
+const log = logger('test')
 
 // Import the functions we need to spy on
 import * as imageComparisonCore from '@wdio/image-comparison-core'
@@ -960,3 +966,50 @@ describe('utils', () => {
         })
     })
 })
+
+describe('warnIfBiDiScriptsFailOnAndroid (#1232)', () => {
+    const createBrowser = ({ isAndroid = true, isBidi = true, browserName = 'chrome', execute = vi.fn().mockResolvedValue(true) } = {}) => mock<WebdriverIO.Browser>({
+        isAndroid,
+        isBidi,
+        capabilities: { browserName },
+        execute,
+    })
+
+    afterEach(() => {
+        vi.mocked(log.warn).mockClear()
+    })
+
+    it('should warn with the workaround when the driver does not run scripts', async () => {
+        const bidiError = new Error('WebDriver Bidi command "script.callFunction" failed with error: unknown command')
+        const browser = createBrowser({ execute: vi.fn().mockRejectedValue(bidiError) })
+
+        await warnIfBiDiScriptsFailOnAndroid(browser)
+
+        expect(log.warn).toHaveBeenCalledTimes(1)
+        expect(log.warn).toHaveBeenCalledWith(expect.stringContaining("'wdio:enforceWebDriverClassic': true"))
+        expect(log.warn).toHaveBeenCalledWith(expect.stringContaining(bidiError.message))
+    })
+
+    it('should not warn when the driver runs scripts', async () => {
+        const browser = createBrowser()
+
+        await warnIfBiDiScriptsFailOnAndroid(browser)
+
+        expect(browser.execute).toHaveBeenCalledTimes(1)
+        expect(log.warn).not.toHaveBeenCalled()
+    })
+
+    it.each([
+        ['a WebDriver Classic session', { isBidi: false }],
+        ['another platform', { isAndroid: false }],
+        ['a native app session', { browserName: '' }],
+    ])('should not test a script in %s', async (_name, overrides) => {
+        const browser = createBrowser(overrides)
+
+        await warnIfBiDiScriptsFailOnAndroid(browser)
+
+        expect(browser.execute).not.toHaveBeenCalled()
+        expect(log.warn).not.toHaveBeenCalled()
+    })
+})
+

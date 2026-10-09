@@ -24,6 +24,7 @@ import {
     getNativeContext,
     isMultiRemoteBrowser,
     isMultiRemoteElement,
+    warnIfBiDiScriptsFailOnAndroid,
 } from './utils.js'
 import {
     toMatchScreenSnapshot,
@@ -89,6 +90,9 @@ export default class WdioImageComparisonService extends BaseClass {
         this.#browser = browser
         // Add the matchers first, so that a setup error below does not hide them behind `is not a function`
         this.#addMatchers()
+        if (!isMultiRemoteBrowser(browser)) {
+            await warnIfBiDiScriptsFailOnAndroid(browser)
+        }
 
         try {
             if (!isMultiRemoteBrowser(browser)) {
