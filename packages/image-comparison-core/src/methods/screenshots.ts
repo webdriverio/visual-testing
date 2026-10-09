@@ -93,10 +93,9 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
         // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
         await browserInstance.execute(hideScrollBars, true)
 
-        // Simply wait the amount of time specified for lazy-loading
-        await waitFor(fullPageScrollTimeout)
-
-        // Elements that need to be hidden after the first scroll for a fullpage scroll
+        // Elements that need to be hidden after the first scroll for a fullpage scroll.
+        // Hide them before the wait: on a slow device the page needs time to be drawn again without them,
+        // otherwise the screenshot can still show them
         if (i === 1 && hideAfterFirstScroll.length > 0) {
             try {
                 await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
@@ -104,6 +103,9 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
                 logHiddenRemovedError(e)
             }
         }
+
+        // Simply wait the amount of time specified for lazy-loading
+        await waitFor(fullPageScrollTimeout)
 
         // Take the screenshot and determine if it's rotated
         const screenshot = await takeBase64Screenshot(browserInstance)
@@ -231,10 +233,9 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(browserInsta
         // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
         await browserInstance.execute(hideScrollBars, true)
 
-        // Simply wait the amount of time specified for lazy-loading
-        await waitFor(fullPageScrollTimeout)
-
-        // Elements that need to be hidden after the first scroll for a fullpage scroll
+        // Elements that need to be hidden after the first scroll for a fullpage scroll.
+        // Hide them before the wait: on a slow device the page needs time to be drawn again without them,
+        // otherwise the screenshot can still show them
         if (i === 1 && hideAfterFirstScroll.length > 0) {
             try {
                 await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
@@ -242,6 +243,9 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(browserInsta
                 logHiddenRemovedError(e)
             }
         }
+
+        // Simply wait the amount of time specified for lazy-loading
+        await waitFor(fullPageScrollTimeout)
 
         // Take the screenshot
         const screenshot = await takeBase64Screenshot(browserInstance)
@@ -345,10 +349,9 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
 
         await browserInstance.execute(scrollToPosition, scrollY)
 
-        // Simply wait the amount of time specified for lazy-loading
-        await waitFor(fullPageScrollTimeout)
-
-        // Elements that need to be hidden after the first scroll for a fullpage scroll
+        // Elements that need to be hidden after the first scroll for a fullpage scroll.
+        // Hide them before the wait: on a slow device the page needs time to be drawn again without them,
+        // otherwise the screenshot can still show them
         if (i === 1 && hideAfterFirstScroll.length > 0) {
             try {
                 await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
@@ -356,6 +359,9 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
                 logHiddenRemovedError(e)
             }
         }
+
+        // Simply wait the amount of time specified for lazy-loading
+        await waitFor(fullPageScrollTimeout)
 
         // Take the screenshot
         const screenshot = await takeBase64Screenshot(browserInstance)
