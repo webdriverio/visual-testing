@@ -14,6 +14,8 @@ temp/
 out/
 public/
 build/static/report/
+# React Router 8 keeps the small server build that renders index.html; the CLI only serves build/client
+build/server/
 demo/
 app/
 scripts/
