@@ -7,6 +7,8 @@ const iosPlatformVersion = process.env.IOS_PLATFORM_VERSION ?? '17.5'
 
 export const config: WebdriverIO.Config  = {
     ...sharedConfig,
+    // On a new CI simulator the first session takes about 3 minutes (WebDriverAgent start, Safari preparation)
+    ...(process.env.CI ? { connectionRetryTimeout: 10 * 60 * 1000 } : {}),
     // ==================
     // Specify Test Files
     // ==================
@@ -43,7 +45,7 @@ function iOSCaps(
         'appium:language': 'en',
         'appium:locale': 'en',
         // In CI the simulator is booted without a window; without this, Appium restarts it with a window, which is slow
-        ...(process.env.CI ? { 'appium:isHeadless': true } : {}),
+        ...(process.env.CI ? { 'appium:isHeadless': true, 'appium:wdaLaunchTimeout': 180 * 1000 } : {}),
         'wdio-ics:options': {
             logName: `${deviceName
                 .split(' ')
