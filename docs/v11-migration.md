@@ -18,6 +18,7 @@ v11 is in prerelease on `main` (npm tag `next`). This guide lists what changes w
 | [WebdriverIO v10 only](#webdriverio-v10-only) | Yes, if you still use WebdriverIO v9 |
 | [Node.js 22.19 or later](#nodejs-2219-or-later) | Only on an older Node.js |
 | [New color difference metric (pixelmatch 8)](#new-color-difference-metric-pixelmatch-8) | Check tight tolerances; maybe re-accept some baselines |
+| [Ignored regions](#ignored-regions) | Only if a check fails after the upgrade |
 | [OCR: tesseract.js 7](#ocr-tesseractjs-7) | No |
 | [Visual reporter](#visual-reporter) | Only if you open reports in an old browser |
 | [Smaller fixes](#smaller-fixes) | No |
@@ -61,6 +62,24 @@ see colors: fewer false positives and fewer missed changes.
 mismatch percentage or a very tight tolerance, check the image and re-accept the baseline
 (`--update-visual-baseline`), or adjust the tolerance.
 
+## Ignored regions
+
+Ignored regions (`ignore` elements, `blockOut` rectangles and the `blockOut*` bars) are now skipped by
+pixelmatch with a mask. Before, they were painted black in both images before the comparison. The baseline,
+actual and diff files do not change, and the diff image still shows the ignored regions in green. You can notice
+2 effects:
+
+- **The edge of a region with `ignoreAntialiasing`:** the pixels next to a region are now compared with their
+  real neighbours, so the anti-aliasing detection there can give a slightly different count (on a real
+  screenshot: 15 more pixels out of 61 208).
+- **A region that goes past the right edge of the image** (for example an element that is partly outside the
+  viewport, or a `blockOut` rectangle that is too wide) is now cut at the edge. Before, the part outside the image
+  continued on the left side of the next pixel rows, so those pixels were also ignored by mistake. A real change
+  there was not found before, and is found now.
+
+**What to do:** nothing, unless a check fails after the upgrade. Then look at the diff image: a difference at the
+left edge of the image, below an ignored region, is a real difference that v10 did not report.
+
 ## OCR: tesseract.js 7
 
 `@wdio/ocr-service` uses tesseract.js 7 (before: 5) when no system Tesseract is installed.
@@ -78,9 +97,9 @@ No change is needed.
 - Needs Node.js 22.19 or later (before: 20).
 - The report UI is rebuilt with React Router (before: Remix 2), React 19 and Vite 8. It looks and works the
   same.
-- **Browser support of the report:** Vite 8 builds for its default target "baseline widely available"
-  (Chrome and Edge 107+, Firefox 104+, Safari 16+; before: Chrome and Edge 87+, Firefox 78+, Safari 14+).
-  Open the report in a recent browser.
+- **Browser support of the report:** Vite 8 builds for its default target "baseline widely available":
+  Chrome and Edge 111+, Firefox 114+, Safari 16.4+ (before, with Vite 5: Chrome 87+, Edge 88+, Firefox 78+,
+  Safari 14+). Open the report in a recent browser.
 - The CLI wizards use `@inquirer/prompts` 8 and `ora` 9; they work the same.
 
 ## Smaller fixes
@@ -89,7 +108,9 @@ You do not need to change anything for these, but you can notice them:
 
 - **Background tabs (WebDriver BiDi, Chromium):** before a check or save command, a page in a background tab
   is brought to the front, as ChromeDriver does for WebDriver Classic screenshots. Before, such a check could
-  save a new baseline with another file name, or hang until `bidiResponseTimeout`.
+  save a new baseline with another file name, or hang until `bidiResponseTimeout`. In these sessions each check
+  or save command first runs one small script to read `document.visibilityState`, and in a headed browser you can
+  see the tab come to the front.
 - **Types:** the published type declarations of `@wdio/image-comparison-core` resolve in your project. Before,
   some types (for example `TestContext`, `CompareData`, `ElementIgnore`) became `any`.
 - **`mobileEmulation.deviceName`:** `browser.emulate('device')` is called only for a device that WebdriverIO
