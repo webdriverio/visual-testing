@@ -18,9 +18,10 @@ describe('@wdio/visual-service mobile web', () => {
 
     // The Android 15 and 16 emulators on LambdaTest start in one of two states: Chrome draws into the display cutout
     // area (426x848 in portrait, 952x322 in landscape), or the window leaves it out (an opaque status bar in portrait,
-    // a narrower page in landscape: 426x823, 903x322). This changes the viewport and thus the layout of the page, but
-    // not the screen size in the file name. The viewport at the start of the session goes in the tag
-    // (for example `-vp426x823`), so each state has its own baselines.
+    // a narrower page in landscape: 426x823, 903x322). Android 16 also started once in portrait with 426x827.
+    // This changes the viewport and thus the layout of the page, but not the screen size in the file name.
+    // The viewport at the start of the session goes in the tag (for example `-vp426x823`), so each state has its
+    // own baselines. A rotation can also end in either state, so the rotated screenshot gets its own tag (see below).
     let viewportTag = ''
 
     beforeEach(async () => {
@@ -203,7 +204,12 @@ describe('@wdio/visual-service mobile web', () => {
 
             await browser.setOrientation(newOrientation)
             await browser.pause(2000)
-            const result = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}${viewportTag}`) as number
+            // On Android the display state after the rotation does not always follow the state at the start of the session
+            // (LambdaTest Android 16: the rotated page is 952 or 903 pixels wide), so the tag has the viewport after the rotation
+            const rotatedViewportTag = platformName === 'Android'
+                ? `-vp${await browser.execute(() => `${window.innerWidth}x${window.innerHeight}`)}`
+                : ''
+            const result = await browser.checkScreen(`screenshot-${newOrientation.toLowerCase()}${rotatedViewportTag}`) as number
             if (result > 0 && result < 0.05) {
                 console.log(`\n\n\n'Screenshot for ${deviceName}' with ${platformName}:${platformVersion} in new orientation mode ${newOrientation} has a difference of ${result}%\n\n\n`)
             }
@@ -294,16 +300,6 @@ const skipRules = expandSkipRules([
         platformVersions: ['14'],
         orientations: ['landscape', 'portrait'],
         reason: 'Full black screen',
-    },
-    {
-        titleIncludes: 'compare a screen after an orientation change',
-        deviceName: 'Pixel 9 Pro',
-        platformName: 'Android',
-        platformVersions: ['16'],
-        orientations: ['landscape', 'portrait'],
-        // TODO: find a better solution, for example wait until the viewport is stable after the rotation,
-        // or add the viewport after the rotation to the tag
-        reason: 'The display cutout state after a rotation changes between sessions, so the screenshot changes',
     },
     {
         titleIncludes: 'compare a full page screenshot successful',
