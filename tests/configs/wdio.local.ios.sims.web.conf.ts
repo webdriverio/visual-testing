@@ -42,6 +42,8 @@ function iOSCaps(
         'appium:newCommandTimeout': 240,
         'appium:language': 'en',
         'appium:locale': 'en',
+        // In CI the simulator is booted without a window; without this, Appium restarts it with a window, which is slow
+        ...(process.env.CI ? { 'appium:isHeadless': true } : {}),
         'wdio-ics:options': {
             logName: `${deviceName
                 .split(' ')
