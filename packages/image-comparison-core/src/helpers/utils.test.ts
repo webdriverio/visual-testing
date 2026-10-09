@@ -805,15 +805,20 @@ describe('utils', () => {
             errorSpy.mockRestore()
         })
 
-        it('should not retry on iOS when overlay returns zeros', async () => {
+        it('should measure again on iOS when the first native tap only closes a Safari tip', async () => {
             const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
 
             vi.mocked(mockBrowserInstance.execute)
+                // --- Attempt 1: a Safari tip takes the native tap, the overlay gets nothing ---
                 .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
                 .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce({ x: 0, y: 0, width: 0, height: 0 }) // getMobileWebviewClickAndDimensions
-                .mockResolvedValueOnce({ vs: 'visible', focus: true }) // visibilityState debug check
+                // --- Attempt 2: the tip is closed, the overlay gets the tap ---
+                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
 
             const result = await getMobileViewPortPosition({
                 browserInstance: mockBrowserInstance,
@@ -822,14 +827,46 @@ describe('utils', () => {
                 isIOS: true,
             })
 
-            // iOS uses a single attempt — no retry, no Start Surface dismissal
-            expect(warnSpy).not.toHaveBeenCalled()
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('overlay did not receive the native click')
+            )
             expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
-            // The zero overlay values produce a viewport at screen center with 0 dimensions
-            expect(result.viewport.width).toBe(0)
-            expect(result.viewport.height).toBe(0)
+            expect(result.viewport).toEqual({ y: 100, x: 50, width: 100, height: 100 })
+            // The Android Back button is not used on iOS
+            expect(mockBrowserInstance.executeScript).not.toHaveBeenCalledWith('mobile: pressKey', expect.anything())
 
             warnSpy.mockRestore()
+        })
+
+        it('should return initialDeviceRectangles after all attempts are exhausted on iOS', async () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+            const errorSpy = vi.spyOn(log, 'error').mockImplementation(() => {})
+
+            const mocked = vi.mocked(mockBrowserInstance.execute)
+            for (let i = 0; i < 3; i++) {
+                mocked
+                    .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                    .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
+                    .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                    .mockResolvedValueOnce({ x: 0, y: 0, width: 0, height: 0 }) // getMobileWebviewClickAndDimensions
+            }
+
+            const result = await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                isAndroid: false,
+                isIOS: true,
+            })
+
+            expect(warnSpy).toHaveBeenCalledTimes(3)
+            expect(errorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('Viewport measurement failed after 3 attempts')
+            )
+            expect(mockBrowserInstance.url).toHaveBeenCalledWith('http://example.com')
+            expect(result).toEqual(DEVICE_RECTANGLES)
+
+            warnSpy.mockRestore()
+            errorSpy.mockRestore()
         })
 
         it('should return initialDeviceRectangles if not WebView (native context)', async () => {
