@@ -92,6 +92,7 @@ The versions in the table above are the versions of the visual testing packages,
 #### Upgrading to WebdriverIO v10
 
 -   **Strict `$()`**: in WebdriverIO v10, `$()` throws a `StrictSelectorError` when the selector finds more than one element. This applies to elements in `ignore` and to `checkElement()` / `toMatchElementSnapshot()`. Use `$$()` to use all the elements, `$(selector, { strict: false })` to use the first one, or a more specific selector. `hideElements` and `removeElements` are not affected.
+-   **Android Chrome through Appium**: WebdriverIO v10 starts a WebDriver BiDi session by default, but the Appium UiAutomator2 driver does not support the BiDi commands that WebdriverIO and the visual service use. `browser.url()` fails with `WebDriver Bidi command "browsingContext.navigate" failed with error: unknown method`, and the check commands and visual matchers fail with `"script.callFunction" failed with error: unknown command`. Set `'wdio:enforceWebDriverClassic': true` in the capabilities of these sessions. See [#1232](https://github.com/webdriverio/visual-testing/issues/1232).
 -   **Elements in a frame**: in a WebDriver BiDi session, an element screenshot of an element in a frame is not supported. With WebdriverIO v9 `switchFrame()`, the image is moved by the position of the frame. With WebdriverIO v10 `context.frame()`, the command fails. With WebDriver Classic (`'wdio:enforceWebDriverClassic': true`), it works with WebdriverIO v9 and v10. See [#1228](https://github.com/webdriverio/visual-testing/issues/1228).
 
 ### Staying on v9
