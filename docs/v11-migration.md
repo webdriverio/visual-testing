@@ -20,7 +20,7 @@ v11 is in prerelease on `main` (npm tag `next`). This guide lists what changes w
 | [New color difference metric (pixelmatch 8)](#new-color-difference-metric-pixelmatch-8) | Check tight tolerances; maybe re-accept some baselines |
 | [Ignored regions](#ignored-regions) | Only if a check fails after the upgrade |
 | [OCR: tesseract.js 7](#ocr-tesseractjs-7) | No |
-| [Visual reporter](#visual-reporter) | Only if you open reports in an old browser |
+| [Visual reporter](#visual-reporter) | No |
 | [Smaller fixes](#smaller-fixes) | No |
 
 ## WebdriverIO v10 only
@@ -97,9 +97,8 @@ No change is needed.
 - Needs Node.js 22.19 or later (before: 20).
 - The report UI is rebuilt with React Router (before: Remix 2), React 19 and Vite 8. It looks and works the
   same.
-- **Browser support of the report:** Vite 8 builds for its default target "baseline widely available":
-  Chrome and Edge 111+, Firefox 114+, Safari 16.4+ (before, with Vite 5: Chrome 87+, Edge 88+, Firefox 78+,
-  Safari 14+). Open the report in a recent browser.
+- **Browser support of the report did not change:** Chrome 87+, Edge 88+, Firefox 78+, Safari 14+, the same
+  browsers as Vite 5 built for. Vite 8 has a newer default target, so the reporter sets this list itself.
 - The CLI wizards use `@inquirer/prompts` 8 and `ora` 9; they work the same.
 
 ## Smaller fixes
