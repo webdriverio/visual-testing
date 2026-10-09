@@ -316,13 +316,13 @@ describe('pixelmatch adapter - compareImages', () => {
     })
 
     describe('ignoredBoxes', () => {
-        it('zeroes out the specified box regions in both pixel arrays before comparison', async () => {
+        it('passes an ignoreMask for the box regions and leaves both images unchanged', async () => {
             let capturedImg1: Uint8Array | undefined
-            let capturedImg2: Uint8Array | undefined
+            let capturedMask: Uint8Array | Uint8ClampedArray | undefined
 
-            pixelmatchFn.mockImplementation((img1: Uint8Array, img2: Uint8Array) => {
+            pixelmatchFn.mockImplementation((img1: Uint8Array, _img2, _output, _width, _height, options) => {
                 capturedImg1 = new Uint8Array(img1)
-                capturedImg2 = new Uint8Array(img2)
+                capturedMask = options?.ignoreMask
                 return 0
             })
 
@@ -332,11 +332,18 @@ describe('pixelmatch adapter - compareImages', () => {
                 }
             })
 
-            expect(capturedImg1![0]).toBe(0)
-            expect(capturedImg1![1]).toBe(0)
-            expect(capturedImg1![2]).toBe(0)
-            expect(capturedImg1![3]).toBe(0)
-            expect(capturedImg2![0]).toBe(0)
+            expect(capturedMask).toBeInstanceOf(Uint8Array)
+            expect(capturedMask![0]).toBe(1)
+            expect(capturedMask![1]).toBe(0)
+            expect(capturedImg1!.some((value) => value !== 0)).toBe(true)
+        })
+
+        it('passes no ignoreMask without ignored boxes', async () => {
+            pixelmatchFn.mockImplementation(() => 0)
+
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
+
+            expect(pixelmatchFn.mock.calls[0][5]).not.toHaveProperty('ignoreMask')
         })
     })
 
