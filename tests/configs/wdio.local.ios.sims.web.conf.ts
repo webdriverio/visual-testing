@@ -51,6 +51,8 @@ function iOSCaps(
             'appium:wdaLaunchTimeout': 180 * 1000,
             'appium:webviewConnectTimeout': 60 * 1000,
             'appium:webviewConnectRetries': 120,
+            // Appium reuses the WebDriverAgent of the previous session, which can have stopped: start a new one
+            'appium:useNewWDA': true,
         } : {}),
         'wdio-ics:options': {
             logName: `${deviceName
