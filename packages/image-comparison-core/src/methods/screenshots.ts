@@ -11,6 +11,7 @@ import type {
 } from './screenshots.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
+import getElementVisibleRect from '../clientSideScripts/getElementVisibleRect.js'
 import type { ElementRectanglesOptions, RectanglesOutput } from './rectangles.interfaces.js'
 import { determineElementRectangles } from './rectangles.js'
 
@@ -618,6 +619,36 @@ export async function takeWebElementScreenshot({
             base64Image,
             isWebDriverElementScreenshot: false,
             rectangles,
+        }
+    }
+
+    // TEMPORARY workaround for https://github.com/appium/appium/issues/22939 (see #1127): in iOS Safari, the Appium
+    // element screenshot has the size of the whole element, but only the part inside the viewport has pixels, the rest
+    // is transparent (shown as black). Until Appium fixes it, cut the visible part of the element from a screenshot when
+    // the element is not fully inside the viewport, as on Android. `innerHeight` leaves out the area under the floating
+    // Safari toolbar of iOS 26, so the cut does not have the toolbar.
+    if (isIOS) {
+        const visibleRect = await browserInstance.execute(getElementVisibleRect, await element)
+
+        if (!visibleRect.isFullyVisible && visibleRect.width > 0 && visibleRect.height > 0) {
+            log.info('The element is not fully inside the viewport, cutting its visible part from a screenshot (see https://github.com/appium/appium/issues/22939)')
+            const base64Image = await takeBase64Screenshot(browserInstance)
+            // On iOS the device rectangles are in CSS pixels, as in getElementWebviewPosition
+            const rectangles = calculateDprData(
+                {
+                    height: visibleRect.height,
+                    width: visibleRect.width,
+                    x: visibleRect.x + deviceRectangles.viewport.x,
+                    y: visibleRect.y + deviceRectangles.viewport.y,
+                },
+                devicePixelRatio,
+            )
+
+            return {
+                base64Image,
+                isWebDriverElementScreenshot: false,
+                rectangles,
+            }
         }
     }
 

@@ -120,3 +120,7 @@ You do not need to change anything for these, but you can notice them:
   took the tap the service uses to measure the viewport. Full page screenshots of that session then failed with
   "Negative scroll position detected". The service now measures again when the tap did not reach the page, as it
   already did on Android.
+- **iOS element screenshots of large elements:** for an element that is not fully inside the viewport, the image
+  had the size of the whole element, but only the visible part had content and the rest was black (an Appium bug,
+  [appium/appium#22939](https://github.com/appium/appium/issues/22939)). The image now has only the visible part of
+  the element, as on Android, so baselines of such elements change once.
