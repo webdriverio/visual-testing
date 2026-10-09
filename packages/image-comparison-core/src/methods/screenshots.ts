@@ -626,11 +626,12 @@ export async function takeWebElementScreenshot({
     // element screenshot has the size of the whole element, but only the part inside the viewport has pixels, the rest
     // is transparent (shown as black). Until Appium fixes it, cut the visible part of the element from a screenshot when
     // the element is not fully inside the viewport, as on Android. `innerHeight` leaves out the area under the floating
-    // Safari toolbar of iOS 26, so the cut does not have the toolbar.
+    // Safari toolbar of iOS 26, so the cut does not have the toolbar. In a frame the position is relative to the frame,
+    // not to the page, so the driver's element screenshot is used there, as before.
     if (isIOS) {
         const visibleRect = await browserInstance.execute(getElementVisibleRect, await element)
 
-        if (!visibleRect.isFullyVisible && visibleRect.width > 0 && visibleRect.height > 0) {
+        if (!visibleRect.isFullyVisible && !visibleRect.isInFrame && visibleRect.width > 0 && visibleRect.height > 0) {
             log.info('The element is not fully inside the viewport, cutting its visible part from a screenshot (see https://github.com/appium/appium/issues/22939)')
             const base64Image = await takeBase64Screenshot(browserInstance)
             // On iOS the device rectangles are in CSS pixels, as in getElementWebviewPosition

@@ -3,6 +3,8 @@ import type { ElementPosition } from './elementPosition.interfaces.js'
 export type ElementVisibleRect = ElementPosition & {
     /** The whole element is inside the viewport (a rounding margin of 1 CSS pixel is allowed) */
     isFullyVisible: boolean;
+    /** The element is in a frame: its position is relative to the frame, not to the page */
+    isInFrame: boolean;
 }
 
 /**
@@ -18,6 +20,7 @@ export default function getElementVisibleRect(element: HTMLElement): ElementVisi
 
     return {
         isFullyVisible: top >= -1 && left >= -1 && bottom <= innerHeight + 1 && right <= innerWidth + 1,
+        isInFrame: window.self !== window.top,
         height: Math.max(0, Math.round(visibleBottom - visibleTop)),
         width: Math.max(0, Math.round(visibleRight - visibleLeft)),
         x: Math.round(visibleLeft),

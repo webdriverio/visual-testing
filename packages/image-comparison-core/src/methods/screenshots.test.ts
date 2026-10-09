@@ -702,7 +702,7 @@ describe('screenshots', () => {
 
             it('should cut the visible part of the element from a screenshot when it is not fully inside the viewport', async () => {
                 const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: MEDIUM_IMAGE_STRING })
-                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: false, x: 0, y: 0, width: 402, height: 714 })
+                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: false, isInFrame: false, x: 0, y: 0, width: 402, height: 714 })
                 vi.mocked(utilsModule.calculateDprData).mockReturnValueOnce({ x: 0, y: 204, width: 1206, height: 2142 })
 
                 const result = await takeWebElementScreenshot(createBaseTakeWebElementScreenshotOptions({
@@ -726,7 +726,7 @@ describe('screenshots', () => {
 
             it('should use the element screenshot of the driver when the element is fully inside the viewport', async () => {
                 const mockBrowserInstance = createMockBrowserInstance({ takeElementScreenshot: SMALL_IMAGE_STRING })
-                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: true, x: 0, y: 10, width: 300, height: 200 })
+                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: true, isInFrame: false, x: 0, y: 10, width: 300, height: 200 })
                 vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({ width: 300, height: 200 })
 
                 const result = await takeWebElementScreenshot(createBaseTakeWebElementScreenshotOptions({
@@ -742,7 +742,22 @@ describe('screenshots', () => {
 
             it('should use the element screenshot of the driver when no part of the element is visible', async () => {
                 const mockBrowserInstance = createMockBrowserInstance({ takeElementScreenshot: SMALL_IMAGE_STRING })
-                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: false, x: 0, y: 900, width: 402, height: 0 })
+                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: false, isInFrame: false, x: 0, y: 900, width: 402, height: 0 })
+                vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({ width: 300, height: 200 })
+
+                await takeWebElementScreenshot(createBaseTakeWebElementScreenshotOptions({
+                    browserInstance: mockBrowserInstance,
+                    deviceRectangles: iosDeviceRectangles,
+                    isIOS: true,
+                }))
+
+                expect(mockBrowserInstance.takeElementScreenshot).toHaveBeenCalledWith('element-123')
+                expect(mockBrowserInstance.takeScreenshot).not.toHaveBeenCalled()
+            })
+
+            it('should use the element screenshot of the driver for an element in a frame', async () => {
+                const mockBrowserInstance = createMockBrowserInstance({ takeElementScreenshot: SMALL_IMAGE_STRING })
+                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: false, isInFrame: true, x: 0, y: 0, width: 300, height: 400 })
                 vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({ width: 300, height: 200 })
 
                 await takeWebElementScreenshot(createBaseTakeWebElementScreenshotOptions({
