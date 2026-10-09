@@ -6,6 +6,13 @@ name: android emulator
 on:
   pull_request:
     paths:
+      # Dependency updates (for example webdriverio, @wdio/*, Appium-related packages) can change the screenshots
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "patches/**"
+      - "packages/image-comparison-core/package.json"
+      - "packages/visual-service/package.json"
       - "packages/image-comparison-core/src/**"
       - "packages/visual-service/src/**"
       - "tests/specs/mobile.web.spec.ts"

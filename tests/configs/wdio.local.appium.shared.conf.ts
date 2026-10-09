@@ -36,6 +36,9 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'>  = {
                 blockOutToolBar: true,
                 blockOutSideBar: true,
                 enableLayoutTesting: true,
+                // In CI only the setup run (BASELINE_SETUP=true) saves baselines: in the compare run a missing
+                // baseline must fail, for example when the viewport in the file name changed between the runs
+                autoSaveBaseline: !process.env.CI || process.env.BASELINE_SETUP === 'true',
             } satisfies VisualServiceOptions,
         ],
     ],

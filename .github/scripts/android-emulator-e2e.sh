@@ -20,7 +20,7 @@ done
 curl -sf http://127.0.0.1:4723/status > /dev/null || { echo "Appium did not start"; cat logs/appium.log; exit 1; }
 
 echo "::group::Save the baselines"
-pnpm test.local.emus.web
+BASELINE_SETUP=true pnpm test.local.emus.web
 echo "::endgroup::"
 
 echo "::group::Compare with the baselines"
