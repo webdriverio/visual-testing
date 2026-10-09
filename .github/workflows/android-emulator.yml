@@ -1,0 +1,101 @@
+name: android emulator
+
+# The Android mobile web e2e tests on an emulator in the GitHub runner. No cloud credentials are needed, so this
+# also runs for pull requests from forks. It runs only when a change can affect the mobile screenshots.
+# The LambdaTest Android jobs (e2e workflow) stay: they test real cloud devices with committed baselines.
+on:
+  pull_request:
+    paths:
+      # Dependency updates (for example webdriverio, @wdio/*, Appium-related packages) can change the screenshots
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "patches/**"
+      - "packages/image-comparison-core/package.json"
+      - "packages/visual-service/package.json"
+      - "packages/image-comparison-core/src/**"
+      - "packages/visual-service/src/**"
+      - "tests/specs/mobile.web.spec.ts"
+      - "tests/configs/wdio.shared.conf.ts"
+      - "tests/configs/wdio.local.appium.shared.conf.ts"
+      - "tests/configs/wdio.local.android.emus.web.conf.ts"
+      - ".github/scripts/android-emulator-e2e.sh"
+      - ".github/workflows/android-emulator.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  android-emulator-web:
+    name: 🤖 Run the Android mobile web e2e tests on an emulator
+    runs-on: ubuntu-latest
+    # Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
+    env:
+      # Used by tests/configs/wdio.local.android.emus.web.conf.ts
+      ANDROID_AVD: ci_android_35
+      ANDROID_PLATFORM_VERSION: "15"
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build
+        run: pnpm build
+
+      - name: 📱 Install Appium and the UiAutomator2 driver
+        run: |
+          npm install --global appium@3.8.0
+          appium driver install uiautomator2@8.7.0
+
+      # The emulator needs hardware acceleration
+      - name: ⚙️ Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # A new AVD with a `google_apis` image: it has Chrome, and without a Play Store account Chrome
+      # can not update itself during the run
+      - name: 🤖 Run the e2e tests on the Android emulator
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          # The cmdline-tools of the runner image do not know the newest Pixel profiles
+          profile: pixel_6
+          pre-emulator-launch-script: avdmanager list device -c | tr '\n' ' '
+          avd-name: ci_android_35
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
+          disable-animations: true
+          script: bash .github/scripts/android-emulator-e2e.sh
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: failure()
+        with:
+          name: android-emulator-logs
+          include-hidden-files: true
+          path: |
+            logs/
+            .tmp/
+            tests/localBaseline/

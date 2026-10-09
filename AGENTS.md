@@ -94,6 +94,12 @@ Mock the browser in unit tests; do not start a browser.
   every push to `main` and to the maintenance branches. Lint, types and unit
   tests; the local headless Chrome suites (v10 Mocha, Jasmine, multi-remote,
   emulation) and the local desktop suite (setup run, then the real run).
+- [`android emulator`](.github/workflows/android-emulator.yml): the Android
+  mobile web suite on an emulator in the runner (Appium, same-run baselines).
+  It runs for PRs (also from forks) that change the core, the service, the
+  mobile web spec or its configs. Locally: start an emulator and Appium, then
+  `ANDROID_AVD=<avd> ANDROID_PLATFORM_VERSION=<version> pnpm test.local.emus.web`
+  (see [.github/scripts/android-emulator-e2e.sh](.github/scripts/android-emulator-e2e.sh)).
 - [`e2e`](.github/workflows/e2e.yml): the LambdaTest and Sauce Labs jobs. They
   need the cloud credentials, so they run only for branches in this
   repository, not for forks or Dependabot.

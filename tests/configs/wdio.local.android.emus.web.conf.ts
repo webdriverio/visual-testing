@@ -1,6 +1,10 @@
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.local.appium.shared.conf.ts'
 
+// The AVD name and Android version, for example in CI: ANDROID_AVD=ci_android_35 ANDROID_PLATFORM_VERSION=15.0
+const androidDeviceName = process.env.ANDROID_AVD ?? 'Pixel_8_Pro_Android_15_API_35'
+const androidPlatformVersion = process.env.ANDROID_PLATFORM_VERSION ?? '15.0'
+
 export const config: WebdriverIO.Config  = {
     ...sharedConfig,
     // ==================
@@ -12,7 +16,7 @@ export const config: WebdriverIO.Config  = {
     // Capabilities
     // ============
     capabilities: [
-        androidCaps('Pixel_8_Pro_Android_15_API_35', 'PORTRAIT', '15.0', true),
+        androidCaps(androidDeviceName, 'PORTRAIT', androidPlatformVersion, true),
         // androidCaps('Pixel_8_Pro_Android_15_API_35', 'LANDSCAPE', '15.0', true),
     ],
 }
