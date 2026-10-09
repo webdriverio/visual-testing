@@ -16,6 +16,8 @@ public/
 build/static/report/
 # React Router 8 keeps the small server build that renders index.html; the CLI only serves build/client
 build/server/
+# Route types that React Router generates for the type check
+.react-router/
 demo/
 app/
 scripts/
