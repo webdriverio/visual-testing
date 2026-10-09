@@ -14,11 +14,11 @@ xcrun simctl bootstatus "$UDID" -b > /dev/null
 
 # Build WebDriverAgent before the first session: inside a session, Appium waits only 60 s for it, and the build
 # alone takes longer on the runner. The session then reuses this build.
-echo "::group::Build WebDriverAgent"
-appium driver run xcuitest build-wda --name "$IOS_DEVICE_NAME" --sdk "$IOS_PLATFORM_VERSION"
-echo "::endgroup::"
-
 mkdir -p logs
+echo "Building WebDriverAgent (output in logs/build-wda.log)"
+appium driver run xcuitest build-wda --name "$IOS_DEVICE_NAME" --sdk "$IOS_PLATFORM_VERSION" > logs/build-wda.log 2>&1 \
+    || { tail -50 logs/build-wda.log; exit 1; }
+
 # Its output goes to a file (uploaded when the job fails), not to the job log
 appium --port 4723 > logs/appium.log 2>&1 &
 APPIUM_PID=$!
