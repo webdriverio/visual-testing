@@ -45,7 +45,13 @@ function iOSCaps(
         'appium:language': 'en',
         'appium:locale': 'en',
         // In CI the simulator is booted without a window; without this, Appium restarts it with a window, which is slow
-        ...(process.env.CI ? { 'appium:isHeadless': true, 'appium:wdaLaunchTimeout': 180 * 1000 } : {}),
+        // and the web inspector of a new CI simulator reports Safari late, so give Appium more time to find the page
+        ...(process.env.CI ? {
+            'appium:isHeadless': true,
+            'appium:wdaLaunchTimeout': 180 * 1000,
+            'appium:webviewConnectTimeout': 60 * 1000,
+            'appium:webviewConnectRetries': 120,
+        } : {}),
         'wdio-ics:options': {
             logName: `${deviceName
                 .split(' ')
