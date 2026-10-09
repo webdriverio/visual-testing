@@ -38,6 +38,13 @@ for _ in $(seq 1 60); do
 done
 curl -sf http://127.0.0.1:4723/status > /dev/null || { echo "Appium did not start"; cat logs/appium.log; exit 1; }
 
+# Warm-up: in the first minutes after the boot the emulator is busy, and a screenshot can still show the frame before
+# a scroll (wrong full page stitch: 2 of 3 CI jobs without a warm-up, 0 of 3 with it). Its files are not kept.
+echo "::group::Warm up the emulator"
+BASELINE_SETUP=true pnpm test.local.emus.web --mochaOpts.grep "full page screenshot successful" || true
+rm -rf tests/localBaseline .tmp
+echo "::endgroup::"
+
 echo "::group::Save the baselines"
 BASELINE_SETUP=true pnpm test.local.emus.web
 echo "::endgroup::"
