@@ -1,0 +1,98 @@
+# Migrating to v11
+
+v11 is in prerelease on `main` (npm tag `next`). This guide lists what changes when you move from
+
+- `@wdio/visual-service` v10 to v11,
+- `@wdio/image-comparison-core` v2 to v3,
+- `@wdio/ocr-service` v2 to v3,
+- `@wdio/visual-reporter` 0.4 to 0.5.
+
+> Contributors: when a PR changes something that users of these packages can notice, update this guide in the
+> same PR. At the v11 release, this content also goes to the WebdriverIO documentation
+> ([visual testing FAQ](https://webdriver.io/docs/visual-testing/faq)).
+
+## Summary
+
+| Change | Do you need to do something? |
+|---|---|
+| [WebdriverIO v10 only](#webdriverio-v10-only) | Yes, if you still use WebdriverIO v9 |
+| [Node.js 22.19 or later](#nodejs-2219-or-later) | Only on an older Node.js |
+| [New color difference metric (pixelmatch 8)](#new-color-difference-metric-pixelmatch-8) | Check tight tolerances; maybe re-accept some baselines |
+| [OCR: tesseract.js 7](#ocr-tesseractjs-7) | No |
+| [Visual reporter](#visual-reporter) | Only if you open reports in an old browser |
+| [Smaller fixes](#smaller-fixes) | No |
+
+## WebdriverIO v10 only
+
+`@wdio/visual-service` v11, `@wdio/image-comparison-core` v3 and `@wdio/ocr-service` v3 support only
+WebdriverIO v10. The code paths for WebdriverIO v9 are removed.
+
+- The packages declare `webdriverio: ^10.0.0` as a peer dependency. A WebdriverIO project always has it
+  installed.
+- A multi-remote browser or element is found with the `isMultiRemote` flag of WebdriverIO v10 (not
+  `isMultiremote` of v9), and an element with the kind brand of WebdriverIO v10.
+  `toMatchElementSnapshot()` gives a clear error for a value that is not a WebdriverIO v10 element.
+
+**If you still use WebdriverIO v9:** stay on `@wdio/visual-service@10`, `@wdio/image-comparison-core@2` and
+`@wdio/ocr-service@2`. They are in maintenance on the `v10` branch, and fixes are backported on request.
+
+For the WebdriverIO v10 changes that affect visual tests (strict `$()`, elements in a frame), see
+[Upgrading to WebdriverIO v10](../README.md#upgrading-to-webdriverio-v10).
+
+## Node.js 22.19 or later
+
+All packages declare `"engines": { "node": ">=22.19.0" }`, like WebdriverIO 10. For the visual, OCR and
+comparison packages this changes nothing, because WebdriverIO 10 already needs it.
+`@wdio/visual-reporter` declared `>=20.0.0` before.
+
+## New color difference metric (pixelmatch 8)
+
+The comparison engine is now [pixelmatch 8](https://github.com/mapbox/pixelmatch). It measures color
+differences in the OKLab color space with the HyAB distance instead of YIQ. This is closer to how people
+see colors: fewer false positives and fewer missed changes.
+
+- The API and the `threshold` scale (`0` to `1`, where `1` is black vs white) did not change, so the
+  `ignore*` options keep their values.
+- **Mismatch percentages can differ a little** for the same images. On real screenshots the number of
+  different pixels changed by about −3 % to +3 %. Example: a full page with a 1-pixel shift and
+  `ignoreAntialiasing` went from 0.002 % to 0.003 %.
+
+**What to do:** run your visual tests once after the upgrade. If a check fails only because it uses an exact
+mismatch percentage or a very tight tolerance, check the image and re-accept the baseline
+(`--update-visual-baseline`), or adjust the tolerance.
+
+## OCR: tesseract.js 7
+
+`@wdio/ocr-service` uses tesseract.js 7 (before: 5) when no system Tesseract is installed.
+
+- About 15 % faster, and the memory leak of tesseract.js 5 (memory grew over time until a crash) is fixed.
+- On our test screenshots, the found text and word positions are the same.
+- The `clickDuration` option of `ocrClickOnText` is typed `number` (before: the wrapper type `Number`).
+
+No change is needed.
+
+## Visual reporter
+
+`@wdio/visual-reporter` 0.5:
+
+- Needs Node.js 22.19 or later (before: 20).
+- The report UI is rebuilt with React Router (before: Remix 2), React 19 and Vite 8. It looks and works the
+  same.
+- **Browser support of the report:** Vite 8 builds for its default target "baseline widely available"
+  (Chrome and Edge 107+, Firefox 104+, Safari 16+; before: Chrome and Edge 87+, Firefox 78+, Safari 14+).
+  Open the report in a recent browser.
+- The CLI wizards use `@inquirer/prompts` 8 and `ora` 9; they work the same.
+
+## Smaller fixes
+
+You do not need to change anything for these, but you can notice them:
+
+- **Background tabs (WebDriver BiDi, Chromium):** before a check or save command, a page in a background tab
+  is brought to the front, as ChromeDriver does for WebDriver Classic screenshots. Before, such a check could
+  save a new baseline with another file name, or hang until `bidiResponseTimeout`.
+- **Types:** the published type declarations of `@wdio/image-comparison-core` resolve in your project. Before,
+  some types (for example `TestContext`, `CompareData`, `ElementIgnore`) became `any`.
+- **`mobileEmulation.deviceName`:** `browser.emulate('device')` is called only for a device that WebdriverIO
+  knows; for other names, the viewport of the emulated device is used without a failed call first.
+- **`ignore` elements:** an element is found again only when its reference is stale, not for every check.
+- **Matcher messages:** the documentation link in the message of a failed visual matcher works again.

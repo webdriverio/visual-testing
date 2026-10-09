@@ -153,6 +153,7 @@ Mock the browser in unit tests; do not start a browser.
 - **Verify a change:** [.agents/skills/verify-visual-testing/SKILL.md](.agents/skills/verify-visual-testing/SKILL.md)
 - **Baselines:** [.agents/skills/visual-testing-baselines/SKILL.md](.agents/skills/visual-testing-baselines/SKILL.md)
 - **Release and backports:** [.agents/skills/visual-testing-release/SKILL.md](.agents/skills/visual-testing-release/SKILL.md)
+- **v11 migration guide:** [docs/v11-migration.md](docs/v11-migration.md). When a change is noticeable for users of the packages, update it in the same PR.
 
 The skills set `metadata.internal: true` because they are for this repository
 only. Leave that flag on.
