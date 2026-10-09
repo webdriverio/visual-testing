@@ -36,7 +36,7 @@ export const config: WebdriverIO.Config  = {
     // Specs
     // =====
     specs: [
-        '../specs/desktop.ocr.spec.ts',
+        '../specs/desktop.ocr.local.spec.ts',
     ],
     // ========
     // Services

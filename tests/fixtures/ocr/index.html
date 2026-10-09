@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OCR fixture</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>WebdriverIO</h1>
+<p class="subtitle">Next-gen browser and mobile automation test framework for Node.js</p>
+
+<button class="search-button" type="button">Search</button>
+<form class="search-form" hidden>
+    <input type="search" placeholder="Search docs" aria-label="Search docs">
+</form>
+<ul class="search-results" hidden>
+    <li>specFileRetries</li>
+</ul>
+
+<div class="buttons">
+    <a class="get-started" href="get-started.html">Get Started</a>
+    <a class="why" href="why-webdriverio.html">Why WebdriverIO?</a>
+</div>
+
+<script>
+    const button = document.querySelector('.search-button')
+    const form = document.querySelector('.search-form')
+    const input = form.querySelector('input')
+    const results = document.querySelector('.search-results')
+
+    button.addEventListener('click', () => {
+        button.hidden = true
+        form.hidden = false
+        input.focus()
+    })
+    input.addEventListener('input', () => {
+        results.hidden = !'specfileretries'.startsWith(input.value.toLowerCase()) || input.value.length < 4
+    })
+    form.addEventListener('submit', (event) => event.preventDefault())
+</script>
+</body>
+</html>
