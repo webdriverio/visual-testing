@@ -78,7 +78,7 @@ way a user runs it. Before you report a feature or bug fix as done, follow
 | Style | `pnpm run test:lint` |
 | Web commands, screenshots, compare logic (`image-comparison-core`, `visual-service`) | `pnpm build`, then the local Chrome suites: `pnpm test.local.chrome.v10`, `pnpm test.local.chrome.v10.jasmine`, `pnpm test.local.chrome.v10.emulation`, `pnpm test.local.desktop.multi` |
 | Desktop specs (`tests/specs/basics`, `desktop*`, `matcher`, folders) | `BASELINE_SETUP=true pnpm test.local.desktop`, then `pnpm test.local.desktop` |
-| OCR (`ocr-service`) | the unit tests and `pnpm test.ocr.local.desktop` (local only, the result depends on the fonts) |
+| OCR (`ocr-service`) | the unit tests and `pnpm test.ocr.local.desktop` (a local page in `tests/fixtures/ocr` with a committed font, also runs in CI) |
 | Mobile (Appium, native app or mobile web) | a local emulator or simulator suite (`test.local.emus.*`, `test.local.sims.*`), or a cloud run |
 | A failure only in CI on Linux | the Docker recipe in [verify-visual-testing](.agents/skills/verify-visual-testing/SKILL.md) |
 | Cloud configs or cloud baselines | a cloud run, see [verify-visual-testing](.agents/skills/verify-visual-testing/SKILL.md) |
