@@ -1,6 +1,10 @@
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.local.appium.shared.conf.ts'
 
+// The simulator name and iOS version, for example in CI: IOS_DEVICE_NAME="iPhone 16 Pro" IOS_PLATFORM_VERSION=18.5
+const iosDeviceName = process.env.IOS_DEVICE_NAME ?? 'iPhone 15 Pro'
+const iosPlatformVersion = process.env.IOS_PLATFORM_VERSION ?? '17.5'
+
 export const config: WebdriverIO.Config  = {
     ...sharedConfig,
     // ==================
@@ -13,7 +17,7 @@ export const config: WebdriverIO.Config  = {
     // ============
     capabilities: [
         // iOSCaps('iPhone 15 Pro', 'PORTRAIT', '17.5', ['checkFullPageScreen']),
-        iOSCaps('iPhone 15 Pro', 'LANDSCAPE', '17.5', ['checkFullPageScreen']),
+        iOSCaps(iosDeviceName, 'LANDSCAPE', iosPlatformVersion, ['checkFullPageScreen']),
         // iOSCaps('iPhone 16 Pro', 'PORTRAIT', '18.2'),
     ],
 }
