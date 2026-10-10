@@ -144,6 +144,7 @@ describe('@wdio/visual-service mobile web', () => {
             skipTest({ test: this, deviceName, platformName, platformVersion, orientation })
             this.retries(2)
 
+            const scrollYBefore = await browser.execute(() => window.scrollY)
             // This is normally a bad practice, but a mobile full page screenshot is normally around 4M pixels
             // We're accepting 0.05%, which is 2000 pixels, to be a max difference
             const result = await browser.checkFullPageScreen(`fullPage${viewportTag}`, {
@@ -152,6 +153,8 @@ describe('@wdio/visual-service mobile web', () => {
                     await $('nav.navbar'),
                 ],
             }) as number
+            // The full page screenshot scrolls the page, then it must scroll back, so a later check sees the same page (#1231)
+            await expect(await browser.execute(() => window.scrollY)).toEqual(scrollYBefore)
             if (result > 0 && result < 0.05) {
                 console.log(`\n\n\nFull page layout screenshot for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode has a difference of ${result}%\n\n\n`)
             }

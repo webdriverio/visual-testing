@@ -120,6 +120,11 @@ You do not need to change anything for these, but you can notice them:
   took the tap the service uses to measure the viewport. Full page screenshots of that session then failed with
   "Negative scroll position detected". The service now measures again when the tap did not reach the page, as it
   already did on Android.
+- **Full page screenshots scroll back:** after a full page or tabbable check or save, the page is now scrolled back
+  to the position that it had before the command. Before, a full page screenshot that scrolls (WebDriver Classic, and
+  Android and iOS mobile web) left the page at the bottom, the tabbable commands also left it at the top, and a later
+  viewport check captured a scrolled page. If a test makes a viewport check right after one of these commands, its
+  baseline can change once.
 - **iOS element screenshots of large elements:** for an element that is not fully inside the viewport, the image
   had the size of the whole element, but only the visible part had content and the rest was black (an Appium bug,
   [appium/appium#22939](https://github.com/appium/appium/issues/22939)). The image now has only the visible part of

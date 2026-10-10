@@ -3,6 +3,7 @@ import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 import checkFullPageScreen from './checkFullPageScreen.js'
 import type { ImageCompareResult } from '../index.js'
 import type { InternalCheckTabbablePageMethodOptions } from './check.interfaces.js'
+import { readScrollPosition, restoreScrollPosition } from '../helpers/scrollPosition.js'
 
 /**
  * Compare an image with all tab executions
@@ -23,6 +24,26 @@ export default async function checkTabbablePage(
         throw new Error('The method checkTabbablePage is not supported in native context for native mobile apps!')
     }
 
+    // Drawing the tabbables scrolls to the top, so read the position before it, and scroll back after the canvas is removed (#1231)
+    const startScrollPosition = await readScrollPosition(browserInstance)
+    try {
+        return await takeTabbablePage({ browserInstance, checkTabbableOptions, folders, instanceData, isNativeContext, tag, testContext })
+    } finally {
+        await restoreScrollPosition(browserInstance, startScrollPosition, instanceData.isIOS)
+    }
+}
+
+async function takeTabbablePage(
+    {
+        browserInstance,
+        checkTabbableOptions,
+        folders,
+        instanceData,
+        isNativeContext,
+        tag,
+        testContext,
+    }: InternalCheckTabbablePageMethodOptions
+): Promise<ImageCompareResult | number> {
     // 1b. Inject drawing the tabbables
     await browserInstance.execute(drawTabbableOnCanvas, checkTabbableOptions.wic.tabbableOptions)
 

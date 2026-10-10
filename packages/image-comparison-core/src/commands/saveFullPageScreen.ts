@@ -9,25 +9,37 @@ import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
 import { getMethodOrWicOption, canUseBidiScreenshot } from '../helpers/utils.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
 import { determineWebFullPageIgnoreRegions } from '../methods/rectangles.js'
+import { readScrollPosition, restoreScrollPosition } from '../helpers/scrollPosition.js'
 
 /**
  * Saves an image of the full page
  */
-export default async function saveFullPageScreen(
+export default async function saveFullPageScreen(options: InternalSaveFullPageMethodOptions): Promise<ScreenshotOutput> {
+    // 1. Check if the method is supported in native context
+    if (options.isNativeContext) {
+        throw new Error('The method saveFullPageScreen is not supported in native context for native mobile apps!')
+    }
+
+    // A full page screenshot that scrolls and stitches leaves the page at the bottom (#1231). Read the position
+    // before the page is prepared (removed elements can make the page shorter and move it), and scroll back after
+    // the page is restored, also when the screenshot fails
+    const startScrollPosition = await readScrollPosition(options.browserInstance)
+    try {
+        return await takeFullPageScreen(options)
+    } finally {
+        await restoreScrollPosition(options.browserInstance, startScrollPosition, options.instanceData.isIOS)
+    }
+}
+
+async function takeFullPageScreen(
     {
         browserInstance,
         instanceData,
         folders,
         tag,
         saveFullPageOptions,
-        isNativeContext,
     }: InternalSaveFullPageMethodOptions
 ): Promise<ScreenshotOutput> {
-    // 1. Check if the method is supported in native context
-    if (isNativeContext) {
-        throw new Error('The method saveFullPageScreen is not supported in native context for native mobile apps!')
-    }
-
     // 2. Set some variables
     const enableLegacyScreenshotMethod = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'enableLegacyScreenshotMethod')
     const fullPageScrollTimeout = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'fullPageScrollTimeout')
