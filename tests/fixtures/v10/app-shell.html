@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>App shell</title>
+<style>
+    /* The page itself does not scroll, the main container does (#125) */
+    html, body { height: 100%; margin: 0; overflow: hidden; background: #fff; }
+    body { display: flex; flex-direction: column; }
+    header, footer { height: 60px; flex: none; background: #263238; }
+    main { flex: 1; overflow: auto; }
+    .row { height: 300px; border-bottom: 4px solid #000; }
+    /* `?expanded`: the container has no scroll, so the page scrolls: the expected full page image */
+    html.expanded, html.expanded body { height: auto; overflow: visible; }
+    html.expanded main { flex: none; overflow: visible; }
+</style>
+<script>
+    if (location.search.includes('expanded')) {
+        document.documentElement.classList.add('expanded')
+    }
+</script>
+</head>
+<body>
+<header></header>
+<main id="scroller">
+    <div class="row" style="background: #388e3c"></div>
+    <div class="row" style="background: #1565c0"></div>
+    <div class="row" style="background: #f9a825"></div>
+    <div class="row" style="background: #6a1b9a"></div>
+    <div class="row" style="background: #c62828"></div>
+    <div class="row" style="background: #00838f"></div>
+</main>
+<footer></footer>
+</body>
+</html>

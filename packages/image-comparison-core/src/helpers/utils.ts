@@ -827,3 +827,16 @@ export function prepareComparisonFilePaths(options: PrepareComparisonFilePathsOp
         diffFilePath
     }
 }
+
+/**
+ * The tabbable commands draw the tab order on a canvas of the page, which does not fit the image of a page with a
+ * scroll container (#125), so they do not use the `scrollContainer` option
+ */
+export function withoutScrollContainer<T extends { method: { scrollContainer?: unknown } }>(options: T, commandName: string): T {
+    if (options.method.scrollContainer === undefined) {
+        return options
+    }
+    log.warn(`The option \`scrollContainer\` is not supported by \`${commandName}\` and is not used.`)
+
+    return { ...options, method: { ...options.method, scrollContainer: undefined } }
+}

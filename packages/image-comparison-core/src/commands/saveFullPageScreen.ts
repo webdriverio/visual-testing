@@ -45,9 +45,16 @@ async function takeFullPageScreen(
     const fullPageScrollTimeout = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'fullPageScrollTimeout')
     const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
     const userBasedFullPageScreenshot = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'userBasedFullPageScreenshot')
+    // A page where a container scrolls and not the page (#125)
+    const scrollContainer = saveFullPageOptions.method.scrollContainer ? await saveFullPageOptions.method.scrollContainer : undefined
 
     // 3.  Prepare the screenshot
-    const beforeOptions = createBeforeScreenshotOptions(instanceData, saveFullPageOptions.method, saveFullPageOptions.wic)
+    const defaultBeforeOptions = createBeforeScreenshotOptions(instanceData, saveFullPageOptions.method, saveFullPageOptions.wic)
+    // On mobile, the body gets a padding for the shadows of the address bar and of the toolbar. In an app where a
+    // container scrolls, the body has the height of the viewport, so the padding would cut the end of the container
+    const beforeOptions = scrollContainer
+        ? { ...defaultBeforeOptions, addressBarShadowPadding: 0, toolBarShadowPadding: 0 }
+        : defaultBeforeOptions
     const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions, true)
     const {
         dimensions: {
@@ -74,6 +81,7 @@ async function takeFullPageScreen(
         deviceRectangles: instanceData.deviceRectangles,
         fullPageScrollTimeout,
         hideAfterFirstScroll,
+        hideScrollBars: beforeOptions.noScrollBars,
         innerHeight: innerHeight || NaN,
         isAndroid,
         isAndroidChromeDriverScreenshot,
@@ -82,9 +90,11 @@ async function takeFullPageScreen(
         isLandscape,
         screenHeight: screenHeight || NaN,
         screenWidth: screenWidth || NaN,
+        scrollContainer,
         toolBarShadowPadding: beforeOptions.toolBarShadowPadding,
     }
-    const shouldUseBidi = canUseBidiScreenshot(browserInstance) && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
+    // A BiDi screenshot of the document does not show the content of a scroll container, so scroll and stitch
+    const shouldUseBidi = canUseBidiScreenshot(browserInstance) && !scrollContainer && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
     const screenshotsData = await takeFullPageScreenshots(browserInstance, fullPageScreenshotOptions, shouldUseBidi)
 
     // 5.  Get the final image - either direct BiDi or stitched from multiple screenshots
@@ -98,7 +108,7 @@ async function takeFullPageScreen(
     //    fullPageCropTopPaddingCSS so ignore regions align with the stitched canvas.
     const ignore = saveFullPageOptions.method?.ignore
     const ignoreRegionPadding = (getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
-    const usedStitchedMobile = isMobile && !(screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
+    const usedStitchedMobile = isMobile && !scrollContainer && !(screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
     const ignoreRegions = ignore && ignore.length > 0
         ? await determineWebFullPageIgnoreRegions(
             {
@@ -106,6 +116,7 @@ async function takeFullPageScreen(
                 devicePixelRatio: devicePixelRatio || 1,
                 fullPageCropTopPaddingCSS: usedStitchedMobile ? beforeOptions.addressBarShadowPadding : 0,
                 ignoreRegionPadding,
+                scrollContainer,
             },
             ignore,
         )

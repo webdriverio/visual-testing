@@ -93,6 +93,19 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         expect(await browser.checkTabbablePage('v10-tabbable-cases')).toBe(0)
     })
 
+    it('takes a full page screenshot of a page where a container scrolls, with scrollContainer (#125)', async () => {
+        // creates the baseline: the same page with the container expanded, so the page itself scrolls
+        await browser.url(`${fixture('app-shell.html')}?expanded`)
+        await browser.checkFullPageScreen('v10-scroll-container')
+
+        // The header, the full content of the container and the footer, as in the expanded page
+        await browser.url(fixture('app-shell.html'))
+        const scrollContainer = await $('#scroller')
+        expect(await browser.checkFullPageScreen('v10-scroll-container', { scrollContainer })).toBe(0)
+        // The container is scrolled back to its start position
+        expect(await browser.execute((el) => el.scrollTop, scrollContainer)).toBe(0)
+    })
+
     // Known gap, not supported yet: the element rect comes from WebDriver Classic `getElementRect`, which cannot
     // find an element in a frame (`no such element`), and `browsingContext.captureScreenshot` only accepts a
     // top-level context. A fix must add the offset of the iframe to the rect of the element in the frame.
