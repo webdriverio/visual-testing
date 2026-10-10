@@ -44,7 +44,7 @@
   "devDependencies": {
     "@types/inquirer": "~9.0.10",
     "@types/xml2js": "~0.4.14",
-    "webdriverio": "^10.0.0"
+    "webdriverio": "^10.0.2"
   },
   "peerDependencies": {
     "webdriverio": "^10.0.0"

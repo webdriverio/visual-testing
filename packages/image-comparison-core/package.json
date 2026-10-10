@@ -43,7 +43,7 @@
     "pixelmatch": "^8.0.0"
   },
   "devDependencies": {
-    "webdriverio": "^10.0.0"
+    "webdriverio": "^10.0.2"
   },
   "publishConfig": {
     "access": "public"

@@ -42,50 +42,53 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3(vitest@5.0.3)
       '@wdio/appium-service':
-        specifier: ^10.0.0
-        version: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/browserstack-service':
         specifier: ^9.39.3
-        version: 9.39.3(@wdio/cli@10.0.0(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+        version: 9.39.3(@wdio/cli@10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       '@wdio/cli':
-        specifier: ^10.0.0
-        version: 10.0.0(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/globals':
-        specifier: ^10.0.0
-        version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+        specifier: ^10.0.2
+        version: 10.0.2(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       '@wdio/image-comparison-core':
         specifier: workspace:*
         version: link:packages/image-comparison-core
       '@wdio/jasmine-framework':
-        specifier: ^10.0.0
-        version: 10.0.0(@wdio/runner@10.0.0(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0))(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(@wdio/runner@10.0.2(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0))(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)
       '@wdio/local-runner':
-        specifier: ^10.0.0
-        version: 10.0.0(@wdio/visual-service@packages+visual-service)(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(@wdio/visual-service@packages+visual-service)(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)
       '@wdio/mocha-framework':
-        specifier: ^10.0.0
-        version: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+        specifier: ^10.0.1
+        version: 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/ocr-service':
         specifier: workspace:*
         version: link:packages/ocr-service
       '@wdio/sauce-service':
-        specifier: ^10.0.0
-        version: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/shared-store-service':
-        specifier: ^10.0.0
-        version: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/spec-reporter':
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^10.0.1
+        version: 10.0.1
       '@wdio/types':
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^10.0.1
+        version: 10.0.1
       '@wdio/visual-service':
         specifier: workspace:*
         version: link:packages/visual-service
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
+      expect-webdriverio:
+        specifier: ^8.0.0-0
+        version: 8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -118,10 +121,10 @@ importers:
         version: 5.1.1(typescript@6.0.3)(vitest@5.0.3)
       wdio-lambdatest-service:
         specifier: ^4.0.1
-        version: 4.0.1(patch_hash=07d272cca35a334e8835c85beb552eb4f8cdb6e76edba1cab0289e9c092dbf1b)(@wdio/cli@10.0.0(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(@wdio/types@10.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+        version: 4.0.1(patch_hash=07d272cca35a334e8835c85beb552eb4f8cdb6e76edba1cab0289e9c092dbf1b)(@wdio/cli@10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(@wdio/types@10.0.1)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       webdriverio:
-        specifier: ^10.0.0
-        version: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
 
   packages/image-comparison-core:
     dependencies:
@@ -139,8 +142,8 @@ importers:
         version: 8.0.0
     devDependencies:
       webdriverio:
-        specifier: ^10.0.0
-        version: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
 
   packages/ocr-service:
     dependencies:
@@ -149,7 +152,7 @@ importers:
         version: 8.7.3(@types/node@24.10.1)
       '@wdio/globals':
         specifier: ^10.0.0
-        version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+        version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       '@wdio/logger':
         specifier: ^10.0.0
         version: 10.0.0
@@ -179,8 +182,8 @@ importers:
         specifier: ~0.4.14
         version: 0.4.14
       webdriverio:
-        specifier: ^10.0.0
-        version: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
 
   packages/visual-reporter:
     dependencies:
@@ -247,7 +250,7 @@ importers:
     dependencies:
       '@wdio/globals':
         specifier: ^10.0.0
-        version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+        version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       '@wdio/image-comparison-core':
         specifier: workspace:*
         version: link:../image-comparison-core
@@ -260,10 +263,10 @@ importers:
     devDependencies:
       expect-webdriverio:
         specifier: ^8.0.0-0
-        version: 8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+        version: 8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       webdriverio:
-        specifier: ^10.0.0
-        version: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+        specifier: ^10.0.2
+        version: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
 
 packages:
 
@@ -2050,8 +2053,8 @@ packages:
   '@vitest/utils@5.0.3':
     resolution: {integrity: sha512-77fDTZv8eu1CzlIfgPU2yrl5MXSUaUAOvgdZEeVm3X3WIxUubIX2SforqS6176lT32HCF6uBVMYVqfHxw7o6eg==}
 
-  '@wdio/appium-service@10.0.0':
-    resolution: {integrity: sha512-toa6IUmIv8H2fd7THXSPZFge7n4Wobgt3E4Axd1vqSwMITuj9MnjwIlqr2kIQegrazQ0MeIN0vcnKYw+csGT5w==}
+  '@wdio/appium-service@10.0.2':
+    resolution: {integrity: sha512-r9+h5+mJXGgtmkgqWcKCPuloA/HU5SAEgJHWOgvFlXrA5ZkX4jw0MC1OuexixDrDdORQJq89Rpj6a88kefbyrA==}
     engines: {node: '>=22.19.0'}
     hasBin: true
     peerDependencies:
@@ -2066,25 +2069,25 @@ packages:
     peerDependencies:
       '@wdio/cli': ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
 
-  '@wdio/cli@10.0.0':
-    resolution: {integrity: sha512-m8ILazuQQLfdE14IEFrrJLTXkz25Nomhnypw7p5royHuxacB643+d9fYjX4VrI0h/Nufomg2ua/vxRMTm6wVBA==}
+  '@wdio/cli@10.0.2':
+    resolution: {integrity: sha512-t67EIII06oAtzCyy9RYNgmChzSnwY91Vw5NW8QwJg2p8ZT2cvDYrtytEYO/x3jZQK3uJ/mba2GlQQP4SHJK+Uw==}
     engines: {node: '>=22.19.0'}
     hasBin: true
 
-  '@wdio/config@10.0.0':
-    resolution: {integrity: sha512-g0xaQxKJM5hIhZBW05Ivs7vZi/txB+UcWeoiuzNl0/fS5rvQYvofnYlROvCBKeEdf72ooIRtfkRnW8nKQ97P+A==}
+  '@wdio/config@10.0.1':
+    resolution: {integrity: sha512-n6elHE4ItKAtr4lwAaWIh/sAFuEFhyesLM27i5l9IWBJEK6VECdt0Pigj/4vUD2tliOoBtsWxphSW4oiNFXotg==}
     engines: {node: '>=22.19.0'}
 
   '@wdio/config@9.32.0':
     resolution: {integrity: sha512-HjIANiNoL5ehIuot/KbZyNa26r5SaOaVRscYBxZ6fE4BxZMoHqthiuzGsmbr54Hn6pqQm4nn46GCsEfhPxYzEA==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/display-server@10.0.0':
-    resolution: {integrity: sha512-aBLa9Qd+7Cm6LnazcxNGdet141ZY80rx5pAiO6B+f9b/Dz2h3tAP8ryPyKclxKaMoGNh8QDcyNluPGfPW3k0hA==}
+  '@wdio/display-server@10.0.1':
+    resolution: {integrity: sha512-DMXpSCUpk/3KArcTFNlyEPI6O7EzeW9b3C4m54yZSlwaXFtix0P96c6ofiuvZ6bf/6bVd7s2GAxGk3yhmK8giw==}
     engines: {node: '>=22.19.0'}
 
-  '@wdio/dot-reporter@10.0.0':
-    resolution: {integrity: sha512-8Y0Ras2CdgNqTWLtOp6Y8HC+vFVtYWw31wvnLtizLvertfDh4mMSgi/loJbfxAEkHu64WK9cIU4iLsq0S/6G/g==}
+  '@wdio/dot-reporter@10.0.1':
+    resolution: {integrity: sha512-R0wuXuj4+f1yeXWnDyFqVPnJQzHrnepLH8ynS47wb87BVbtX9aVsbT9jctfplnfGHKySLm525w3/ajTj//anFg==}
     engines: {node: '>=22.19.0'}
 
   '@wdio/globals@10.0.0':
@@ -2094,15 +2097,22 @@ packages:
       expect-webdriverio: ^8.0.0-0 || ^8.0.0-alpha.3
       webdriverio: ^10.0.0-0 || ^10.0.0
 
-  '@wdio/jasmine-framework@10.0.0':
-    resolution: {integrity: sha512-43Sr1VHpSIfElg9ax3o+LVbUpowaXjFddJyUZ3JmBOa1vqlqJwTE2kJPE0VeNFqcQJrOxUz/xCKqXiKQEuxhKw==}
+  '@wdio/globals@10.0.2':
+    resolution: {integrity: sha512-gQgKy2Yo99E9CIiHJgKDKrRPU3sYR92kZGStROArQvZqVcLsdPQZ3Ktf6L3cRyes1Vee/H82L/FG24vrB3C+mQ==}
+    engines: {node: '>=22.19.0'}
+    peerDependencies:
+      expect-webdriverio: ^8.0.0-0 || ^8.0.0-alpha.3
+      webdriverio: ^10.0.0-0 || ^10.0.0
+
+  '@wdio/jasmine-framework@10.0.2':
+    resolution: {integrity: sha512-52DHCbHBePe6t3NJXr5FMKjXL+hN3O0eRPeOqRzuEzsgWyel2czsjCXjA7lZ9+MA0zhhfdVIVw8z/whHkRP4kQ==}
     engines: {node: '>=22.19.0'}
     peerDependencies:
       '@wdio/runner': ^10.0.0-0 || ^10.0.0
       webdriverio: ^10.0.0-0 || ^10.0.0
 
-  '@wdio/local-runner@10.0.0':
-    resolution: {integrity: sha512-9XGliTTbbhqufM+hbTqAOvAX6Q32KZ0Fcrn/G0xVxmxKqRzu1UByi0nwcu1zqkakwuLRXiD1hYQ76Mwn0fEZ3Q==}
+  '@wdio/local-runner@10.0.2':
+    resolution: {integrity: sha512-w3mamc9/CWttRYE+sLXYwHl7sDi2nxt7R8RpY41gT5sK2ol/UQ+96TaG4fO3KsotmLhNe15wfP/Z2umgeEx+Tg==}
     engines: {node: '>=22.19.0'}
 
   '@wdio/logger@10.0.0':
@@ -2117,12 +2127,12 @@ packages:
     resolution: {integrity: sha512-0ZAEIo6PNyMIJPlOGkIgyOJUjcd0pC8/QHlVAAe1c91/IcjZ1X+k0yidXHaboJdN7dq1XPUacmhRdtua0U5EZg==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/mocha-framework@10.0.0':
-    resolution: {integrity: sha512-nd1eQs28FPrRqtol0V3BeXsS2OlZUxvgz1bDo2TDdWJPbhEuDZd+JxSqjVbKhPn6A9IYnOYviGnJrdBPx3PZeg==}
+  '@wdio/mocha-framework@10.0.1':
+    resolution: {integrity: sha512-OZ++XMxtJnCmRZ2EA+ElzMxLXJNo27H9vvm3wWdFTFOFGuu5jWOlb6x090BVeX0c7jXYYjpAu0aXqix+dBItxQ==}
     engines: {node: '>=22.19.0'}
 
-  '@wdio/protocols@10.0.0':
-    resolution: {integrity: sha512-426ENC79fH7N4ggoGRHhZBY/exkdHAndbBiXcs9pQkzGP356H8C7VkQUx8g78m4k1TUC0RhOl8Se8VE0Mutpqw==}
+  '@wdio/protocols@10.0.2':
+    resolution: {integrity: sha512-ewuQuu+niq/ZpV1TLn904nDA4F9n4LLu9X1U8Juwwm1ahq09dpEP8lEytDnpaD0f21uIx//mFBKmBAjSexMdEA==}
     engines: {node: '>=22.19.0'}
 
   '@wdio/protocols@9.31.5':
@@ -2136,33 +2146,35 @@ packages:
     resolution: {integrity: sha512-FLTF0VL6+o5BSTCO7yLSXocm3kUnu31zYwzdsz4n9s5YWt83sCtzGZlZpt7TaTzb3jVUfxuHNQDTb8UMkCu0lQ==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/reporter@10.0.0':
-    resolution: {integrity: sha512-qPxe2dq0hFDd6AZj6Z3SunpMvCOv9UdXS3CINtSrJweGNGHj1VltSNVPVqWYWwzs3ywuEjGg2t91JIQVxgfgWA==}
+  '@wdio/reporter@10.0.1':
+    resolution: {integrity: sha512-A917SeniucyosspqazR9tGH6t9JaecU5SRP3VzRGyIo0JBEKV6walJU1VBauMH+7n043huzgiQvNJ414Vi8dmQ==}
     engines: {node: '>=22.19.0'}
 
   '@wdio/reporter@9.32.0':
     resolution: {integrity: sha512-9z8pG7zAayRXwheN8BH6YNuzyPJ/kFIRyPl2fsD+6IvF/LFSptXPlk2XjcnKvY9Am6Lif5oAwebDFcLHp1ztAA==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/runner@10.0.0':
-    resolution: {integrity: sha512-eFpec964oivTK33/8zhsbwzp6lcTElaL6h3KCEb9I0+jP2avaZS8g6KStHP9Nl/itSYarKiIrsoxZmT9k2x/ng==}
+  '@wdio/runner@10.0.2':
+    resolution: {integrity: sha512-+BnWawcWrqQh9RoKhqtnlJ3onRDpahu5BuJx1ESrWvR/+MDdlOx617Mk5Pvw69+vpDpMUdox9XqFMAt3H3hL7Q==}
     engines: {node: '>=22.19.0'}
     peerDependencies:
       expect-webdriverio: ^8.0.0-0 || ^8.0.0-alpha.3
       webdriverio: ^10.0.0-0 || ^10.0.0
 
-  '@wdio/sauce-service@10.0.0':
-    resolution: {integrity: sha512-P61gcVPzqCDwmvhHLgmGckEHN23yLFItAwttsZ2NVzitleIqj0HuIFCjbiftUbPUwqTQMJDVj6mUtrKmorlIyw==}
+  '@wdio/sauce-service@10.0.2':
+    resolution: {integrity: sha512-2Vt04W5YeeBLnKVMNJkpOZLwEDK8xvFHRVfsBGKyJC3yhjKiAUszyOzxDln+jirN4VmPfTGDXBRxPGegAePCUQ==}
     engines: {node: '>=22.19.0'}
 
-  '@wdio/session@10.0.0':
-    resolution: {integrity: sha512-at9DQLmPfAinFUs6xmbhjHlj0ApaiAbzJ4JPvTW//csAGgeV+C8KAZmkN9jB4ttHHk//GFWANU6tNzEOPFdG5Q==}
+  '@wdio/session@10.0.2':
+    resolution: {integrity: sha512-Ttu2425dZ+r5whjScFRWVkAHAyhg/5nheN/bkTWPf2gluJb4/na2NM7bElOZ4IZFgwFgM5gFkE+9o5WwSVJfSQ==}
     engines: {node: '>=22.19.0'}
     hasBin: true
     peerDependencies:
       '@wdio/electron-service': '*'
       '@wdio/visual-service': '*'
       appium: ^3.0.0
+      expect-webdriverio: '*'
+      tsx: '*'
     peerDependenciesMeta:
       '@wdio/electron-service':
         optional: true
@@ -2170,25 +2182,37 @@ packages:
         optional: true
       appium:
         optional: true
+      expect-webdriverio:
+        optional: true
+      tsx:
+        optional: true
 
-  '@wdio/shared-store-service@10.0.0':
-    resolution: {integrity: sha512-BHluF7ib4HWLk2OJI1sGsOgR0JpM0c9MBwO3BN4ihxmRHZfVUn9uCmZUK9TRNOYBd4he8KTzbVoznnXUN7jFSw==}
+  '@wdio/shared-store-service@10.0.2':
+    resolution: {integrity: sha512-rUNPbuyQoC+5tC+gLBk0PYSLQF5chF11kQHtHu03I5xpZemHk8JFJ2yh+Y0D3Bozcfhy05aBQBOCVwsbjU7GOA==}
     engines: {node: '>=22.19.0'}
 
-  '@wdio/spec-reporter@10.0.0':
-    resolution: {integrity: sha512-48q0tROaNvP8JQ+JyquJYk1eXBXE9JTGksCKwuiuC8hhYcNyunX1uAtkxAshC5qPVg31pByLcSWnIkBLZkzMBg==}
+  '@wdio/snapshot@10.0.2':
+    resolution: {integrity: sha512-eN5DJEr4bQKGOMkA3x4FglMJxe9U91QUGXuChHjFAnzV9OcNQcfVNIsK3uIB3wJ0tnUlzqQ27Dbm8vP+2bA38w==}
+    engines: {node: '>=22.19.0'}
+
+  '@wdio/spec-reporter@10.0.1':
+    resolution: {integrity: sha512-zu4PQ7T95KQ/b3/coHQ3RLK5ffQDrpdXkxsfcTXU9Zd+l9K1GzTyJEgXCE7zY1l+INbrBqhM17aUmQvaBZH+JA==}
     engines: {node: '>=22.19.0'}
 
   '@wdio/types@10.0.0':
     resolution: {integrity: sha512-qUJbKEHjsN0PuC3S2r7Gy9wYtbChmX+PYghKGHYQhjyH9P9t+sWhSPQWUBk3S+IUTYT1f+Z4VbF+5FmvlHL6Lg==}
     engines: {node: '>=22.19.0'}
 
+  '@wdio/types@10.0.1':
+    resolution: {integrity: sha512-HGP9lAYXCsLAXzugfT4khCh7tYByWOMIxZHCG+tUvgmpwNzi6lfIsxyIlWownXK1wYJUpk6tkDBX/iXwN+q0lg==}
+    engines: {node: '>=22.19.0'}
+
   '@wdio/types@9.32.0':
     resolution: {integrity: sha512-7jMZQ4TGX45bPLgCv9du7mw/Kq7FrjEbQ5vTGg/pUgQy/wSygJ3u4FvPu8FS+DNeQUmvjSPKEUGfl4N+rZjpUg==}
     engines: {node: '>=18.20.0'}
 
-  '@wdio/utils@10.0.0':
-    resolution: {integrity: sha512-Ta3wq+u83DT0Vnz1QcuqkagBSwWBnTg8LCIQmDO6DGkMIiHXJrhUMfz6ibrlMJPslt4g0P/Ri5wm7WkJXo9HXw==}
+  '@wdio/utils@10.0.1':
+    resolution: {integrity: sha512-aYvTtF+7IYsvkFdXdu32Q2vexEaXYK79R1wLTnAXrT2Q7fp0oCDL0UgBx8Jgo5Tn98ZLWx4JlUeZsDRAIkV4Zw==}
     engines: {node: '>=22.19.0'}
 
   '@wdio/utils@9.32.0':
@@ -2659,8 +2683,8 @@ packages:
     resolution: {integrity: sha512-IBWsY8xznyQrcHn8h4bC8/4ErNke5elzgG8GcqF4RFPw6aHkWWRc7Tgw6upjaTX/CT/yQgqYENkxYsTYN+hW2g==}
     engines: {node: '>=18'}
 
-  create-wdio@10.0.0:
-    resolution: {integrity: sha512-eMvUZd2SVATrIPnYdWZur098ZVShrkpCk/g9QSrgelFcX5oijwUsxn7T0PSDfRLJcIQxPyl7Dyk3ObcAmdMFtg==}
+  create-wdio@10.0.2:
+    resolution: {integrity: sha512-d3Z+a46mOhPVogOzqTatXoI5k+a2cYNpkvhLjbJaiteapxyGALBfM7XQO1po+NTIu1WTaVT0pM1eAoMkw14CNQ==}
     engines: {node: '>=22.19.0'}
     hasBin: true
 
@@ -5192,16 +5216,16 @@ packages:
       '@wdio/types': ^7.0.0 || ^8.0.0 || ^9.0.0
       webdriverio: ^7.0.0 || ^8.0.0 || ^9.0.0
 
-  webdriver@10.0.0:
-    resolution: {integrity: sha512-EyMSQjY+Nq9mAUTCzzW1hjarwHNJWtCBRtGSZkiTcdJdFZ6siKF0Z01hHJFVkF1Xm+aCkFxD1atm1S2cNxCQxA==}
+  webdriver@10.0.2:
+    resolution: {integrity: sha512-q2eKiapaOyCH2QfVykBjrYznQiL4gjmGakTYVzQqq3Ycqpd2VPOMSkmbxGHFo8+CpO628QwvpxgKvAxA3hpDaA==}
     engines: {node: '>=22.19.0'}
 
   webdriver@9.32.0:
     resolution: {integrity: sha512-1Z7mydyw3v3UfzQ6UtrRvu3ij1eHuSoitxBMWlnKi2e3Zpvc1EBPp6FhsXBYhdFg0F4900j6sUTkoF//CkpbpQ==}
     engines: {node: '>=18.20.0'}
 
-  webdriverio@10.0.0:
-    resolution: {integrity: sha512-DiDflg731z/b+qg4EmVAGihMJSWhHJYhlwrS6Q1uSFqL4c48+xHDj9VjhQr7sFzZ/MBJySjGZfMBGyjP7p547Q==}
+  webdriverio@10.0.2:
+    resolution: {integrity: sha512-o+T+DXwsn2e0niAmz9PWUMDwE/8R06euZ4O85faB6fGG9X/uVOom8sloIH+SYc1tI0fjcI34sU9hptrQj9fDdQ==}
     engines: {node: '>=22.19.0'}
     peerDependencies:
       puppeteer-core: '>=24 <26'
@@ -7325,18 +7349,18 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.2.0
 
-  '@wdio/appium-service@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
+  '@wdio/appium-service@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
     dependencies:
-      '@wdio/config': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/config': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/logger': 10.0.0
-      '@wdio/reporter': 10.0.0
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/reporter': 10.0.1
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@xmldom/xmldom': 0.9.12
       change-case: 5.4.4
       get-port: 7.2.0
       tree-kill: 1.2.2
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       xpath: 0.0.34
     transitivePeerDependencies:
       - bufferutil
@@ -7347,7 +7371,7 @@ snapshots:
       - utf-8-validate
       - yauzl
 
-  '@wdio/browserstack-service@9.39.3(@wdio/cli@10.0.0(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
+  '@wdio/browserstack-service@9.39.3(@wdio/cli@10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
     dependencies:
       '@browserstack/ai-sdk-node': 1.5.17(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       '@bufbuild/protobuf': 2.10.2
@@ -7356,7 +7380,7 @@ snapshots:
       '@percy/selenium-webdriver': 2.2.4(supports-color@8.1.1)
       '@percy/webdriverio': 3.3.4(supports-color@8.1.1)(webdriverio@9.32.0(supports-color@8.1.1))
       '@types/gitconfiglocal': 2.0.3
-      '@wdio/cli': 10.0.0(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/cli': 10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/logger': 9.29.1
       '@wdio/reporter': 9.32.0
       '@wdio/types': 9.32.0
@@ -7382,20 +7406,20 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@wdio/cli@10.0.0(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
+  '@wdio/cli@10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
     dependencies:
       '@vitest/snapshot': 5.0.3
-      '@wdio/config': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
-      '@wdio/globals': 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+      '@wdio/config': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/globals': 10.0.2(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       '@wdio/logger': 10.0.0
-      '@wdio/protocols': 10.0.0
-      '@wdio/session': 10.0.0(@wdio/visual-service@packages+visual-service)(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/protocols': 10.0.2
+      '@wdio/session': 10.0.2(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(yauzl@3.4.0)
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       async-exit-hook: 2.0.1
       chalk: 5.6.2
       chokidar: 4.0.3
-      create-wdio: 10.0.0(@types/node@24.0.14)
+      create-wdio: 10.0.2(@types/node@24.0.14)
       dotenv: 17.4.2
       import-meta-resolve: 4.2.0
       lodash.flattendeep: 4.4.0
@@ -7403,7 +7427,7 @@ snapshots:
       lodash.union: 4.6.0
       read-pkg-up: 10.1.0
       tsx: 4.23.15
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       yargs: 18.2.0
     transitivePeerDependencies:
       - '@types/node'
@@ -7419,11 +7443,11 @@ snapshots:
       - utf-8-validate
       - yauzl
 
-  '@wdio/config@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
+  '@wdio/config@10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
     dependencies:
       '@wdio/logger': 10.0.0
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       deepmerge-ts: 8.0.2
       glob: 10.5.0
       import-meta-resolve: 4.2.0
@@ -7448,50 +7472,55 @@ snapshots:
       - react-native-b4a
       - supports-color
 
-  '@wdio/display-server@10.0.0':
+  '@wdio/display-server@10.0.1':
     dependencies:
       '@wdio/logger': 10.0.0
-      '@wdio/types': 10.0.0
+      '@wdio/types': 10.0.1
 
-  '@wdio/dot-reporter@10.0.0':
+  '@wdio/dot-reporter@10.0.1':
     dependencies:
-      '@wdio/reporter': 10.0.0
-      '@wdio/types': 10.0.0
+      '@wdio/reporter': 10.0.1
+      '@wdio/types': 10.0.1
       chalk: 5.6.2
 
-  '@wdio/globals@10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))':
+  '@wdio/globals@10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))':
     dependencies:
-      expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
 
-  '@wdio/jasmine-framework@10.0.0(@wdio/runner@10.0.0(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0))(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)':
+  '@wdio/globals@10.0.2(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))':
+    dependencies:
+      expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+
+  '@wdio/jasmine-framework@10.0.2(@wdio/runner@10.0.2(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0))(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)':
     dependencies:
       '@types/jasmine': 6.0.0
       '@types/node': 22.20.5
-      '@wdio/globals': 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+      '@wdio/globals': 10.0.2(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       '@wdio/logger': 10.0.0
-      '@wdio/runner': 10.0.0(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/runner': 10.0.2(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       jasmine: 6.3.0
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
     transitivePeerDependencies:
       - expect-webdriverio
       - proxy-agent
       - supports-color
       - yauzl
 
-  '@wdio/local-runner@10.0.0(@wdio/visual-service@packages+visual-service)(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)':
+  '@wdio/local-runner@10.0.2(@wdio/visual-service@packages+visual-service)(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)':
     dependencies:
       '@types/node': 22.20.5
       '@types/split2': 4.2.3
-      '@wdio/display-server': 10.0.0
+      '@wdio/display-server': 10.0.1
       '@wdio/logger': 10.0.0
       '@wdio/repl': 10.0.0
-      '@wdio/runner': 10.0.0(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)
-      '@wdio/types': 10.0.0
+      '@wdio/runner': 10.0.2(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)
+      '@wdio/types': 10.0.1
       exit-hook: 4.0.0
-      expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+      expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       split2: 4.2.0
       stream-buffers: 3.0.3
     transitivePeerDependencies:
@@ -7503,6 +7532,7 @@ snapshots:
       - puppeteer-core
       - react-native-b4a
       - supports-color
+      - tsx
       - utf-8-validate
       - webdriverio
       - yauzl
@@ -7530,20 +7560,20 @@ snapshots:
       safe-regex2: 5.0.0
       strip-ansi: 7.1.2
 
-  '@wdio/mocha-framework@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
+  '@wdio/mocha-framework@10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
     dependencies:
       '@types/mocha': 10.0.10
       '@types/node': 22.20.5
       '@wdio/logger': 10.0.0
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       mocha: 12.0.3
     transitivePeerDependencies:
       - proxy-agent
       - supports-color
       - yauzl
 
-  '@wdio/protocols@10.0.0': {}
+  '@wdio/protocols@10.0.2': {}
 
   '@wdio/protocols@9.31.5': {}
 
@@ -7555,10 +7585,10 @@ snapshots:
     dependencies:
       '@types/node': 20.19.43
 
-  '@wdio/reporter@10.0.0':
+  '@wdio/reporter@10.0.1':
     dependencies:
       '@types/node': 22.20.5
-      '@wdio/types': 10.0.0
+      '@wdio/types': 10.0.1
       diff: 8.0.4
       object-inspect: 1.13.4
 
@@ -7570,20 +7600,20 @@ snapshots:
       diff: 8.0.2
       object-inspect: 1.13.4
 
-  '@wdio/runner@10.0.0(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)':
+  '@wdio/runner@10.0.2(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(yauzl@3.4.0)':
     dependencies:
       '@types/node': 22.20.5
-      '@wdio/config': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
-      '@wdio/dot-reporter': 10.0.0
-      '@wdio/globals': 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+      '@wdio/config': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/dot-reporter': 10.0.1
+      '@wdio/globals': 10.0.2(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       '@wdio/logger': 10.0.0
-      '@wdio/session': 10.0.0(@wdio/visual-service@packages+visual-service)(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/session': 10.0.2(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(yauzl@3.4.0)
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       deepmerge-ts: 8.0.2
-      expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
-      webdriver: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+      webdriver: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
     transitivePeerDependencies:
       - '@wdio/electron-service'
       - '@wdio/visual-service'
@@ -7593,16 +7623,17 @@ snapshots:
       - puppeteer-core
       - react-native-b4a
       - supports-color
+      - tsx
       - utf-8-validate
       - yauzl
 
-  '@wdio/sauce-service@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
+  '@wdio/sauce-service@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
     dependencies:
       '@wdio/logger': 10.0.0
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       saucelabs: 9.3.0
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
     transitivePeerDependencies:
       - bufferutil
       - proxy-agent
@@ -7612,25 +7643,26 @@ snapshots:
       - utf-8-validate
       - yauzl
 
-  '@wdio/session@10.0.0(@wdio/visual-service@packages+visual-service)(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
+  '@wdio/session@10.0.2(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(tsx@4.23.15)(yauzl@3.4.0)':
     dependencies:
       '@types/node': 22.20.5
-      '@wdio/config': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
-      '@wdio/display-server': 10.0.0
+      '@wdio/config': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/display-server': 10.0.1
       '@wdio/logger': 10.0.0
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/snapshot': 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       acorn: 8.19.0
-      expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       get-port: 7.2.0
       image-size: 2.0.4
       picomatch: 4.0.7
       semver: 7.8.5
-      tsx: 4.23.15
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       yargs: 18.2.0
     optionalDependencies:
       '@wdio/visual-service': link:packages/visual-service
+      expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+      tsx: 4.23.15
     transitivePeerDependencies:
       - bufferutil
       - proxy-agent
@@ -7640,13 +7672,13 @@ snapshots:
       - utf-8-validate
       - yauzl
 
-  '@wdio/shared-store-service@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
+  '@wdio/shared-store-service@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
     dependencies:
       '@polka/parse': 1.0.0-next.0
       '@wdio/logger': 10.0.0
-      '@wdio/types': 10.0.0
+      '@wdio/types': 10.0.1
       polka: 0.5.2
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
     transitivePeerDependencies:
       - bufferutil
       - proxy-agent
@@ -7656,10 +7688,23 @@ snapshots:
       - utf-8-validate
       - yauzl
 
-  '@wdio/spec-reporter@10.0.0':
+  '@wdio/snapshot@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
     dependencies:
-      '@wdio/reporter': 10.0.0
-      '@wdio/types': 10.0.0
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+    transitivePeerDependencies:
+      - bufferutil
+      - proxy-agent
+      - puppeteer-core
+      - react-native-b4a
+      - supports-color
+      - utf-8-validate
+      - yauzl
+
+  '@wdio/spec-reporter@10.0.1':
+    dependencies:
+      '@wdio/reporter': 10.0.1
+      '@wdio/types': 10.0.1
       chalk: 5.6.2
       easy-table: 1.2.0
       pretty-ms: 9.3.1
@@ -7668,16 +7713,20 @@ snapshots:
     dependencies:
       '@types/node': 22.20.5
 
+  '@wdio/types@10.0.1':
+    dependencies:
+      '@types/node': 22.20.5
+
   '@wdio/types@9.32.0':
     dependencies:
       '@types/node': 20.19.43
 
-  '@wdio/utils@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
+  '@wdio/utils@10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)':
     dependencies:
       '@puppeteer/browsers': 3.2.3(proxy-agent@8.0.2(supports-color@8.1.1))(yauzl@3.4.0)
       '@types/split2': 4.2.3
       '@wdio/logger': 10.0.0
-      '@wdio/types': 10.0.0
+      '@wdio/types': 10.0.1
       aria-query: 5.3.2
       decamelize: 6.0.1
       deepmerge-ts: 8.0.2
@@ -8201,7 +8250,7 @@ snapshots:
       crc-32: 1.2.2
       readable-stream: 4.7.0
 
-  create-wdio@10.0.0(@types/node@24.0.14):
+  create-wdio@10.0.2(@types/node@24.0.14):
     dependencies:
       chalk: 5.6.2
       commander: 14.0.3
@@ -8617,14 +8666,23 @@ snapshots:
 
   expect-type@1.4.0: {}
 
-  expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)):
+  expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)):
     dependencies:
       '@vitest/snapshot': 5.0.3
       '@wdio/types': 10.0.0
       deep-eql: 5.0.2
       expect: 30.5.2
       jest-matcher-utils: 30.5.2
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+
+  expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)):
+    dependencies:
+      '@vitest/snapshot': 5.0.3
+      '@wdio/types': 10.0.1
+      deep-eql: 5.0.2
+      expect: 30.5.2
+      jest-matcher-utils: 30.5.2
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
 
   expect@30.5.2:
     dependencies:
@@ -10854,31 +10912,31 @@ snapshots:
       defaults: 1.0.4
     optional: true
 
-  wdio-lambdatest-service@4.0.1(patch_hash=07d272cca35a334e8835c85beb552eb4f8cdb6e76edba1cab0289e9c092dbf1b)(@wdio/cli@10.0.0(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(@wdio/types@10.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)):
+  wdio-lambdatest-service@4.0.1(patch_hash=07d272cca35a334e8835c85beb552eb4f8cdb6e76edba1cab0289e9c092dbf1b)(@wdio/cli@10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(@wdio/types@10.0.1)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)):
     dependencies:
       '@lambdatest/node-tunnel': 4.0.9(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      '@wdio/cli': 10.0.0(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/cli': 10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/logger': 7.26.0
-      '@wdio/types': 10.0.0
+      '@wdio/types': 10.0.1
       axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       colors: 1.4.0
       form-data: 4.0.6
       source-map-support: 0.5.21
-      webdriverio: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       winston: 3.17.0
     transitivePeerDependencies:
       - debug
       - supports-color
 
-  webdriver@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0):
+  webdriver@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0):
     dependencies:
       '@types/node': 22.20.5
       '@types/ws': 8.18.2
-      '@wdio/config': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/config': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/logger': 10.0.0
-      '@wdio/protocols': 10.0.0
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/protocols': 10.0.2
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       deepmerge-ts: 8.0.2
       https-proxy-agent: 7.0.6(supports-color@8.1.1)
       undici: 8.11.2
@@ -10911,16 +10969,16 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  webdriverio@10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0):
+  webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0):
     dependencies:
       '@types/node': 22.20.5
       '@types/sinonjs__fake-timers': 8.1.5
-      '@wdio/config': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/config': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/logger': 10.0.0
-      '@wdio/protocols': 10.0.0
+      '@wdio/protocols': 10.0.2
       '@wdio/repl': 10.0.0
-      '@wdio/types': 10.0.0
-      '@wdio/utils': 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      '@wdio/types': 10.0.1
+      '@wdio/utils': 10.0.1(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       archiver: 8.0.0
       aria-query: 5.3.2
       cheerio: 1.1.2
@@ -10935,7 +10993,7 @@ snapshots:
       rgb2hex: 0.2.5
       serialize-error: 12.0.0
       urlpattern-polyfill: 10.1.0
-      webdriver: 10.0.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
+      webdriver: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
     transitivePeerDependencies:
       - bufferutil
       - proxy-agent
