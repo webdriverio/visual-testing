@@ -975,7 +975,8 @@ describe('warnIfBiDiScriptsFailOnAndroid (#1232)', () => {
         execute,
     })
 
-    afterEach(() => {
+    // Each test starts with no warning calls, whatever the tests before it logged
+    beforeEach(() => {
         vi.mocked(log.warn).mockClear()
     })
 
