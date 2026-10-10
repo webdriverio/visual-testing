@@ -34,7 +34,7 @@
     "@inquirer/prompts": "8.7.3",
     "@wdio/globals": "^10.0.2",
     "@wdio/logger": "^10.0.0",
-    "@wdio/types": "^10.0.0",
+    "@wdio/types": "^10.0.1",
     "fuse.js": "^7.5.0",
     "jimp": "^1.6.1",
     "node-tesseract-ocr": "^2.2.1",
