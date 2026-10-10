@@ -1,3 +1,4 @@
+import { statSync, unlinkSync } from 'node:fs'
 import type { ImageCompareResult } from '@wdio/image-comparison-core'
 
 import { getBrowserObject, isMultiRemoteElement } from './utils.js'
@@ -175,28 +176,130 @@ function parseMatcherParams (
 /**
  * Run the visual check until the result is the expected one, for at most `wait` milliseconds: until the image matches,
  * or with `.not` until it does not match. Each attempt is a full check (screenshot and compare), so the files of the
- * last attempt stay (#690)
+ * last attempt stay (#690). A stale element (the page rendered it again) is found again with `findAgain` and checked
+ * again within the wait time.
  */
 async function checkUntilExpected (
     check: () => Promise<CheckResult>,
     expectedResult: number | ExpectWebdriverIO.PartialMatcher<number>,
     { wait, interval }: Required<WdioMatcherWaitOptions>,
     isNot = false,
+    findAgain?: () => Promise<void>,
 ): Promise<CompareResult> {
     const start = Date.now()
+    // The image files of the failed attempts, with the time they were written
+    const failedImages = new Map<string, number>()
     let attempts = 0
 
     for (;;) {
         attempts++
-        const compared = compareResult(await check(), expectedResult)
+        let result: CheckResult
+        try {
+            result = await check()
+        } catch (error) {
+            if (!findAgain || !isStaleElementError(error) || Date.now() - start >= wait) {
+                throw error
+            }
+            // The element is not there again yet: the next attempt tries again
+            await findAgain().catch(() => undefined)
+            await waitForNextAttempt(start, wait, interval)
+            continue
+        }
+
+        const compared = compareResult(result, expectedResult)
+        if (!compared.pass) {
+            rememberImages(result, failedImages)
+        }
         const elapsed = Date.now() - start
         if (compared.pass !== isNot || elapsed >= wait) {
+            if (compared.pass) {
+                removeFailedImages(failedImages)
+            }
             return attempts === 1 ? compared : {
                 pass: compared.pass,
                 message: () => `${compared.message()}\n\nThe visual check ran ${attempts} times in ${elapsed} ms (wait: ${wait} ms).`,
             }
         }
-        await new Promise((resolve) => setTimeout(resolve, Math.min(interval, wait - elapsed)))
+        await waitForNextAttempt(start, wait, interval)
+    }
+}
+
+/**
+ * Wait the interval, but not longer than the rest of the wait time
+ */
+async function waitForNextAttempt (start: number, wait: number, interval: number) {
+    await new Promise((resolve) => setTimeout(resolve, Math.max(0, Math.min(interval, wait - (Date.now() - start)))))
+}
+
+/**
+ * Is the error a stale element error: the page rendered the element again. The same messages as
+ * `isStaleElementError()` of WebdriverIO, which it does not export
+ */
+function isStaleElementError (error: unknown): boolean {
+    if (!(error instanceof Error)) {
+        return false
+    }
+    const { message } = error
+
+    return error.name === 'stale element reference'
+        // Chrome, Firefox, Safari, Chrome through a script, WebDriver BiDi
+        || message.includes('stale element reference')
+        || message.includes('is no longer attached to the DOM')
+        || message.toLowerCase().includes('stale element found')
+        || message.includes('stale element not found in the current frame')
+        || message.includes('belongs to different document')
+        || message.includes('no such node - The node with the reference')
+}
+
+/**
+ * Find a stale element again. The check commands use the element id of the element, so they do not find it again,
+ * but an element command of WebdriverIO does, and it updates the element id of the element (also of each instance of
+ * a multiremote element)
+ */
+async function findElementAgain (element: WebdriverIO.Element) {
+    const elements = isMultiRemoteElement(element)
+        ? element.instances.map((instanceName) => element.getInstance(instanceName))
+        : [element]
+    for (const instanceElement of elements) {
+        await instanceElement.getTagName()
+    }
+}
+
+/**
+ * Get the image files of a check result: the actual image and the diff, also of each multiremote instance
+ */
+function getImageFiles (result: CheckResult): string[] {
+    const results = isMultiremoteResult(result) ? Object.values(result) : [result]
+
+    return results.flatMap(({ folders }) => [folders.actual, folders.diff])
+        .filter((file): file is string => typeof file === 'string' && file !== '')
+}
+
+/**
+ * Remember the image files that a failed attempt wrote, with their write time
+ */
+function rememberImages (result: CheckResult, images: Map<string, number>) {
+    for (const file of getImageFiles(result)) {
+        const written = statSync(file, { throwIfNoEntry: false })
+        if (written) {
+            images.set(file, written.mtimeMs)
+        }
+    }
+}
+
+/**
+ * Remove the images of the failed attempts that the matching attempt did not write again: a matching check does not
+ * save a diff, or an actual image with `alwaysSaveActualImage: false`, so these files are of an earlier failure
+ */
+function removeFailedImages (images: Map<string, number>) {
+    for (const [file, mtimeMs] of images) {
+        if (statSync(file, { throwIfNoEntry: false })?.mtimeMs === mtimeMs) {
+            try {
+                unlinkSync(file)
+            } catch {
+                // Already removed
+            }
+        }
     }
 }
 
@@ -267,7 +370,7 @@ export async function toMatchElementSnapshot (
         }
 
         return checkElementOfBrowser(resolvedElement, tag, options)
-    }, expectedResult || DEFAULT_EXPECTED_RESULT, waitOptions, isNegated(this))
+    }, expectedResult || DEFAULT_EXPECTED_RESULT, waitOptions, isNegated(this), () => findElementAgain(resolvedElement))
 }
 
 async function checkElementOfBrowser (element: WebdriverIO.Element, tag: string, options: WdioCheckElementMethodOptions) {
