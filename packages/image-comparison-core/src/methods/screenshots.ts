@@ -336,6 +336,8 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
     let screenshotSize
+    // Safari desktop: where the next image starts on the canvas, in CSS pixels
+    let nextSafariCanvasYPosition = 0
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
@@ -476,16 +478,14 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
             imageHeight = screenshotSize.height - imageYPosition
         }
 
-        // Calculate based on where the previous image ends
-        // Previous image's canvasYPosition + previous image's height
+        // Safari desktop: the image starts where the previous image ends. This is counted in CSS pixels, because the
+        // stored images are already in device pixels (calculateDprData), so they can not be added to CSS pixels
         let canvasYPosition: number
-        if (isSafariDesktop && !isFirstImage) {
-            const previousImage = viewportScreenshots[viewportScreenshots.length - 1]
-            canvasYPosition = previousImage
-                ? previousImage.canvasYPosition + previousImage.imageHeight
-                : actualInnerHeight + (i - 1) * effectiveScrollIncrement
+        if (isSafariDesktop) {
+            canvasYPosition = isFirstImage ? 0 : nextSafariCanvasYPosition
+            nextSafariCanvasYPosition = canvasYPosition + imageHeight
         } else {
-            canvasYPosition = isSafariDesktop ? 0 : scrollY
+            canvasYPosition = scrollY
         }
 
         // Store all the screenshot data in the screenshot object
