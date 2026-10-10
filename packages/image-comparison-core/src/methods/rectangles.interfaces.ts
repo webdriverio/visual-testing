@@ -179,10 +179,10 @@ export interface DetermineWebFullPageIgnoreRegionsOptions {
      */
     fullPageCropTopPaddingCSS?: number;
     /**
-     * The scroll container of a page where a container scrolls and not the page (#125). The image is then the
-     * viewport with the container expanded, so the regions are mapped to that image.
+     * With a scroll container (#125): the places of the ignore elements in the full page image, in CSS pixels, measured
+     * at each screenshot. The elements are then not measured again.
      */
-    scrollContainer?: WebdriverIO.Element;
+    elementRegions?: RectanglesOutput[];
 }
 
 export interface DetermineWebElementIgnoreRegionsOptions {

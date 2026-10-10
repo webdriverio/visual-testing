@@ -20,6 +20,7 @@ export async function takeFullPageScreenshots(
             fullPageScrollTimeout: options.fullPageScrollTimeout,
             hideAfterFirstScroll: options.hideAfterFirstScroll,
             hideScrollBars: options.hideScrollBars ?? true,
+            ignoreElements: options.ignoreElements,
             scrollContainer: options.scrollContainer,
             viewport: getMobileScreenViewport(options),
         })

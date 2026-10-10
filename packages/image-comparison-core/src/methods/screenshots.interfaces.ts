@@ -108,6 +108,11 @@ export interface FullPageScreenshotsData {
     fullPageWidth: number;
     /** Array of screenshot data. */
     data: ScreenshotData[];
+    /**
+     * With a scroll container (#125): the places of the ignore elements in the full page image, in CSS pixels, measured
+     * at each screenshot. An element can have more than one place, for example a sticky element in each screenshot
+     */
+    elementRegions?: { x: number, y: number, width: number, height: number }[];
 }
 
 /**
@@ -186,6 +191,8 @@ export interface FullPageScreenshotDataOptions extends
     screenWidth: number;
     /** The scroll container of a page where a container scrolls and not the page (#125) */
     scrollContainer?: WebdriverIO.Element;
+    /** With a scroll container: the ignore elements, measured at each screenshot (#125) */
+    ignoreElements?: WebdriverIO.Element[];
     /** Hide the scrollbar of the scroll container, as for the page */
     hideScrollBars?: boolean;
 }
@@ -196,6 +203,8 @@ export interface FullPageScreenshotDataOptions extends
 export interface ScrollContainerFullPageOptions extends ScreenshotInfo, ScrollOptions {
     /** The scroll container */
     scrollContainer: WebdriverIO.Element;
+    /** The ignore elements, measured at each screenshot */
+    ignoreElements?: WebdriverIO.Element[];
     /** Hide the scrollbar of the scroll container */
     hideScrollBars: boolean;
     /**

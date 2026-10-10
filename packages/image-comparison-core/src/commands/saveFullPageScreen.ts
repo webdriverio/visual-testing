@@ -8,7 +8,7 @@ import type { FullPageScreenshotDataOptions } from '../methods/screenshots.inter
 import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
 import { getMethodOrWicOption, canUseBidiScreenshot } from '../helpers/utils.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
-import { determineWebFullPageIgnoreRegions } from '../methods/rectangles.js'
+import { determineWebFullPageIgnoreRegions, splitIgnores } from '../methods/rectangles.js'
 import { readScrollPosition, restoreScrollPosition } from '../helpers/scrollPosition.js'
 
 /**
@@ -47,6 +47,7 @@ async function takeFullPageScreen(
     const userBasedFullPageScreenshot = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'userBasedFullPageScreenshot')
     // A page where a container scrolls and not the page (#125)
     const scrollContainer = saveFullPageOptions.method.scrollContainer ? await saveFullPageOptions.method.scrollContainer : undefined
+    const ignore = saveFullPageOptions.method?.ignore
 
     // 3.  Prepare the screenshot
     const defaultBeforeOptions = createBeforeScreenshotOptions(instanceData, saveFullPageOptions.method, saveFullPageOptions.wic)
@@ -92,6 +93,9 @@ async function takeFullPageScreen(
         screenWidth: screenWidth || NaN,
         scrollContainer,
         toolBarShadowPadding: beforeOptions.toolBarShadowPadding,
+        // With a scroll container, the ignore elements are measured at each screenshot: the layout and the scroll
+        // position of the container change, and a sticky element can be in more than one screenshot
+        ...(scrollContainer && ignore && ignore.length > 0 ? { ignoreElements: splitIgnores(await Promise.all(ignore)).elements } : {}),
     }
     // A BiDi screenshot of the document does not show the content of a scroll container, so scroll and stitch
     const shouldUseBidi = canUseBidiScreenshot(browserInstance) && !scrollContainer && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
@@ -106,7 +110,6 @@ async function takeFullPageScreen(
     //    Full-page image (BiDi or stitched) is in document coordinates; regions are document-relative device pixels.
     //    On mobile scroll-and-stitch we crop addressBarShadowPadding from the top of each tile, so we pass
     //    fullPageCropTopPaddingCSS so ignore regions align with the stitched canvas.
-    const ignore = saveFullPageOptions.method?.ignore
     const ignoreRegionPadding = (getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
     const usedStitchedMobile = isMobile && !scrollContainer && !(screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
     const ignoreRegions = ignore && ignore.length > 0
@@ -116,7 +119,7 @@ async function takeFullPageScreen(
                 devicePixelRatio: devicePixelRatio || 1,
                 fullPageCropTopPaddingCSS: usedStitchedMobile ? beforeOptions.addressBarShadowPadding : 0,
                 ignoreRegionPadding,
-                scrollContainer,
+                elementRegions: screenshotsData.elementRegions,
             },
             ignore,
         )
