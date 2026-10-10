@@ -100,6 +100,8 @@ No change is needed.
 - **Browser support of the report did not change:** Chrome 87+, Edge 88+, Firefox 78+, Safari 14+, the same
   browsers as Vite 5 built for. Vite 8 has a newer default target, so the reporter sets this list itself.
 - The CLI wizards use `@inquirer/prompts` 8 and `ora` 9; they work the same.
+- **The report works in any folder of a static host,** for example an AWS S3 bucket, also when the URL ends with
+  `index.html` or has a query string. Before, it only worked at the root of a web server, opened as a folder (`/`).
 
 ## Smaller fixes
 
