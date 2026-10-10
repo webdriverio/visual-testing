@@ -289,7 +289,43 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce(0) // pageYOffset for error logging
 
             await expect(getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options))
-                .rejects.toThrow(/Negative scroll position detected/)
+                .rejects.toThrow(/the viewport height without the shadow paddings and the home bar is -90 px/)
+            expect(mockBrowserInstance.takeScreenshot).not.toHaveBeenCalled()
+        })
+
+        it('should throw a clear error when the viewport measurement of the session failed (viewport height 0)', async () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            const options = createMobileOptions({
+                deviceRectangles: { ...createMobileOptions().deviceRectangles, viewport: { x: 0, y: 0, width: 0, height: 0 } },
+                addressBarShadowPadding: 6,
+                toolBarShadowPadding: 6,
+                isAndroid: true,
+            })
+
+            await expect(getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options))
+                .rejects.toThrow(/the viewport of the mobile browser is not known/)
+            expect(mockBrowserInstance.takeScreenshot).not.toHaveBeenCalled()
+        })
+
+        it('should not take screenshots without end when the viewport height is 0 and there are no shadow paddings', async () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            // Without a check the scroll position stays 0 and the loop adds a scroll for each screenshot
+            let screenshots = 0
+            mockBrowserInstance.takeScreenshot = vi.fn(async () => {
+                if (++screenshots > 20) {
+                    throw new Error('endless loop')
+                }
+                return SMALL_IMAGE_STRING
+            })
+            const options = createMobileOptions({
+                deviceRectangles: { ...createMobileOptions().deviceRectangles, viewport: { x: 0, y: 0, width: 0, height: 0 } },
+                addressBarShadowPadding: 0,
+                toolBarShadowPadding: 0,
+            })
+
+            await expect(getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options))
+                .rejects.toThrow(/the viewport of the mobile browser is not known/)
+            expect(screenshots).toBe(0)
         })
 
         it('should throw error when scroll height cannot be determined', async () => {
