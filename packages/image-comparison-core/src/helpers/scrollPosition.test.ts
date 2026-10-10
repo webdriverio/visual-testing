@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { mock } from 'vitest-mock-extended'
 import logger from '@wdio/logger'
-import { readScrollPosition, restoreScrollPosition, IOS_MAX_SCROLL_WAIT_TIME, IOS_STABLE_SCROLL_TIME } from './scrollPosition.js'
+import { readScrollPosition, restoreScrollPosition, SAFARI_MAX_SCROLL_WAIT_TIME, SAFARI_STABLE_SCROLL_TIME } from './scrollPosition.js'
 import getScrollPosition from '../clientSideScripts/getScrollPosition.js'
 import scrollBackToPosition from '../clientSideScripts/scrollBackToPosition.js'
 
@@ -10,7 +10,10 @@ vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/log
 const log = logger('test')
 
 describe('scrollPosition', () => {
-    const createBrowser = (execute = vi.fn().mockResolvedValue(420)) => mock<WebdriverIO.Browser>({ execute })
+    const createBrowser = (execute = vi.fn().mockResolvedValue(420), browserName = 'chrome') => mock<WebdriverIO.Browser>({
+        execute,
+        capabilities: { browserName },
+    })
 
     afterEach(() => {
         vi.clearAllMocks()
@@ -65,11 +68,11 @@ describe('scrollPosition', () => {
             expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('Could not scroll back'))
         })
 
-        describe('on iOS', () => {
+        describe('in Safari', () => {
             /**
              * Each read of the position takes 20 ms, and returns the next value of `positions` (the last one repeats)
              */
-            const createIOSBrowser = (positions: number[]) => {
+            const createIOSBrowser = (positions: number[], browserName = 'Safari') => {
                 vi.useFakeTimers()
                 let read = 0
                 return createBrowser(vi.fn(async (script: unknown) => {
@@ -78,7 +81,7 @@ describe('scrollPosition', () => {
                     }
                     vi.advanceTimersByTime(20)
                     return positions[Math.min(read++, positions.length - 1)]
-                }))
+                }), browserName)
             }
             const reads = (browserInstance: WebdriverIO.Browser) => vi.mocked(browserInstance.execute).mock.calls
                 .filter(([script]) => script === getScrollPosition).length
@@ -90,7 +93,7 @@ describe('scrollPosition', () => {
 
                 expect(browserInstance.execute).toHaveBeenNthCalledWith(1, scrollBackToPosition, 420)
                 // The first read at the position, then reads until 100 ms later
-                expect(reads(browserInstance)).toBe(IOS_STABLE_SCROLL_TIME / 20 + 1)
+                expect(reads(browserInstance)).toBe(SAFARI_STABLE_SCROLL_TIME / 20 + 1)
             })
 
             it('should wait again when Safari puts back the old position for a moment', async () => {
@@ -99,7 +102,7 @@ describe('scrollPosition', () => {
 
                 await restoreScrollPosition(browserInstance, 420, true)
 
-                expect(reads(browserInstance)).toBe(3 + IOS_STABLE_SCROLL_TIME / 20 + 1)
+                expect(reads(browserInstance)).toBe(3 + SAFARI_STABLE_SCROLL_TIME / 20 + 1)
             })
 
             it('should stop waiting after the maximum time when the page does not stay at the position', async () => {
@@ -107,12 +110,28 @@ describe('scrollPosition', () => {
 
                 await restoreScrollPosition(browserInstance, 420, true)
 
-                expect(reads(browserInstance)).toBe(IOS_MAX_SCROLL_WAIT_TIME / 20)
+                expect(reads(browserInstance)).toBe(SAFARI_MAX_SCROLL_WAIT_TIME / 20)
                 expect(log.warn).not.toHaveBeenCalled()
             })
 
-            it('should not wait on other platforms', async () => {
-                const browserInstance = createIOSBrowser([5346])
+            it('should wait in Safari on macOS, where a screenshot right after the scroll can show the old position', async () => {
+                const browserInstance = createIOSBrowser([420], 'Safari')
+
+                await restoreScrollPosition(browserInstance, 420)
+
+                expect(reads(browserInstance)).toBe(SAFARI_STABLE_SCROLL_TIME / 20 + 1)
+            })
+
+            it('should wait on iOS also when the browser name is not Safari', async () => {
+                const browserInstance = createIOSBrowser([420], 'chrome')
+
+                await restoreScrollPosition(browserInstance, 420, true)
+
+                expect(reads(browserInstance)).toBe(SAFARI_STABLE_SCROLL_TIME / 20 + 1)
+            })
+
+            it('should not wait in other browsers', async () => {
+                const browserInstance = createIOSBrowser([5346], 'chrome')
 
                 await restoreScrollPosition(browserInstance, 420)
 

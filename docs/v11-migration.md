@@ -125,6 +125,10 @@ You do not need to change anything for these, but you can notice them:
   Android and iOS mobile web) left the page at the bottom, the tabbable commands also left it at the top, and a later
   viewport check captured a scrolled page. If a test makes a viewport check right after one of these commands, its
   baseline can change once.
+- **Element screenshots scroll back:** with `autoElementScroll` (the default), an element check or save now always
+  scrolls the page back to the position that it had before the command. Before, a page at the top stayed at the
+  element, a page with `removeElements` could go back to a wrong position, and a failed element screenshot left the
+  page at the element. If a test makes a viewport check right after an element check, its baseline can change once.
 - **iOS element screenshots of large elements:** for an element that is not fully inside the viewport, the image
   had the size of the whole element, but only the visible part had content and the rest was black (an Appium bug,
   [appium/appium#22939](https://github.com/appium/appium/issues/22939)). The image now has only the visible part of

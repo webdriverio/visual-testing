@@ -4,10 +4,10 @@ import scrollBackToPosition from '../clientSideScripts/scrollBackToPosition.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:scrollPosition')
 
-/** How long the page must stay at the position on iOS before the next command can start */
-export const IOS_STABLE_SCROLL_TIME = 100
-/** The maximum time to wait for that on iOS */
-export const IOS_MAX_SCROLL_WAIT_TIME = 1000
+/** How long the page must stay at the position in Safari before the next command can start */
+export const SAFARI_STABLE_SCROLL_TIME = 100
+/** The maximum time to wait for that in Safari */
+export const SAFARI_MAX_SCROLL_WAIT_TIME = 1000
 
 /**
  * Read the vertical scroll position of the page, so a command that scrolls the page can scroll back (#1231).
@@ -26,9 +26,12 @@ export async function readScrollPosition(browserInstance: WebdriverIO.Browser): 
  * Scroll back to the position from `readScrollPosition`, without a smooth scroll animation.
  * Only logs a warning when it fails, so it never hides an error of the screenshot itself.
  *
- * On iOS, Safari applies the layout changes of the page (for example the CSS that the screenshot removed) a moment
- * later, and can then put back the old scroll position for some milliseconds. When the next command starts in that
- * time, the page can stay at the old position. So on iOS, wait until the page stays at the position
+ * Safari (WebKit) scrolls the page in a separate process, so a scroll by a script is applied there a moment later:
+ * - on iOS, after the layout changes of the page (for example the CSS that the screenshot removed), Safari can put back
+ *   the old scroll position for some milliseconds, and a next command in that time can leave the page there;
+ * - on macOS, a screenshot right after the scroll can still show the old position (about 1 frame).
+ * So in Safari, wait until the page stays at the position. A wait for an animation frame does not work in a window
+ * that is not in front, because Safari then does not draw frames
  */
 export async function restoreScrollPosition(browserInstance: WebdriverIO.Browser, position: number | undefined, isIOS = false): Promise<void> {
     if (typeof position !== 'number') {
@@ -36,7 +39,7 @@ export async function restoreScrollPosition(browserInstance: WebdriverIO.Browser
     }
     try {
         await browserInstance.execute(scrollBackToPosition, position)
-        if (isIOS) {
+        if (isIOS || isSafari(browserInstance)) {
             await waitForStableScrollPosition(browserInstance, position)
         }
     } catch (error) {
@@ -47,16 +50,20 @@ export async function restoreScrollPosition(browserInstance: WebdriverIO.Browser
 async function waitForStableScrollPosition(browserInstance: WebdriverIO.Browser, position: number): Promise<void> {
     const start = Date.now()
     let atPositionSince: number | undefined
-    while (Date.now() - start < IOS_MAX_SCROLL_WAIT_TIME) {
+    while (Date.now() - start < SAFARI_MAX_SCROLL_WAIT_TIME) {
         const current = await browserInstance.execute(getScrollPosition)
         if (Math.abs(current - position) > 1) {
             atPositionSince = undefined
             continue
         }
         atPositionSince ??= Date.now()
-        if (Date.now() - atPositionSince >= IOS_STABLE_SCROLL_TIME) {
+        if (Date.now() - atPositionSince >= SAFARI_STABLE_SCROLL_TIME) {
             return
         }
     }
-    log.debug(`The page did not stay at the scroll position ${position} for ${IOS_STABLE_SCROLL_TIME} ms within ${IOS_MAX_SCROLL_WAIT_TIME} ms`)
+    log.debug(`The page did not stay at the scroll position ${position} for ${SAFARI_STABLE_SCROLL_TIME} ms within ${SAFARI_MAX_SCROLL_WAIT_TIME} ms`)
+}
+
+function isSafari(browserInstance: WebdriverIO.Browser): boolean {
+    return (browserInstance.capabilities?.browserName ?? '').toLowerCase().includes('safari')
 }

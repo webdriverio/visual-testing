@@ -93,6 +93,7 @@ describe('@wdio/visual-service mobile web', () => {
             skipTest({ test: this, deviceName, platformName, platformVersion, orientation })
             this.retries(2)
 
+            const scrollYBefore = await browser.execute(() => window.scrollY)
             await expect(
                 await browser.checkElement(
                     await $('.hero__title-logo'),
@@ -102,6 +103,8 @@ describe('@wdio/visual-service mobile web', () => {
                     }
                 )
             ).toEqual(0)
+            // The element screenshot scrolls the element into view, then it must scroll back, also to the top (#1229)
+            await expect(await browser.execute(() => window.scrollY)).toEqual(scrollYBefore)
         })
 
         it(`should compare an element with ignore elements successful for '${deviceName}' with ${platformName}:${platformVersion} in ${orientation}-mode`, async function() {
