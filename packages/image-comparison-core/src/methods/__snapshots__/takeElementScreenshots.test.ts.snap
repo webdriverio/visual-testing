@@ -10,13 +10,6 @@ exports[`takeElementScreenshot > BiDi screenshots > should scroll element into v
 ]
 `;
 
-exports[`takeElementScreenshot > BiDi screenshots > should scroll element into view when autoElementScroll is enabled 2`] = `
-[
-  [MockFunction],
-  100,
-]
-`;
-
 exports[`takeElementScreenshot > Edge cases > should handle devicePixelRatio values and fallback to NaN when falsy 1`] = `
 {
   "base64Image": "cropped-screenshot-data",
@@ -69,13 +62,6 @@ exports[`takeElementScreenshot > Legacy screenshots > should handle auto scroll 
 ]
 `;
 
-exports[`takeElementScreenshot > Legacy screenshots > should handle auto scroll when enabled 2`] = `
-[
-  [MockFunction],
-  100,
-]
-`;
-
 exports[`takeElementScreenshot > Legacy screenshots > should handle zero dimensions by falling back to viewport size 1`] = `
 {
   "base64Image": "cropped-screenshot-data",
@@ -119,11 +105,4 @@ exports[`takeElementScreenshot > Legacy screenshots > should handle zero width o
     "The element has no width or height. We defaulted to the viewport screen size of width: 100 and height: 100.",
   ],
 ]
-`;
-
-exports[`takeElementScreenshot > Legacy screenshots > should not scroll back when autoElementScroll is enabled but no current position 1`] = `
-{
-  "base64Image": "cropped-screenshot-data",
-  "isWebDriverElementScreenshot": false,
-}
 `;

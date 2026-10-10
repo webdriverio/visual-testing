@@ -24,9 +24,12 @@ describe('@wdio/visual-service desktop', () => {
     afterEach(async () => await browser.execute('window.scrollTo(0, 0);', []))
 
     it(`should compare an element successful with a baseline for '${browserName}'`, async function() {
+        const scrollYBefore = await browser.execute(() => window.scrollY)
         await expect($('.hero__title-logo')).toMatchElementSnapshot('wdioLogo', {
             removeElements: [await $('nav.navbar')]
         })
+        // The element screenshot scrolls the element into view, then it must scroll back, also to the top (#1229)
+        await expect(await browser.execute(() => window.scrollY)).toEqual(scrollYBefore)
     })
 
     it(`should compare an element screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {

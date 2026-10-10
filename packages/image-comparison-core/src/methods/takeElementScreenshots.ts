@@ -2,7 +2,6 @@ import logger from '@wdio/logger'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
-import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import { getBase64ScreenshotSize, hasResizeDimensions, waitFor } from '../helpers/utils.js'
 import type { ElementScreenshotDataOptions, ElementScreenshotData } from './screenshots.interfaces.js'
 
@@ -34,9 +33,8 @@ async function takeBiDiElementScreenshot(
     // Scroll the element into the viewport so any lazy‑load / intersection
     // observers are triggered. We always capture from the *document* origin,
     // so the clip coordinates are document‑relative and independent of scroll.
-    let currentPosition: number | undefined
     if (options.autoElementScroll) {
-        currentPosition = await browserInstance.execute(scrollElementIntoView as any, element, options.addressBarShadowPadding)
+        await browserInstance.execute(scrollElementIntoView as any, element, options.addressBarShadowPadding)
         await waitFor(100)
     }
 
@@ -51,10 +49,6 @@ async function takeBiDiElementScreenshot(
         clip,
     })
 
-    if (options.autoElementScroll && currentPosition) {
-        await browserInstance.execute(scrollToPosition, currentPosition)
-    }
-
     return {
         base64Image,
         isWebDriverElementScreenshot: false,
@@ -67,9 +61,8 @@ async function takeBiDiElementScreenshotFromViewport(
     options: ElementScreenshotDataOptions
 ): Promise<ElementScreenshotData> {
     // Scroll element into view first so getElementRect reflects its viewport position.
-    let currentPosition: number | undefined
     if (options.autoElementScroll) {
-        currentPosition = await browserInstance.execute(scrollElementIntoView as any, element, options.addressBarShadowPadding)
+        await browserInstance.execute(scrollElementIntoView as any, element, options.addressBarShadowPadding)
         await waitFor(100)
     }
 
@@ -120,10 +113,6 @@ async function takeBiDiElementScreenshotFromViewport(
         clip,
     })
 
-    if (options.autoElementScroll && currentPosition) {
-        await browserInstance.execute(scrollToPosition, currentPosition)
-    }
-
     return {
         base64Image,
         isWebDriverElementScreenshot: false,
@@ -143,9 +132,8 @@ async function takeWebDriverElementScreenshot(
     const element = await (options.element as unknown as WebdriverIO.Element | Promise<WebdriverIO.Element>)
 
     // Scroll the element into top of the viewport and return the current scroll position
-    let currentPosition: number | undefined
     if (options.autoElementScroll) {
-        currentPosition = await browserInstance.execute(scrollElementIntoView as any, element, options.addressBarShadowPadding)
+        await browserInstance.execute(scrollElementIntoView as any, element, options.addressBarShadowPadding)
         // We need to wait for the scroll to finish before taking the screenshot
         await waitFor(100)
     }
@@ -179,10 +167,6 @@ async function takeWebDriverElementScreenshot(
     // When the screenshot has been taken and the element position has been determined,
     // we can scroll back to the original position
     // We don't need to wait for the scroll here because we don't take a screenshot after this
-    if (options.autoElementScroll && currentPosition) {
-        await browserInstance.execute(scrollToPosition, currentPosition)
-    }
-
     // When the element has no height or width, we default to the viewport screen size
     if (rectangles.width === 0 || rectangles.height === 0) {
         const { height, width } = getBase64ScreenshotSize(base64Image)

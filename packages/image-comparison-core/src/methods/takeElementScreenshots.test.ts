@@ -114,21 +114,9 @@ describe('takeElementScreenshot', () => {
                 base64Image: 'bidi-screenshot-data',
                 isWebDriverElementScreenshot: false
             })
-            // First call: scrollElementIntoView, second call: scrollToPosition (restore)
-            expect(executeMock).toHaveBeenCalledTimes(2)
-            expect(executeMock.mock.calls[0]).toMatchSnapshot()
-            expect(executeMock.mock.calls[1]).toMatchSnapshot()
-            expect(waitForSpy).toHaveBeenCalledWith(100)
-        })
-
-        it('should not restore scroll when autoElementScroll is enabled but no previous position', async () => {
-            const optionsWithScroll = { ...baseOptions, autoElementScroll: true }
-            executeMock.mockResolvedValueOnce(undefined) // no previous position
-
-            await takeElementScreenshot(browserInstance, optionsWithScroll, true)
-
-            // Only the scrollElementIntoView call, no restore
+            // Only scrollElementIntoView: saveWebElement scrolls back after the page is restored (#1229)
             expect(executeMock).toHaveBeenCalledTimes(1)
+            expect(executeMock.mock.calls[0]).toMatchSnapshot()
             expect(waitForSpy).toHaveBeenCalledWith(100)
         })
 
@@ -217,8 +205,8 @@ describe('takeElementScreenshot', () => {
             const result = await takeElementScreenshot(browserInstance, vpScrollOptions, true)
 
             expect(result.base64Image).toBe('bidi-screenshot-data')
-            // scrollElementIntoView + scrollToPosition (restore)
-            expect(executeMock).toHaveBeenCalledTimes(2)
+            // Only scrollElementIntoView: saveWebElement scrolls back after the page is restored (#1229)
+            expect(executeMock).toHaveBeenCalledTimes(1)
             expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(
                 expect.objectContaining({ origin: 'viewport' })
             )
@@ -296,22 +284,9 @@ describe('takeElementScreenshot', () => {
                 base64Image: 'cropped-screenshot-data',
                 isWebDriverElementScreenshot: false
             })
-            expect(executeMock).toHaveBeenCalledTimes(2)
-            // First call for scrolling element into view
+            // Only the call that scrolls the element into view: saveWebElement scrolls back after the page is restored (#1229)
+            expect(executeMock).toHaveBeenCalledTimes(1)
             expect(executeMock.mock.calls[0]).toMatchSnapshot()
-            // Second call for scrolling back to original position
-            expect(executeMock.mock.calls[1]).toMatchSnapshot()
-            expect(waitForSpy).toHaveBeenCalledWith(100)
-        })
-
-        it('should not scroll back when autoElementScroll is enabled but no current position', async () => {
-            const optionsWithScroll = { ...baseOptions, autoElementScroll: true }
-            executeMock.mockResolvedValueOnce(undefined) // no scroll position returned
-
-            const result = await takeElementScreenshot(browserInstance, optionsWithScroll, false)
-
-            expect(result).toMatchSnapshot()
-            expect(executeMock).toHaveBeenCalledTimes(1) // Only the scroll into view call
             expect(waitForSpy).toHaveBeenCalledWith(100)
         })
 
