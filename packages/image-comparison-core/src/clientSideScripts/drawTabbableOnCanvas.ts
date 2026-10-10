@@ -96,23 +96,31 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
    * browser: the original module can not be injected.
    * It follows the sequential focus navigation of the browser: open shadow roots and slots are own scopes, which are
    * sorted at the place of their host or slot (#515). The content of closed shadow roots and of iframes can not be
-   * read from the page, so it is not included.
+   * read from the page, so it is not included. Where browsers do not agree, it follows Chrome.
    */
+    type FocusableElement = HTMLElement | SVGElement | MathMLElement
     interface TabbableScope {
-        scopeParent: Element
+        // The tab index of the host, details element or slot of the scope: the scope is sorted at its place
+        tabIndex: number
         candidates: TabbableCandidate[]
     }
-    type TabbableCandidate = HTMLElement | TabbableScope
+    type TabbableCandidate = FocusableElement | TabbableScope
 
     /**
    * Get all tabbable elements in the order of the Tab key
    */
-    function tabbable(): HTMLElement[] {
-        return sortByTabOrder(getCandidates(Array.from(document.body?.children ?? [])))
+    function tabbable(): FocusableElement[] {
+        const body = document.body
+        // Nothing can get the focus in an inert page
+        if (!body || isInert(document.documentElement) || isInert(body)) {
+            return []
+        }
+
+        return keepOneRadioPerGroup(sortByTabOrder(getCandidates(Array.from(body.children))))
     }
 
     /**
-   * Get the tabbable elements and the scopes (open shadow roots and slots) in tree order
+   * Get the tabbable elements and the scopes (open shadow roots, details elements and slots) in tree order
    */
     function getCandidates(elements: Element[]): TabbableCandidate[] {
         const candidates: TabbableCandidate[] = []
@@ -126,24 +134,31 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
             if (element instanceof HTMLSlotElement) {
                 // The assigned elements, or the fallback content of the slot when nothing is assigned
                 const assigned = element.assignedElements({ flatten: true })
-                candidates.push({ scopeParent: element, candidates: getCandidates(assigned.length > 0 ? assigned : Array.from(element.children)) })
+                candidates.push(createScope(element, assigned.length > 0 ? assigned : Array.from(element.children)))
                 continue
             }
 
-            if (element instanceof HTMLElement && isTabbable(element)) {
+            if (isFocusableKind(element) && isTabbable(element)) {
                 candidates.push(element)
             }
 
             const shadowRoot = element.shadowRoot
             if (shadowRoot) {
                 // A shadow host with a negative tabindex is skipped with its shadow tree
-                if (!(element instanceof HTMLElement && hasNegativeTabindexAttribute(element))) {
-                    candidates.push({ scopeParent: element, candidates: getCandidates(Array.from(shadowRoot.children)) })
+                if (!hasNegativeTabindexAttribute(element)) {
+                    candidates.push(createScope(element, Array.from(shadowRoot.children)))
                 }
-            } else if (element instanceof HTMLDetailsElement && !element.open) {
-                // The content of a closed details element is not rendered, only its summary
-                const summary = Array.from(element.children).find((child) => child.tagName === 'SUMMARY')
-                candidates.push(...getCandidates(summary ? [summary] : []))
+            } else if (element instanceof HTMLDetailsElement) {
+                // Browsers render a details element like a shadow host with a slot for its summary and a slot for its
+                // other content, which is only rendered when the details element is open
+                if (!hasNegativeTabindexAttribute(element)) {
+                    const summary = getSummary(element)
+                    const content = element.open ? Array.from(element.children).filter((child) => child !== summary) : []
+                    candidates.push({
+                        tabIndex: getScopeTabindex(element),
+                        candidates: [createScope(null, summary ? [summary] : []), createScope(null, content)],
+                    })
+                }
             } else {
                 candidates.push(...getCandidates(Array.from(element.children)))
             }
@@ -153,18 +168,32 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     }
 
     /**
-   * Sort the candidates of one scope: positive tabindex first (in tree order for the same value), then the others in
-   * tree order. A scope is sorted at the place of its host or slot.
+   * Create the scope of a host, details element or slot (sorted with its tab index), or a scope without its own
+   * element (sorted like tabindex 0)
    */
-    function sortByTabOrder(candidates: TabbableCandidate[]): HTMLElement[] {
-        const regular: HTMLElement[] = []
-        const ordered: { documentOrder: number, tabIndex: number, content: HTMLElement[] }[] = []
+    function createScope(scopeParent: Element | null, elements: Element[]): TabbableScope {
+        return { tabIndex: scopeParent ? getScopeTabindex(scopeParent) : 0, candidates: getCandidates(elements) }
+    }
+
+    /**
+   * Get the tab index that a scope is sorted with
+   */
+    function getScopeTabindex(scopeParent: Element): number {
+        return isFocusableKind(scopeParent) ? Math.max(getTabindex(scopeParent), 0) : 0
+    }
+
+    /**
+   * Sort the candidates of one scope: positive tabindex first (in tree order for the same value), then the others in
+   * tree order. A scope is sorted at the place of its host, details element or slot.
+   */
+    function sortByTabOrder(candidates: TabbableCandidate[]): FocusableElement[] {
+        const regular: FocusableElement[] = []
+        const ordered: { documentOrder: number, tabIndex: number, content: FocusableElement[] }[] = []
 
         candidates.forEach((candidate, documentOrder) => {
-            const isScope = !(candidate instanceof HTMLElement)
-            const element = isScope ? candidate.scopeParent : candidate
-            const content = isScope ? sortByTabOrder(candidate.candidates) : [candidate]
-            const tabIndex = element instanceof HTMLElement ? Math.max(getTabindex(element), 0) : 0
+            const isElement = candidate instanceof Element
+            const content = isElement ? [candidate] : sortByTabOrder(candidate.candidates)
+            const tabIndex = isElement ? Math.max(getTabindex(candidate), 0) : candidate.tabIndex
 
             if (tabIndex === 0) {
                 regular.push(...content)
@@ -180,12 +209,50 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     }
 
     /**
+   * Keep one radio input per radio group: the checked radio input. When no radio input of the group is checked, or
+   * when the checked radio input is not a tab stop, the first radio input of the group in the tab order.
+   */
+    function keepOneRadioPerGroup(elements: FocusableElement[]): FocusableElement[] {
+        return elements.filter((element) => {
+            if (!isGroupedRadio(element)) {
+                return true
+            }
+            const group = elements.filter((other): other is HTMLInputElement => isGroupedRadio(other) && isSameRadioGroup(element, other))
+
+            return (group.find((radio) => radio.checked) ?? group[0]) === element
+        })
+    }
+
+    /**
+   * Is the element a radio input with a name, so in a radio group
+   */
+    function isGroupedRadio(node: Element): node is HTMLInputElement {
+        return node instanceof HTMLInputElement && node.type === 'radio' && node.name !== ''
+    }
+
+    /**
+   * Are the radio inputs in the same group: the same tree (document or shadow root), the same form owner (also with
+   * the form attribute) and the same name
+   */
+    function isSameRadioGroup(radio: HTMLInputElement, other: HTMLInputElement): boolean {
+        return radio.name === other.name && radio.form === other.form && radio.getRootNode() === other.getRootNode()
+    }
+
+    /**
+   * Is the element of a kind that can get the focus: HTML, SVG and MathML elements
+   */
+    function isFocusableKind(node: Element): node is FocusableElement {
+        return node instanceof HTMLElement
+            || node instanceof SVGElement
+            || (typeof MathMLElement === 'function' && node instanceof MathMLElement)
+    }
+
+    /**
    * Is the element a tab stop
    */
-    function isTabbable(node: HTMLElement): boolean {
+    function isTabbable(node: FocusableElement): boolean {
         return isFocusableCandidate(node)
             && getTabindex(node) >= 0
-            && !isNonTabbableRadio(node)
             // A shadow host that delegates the focus is not a tab stop, the elements in its shadow tree are
             && !node.shadowRoot?.delegatesFocus
     }
@@ -193,7 +260,7 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     /**
    * Can the element get the focus: a focusable kind of element that is not disabled and is rendered
    */
-    function isFocusableCandidate(node: HTMLElement): boolean {
+    function isFocusableCandidate(node: FocusableElement): boolean {
         const candidateSelectors = [
             'input:not([type="hidden"])',
             'select',
@@ -208,25 +275,34 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
             'details',
         ].join(',')
 
-        return node.matches(candidateSelectors)
+        return (node.matches(candidateSelectors) || isSvgLink(node))
             && !node.matches(':disabled')
-            // A details element with a summary is reached through its summary
-            && !(node instanceof HTMLDetailsElement && hasSummary(node))
+            // A details element with a summary is reached through its summary, unless it has its own tabindex
+            && !(node instanceof HTMLDetailsElement && getSummary(node) && getTabindexAttribute(node) === null)
             && !isHidden(node)
+    }
+
+    /**
+   * Is the element an SVG link, also with the old `xlink:href` attribute
+   */
+    function isSvgLink(node: FocusableElement): boolean {
+        return node instanceof SVGElement
+            && node.localName === 'a'
+            && (node.hasAttribute('href') || node.hasAttributeNS('http://www.w3.org/1999/xlink', 'href'))
     }
 
     /**
    * Get the tab index of the node
    */
-    function getTabindex(node: HTMLElement): number {
-        const tabindexAttr = parseInt(node.getAttribute('tabindex') ?? '', 10)
+    function getTabindex(node: FocusableElement): number {
+        const tabindexAttr = getTabindexAttribute(node)
 
-        if (!isNaN(tabindexAttr)) {
+        if (tabindexAttr !== null) {
             return tabindexAttr
         }
         // Browsers do not return `tabIndex` correctly for contentEditable nodes and details elements,
         // so if they don't have a tabindex attribute specifically set, assume it's 0.
-        if (node.contentEditable === 'true' || node instanceof HTMLDetailsElement) {
+        if ((node instanceof HTMLElement && node.contentEditable === 'true') || node instanceof HTMLDetailsElement) {
             return 0
         }
 
@@ -234,12 +310,21 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     }
 
     /**
-   * Has the element a negative tabindex attribute
+   * Get the value of a valid tabindex attribute, or null
    */
-    function hasNegativeTabindexAttribute(node: HTMLElement): boolean {
+    function getTabindexAttribute(node: Element): number | null {
         const tabindexAttr = parseInt(node.getAttribute('tabindex') ?? '', 10)
 
-        return !isNaN(tabindexAttr) && tabindexAttr < 0
+        return isNaN(tabindexAttr) ? null : tabindexAttr
+    }
+
+    /**
+   * Has the element a negative tabindex attribute
+   */
+    function hasNegativeTabindexAttribute(node: Element): boolean {
+        const tabindexAttr = getTabindexAttribute(node)
+
+        return tabindexAttr !== null && tabindexAttr < 0
     }
 
     /**
@@ -250,30 +335,10 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     }
 
     /**
-   * Has the details element a summary
+   * Get the summary of the details element: its first summary child
    */
-    function hasSummary(node: HTMLDetailsElement): boolean {
-        return Array.from(node.children).some((child) => child.tagName === 'SUMMARY')
-    }
-
-    /**
-   * Is the node a radio input that is not the tab stop of its group: the checked radio input of the group, or every
-   * radio input of the group when none is checked
-   */
-    function isNonTabbableRadio(node: HTMLElement): boolean {
-        if (!(node instanceof HTMLInputElement) || node.type !== 'radio' || !node.name) {
-            return false
-        }
-        // The group is in the same form, or else in the same document or shadow root
-        const scope = node.form ?? node.getRootNode()
-        if (!(scope instanceof HTMLFormElement || scope instanceof Document || scope instanceof ShadowRoot)) {
-            return false
-        }
-        const group = Array.from(scope.querySelectorAll('input[type="radio"]'))
-            .filter((radio): radio is HTMLInputElement => radio instanceof HTMLInputElement && radio.name === node.name)
-        const checked = group.find((radio) => radio.checked)
-
-        return Boolean(checked) && checked !== node
+    function getSummary(node: HTMLDetailsElement): Element | undefined {
+        return Array.from(node.children).find((child) => child.tagName === 'SUMMARY')
     }
 
     /**
@@ -281,7 +346,7 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
    * content of a closed details element), or `visibility: hidden`.
    * Not `offsetParent`, which is also `null` for elements with `position: fixed`
    */
-    function isHidden(node: HTMLElement): boolean {
+    function isHidden(node: Element): boolean {
         if (typeof node.checkVisibility === 'function') {
             return !node.checkVisibility({ visibilityProperty: true, checkVisibilityCSS: true })
         }
