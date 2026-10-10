@@ -70,7 +70,8 @@ All the options: [service options](https://webdriver.io/docs/visual-testing/serv
 
 | Version | npm tag | Status | Supported until |
 |---|---|---|---|
-| **v10** — `@wdio/visual-service@10` / `@wdio/image-comparison-core@2` | `latest` | ✅ Active development | — |
+| **v11** — `@wdio/visual-service@11` / `@wdio/image-comparison-core@3` | `latest` | ✅ Active, WebdriverIO v10 only | — |
+| **v10** — `@wdio/visual-service@10` / `@wdio/image-comparison-core@2` | `legacy-v10` | 🛠️ Maintenance for WebdriverIO v9 users (fixes backported on request) | — |
 | **v9** — `@wdio/visual-service@9` / `@wdio/image-comparison-core@1` | `legacy` | 🛠️ Maintenance (critical fixes only) | 12 months after the v10 release |
 
 > [!IMPORTANT]
@@ -107,11 +108,16 @@ Once v9 maintenance releases are published, they are also available under the `l
 npm install @wdio/visual-service@legacy
 ```
 
-Installing without a version (`npm install @wdio/visual-service`) always gives you the latest **v10**.
+Installing without a version (`npm install @wdio/visual-service`) gives you the latest **v11**, which supports only WebdriverIO v10. To stay on v10 (for example with WebdriverIO v9), pin it with a semver range or use the `legacy-v10` tag:
+
+```sh
+npm install @wdio/visual-service@^10
+npm install @wdio/visual-service@legacy-v10
+```
 
 ### Upgrading from v9 to v10
 
-1. Install the latest: `npm install @wdio/visual-service@latest`.
+1. Install v10: `npm install @wdio/visual-service@^10`.
 2. Re-run your suite once and re-accept the baselines so they are regenerated with the new engine.
 3. No code changes are required — `checkScreen`, `checkElement`, `checkFullPageScreen` and the matchers keep the same signatures and `ignore` options.
 
