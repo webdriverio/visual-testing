@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tabbable limits</title>
+<style>
+    body { margin: 0; background: #fff; }
+    /* The elements stay tab stops but are not visible: only the drawn tab order is visible */
+    main { opacity: 0; }
+    .row { display: block; box-sizing: border-box; width: 160px; height: 40px; margin: 20px; padding: 0; border: 0; }
+    .scroll { overflow-y: auto; }
+    .tall { height: 200px; }
+    .inner { display: block; box-sizing: border-box; width: 100px; height: 30px; margin: 0; padding: 0; border: 0; }
+    map { display: block; height: 0; }
+</style>
+</head>
+<body>
+<!-- tabbable-limits-reference.html has the same layout, with an element with tabindex="0" for each expected tab stop -->
+<main>
+    <!-- An editing host with contenteditable="plaintext-only" -->
+    <div class="row" contenteditable="plaintext-only"></div>
+    <!-- An editing host: a tab stop, the link in it is not -->
+    <div class="row" contenteditable="true"><a href="#link">link</a></div>
+    <!-- An image map: the area is a tab stop at the place of the map, drawn at the center of its shape on the image -->
+    <map name="shapes"><area href="#area" shape="rect" coords="0,0,40,40" alt="area"><area shape="rect" coords="40,0,80,40" alt="no href"></map>
+    <img class="row" usemap="#shapes" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">
+    <!-- A scroll container without a tab stop in it: a tab stop in Chrome -->
+    <div class="row scroll"><div class="tall"></div></div>
+    <!-- A scroll container with a button in it: the button is the tab stop -->
+    <div class="row scroll"><button class="inner"></button><div class="tall"></div></div>
+</main>
+</body>
+</html>

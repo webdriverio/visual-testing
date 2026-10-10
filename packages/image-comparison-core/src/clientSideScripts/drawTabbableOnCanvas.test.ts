@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { afterEach, describe, it, expect, beforeEach, vi } from 'vitest'
 import { mock } from 'vitest-mock-extended'
 import drawTabbableOnCanvas from './drawTabbableOnCanvas.js'
 import type { TabbableOptions } from '../commands/tabbable.interfaces.js'
@@ -569,6 +569,188 @@ describe('drawTabbableOnCanvas', () => {
             create(document.body, '<button tabindex="2"></button>', 'button-2')
 
             expect(drawnOrder()).toEqual(['body', 'button-2', 'button-0'])
+        })
+
+        describe('limits found after #515', () => {
+            const userAgents = {
+                blink: 'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36',
+                gecko: 'Mozilla/5.0 (Macintosh; rv:150.0) Gecko/20100101 Firefox/150.0',
+                webkit: 'Mozilla/5.0 (Macintosh) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Safari/605.1.15',
+            }
+            const useEngine = (engine: keyof typeof userAgents) => vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(userAgents[engine])
+
+            afterEach(() => {
+                vi.restoreAllMocks()
+                Reflect.deleteProperty(document, 'designMode')
+            })
+
+            /**
+             * jsdom does no layout: give the element a scrollable overflow. jsdom also does not expand the `overflow`
+             * shorthand, so the tests use `overflow-y`.
+             */
+            function overflow(element: Element, { vertical = true } = {}) {
+                Object.defineProperty(element, 'clientHeight', { value: 40, configurable: true })
+                Object.defineProperty(element, 'scrollHeight', { value: vertical ? 200 : 40, configurable: true })
+                Object.defineProperty(element, 'clientWidth', { value: 200, configurable: true })
+                Object.defineProperty(element, 'scrollWidth', { value: 200, configurable: true })
+            }
+
+            it('should include an element with contenteditable="plaintext-only" and the other values of an editing host', () => {
+                create(document.body, '<div contenteditable="plaintext-only"></div>', 'plaintext-only')
+                create(document.body, '<div contenteditable=""></div>', 'empty')
+                create(document.body, '<div contenteditable="TRUE"></div>', 'upper-case')
+                create(document.body, '<div contenteditable="invalid"></div>', 'invalid')
+                create(document.body, '<div contenteditable="false"></div>', 'false')
+
+                expect(drawnOrder()).toEqual(['plaintext-only', 'empty', 'upper-case'])
+            })
+
+            it('should not include a link or a nested editable element in editable content, but the other controls', () => {
+                const host = create(document.body, '<div contenteditable="true"></div>', 'host')
+                create(host, '<a href="#a"></a>', 'link')
+                create(host, '<a href="#b" tabindex="0"></a>', 'link-with-tabindex')
+                create(host, '<button></button>', 'button')
+                create(host, '<div contenteditable="true"></div>', 'nested-editable')
+                const island = create(host, '<span contenteditable="false"></span>')
+                create(island, '<a href="#c"></a>', 'island-link')
+
+                expect(drawnOrder()).toEqual(['host', 'link-with-tabindex', 'button', 'island-link'])
+            })
+
+            it('should include the areas of an image map at the place of the map, with their position on the image', () => {
+                create(document.body, '<button></button>', 'start')
+                const map = create(document.body, '<map name="m"></map>')
+                create(map, '<area href="#a" shape="rect" coords="0,0,4,4">')
+                create(map, '<area shape="rect" coords="0,0,4,4">')
+                create(map, '<area href="#c" tabindex="-1" shape="rect" coords="0,0,4,4">')
+                create(document.body, '<button></button>', 'middle')
+                const image = create(document.body, '<img usemap="#m" alt="">')
+                render(image, 1000)
+                // The center of the area: the left side of the image + 2
+                rendered.set(1002, 'area')
+                const unusedMap = create(document.body, '<map name="unused"></map>')
+                create(unusedMap, '<area href="#u" shape="rect" coords="0,0,4,4">')
+
+                expect(drawnOrder()).toEqual(['start', 'area', 'middle'])
+            })
+
+            it('should include a scroll container without tab stops in it in Chrome, but not one with a tab stop', () => {
+                useEngine('blink')
+                overflow(create(document.body, '<div style="overflow-y: auto"></div>', 'scroller'))
+                const withButton = create(document.body, '<div style="overflow-y: auto"></div>', 'scroller-with-button')
+                overflow(withButton)
+                create(withButton, '<button></button>', 'button')
+                const withDisabled = create(document.body, '<div style="overflow-y: auto"></div>', 'scroller-with-disabled-button')
+                overflow(withDisabled)
+                create(withDisabled, '<button disabled></button>')
+                overflow(create(document.body, '<div style="overflow-y: hidden"></div>', 'overflow-hidden'))
+                overflow(create(document.body, '<div style="overflow-y: auto" tabindex="-1"></div>', 'tabindex-minus'))
+                create(document.body, '<div style="overflow-y: auto"></div>', 'fits')
+
+                expect(drawnOrder()).toEqual(['scroller', 'button', 'scroller-with-disabled-button'])
+            })
+
+            it('should include every scroll container in Firefox and none in Safari', () => {
+                const build = () => {
+                    document.body.innerHTML = ''
+                    rendered.clear()
+                    overflow(create(document.body, '<div style="overflow-y: auto"></div>', 'scroller'))
+                    const withButton = create(document.body, '<div style="overflow-y: scroll"></div>', 'scroller-with-button')
+                    overflow(withButton)
+                    create(withButton, '<button></button>', 'button')
+                }
+
+                useEngine('gecko')
+                build()
+                expect(drawnOrder()).toEqual(['scroller', 'scroller-with-button', 'button'])
+
+                vi.mocked(mockCanvasContext.fillText).mockClear()
+                useEngine('webkit')
+                build()
+                expect(drawnOrder()).toEqual(['button'])
+            })
+
+            /**
+             * jsdom has no `:modal`
+             */
+            function modal(dialog: Element) {
+                Object.defineProperty(dialog, 'matches', {
+                    value: (selector: string) => selector === ':modal' || Element.prototype.matches.call(dialog, selector),
+                    configurable: true,
+                })
+            }
+
+            it('should include only the content of the modal dialog, and the dialog itself in Firefox and Safari', () => {
+                const build = () => {
+                    document.body.innerHTML = ''
+                    rendered.clear()
+                    create(document.body, '<button></button>', 'outside')
+                    const dialog = create(document.body, '<dialog open></dialog>', 'dialog')
+                    modal(dialog)
+                    create(dialog, '<button></button>', 'in-dialog')
+                    create(document.body, '<button></button>', 'outside-after')
+                }
+
+                useEngine('blink')
+                build()
+                expect(drawnOrder()).toEqual(['in-dialog'])
+
+                vi.mocked(mockCanvasContext.fillText).mockClear()
+                useEngine('webkit')
+                build()
+                expect(drawnOrder()).toEqual(['dialog', 'in-dialog'])
+            })
+
+            it('should include an open dialog that is not modal itself in Firefox and Safari, not in Chrome', () => {
+                const build = () => {
+                    document.body.innerHTML = ''
+                    rendered.clear()
+                    create(document.body, '<button></button>', 'outside')
+                    const dialog = create(document.body, '<dialog open></dialog>', 'dialog')
+                    create(dialog, '<button></button>', 'in-dialog')
+                }
+
+                useEngine('gecko')
+                build()
+                expect(drawnOrder()).toEqual(['outside', 'dialog', 'in-dialog'])
+
+                vi.mocked(mockCanvasContext.fillText).mockClear()
+                useEngine('blink')
+                build()
+                expect(drawnOrder()).toEqual(['outside', 'in-dialog'])
+            })
+
+            it('should include audio and video elements with controls, also when the browser gives them tabIndex -1 (Safari)', () => {
+                const video = create(document.body, '<video controls></video>', 'video')
+                const audio = create(document.body, '<audio controls></audio>', 'audio')
+                Object.defineProperty(video, 'tabIndex', { value: -1, configurable: true })
+                Object.defineProperty(audio, 'tabIndex', { value: -1, configurable: true })
+                create(document.body, '<video controls tabindex="-1"></video>', 'video-tabindex-minus')
+
+                expect(drawnOrder()).toEqual(['video', 'audio'])
+            })
+
+            it('should include only the body in Chrome when the page is in design mode, and nothing in the other browsers', () => {
+                Object.defineProperty(document, 'designMode', { value: 'on', configurable: true })
+                track(document.body, 'body')
+                create(document.body, '<button></button>', 'button')
+
+                useEngine('blink')
+                expect(drawnOrder()).toEqual(['body'])
+
+                vi.mocked(mockCanvasContext.fillText).mockClear()
+                useEngine('gecko')
+                expect(drawnOrder()).toEqual([])
+            })
+
+            it('should not include an editable body in Firefox', () => {
+                useEngine('gecko')
+                document.body.setAttribute('contenteditable', 'true')
+                track(document.body, 'body')
+                create(document.body, '<button></button>', 'button')
+
+                expect(drawnOrder()).toEqual(['button'])
+            })
         })
 
         it.each(['body', 'html'])('should not include any element when the %s element is inert', (root) => {

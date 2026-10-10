@@ -93,6 +93,23 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         expect(await browser.checkTabbablePage('v10-tabbable-cases')).toBe(0)
     })
 
+    it('draws the tab stops of editable content, image map areas and scroll containers as Chrome has them', async () => {
+        // The reference page has an element with tabindex="0" at the place of each expected tab stop
+        await browser.url(fixture('tabbable-limits-reference.html'))
+        await browser.checkTabbablePage('v10-tabbable-limits')
+
+        await browser.url(fixture('tabbable-limits.html'))
+        expect(await browser.checkTabbablePage('v10-tabbable-limits')).toBe(0)
+    })
+
+    it('draws only the tab stops of a modal dialog, above the dialog', async () => {
+        await browser.url(fixture('tabbable-modal-reference.html'))
+        await browser.checkTabbablePage('v10-tabbable-modal')
+
+        await browser.url(fixture('tabbable-modal.html'))
+        expect(await browser.checkTabbablePage('v10-tabbable-modal')).toBe(0)
+    })
+
     // Known gap, not supported yet: the element rect comes from WebDriver Classic `getElementRect`, which cannot
     // find an element in a frame (`no such element`), and `browsingContext.captureScreenshot` only accepts a
     // top-level context. A fix must add the offset of the iframe to the rect of the element in the frame.
