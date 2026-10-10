@@ -61,14 +61,21 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
             deviceRectangles: { viewport, bottomBar, homeBar, screenSize: options.deviceRectangles.screenSize },
         })
 
+        const viewportCssHeight = viewportHeight + addressBarShadowPadding + toolBarShadowPadding
+        const homeBarHeight = viewportHeight - effectiveViewportHeight
+        // Smaller shadow paddings only help when the viewport is higher than the home bar
+        const advice = viewportCssHeight - homeBarHeight > 0
+            ? 'Use smaller shadow paddings.'
+            : 'The viewport is not higher than the home bar, so the device rectangles are probably wrong.'
+
         throw new Error(viewport.height === 0
             ? 'The full page screenshot can not be taken: the viewport of the mobile browser is not known (height 0). ' +
                 'The visual service measures it at the start of the session with a native tap in the middle of the screen, ' +
                 'and that measurement failed, for example because the screen was black or a browser screen covered the page. ' +
                 'See the warnings of the visual service in the WebdriverIO log.'
             : `The full page screenshot can not be taken: the viewport height without the shadow paddings and the home bar is ${effectiveViewportHeight} px ` +
-                `(viewport ${viewportHeight + addressBarShadowPadding + toolBarShadowPadding} px, addressBarShadowPadding ${addressBarShadowPadding} px, ` +
-                `toolBarShadowPadding ${toolBarShadowPadding} px). Use smaller shadow paddings.`)
+                `(viewport ${viewportCssHeight} px, addressBarShadowPadding ${addressBarShadowPadding} px, ` +
+                `toolBarShadowPadding ${toolBarShadowPadding} px, home bar ${homeBarHeight} px). ${advice}`)
     }
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {

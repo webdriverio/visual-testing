@@ -289,8 +289,20 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce(0) // pageYOffset for error logging
 
             await expect(getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options))
-                .rejects.toThrow(/the viewport height without the shadow paddings and the home bar is -90 px/)
+                .rejects.toThrow(/is -90 px \(viewport 50 px, addressBarShadowPadding 20 px, toolBarShadowPadding 20 px, home bar 100 px\)\. The viewport is not higher than the home bar/)
             expect(mockBrowserInstance.takeScreenshot).not.toHaveBeenCalled()
+        })
+
+        it('should advise smaller shadow paddings when they make the viewport height not positive', async () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            const options = createMobileOptions({
+                deviceRectangles: { ...createMobileOptions().deviceRectangles, viewport: { x: 0, y: 100, width: 750, height: 40 } },
+                addressBarShadowPadding: 25,
+                toolBarShadowPadding: 25,
+            })
+
+            await expect(getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options))
+                .rejects.toThrow(/is -10 px \(viewport 40 px, addressBarShadowPadding 25 px, toolBarShadowPadding 25 px, home bar 0 px\)\. Use smaller shadow paddings\./)
         })
 
         it('should throw a clear error when the viewport measurement of the session failed (viewport height 0)', async () => {
