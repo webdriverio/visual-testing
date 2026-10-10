@@ -93,6 +93,19 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         expect(await browser.checkTabbablePage('v10-tabbable-cases')).toBe(0)
     })
 
+    it('waits with the `wait` option of a visual matcher until the element matches (#690)', async () => {
+        // creates the baseline of the box in its final color
+        await browser.url(fixture('delayed-change.html'))
+        await $('#box.done').waitForExist()
+        await browser.checkElement(await $('#box'), 'v10-delayed-change')
+
+        // Right after the page is loaded again, the box does not have its final color yet
+        await browser.url(fixture('delayed-change.html'))
+        expect(await browser.checkElement(await $('#box'), 'v10-delayed-change')).toBeGreaterThan(0)
+        // The matcher checks again until the box matches the baseline
+        await expect($('#box')).toMatchElementSnapshot('v10-delayed-change', { wait: 5000, interval: 250 })
+    })
+
     // Known gap, not supported yet: the element rect comes from WebDriver Classic `getElementRect`, which cannot
     // find an element in a frame (`no such element`), and `browsingContext.captureScreenshot` only accepts a
     // top-level context. A fix must add the offset of the iframe to the rect of the element in the frame.

@@ -4,10 +4,28 @@ import { getBrowserObject, isMultiRemoteElement } from './utils.js'
 import type {
     WdioCheckFullPageMethodOptions,
     WdioCheckElementMethodOptions,
-    WdioCheckScreenMethodOptions
+    WdioCheckScreenMethodOptions,
+    WdioMatcherWaitOptions,
 } from './types.js'
 
 const DEFAULT_EXPECTED_RESULT = 0
+const DEFAULT_WAIT_INTERVAL = 100
+
+/**
+ * The context of a matcher: `expect` gives `isNot` for `.not`, the Jasmine adapter gives it too
+ */
+interface VisualMatcherContext {
+    isNot?: boolean
+}
+
+/**
+ * Is the matcher called with `.not` (a direct call has no context)
+ */
+function isNegated (context: VisualMatcherContext | void): boolean {
+    return typeof context === 'object' && context !== null && context.isNot === true
+}
+type CompareResult = ReturnType<typeof compareResult>
+type CheckResult = ImageCompareResult | Record<string, ImageCompareResult>
 
 const asymmetricMatcher =
     typeof Symbol === 'function' && Symbol.for
@@ -89,7 +107,7 @@ function compareResult (
 function parseMatcherParams (
     tag: string,
     expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
-    options?: WdioCheckFullPageMethodOptions
+    options?: WdioCheckFullPageMethodOptions & WdioMatcherWaitOptions
 ) {
     /**
      * throw if `tag` is not a string
@@ -117,6 +135,17 @@ function parseMatcherParams (
     }
 
     /**
+     * `wait` and `interval` are options of the matcher, not of the check command (#690)
+     */
+    const { wait = 0, interval = DEFAULT_WAIT_INTERVAL, ...checkOptions } = options
+    for (const [name, value] of Object.entries({ wait, interval })) {
+        if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+            throw new Error(`Expected the option "${name}" to be a number of milliseconds of 0 or more, but received "${value}"`)
+        }
+    }
+    options = checkOptions
+
+    /**
      * overwrite `returnAllCompareData` to allow us to provide a better assertion message
      */
     options.returnAllCompareData = true
@@ -140,7 +169,35 @@ function parseMatcherParams (
         }
     }
 
-    return { expectedResult, options }
+    return { expectedResult, options, waitOptions: { wait, interval } }
+}
+
+/**
+ * Run the visual check until the result is the expected one, for at most `wait` milliseconds: until the image matches,
+ * or with `.not` until it does not match. Each attempt is a full check (screenshot and compare), so the files of the
+ * last attempt stay (#690)
+ */
+async function checkUntilExpected (
+    check: () => Promise<CheckResult>,
+    expectedResult: number | ExpectWebdriverIO.PartialMatcher<number>,
+    { wait, interval }: Required<WdioMatcherWaitOptions>,
+    isNot = false,
+): Promise<CompareResult> {
+    const start = Date.now()
+    let attempts = 0
+
+    for (;;) {
+        attempts++
+        const compared = compareResult(await check(), expectedResult)
+        const elapsed = Date.now() - start
+        if (compared.pass !== isNot || elapsed >= wait) {
+            return attempts === 1 ? compared : {
+                pass: compared.pass,
+                message: () => `${compared.message()}\n\nThe visual check ran ${attempts} times in ${elapsed} ms (wait: ${wait} ms).`,
+            }
+        }
+        await new Promise((resolve) => setTimeout(resolve, Math.min(interval, wait - elapsed)))
+    }
 }
 
 /**
@@ -156,49 +213,61 @@ function assertVisualCommand (browser: unknown, command: string) {
 }
 
 export async function toMatchScreenSnapshot (
+    this: VisualMatcherContext | void,
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
     expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher<number>,
-    optionsOrUndefined?: WdioCheckScreenMethodOptions
+    optionsOrUndefined?: WdioCheckScreenMethodOptions & WdioMatcherWaitOptions
 ) {
-    const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    const { expectedResult, options, waitOptions } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
     assertVisualCommand(browser, 'checkScreen')
-    const result = await browser.checkScreen(tag, options) as ImageCompareResult
-    return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
+    return checkUntilExpected(
+        async () => await browser.checkScreen(tag, options) as ImageCompareResult,
+        expectedResult || DEFAULT_EXPECTED_RESULT,
+        waitOptions,
+        isNegated(this),
+    )
 }
 
 export async function toMatchFullPageSnapshot (
+    this: VisualMatcherContext | void,
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
     expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher<number>,
-    optionsOrUndefined?: WdioCheckFullPageMethodOptions
+    optionsOrUndefined?: WdioCheckFullPageMethodOptions & WdioMatcherWaitOptions
 ) {
-    const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    const { expectedResult, options, waitOptions } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
     assertVisualCommand(browser, 'checkFullPageScreen')
-    const result = await browser.checkFullPageScreen(tag, options) as ImageCompareResult
-    return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
+    return checkUntilExpected(
+        async () => await browser.checkFullPageScreen(tag, options) as ImageCompareResult,
+        expectedResult || DEFAULT_EXPECTED_RESULT,
+        waitOptions,
+        isNegated(this),
+    )
 }
 
 export async function toMatchElementSnapshot (
+    this: VisualMatcherContext | void,
     element: WebdriverIO.Element,
     tag: string,
     expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher<number>,
-    optionsOrUndefined?: WdioCheckElementMethodOptions
+    optionsOrUndefined?: WdioCheckElementMethodOptions & WdioMatcherWaitOptions
 ) {
-    const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    const { expectedResult, options, waitOptions } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
     const resolvedElement = await element
 
-    // A multiremote element has no parent, so compare the element of each instance with the browser of that instance
-    if (isMultiRemoteElement(resolvedElement)) {
-        const results: Record<string, ImageCompareResult> = {}
-        for (const instanceName of resolvedElement.instances) {
-            results[instanceName] = await checkElementOfBrowser(resolvedElement.getInstance(instanceName), tag, options)
+    return checkUntilExpected(async () => {
+        // A multiremote element has no parent, so compare the element of each instance with the browser of that instance
+        if (isMultiRemoteElement(resolvedElement)) {
+            const results: Record<string, ImageCompareResult> = {}
+            for (const instanceName of resolvedElement.instances) {
+                results[instanceName] = await checkElementOfBrowser(resolvedElement.getInstance(instanceName), tag, options)
+            }
+            return results
         }
-        return compareResult(results, expectedResult || DEFAULT_EXPECTED_RESULT)
-    }
 
-    const result = await checkElementOfBrowser(resolvedElement, tag, options)
-    return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
+        return checkElementOfBrowser(resolvedElement, tag, options)
+    }, expectedResult || DEFAULT_EXPECTED_RESULT, waitOptions, isNegated(this))
 }
 
 async function checkElementOfBrowser (element: WebdriverIO.Element, tag: string, options: WdioCheckElementMethodOptions) {
@@ -208,13 +277,18 @@ async function checkElementOfBrowser (element: WebdriverIO.Element, tag: string,
 }
 
 export async function toMatchTabbablePageSnapshot (
+    this: VisualMatcherContext | void,
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
     expectedResultOrOptions?: number | ExpectWebdriverIO.PartialMatcher<number>,
-    optionsOrUndefined?: WdioCheckFullPageMethodOptions
+    optionsOrUndefined?: WdioCheckFullPageMethodOptions & WdioMatcherWaitOptions
 ) {
-    const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    const { expectedResult, options, waitOptions } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
     assertVisualCommand(browser, 'checkTabbablePage')
-    const result = await browser.checkTabbablePage(tag, options) as ImageCompareResult
-    return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
+    return checkUntilExpected(
+        async () => await browser.checkTabbablePage(tag, options) as ImageCompareResult,
+        expectedResult || DEFAULT_EXPECTED_RESULT,
+        waitOptions,
+        isNegated(this),
+    )
 }

@@ -1,4 +1,5 @@
-import { beforeEach, describe, it, vi, expect } from 'vitest'
+import { afterEach, beforeEach, describe, it, vi, expect } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import {
     toMatchScreenSnapshot, toMatchFullPageSnapshot,
     toMatchElementSnapshot, toMatchTabbablePageSnapshot
@@ -314,6 +315,96 @@ describe('custom visual matcher', () => {
                 returnAllCompareData: true,
                 saveAboveTolerance: 0
             })
+        })
+    })
+
+    describe('wait until the image matches (#690)', () => {
+        const result = (misMatchPercentage: number) => ({ misMatchPercentage, folders })
+
+        beforeEach(() => {
+            vi.useFakeTimers()
+        })
+
+        afterEach(() => {
+            vi.useRealTimers()
+        })
+
+        it('should check once without wait, also when the image does not match', async () => {
+            const matched = await toMatchScreenSnapshot(browser, 'foo', 0, {})
+
+            expect(matched.pass).toBe(false)
+            expect(browser.checkScreen).toHaveBeenCalledTimes(1)
+        })
+
+        it('should check again until the image matches', async () => {
+            vi.mocked(browser.checkScreen).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(0))
+
+            const promise = toMatchScreenSnapshot(browser, 'foo', 0, { wait: 1000, interval: 200 })
+            await vi.advanceTimersByTimeAsync(1000)
+            const matched = await promise
+
+            expect(matched.pass).toBe(true)
+            expect(browser.checkScreen).toHaveBeenCalledTimes(3)
+        })
+
+        it('should stop after the wait time and tell how often it checked', async () => {
+            const promise = toMatchScreenSnapshot(browser, 'foo', 0, { wait: 300, interval: 100 })
+            await vi.advanceTimersByTimeAsync(1000)
+            const matched = await promise
+
+            expect(matched.pass).toBe(false)
+            // At 0, 100, 200 and 300 ms
+            expect(browser.checkScreen).toHaveBeenCalledTimes(4)
+            expect(matched.message()).toContain('The visual check ran 4 times in 300 ms (wait: 300 ms).')
+        })
+
+        it('should not pass wait and interval to the check command', async () => {
+            vi.mocked(browser.checkScreen).mockResolvedValue(result(0))
+
+            await toMatchScreenSnapshot(browser, 'foo', 0, { wait: 1000, interval: 200, hideScrollBars: false })
+
+            expect(vi.mocked(browser.checkScreen).mock.calls[0][1]).toEqual({ hideScrollBars: false, returnAllCompareData: true, saveAboveTolerance: 0 })
+        })
+
+        it('should check again until the image does not match with .not', async () => {
+            vi.mocked(browser.checkScreen).mockResolvedValueOnce(result(0)).mockResolvedValueOnce(result(5))
+
+            const promise = toMatchScreenSnapshot.call({ isNot: true }, browser, 'foo', 0, { wait: 1000, interval: 100 })
+            await vi.advanceTimersByTimeAsync(1000)
+            const matched = await promise
+
+            // `expect` inverts the result for `.not`: no match, so `.not` passes
+            expect(matched.pass).toBe(false)
+            expect(browser.checkScreen).toHaveBeenCalledTimes(2)
+        })
+
+        it('should wait for an element and for each instance of a multiremote element', async () => {
+            vi.mocked(browser.checkElement).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(0))
+            // WebdriverIO brands its elements, see `isWdioKind()`
+            const element = mock<WebdriverIO.Element>({ [WDIO_KIND]: 'element', parent: browser })
+
+            const promise = toMatchElementSnapshot(element, 'foo', 0, { wait: 1000 })
+            await vi.advanceTimersByTimeAsync(1000)
+
+            expect((await promise).pass).toBe(true)
+            expect(browser.checkElement).toHaveBeenCalledTimes(2)
+        })
+
+        it('should wait for the full page and tabbable matchers too', async () => {
+            vi.mocked(browser.checkFullPageScreen).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(0))
+            vi.mocked(browser.checkTabbablePage).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(0))
+
+            const fullPage = toMatchFullPageSnapshot(browser, 'foo', 0, { wait: 1000 })
+            const tabbable = toMatchTabbablePageSnapshot(browser, 'foo', 0, { wait: 1000 })
+            await vi.advanceTimersByTimeAsync(1000)
+
+            expect((await fullPage).pass).toBe(true)
+            expect((await tabbable).pass).toBe(true)
+        })
+
+        it.each([-1, Number.NaN, 'soon'])('should throw for an invalid wait %j', async (wait) => {
+            // @ts-expect-error test invalid input
+            await expect(toMatchScreenSnapshot(browser, 'foo', 0, { wait })).rejects.toThrow('Expected the option "wait" to be a number of milliseconds of 0 or more')
         })
     })
 })

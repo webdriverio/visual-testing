@@ -28,6 +28,18 @@ describe('@wdio/visual-service with Jasmine (WebdriverIO v10)', () => {
         await expect(browser).not.toMatchScreenSnapshot('v10-jasmine-page')
     })
 
+    it('waits with the `wait` option, also for `.not` (#690)', async () => {
+        // creates the baseline of the box in its final color
+        await browser.url(fixture('delayed-change.html'))
+        await $('#box.done').waitForExist()
+        await expect($('#box')).toMatchElementSnapshot('v10-jasmine-delayed-change')
+
+        // Right after the page is loaded again the box does not match yet, then it matches
+        await browser.url(fixture('delayed-change.html'))
+        await expect($('#box')).not.toMatchElementSnapshot('v10-jasmine-delayed-change')
+        await expect($('#box')).toMatchElementSnapshot('v10-jasmine-delayed-change', { wait: 5000, interval: 250 })
+    })
+
     it('compares an element', async () => {
         await browser.url(fixture('box.html'))
 
