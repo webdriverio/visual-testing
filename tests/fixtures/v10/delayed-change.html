@@ -21,6 +21,11 @@
             old.replaceWith(box)
         }
     }, delay)
+    // The box is not in the page, it comes in its final color after a delay, like content that loads
+    window.addBoxLater = (delay) => {
+        document.getElementById('box').remove()
+        setTimeout(() => document.body.insertAdjacentHTML('afterbegin', '<div id="box" class="done"></div>'), delay)
+    }
 </script>
 </body>
 </html>

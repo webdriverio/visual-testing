@@ -431,6 +431,40 @@ describe('custom visual matcher', () => {
             expect(browser.checkElement).toHaveBeenCalledTimes(2)
         })
 
+        it('should wait for an element that is not in the page yet, within the wait time', async () => {
+            // WebdriverIO keeps an element that it did not find, without an element id
+            const element = mock<WebdriverIO.Element>({ [WDIO_KIND]: 'element', parent: browser, elementId: '' })
+            element.waitForExist.mockResolvedValue(true)
+            // An element command of WebdriverIO finds the element and sets its element id
+            element.getTagName.mockResolvedValue('div')
+            vi.mocked(browser.checkElement).mockResolvedValueOnce(result(0))
+
+            const promise = toMatchElementSnapshot(element, 'foo', 0, { wait: 1000 })
+            await vi.advanceTimersByTimeAsync(1000)
+
+            expect((await promise).pass).toBe(true)
+            expect(element.waitForExist).toHaveBeenCalledWith({ timeout: 1000 })
+            expect(element.getTagName).toHaveBeenCalledTimes(1)
+            expect(vi.mocked(element.getTagName).mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(browser.checkElement).mock.invocationCallOrder[0])
+        })
+
+        it('should fail with a clear error when the element is not in the page at the end of the wait time', async () => {
+            const element = mock<WebdriverIO.Element>({ [WDIO_KIND]: 'element', parent: browser, elementId: '' })
+            element.waitForExist.mockRejectedValue(new Error('element ("#chart") still not existing after 1000ms'))
+
+            await expect(toMatchElementSnapshot(element, 'foo', 0, { wait: 1000 })).rejects.toThrow('element ("#chart") still not existing after 1000ms')
+            expect(browser.checkElement).not.toHaveBeenCalled()
+        })
+
+        it('should not wait for an element that is not in the page without wait time', async () => {
+            const element = mock<WebdriverIO.Element>({ [WDIO_KIND]: 'element', parent: browser, elementId: '' })
+            vi.mocked(browser.checkElement).mockResolvedValueOnce(result(0))
+
+            await toMatchElementSnapshot(element, 'foo', 0, {})
+
+            expect(element.waitForExist).not.toHaveBeenCalled()
+        })
+
         it('should throw the error of a stale element without wait time', async () => {
             const element = mock<WebdriverIO.Element>({ [WDIO_KIND]: 'element', parent: browser })
             vi.mocked(browser.checkElement).mockRejectedValueOnce(new Error('stale element reference: element is not attached to the page document'))

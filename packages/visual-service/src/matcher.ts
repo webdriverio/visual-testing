@@ -180,7 +180,7 @@ function parseMatcherParams (
  * again within the wait time.
  */
 async function checkUntilExpected (
-    check: () => Promise<CheckResult>,
+    check: (remainingWait: number) => Promise<CheckResult>,
     expectedResult: number | ExpectWebdriverIO.PartialMatcher<number>,
     { wait, interval }: Required<WdioMatcherWaitOptions>,
     isNot = false,
@@ -195,7 +195,7 @@ async function checkUntilExpected (
         attempts++
         let result: CheckResult
         try {
-            result = await check()
+            result = await check(wait - (Date.now() - start))
         } catch (error) {
             if (!findAgain || !isStaleElementError(error) || Date.now() - start >= wait) {
                 throw error
@@ -252,16 +252,36 @@ function isStaleElementError (error: unknown): boolean {
 }
 
 /**
+ * The element of each instance of a multiremote element, or the element
+ */
+function getInstanceElements (element: WebdriverIO.Element): WebdriverIO.Element[] {
+    return isMultiRemoteElement(element)
+        ? element.instances.map((instanceName) => element.getInstance(instanceName))
+        : [element]
+}
+
+/**
  * Find a stale element again. The check commands use the element id of the element, so they do not find it again,
  * but an element command of WebdriverIO does, and it updates the element id of the element (also of each instance of
  * a multiremote element)
  */
 async function findElementAgain (element: WebdriverIO.Element) {
-    const elements = isMultiRemoteElement(element)
-        ? element.instances.map((instanceName) => element.getInstance(instanceName))
-        : [element]
-    for (const instanceElement of elements) {
+    for (const instanceElement of getInstanceElements(element)) {
         await instanceElement.getTagName()
+    }
+}
+
+/**
+ * Wait, at most for the rest of the wait time, for an element that WebdriverIO did not find (it has no element id),
+ * for example a chart that is not in the page yet. The check commands do not wait for it: they need the element id
+ */
+async function findMissingElement (element: WebdriverIO.Element, timeout: number) {
+    for (const instanceElement of getInstanceElements(element)) {
+        if (!instanceElement.elementId) {
+            await instanceElement.waitForExist({ timeout: Math.max(1, timeout) })
+            // An element command of WebdriverIO sets the element id of an element that it found
+            await instanceElement.getTagName()
+        }
     }
 }
 
@@ -359,7 +379,10 @@ export async function toMatchElementSnapshot (
     const { expectedResult, options, waitOptions } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
     const resolvedElement = await element
 
-    return checkUntilExpected(async () => {
+    return checkUntilExpected(async (remainingWait) => {
+        if (waitOptions.wait > 0) {
+            await findMissingElement(resolvedElement, remainingWait)
+        }
         // A multiremote element has no parent, so compare the element of each instance with the browser of that instance
         if (isMultiRemoteElement(resolvedElement)) {
             const results: Record<string, ImageCompareResult> = {}

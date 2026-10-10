@@ -21,7 +21,6 @@ v11 is the current major version (npm tag `latest`). This guide lists what chang
 | [Ignored regions](#ignored-regions) | Only if a check fails after the upgrade |
 | [OCR: tesseract.js 7](#ocr-tesseractjs-7) | No |
 | [Visual reporter](#visual-reporter) | No |
-| [New: the visual matchers can wait until the image matches](#new-the-visual-matchers-can-wait-until-the-image-matches) | No, a new option |
 | [Smaller fixes](#smaller-fixes) | No |
 
 ## WebdriverIO v10 only
@@ -105,19 +104,6 @@ No change is needed.
   `index.html` or has a query string. Before, it only worked at the root of a web server, opened as a folder (`/`).
 - The package no longer contains the 2 route type files that React Router generates for the type check of this
   repository.
-
-## New: the visual matchers can wait until the image matches
-
-A page or an element is not always in its final state when the test checks it, for example during an animation. The
-visual matchers now accept `wait` and `interval` (in milliseconds), with the same meaning as in the other WebdriverIO
-matchers. With `wait`, the matcher checks again until the image matches, or with `.not` until it does not match:
-
-```ts
-await expect($('#chart')).toMatchElementSnapshot('chart', { wait: 3000, interval: 250 })
-```
-
-`wait` is `0` by default, so without it a matcher checks once, as before. Each attempt is a full check (screenshot and
-compare), so the files of the last attempt stay.
 
 ## Smaller fixes
 
