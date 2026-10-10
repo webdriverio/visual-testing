@@ -95,13 +95,15 @@ No change is needed.
 `@wdio/visual-reporter` 0.5:
 
 - Needs Node.js 22.19 or later (before: 20).
-- The report UI is rebuilt with React Router (before: Remix 2), React 19 and Vite 8. It looks and works the
+- The report UI is rebuilt with React Router 8 (before: Remix 2), React 19 and Vite 8. It looks and works the
   same.
 - **Browser support of the report did not change:** Chrome 87+, Edge 88+, Firefox 78+, Safari 14+, the same
   browsers as Vite 5 built for. Vite 8 has a newer default target, so the reporter sets this list itself.
 - The CLI wizards use `@inquirer/prompts` 8 and `ora` 9; they work the same.
 - **The report works in any folder of a static host,** for example an AWS S3 bucket, also when the URL ends with
   `index.html` or has a query string. Before, it only worked at the root of a web server, opened as a folder (`/`).
+- The package no longer contains the 2 route type files that React Router generates for the type check of this
+  repository.
 
 ## Smaller fixes
 
@@ -118,6 +120,21 @@ You do not need to change anything for these, but you can notice them:
   knows; for other names, the viewport of the emulated device is used without a failed call first.
 - **`ignore` elements:** an element is found again only when its reference is stale, not for every check.
 - **Matcher messages:** the documentation link in the message of a failed visual matcher works again.
+- **Jasmine:** with `@wdio/jasmine-framework` 10.0.2 or later, the visual matchers are added with `expect.extend()`,
+  as with Mocha. With 10.0.0 and 10.0.1, which have no `expect.extend()` in Jasmine, they are added to Jasmine as
+  before.
+- **Android browser sessions in WebDriver BiDi:** the Appium UiAutomator2 driver does not support the BiDi commands
+  that the service uses, so every check command and visual matcher failed with an unclear error. At the start of such
+  a session, the service now logs one warning that tells you to set `'wdio:enforceWebDriverClassic': true` in the
+  capabilities. See [Upgrading to WebdriverIO v10](../README.md#upgrading-to-webdriverio-v10).
+- **`hideAfterFirstScroll`:** the elements are hidden before the `fullPageScrollTimeout` wait, not after it. On a slow
+  device or emulator, the full page image could still show them (for example a sticky header in the second part).
+  Full page baselines that showed them by mistake can change once.
+- **Mobile full page screenshots without a viewport:** when the measurement of the mobile viewport at the start of
+  the session failed (for example on a black emulator screen), a full page screenshot failed with "Negative scroll
+  position detected", or took screenshots without end when both shadow paddings were 0. It now fails at once with an
+  error that says that the viewport measurement failed. A viewport that is smaller than the shadow paddings and the
+  home bar also gets a clear error.
 - **iOS, first Safari start:** on a new simulator or device (for example in CI), iOS 26 shows a Safari tip that
   took the tap the service uses to measure the viewport. Full page screenshots of that session then failed with
   "Negative scroll position detected". The service now measures again when the tap did not reach the page, as it
