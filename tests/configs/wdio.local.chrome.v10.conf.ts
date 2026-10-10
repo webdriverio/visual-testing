@@ -20,7 +20,7 @@ export const config: WebdriverIO.Config = {
             logName: 'local-chrome-v10',
         },
     }],
-    specs: ['../specs/v10.browsingContexts.spec.ts'],
+    specs: ['../specs/v10.browsingContexts.spec.ts', '../specs/visual-reporter.spec.ts'],
     // Chrome runs headless, so no display server is needed on Linux
     displayServerEnabled: false,
     services: [[
