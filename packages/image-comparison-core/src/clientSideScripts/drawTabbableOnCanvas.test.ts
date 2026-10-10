@@ -51,8 +51,15 @@ describe('drawTabbableOnCanvas', () => {
 
     beforeEach(() => {
         document.body.innerHTML = ''
-        document.body.removeAttribute('inert')
-        document.documentElement.removeAttribute('inert')
+        for (const root of [document.documentElement, document.body]) {
+            for (const attribute of ['inert', 'tabindex', 'contenteditable']) {
+                root.removeAttribute(attribute)
+            }
+            // The own properties of `render()`
+            Reflect.deleteProperty(root, 'getClientRects')
+            Reflect.deleteProperty(root, 'getBoundingClientRect')
+            Reflect.deleteProperty(root, 'contentEditable')
+        }
 
         Object.defineProperty(window, 'innerWidth', { value: 1024, configurable: true })
         Object.defineProperty(window, 'innerHeight', { value: 768, configurable: true })
@@ -523,6 +530,45 @@ describe('drawTabbableOnCanvas', () => {
             create(details, '<button tabindex="1"></button>', 'content-1')
 
             expect(drawnOrder()).toEqual(['details', 'summary', 'content-1', 'content-0', 'document-0'])
+        })
+
+        it('should skip a slot with a negative tabindex with its assigned elements and its fallback content', () => {
+            const assignedHost = create(document.body, '<div></div>')
+            create(assignedHost, '<button></button>', 'assigned')
+            const assignedRoot = assignedHost.attachShadow({ mode: 'open' })
+            create(assignedRoot, '<button></button>', 'before')
+            create(assignedRoot, '<slot tabindex="-1"></slot>')
+            const fallbackRoot = create(document.body, '<div></div>').attachShadow({ mode: 'open' })
+            create(create(fallbackRoot, '<slot tabindex="-1"></slot>'), '<button></button>', 'fallback')
+            create(document.body, '<button></button>', 'end')
+
+            expect(drawnOrder()).toEqual(['before', 'end'])
+        })
+
+        it.each([
+            ['body', 'tabindex', '0'],
+            ['body', 'contenteditable', 'true'],
+            ['html', 'tabindex', '0'],
+        ])('should include the %s element with %s="%s" as the first tab stop', (root, attribute, value) => {
+            const element = root === 'body' ? document.body : document.documentElement
+            element.setAttribute(attribute, value)
+            if (attribute === 'contenteditable') {
+                // jsdom does not have `contentEditable`
+                Object.defineProperty(element, 'contentEditable', { value, configurable: true })
+            }
+            track(element, root)
+            create(document.body, '<button></button>', 'button')
+
+            expect(drawnOrder()).toEqual([root, 'button'])
+        })
+
+        it('should sort the body element with a positive tabindex with the other positive tabindex values', () => {
+            document.body.setAttribute('tabindex', '1')
+            track(document.body, 'body')
+            create(document.body, '<button></button>', 'button-0')
+            create(document.body, '<button tabindex="2"></button>', 'button-2')
+
+            expect(drawnOrder()).toEqual(['body', 'button-2', 'button-0'])
         })
 
         it.each(['body', 'html'])('should not include any element when the %s element is inert', (root) => {

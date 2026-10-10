@@ -140,9 +140,10 @@ You do not need to change anything for these, but you can notice them:
   Baselines made like that change once. With a device pixel ratio of 1 the image does not change.
 - **Tabbable commands follow the real tab order:** `checkTabbablePage()` and `saveTabbablePage()` now also draw the
   elements in open shadow roots (in the order of their slots), elements with `position: fixed`, SVG links with
-  `xlink:href`, the summary of a closed `details` element and a `details` element with a `tabindex`. They leave out
-  `inert` elements, elements in a disabled `fieldset`, the content of a closed `details` element, and all radio inputs
-  of a group except its tab stop. Tabbable baselines of such pages change once.
+  `xlink:href`, the summary of a closed `details` element, a `details` element with a `tabindex`, and the `html` or
+  `body` element with a `tabindex`. They leave out `inert` elements, elements in a disabled `fieldset`, the content of
+  a closed `details` element or of a slot with a negative `tabindex`, and all radio inputs of a group except its tab
+  stop. Tabbable baselines of such pages change once.
 - **iOS element screenshots of large elements:** for an element that is not fully inside the viewport, the image
   had the size of the whole element, but only the visible part had content and the rest was black (an Appium bug,
   [appium/appium#22939](https://github.com/appium/appium/issues/22939)). The image now has only the visible part of

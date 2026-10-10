@@ -110,13 +110,9 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
    * Get all tabbable elements in the order of the Tab key
    */
     function tabbable(): FocusableElement[] {
-        const body = document.body
-        // Nothing can get the focus in an inert page
-        if (!body || isInert(document.documentElement) || isInert(body)) {
-            return []
-        }
-
-        return keepOneRadioPerGroup(sortByTabOrder(getCandidates(Array.from(body.children))))
+        // Start at the html element: the html and body elements can be tab stops too (for example with a tabindex), and
+        // an inert html or body element makes the page inert
+        return keepOneRadioPerGroup(sortByTabOrder(getCandidates([document.documentElement])))
     }
 
     /**
@@ -132,9 +128,12 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
             }
 
             if (element instanceof HTMLSlotElement) {
-                // The assigned elements, or the fallback content of the slot when nothing is assigned
-                const assigned = element.assignedElements({ flatten: true })
-                candidates.push(createScope(element, assigned.length > 0 ? assigned : Array.from(element.children)))
+                // The assigned elements, or the fallback content of the slot when nothing is assigned. A slot with a
+                // negative tabindex is skipped with its content
+                if (!hasNegativeTabindexAttribute(element)) {
+                    const assigned = element.assignedElements({ flatten: true })
+                    candidates.push(createScope(element, assigned.length > 0 ? assigned : Array.from(element.children)))
+                }
                 continue
             }
 
