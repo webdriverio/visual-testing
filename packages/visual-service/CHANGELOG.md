@@ -1,5 +1,80 @@
 # @wdio/visual-service
 
+## 11.0.0
+
+### Major Changes
+
+- 104fb89: feat!: support WebdriverIO v10 only
+  
+  All changes that users can notice in v11, also the fixes in `@wdio/image-comparison-core` 3.0.0, are in the [v11 migration guide](https://github.com/webdriverio/visual-testing/blob/main/docs/v11-migration.md).
+  
+  `@wdio/visual-service` v11, `@wdio/image-comparison-core` v3 and `@wdio/ocr-service` v3 support only WebdriverIO v10. WebdriverIO v10 needs Node.js 22.19 or later.
+  
+  **What changed**
+  
+  - The `@wdio/globals`, `@wdio/logger` and `@wdio/types` dependencies are now `^10.0.0` (before: `^9.29.1 || ^10.0.0`).
+  - The code paths for WebdriverIO v9 are removed. For example, a multiremote browser or element is found only with the `isMultiRemote` flag of WebdriverIO v10, not with the `isMultiremote` flag of WebdriverIO v9.
+  - The visual service finds the browser of an element, and a multiremote element, with the kind brand of WebdriverIO v10 (`Symbol.for('wdio.kind')`). `toMatchElementSnapshot()` gives a clear error for a value that is not a WebdriverIO v10 element.
+  
+  **If you use WebdriverIO v9**
+  
+  Stay on `@wdio/visual-service@10`, `@wdio/image-comparison-core@2` and `@wdio/ocr-service@2`. They are in maintenance on the `v10` branch, and fixes are backported on request.
+- e9aa654: feat: compare images with pixelmatch 8 (OKLab/HyAB color distance)
+  
+  The comparison engine is now pixelmatch 8. It measures color differences in the OKLab color space with the HyAB distance instead of YIQ, which is closer to how people see colors: fewer false positives and fewer missed changes.
+  
+  The threshold scale did not change (`0` to `1`, where `1` is black vs white), so the `ignore*` presets keep their values. But **mismatch percentages can differ a little** from v10 for the same images. On real screenshots the number of different pixels changed by about −3 % to +3 % (for a 1-pixel shift of a full page with `ignoreAntialiasing`: 0.002 % → 0.003 %). If a check depends on an exact mismatch percentage or a tight tolerance, check it again after the upgrade.
+
+### Patch Changes
+
+- d32cca2: fix: bring a page in a background tab to the front before a check or save command (WebDriver BiDi, Chromium)
+  
+  In a WebDriver BiDi session with a Chromium-based browser (Chrome, Chromium, Edge) on Linux, a page in a background tab, for example after `browser.newWindow()` (which in WebdriverIO v10 does not switch to the new tab), caused 2 problems:
+  
+  - The page reports another window size, which changes the image file name. With `autoSaveBaseline`, the check then saved a new baseline and returned 0 without comparing.
+  - When the page had no new frame for about 300 ms, the screenshot never returned, until the `bidiResponseTimeout` (180 seconds by default). This is a Chromium bug, which also happens with the Chrome DevTools Protocol only: https://issues.chromium.org/issues/571157133
+  
+  Before each check or save command, the visual service now brings that page to the front with `browsingContext.activate`, as ChromeDriver already does for a WebDriver Classic screenshot. It does this only in BiDi sessions of Chromium-based desktop browsers, and only when the page is hidden. Firefox, Safari, mobile and WebDriver Classic sessions do not change. A failed activation only logs a warning.
+- c21dd1b: feat: warn when an Android browser session in WebDriver BiDi cannot run scripts
+  
+  WebdriverIO v10 starts a WebDriver BiDi session by default, but the Appium UiAutomator2 driver does not support the BiDi commands that the visual service uses, so every check command and visual matcher fails with an error that does not tell what to do (#1232). At the start of an Android browser session in BiDi, the service now tries one small script. If it fails, the service logs one warning: set `'wdio:enforceWebDriverClassic': true` in the capabilities. The warning stops by itself when the driver supports these commands.
+- e9c18f9: fix: declare `webdriverio` as a peer dependency
+  
+  `@wdio/visual-service` and `@wdio/ocr-service` import `webdriverio` at runtime, and the types of `@wdio/image-comparison-core` use the `webdriverio` types, but the packages did not declare it. They now have the peer dependency `webdriverio: ^10.0.0`. A WebdriverIO project always has `webdriverio` installed, so no change is needed in your project.
+- 658638b: fix: call `emulate('device')` only for a device that WebdriverIO knows
+  
+  With the `mobileEmulation.deviceName` capability of Chrome or Edge, the visual service calls `browser.emulate('device', deviceName)` only when the name is in the device list of WebdriverIO (`deviceDescriptorsSource`). For another name (Chrome knows more devices), it now logs this and sets the viewport of the device that the browser emulates, without a failed `emulate('device')` call first. The result is the same as before.
+- 925c87a: fix: add the visual matchers with `expect.extend()` also with Jasmine
+  
+  From `@wdio/jasmine-framework` 10.0.2 the Jasmine `expect` has an `extend()` (webdriverio/webdriverio#15947), so the service now adds `toMatchScreenSnapshot()`, `toMatchFullPageSnapshot()`, `toMatchElementSnapshot()` and `toMatchTabbablePageSnapshot()` with it, as with Mocha. With `@wdio/jasmine-framework` 10.0.0 and 10.0.1, which have no `extend()` (webdriverio/webdriverio#15913), the service still adds them to Jasmine itself.
+- e7f1b46: fix: link the mismatch message of the visual matchers to a page that exists
+  
+  When a visual matcher fails, its message links to the documentation. The old link (`https://webdriver.io/docs/api/visual-regression.html`) returned a 404. It now links to the visual testing FAQ (`https://webdriver.io/docs/visual-testing/faq`), which explains how to update a baseline.
+- 5557e9e: chore: declare Node.js `>=22.19.0`, the same as WebdriverIO 10
+  
+  All packages now declare `"engines": { "node": ">=22.19.0" }`, like every package of WebdriverIO 10.
+  
+  - `@wdio/image-comparison-core`, `@wdio/visual-service` and `@wdio/ocr-service` did not declare a Node.js version, but they already needed 22.19 or newer through WebdriverIO 10.
+  - `@wdio/visual-reporter` declared `>=20.0.0`. Node.js 20 is end-of-life, and the reporter CLI is used together with WebdriverIO 10, so it now also needs Node.js 22.19 or newer.
+- Updated dependencies [df78eb9]
+- Updated dependencies [e79530b]
+- Updated dependencies [893242a]
+- Updated dependencies [e9c18f9]
+- Updated dependencies [104fb89]
+- Updated dependencies [be8f022]
+- Updated dependencies [c136ea8]
+- Updated dependencies [ee3a8a9]
+- Updated dependencies [fd38751]
+- Updated dependencies [06a7ad5]
+- Updated dependencies [536ad6e]
+- Updated dependencies [5557e9e]
+- Updated dependencies [e9aa654]
+- Updated dependencies [c1db350]
+- Updated dependencies [84d2749]
+- Updated dependencies [6a52570]
+- Updated dependencies [172b1a8]
+  - @wdio/image-comparison-core@3.0.0
+
 ## 10.2.1
 
 ### Patch Changes

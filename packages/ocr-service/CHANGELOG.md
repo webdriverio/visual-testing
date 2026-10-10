@@ -1,5 +1,46 @@
 # @wdio/ocr-service
 
+## 3.0.0
+
+### Major Changes
+
+- 104fb89: feat!: support WebdriverIO v10 only
+  
+  All changes that users can notice in v11, also the fixes in `@wdio/image-comparison-core` 3.0.0, are in the [v11 migration guide](https://github.com/webdriverio/visual-testing/blob/main/docs/v11-migration.md).
+  
+  `@wdio/visual-service` v11, `@wdio/image-comparison-core` v3 and `@wdio/ocr-service` v3 support only WebdriverIO v10. WebdriverIO v10 needs Node.js 22.19 or later.
+  
+  **What changed**
+  
+  - The `@wdio/globals`, `@wdio/logger` and `@wdio/types` dependencies are now `^10.0.0` (before: `^9.29.1 || ^10.0.0`).
+  - The code paths for WebdriverIO v9 are removed. For example, a multiremote browser or element is found only with the `isMultiRemote` flag of WebdriverIO v10, not with the `isMultiremote` flag of WebdriverIO v9.
+  - The visual service finds the browser of an element, and a multiremote element, with the kind brand of WebdriverIO v10 (`Symbol.for('wdio.kind')`). `toMatchElementSnapshot()` gives a clear error for a value that is not a WebdriverIO v10 element.
+  
+  **If you use WebdriverIO v9**
+  
+  Stay on `@wdio/visual-service@10`, `@wdio/image-comparison-core@2` and `@wdio/ocr-service@2`. They are in maintenance on the `v10` branch, and fixes are backported on request.
+
+### Patch Changes
+
+- e9c18f9: fix: declare `webdriverio` as a peer dependency
+  
+  `@wdio/visual-service` and `@wdio/ocr-service` import `webdriverio` at runtime, and the types of `@wdio/image-comparison-core` use the `webdriverio` types, but the packages did not declare it. They now have the peer dependency `webdriverio: ^10.0.0`. A WebdriverIO project always has `webdriverio` installed, so no change is needed in your project.
+- 4c63e9a: chore: upgrade `@inquirer/prompts` to 8 for the CLI wizards
+  
+  `@inquirer/prompts` 8.7.3 is ESM only and needs Node.js `^20.17.0`, `^22.13.0` or `>=23.5.0`. Both packages now need Node.js 22.19 or newer (like WebdriverIO 10), so this changes nothing for users. The wizards work the same; the prompt colors now come from Node.js `styleText`.
+- 5557e9e: chore: declare Node.js `>=22.19.0`, the same as WebdriverIO 10
+  
+  All packages now declare `"engines": { "node": ">=22.19.0" }`, like every package of WebdriverIO 10.
+  
+  - `@wdio/image-comparison-core`, `@wdio/visual-service` and `@wdio/ocr-service` did not declare a Node.js version, but they already needed 22.19 or newer through WebdriverIO 10.
+  - `@wdio/visual-reporter` declared `>=20.0.0`. Node.js 20 is end-of-life, and the reporter CLI is used together with WebdriverIO 10, so it now also needs Node.js 22.19 or newer.
+- 17f3201: fix: type `clickDuration` as `number` instead of the wrapper object type `Number`
+  
+  The `clickDuration` option of `ocrClickOnText` used the type `Number`. It now uses `number`, like the other numeric options.
+- d263218: chore: upgrade `tesseract.js` from 5 to 7
+  
+  OCR with the built-in Tesseract (when no system Tesseract is installed) is about 15 % faster, and the memory leak of tesseract.js 5 (memory grew over time until a crash) is fixed. The found text and word positions are the same. Since tesseract.js 6 only the `text` output is on by default, so the service now asks for the `hocr` output, which it uses for the word positions.
+
 ## 2.3.1
 
 ### Patch Changes

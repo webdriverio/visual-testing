@@ -1,5 +1,36 @@
 # @wdio/visual-reporter
 
+## 0.5.0
+
+### Minor Changes
+
+- 5557e9e: chore: declare Node.js `>=22.19.0`, the same as WebdriverIO 10
+  
+  All packages now declare `"engines": { "node": ">=22.19.0" }`, like every package of WebdriverIO 10.
+  
+  - `@wdio/image-comparison-core`, `@wdio/visual-service` and `@wdio/ocr-service` did not declare a Node.js version, but they already needed 22.19 or newer through WebdriverIO 10.
+  - `@wdio/visual-reporter` declared `>=20.0.0`. Node.js 20 is end-of-life, and the reporter CLI is used together with WebdriverIO 10, so it now also needs Node.js 22.19 or newer.
+
+### Patch Changes
+
+- 4c63e9a: chore: upgrade `@inquirer/prompts` to 8 for the CLI wizards
+  
+  `@inquirer/prompts` 8.7.3 is ESM only and needs Node.js `^20.17.0`, `^22.13.0` or `>=23.5.0`. Both packages now need Node.js 22.19 or newer (like WebdriverIO 10), so this changes nothing for users. The wizards work the same; the prompt colors now come from Node.js `styleText`.
+- fd988ee: fix: open the report from any folder of a static host, for example an AWS S3 bucket
+  
+  The report used absolute paths (`/assets/...`, `/static/report/output.json`) and a router that only matched the root URL, so it only worked at the root of a web server, opened as a folder (`/`). On S3 (`/reports/run-1/index.html`), in a sub-folder or with `index.html` in the URL, the page showed "404 Not Found". The report now uses relative paths and works in any folder, also with a query string. Fixes #985.
+- a9d45d3: fix: do not publish the route types that React Router generates
+  
+  Since the move to React Router, the package also contained 2 generated type files (`.react-router/types/`), which only the type check of this repository uses. They are no longer published.
+- 0a82c74: chore: upgrade `ora` to 9 for the CLI spinners
+  
+  `ora` 9 needs Node.js 20 or newer, which fits the reporter's declared Node.js requirement. The spinners of the `wdio-visual-reporter` CLI work the same.
+- 6764aef: chore: rebuild the report UI with React Router 8, React 19 and Vite 8
+  
+  The report UI moves from Remix 2 (end of life) to React Router 8 in framework mode, as a static single-page app, with React 19 and Vite 8. The report looks and works the same, and the CLI did not change.
+  
+  The report still opens in the same browsers as before: Chrome 87+, Edge 88+, Firefox 78+ and Safari 14+. Vite 8 builds for newer browsers by default, so the reporter sets this list itself.
+
 ## 0.4.15
 
 ### Patch Changes

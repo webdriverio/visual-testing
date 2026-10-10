@@ -1,5 +1,103 @@
 # @wdio/image-comparison-core
 
+## 3.0.0
+
+### Major Changes
+
+- 104fb89: feat!: support WebdriverIO v10 only
+  
+  All changes that users can notice in v11, also the fixes in `@wdio/image-comparison-core` 3.0.0, are in the [v11 migration guide](https://github.com/webdriverio/visual-testing/blob/main/docs/v11-migration.md).
+  
+  `@wdio/visual-service` v11, `@wdio/image-comparison-core` v3 and `@wdio/ocr-service` v3 support only WebdriverIO v10. WebdriverIO v10 needs Node.js 22.19 or later.
+  
+  **What changed**
+  
+  - The `@wdio/globals`, `@wdio/logger` and `@wdio/types` dependencies are now `^10.0.0` (before: `^9.29.1 || ^10.0.0`).
+  - The code paths for WebdriverIO v9 are removed. For example, a multiremote browser or element is found only with the `isMultiRemote` flag of WebdriverIO v10, not with the `isMultiremote` flag of WebdriverIO v9.
+  - The visual service finds the browser of an element, and a multiremote element, with the kind brand of WebdriverIO v10 (`Symbol.for('wdio.kind')`). `toMatchElementSnapshot()` gives a clear error for a value that is not a WebdriverIO v10 element.
+  
+  **If you use WebdriverIO v9**
+  
+  Stay on `@wdio/visual-service@10`, `@wdio/image-comparison-core@2` and `@wdio/ocr-service@2`. They are in maintenance on the `v10` branch, and fixes are backported on request.
+- e9aa654: feat: compare images with pixelmatch 8 (OKLab/HyAB color distance)
+  
+  The comparison engine is now pixelmatch 8. It measures color differences in the OKLab color space with the HyAB distance instead of YIQ, which is closer to how people see colors: fewer false positives and fewer missed changes.
+  
+  The threshold scale did not change (`0` to `1`, where `1` is black vs white), so the `ignore*` presets keep their values. But **mismatch percentages can differ a little** from v10 for the same images. On real screenshots the number of different pixels changed by about −3 % to +3 % (for a 1-pixel shift of a full page with `ignoreAntialiasing`: 0.002 % → 0.003 %). If a check depends on an exact mismatch percentage or a tight tolerance, check it again after the upgrade.
+
+### Patch Changes
+
+- df78eb9: fix: clip the right area for element screenshots with `biDiOrigin: 'viewport'`
+  
+  With `biDiOrigin: 'viewport'`, an element screenshot in a WebDriver BiDi session used the position of the element on the page (`getElementRect`) as its position in the viewport. When the page was scrolled, for example by `autoElementScroll`, the screenshot either failed with "The element is not in the viewport" (an element below the first viewport) or, without an error, showed another part of the page. The clip now uses the position of the element in the viewport.
+- e79530b: fix: a clear error, and no endless screenshots, for a mobile full page screenshot without a viewport height
+  
+  The visual service measures the viewport of a mobile browser at the start of the session with a native tap. When this measurement failed (for example on a black emulator screen), the viewport height was 0, and a mobile full page screenshot then failed with "Negative scroll position detected (scrollY: -12)", or, with both shadow paddings set to 0, took screenshots without end. It now fails at once with an error that says that the viewport measurement failed. A viewport that is smaller than the shadow paddings also gets a clear error.
+- 893242a: fix: the published type declarations import other declarations with relative paths
+  
+  Five type declaration files imported other files with paths like `src/methods/images.interfaces.js`. Those paths only worked inside this repository, so in a user's project TypeScript could not resolve them, and types such as `TestContext`, `CompareData` and `ElementIgnore` became `any` (or caused `Cannot find module 'src/…'` errors without `skipLibCheck`). The imports are now relative.
+- e9c18f9: fix: declare `webdriverio` as a peer dependency
+  
+  `@wdio/visual-service` and `@wdio/ocr-service` import `webdriverio` at runtime, and the types of `@wdio/image-comparison-core` use the `webdriverio` types, but the packages did not declare it. They now have the peer dependency `webdriverio: ^10.0.0`. A WebdriverIO project always has `webdriverio` installed, so no change is needed in your project.
+- be8f022: fix: scroll back to the old position after an element screenshot, also at the top of the page
+  
+  With `autoElementScroll` (the default), `checkElement()`, `saveElement()` and `toMatchElementSnapshot()` scroll the element into view. When the page was at the top, they did not scroll back, because the position 0 was treated as "no position" (thanks to @theluckystrike for the first fix in #1271). A later viewport check then captured a scrolled page. The scroll back now works in the same way as for full page screenshots: the position is read before the page is prepared (so `removeElements` cannot change it) and restored after the page is restored, also when the screenshot fails. It is instant, also on a page with `scroll-behavior: smooth`. In Safari (macOS and iOS), the element and full page commands now wait until Safari keeps and shows the position (about 100 ms): before, a screenshot right after the command could still show the old position in Safari on macOS. Fixes #1229.
+- c136ea8: fix: scroll back to the old position after a full page screenshot
+  
+  When the full page screenshot is made by scrolling and joining viewport screenshots (WebDriver Classic, and Android and iOS mobile web), `checkFullPageScreen()`, `saveFullPageScreen()` and `toMatchFullPageSnapshot()` left the page at the bottom, and the tabbable commands left it at the top or at the bottom. A later viewport check then captured a scrolled page. The page is now scrolled back to the position that it had before the command. The position is read before the page is prepared (so `removeElements` cannot change it) and restored after the page is restored, also when the screenshot fails. The scroll back is instant, also on a page with `scroll-behavior: smooth`. On iOS, Safari can put back the old position for a moment after the page is restored, so the command waits until the page stays at the position (about 150 ms). Fixes #1231.
+- ee3a8a9: fix: hide the `hideAfterFirstScroll` elements before the scroll wait of a full page screenshot
+  
+  The elements of `hideAfterFirstScroll` were hidden after the `fullPageScrollTimeout` wait, just before the screenshot. On a slow device or emulator, the page was not drawn again in time, so the screenshot could still show them (for example a sticky header in the second part of the full page image). They are now hidden before the wait, so the page has the whole wait to be drawn again. This applies to desktop, Android and iOS full page screenshots.
+- fd38751: fix: find an ignore element again only when its reference is stale
+  
+  Before, the region of each `ignore` element was read with `browser.execute(script, element)`, and every element was first found again with `$$` (one query for each selector and scope), even when its reference was still valid. Now the region is read with the element command `element.execute(script)`. When the browser says that the reference is stale (for example after a DOM change by the `beforeScreenshot` style injection), WebdriverIO finds the element again with its full chain (parent, index of a `$$` list, browsing context) and runs the script again. This removes the extra queries, and an element is found again in the same way as for all other WebdriverIO element commands.
+- 06a7ad5: fix: no transparent (black) area in iOS element screenshots of elements larger than the viewport
+  
+  In iOS Safari, the Appium element screenshot of an element that is not fully inside the viewport has the size of the whole element, but only the visible part has pixels; the rest is transparent and shows as black (#1127, https://github.com/appium/appium/issues/22939). Until Appium fixes it, the service cuts the visible part of such an element from a screenshot, as it already does on Android. Elements that are fully inside the viewport do not change.
+- 536ad6e: fix: measure the iOS viewport again when a Safari tip takes the native tap
+  
+  To find the position of the webview, the service loads a test page with an overlay and makes a native tap in the center of the screen. On the first Safari start of a new simulator or device (for example in CI), iOS 26 shows a tip ("View Bookmarks, Share Menu, and Open Tabs"). The tap only closed that tip and did not reach the overlay. The service then used an empty viewport (0x0), and full page screenshots failed with "Negative scroll position detected". The service now checks the measurement on iOS too, as it already did on Android, and measures again (up to 3 attempts).
+- 5557e9e: chore: declare Node.js `>=22.19.0`, the same as WebdriverIO 10
+  
+  All packages now declare `"engines": { "node": ">=22.19.0" }`, like every package of WebdriverIO 10.
+  
+  - `@wdio/image-comparison-core`, `@wdio/visual-service` and `@wdio/ocr-service` did not declare a Node.js version, but they already needed 22.19 or newer through WebdriverIO 10.
+  - `@wdio/visual-reporter` declared `>=20.0.0`. Node.js 20 is end-of-life, and the reporter CLI is used together with WebdriverIO 10, so it now also needs Node.js 22.19 or newer.
+- c1db350: refactor: skip ignored regions with pixelmatch's `ignoreMask`
+  
+  Ignored regions (ignored elements and block-outs) are now skipped by pixelmatch itself instead of being painted black in both images before the comparison. The baseline, actual and diff files do not change, and the diff image still shows the ignored regions in green. The pixels next to an ignored region are now compared with their real neighbours: with `ignoreAntialiasing`, the anti-aliasing detection at the edge of an ignored region can give a slightly different count (for example 15 more pixels out of 61 208 on a real screenshot).
+  
+  A region that goes past the right edge of the image is now cut at the edge. Before, the part outside the image continued on the left side of the next pixel rows, so those pixels were also ignored by mistake, and a real difference there was not found.
+- 84d2749: fix: full page screenshots in Safari desktop on a screen with a device pixel ratio above 1
+  
+  In Safari desktop (WebDriver Classic), each part of a full page screenshot is put right after the previous one. The position of the previous part was already in device pixels and was converted again, so on a Retina screen (device pixel ratio 2) the positions doubled with each part: most parts were outside the image, and the image had black areas and repeated parts. The position is now counted in CSS pixels. With a device pixel ratio of 1 the image does not change.
+- 6a52570: fix: draw the tab stops of editable content, image maps, scroll containers and dialogs as the browsers have them
+  
+  `checkTabbablePage()`, `saveTabbablePage()` and `toMatchTabbablePageSnapshot()` now also follow the Tab key of the browser for these cases (checked with the real Tab key in Chrome, Edge, Firefox and Safari):
+  
+  - an element with `contenteditable="plaintext-only"` (and the other editing hosts) is a tab stop; a link without a `tabindex` in editable content and an editable element in editable content are not;
+  - the areas (`<area href>`) of an image map that a rendered image uses are tab stops at the place of the map, drawn at the center of their shape on the image;
+  - a scroll container is a tab stop as the browser engine has it: in Chrome and Edge (130 and newer) when no tab stop is in it, in Firefox always, in Safari never;
+  - with a modal dialog only the top modal dialog can get the focus, and the drawing is in the top layer, above the dialog. In Firefox and Safari an open dialog is a tab stop itself;
+  - a page in design mode has only the `body` as tab stop in Chrome and Edge, and no tab stop in Firefox and Safari; an editable `html` or `body` is not a tab stop in Firefox;
+  - `audio` and `video` elements with controls are tab stops also in Safari, which gives them `tabIndex` -1.
+  
+  Where browsers do not agree on other cases, the tab order of Chrome is used.
+- 172b1a8: fix: draw the real tab order in the tabbable commands, also through shadow DOM
+  
+  `checkTabbablePage()`, `saveTabbablePage()` and `toMatchTabbablePageSnapshot()` now draw the tab stops in the order of the Tab key of the browser:
+  
+  - the elements in open shadow roots, at the place of their host, and the elements in slots, in the order of the slots (#515);
+  - a positive `tabindex` in a shadow root is sorted only in that shadow root, a shadow host or slot with a negative `tabindex` is skipped with its content, and a host that delegates the focus is not a tab stop itself;
+  - the `html` and `body` elements are tab stops when they have a `tabindex` (or `body` is `contenteditable`);
+  - elements with `position: fixed` are no longer left out;
+  - SVG links (also with `xlink:href`) and SVG and MathML elements with a `tabindex` are tab stops, also in shadow roots, and not when they are hidden;
+  - a `details` element is sorted like a shadow host: its summary is a tab stop and the content of a closed `details` element is not, a `details` element is a tab stop itself when it has no summary or has a `tabindex`, and a negative `tabindex` skips its summary and content;
+  - elements in an `inert` subtree (also an `inert` `body` or `html` element) or in a disabled `fieldset` are left out;
+  - a radio group has one tab stop: the checked radio input, or else the first radio input of the group in the tab order. The group uses the form owner (also with the `form` attribute), the name, and the document or shadow root of the radio input. Where browsers do not agree, the order of Chrome is used.
+  
+  The content of closed shadow roots and of iframes can not be read from the page, so it is still not drawn.
+
 ## 2.1.2
 
 ### Patch Changes
