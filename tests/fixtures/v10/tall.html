@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tall</title>
+<style>
+    body { margin: 0; background: #fff; }
+    .target { position: relative; margin: 20px; width: 200px; height: 100px; background: #388e3c; }
+    .target::after { content: ''; position: absolute; left: 20px; top: 20px; width: 60px; height: 40px; background: #1565c0; }
+</style>
+</head>
+<body>
+<!-- #near fits in the viewport after it is scrolled into view, #far is far below the first viewport -->
+<div style="height: 500px"></div>
+<div id="near" class="target"></div>
+<div style="height: 3000px"></div>
+<div id="far" class="target"></div>
+<div style="height: 1000px"></div>
+</body>
+</html>

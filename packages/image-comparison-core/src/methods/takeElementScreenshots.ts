@@ -2,6 +2,7 @@ import logger from '@wdio/logger'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
+import getElementViewportRect from '../clientSideScripts/getElementViewportRect.js'
 import { getBase64ScreenshotSize, hasResizeDimensions, waitFor } from '../helpers/utils.js'
 import type { ElementScreenshotDataOptions, ElementScreenshotData } from './screenshots.interfaces.js'
 
@@ -60,14 +61,15 @@ async function takeBiDiElementScreenshotFromViewport(
     element: WebdriverIO.Element,
     options: ElementScreenshotDataOptions
 ): Promise<ElementScreenshotData> {
-    // Scroll element into view first so getElementRect reflects its viewport position.
+    // Scroll the element into view first, so it can be in the viewport.
     if (options.autoElementScroll) {
         await browserInstance.execute(scrollElementIntoView as any, element, options.addressBarShadowPadding)
         await waitFor(100)
     }
 
-    // getElementRect returns viewport-relative coordinates per W3C BiDi spec.
-    const rect = await browserInstance.getElementRect!(element.elementId)
+    // The clip of a `viewport` screenshot is relative to the viewport, so use the position of the element in the
+    // viewport. WebDriver `getElementRect` returns the position on the page, which is different when the page is scrolled.
+    const rect = await element.execute(getElementViewportRect)
     const elX = Math.floor(rect.x)
     const elY = Math.floor(rect.y)
     const elW = Math.floor(rect.width)
