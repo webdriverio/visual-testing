@@ -381,7 +381,7 @@ export async function determineWebFullPageIgnoreRegions(
 ): Promise<RectanglesOutput[]> {
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const { devicePixelRatio, ignoreRegionPadding: padding, fullPageCropTopPaddingCSS: cropTop = 0, scrollContainer } = options
+    const { devicePixelRatio, ignoreRegionPadding: padding, fullPageCropTopPaddingCSS: cropTop = 0, elementRegions } = options
 
     const rawDocumentBcr = (el: Element) => {
         const rect = el.getBoundingClientRect()
@@ -393,29 +393,12 @@ export async function determineWebFullPageIgnoreRegions(
         }
     }
 
-    // The position in the image of a page where a container scrolls (#125): the viewport with the container expanded.
-    // An element in the container moves with the scroll position of the container, an element below the container
-    // moves down by the content of the container that is not in the viewport
-    const rawExpandedContainerBcr = (el: Element, container: Element) => {
-        const rect = el.getBoundingClientRect()
-        const containerRect = container.getBoundingClientRect()
-        const top = Math.max(0, containerRect.top + container.clientTop)
-        const visibleHeight = Math.min(containerRect.top + container.clientTop + container.clientHeight, window.innerHeight) - top
-        const y = container.contains(el)
-            ? rect.y + container.scrollTop
-            : rect.y >= top + visibleHeight ? rect.y + container.scrollHeight - visibleHeight : rect.y
-
-        return { x: rect.x, y, width: rect.width, height: rect.height }
-    }
-
-    const regionsFromElements: RectanglesOutput[] = []
+    // With a scroll container (#125) the elements were measured at each screenshot, so use those places
+    const regionsFromElements: RectanglesOutput[] = elementRegions ? [...elementRegions] : []
     // `execute` is an element command: when the browser says that the element reference is stale, for example
     // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
-    for (const el of elements) {
-        regionsFromElements.push(scrollContainer
-            // The type arguments make WebdriverIO map `scrollContainer` to the DOM element of the script
-            ? await el.execute<RectanglesOutput, [WebdriverIO.Element]>(rawExpandedContainerBcr, scrollContainer)
-            : await el.execute(rawDocumentBcr))
+    for (const el of elementRegions ? [] : elements) {
+        regionsFromElements.push(await el.execute(rawDocumentBcr))
     }
 
     return [...regions, ...regionsFromElements]

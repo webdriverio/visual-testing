@@ -7,6 +7,7 @@ import getScrollContainerData from '../clientSideScripts/getScrollContainerData.
 import scrollContainerTo from '../clientSideScripts/scrollContainerTo.js'
 import hideScrollContainerScrollbar from '../clientSideScripts/hideScrollContainerScrollbar.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
+import getVisibleElementViewportRect from '../clientSideScripts/getVisibleElementViewportRect.js'
 
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 vi.mock('../helpers/utils.js', async () => ({
@@ -37,6 +38,8 @@ interface ContainerState {
     viewportHeight: number
     // The scroll height after each scroll, for lazy loading
     growTo?: number[]
+    // A change of the scroll position after each scroll, for content that loads above the visible rows
+    driftAfterScroll?: number[]
 }
 
 /**
@@ -44,10 +47,14 @@ interface ContainerState {
  */
 function createContainer(state: ContainerState) {
     let scrolls = 0
+    let drift = 0
     // `any`: the mock answers the different scripts of the element command `execute`
     const execute = vi.fn(async (script: unknown, ...args: unknown[]): Promise<any> => {
         if (script === getScrollContainerData) {
-            const { growTo: _growTo, ...data } = state
+            // The position changes during the wait, after the scroll
+            state.scrollTop += drift
+            drift = 0
+            const { growTo: _growTo, driftAfterScroll: _driftAfterScroll, ...data } = state
             return data
         }
         if (script === scrollContainerTo) {
@@ -56,6 +63,7 @@ function createContainer(state: ContainerState) {
             if (state.growTo?.[scrolls] !== undefined) {
                 state.scrollHeight = state.growTo[scrolls]
             }
+            drift = state.driftAfterScroll?.[scrolls] ?? 0
             scrolls++
             return state.scrollTop
         }
@@ -65,7 +73,22 @@ function createContainer(state: ContainerState) {
         throw new Error('Unknown script')
     })
 
-    return { element: mock<WebdriverIO.Element>({ execute }), execute }
+    return { element: mock<WebdriverIO.Element>({ execute }), execute, state }
+}
+
+/**
+ * An ignore element: its box in the viewport depends on the scroll position of the container
+ */
+function createIgnoreElement(boxFor: (scrollTop: number) => { x: number, y: number, width: number, height: number } | null, state: ContainerState) {
+    // `any`: the mock answers the script of the element command `execute`
+    const execute = vi.fn(async (script: unknown, ..._args: unknown[]): Promise<any> => {
+        if (script === getVisibleElementViewportRect) {
+            return boxFor(state.scrollTop)
+        }
+        throw new Error('Unknown script')
+    })
+
+    return mock<WebdriverIO.Element>({ execute })
 }
 
 function createBrowser(screenshot = screenshotOfSize(1000, 800)) {
@@ -195,6 +218,61 @@ describe('getScrollContainerFullPageScreenshotsData (#125)', () => {
         const screenshotOrder = vi.mocked(browser.takeScreenshot).mock.invocationCallOrder
         expect(hideOrder).toBeGreaterThan(screenshotOrder[0])
         expect(hideOrder).toBeLessThan(screenshotOrder[1])
+    })
+
+    it('should measure the ignore elements at each screenshot and map them into the stitched image', async () => {
+        // A header of 60px, then the container until the bottom of the 1000x800 viewport (tiles at the scroll positions 0, 740, 1260)
+        const { element, state } = createContainer({ top: 60, left: 0, width: 1000, height: 740, scrollTop: 0, scrollHeight: 2000, viewportWidth: 1000, viewportHeight: 800 })
+        const header = createIgnoreElement(() => ({ x: 0, y: 0, width: 1000, height: 60 }), state)
+        // In the content at the rows 700 to 780, so across the first 2 tiles
+        const inContent = createIgnoreElement((scrollTop) => ({ x: 10, y: 60 + 700 - scrollTop, width: 50, height: 80 }), state)
+        // A sticky title at the top of the container: it is at the top of the container in each screenshot
+        const sticky = createIgnoreElement(() => ({ x: 0, y: 60, width: 1000, height: 30 }), state)
+        const hidden = createIgnoreElement(() => null, state)
+
+        const result = await getScrollContainerFullPageScreenshotsData(createBrowser(), { ...baseOptions(element), ignoreElements: [header, inContent, sticky, hidden] })
+
+        expect(result.elementRegions).toEqual([
+            // The first screenshot: the rows 0 to 800 of the image
+            { x: 0, y: 0, width: 1000, height: 60 },
+            { x: 10, y: 760, width: 50, height: 40 },
+            { x: 0, y: 60, width: 1000, height: 30 },
+            // The second screenshot: the content rows 740 to 1480 at the image rows 800 to 1540
+            { x: 10, y: 800, width: 50, height: 40 },
+            { x: 0, y: 800, width: 1000, height: 30 },
+        ])
+    })
+
+    it('should scroll again when the scroll position changed during the wait', async () => {
+        // After the second scroll the position moves 30px down during the wait (content loaded above the visible rows)
+        const { element } = createContainer({ top: 0, left: 0, width: 1000, height: 800, scrollTop: 0, scrollHeight: 2400, viewportWidth: 1000, viewportHeight: 800, driftAfterScroll: [0, 30] })
+        const browser = createBrowser()
+
+        const result = await getScrollContainerFullPageScreenshotsData(browser, baseOptions(element))
+
+        // The screenshot at the moved position is not used: the container is scrolled again
+        expect(browser.takeScreenshot).toHaveBeenCalledTimes(4)
+        expect(result.data.map(({ canvasYPosition, imageYPosition, imageHeight }) => ({ canvasYPosition, imageYPosition, imageHeight }))).toEqual([
+            { canvasYPosition: 0, imageYPosition: 0, imageHeight: 800 },
+            { canvasYPosition: 800, imageYPosition: 0, imageHeight: 800 },
+            { canvasYPosition: 1600, imageYPosition: 0, imageHeight: 800 },
+        ])
+    })
+
+    it('should throw when the scroll position changes during each wait', async () => {
+        const { element } = createContainer({ top: 0, left: 0, width: 1000, height: 800, scrollTop: 0, scrollHeight: 2400, viewportWidth: 1000, viewportHeight: 800, driftAfterScroll: [0, 30, 30, 30, 30, 30] })
+
+        await expect(getScrollContainerFullPageScreenshotsData(createBrowser(), baseOptions(element)))
+            .rejects.toThrow('The scroll position of the scroll container changed during the wait')
+    })
+
+    it.each([
+        ['below', { top: 60, height: 900 }, 'The bottom of the scroll container is below the viewport'],
+        ['above', { top: -50, height: 700 }, 'The top of the scroll container is above the viewport'],
+    ])('should throw when the container goes %s the viewport, because rows would be missing', async (_side, geometry, message) => {
+        const { element } = createContainer({ ...geometry, left: 0, width: 1000, scrollTop: 0, scrollHeight: 2000, viewportWidth: 1000, viewportHeight: 800 })
+
+        await expect(getScrollContainerFullPageScreenshotsData(createBrowser(), baseOptions(element))).rejects.toThrow(message)
     })
 
     it('should throw when the container is not in the viewport, and still scroll it back', async () => {

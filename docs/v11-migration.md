@@ -121,6 +121,9 @@ container, and the part below it. The container is scrolled back to its start po
 this option, the screenshot scrolls and stitches, also in a WebDriver BiDi session. It works for
 `checkFullPageScreen()`, `saveFullPageScreen()` and `toMatchFullPageSnapshot()`, on desktop and on Android and iOS
 mobile web. Columns next to the container (for example a sidebar) are only in the image for the first viewport.
+The container must be fully in the viewport: a container that goes above or below the viewport gives an error,
+because its first or last rows can not be in the image. A sticky element in the container is in each screenshot of
+the container: hide it with `hideAfterFirstScroll`, or ignore it (it is then ignored at each place in the image).
 
 ## Smaller fixes
 
