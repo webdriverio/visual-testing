@@ -39,6 +39,9 @@ function androidCaps(
         'appium:platformVersion': osVersion,
         'appium:orientation': orientation,
         'appium:newCommandTimeout': 240,
+        // On the busy CI runner the UiAutomator2 server sometimes needs more than the default 30 s to start
+        // ("The instrumentation process cannot be initialized within 30000ms timeout")
+        ...(process.env.CI ? { 'appium:uiautomator2ServerLaunchTimeout': 120 * 1000 } : {}),
         ...(nativeWebScreenshot ? { 'appium:nativeWebScreenshot': true } : {}),
         'wdio:enforceWebDriverClassic': true,
         'wdio-ics:options': {
