@@ -211,16 +211,35 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     /**
    * Keep one radio input per radio group: the checked radio input. When no radio input of the group is checked, or
    * when the checked radio input is not a tab stop, the first radio input of the group in the tab order.
+   * A radio group is the radio inputs with the same name and the same form owner (also with the form attribute), or
+   * without a form owner in the same tree (document or shadow root). A form owner is always in the tree of its radio
+   * inputs, so the form owner or else the tree is the key of the groups.
    */
     function keepOneRadioPerGroup(elements: FocusableElement[]): FocusableElement[] {
-        return elements.filter((element) => {
-            if (!isGroupedRadio(element)) {
-                return true
-            }
-            const group = elements.filter((other): other is HTMLInputElement => isGroupedRadio(other) && isSameRadioGroup(element, other))
+        const groups = new Map<Node, Map<string, HTMLInputElement[]>>()
 
-            return (group.find((radio) => radio.checked) ?? group[0]) === element
-        })
+        for (const element of elements) {
+            if (isGroupedRadio(element)) {
+                const owner = element.form ?? element.getRootNode()
+                const groupsByName = groups.get(owner) ?? new Map<string, HTMLInputElement[]>()
+                groups.set(owner, groupsByName)
+                const group = groupsByName.get(element.name)
+                if (group) {
+                    group.push(element)
+                } else {
+                    groupsByName.set(element.name, [element])
+                }
+            }
+        }
+
+        const radioStops = new Set<Element>()
+        for (const groupsByName of groups.values()) {
+            for (const group of groupsByName.values()) {
+                radioStops.add(group.find((radio) => radio.checked) ?? group[0])
+            }
+        }
+
+        return elements.filter((element) => !isGroupedRadio(element) || radioStops.has(element))
     }
 
     /**
@@ -228,14 +247,6 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
    */
     function isGroupedRadio(node: Element): node is HTMLInputElement {
         return node instanceof HTMLInputElement && node.type === 'radio' && node.name !== ''
-    }
-
-    /**
-   * Are the radio inputs in the same group: the same tree (document or shadow root), the same form owner (also with
-   * the form attribute) and the same name
-   */
-    function isSameRadioGroup(radio: HTMLInputElement, other: HTMLInputElement): boolean {
-        return radio.name === other.name && radio.form === other.form && radio.getRootNode() === other.getRootNode()
     }
 
     /**
