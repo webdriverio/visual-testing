@@ -67,7 +67,7 @@
     "@tsconfig/node22": "^22.0.6",
     "@types/inquirer": "^9.0.10",
     "@types/jsdom": "~30.0.0",
-    "@types/node": "^24",
+    "@types/node": "^26",
     "@types/xml2js": "~0.4.14",
     "@vitest/coverage-v8": "^5.0.3",
     "@vitest/ui": "^5.0.3",
