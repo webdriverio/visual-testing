@@ -78,13 +78,14 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
 
     /**
    * Get the center of the shape of an area on its image. The coords are CSS pixels from the top left corner of the
-   * content of the image.
+   * border box of the image (as Chrome hit-tests them), and they follow the scale of the image (a CSS transform, also on
+   * an ancestor). A rotation is not taken into account.
    */
     function getAreaCenter(area: HTMLAreaElement, image: HTMLImageElement): ElementCoordinate {
         const rect = image.getBoundingClientRect()
-        const style = getComputedStyle(image)
-        const left = rect.left + image.clientLeft + (parseFloat(style.paddingLeft) || 0)
-        const top = rect.top + image.clientTop + (parseFloat(style.paddingTop) || 0)
+        const scaleX = image.offsetWidth > 0 ? rect.width / image.offsetWidth : 1
+        const scaleY = image.offsetHeight > 0 ? rect.height / image.offsetHeight : 1
+        const point = (x: number, y: number): ElementCoordinate => ({ x: rect.left + x * scaleX, y: rect.top + y * scaleY })
         const coords = (area.getAttribute('coords') ?? '').split(/[\s,]+/).filter((value) => value !== '').map(Number)
         const shape = (area.getAttribute('shape') ?? 'rect').toLowerCase()
         const imageCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
@@ -93,10 +94,10 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
             return imageCenter
         }
         if ((shape === 'rect' || shape === 'rectangle') && coords.length >= 4) {
-            return { x: left + (coords[0] + coords[2]) / 2, y: top + (coords[1] + coords[3]) / 2 }
+            return point((coords[0] + coords[2]) / 2, (coords[1] + coords[3]) / 2)
         }
         if ((shape === 'circle' || shape === 'circ') && coords.length >= 3) {
-            return { x: left + coords[0], y: top + coords[1] }
+            return point(coords[0], coords[1])
         }
         if ((shape === 'poly' || shape === 'polygon') && coords.length >= 6) {
             const points = Math.floor(coords.length / 2)
@@ -105,7 +106,7 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
                 sum.x += coords[i * 2]
                 sum.y += coords[i * 2 + 1]
             }
-            return { x: left + sum.x / points, y: top + sum.y / points }
+            return point(sum.x / points, sum.y / points)
         }
 
         // `default` and incomplete coords: the whole image
@@ -185,7 +186,10 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     function tabbable(): FocusableElement[] {
         // A page in design mode is edited as a whole: Chrome stops only at the body, Firefox and Safari nowhere
         if (document.designMode === 'on') {
-            return engine === 'blink' && document.body && !isHidden(document.body) ? [document.body] : []
+            const body = document.body
+            const isBodyStop = engine === 'blink' && body && !isInert(document.documentElement) && !isInert(body) && !isHidden(body)
+
+            return isBodyStop ? [body] : []
         }
 
         // Start at the top modal dialog, or at the html element: the html and body elements can be tab stops too (for
@@ -334,6 +338,10 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
             return false
         }
         if (node === document.documentElement || node === document.body || getTabindexAttribute(node) !== null) {
+            return false
+        }
+        // A disabled control (for example a textarea) can not get the focus, also when it can scroll
+        if (node.matches(':disabled')) {
             return false
         }
         if (!isScrollContainer(node) || isHidden(node)) {

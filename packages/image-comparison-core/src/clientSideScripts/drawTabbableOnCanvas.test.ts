@@ -650,6 +650,17 @@ describe('drawTabbableOnCanvas', () => {
                 expect(drawnOrder()).toEqual(['scroller', 'button', 'scroller-with-disabled-button'])
             })
 
+            it('should not include a disabled control that can scroll, but a scroll container in a disabled fieldset', () => {
+                useEngine('blink')
+                // Browsers give a textarea `overflow: auto`, jsdom does not
+                overflow(create(document.body, '<textarea disabled style="overflow-y: auto"></textarea>', 'disabled-textarea'))
+                const fieldset = create(document.body, '<fieldset disabled></fieldset>')
+                overflow(create(fieldset, '<textarea style="overflow-y: auto"></textarea>', 'textarea-in-disabled-fieldset'))
+                overflow(create(fieldset, '<div style="overflow-y: auto"></div>', 'div-in-disabled-fieldset'))
+
+                expect(drawnOrder()).toEqual(['div-in-disabled-fieldset'])
+            })
+
             it('should include every scroll container in Firefox and none in Safari', () => {
                 const build = () => {
                     document.body.innerHTML = ''
@@ -741,6 +752,45 @@ describe('drawTabbableOnCanvas', () => {
                 vi.mocked(mockCanvasContext.fillText).mockClear()
                 useEngine('gecko')
                 expect(drawnOrder()).toEqual([])
+            })
+
+            it.each(['body', 'html'])('should not include the body in design mode when the %s element is inert', (root) => {
+                useEngine('blink')
+                Object.defineProperty(document, 'designMode', { value: 'on', configurable: true })
+                track(document.body, 'body')
+                ;(root === 'body' ? document.body : document.documentElement).setAttribute('inert', '')
+
+                expect(drawnOrder()).toEqual([])
+            })
+
+            it('should draw an area from the border box of its image, also with a border and a padding', () => {
+                const map = create(document.body, '<map name="boxed"></map>')
+                create(map, '<area href="#a" shape="rect" coords="0,0,4,4">')
+                const image = create(document.body, '<img usemap="#boxed" alt="" style="padding: 5px">')
+                render(image, 1000)
+                Object.defineProperty(image, 'clientLeft', { value: 7, configurable: true })
+                Object.defineProperty(image, 'clientTop', { value: 7, configurable: true })
+                // The center of the area from the border box corner: 1000 + 2
+                rendered.set(1002, 'area')
+
+                expect(drawnOrder()).toEqual(['area'])
+            })
+
+            it('should draw an area on an image with a transform at the transformed place of its shape', () => {
+                const map = create(document.body, '<map name="scaled"></map>')
+                create(map, '<area href="#a" shape="rect" coords="10,10,30,30">')
+                const image = create(document.body, '<img usemap="#scaled" alt="">')
+                // An image of 50 x 50 CSS pixels, scaled 2 times: its box is 100 x 100
+                render(image, 1000)
+                Object.defineProperty(image, 'getBoundingClientRect', { value: () => DOMRect.fromRect({ x: 1000, y: 0, width: 100, height: 100 }), configurable: true })
+                Object.defineProperty(image, 'offsetWidth', { value: 50, configurable: true })
+                Object.defineProperty(image, 'offsetHeight', { value: 50, configurable: true })
+                // The center of the area (20, 20) on the scaled image: 1000 + 2 * 20
+                rendered.set(1040, 'area')
+
+                drawTabbableOnCanvas(defaultOptions)
+
+                expect(mockCanvasContext.fillText.mock.calls.map(([, x, y]) => [rendered.get(x) ?? `unknown x=${x}`, y])).toEqual([['area', 40]])
             })
 
             it('should not include an editable body in Firefox', () => {
