@@ -18,6 +18,10 @@ function createContainer({ scrollHeight = 2000, clientHeight = 740 } = {}) {
     Object.defineProperty(container, 'clientWidth', { value: 980, configurable: true })
     Object.defineProperty(container, 'clientTop', { value: 2, configurable: true })
     Object.defineProperty(container, 'clientLeft', { value: 3, configurable: true })
+    Object.defineProperty(container, 'offsetHeight', { value: clientHeight + 4, configurable: true })
+    Object.defineProperty(container, 'offsetWidth', { value: 1000, configurable: true })
+    container.style.borderStyle = 'solid'
+    container.style.borderWidth = '2px 3px'
     Object.defineProperty(container, 'scrollTop', {
         configurable: true,
         get: () => scrollTop,
@@ -46,6 +50,38 @@ describe('scroll container client scripts (#125)', () => {
             scrollTop: 300,
             scrollHeight: 2000,
         }))
+    })
+
+    it('getScrollContainerData should use the exact content box when the borders are at a fractional pixel', () => {
+        // At DPR 2.625 Chrome draws a 6px border as 5.714px; clientTop (6) and clientHeight (536) are rounded, the
+        // bounding box is not: the content box is 85.714px to 621.428px, not 86px to 622px
+        const container = createContainer({ clientHeight: 536 })
+        container.style.borderWidth = '5.714286px'
+        Object.defineProperty(container, 'clientTop', { value: 6, configurable: true })
+        Object.defineProperty(container, 'clientLeft', { value: 6, configurable: true })
+        Object.defineProperty(container, 'offsetHeight', { value: 547, configurable: true })
+        Object.defineProperty(container, 'offsetWidth', { value: 920, configurable: true })
+        Object.defineProperty(container, 'clientWidth', { value: 909, configurable: true })
+        vi.spyOn(container, 'getBoundingClientRect').mockReturnValue(DOMRect.fromRect({ x: 40, y: 80, width: 920, height: 547.142857 }))
+
+        const data = getScrollContainerData(container)
+
+        expect(data.top).toBeCloseTo(85.714, 3)
+        expect(data.top + data.height).toBeCloseTo(621.429, 3)
+        expect(data.left).toBeCloseTo(45.714, 3)
+        expect(data.width).toBeCloseTo(908.571, 3)
+    })
+
+    it('getScrollContainerData should leave out a scrollbar that takes space', () => {
+        // A classic scrollbar of 15px on the right and at the bottom
+        const container = createContainer({ clientHeight: 725 })
+        Object.defineProperty(container, 'offsetHeight', { value: 744, configurable: true })
+        Object.defineProperty(container, 'offsetWidth', { value: 1000, configurable: true })
+        Object.defineProperty(container, 'clientWidth', { value: 979, configurable: true })
+
+        const data = getScrollContainerData(container)
+
+        expect(data).toEqual(expect.objectContaining({ top: 62, left: 13, height: 725, width: 979 }))
     })
 
     it('scrollContainerTo should scroll and return the position where the container stops', () => {

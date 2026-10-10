@@ -42,12 +42,15 @@ interface ContainerState {
     driftAfterScroll?: number[]
     // The browser keeps the scroll position in device pixels
     pixelRatio?: number
+    // Chrome reports the scroll position as a 32-bit float, for example 596.6666870117188 for 895 device pixels at DPR 1.5
+    float32?: boolean
 }
 
 /**
  * A scroll container: it keeps its scroll position and stops at the end of its content, like a browser
  */
 function createContainer(state: ContainerState) {
+    const scrollPositions: number[] = []
     let scrolls = 0
     let drift = 0
     // `any`: the mock answers the different scripts of the element command `execute`
@@ -56,13 +59,17 @@ function createContainer(state: ContainerState) {
             // The position changes during the wait, after the scroll
             state.scrollTop += drift
             drift = 0
-            const { growTo: _growTo, driftAfterScroll: _driftAfterScroll, pixelRatio: _pixelRatio, ...data } = state
+            const { growTo: _growTo, driftAfterScroll: _driftAfterScroll, pixelRatio: _pixelRatio, float32: _float32, ...data } = state
             return data
         }
         if (script === scrollContainerTo) {
             const position = Number(args[0])
             const pixelRatio = state.pixelRatio ?? 1
             state.scrollTop = Math.round(Math.max(0, Math.min(position, state.scrollHeight - state.height)) * pixelRatio) / pixelRatio
+            if (state.float32) {
+                state.scrollTop = Math.fround(state.scrollTop)
+            }
+            scrollPositions.push(state.scrollTop)
             if (state.growTo?.[scrolls] !== undefined) {
                 state.scrollHeight = state.growTo[scrolls]
             }
@@ -76,7 +83,7 @@ function createContainer(state: ContainerState) {
         throw new Error('Unknown script')
     })
 
-    return { element: mock<WebdriverIO.Element>({ execute }), execute, state }
+    return { element: mock<WebdriverIO.Element>({ execute }), execute, scrollPositions, state }
 }
 
 /**
@@ -243,6 +250,45 @@ describe('getScrollContainerFullPageScreenshotsData (#125)', () => {
             if (index > 0) {
                 expect(tile.imageYPosition).toBeGreaterThanOrEqual(Math.floor(60.5 * dpr))
             }
+        })
+    })
+
+    it.each([1.5, 2.625])('should crop each screenshot at the canvas row minus the scroll position in device pixels (DPR %s)', async (dpr) => {
+        // A header of 60px and a viewport of 657px: the container shows 597px, so the rows of the next screenshot start at
+        // half device pixels at DPR 1.5. The canvas row and the screenshot row of the same content differ by the scroll
+        // position in device pixels, whatever the rounding of the other values
+        const { element, scrollPositions } = createContainer({ top: 60, left: 0, width: 1000, height: 597, scrollTop: 0, scrollHeight: 4545, viewportWidth: 1000, viewportHeight: 657, pixelRatio: dpr, float32: true })
+
+        const result = await getScrollContainerFullPageScreenshotsData(createBrowser(screenshotOfSize(Math.round(1000 * dpr), Math.round(657 * dpr))), { ...baseOptions(element), devicePixelRatio: dpr })
+
+        const deviceScrollPositions = scrollPositions.map((position) => Math.round(position * dpr))
+        expect(result.data[0].canvasYPosition - result.data[0].imageYPosition).toBe(0)
+        for (const tile of result.data.slice(1)) {
+            expect(deviceScrollPositions).toContain(tile.canvasYPosition - tile.imageYPosition)
+        }
+    })
+
+    it('should crop only the rows that are fully in the container when its edges are at a fractional device pixel', async () => {
+        // The content box of the container starts at 86px and ends at 621px: at DPR 2.625 that is 225.75 and 1630.125
+        // device pixels, so the device rows 225 and 1630 are a blend of the container and what is around it
+        const dpr = 2.625
+        const { element, scrollPositions } = createContainer({ top: 86, left: 46, width: 908, height: 535, scrollTop: 0, scrollHeight: 3636, viewportWidth: 1000, viewportHeight: 657, pixelRatio: dpr, float32: true })
+
+        const result = await getScrollContainerFullPageScreenshotsData(createBrowser(screenshotOfSize(Math.round(1000 * dpr), Math.round(657 * dpr))), { ...baseOptions(element), devicePixelRatio: dpr })
+
+        const deviceScrollPositions = scrollPositions.map((position) => Math.round(position * dpr))
+        const containerTiles = result.data.filter((tile) => tile.canvasXPosition !== undefined)
+        expect(containerTiles.length).toBeGreaterThan(2)
+        for (const tile of containerTiles) {
+            expect(tile.imageYPosition).toBeGreaterThanOrEqual(226)
+            expect(tile.imageYPosition + tile.imageHeight).toBeLessThanOrEqual(1630)
+            expect(deviceScrollPositions).toContain(tile.canvasYPosition - tile.imageYPosition)
+        }
+        // The first tile ends at the last full row of the container, and the tiles touch
+        expect(result.data[0].imageHeight).toBeLessThanOrEqual(1630)
+        result.data.forEach((tile, index) => {
+            const next = result.data[index + 1]
+            expect(tile.canvasYPosition + tile.imageHeight).toBe(next ? next.canvasYPosition : result.fullPageHeight)
         })
     })
 

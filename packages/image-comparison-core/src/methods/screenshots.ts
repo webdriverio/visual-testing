@@ -572,7 +572,7 @@ export async function getScrollContainerFullPageScreenshotsData(
     return {
         fullPageHeight: Math.round(fullPageHeight * devicePixelRatio),
         fullPageWidth: Math.round(viewport.width * devicePixelRatio),
-        data: tiles.map((tile) => ({ ...toDeviceTile(tile, devicePixelRatio), screenshot: captures[tile.screenshotIndex].screenshot })),
+        data: tiles.map((tile) => ({ ...toDeviceTile(tile, viewport, devicePixelRatio), screenshot: captures[tile.screenshotIndex].screenshot })),
         ...(ignoreElements.length > 0
             ? { elementRegions: getScrollContainerElementRegions(tiles, captures.map(({ elementBoxes }) => elementBoxes), viewport) }
             : {}),
@@ -648,6 +648,7 @@ async function captureScrollContainer(
                 imageXPosition: viewport.x,
                 imageYPosition: viewport.y,
                 screenshotIndex,
+                scrollTop: 0,
             })
             covered = firstHeight
         } else {
@@ -665,6 +666,7 @@ async function captureScrollContainer(
                 imageXPosition: viewport.x + Math.max(0, container.left),
                 imageYPosition: viewport.y + top + covered - scrollTop,
                 screenshotIndex,
+                scrollTop,
             })
             covered += newRows
         }
@@ -690,6 +692,8 @@ async function captureScrollContainer(
             imageXPosition: viewport.x,
             imageYPosition: viewport.y + containerBottom,
             screenshotIndex: captures.length - 1,
+            // The last screenshot shows the last rows of the container right above these rows
+            scrollTop: container.scrollTop,
         })
     }
 
@@ -719,7 +723,11 @@ const MAX_SCROLL_CONTAINER_RESTARTS = 3
 const SCROLL_POSITION_TOLERANCE = 1
 
 type ElementBox = { x: number, y: number, width: number, height: number }
-type ScrollContainerTile = Omit<FullPageScreenshotsData['data'][number], 'screenshot'> & { screenshotIndex: number }
+type ScrollContainerTile = Omit<FullPageScreenshotsData['data'][number], 'screenshot'> & {
+    screenshotIndex: number
+    /** The scroll position of the container in the screenshot of the tile */
+    scrollTop: number
+}
 type ScrollContainerCapture = {
     captures: { screenshot: string, elementBoxes: (ElementBox | null)[] }[]
     fullPageHeight: number
@@ -729,9 +737,16 @@ type ScrollContainerCapture = {
 
 /**
  * A tile in device pixels. The height and the width come from the rounded edges of the tile, so the tiles touch without
- * a gap or an overlap, also when the CSS values are fractional
+ * a gap or an overlap, also when the CSS values are fractional. The place of the crop in the screenshot comes from the
+ * place on the canvas: a canvas row and the screenshot row of the same content differ by the scroll position of the
+ * container in device pixels, which the browser keeps as a whole number (the top of the container cancels out). So
+ * the rounding of the other values can not move the crop by a row
  */
-function toDeviceTile({ screenshotIndex: _screenshotIndex, ...tile }: ScrollContainerTile, devicePixelRatio: number): Omit<FullPageScreenshotsData['data'][number], 'screenshot'> {
+function toDeviceTile(
+    { screenshotIndex: _screenshotIndex, scrollTop, ...tile }: ScrollContainerTile,
+    viewport: { x: number, y: number },
+    devicePixelRatio: number,
+): Omit<FullPageScreenshotsData['data'][number], 'screenshot'> {
     const toDevice = (value: number) => Math.round(value * devicePixelRatio)
     const { canvasXPosition, canvasYPosition, imageHeight, imageWidth } = tile
 
@@ -741,8 +756,8 @@ function toDeviceTile({ screenshotIndex: _screenshotIndex, ...tile }: ScrollCont
         canvasYPosition: toDevice(canvasYPosition),
         imageHeight: toDevice(canvasYPosition + imageHeight) - toDevice(canvasYPosition),
         imageWidth: canvasXPosition === undefined ? toDevice(imageWidth) : toDevice(canvasXPosition + imageWidth) - toDevice(canvasXPosition),
-        imageXPosition: toDevice(tile.imageXPosition),
-        imageYPosition: toDevice(tile.imageYPosition),
+        imageXPosition: toDevice(viewport.x) + toDevice(canvasXPosition ?? 0),
+        imageYPosition: toDevice(viewport.y) + toDevice(canvasYPosition) - toDevice(scrollTop),
     }
 }
 
