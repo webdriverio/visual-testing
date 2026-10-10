@@ -13,7 +13,8 @@ tmp/
 temp/
 out/
 public/
-build/static/report/
+# Demo report data that the build copies from public/static/report
+build/client/static/report/
 # React Router 8 keeps the small server build that renders index.html; the CLI only serves build/client
 build/server/
 # Route types that React Router generates for the type check
