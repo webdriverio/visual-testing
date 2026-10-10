@@ -1,16 +1,20 @@
 /**
- * Scroll to y = variable position in the screen
+ * Scroll to y = variable position in the screen.
+ * Returns the scroll position before the scroll, so the caller can scroll back to it.
  */
 /* istanbul ignore next */
-export default function scrollToPosition(yPosition: number): void {
+export default function scrollToPosition(yPosition: number): number {
     const htmlNode = document.querySelector('html')!
     const bodyNode = document.querySelector('body')!
+    const scrollingElement = document.scrollingElement || document.documentElement
+    // Only the element that scrolls has a position, the others stay at 0
+    const previousPosition = Math.max(htmlNode.scrollTop, bodyNode.scrollTop, scrollingElement.scrollTop)
 
     if (htmlNode.scrollHeight > htmlNode.clientHeight) {
         htmlNode.scrollTop = yPosition
         // Did we scroll to the right position?
         if (htmlNode.scrollTop === yPosition) {
-            return
+            return previousPosition
         }
     }
 
@@ -19,10 +23,12 @@ export default function scrollToPosition(yPosition: number): void {
         bodyNode.scrollTop = yPosition
         // Did we scroll to the right position?
         if (bodyNode.scrollTop === yPosition) {
-            return
+            return previousPosition
         }
     }
 
     // If not then try the document
-    (document.scrollingElement || document.documentElement).scrollTop = yPosition
+    scrollingElement.scrollTop = yPosition
+
+    return previousPosition
 }

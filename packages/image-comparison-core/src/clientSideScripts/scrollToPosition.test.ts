@@ -34,6 +34,25 @@ describe('scrollToPosition', () => {
         } as unknown as Document
     })
 
+    it('should return the scroll position before the scroll', () => {
+        mockHtmlNode.scrollTop = 250
+
+        expect(scrollToPosition(0)).toBe(250)
+        expect(mockHtmlNode.scrollTop).toBe(0)
+    })
+
+    it('should return the scroll position of the body when the body scrolls', () => {
+        Object.defineProperty(mockHtmlNode, 'scrollHeight', { value: 500 })
+        mockBodyNode.scrollTop = 300
+
+        expect(scrollToPosition(100)).toBe(300)
+        expect(mockBodyNode.scrollTop).toBe(100)
+    })
+
+    it('should return 0 when the page was at the top', () => {
+        expect(scrollToPosition(100)).toBe(0)
+    })
+
     it('should scroll html node when it is scrollable', () => {
         const yPosition = 100
         scrollToPosition(yPosition)
