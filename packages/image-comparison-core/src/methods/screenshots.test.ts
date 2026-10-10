@@ -61,6 +61,21 @@ describe('screenshots', () => {
 
     let logWarnSpy: ReturnType<typeof vi.spyOn>
 
+    /**
+     * The hide call of `hideAfterFirstScroll` (the third argument is `true`) runs after the first wait and before
+     * the wait of the second scroll
+     */
+    const expectHiddenBeforeTheSecondWait = (browserInstance: WebdriverIO.Browser) => {
+        const execute = vi.mocked(browserInstance.execute).mock
+        const hideCallIndex = execute.calls.findIndex((call) => call[2] === true && typeof call[1] === 'object' && call[1] !== null && 'hide' in call[1])
+        const hideOrder = execute.invocationCallOrder[hideCallIndex]
+        const waitOrders = vi.mocked(utilsModule.waitFor).mock.invocationCallOrder
+
+        expect(hideCallIndex).toBeGreaterThanOrEqual(0)
+        expect(hideOrder).toBeGreaterThan(waitOrders[0])
+        expect(hideOrder).toBeLessThan(waitOrders[1])
+    }
+
     describe('getMobileFullPageNativeWebScreenshotsData', () => {
         const createMobileOptions = (overrides: Partial<FullPageScreenshotNativeMobileOptions> = {}): FullPageScreenshotNativeMobileOptions => ({
             addressBarShadowPadding: 10,
@@ -198,6 +213,9 @@ describe('screenshots', () => {
             const result = await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options)
 
             expect(result).toMatchSnapshot()
+            // The elements are hidden before the wait of the second scroll, so a slow device has the whole wait
+            // to draw the page again without them before the screenshot
+            expectHiddenBeforeTheSecondWait(mockBrowserInstance)
 
             const executeCalls = vi.mocked(mockBrowserInstance.execute).mock.calls
             const hideElementsCalls = executeCalls.filter(call =>
@@ -383,6 +401,9 @@ describe('screenshots', () => {
             const result = await getAndroidChromeDriverFullPageScreenshotsData(mockBrowserInstance, options)
 
             expect(result).toMatchSnapshot()
+            // The elements are hidden before the wait of the second scroll, so a slow device has the whole wait
+            // to draw the page again without them before the screenshot
+            expectHiddenBeforeTheSecondWait(mockBrowserInstance)
             expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
                 expect.any(Function),
                 { hide: [mockElements], remove: [] },
@@ -551,6 +572,9 @@ describe('screenshots', () => {
             const result = await getDesktopFullPageScreenshotsData(mockBrowserInstance, options)
 
             expect(result).toMatchSnapshot()
+            // The elements are hidden before the wait of the second scroll, so a slow device has the whole wait
+            // to draw the page again without them before the screenshot
+            expectHiddenBeforeTheSecondWait(mockBrowserInstance)
             expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
                 expect.any(Function),
                 { hide: [mockElements], remove: [] },
