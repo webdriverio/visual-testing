@@ -469,3 +469,25 @@ export async function activateHiddenBrowsingContext(browserInstance: WebdriverIO
         log.warn(`Could not bring the page in a background tab to the front, the screenshot can fail: ${error}`)
     }
 }
+
+/**
+ * The Appium UiAutomator2 driver does not support the WebDriver BiDi commands that WebdriverIO and the visual
+ * service use, so in a BiDi session (the WebdriverIO v10 default) every check command fails with an error that
+ * does not tell the workaround (#1232). Tell it once, at the start of the session.
+ * A test call instead of a capability check: the warning stops by itself when Appium supports these commands.
+ */
+export async function warnIfBiDiScriptsFailOnAndroid(browserInstance: WebdriverIO.Browser): Promise<void> {
+    if (!browserInstance.isAndroid || !browserInstance.isBidi || !browserInstance.capabilities.browserName) {
+        return
+    }
+
+    try {
+        await browserInstance.execute(() => true)
+    } catch (error) {
+        log.warn(
+            'This Android browser session uses WebDriver BiDi, but the driver does not run its scripts, so the '
+            + 'visual commands and matchers will fail. Set `\'wdio:enforceWebDriverClassic\': true` in the '
+            + `capabilities. See https://github.com/webdriverio/visual-testing/issues/1232. Error: ${error}`
+        )
+    }
+}
