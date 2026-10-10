@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Delayed change</title>
+<style>
+    body { margin: 0; background: #fff; }
+    #box { margin: 20px; width: 200px; height: 100px; background: #388e3c; }
+    #box.done { background: #1565c0; }
+</style>
+</head>
+<body>
+<!-- The box gets its final color 1.5 s after the page loads, for example after an animation -->
+<div id="box"></div>
+<script>
+    setTimeout(() => document.getElementById('box').classList.add('done'), 1500)
+</script>
+</body>
+</html>
