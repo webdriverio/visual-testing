@@ -74,6 +74,25 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         }
     })
 
+    it('draws the tab order through an open shadow root (#515)', async () => {
+        // creates the baseline with the 4 buttons in the light DOM
+        await browser.url(fixture('tabbable-light.html'))
+        await browser.checkTabbablePage('v10-tabbable-shadow')
+
+        // The same page with 2 of the buttons in a shadow root must give the same tab order (circles and lines)
+        await browser.url(fixture('tabbable-shadow.html'))
+        expect(await browser.checkTabbablePage('v10-tabbable-shadow')).toBe(0)
+    })
+
+    it('draws the tab stops of radio groups, SVG elements and details elements as the browser has them', async () => {
+        // The reference page has an element with tabindex="0" at the place of each expected tab stop
+        await browser.url(fixture('tabbable-cases-reference.html'))
+        await browser.checkTabbablePage('v10-tabbable-cases')
+
+        await browser.url(fixture('tabbable-cases.html'))
+        expect(await browser.checkTabbablePage('v10-tabbable-cases')).toBe(0)
+    })
+
     // Known gap, not supported yet: the element rect comes from WebDriver Classic `getElementRect`, which cannot
     // find an element in a frame (`no such element`), and `browsingContext.captureScreenshot` only accepts a
     // top-level context. A fix must add the offset of the iframe to the rect of the element in the frame.

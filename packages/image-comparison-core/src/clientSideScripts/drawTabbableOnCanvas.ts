@@ -92,19 +92,187 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     }
 
     /**
-   * Below code is coming from https://github.com/davidtheclark/tabbable
-   * and is modified a bit to work inside the browser.
-   * The original module couldn't be used for injection and didn't support TypeScript
+   * Below code is based on https://github.com/davidtheclark/tabbable (version 6), and is modified to work inside the
+   * browser: the original module can not be injected.
+   * It follows the sequential focus navigation of the browser: open shadow roots and slots are own scopes, which are
+   * sorted at the place of their host or slot (#515). The content of closed shadow roots and of iframes can not be
+   * read from the page, so it is not included. Where browsers do not agree, it follows Chrome.
    */
+    type FocusableElement = HTMLElement | SVGElement | MathMLElement
+    interface TabbableScope {
+        // The tab index of the host, details element or slot of the scope: the scope is sorted at its place
+        tabIndex: number
+        candidates: TabbableCandidate[]
+    }
+    type TabbableCandidate = FocusableElement | TabbableScope
 
     /**
-   * Get all tabbable elements based on tabindex and then regular dom order
+   * Get all tabbable elements in the order of the Tab key
    */
-    function tabbable(): HTMLElement[] {
-        const regularTabbables = []
-        const orderedTabbables = []
+    function tabbable(): FocusableElement[] {
+        // Start at the html element: the html and body elements can be tab stops too (for example with a tabindex), and
+        // an inert html or body element makes the page inert
+        return keepOneRadioPerGroup(sortByTabOrder(getCandidates([document.documentElement])))
+    }
+
+    /**
+   * Get the tabbable elements and the scopes (open shadow roots, details elements and slots) in tree order
+   */
+    function getCandidates(elements: Element[]): TabbableCandidate[] {
+        const candidates: TabbableCandidate[] = []
+
+        for (const element of elements) {
+            // An inert element and its subtree can not be focused
+            if (isInert(element)) {
+                continue
+            }
+
+            if (element instanceof HTMLSlotElement) {
+                // The assigned elements, or the fallback content of the slot when nothing is assigned. A slot with a
+                // negative tabindex is skipped with its content
+                if (!hasNegativeTabindexAttribute(element)) {
+                    const assigned = element.assignedElements({ flatten: true })
+                    candidates.push(createScope(element, assigned.length > 0 ? assigned : Array.from(element.children)))
+                }
+                continue
+            }
+
+            if (isFocusableKind(element) && isTabbable(element)) {
+                candidates.push(element)
+            }
+
+            const shadowRoot = element.shadowRoot
+            if (shadowRoot) {
+                // A shadow host with a negative tabindex is skipped with its shadow tree
+                if (!hasNegativeTabindexAttribute(element)) {
+                    candidates.push(createScope(element, Array.from(shadowRoot.children)))
+                }
+            } else if (element instanceof HTMLDetailsElement) {
+                // Browsers render a details element like a shadow host with a slot for its summary and a slot for its
+                // other content, which is only rendered when the details element is open
+                if (!hasNegativeTabindexAttribute(element)) {
+                    const summary = getSummary(element)
+                    const content = element.open ? Array.from(element.children).filter((child) => child !== summary) : []
+                    candidates.push({
+                        tabIndex: getScopeTabindex(element),
+                        candidates: [createScope(null, summary ? [summary] : []), createScope(null, content)],
+                    })
+                }
+            } else {
+                candidates.push(...getCandidates(Array.from(element.children)))
+            }
+        }
+
+        return candidates
+    }
+
+    /**
+   * Create the scope of a host, details element or slot (sorted with its tab index), or a scope without its own
+   * element (sorted like tabindex 0)
+   */
+    function createScope(scopeParent: Element | null, elements: Element[]): TabbableScope {
+        return { tabIndex: scopeParent ? getScopeTabindex(scopeParent) : 0, candidates: getCandidates(elements) }
+    }
+
+    /**
+   * Get the tab index that a scope is sorted with
+   */
+    function getScopeTabindex(scopeParent: Element): number {
+        return isFocusableKind(scopeParent) ? Math.max(getTabindex(scopeParent), 0) : 0
+    }
+
+    /**
+   * Sort the candidates of one scope: positive tabindex first (in tree order for the same value), then the others in
+   * tree order. A scope is sorted at the place of its host, details element or slot.
+   */
+    function sortByTabOrder(candidates: TabbableCandidate[]): FocusableElement[] {
+        const regular: FocusableElement[] = []
+        const ordered: { documentOrder: number, tabIndex: number, content: FocusableElement[] }[] = []
+
+        candidates.forEach((candidate, documentOrder) => {
+            const isElement = candidate instanceof Element
+            const content = isElement ? [candidate] : sortByTabOrder(candidate.candidates)
+            const tabIndex = isElement ? Math.max(getTabindex(candidate), 0) : candidate.tabIndex
+
+            if (tabIndex === 0) {
+                regular.push(...content)
+            } else {
+                ordered.push({ documentOrder, tabIndex, content })
+            }
+        })
+
+        return ordered
+            .sort((a, b) => a.tabIndex === b.tabIndex ? a.documentOrder - b.documentOrder : a.tabIndex - b.tabIndex)
+            .flatMap(({ content }) => content)
+            .concat(regular)
+    }
+
+    /**
+   * Keep one radio input per radio group: the checked radio input. When no radio input of the group is checked, or
+   * when the checked radio input is not a tab stop, the first radio input of the group in the tab order.
+   * A radio group is the radio inputs with the same name and the same form owner (also with the form attribute), or
+   * without a form owner in the same tree (document or shadow root). A form owner is always in the tree of its radio
+   * inputs, so the form owner or else the tree is the key of the groups.
+   */
+    function keepOneRadioPerGroup(elements: FocusableElement[]): FocusableElement[] {
+        const groups = new Map<Node, Map<string, HTMLInputElement[]>>()
+
+        for (const element of elements) {
+            if (isGroupedRadio(element)) {
+                const owner = element.form ?? element.getRootNode()
+                const groupsByName = groups.get(owner) ?? new Map<string, HTMLInputElement[]>()
+                groups.set(owner, groupsByName)
+                const group = groupsByName.get(element.name)
+                if (group) {
+                    group.push(element)
+                } else {
+                    groupsByName.set(element.name, [element])
+                }
+            }
+        }
+
+        const radioStops = new Set<Element>()
+        for (const groupsByName of groups.values()) {
+            for (const group of groupsByName.values()) {
+                radioStops.add(group.find((radio) => radio.checked) ?? group[0])
+            }
+        }
+
+        return elements.filter((element) => !isGroupedRadio(element) || radioStops.has(element))
+    }
+
+    /**
+   * Is the element a radio input with a name, so in a radio group
+   */
+    function isGroupedRadio(node: Element): node is HTMLInputElement {
+        return node instanceof HTMLInputElement && node.type === 'radio' && node.name !== ''
+    }
+
+    /**
+   * Is the element of a kind that can get the focus: HTML, SVG and MathML elements
+   */
+    function isFocusableKind(node: Element): node is FocusableElement {
+        return node instanceof HTMLElement
+            || node instanceof SVGElement
+            || (typeof MathMLElement === 'function' && node instanceof MathMLElement)
+    }
+
+    /**
+   * Is the element a tab stop
+   */
+    function isTabbable(node: FocusableElement): boolean {
+        return isFocusableCandidate(node)
+            && getTabindex(node) >= 0
+            // A shadow host that delegates the focus is not a tab stop, the elements in its shadow tree are
+            && !node.shadowRoot?.delegatesFocus
+    }
+
+    /**
+   * Can the element get the focus: a focusable kind of element that is not disabled and is rendered
+   */
+    function isFocusableCandidate(node: FocusableElement): boolean {
         const candidateSelectors = [
-            'input',
+            'input:not([type="hidden"])',
             'select',
             'textarea',
             'a[href]',
@@ -113,65 +281,38 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
             'audio[controls]',
             'video[controls]',
             '[contenteditable]:not([contenteditable="false"])',
+            'details > summary:first-of-type',
+            'details',
         ].join(',')
-        const candidates: NodeListOf<HTMLElement> = document.querySelectorAll(candidateSelectors)
 
-        for (let i = 0; i < candidates.length; i++) {
-            const candidate = candidates[i]
-
-            if (!isNodeMatchingSelectorTabbable(candidate)) {
-                continue
-            }
-
-            const candidateTabindex = getTabindex(candidate)
-
-            if (candidateTabindex === 0) {
-                regularTabbables.push(candidate)
-            } else {
-                orderedTabbables.push({
-                    documentOrder: i,
-                    tabIndex: candidateTabindex,
-                    node: candidate,
-                })
-            }
-        }
-
-        return Array.prototype.slice.call(
-            orderedTabbables
-                .sort(<any>sortOrderedTabbables)
-                .map((a) => a.node)
-                .concat(regularTabbables),
-        )
+        return (node.matches(candidateSelectors) || isSvgLink(node))
+            && !node.matches(':disabled')
+            // A details element with a summary is reached through its summary, unless it has its own tabindex
+            && !(node instanceof HTMLDetailsElement && getSummary(node) && getTabindexAttribute(node) === null)
+            && !isHidden(node)
     }
 
     /**
-   * Is the node tabbable
+   * Is the element an SVG link, also with the old `xlink:href` attribute
    */
-    function isNodeMatchingSelectorTabbable(node: HTMLElement): boolean {
-        return !(!isNodeMatchingSelectorFocusable(node) || isNonTabbableRadio(node) || getTabindex(node) < 0)
-    }
-
-    /**
-   * Check if the node has a focused state
-   */
-    function isNodeMatchingSelectorFocusable(node: HTMLElement): boolean {
-        return !(node.hasAttribute('disabled') || node.getAttribute('disabled') || isHiddenInput(node) || isHidden(node))
+    function isSvgLink(node: FocusableElement): boolean {
+        return node instanceof SVGElement
+            && node.localName === 'a'
+            && (node.hasAttribute('href') || node.hasAttributeNS('http://www.w3.org/1999/xlink', 'href'))
     }
 
     /**
    * Get the tab index of the node
    */
-    function getTabindex(node: HTMLElement): number {
-        const tabindexAttr = parseInt(node.getAttribute('tabindex')!, 10)
+    function getTabindex(node: FocusableElement): number {
+        const tabindexAttr = getTabindexAttribute(node)
 
-        if (!isNaN(tabindexAttr)) {
+        if (tabindexAttr !== null) {
             return tabindexAttr
         }
-        // Browsers do not return `tabIndex` correctly for contentEditable nodes;
+        // Browsers do not return `tabIndex` correctly for contentEditable nodes and details elements,
         // so if they don't have a tabindex attribute specifically set, assume it's 0.
-        // TODO: Lines 173-174 are currently untestable with the current setup
-        // The radio input with no name case is hard to test through the public API
-        if (isContentEditable(node)) {
+        if ((node instanceof HTMLElement && node.contentEditable === 'true') || node instanceof HTMLDetailsElement) {
             return 0
         }
 
@@ -179,87 +320,48 @@ export default function drawTabbableOnCanvas(drawOptions: TabbableOptions) {
     }
 
     /**
-   * Return ordered tabbable nodes
+   * Get the value of a valid tabindex attribute, or null
    */
-    function sortOrderedTabbables(nodeA: HTMLElement, nodeB: HTMLElement): number {
-        // TODO: Lines 187-191 are currently untestable with the current setup
-        // The findHighestNode function is hard to test through the public API
-        return nodeA.tabIndex === nodeB.tabIndex
-            ? // This is so bad :(, fix this!
-            (<any>nodeA).documentOrder - (<any>nodeB).documentOrder
-            : nodeA.tabIndex - nodeB.tabIndex
+    function getTabindexAttribute(node: Element): number | null {
+        const tabindexAttr = parseInt(node.getAttribute('tabindex') ?? '', 10)
+
+        return isNaN(tabindexAttr) ? null : tabindexAttr
     }
 
     /**
-   * Is the content editable
+   * Has the element a negative tabindex attribute
    */
-    function isContentEditable(node: HTMLElement): boolean {
-        return node.contentEditable === 'true'
+    function hasNegativeTabindexAttribute(node: Element): boolean {
+        const tabindexAttr = getTabindexAttribute(node)
+
+        return tabindexAttr !== null && tabindexAttr < 0
     }
 
     /**
-   * Is the node an input
+   * Is the element inert: the element and its subtree can not get the focus, so the subtree is skipped
    */
-    function isInput(node: HTMLElement): boolean {
-        return node.tagName === 'INPUT'
+    function isInert(node: Element): boolean {
+        return node.hasAttribute('inert')
     }
 
     /**
-   * Is the input hidden
+   * Get the summary of the details element: its first summary child
    */
-    function isHiddenInput(node: HTMLElement): boolean {
-        return isInput(node) && (<HTMLInputElement>node).type === 'hidden'
+    function getSummary(node: HTMLDetailsElement): Element | undefined {
+        return Array.from(node.children).find((child) => child.tagName === 'SUMMARY')
     }
 
     /**
-   * Is the node a radio input
+   * Is the node hidden: not rendered (also in a hidden ancestor or in a `content-visibility: hidden` subtree, like the
+   * content of a closed details element), or `visibility: hidden`.
+   * Not `offsetParent`, which is also `null` for elements with `position: fixed`
    */
-    function isRadio(node: HTMLElement): boolean {
-        return isInput(node) && (<HTMLInputElement>node).type === 'radio'
-    }
-
-    /**
-   * Is the node a radio input and can it be tabbed
-   */
-    function isNonTabbableRadio(node: HTMLElement): boolean {
-        return isRadio(node) && !isTabbableRadio(<HTMLInputElement>node)
-    }
-
-    /**
-   * Get the checked radio input
-   */
-    // @ts-ignore
-    function getCheckedRadio(nodes: HTMLInputElement[]) {
-        for (let i = 0; i < nodes.length; i++) {
-            if (nodes[i].checked) {
-                return nodes[i]
-            }
+    function isHidden(node: Element): boolean {
+        if (typeof node.checkVisibility === 'function') {
+            return !node.checkVisibility({ visibilityProperty: true, checkVisibilityCSS: true })
         }
-    }
 
-    /**
-   * Is the radio input tabbable
-   */
-    function isTabbableRadio(node: HTMLInputElement): boolean {
-        if (!node.name) {
-            return true
-        }
-        // This won't account for the edge case where you have radio groups with the same
-        // in separate forms on the same page.
-        // This is bad :(, but don't know how to fix this typing
-        const radioSet = (<any>node.ownerDocument).querySelectorAll(`input[type="radio"][name="${node.name}"]`)
-        const checked = getCheckedRadio(radioSet)
-
-        return !checked || checked === node
-    }
-
-    /**
-   * Is the node hidden
-   */
-    function isHidden(node: HTMLElement): boolean {
-        // offsetParent being null will allow detecting cases where an element is invisible or inside an invisible element,
-        // as long as the element does not use position: fixed. For them, their visibility has to be checked directly as well.
-        return node.offsetParent === null || getComputedStyle(node).visibility === 'hidden'
+        return node.getClientRects().length === 0 || getComputedStyle(node).visibility === 'hidden'
     }
 
     /**

@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import drawTabbableOnCanvas from './drawTabbableOnCanvas.js'
 import type { TabbableOptions } from '../commands/tabbable.interfaces.js'
 
@@ -39,8 +40,26 @@ describe('drawTabbableOnCanvas', () => {
         },
     }
 
+    /**
+     * jsdom does no layout, so mark the element as rendered (one client rect), at `left` in the viewport
+     */
+    function render(element: Element, left = 0) {
+        // Own properties: a spy on the inherited method would change it for all elements
+        Object.defineProperty(element, 'getClientRects', { value: vi.fn().mockReturnValue(mock<DOMRectList>({ length: 1 })), configurable: true })
+        Object.defineProperty(element, 'getBoundingClientRect', { value: vi.fn().mockReturnValue(DOMRect.fromRect({ x: left, y: 0, width: 10, height: 10 })), configurable: true, writable: true })
+    }
+
     beforeEach(() => {
         document.body.innerHTML = ''
+        for (const root of [document.documentElement, document.body]) {
+            for (const attribute of ['inert', 'tabindex', 'contenteditable']) {
+                root.removeAttribute(attribute)
+            }
+            // The own properties of `render()`
+            Reflect.deleteProperty(root, 'getClientRects')
+            Reflect.deleteProperty(root, 'getBoundingClientRect')
+            Reflect.deleteProperty(root, 'contentEditable')
+        }
 
         Object.defineProperty(window, 'innerWidth', { value: 1024, configurable: true })
         Object.defineProperty(window, 'innerHeight', { value: 768, configurable: true })
@@ -90,8 +109,8 @@ describe('drawTabbableOnCanvas', () => {
         }
         Element.prototype.getBoundingClientRect = vi.fn().mockReturnValue(mockRect)
 
-        Object.defineProperty(button, 'offsetParent', { value: document.body, configurable: true })
-        Object.defineProperty(input, 'offsetParent', { value: document.body, configurable: true })
+        render(button)
+        render(input)
 
         const beginPathSpy = vi.spyOn(mockCanvasContext, 'beginPath')
         const globalCompositeOperationSpy = vi.spyOn(mockCanvasContext, 'globalCompositeOperation', 'set')
@@ -135,6 +154,7 @@ describe('drawTabbableOnCanvas', () => {
         const button = document.createElement('button')
         button.style.visibility = 'hidden'
         document.body.appendChild(button)
+        render(button)
 
         drawTabbableOnCanvas(defaultOptions)
 
@@ -145,6 +165,7 @@ describe('drawTabbableOnCanvas', () => {
         const button = document.createElement('button')
         button.disabled = true
         document.body.appendChild(button)
+        render(button)
 
         drawTabbableOnCanvas(defaultOptions)
 
@@ -155,6 +176,7 @@ describe('drawTabbableOnCanvas', () => {
         const div = document.createElement('div')
         div.tabIndex = -1
         document.body.appendChild(div)
+        render(div)
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
     })
@@ -163,6 +185,7 @@ describe('drawTabbableOnCanvas', () => {
         const input = document.createElement('input')
         input.disabled = true
         document.body.appendChild(input)
+        render(input)
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
     })
@@ -171,6 +194,7 @@ describe('drawTabbableOnCanvas', () => {
         const input = document.createElement('input')
         input.style.visibility = 'hidden'
         document.body.appendChild(input)
+        render(input)
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
     })
@@ -186,8 +210,8 @@ describe('drawTabbableOnCanvas', () => {
         radio2.name = 'group1'
         radio2.checked = true
         document.body.appendChild(radio2)
-        Object.defineProperty(radio1, 'offsetParent', { value: document.body, configurable: true })
-        Object.defineProperty(radio2, 'offsetParent', { value: document.body, configurable: true })
+        render(radio1)
+        render(radio2)
         radio2.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
 
         drawTabbableOnCanvas(defaultOptions)
@@ -202,8 +226,8 @@ describe('drawTabbableOnCanvas', () => {
         const btn2 = document.createElement('button')
         btn2.tabIndex = 1
         document.body.appendChild(btn2)
-        Object.defineProperty(btn1, 'offsetParent', { value: document.body, configurable: true })
-        Object.defineProperty(btn2, 'offsetParent', { value: document.body, configurable: true })
+        render(btn1)
+        render(btn2)
         btn1.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         btn2.getBoundingClientRect = vi.fn().mockReturnValue({ left: 20, top: 20, width: 10, height: 10, right: 30, bottom: 30 })
         drawTabbableOnCanvas(defaultOptions)
@@ -214,7 +238,7 @@ describe('drawTabbableOnCanvas', () => {
         const radio = document.createElement('input')
         radio.type = 'radio'
         document.body.appendChild(radio)
-        Object.defineProperty(radio, 'offsetParent', { value: document.body, configurable: true })
+        render(radio)
         radio.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).toHaveBeenCalled()
@@ -225,7 +249,7 @@ describe('drawTabbableOnCanvas', () => {
         div.contentEditable = 'true'
         div.tabIndex = 0
         document.body.appendChild(div)
-        Object.defineProperty(div, 'offsetParent', { value: document.body, configurable: true })
+        render(div)
         div.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).toHaveBeenCalled()
@@ -239,7 +263,7 @@ describe('drawTabbableOnCanvas', () => {
 
         const btn = document.createElement('button')
         btn.tabIndex = 0
-        Object.defineProperty(btn, 'offsetParent', { value: document.body, configurable: true })
+        render(btn)
         btn.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         document.body.appendChild(btn)
 
@@ -273,13 +297,13 @@ describe('drawTabbableOnCanvas', () => {
 
         const btn1 = document.createElement('button')
         btn1.tabIndex = 0
-        Object.defineProperty(btn1, 'offsetParent', { value: document.body, configurable: true })
+        render(btn1)
         btn1.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         document.body.appendChild(btn1)
 
         const btn2 = document.createElement('button')
         btn2.tabIndex = 0
-        Object.defineProperty(btn2, 'offsetParent', { value: document.body, configurable: true })
+        render(btn2)
         btn2.getBoundingClientRect = vi.fn().mockReturnValue({ left: 20, top: 20, width: 10, height: 10, right: 30, bottom: 30 })
         document.body.appendChild(btn2)
 
@@ -295,7 +319,7 @@ describe('drawTabbableOnCanvas', () => {
 
         const btn = document.createElement('button')
         btn.tabIndex = 0
-        Object.defineProperty(btn, 'offsetParent', { value: document.body, configurable: true })
+        render(btn)
         btn.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         document.body.appendChild(btn)
 
@@ -303,5 +327,295 @@ describe('drawTabbableOnCanvas', () => {
         expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
 
         HTMLCanvasElement.prototype.getContext = originalGetContext
+    })
+
+    describe('tab order (#515)', () => {
+        let rendered: Map<number, string>
+
+        beforeEach(() => {
+            rendered = new Map()
+        })
+
+        /**
+         * Create an element, mark it as rendered at its own x position, and remember its name for that position
+         */
+        function create(parent: Element | ShadowRoot, html: string, name?: string): Element {
+            const template = document.createElement('template')
+            template.innerHTML = html
+            const element = template.content.firstElementChild
+            if (!element) {
+                throw new Error(`No element in ${html}`)
+            }
+            parent.appendChild(element)
+            if (name) {
+                track(element, name)
+            }
+            return element
+        }
+
+        /**
+         * Mark an element as rendered at its own x position, and remember its name for that position
+         */
+        function track(element: Element | null, name: string): void {
+            if (!element) {
+                throw new Error(`No element for ${name}`)
+            }
+            const left = (rendered.size + 1) * 100
+            rendered.set(left + 5, name)
+            render(element, left)
+        }
+
+        /**
+         * The names of the drawn elements, in the order of their numbers (the center of an element is at left + 5)
+         */
+        function drawnOrder(): string[] {
+            drawTabbableOnCanvas(defaultOptions)
+
+            return mockCanvasContext.fillText.mock.calls.map(([, x]) => rendered.get(x) ?? `unknown x=${x}`)
+        }
+
+        it('should include the elements of an open shadow root at the place of its host', () => {
+            create(document.body, '<button></button>', 'start')
+            const host = create(document.body, '<div></div>')
+            const root = host.attachShadow({ mode: 'open' })
+            create(root, '<button></button>', 'shadow-a')
+            create(root, '<button></button>', 'shadow-b')
+            create(document.body, '<button></button>', 'end')
+
+            expect(drawnOrder()).toEqual(['start', 'shadow-a', 'shadow-b', 'end'])
+        })
+
+        it('should include the elements of nested shadow roots', () => {
+            const host = create(document.body, '<div></div>')
+            const root = host.attachShadow({ mode: 'open' })
+            create(root, '<button></button>', 'outer-a')
+            const inner = create(root, '<div></div>').attachShadow({ mode: 'open' })
+            create(inner, '<button></button>', 'inner')
+            create(root, '<button></button>', 'outer-b')
+
+            expect(drawnOrder()).toEqual(['outer-a', 'inner', 'outer-b'])
+        })
+
+        it('should follow the order of the slots, not the order of the light DOM', () => {
+            const host = create(document.body, '<div></div>')
+            create(host, '<button></button>', 'slotted-default')
+            create(host, '<button slot="second"></button>', 'slotted-second')
+            const root = host.attachShadow({ mode: 'open' })
+            create(root, '<button></button>', 'before')
+            create(root, '<slot name="second"></slot>')
+            create(root, '<slot></slot>')
+            create(root, '<button></button>', 'after')
+
+            expect(drawnOrder()).toEqual(['before', 'slotted-second', 'slotted-default', 'after'])
+        })
+
+        it('should sort a positive tabindex inside a shadow root only in that shadow root', () => {
+            create(document.body, '<button></button>', 'document-0')
+            const root = create(document.body, '<div></div>').attachShadow({ mode: 'open' })
+            create(root, '<button></button>', 'shadow-0')
+            create(root, '<button tabindex="2"></button>', 'shadow-2')
+            create(root, '<button tabindex="1"></button>', 'shadow-1')
+            create(document.body, '<button tabindex="1"></button>', 'document-1')
+
+            expect(drawnOrder()).toEqual(['document-1', 'document-0', 'shadow-1', 'shadow-2', 'shadow-0'])
+        })
+
+        it('should sort the shadow root of a host with a positive tabindex with its host', () => {
+            create(document.body, '<button></button>', 'document-0')
+            const host = create(document.body, '<div tabindex="1"></div>', 'host')
+            create(host.attachShadow({ mode: 'open' }), '<button></button>', 'in-host')
+
+            expect(drawnOrder()).toEqual(['host', 'in-host', 'document-0'])
+        })
+
+        it('should skip a shadow host with a negative tabindex and its shadow root', () => {
+            create(document.body, '<button></button>', 'start')
+            const host = create(document.body, '<div tabindex="-1"></div>')
+            create(host.attachShadow({ mode: 'open' }), '<button></button>', 'in-skipped-host')
+            create(document.body, '<button></button>', 'end')
+
+            expect(drawnOrder()).toEqual(['start', 'end'])
+        })
+
+        it('should not include a shadow host that delegates the focus, only the elements in its shadow root', () => {
+            const host = create(document.body, '<div tabindex="0"></div>', 'host')
+            const root = host.attachShadow({ mode: 'open', delegatesFocus: true })
+            // jsdom does not keep `delegatesFocus`
+            Object.defineProperty(root, 'delegatesFocus', { value: true })
+            create(root, '<input>', 'input')
+
+            expect(drawnOrder()).toEqual(['input'])
+        })
+
+        it('should use a radio group per shadow root', () => {
+            create(document.body, '<input type="radio" name="r" checked>', 'document-radio')
+            const root = create(document.body, '<div></div>').attachShadow({ mode: 'open' })
+            create(root, '<input type="radio" name="r">', 'shadow-radio-1')
+            create(root, '<input type="radio" name="r" checked>', 'shadow-radio-2')
+
+            expect(drawnOrder()).toEqual(['document-radio', 'shadow-radio-2'])
+        })
+
+        it('should use the form owner of a radio input for its group, also with the form attribute', () => {
+            const form = create(document.body, '<form id="f1"></form>')
+            create(form, '<input type="radio" name="g">', 'in-form-a')
+            create(form, '<input type="radio" name="g">', 'in-form-b')
+            create(document.body, '<input type="radio" name="g" form="f1" checked>', 'form-attribute')
+
+            expect(drawnOrder()).toEqual(['form-attribute'])
+        })
+
+        it('should not put a radio input without a form in the group of a form with the same name', () => {
+            create(document.body, '<input type="radio" name="g">', 'no-form-a')
+            create(document.body, '<input type="radio" name="g">', 'no-form-b')
+            create(create(document.body, '<form></form>'), '<input type="radio" name="g" checked>', 'in-form')
+
+            expect(drawnOrder()).toEqual(['no-form-a', 'in-form'])
+        })
+
+        it('should include only the first radio input of a group without a checked radio input', () => {
+            create(document.body, '<input type="radio" name="g">', 'radio-a')
+            create(document.body, '<button></button>', 'between')
+            create(document.body, '<input type="radio" name="g">', 'radio-b')
+
+            expect(drawnOrder()).toEqual(['radio-a', 'between'])
+        })
+
+        it('should include the first radio input in the tab order when the checked radio input is not a tab stop', () => {
+            create(document.body, '<input type="radio" name="disabled">', 'disabled-a')
+            create(document.body, '<input type="radio" name="disabled" checked disabled>', 'disabled-b')
+            create(document.body, '<input type="radio" name="positive">', 'positive-0')
+            create(document.body, '<input type="radio" name="positive" tabindex="2">', 'positive-2')
+
+            expect(drawnOrder()).toEqual(['positive-2', 'disabled-a'])
+        })
+
+        it('should include SVG links and SVG elements with a tabindex', () => {
+            const svg = create(document.body, '<svg><a href="#a"></a><a xlink:href="#b"></a><a></a><rect tabindex="0"></rect><circle tabindex="1"></circle><rect tabindex="-1"></rect></svg>')
+            const [link, xlink, noHref] = Array.from(svg.querySelectorAll('a'))
+            track(link, 'link')
+            track(xlink, 'xlink')
+            track(noHref, 'no-href')
+            track(svg.querySelector('rect[tabindex="0"]'), 'rect')
+            track(svg.querySelector('circle'), 'circle')
+            track(svg.querySelector('rect[tabindex="-1"]'), 'rect-minus')
+
+            expect(drawnOrder()).toEqual(['circle', 'link', 'xlink', 'rect'])
+        })
+
+        it('should include a details element with a summary when it has a tabindex, and then its summary', () => {
+            const details = create(document.body, '<details tabindex="0"></details>', 'details')
+            create(details, '<summary></summary>', 'summary')
+            const invalid = create(document.body, '<details tabindex="invalid"></details>', 'details-invalid-tabindex')
+            create(invalid, '<summary></summary>', 'summary-invalid-tabindex')
+
+            expect(drawnOrder()).toEqual(['details', 'summary', 'summary-invalid-tabindex'])
+        })
+
+        it('should skip a details element with a negative tabindex with its summary and content', () => {
+            create(document.body, '<button></button>', 'start')
+            const details = create(document.body, '<details tabindex="-1" open></details>')
+            create(details, '<summary></summary>', 'summary')
+            create(details, '<button></button>', 'content')
+            create(document.body, '<button></button>', 'end')
+
+            expect(drawnOrder()).toEqual(['start', 'end'])
+        })
+
+        it('should sort a details element like a shadow host with a slot for the summary and a slot for the content', () => {
+            create(document.body, '<button></button>', 'document-0')
+            const details = create(document.body, '<details tabindex="2" open></details>', 'details')
+            create(details, '<button></button>', 'content-0')
+            create(details, '<summary></summary>', 'summary')
+            create(details, '<button tabindex="1"></button>', 'content-1')
+
+            expect(drawnOrder()).toEqual(['details', 'summary', 'content-1', 'content-0', 'document-0'])
+        })
+
+        it('should skip a slot with a negative tabindex with its assigned elements and its fallback content', () => {
+            const assignedHost = create(document.body, '<div></div>')
+            create(assignedHost, '<button></button>', 'assigned')
+            const assignedRoot = assignedHost.attachShadow({ mode: 'open' })
+            create(assignedRoot, '<button></button>', 'before')
+            create(assignedRoot, '<slot tabindex="-1"></slot>')
+            const fallbackRoot = create(document.body, '<div></div>').attachShadow({ mode: 'open' })
+            create(create(fallbackRoot, '<slot tabindex="-1"></slot>'), '<button></button>', 'fallback')
+            create(document.body, '<button></button>', 'end')
+
+            expect(drawnOrder()).toEqual(['before', 'end'])
+        })
+
+        it.each([
+            ['body', 'tabindex', '0'],
+            ['body', 'contenteditable', 'true'],
+            ['html', 'tabindex', '0'],
+        ])('should include the %s element with %s="%s" as the first tab stop', (root, attribute, value) => {
+            const element = root === 'body' ? document.body : document.documentElement
+            element.setAttribute(attribute, value)
+            if (attribute === 'contenteditable') {
+                // jsdom does not have `contentEditable`
+                Object.defineProperty(element, 'contentEditable', { value, configurable: true })
+            }
+            track(element, root)
+            create(document.body, '<button></button>', 'button')
+
+            expect(drawnOrder()).toEqual([root, 'button'])
+        })
+
+        it('should sort the body element with a positive tabindex with the other positive tabindex values', () => {
+            document.body.setAttribute('tabindex', '1')
+            track(document.body, 'body')
+            create(document.body, '<button></button>', 'button-0')
+            create(document.body, '<button tabindex="2"></button>', 'button-2')
+
+            expect(drawnOrder()).toEqual(['body', 'button-2', 'button-0'])
+        })
+
+        it.each(['body', 'html'])('should not include any element when the %s element is inert', (root) => {
+            create(document.body, '<button></button>', 'button')
+            const element = root === 'body' ? document.body : document.documentElement
+            element.setAttribute('inert', '')
+
+            expect(drawnOrder()).toEqual([])
+        })
+
+        it('should include an element with position fixed, which has no offsetParent', () => {
+            const fixed = create(document.body, '<button style="position: fixed"></button>', 'fixed')
+            Object.defineProperty(fixed, 'offsetParent', { value: null, configurable: true })
+
+            expect(drawnOrder()).toEqual(['fixed'])
+        })
+
+        it('should include the summary of a closed details element, not its content', () => {
+            const details = create(document.body, '<details></details>')
+            create(details, '<summary></summary>', 'summary')
+            create(details, '<button></button>', 'in-closed-details')
+
+            expect(drawnOrder()).toEqual(['summary'])
+        })
+
+        it('should include a details element without a summary', () => {
+            create(document.body, '<details></details>', 'details')
+
+            expect(drawnOrder()).toEqual(['details'])
+        })
+
+        it('should not include the elements in an inert subtree or in a disabled fieldset', () => {
+            create(create(document.body, '<div inert></div>'), '<button></button>', 'inert')
+            create(create(document.body, '<fieldset disabled></fieldset>'), '<button></button>', 'in-disabled-fieldset')
+            create(document.body, '<button></button>', 'end')
+
+            expect(drawnOrder()).toEqual(['end'])
+        })
+
+        it('should use checkVisibility when the browser has it', () => {
+            const visible = create(document.body, '<button></button>', 'visible')
+            const hidden = create(document.body, '<button></button>', 'hidden')
+            visible.checkVisibility = vi.fn().mockReturnValue(true)
+            hidden.checkVisibility = vi.fn().mockReturnValue(false)
+
+            expect(drawnOrder()).toEqual(['visible'])
+            expect(hidden.checkVisibility).toHaveBeenCalledWith({ visibilityProperty: true, checkVisibilityCSS: true })
+        })
     })
 })
