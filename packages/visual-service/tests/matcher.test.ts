@@ -1,4 +1,8 @@
-import { beforeEach, describe, it, vi, expect } from 'vitest'
+import { existsSync, mkdtempSync, readFileSync, utimesSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { afterEach, beforeEach, describe, it, vi, expect } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import {
     toMatchScreenSnapshot, toMatchFullPageSnapshot,
     toMatchElementSnapshot, toMatchTabbablePageSnapshot
@@ -127,6 +131,28 @@ describe('custom visual matcher', () => {
             expect(instanceBrowsers.chrome.checkElement).toHaveBeenCalledWith(instanceElements.chrome, 'purplebox', expect.any(Object))
             expect(instanceBrowsers.firefox.checkElement).toHaveBeenCalledTimes(1)
             expect(instanceBrowsers.firefox.checkElement).toHaveBeenCalledWith(instanceElements.firefox, 'purplebox', expect.any(Object))
+        })
+
+        it('waits until the element of each instance matches', async () => {
+            vi.useFakeTimers()
+            try {
+                const { element, instanceBrowsers } = createMultiRemoteElement()
+                // chrome matches at the second check, firefox at the third
+                instanceBrowsers.chrome.checkElement
+                    .mockResolvedValueOnce({ misMatchPercentage: 10, folders })
+                instanceBrowsers.firefox.checkElement
+                    .mockResolvedValueOnce({ misMatchPercentage: 10, folders })
+                    .mockResolvedValueOnce({ misMatchPercentage: 10, folders })
+
+                const promise = toMatchElementSnapshot(element, 'purplebox', 0, { wait: 1000, interval: 100 })
+                await vi.advanceTimersByTimeAsync(1000)
+
+                expect((await promise).pass).toBe(true)
+                expect(instanceBrowsers.chrome.checkElement).toHaveBeenCalledTimes(3)
+                expect(instanceBrowsers.firefox.checkElement).toHaveBeenCalledTimes(3)
+            } finally {
+                vi.useRealTimers()
+            }
         })
 
         it('fails with the message of each instance that does not match', async () => {
@@ -314,6 +340,170 @@ describe('custom visual matcher', () => {
                 returnAllCompareData: true,
                 saveAboveTolerance: 0
             })
+        })
+    })
+
+    describe('wait until the image matches (#690)', () => {
+        const result = (misMatchPercentage: number) => ({ misMatchPercentage, folders })
+
+        beforeEach(() => {
+            vi.useFakeTimers()
+        })
+
+        afterEach(() => {
+            vi.useRealTimers()
+        })
+
+        it('should check once without wait, also when the image does not match', async () => {
+            const matched = await toMatchScreenSnapshot(browser, 'foo', 0, {})
+
+            expect(matched.pass).toBe(false)
+            expect(browser.checkScreen).toHaveBeenCalledTimes(1)
+        })
+
+        it('should check again until the image matches', async () => {
+            vi.mocked(browser.checkScreen).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(0))
+
+            const promise = toMatchScreenSnapshot(browser, 'foo', 0, { wait: 1000, interval: 200 })
+            await vi.advanceTimersByTimeAsync(1000)
+            const matched = await promise
+
+            expect(matched.pass).toBe(true)
+            expect(browser.checkScreen).toHaveBeenCalledTimes(3)
+        })
+
+        it('should stop after the wait time and tell how often it checked', async () => {
+            const promise = toMatchScreenSnapshot(browser, 'foo', 0, { wait: 300, interval: 100 })
+            await vi.advanceTimersByTimeAsync(1000)
+            const matched = await promise
+
+            expect(matched.pass).toBe(false)
+            // At 0, 100, 200 and 300 ms
+            expect(browser.checkScreen).toHaveBeenCalledTimes(4)
+            expect(matched.message()).toContain('The visual check ran 4 times in 300 ms (wait: 300 ms).')
+        })
+
+        it('should not pass wait and interval to the check command', async () => {
+            vi.mocked(browser.checkScreen).mockResolvedValue(result(0))
+
+            await toMatchScreenSnapshot(browser, 'foo', 0, { wait: 1000, interval: 200, hideScrollBars: false })
+
+            expect(vi.mocked(browser.checkScreen).mock.calls[0][1]).toEqual({ hideScrollBars: false, returnAllCompareData: true, saveAboveTolerance: 0 })
+        })
+
+        it('should check again until the image does not match with .not', async () => {
+            vi.mocked(browser.checkScreen).mockResolvedValueOnce(result(0)).mockResolvedValueOnce(result(5))
+
+            const promise = toMatchScreenSnapshot.call({ isNot: true }, browser, 'foo', 0, { wait: 1000, interval: 100 })
+            await vi.advanceTimersByTimeAsync(1000)
+            const matched = await promise
+
+            // `expect` inverts the result for `.not`: no match, so `.not` passes
+            expect(matched.pass).toBe(false)
+            expect(browser.checkScreen).toHaveBeenCalledTimes(2)
+        })
+
+        it('should wait for an element', async () => {
+            vi.mocked(browser.checkElement).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(0))
+            // WebdriverIO brands its elements, see `isWdioKind()`
+            const element = mock<WebdriverIO.Element>({ [WDIO_KIND]: 'element', parent: browser })
+
+            const promise = toMatchElementSnapshot(element, 'foo', 0, { wait: 1000 })
+            await vi.advanceTimersByTimeAsync(1000)
+
+            expect((await promise).pass).toBe(true)
+            expect(browser.checkElement).toHaveBeenCalledTimes(2)
+        })
+
+        it('should find a stale element again and check it again within the wait time', async () => {
+            const element = mock<WebdriverIO.Element>({ [WDIO_KIND]: 'element', parent: browser })
+            // An element command of WebdriverIO finds a stale element again and updates its element id
+            element.getTagName.mockResolvedValue('div')
+            vi.mocked(browser.checkElement)
+                .mockRejectedValueOnce(new Error('stale element reference: element is not attached to the page document'))
+                .mockResolvedValueOnce(result(0))
+
+            const promise = toMatchElementSnapshot(element, 'foo', 0, { wait: 1000 })
+            await vi.advanceTimersByTimeAsync(1000)
+
+            expect((await promise).pass).toBe(true)
+            expect(element.getTagName).toHaveBeenCalledTimes(1)
+            expect(browser.checkElement).toHaveBeenCalledTimes(2)
+        })
+
+        it('should throw the error of a stale element without wait time', async () => {
+            const element = mock<WebdriverIO.Element>({ [WDIO_KIND]: 'element', parent: browser })
+            vi.mocked(browser.checkElement).mockRejectedValueOnce(new Error('stale element reference: element is not attached to the page document'))
+
+            await expect(toMatchElementSnapshot(element, 'foo', 0, {})).rejects.toThrow('stale element reference')
+            expect(element.getTagName).not.toHaveBeenCalled()
+        })
+
+        /**
+         * Image files in a new folder, like the check command saves them
+         */
+        function imageFiles() {
+            const folder = mkdtempSync(join(tmpdir(), 'visual-matcher-'))
+            return { baseline: join(folder, 'baseline.png'), actual: join(folder, 'actual.png'), diff: join(folder, 'diff.png') }
+        }
+
+        it('should remove the images of a failed check when a later check matches without saving images', async () => {
+            const files = imageFiles()
+            vi.mocked(browser.checkScreen)
+                .mockImplementationOnce(async () => {
+                    writeFileSync(files.actual, 'failed')
+                    writeFileSync(files.diff, 'failed')
+                    return { misMatchPercentage: 10, folders: files }
+                })
+                // A matching check does not save the actual image (alwaysSaveActualImage: false) and has no diff
+                .mockResolvedValueOnce({ misMatchPercentage: 0, folders: { baseline: files.baseline, actual: files.actual } })
+
+            const promise = toMatchScreenSnapshot(browser, 'foo', 0, { wait: 1000 })
+            await vi.advanceTimersByTimeAsync(1000)
+
+            expect((await promise).pass).toBe(true)
+            expect(existsSync(files.actual)).toBe(false)
+            expect(existsSync(files.diff)).toBe(false)
+        })
+
+        it('should keep the actual image that the matching check saved (alwaysSaveActualImage: true)', async () => {
+            const files = imageFiles()
+            const earlier = new Date(Date.UTC(2020, 0, 1))
+            vi.mocked(browser.checkScreen)
+                .mockImplementationOnce(async () => {
+                    writeFileSync(files.actual, 'failed')
+                    writeFileSync(files.diff, 'failed')
+                    utimesSync(files.actual, earlier, earlier)
+                    return { misMatchPercentage: 10, folders: files }
+                })
+                .mockImplementationOnce(async () => {
+                    writeFileSync(files.actual, 'matched')
+                    return { misMatchPercentage: 0, folders: { baseline: files.baseline, actual: files.actual } }
+                })
+
+            const promise = toMatchScreenSnapshot(browser, 'foo', 0, { wait: 1000 })
+            await vi.advanceTimersByTimeAsync(1000)
+
+            expect((await promise).pass).toBe(true)
+            expect(readFileSync(files.actual, 'utf8')).toBe('matched')
+            expect(existsSync(files.diff)).toBe(false)
+        })
+
+        it('should wait for the full page and tabbable matchers too', async () => {
+            vi.mocked(browser.checkFullPageScreen).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(0))
+            vi.mocked(browser.checkTabbablePage).mockResolvedValueOnce(result(10)).mockResolvedValueOnce(result(0))
+
+            const fullPage = toMatchFullPageSnapshot(browser, 'foo', 0, { wait: 1000 })
+            const tabbable = toMatchTabbablePageSnapshot(browser, 'foo', 0, { wait: 1000 })
+            await vi.advanceTimersByTimeAsync(1000)
+
+            expect((await fullPage).pass).toBe(true)
+            expect((await tabbable).pass).toBe(true)
+        })
+
+        it.each([-1, Number.NaN, 'soon'])('should throw for an invalid wait %j', async (wait) => {
+            // @ts-expect-error test invalid input
+            await expect(toMatchScreenSnapshot(browser, 'foo', 0, { wait })).rejects.toThrow('Expected the option "wait" to be a number of milliseconds of 0 or more')
         })
     })
 })

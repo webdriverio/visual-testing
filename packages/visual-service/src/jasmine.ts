@@ -10,7 +10,7 @@ interface VisualMatcherResult {
     message: () => string
 }
 
-type VisualMatcher = (actual: any, ...args: any[]) => Promise<VisualMatcherResult>
+type VisualMatcher = (this: { isNot?: boolean } | void, actual: any, ...args: any[]) => Promise<VisualMatcherResult>
 
 interface JasmineMatcherResult {
     pass: boolean
@@ -41,11 +41,12 @@ export function getJasmineEnv(): JasmineEnv | undefined {
 export function toJasmineAsyncMatchers(matchers: Record<string, VisualMatcher>): Record<string, () => JasmineAsyncMatcher> {
     return Object.fromEntries(Object.entries(matchers).map(([name, matcher]) => [name, () => ({
         async compare(actual: unknown, ...args: unknown[]) {
-            const { pass, message } = await matcher(actual, ...args)
+            const { pass, message } = await matcher.call({ isNot: false }, actual, ...args)
             return { pass, message: message() }
         },
+        // `isNot` lets a matcher with `wait` check again until the image does not match (#690)
         async negativeCompare(actual: unknown, ...args: unknown[]) {
-            const { pass, message } = await matcher(actual, ...args)
+            const { pass, message } = await matcher.call({ isNot: true }, actual, ...args)
             return { pass: !pass, message: message() }
         },
     })]))

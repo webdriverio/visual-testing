@@ -2,6 +2,13 @@ import { pathToFileURL } from 'node:url'
 import { join } from 'node:path'
 import { browser, expect } from '@wdio/globals'
 
+declare global {
+    interface Window {
+        // tests/fixtures/v10/delayed-change.html
+        setBox: (done: boolean, delay?: number, replace?: boolean) => void
+    }
+}
+
 const fixture = (name: string) => pathToFileURL(join(process.cwd(), 'tests/fixtures/v10', name)).href
 
 /**
@@ -91,6 +98,34 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
 
         await browser.url(fixture('tabbable-cases.html'))
         expect(await browser.checkTabbablePage('v10-tabbable-cases')).toBe(0)
+    })
+
+    it('waits with the `wait` option of a visual matcher until the element matches (#690)', async () => {
+        // creates the baseline of the box in its final color
+        await browser.url(fixture('delayed-change.html'))
+        await browser.execute(() => window.setBox(true))
+        await $('#box.done').waitForExist()
+        await browser.checkElement(await $('#box'), 'v10-delayed-change')
+
+        // The box does not have its final color yet, it gets it in 1.5 s
+        await browser.url(fixture('delayed-change.html'))
+        expect(await browser.checkElement(await $('#box'), 'v10-delayed-change')).toBeGreaterThan(0)
+        await browser.execute(() => window.setBox(true, 1500))
+        // The matcher checks again until the box matches the baseline
+        await expect($('#box')).toMatchElementSnapshot('v10-delayed-change', { wait: 5000, interval: 250 })
+    })
+
+    it('waits with the `wait` option also when the page renders the element again (#690)', async () => {
+        // creates the baseline of the box in its final color
+        await browser.url(fixture('delayed-change.html'))
+        await browser.execute(() => window.setBox(true))
+        await $('#box.done').waitForExist()
+        await browser.checkElement(await $('#box'), 'v10-delayed-change-replaced')
+
+        // In 1.5 s a new box element in the final color replaces the box, so the element of the matcher is stale
+        await browser.url(fixture('delayed-change.html'))
+        await browser.execute(() => window.setBox(true, 1500, true))
+        await expect($('#box')).toMatchElementSnapshot('v10-delayed-change-replaced', { wait: 5000, interval: 250 })
     })
 
     // Known gap, not supported yet: the element rect comes from WebDriver Classic `getElementRect`, which cannot
