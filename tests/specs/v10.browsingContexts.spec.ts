@@ -62,6 +62,18 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         expect(await browser.checkScreen('v10-stale-ignore', { ignore: [second] })).toBe(0)
     })
 
+    it('takes an element screenshot with biDiOrigin viewport of an element that is scrolled into view', async () => {
+        await browser.url(fixture('tall.html'))
+
+        for (const id of ['near', 'far']) {
+            // creates the baseline with the default `document` origin
+            await browser.checkElement(await $(`#${id}`), `v10-viewport-origin-${id}`)
+            // The `viewport` origin must clip the same element: the clip uses the position of the element in the
+            // viewport, not its position on the page (`getElementRect`), which is different after the scroll
+            expect(await browser.checkElement(await $(`#${id}`), `v10-viewport-origin-${id}`, { biDiOrigin: 'viewport' })).toBe(0)
+        }
+    })
+
     // Known gap, not supported yet: the element rect comes from WebDriver Classic `getElementRect`, which cannot
     // find an element in a frame (`no such element`), and `browsingContext.captureScreenshot` only accepts a
     // top-level context. A fix must add the offset of the iframe to the rect of the element in the frame.
