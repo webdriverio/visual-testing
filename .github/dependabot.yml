@@ -9,3 +9,10 @@ updates:
   # so only propose versions that are at least 1 day old
   cooldown:
     default-days: 1
+  ignore:
+    # TypeScript 7 is a new major version: update it by hand, in its own PR
+    - dependency-name: "typescript"
+      update-types: ["version-update:semver-major"]
+    # @types/node follows the Node.js version of .nvmrc (24), not the newest Node.js
+    - dependency-name: "@types/node"
+      update-types: ["version-update:semver-major"]
