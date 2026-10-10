@@ -151,8 +151,8 @@ importers:
         specifier: 8.7.3
         version: 8.7.3(@types/node@24.10.1)
       '@wdio/globals':
-        specifier: ^10.0.0
-        version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+        specifier: ^10.0.2
+        version: 10.0.2(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       '@wdio/logger':
         specifier: ^10.0.0
         version: 10.0.0
@@ -249,8 +249,8 @@ importers:
   packages/visual-service:
     dependencies:
       '@wdio/globals':
-        specifier: ^10.0.0
-        version: 10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
+        specifier: ^10.0.2
+        version: 10.0.2(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       '@wdio/image-comparison-core':
         specifier: workspace:*
         version: link:../image-comparison-core
@@ -2089,13 +2089,6 @@ packages:
   '@wdio/dot-reporter@10.0.1':
     resolution: {integrity: sha512-R0wuXuj4+f1yeXWnDyFqVPnJQzHrnepLH8ynS47wb87BVbtX9aVsbT9jctfplnfGHKySLm525w3/ajTj//anFg==}
     engines: {node: '>=22.19.0'}
-
-  '@wdio/globals@10.0.0':
-    resolution: {integrity: sha512-QlC6dkB2hu//cnWIcqine7MUdiJknmB8v7A3jLqEEIOe4J9QXU6HLk35oKKbVQfDnFiEr0JViLQu9XggqH6K0w==}
-    engines: {node: '>=22.19.0'}
-    peerDependencies:
-      expect-webdriverio: ^8.0.0-0 || ^8.0.0-alpha.3
-      webdriverio: ^10.0.0-0 || ^10.0.0
 
   '@wdio/globals@10.0.2':
     resolution: {integrity: sha512-gQgKy2Yo99E9CIiHJgKDKrRPU3sYR92kZGStROArQvZqVcLsdPQZ3Ktf6L3cRyes1Vee/H82L/FG24vrB3C+mQ==}
@@ -7483,7 +7476,7 @@ snapshots:
       '@wdio/types': 10.0.1
       chalk: 5.6.2
 
-  '@wdio/globals@10.0.0(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))':
+  '@wdio/globals@10.0.2(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))':
     dependencies:
       expect-webdriverio: 8.0.0-alpha.3(@wdio/types@10.0.0)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       webdriverio: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
