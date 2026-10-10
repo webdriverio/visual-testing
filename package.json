@@ -86,7 +86,7 @@
     "@wdio/types": "^10.0.1",
     "@wdio/visual-service": "workspace:*",
     "cross-env": "^10.1.0",
-    "expect-webdriverio": "^8.0.0-0",
+    "expect-webdriverio": "^8.0.0",
     "husky": "^9.1.7",
     "jsdom": "^30.1.2",
     "npm-run-all2": "^9.0.3",
