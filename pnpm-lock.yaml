@@ -102,8 +102,8 @@ importers:
         specifier: ^1.87.0
         version: 1.87.0
       release-it:
-        specifier: ^21.1.0
-        version: 21.1.0(@types/node@24.0.14)(magicast@0.5.5)(supports-color@8.1.1)
+        specifier: ^21.1.1
+        version: 21.1.1(@types/node@24.0.14)(magicast@0.5.5)(supports-color@8.1.1)
       rimraf:
         specifier: ^6.1.3
         version: 6.1.3
@@ -1159,15 +1159,6 @@ packages:
   '@inquirer/prompts@7.10.1':
     resolution: {integrity: sha512-Dx/y9bCQcXLI5ooQ5KyvA4FTgeo2jYj/7plWfV5Ak5wDPKQZgudKez2ixyfz7tKXzcJciTxqLeK7R9HItwiByg==}
     engines: {node: '>=18'}
-    peerDependencies:
-      '@types/node': '>=18'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-
-  '@inquirer/prompts@8.7.2':
-    resolution: {integrity: sha512-QoRB4wFIjgH5iOhSjoIKMkTvSHDuV+O3OITlIqAYO0oK5x364GJILXiMBvlPiE+klg7Xx9tq5XVqQHcGUDYYPA==}
-    engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
       '@types/node': '>=18'
     peerDependenciesMeta:
@@ -4136,8 +4127,8 @@ packages:
     resolution: {integrity: sha512-6VlU9MLXbjVQD04AZCMX28hVtA5bUoadvUqO76MUCVA0ilwJbMiHsITRPfyVm6p/BC0Av/BXMujx39WCe1LEqw==}
     engines: {node: '>=20'}
 
-  os-name@7.0.0:
-    resolution: {integrity: sha512-/HfRU/lPPr4T2VigM+cvM3cU77es+XF4OEAa4aE5zpdvrxHGD2NmH0AFIWpMNAb+CsZL45rlcIO49Re0ZcRseg==}
+  os-name@7.0.1:
+    resolution: {integrity: sha512-aja0ZAEzcuhIU+sy/r0c9UszTgxm4qtMPNWx8lJJ+IGLG7igf6Ba+ipX912SIGlHAWBaK+qJq9n2UaR3Kh99Wg==}
     engines: {node: '>=20'}
 
   oxlint@1.87.0:
@@ -4509,8 +4500,8 @@ packages:
   regenerator-runtime@0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
 
-  release-it@21.1.0:
-    resolution: {integrity: sha512-jR179wu8Z9BKfhd0wVmUmzjshCnezUkULdHW5rSCjKTXApdr6mAJjw/R339uXS43mLCz6iAFO6ffS27+N1dy8A==}
+  release-it@21.1.1:
+    resolution: {integrity: sha512-jOhoWMK3hm5UAYfxREcLW1BRlNzMhKfjN8m4sxjnOOPXDWk6b//mZIk2ABv9Cno/eH1M911iyGaCMtapnwS7Ng==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
     hasBin: true
 
@@ -5019,8 +5010,8 @@ packages:
     resolution: {integrity: sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==}
     engines: {node: '>=18.17'}
 
-  undici@7.29.0:
-    resolution: {integrity: sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==}
+  undici@7.29.1:
+    resolution: {integrity: sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==}
     engines: {node: '>=20.18.1'}
 
   undici@7.30.0:
@@ -5099,8 +5090,8 @@ packages:
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}
 
-  verkit@0.4.0:
-    resolution: {integrity: sha512-sXMwN6DMHeouPfCxkxWkKAmxphWKEenHYY5H1nIBzU3PmDsmJp6kBXJdshjVdpMZuWCmL9SH7KFRx29AylpP6g==}
+  verkit@0.5.0:
+    resolution: {integrity: sha512-u4J1hr6Y+C/hit34GwL3eIcUf3wngT8TlYUjK7tk0jxydKLAq3sYvifjdTDA6U3KCKRcQCQDGf/srjxfZF3l7g==}
     engines: {node: '>=18.12.0'}
 
   vite@8.3.3:
@@ -5293,8 +5284,8 @@ packages:
     engines: {node: '>=20.11'}
     hasBin: true
 
-  wildcard-match@5.1.4:
-    resolution: {integrity: sha512-wldeCaczs8XXq7hj+5d/F38JE2r7EXgb6WQDM84RVwxy81T/sxB5e9+uZLK9Q9oNz1mlvjut+QtvgaOQFPVq/g==}
+  wildcard-match@5.1.6:
+    resolution: {integrity: sha512-Dh5N543my42ynFsbT0v6iPpaqJt95MOK1n/lhojVTe/hS3gpP6e938bbzsfaS0goLlJbhEOCIJPe/Tc3hckoaQ==}
 
   windows-release@7.1.1:
     resolution: {integrity: sha512-0GBwC9WmR8Bm3WYiz3FC391054BsFHZ2gzBVdYj9uj5eIVYzbn/YPYCYW9SWdh9vwnLuzpn1UGwJKiMG4F236w==}
@@ -6381,21 +6372,6 @@ snapshots:
       '@inquirer/rawlist': 4.1.11(@types/node@24.0.14)
       '@inquirer/search': 3.2.2(@types/node@24.0.14)
       '@inquirer/select': 4.4.2(@types/node@24.0.14)
-    optionalDependencies:
-      '@types/node': 24.0.14
-
-  '@inquirer/prompts@8.7.2(@types/node@24.0.14)':
-    dependencies:
-      '@inquirer/checkbox': 5.2.6(@types/node@24.0.14)
-      '@inquirer/confirm': 6.3.3(@types/node@24.0.14)
-      '@inquirer/editor': 5.3.4(@types/node@24.0.14)
-      '@inquirer/expand': 5.1.6(@types/node@24.0.14)
-      '@inquirer/input': 5.1.7(@types/node@24.0.14)
-      '@inquirer/number': 4.2.4(@types/node@24.0.14)
-      '@inquirer/password': 5.2.3(@types/node@24.0.14)
-      '@inquirer/rawlist': 5.3.6(@types/node@24.0.14)
-      '@inquirer/search': 4.3.4(@types/node@24.0.14)
-      '@inquirer/select': 5.2.6(@types/node@24.0.14)
     optionalDependencies:
       '@types/node': 24.0.14
 
@@ -9761,7 +9737,7 @@ snapshots:
       stdin-discarder: 0.3.2
       string-width: 8.3.0
 
-  os-name@7.0.0:
+  os-name@7.0.1:
     dependencies:
       macos-release: 3.4.0
       windows-release: 7.1.1
@@ -10195,9 +10171,9 @@ snapshots:
 
   regenerator-runtime@0.13.11: {}
 
-  release-it@21.1.0(@types/node@24.0.14)(magicast@0.5.5)(supports-color@8.1.1):
+  release-it@21.1.1(@types/node@24.0.14)(magicast@0.5.5)(supports-color@8.1.1):
     dependencies:
-      '@inquirer/prompts': 8.7.2(@types/node@24.0.14)
+      '@inquirer/prompts': 8.7.3(@types/node@24.0.14)
       '@octokit/rest': 22.0.1
       '@phun-ky/typeof': 2.0.3
       async-retry: 1.3.3
@@ -10212,13 +10188,13 @@ snapshots:
       new-github-release-url: 2.0.0
       open: 11.0.4
       ora: 9.4.1
-      os-name: 7.0.0
+      os-name: 7.0.1
       proxy-agent: 8.0.2(supports-color@8.1.1)
       tinyglobby: 0.2.17
-      undici: 7.29.0
+      undici: 7.29.1
       url-join: 5.0.0
-      verkit: 0.4.0
-      wildcard-match: 5.1.4
+      verkit: 0.5.0
+      wildcard-match: 5.1.6
     transitivePeerDependencies:
       - '@types/node'
       - kerberos
@@ -10772,7 +10748,7 @@ snapshots:
 
   undici@6.29.0: {}
 
-  undici@7.29.0: {}
+  undici@7.29.1: {}
 
   undici@7.30.0: {}
 
@@ -10831,7 +10807,7 @@ snapshots:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
 
-  verkit@0.4.0: {}
+  verkit@0.5.0: {}
 
   vite@8.3.3(@types/node@24.0.14)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1):
     dependencies:
@@ -11086,7 +11062,7 @@ snapshots:
 
   why-is-node-running@3.2.1: {}
 
-  wildcard-match@5.1.4: {}
+  wildcard-match@5.1.6: {}
 
   windows-release@7.1.1:
     dependencies:
