@@ -1,6 +1,6 @@
 # Migrating to v11
 
-v11 is in prerelease on `main` (npm tag `next`). This guide lists what changes when you move from
+v11 is the current major version (npm tag `latest`). This guide lists what changes when you move from
 
 - `@wdio/visual-service` v10 to v11,
 - `@wdio/image-comparison-core` v2 to v3,

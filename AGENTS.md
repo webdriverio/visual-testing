@@ -25,7 +25,7 @@ tests/lambdaTestBaseline        committed baselines of the LambdaTest runs
 tests/sauceLabsBaseline         committed baselines of the Sauce Labs runs
 apps/                           mobile apps for the app tests
 patches/                        pnpm patches (see pnpm-workspace.yaml)
-.changeset/                     changesets; `main` is in prerelease mode (`next`)
+.changeset/                     changesets (`main` releases v11 with the npm tag `latest`)
 .github/workflows               checks, e2e, scheduled-tests, release, ...
 ```
 

@@ -70,8 +70,8 @@ All the options: [service options](https://webdriver.io/docs/visual-testing/serv
 
 | Version | npm tag | Status | Supported until |
 |---|---|---|---|
-| **v11** — `@wdio/visual-service@11` / `@wdio/image-comparison-core@3` | `next` | 🚧 Prerelease, WebdriverIO v10 only | — |
-| **v10** — `@wdio/visual-service@10` / `@wdio/image-comparison-core@2` | `latest` (`legacy-v10` after the v11 release) | 🛠️ Maintenance for WebdriverIO v9 users (fixes backported on request) | — |
+| **v11** — `@wdio/visual-service@11` / `@wdio/image-comparison-core@3` | `latest` | ✅ Active, WebdriverIO v10 only | — |
+| **v10** — `@wdio/visual-service@10` / `@wdio/image-comparison-core@2` | `legacy-v10` | 🛠️ Maintenance for WebdriverIO v9 users (fixes backported on request) | — |
 | **v9** — `@wdio/visual-service@9` / `@wdio/image-comparison-core@1` | `legacy` | 🛠️ Maintenance (critical fixes only) | 12 months after the v10 release |
 
 > [!IMPORTANT]
