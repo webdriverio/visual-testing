@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@wdio/logger": "^10.0.0",
-    "@wdio/types": "^10.0.0",
+    "@wdio/types": "^10.0.1",
     "fast-png": "^8.0.0",
     "pixelmatch": "^8.0.0"
   },
