@@ -100,6 +100,12 @@ Mock the browser in unit tests; do not start a browser.
   mobile web spec or its configs. Locally: start an emulator and Appium, then
   `ANDROID_AVD=<avd> ANDROID_PLATFORM_VERSION=<version> pnpm test.local.emus.web`
   (see [.github/scripts/android-emulator-e2e.sh](.github/scripts/android-emulator-e2e.sh)).
+- [`ios simulator`](.github/workflows/ios-simulator.yml): the same for iOS, on
+  a new simulator in a macOS runner. Locally: start Appium with the XCUITest
+  driver, then
+  `IOS_DEVICE_NAME="<simulator>" IOS_PLATFORM_VERSION=<version> pnpm test.local.sims.web`
+  (see [.github/scripts/ios-simulator-e2e.sh](.github/scripts/ios-simulator-e2e.sh)).
+  Use a simulator that you made for tests, not one that you use for other work.
 - [`e2e`](.github/workflows/e2e.yml): the LambdaTest and Sauce Labs jobs. They
   need the cloud credentials, so they run only for branches in this
   repository, not for forks or Dependabot.
