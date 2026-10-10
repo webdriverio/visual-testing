@@ -138,6 +138,10 @@ You do not need to change anything for these, but you can notice them:
 - **Safari desktop full page screenshots on a Retina screen:** with a device pixel ratio above 1 (for example a Mac
   with a Retina screen), most parts of the image were outside of it, and the image had black areas and repeated parts.
   Baselines made like that change once. With a device pixel ratio of 1 the image does not change.
+- **Tabbable commands follow the real tab order:** `checkTabbablePage()` and `saveTabbablePage()` now also draw the
+  elements in open shadow roots (in the order of their slots), elements with `position: fixed`, and the summary of a
+  closed `details` element, and they leave out `inert` elements, elements in a disabled `fieldset` and the content of
+  a closed `details` element. Tabbable baselines of such pages change once.
 - **iOS element screenshots of large elements:** for an element that is not fully inside the viewport, the image
   had the size of the whole element, but only the visible part had content and the rest was black (an Appium bug,
   [appium/appium#22939](https://github.com/appium/appium/issues/22939)). The image now has only the visible part of

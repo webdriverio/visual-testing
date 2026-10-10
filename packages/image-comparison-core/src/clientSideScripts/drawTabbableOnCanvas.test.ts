@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import drawTabbableOnCanvas from './drawTabbableOnCanvas.js'
 import type { TabbableOptions } from '../commands/tabbable.interfaces.js'
 
@@ -37,6 +38,15 @@ describe('drawTabbableOnCanvas', () => {
             fontFamily: 'Arial',
             fontColor: '#000000',
         },
+    }
+
+    /**
+     * jsdom does no layout, so mark the element as rendered (one client rect), at `left` in the viewport
+     */
+    function render(element: HTMLElement, left = 0) {
+        // Own properties: a spy on the inherited method would change it for all elements
+        Object.defineProperty(element, 'getClientRects', { value: vi.fn().mockReturnValue(mock<DOMRectList>({ length: 1 })), configurable: true })
+        Object.defineProperty(element, 'getBoundingClientRect', { value: vi.fn().mockReturnValue(DOMRect.fromRect({ x: left, y: 0, width: 10, height: 10 })), configurable: true, writable: true })
     }
 
     beforeEach(() => {
@@ -90,8 +100,8 @@ describe('drawTabbableOnCanvas', () => {
         }
         Element.prototype.getBoundingClientRect = vi.fn().mockReturnValue(mockRect)
 
-        Object.defineProperty(button, 'offsetParent', { value: document.body, configurable: true })
-        Object.defineProperty(input, 'offsetParent', { value: document.body, configurable: true })
+        render(button)
+        render(input)
 
         const beginPathSpy = vi.spyOn(mockCanvasContext, 'beginPath')
         const globalCompositeOperationSpy = vi.spyOn(mockCanvasContext, 'globalCompositeOperation', 'set')
@@ -135,6 +145,7 @@ describe('drawTabbableOnCanvas', () => {
         const button = document.createElement('button')
         button.style.visibility = 'hidden'
         document.body.appendChild(button)
+        render(button)
 
         drawTabbableOnCanvas(defaultOptions)
 
@@ -145,6 +156,7 @@ describe('drawTabbableOnCanvas', () => {
         const button = document.createElement('button')
         button.disabled = true
         document.body.appendChild(button)
+        render(button)
 
         drawTabbableOnCanvas(defaultOptions)
 
@@ -155,6 +167,7 @@ describe('drawTabbableOnCanvas', () => {
         const div = document.createElement('div')
         div.tabIndex = -1
         document.body.appendChild(div)
+        render(div)
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
     })
@@ -163,6 +176,7 @@ describe('drawTabbableOnCanvas', () => {
         const input = document.createElement('input')
         input.disabled = true
         document.body.appendChild(input)
+        render(input)
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
     })
@@ -171,6 +185,7 @@ describe('drawTabbableOnCanvas', () => {
         const input = document.createElement('input')
         input.style.visibility = 'hidden'
         document.body.appendChild(input)
+        render(input)
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
     })
@@ -186,8 +201,8 @@ describe('drawTabbableOnCanvas', () => {
         radio2.name = 'group1'
         radio2.checked = true
         document.body.appendChild(radio2)
-        Object.defineProperty(radio1, 'offsetParent', { value: document.body, configurable: true })
-        Object.defineProperty(radio2, 'offsetParent', { value: document.body, configurable: true })
+        render(radio1)
+        render(radio2)
         radio2.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
 
         drawTabbableOnCanvas(defaultOptions)
@@ -202,8 +217,8 @@ describe('drawTabbableOnCanvas', () => {
         const btn2 = document.createElement('button')
         btn2.tabIndex = 1
         document.body.appendChild(btn2)
-        Object.defineProperty(btn1, 'offsetParent', { value: document.body, configurable: true })
-        Object.defineProperty(btn2, 'offsetParent', { value: document.body, configurable: true })
+        render(btn1)
+        render(btn2)
         btn1.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         btn2.getBoundingClientRect = vi.fn().mockReturnValue({ left: 20, top: 20, width: 10, height: 10, right: 30, bottom: 30 })
         drawTabbableOnCanvas(defaultOptions)
@@ -214,7 +229,7 @@ describe('drawTabbableOnCanvas', () => {
         const radio = document.createElement('input')
         radio.type = 'radio'
         document.body.appendChild(radio)
-        Object.defineProperty(radio, 'offsetParent', { value: document.body, configurable: true })
+        render(radio)
         radio.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).toHaveBeenCalled()
@@ -225,7 +240,7 @@ describe('drawTabbableOnCanvas', () => {
         div.contentEditable = 'true'
         div.tabIndex = 0
         document.body.appendChild(div)
-        Object.defineProperty(div, 'offsetParent', { value: document.body, configurable: true })
+        render(div)
         div.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         drawTabbableOnCanvas(defaultOptions)
         expect(mockCanvasContext.beginPath).toHaveBeenCalled()
@@ -239,7 +254,7 @@ describe('drawTabbableOnCanvas', () => {
 
         const btn = document.createElement('button')
         btn.tabIndex = 0
-        Object.defineProperty(btn, 'offsetParent', { value: document.body, configurable: true })
+        render(btn)
         btn.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         document.body.appendChild(btn)
 
@@ -273,13 +288,13 @@ describe('drawTabbableOnCanvas', () => {
 
         const btn1 = document.createElement('button')
         btn1.tabIndex = 0
-        Object.defineProperty(btn1, 'offsetParent', { value: document.body, configurable: true })
+        render(btn1)
         btn1.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         document.body.appendChild(btn1)
 
         const btn2 = document.createElement('button')
         btn2.tabIndex = 0
-        Object.defineProperty(btn2, 'offsetParent', { value: document.body, configurable: true })
+        render(btn2)
         btn2.getBoundingClientRect = vi.fn().mockReturnValue({ left: 20, top: 20, width: 10, height: 10, right: 30, bottom: 30 })
         document.body.appendChild(btn2)
 
@@ -295,7 +310,7 @@ describe('drawTabbableOnCanvas', () => {
 
         const btn = document.createElement('button')
         btn.tabIndex = 0
-        Object.defineProperty(btn, 'offsetParent', { value: document.body, configurable: true })
+        render(btn)
         btn.getBoundingClientRect = vi.fn().mockReturnValue({ left: 0, top: 0, width: 10, height: 10, right: 10, bottom: 10 })
         document.body.appendChild(btn)
 
@@ -303,5 +318,162 @@ describe('drawTabbableOnCanvas', () => {
         expect(mockCanvasContext.beginPath).not.toHaveBeenCalled()
 
         HTMLCanvasElement.prototype.getContext = originalGetContext
+    })
+
+    describe('tab order (#515)', () => {
+        let rendered: Map<number, string>
+
+        beforeEach(() => {
+            rendered = new Map()
+        })
+
+        /**
+         * Create an element, mark it as rendered at its own x position, and remember its name for that position
+         */
+        function create(parent: Element | ShadowRoot, html: string, name?: string): HTMLElement {
+            const template = document.createElement('template')
+            template.innerHTML = html
+            const element = template.content.firstElementChild
+            if (!(element instanceof HTMLElement)) {
+                throw new Error(`No element in ${html}`)
+            }
+            parent.appendChild(element)
+            if (name) {
+                const left = (rendered.size + 1) * 100
+                rendered.set(left + 5, name)
+                render(element, left)
+            }
+            return element
+        }
+
+        /**
+         * The names of the drawn elements, in the order of their numbers (the center of an element is at left + 5)
+         */
+        function drawnOrder(): string[] {
+            drawTabbableOnCanvas(defaultOptions)
+
+            return mockCanvasContext.fillText.mock.calls.map(([, x]) => rendered.get(x) ?? `unknown x=${x}`)
+        }
+
+        it('should include the elements of an open shadow root at the place of its host', () => {
+            create(document.body, '<button></button>', 'start')
+            const host = create(document.body, '<div></div>')
+            const root = host.attachShadow({ mode: 'open' })
+            create(root, '<button></button>', 'shadow-a')
+            create(root, '<button></button>', 'shadow-b')
+            create(document.body, '<button></button>', 'end')
+
+            expect(drawnOrder()).toEqual(['start', 'shadow-a', 'shadow-b', 'end'])
+        })
+
+        it('should include the elements of nested shadow roots', () => {
+            const host = create(document.body, '<div></div>')
+            const root = host.attachShadow({ mode: 'open' })
+            create(root, '<button></button>', 'outer-a')
+            const inner = create(root, '<div></div>').attachShadow({ mode: 'open' })
+            create(inner, '<button></button>', 'inner')
+            create(root, '<button></button>', 'outer-b')
+
+            expect(drawnOrder()).toEqual(['outer-a', 'inner', 'outer-b'])
+        })
+
+        it('should follow the order of the slots, not the order of the light DOM', () => {
+            const host = create(document.body, '<div></div>')
+            create(host, '<button></button>', 'slotted-default')
+            create(host, '<button slot="second"></button>', 'slotted-second')
+            const root = host.attachShadow({ mode: 'open' })
+            create(root, '<button></button>', 'before')
+            create(root, '<slot name="second"></slot>')
+            create(root, '<slot></slot>')
+            create(root, '<button></button>', 'after')
+
+            expect(drawnOrder()).toEqual(['before', 'slotted-second', 'slotted-default', 'after'])
+        })
+
+        it('should sort a positive tabindex inside a shadow root only in that shadow root', () => {
+            create(document.body, '<button></button>', 'document-0')
+            const root = create(document.body, '<div></div>').attachShadow({ mode: 'open' })
+            create(root, '<button></button>', 'shadow-0')
+            create(root, '<button tabindex="2"></button>', 'shadow-2')
+            create(root, '<button tabindex="1"></button>', 'shadow-1')
+            create(document.body, '<button tabindex="1"></button>', 'document-1')
+
+            expect(drawnOrder()).toEqual(['document-1', 'document-0', 'shadow-1', 'shadow-2', 'shadow-0'])
+        })
+
+        it('should sort the shadow root of a host with a positive tabindex with its host', () => {
+            create(document.body, '<button></button>', 'document-0')
+            const host = create(document.body, '<div tabindex="1"></div>', 'host')
+            create(host.attachShadow({ mode: 'open' }), '<button></button>', 'in-host')
+
+            expect(drawnOrder()).toEqual(['host', 'in-host', 'document-0'])
+        })
+
+        it('should skip a shadow host with a negative tabindex and its shadow root', () => {
+            create(document.body, '<button></button>', 'start')
+            const host = create(document.body, '<div tabindex="-1"></div>')
+            create(host.attachShadow({ mode: 'open' }), '<button></button>', 'in-skipped-host')
+            create(document.body, '<button></button>', 'end')
+
+            expect(drawnOrder()).toEqual(['start', 'end'])
+        })
+
+        it('should not include a shadow host that delegates the focus, only the elements in its shadow root', () => {
+            const host = create(document.body, '<div tabindex="0"></div>', 'host')
+            const root = host.attachShadow({ mode: 'open', delegatesFocus: true })
+            // jsdom does not keep `delegatesFocus`
+            Object.defineProperty(root, 'delegatesFocus', { value: true })
+            create(root, '<input>', 'input')
+
+            expect(drawnOrder()).toEqual(['input'])
+        })
+
+        it('should use a radio group per shadow root', () => {
+            create(document.body, '<input type="radio" name="r" checked>', 'document-radio')
+            const root = create(document.body, '<div></div>').attachShadow({ mode: 'open' })
+            create(root, '<input type="radio" name="r">', 'shadow-radio-1')
+            create(root, '<input type="radio" name="r" checked>', 'shadow-radio-2')
+
+            expect(drawnOrder()).toEqual(['document-radio', 'shadow-radio-2'])
+        })
+
+        it('should include an element with position fixed, which has no offsetParent', () => {
+            const fixed = create(document.body, '<button style="position: fixed"></button>', 'fixed')
+            Object.defineProperty(fixed, 'offsetParent', { value: null, configurable: true })
+
+            expect(drawnOrder()).toEqual(['fixed'])
+        })
+
+        it('should include the summary of a closed details element, not its content', () => {
+            const details = create(document.body, '<details></details>')
+            create(details, '<summary></summary>', 'summary')
+            create(details, '<button></button>', 'in-closed-details')
+
+            expect(drawnOrder()).toEqual(['summary'])
+        })
+
+        it('should include a details element without a summary', () => {
+            create(document.body, '<details></details>', 'details')
+
+            expect(drawnOrder()).toEqual(['details'])
+        })
+
+        it('should not include the elements in an inert subtree or in a disabled fieldset', () => {
+            create(create(document.body, '<div inert></div>'), '<button></button>', 'inert')
+            create(create(document.body, '<fieldset disabled></fieldset>'), '<button></button>', 'in-disabled-fieldset')
+            create(document.body, '<button></button>', 'end')
+
+            expect(drawnOrder()).toEqual(['end'])
+        })
+
+        it('should use checkVisibility when the browser has it', () => {
+            const visible = create(document.body, '<button></button>', 'visible')
+            const hidden = create(document.body, '<button></button>', 'hidden')
+            visible.checkVisibility = vi.fn().mockReturnValue(true)
+            hidden.checkVisibility = vi.fn().mockReturnValue(false)
+
+            expect(drawnOrder()).toEqual(['visible'])
+            expect(hidden.checkVisibility).toHaveBeenCalledWith({ visibilityProperty: true, checkVisibilityCSS: true })
+        })
     })
 })
