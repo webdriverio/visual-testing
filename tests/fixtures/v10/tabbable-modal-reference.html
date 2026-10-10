@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tabbable modal dialog reference</title>
+<style>
+    body { margin: 0; background: #fff; }
+    dialog { width: 300px; height: 160px; padding: 0; border: 4px solid #333; background: #ffe; }
+    .button { display: block; width: 100px; height: 40px; margin: 20px; padding: 0; border: 0; background: #388e3c; }
+</style>
+</head>
+<body>
+<!-- The expected tab stops of tabbable-modal.html: the 2 elements in the dialog, not the element outside -->
+<div class="button"></div>
+<dialog id="dialog"><div class="button" tabindex="0"></div><div class="button" tabindex="0"></div></dialog>
+<script>document.getElementById('dialog').showModal(); document.activeElement.blur()</script>
+</body>
+</html>

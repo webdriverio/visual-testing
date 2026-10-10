@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tabbable limits reference</title>
+<style>
+    body { margin: 0; background: #fff; }
+    main { opacity: 0; }
+    .row { display: block; box-sizing: border-box; width: 160px; height: 40px; margin: 20px; padding: 0; border: 0; }
+    .inner { display: block; box-sizing: border-box; width: 100px; height: 30px; margin: 0; padding: 0; border: 0; }
+    .area { position: absolute; left: 0; top: 0; width: 40px; height: 40px; }
+    .map { display: block; height: 0; position: relative; }
+</style>
+</head>
+<body>
+<!-- The expected tab stops of tabbable-limits.html: an element with tabindex="0" at the same place -->
+<main>
+    <div class="row" tabindex="0"></div>
+    <div class="row" tabindex="0"></div>
+    <!-- The area is drawn on the image (the next row), at the center of its shape -->
+    <div class="map"></div>
+    <div class="row" style="position: relative"><div class="area" tabindex="0"></div></div>
+    <div class="row" tabindex="0"></div>
+    <div class="row"><div class="inner" tabindex="0"></div></div>
+</main>
+</body>
+</html>
