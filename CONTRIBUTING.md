@@ -271,14 +271,13 @@ The versions below are the versions of `@wdio/visual-service`.
 
 | Branch | Service version | WebdriverIO | npm tag | Status |
 | --- | --- | --- | --- | --- |
-| `main` | v11 (prerelease) | v10 | `next` | Development of the next major version |
-| `v10` | v10 | v9 and v10 | `latest`, `legacy-v10` after the v11 release | Maintenance for WebdriverIO v9 users: fixes are backported on request only |
+| `main` | v11 | v10 | `latest` | Active development |
+| `v10` | v10 | v9 and v10 | `legacy-v10` | Maintenance for WebdriverIO v9 users: fixes are backported on request only |
 | `v9` | v9 | v9 | `legacy` | Maintenance until the end of its year of maintenance (June 2027) |
 
 -   Open your PR against `main`, unless a maintainer asks you to backport a fix to a maintenance branch.
 -   A backport is a separate PR against the maintenance branch, with its own changeset.
--   `main` is in [changesets prerelease mode](https://github.com/changesets/changesets/blob/main/docs/prereleases.md) (`.changeset/pre.json`): a release from `main` publishes `-next.N` versions with the `next` npm tag. The v11 release exits this mode (`pnpm changeset pre exit`).
--   After a prerelease, its changesets move to `.changeset/pre/` (Changesets v3). They are used again for the changelog of the final release, so edit or delete one there only when it no longer applies.
+-   For the next major version, `main` goes into [changesets prerelease mode](https://github.com/changesets/changesets/blob/main/docs/prereleases.md) again (`pnpm changeset pre enter next`) only when a maintainer decides it.
 
 ## Releasing
 
@@ -290,4 +289,4 @@ To release a version of any of the packages listed above, do the following:
 -   trigger the [release pipeline](https://github.com/webdriverio/visual-testing/actions/workflows/release.yml) again on the same branch
 -   a new version should be released 🎉
 
-While `main` is in prerelease mode, use the `production` release type: it publishes the prerelease versions. The `alpha` release type is blocked.
+Use the `production` release type.
