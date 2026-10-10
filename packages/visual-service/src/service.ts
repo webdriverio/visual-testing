@@ -124,14 +124,17 @@ export default class WdioImageComparisonService extends BaseClass {
         }
 
         try {
+            // Mocha, and Jasmine from @wdio/jasmine-framework 10.0.2 (webdriverio/webdriverio#15947)
+            expect.extend(matchers)
+        } catch (err) {
+            // Before @wdio/jasmine-framework 10.0.2 the Jasmine `expect` has no `extend()`
+            // (webdriverio/webdriverio#15913), so add the matchers to Jasmine
             const jasmineEnv = getJasmineEnv()
             if (jasmineEnv) {
                 addJasmineMatchers(jasmineEnv, matchers)
                 return
             }
 
-            expect.extend(matchers)
-        } catch (err) {
             log.warn(`The custom matchers \`${Object.keys(matchers).join('|')}\` could not be added and can not be used. Use the \`check*\` methods instead. ${err}`)
         }
     }

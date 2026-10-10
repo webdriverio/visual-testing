@@ -1,8 +1,10 @@
 /**
- * With the Jasmine framework, the global `expect` of WebdriverIO has no `extend()`, and the Jasmine adapter
- * only gives Jasmine the WebdriverIO matchers that exist before the `before` hook. The visual matchers are
- * added to Jasmine as async matchers instead.
+ * Before @wdio/jasmine-framework 10.0.2, the global `expect` of WebdriverIO has no `extend()` with the Jasmine
+ * framework, and the Jasmine adapter only gives Jasmine the WebdriverIO matchers that exist before the `before` hook.
+ * For these versions the visual matchers are added to Jasmine as async matchers instead. From 10.0.2 the service uses
+ * `expect.extend()`. Remove this file when the service needs @wdio/jasmine-framework 10.0.2 or newer.
  * @see https://github.com/webdriverio/webdriverio/issues/15913
+ * @see https://github.com/webdriverio/webdriverio/pull/15947
  */
 
 interface VisualMatcherResult {

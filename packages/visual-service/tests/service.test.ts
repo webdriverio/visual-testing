@@ -2,6 +2,7 @@ import { dirname, join, normalize } from 'node:path'
 import logger from '@wdio/logger'
 import { expect as wdioExpect } from '@wdio/globals'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import VisualService from '../src/index.js'
 import { checkElement, checkScreen, DEVICE_RECTANGLES, getMobileScreenSize, getMobileViewPortPosition, saveScreen } from '@wdio/image-comparison-core'
 
@@ -41,6 +42,24 @@ vi.mock('@wdio/globals', async () => ({
         extend: vi.fn()
     }
 }))
+
+const matcherNames = ['toMatchScreenSnapshot', 'toMatchFullPageSnapshot', 'toMatchElementSnapshot', 'toMatchTabbablePageSnapshot']
+
+/**
+ * A browser that is enough for the `before` hook, which adds the visual matchers
+ */
+function getMatcherBrowser() {
+    const browser = mock<WebdriverIO.Browser>({
+        isMultiRemote: false,
+        isMobile: false,
+        isIOS: false,
+        isAndroid: false,
+        execute: vi.fn().mockResolvedValue(1),
+    })
+    // Plain objects: `mock()` would give every capability as a mock function
+    Object.assign(browser, { capabilities: {}, requestedCapabilities: {} })
+    return browser
+}
 
 describe('@wdio/visual-service', () => {
     beforeEach(() => {
@@ -489,35 +508,43 @@ describe('@wdio/visual-service', () => {
             expect(vi.mocked(log.error)).toHaveBeenCalledWith(expect.stringContaining(setupError.message))
         })
 
-        it('should register custom matchers with Jasmine when Jasmine is the framework', async () => {
-            // With Jasmine, the global `expect` has no `extend()` and the Jasmine adapter does not see matchers added later
+        it('should register custom matchers with expect.extend() with Jasmine from @wdio/jasmine-framework 10.0.2', async () => {
+            // @wdio/jasmine-framework 10.0.2 gives the Jasmine `expect` an `extend()` (webdriverio/webdriverio#15947)
             const jasmineEnv = { beforeAll: vi.fn(), addAsyncMatchers: vi.fn() }
-            ;(globalThis as { jasmine?: unknown }).jasmine = { getEnv: () => jasmineEnv }
-            const service = new VisualService({}, {}, {} as unknown as WebdriverIO.Config)
-            const browser = {
-                isMultiRemote: false,
-                addCommand: vi.fn(),
-                capabilities: {},
-                requestedCapabilities: {},
-                on: vi.fn(),
-                execute: vi.fn().mockResolvedValue(1),
-            } as any as WebdriverIO.Browser
+            vi.stubGlobal('jasmine', { getEnv: () => jasmineEnv })
+            const service = new VisualService({}, {}, mock<WebdriverIO.Config>())
 
             try {
-                await service.before({}, [], browser)
+                await service.before({}, [], getMatcherBrowser())
             } finally {
-                delete (globalThis as { jasmine?: unknown }).jasmine
+                vi.unstubAllGlobals()
             }
 
-            expect(wdioExpect.extend).not.toHaveBeenCalled()
+            expect(wdioExpect.extend).toHaveBeenCalledTimes(1)
+            expect(Object.keys(vi.mocked(wdioExpect.extend).mock.calls[0][0])).toEqual(matcherNames)
+            expect(jasmineEnv.beforeAll).not.toHaveBeenCalled()
+        })
+
+        it('should register custom matchers with Jasmine when the Jasmine expect has no extend() (before 10.0.2)', async () => {
+            // Before @wdio/jasmine-framework 10.0.2 the Jasmine `expect` has no `extend()` (webdriverio/webdriverio#15913),
+            // and the `expect` of @wdio/globals then throws a TypeError
+            vi.mocked(wdioExpect.extend).mockImplementationOnce(() => {
+                throw new TypeError('expect2.extend is not a function')
+            })
+            const jasmineEnv = { beforeAll: vi.fn(), addAsyncMatchers: vi.fn() }
+            vi.stubGlobal('jasmine', { getEnv: () => jasmineEnv })
+            const service = new VisualService({}, {}, mock<WebdriverIO.Config>())
+
+            try {
+                await service.before({}, [], getMatcherBrowser())
+            } finally {
+                vi.unstubAllGlobals()
+            }
+
             expect(jasmineEnv.beforeAll).toHaveBeenCalledTimes(1)
             jasmineEnv.beforeAll.mock.calls[0][0]()
-            expect(Object.keys(jasmineEnv.addAsyncMatchers.mock.calls[0][0])).toEqual([
-                'toMatchScreenSnapshot',
-                'toMatchFullPageSnapshot',
-                'toMatchElementSnapshot',
-                'toMatchTabbablePageSnapshot',
-            ])
+            expect(Object.keys(jasmineEnv.addAsyncMatchers.mock.calls[0][0])).toEqual(matcherNames)
+            expect(vi.mocked(log.warn)).not.toHaveBeenCalled()
         })
 
         it('should fail registering custom matchers', async () => {
