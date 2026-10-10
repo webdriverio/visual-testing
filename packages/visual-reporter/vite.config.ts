@@ -11,7 +11,8 @@ export default defineConfig({
         // The "~/*" paths of tsconfig.json
         tsconfigPaths: true,
     },
-    ...(baseName && { base: baseName }),
+    // Relative paths, so the report works in any folder of a static host (S3, CI artifacts, GitHub Pages) (#985)
+    base: baseName || './',
     build: {
         // The browsers of Vite 5's 'modules' target, which Vite 7 removed: the report is often opened in another
         // browser than the one under test. The Vite 8 default ('baseline-widely-available') needs Chrome/Edge 111+,

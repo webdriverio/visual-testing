@@ -88,6 +88,12 @@ Open a terminal, enter `npx wdio-visual-reporter` and answer all the questions
 
 https://github.com/user-attachments/assets/9cd2d0ce-bb19-4c5f-89c5-ea2f01d68fa1
 
+### Host the report
+
+The `report` folder is a static website with relative paths. You can upload it to any folder of a static host, for
+example an AWS S3 bucket, a CI artifact server or GitHub Pages, and open its `index.html` or the folder URL. It needs a
+web server: Chrome and Safari block the scripts of a page that is opened from the disk (`file://`).
+
 ### Deploy to GitHub Pages
 
 You can find a workflow [here](../../.github/workflows/deploy-visual-reporter.yml). Make sure you change the `GITHUB_PAGES` variable to the path of your reporter
