@@ -21,6 +21,7 @@ v11 is the current major version (npm tag `latest`). This guide lists what chang
 | [Ignored regions](#ignored-regions) | Only if a check fails after the upgrade |
 | [OCR: tesseract.js 7](#ocr-tesseractjs-7) | No |
 | [Visual reporter](#visual-reporter) | No |
+| [New: full page screenshots of apps where a container scrolls](#new-full-page-screenshots-of-apps-where-a-container-scrolls) | No, a new option |
 | [Smaller fixes](#smaller-fixes) | No |
 
 ## WebdriverIO v10 only
@@ -104,6 +105,24 @@ No change is needed.
   `index.html` or has a query string. Before, it only worked at the root of a web server, opened as a folder (`/`).
 - The package no longer contains the 2 route type files that React Router generates for the type check of this
   repository.
+
+## New: full page screenshots of apps where a container scrolls
+
+In many apps the page itself does not scroll: a container scrolls (for example a `main` element under a fixed
+header). Before, a full page screenshot of such an app was only the viewport (WebDriver BiDi), or the top of the
+page again and again (scroll and stitch). The new `scrollContainer` option gives the element that scrolls:
+
+```ts
+await expect(browser).toMatchFullPageSnapshot('app', {
+    scrollContainer: await $('main'),
+})
+```
+
+The image is the viewport with this container expanded: the part above the container, the full content of the
+container, and the part below it. The container is scrolled back to its start position after the screenshot. With
+this option, the screenshot scrolls and stitches, also in a WebDriver BiDi session. It works for
+`checkFullPageScreen()`, `saveFullPageScreen()` and `toMatchFullPageSnapshot()`, on desktop and on Android and iOS
+mobile web. Columns next to the container (for example a sidebar) are only in the image for the first viewport.
 
 ## Smaller fixes
 

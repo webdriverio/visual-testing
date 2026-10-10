@@ -1088,6 +1088,59 @@ describe('rectangles', () => {
             ])
         })
 
+        describe('with a scroll container (#125)', () => {
+            /**
+             * A fake DOM element for the mapping script: its viewport rectangle, and for the container its client box
+             * and scroll data. `contains` is true for the elements in the container
+             */
+            const fakeElement = (rect: { x: number, y: number, width: number, height: number }, extra: Record<string, unknown> = {}) =>
+                mock<Element>({ getBoundingClientRect: vi.fn().mockReturnValue({ ...rect, top: rect.y, left: rect.x }), ...extra })
+            // The container: top 60, a client height of 740 in a viewport of 800, a content of 2000, scrolled to 300
+            const containerElement = fakeElement({ x: 0, y: 60, width: 1000, height: 740 }, { clientTop: 0, clientHeight: 740, scrollTop: 300, scrollHeight: 2000 })
+            const inContainer = fakeElement({ x: 10, y: 100, width: 50, height: 20 })
+            const footer = fakeElement({ x: 0, y: 800, width: 1000, height: 60 })
+            const header = fakeElement({ x: 0, y: 0, width: 1000, height: 60 })
+            Object.assign(containerElement, { contains: (el: Element) => el === inContainer })
+
+            // The ignore element runs the mapping script with the fake elements
+            const ignoreElementFor = (element: Element) => mock<WebdriverIO.Element>({
+                elementId: 'ignore-id',
+                selector: '.ignore',
+                execute: vi.fn(async (script: unknown, ...args: unknown[]) => {
+                    if (typeof script !== 'function') {
+                        throw new Error('Not a script')
+                    }
+                    return script(element, args.length > 0 ? containerElement : undefined)
+                }),
+            })
+
+            beforeEach(() => {
+                vi.stubGlobal('window', { innerHeight: 800 })
+            })
+
+            afterEach(() => {
+                vi.unstubAllGlobals()
+            })
+
+            it('should map the elements to the image of the page with the container expanded', async () => {
+                const scrollContainer = mock<WebdriverIO.Element>({ elementId: 'container' })
+
+                const result = await determineWebFullPageIgnoreRegions(
+                    { ...fullPageOptions, devicePixelRatio: 1, scrollContainer },
+                    [ignoreElementFor(inContainer), ignoreElementFor(footer), ignoreElementFor(header)],
+                )
+
+                expect(result).toEqual([
+                    // In the container: the viewport y plus the scroll position of the container
+                    { x: 10, y: 400, width: 50, height: 20 },
+                    // Below the container: moved down by the content that is not in the viewport (2000 - 740)
+                    { x: 0, y: 2060, width: 1000, height: 60 },
+                    // Above the container: not moved
+                    { x: 0, y: 0, width: 1000, height: 60 },
+                ])
+            })
+        })
+
         it('should treat raw regions as document-relative CSS pixels and apply DPR', async () => {
             const region = { x: 0, y: 500, width: 300, height: 80 }
 

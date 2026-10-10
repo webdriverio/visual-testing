@@ -178,6 +178,11 @@ export interface DetermineWebFullPageIgnoreRegionsOptions {
      * @default 0
      */
     fullPageCropTopPaddingCSS?: number;
+    /**
+     * The scroll container of a page where a container scrolls and not the page (#125). The image is then the
+     * viewport with the container expanded, so the regions are mapped to that image.
+     */
+    scrollContainer?: WebdriverIO.Element;
 }
 
 export interface DetermineWebElementIgnoreRegionsOptions {
