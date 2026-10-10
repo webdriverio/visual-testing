@@ -13,3 +13,8 @@ allowBuilds:
   protobufjs: false
   tesseract.js: false
   unrs-resolver: false
+
+# pnpm refuses packages that are less than 1 day old. expect-webdriverio 8.0.0 was published on 2026-10-10 at
+# 16:09 UTC: remove this exception after 2026-10-11 16:10 UTC
+minimumReleaseAgeExclude:
+  - expect-webdriverio@8.0.0
