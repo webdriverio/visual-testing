@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { createReadStream, existsSync, rmSync, statSync } from 'node:fs'
 import { createServer, type Server } from 'node:http'
-import { extname, join } from 'node:path'
+import { extname, join, resolve, sep } from 'node:path'
 import { browser, expect } from '@wdio/globals'
 
 /**
@@ -10,6 +10,7 @@ import { browser, expect } from '@wdio/globals'
  * files by path, no fallback to index.html, in a sub-folder. Every request that is not found is a failure.
  */
 const reportFolder = join(process.cwd(), '.tmp/visual-reporter-e2e')
+const reportRoot = join(reportFolder, 'report')
 const mount = '/reports/run-1/'
 const contentTypes: Record<string, string> = {
     '.css': 'text/css',
@@ -18,6 +19,30 @@ const contentTypes: Record<string, string> = {
     '.js': 'text/javascript',
     '.json': 'application/json',
     '.png': 'image/png',
+}
+
+/**
+ * Get the file of the report for a decoded request path, or '' when the path is not in the report folder (also with
+ * `..` segments)
+ */
+function getReportFile(path: string | null): string {
+    if (!path?.startsWith(mount)) {
+        return ''
+    }
+    const file = resolve(reportRoot, path.slice(mount.length))
+
+    return file === reportRoot || file.startsWith(`${reportRoot}${sep}`) ? file : ''
+}
+
+/**
+ * Decode the path of a request, or null when it can not be decoded (for example a single `%`)
+ */
+function decodePath(url: string): string | null {
+    try {
+        return decodeURIComponent(url.split('?')[0])
+    } catch {
+        return null
+    }
 }
 
 describe('@wdio/visual-reporter on a static host', () => {
@@ -34,15 +59,15 @@ describe('@wdio/visual-reporter on a static host', () => {
         ], { stdio: 'inherit' })
 
         server = createServer((request, response) => {
-            const path = decodeURIComponent((request.url ?? '').split('?')[0])
-            let file = path.startsWith(mount) ? join(reportFolder, 'report', path.slice(mount.length)) : ''
+            const path = decodePath(request.url ?? '')
+            let file = getReportFile(path)
             if (file && existsSync(file) && statSync(file).isDirectory()) {
                 file = join(file, 'index.html')
             }
             if (!file || !existsSync(file)) {
                 // The browser asks for /favicon.ico at the root of the host by itself, it is not a request of the report
                 if (path !== '/favicon.ico') {
-                    notFound.push(path)
+                    notFound.push(path ?? request.url ?? '')
                 }
                 response.writeHead(404).end()
                 return
