@@ -45,8 +45,8 @@ importers:
         specifier: ^10.0.2
         version: 10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
       '@wdio/browserstack-service':
-        specifier: ^9.39.3
-        version: 9.39.3(@wdio/cli@10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+        specifier: ^9.39.4
+        version: 9.39.4(@wdio/cli@10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       '@wdio/cli':
         specifier: ^10.0.2
         version: 10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)
@@ -2063,8 +2063,8 @@ packages:
       appium:
         optional: true
 
-  '@wdio/browserstack-service@9.39.3':
-    resolution: {integrity: sha512-UMQPsTmH59lkEy3NdJhOnhPwGv0rhzy/h+/YWcxbp30PZbfQi7z84P2yHUv6XydgWStrgEJ7AaE7Avzdl6q9GQ==}
+  '@wdio/browserstack-service@9.39.4':
+    resolution: {integrity: sha512-3L2UHLNqZwK9g5AXrG9RphlsqeMRlOjVAA58HF+dxWTPM718lL3Pb/E7kYd5g36484aAHuteODMdb1ymRY4WSg==}
     engines: {node: '>=18.20.0'}
     peerDependencies:
       '@wdio/cli': ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
@@ -7371,7 +7371,7 @@ snapshots:
       - utf-8-validate
       - yauzl
 
-  '@wdio/browserstack-service@9.39.3(@wdio/cli@10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
+  '@wdio/browserstack-service@9.39.4(@wdio/cli@10.0.2(@types/node@24.0.14)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0-alpha.3(@wdio/types@10.0.1)(webdriverio@10.0.2(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
     dependencies:
       '@browserstack/ai-sdk-node': 1.5.17(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       '@bufbuild/protobuf': 2.10.2
