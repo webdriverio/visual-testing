@@ -51,43 +51,36 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
     let isRotated = false
     let actualFullPageWidth: number | undefined
 
+    // Each screenshot must show a part of the page. Without this check a height of 0 never scrolls and takes screenshots
+    // without end, and a negative height scrolls up
+    if (effectiveViewportHeight <= 0) {
+        log.error('The viewport height for the full page screenshot is not positive', {
+            effectiveViewportHeight,
+            viewportHeight,
+            deviceInfo: { isAndroid, isLandscape, devicePixelRatio, addressBarShadowPadding, toolBarShadowPadding },
+            deviceRectangles: { viewport, bottomBar, homeBar, screenSize: options.deviceRectangles.screenSize },
+        })
+
+        const viewportCssHeight = viewportHeight + addressBarShadowPadding + toolBarShadowPadding
+        const homeBarHeight = viewportHeight - effectiveViewportHeight
+        // Smaller shadow paddings only help when the viewport is higher than the home bar
+        const advice = viewportCssHeight - homeBarHeight > 0
+            ? 'Use smaller shadow paddings.'
+            : 'The viewport is not higher than the home bar, so the device rectangles are probably wrong.'
+
+        throw new Error(viewport.height === 0
+            ? 'The full page screenshot can not be taken: the viewport of the mobile browser is not known (height 0). ' +
+                'The visual service measures it at the start of the session with a native tap in the middle of the screen, ' +
+                'and that measurement failed, for example because the screen was black or a browser screen covered the page. ' +
+                'See the warnings of the visual service in the WebdriverIO log.'
+            : `The full page screenshot can not be taken: the viewport height without the shadow paddings and the home bar is ${effectiveViewportHeight} px ` +
+                `(viewport ${viewportCssHeight} px, addressBarShadowPadding ${addressBarShadowPadding} px, ` +
+                `toolBarShadowPadding ${toolBarShadowPadding} px, home bar ${homeBarHeight} px). ${advice}`)
+    }
+
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
         const scrollY = effectiveViewportHeight * i
-
-        if (scrollY < 0) {
-            const currentBrowserScrollPosition = await browserInstance.execute(() => window.pageYOffset || document.documentElement.scrollTop)
-
-            log.error('Negative scrollY detected during full page screenshot', {
-                iteration: i,
-                scrollY,
-                effectiveViewportHeight,
-                originalViewportHeight: viewportHeight,
-                calculatedScrollY: effectiveViewportHeight * i,
-                deviceInfo: {
-                    isAndroid,
-                    isLandscape,
-                    devicePixelRatio,
-                    addressBarShadowPadding,
-                    toolBarShadowPadding
-                },
-                deviceRectangles: {
-                    viewport: options.deviceRectangles.viewport,
-                    bottomBar: options.deviceRectangles.bottomBar,
-                    homeBar: options.deviceRectangles.homeBar,
-                    screenSize: options.deviceRectangles.screenSize
-                },
-                homeBarAdjustment: {
-                    hasNoBottomBar,
-                    hasHomeBar,
-                    homeBarHeightAdjustment: hasNoBottomBar && hasHomeBar ? Math.round(homeBar.height / (isAndroid ? devicePixelRatio : 1)) : 0
-                },
-                scrollHeight,
-                currentBrowserScrollPosition
-            })
-
-            throw new Error(`Negative scroll position detected (scrollY: ${scrollY}) during full page screenshot at iteration ${i}. This indicates an issue with viewport calculations or browser scroll state. Check logs for detailed debug information.`)
-        }
 
         await browserInstance.execute(scrollToPosition, scrollY)
 
