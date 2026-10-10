@@ -4,6 +4,7 @@ import checkFullPageScreen from './checkFullPageScreen.js'
 import type { ImageCompareResult } from '../index.js'
 import type { InternalCheckTabbablePageMethodOptions } from './check.interfaces.js'
 import { readScrollPosition, restoreScrollPosition } from '../helpers/scrollPosition.js'
+import { withoutScrollContainer } from '../helpers/utils.js'
 
 /**
  * Compare an image with all tab executions
@@ -50,7 +51,7 @@ async function takeTabbablePage(
     // 2. Create the screenshot
     const fullPageCompareData = await checkFullPageScreen({
         browserInstance,
-        checkFullPageOptions: checkTabbableOptions,
+        checkFullPageOptions: withoutScrollContainer(checkTabbableOptions, 'checkTabbablePage'),
         instanceData,
         folders,
         isNativeContext,
