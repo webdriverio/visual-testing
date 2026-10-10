@@ -3,7 +3,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import getScrollContainerData from './getScrollContainerData.js'
 import scrollContainerTo from './scrollContainerTo.js'
-import hideScrollContainerScrollbar from './hideScrollContainerScrollbar.js'
+import prepareScrollContainer from './prepareScrollContainer.js'
 
 /**
  * jsdom does no layout, so set the sizes and scroll data that the browser would report. The scroll position stops at
@@ -75,15 +75,45 @@ describe('scroll container client scripts (#125)', () => {
         expect(container.style.getPropertyValue('scroll-behavior')).toBe('smooth')
     })
 
-    it('hideScrollContainerScrollbar should hide and show the scrollbar of the container only', () => {
+    it('prepareScrollContainer should hide and show the scrollbar of the container only', () => {
         const container = createContainer()
 
-        hideScrollContainerScrollbar(container, true)
+        prepareScrollContainer(container, true, true)
         expect(container.hasAttribute('data-wic-scroll-container')).toBe(true)
         expect(document.getElementById('wic-scroll-container-style')?.textContent).toContain('scrollbar-width: none')
 
-        hideScrollContainerScrollbar(container, false)
+        prepareScrollContainer(container, false, true)
         expect(container.hasAttribute('data-wic-scroll-container')).toBe(false)
         expect(document.getElementById('wic-scroll-container-style')).toBeNull()
+    })
+
+    it('prepareScrollContainer should not touch the scrollbar when it must stay visible', () => {
+        const container = createContainer()
+
+        prepareScrollContainer(container, true, false)
+
+        expect(container.hasAttribute('data-wic-scroll-container')).toBe(false)
+        expect(document.getElementById('wic-scroll-container-style')).toBeNull()
+    })
+
+    it.each([
+        ['no inline value', '', ''],
+        ['an inline value', 'y mandatory', ''],
+        ['an inline !important value', 'y proximity', 'important'],
+    ])('prepareScrollContainer should turn off scroll snap during the screenshots and put back %s', (_name, value, priority) => {
+        // With scroll snap, the container does not stop at the scroll position of the next screenshot
+        const container = createContainer()
+        if (value) {
+            container.style.setProperty('scroll-snap-type', value, priority)
+        }
+
+        prepareScrollContainer(container, true, true)
+        expect(container.style.getPropertyValue('scroll-snap-type')).toBe('none')
+        expect(container.style.getPropertyPriority('scroll-snap-type')).toBe('important')
+
+        prepareScrollContainer(container, false, true)
+        expect(container.style.getPropertyValue('scroll-snap-type')).toBe(value)
+        expect(container.style.getPropertyPriority('scroll-snap-type')).toBe(priority)
+        expect(container.hasAttribute('data-wic-scroll-snap-type')).toBe(false)
     })
 })

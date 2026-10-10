@@ -118,9 +118,20 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         // The header, the full content of the container and the footer, as in the expanded page
         await browser.url(fixture('app-shell.html'))
         const scrollContainer = await $('#scroller')
+        await browser.execute((el) => el.scrollTo({ top: 500, behavior: 'instant' }), scrollContainer)
         expect(await browser.checkFullPageScreen('v10-scroll-container', { scrollContainer })).toBe(0)
         // The container is scrolled back to its start position
-        expect(await browser.execute((el) => el.scrollTop, scrollContainer)).toBe(0)
+        expect(await browser.execute((el) => el.scrollTop, scrollContainer)).toBe(500)
+    })
+
+    it('takes a full page screenshot of a scroll container with scroll snap that starts at a fractional row (#125)', async () => {
+        // With scroll snap, or a header of 60.5 px, the container does not stop at each scroll position of the
+        // screenshots (it snaps to a row, or the browser rounds to a device pixel)
+        await browser.url(`${fixture('app-shell.html')}?expanded&fractional`)
+        await browser.checkFullPageScreen('v10-scroll-container-snap')
+
+        await browser.url(`${fixture('app-shell.html')}?snap&fractional`)
+        expect(await browser.checkFullPageScreen('v10-scroll-container-snap', { scrollContainer: $('#scroller') })).toBe(0)
     })
 
     it('ignores a sticky element of a scroll container in each screenshot of the container (#125)', async () => {
