@@ -12,7 +12,7 @@ import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
 import { BASE_CHECK_OPTIONS, createMethodOptions } from '../mocks/mocks.js'
 import { canUseBidiScreenshot } from '../helpers/utils.js'
 import getScrollPosition from '../clientSideScripts/getScrollPosition.js'
-import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
+import scrollBackToPosition from '../clientSideScripts/scrollBackToPosition.js'
 
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
 const log = logger('test')
@@ -192,14 +192,16 @@ describe('saveFullPageScreen', () => {
             isMobile: false,
             execute,
         })
+        // A desktop browser: on iOS the scroll back also waits until the page stays at the position
+        const desktopOptions = { ...baseOptions, instanceData: { ...baseOptions.instanceData, isIOS: false } }
 
         it('should read the scroll position before the page is prepared and scroll back after it is restored', async () => {
             const browserInstance = createBrowser()
 
-            await saveFullPageScreen({ ...baseOptions, browserInstance })
+            await saveFullPageScreen({ ...desktopOptions, browserInstance })
 
             const execute = vi.mocked(browserInstance.execute).mock
-            expect(execute.calls).toEqual([[getScrollPosition], [scrollToPosition, 420]])
+            expect(execute.calls).toEqual([[getScrollPosition], [scrollBackToPosition, 420]])
             // Read before beforeScreenshot (removed elements can make the page shorter), restore after afterScreenshot
             expect(execute.invocationCallOrder[0]).toBeLessThan(beforeScreenshotSpy.mock.invocationCallOrder[0])
             expect(execute.invocationCallOrder[1]).toBeGreaterThan(afterScreenshotSpy.mock.invocationCallOrder[0])
@@ -210,15 +212,15 @@ describe('saveFullPageScreen', () => {
             const screenshotError = new Error('screenshot failed')
             takeFullPageScreenshotsSpy.mockRejectedValueOnce(screenshotError)
 
-            await expect(saveFullPageScreen({ ...baseOptions, browserInstance })).rejects.toThrow(screenshotError)
+            await expect(saveFullPageScreen({ ...desktopOptions, browserInstance })).rejects.toThrow(screenshotError)
 
-            expect(browserInstance.execute).toHaveBeenLastCalledWith(scrollToPosition, 420)
+            expect(browserInstance.execute).toHaveBeenLastCalledWith(scrollBackToPosition, 420)
         })
 
         it('should keep the result and only warn when the scroll back fails', async () => {
             const browserInstance = createBrowser(vi.fn().mockResolvedValueOnce(420).mockRejectedValueOnce(new Error('no browser')))
 
-            await expect(saveFullPageScreen({ ...baseOptions, browserInstance })).resolves.toBeDefined()
+            await expect(saveFullPageScreen({ ...desktopOptions, browserInstance })).resolves.toBeDefined()
 
             expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('Could not scroll back'))
         })
@@ -226,16 +228,27 @@ describe('saveFullPageScreen', () => {
         it('should not scroll back when the scroll position could not be read', async () => {
             const browserInstance = createBrowser(vi.fn().mockRejectedValueOnce(new Error('no scripts')))
 
-            await saveFullPageScreen({ ...baseOptions, browserInstance })
+            await saveFullPageScreen({ ...desktopOptions, browserInstance })
 
             expect(browserInstance.execute).toHaveBeenCalledTimes(1)
             expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('Could not read the scroll position'))
         })
 
+        it('should wait on iOS until the page stays at the scroll position', async () => {
+            const browserInstance = createBrowser()
+
+            await saveFullPageScreen({ ...desktopOptions, browserInstance, instanceData: { ...desktopOptions.instanceData, isIOS: true } })
+
+            const calls = vi.mocked(browserInstance.execute).mock.calls
+            expect(calls[1]).toEqual([scrollBackToPosition, 420])
+            expect(calls.length).toBeGreaterThan(2)
+            expect(calls.slice(2).every(([script]) => script === getScrollPosition)).toBe(true)
+        })
+
         it('should not touch the scroll position in a native context', async () => {
             const browserInstance = createBrowser()
 
-            await expect(saveFullPageScreen({ ...baseOptions, browserInstance, isNativeContext: true })).rejects.toThrow()
+            await expect(saveFullPageScreen({ ...desktopOptions, browserInstance, isNativeContext: true })).rejects.toThrow()
 
             expect(browserInstance.execute).not.toHaveBeenCalled()
         })

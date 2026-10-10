@@ -1,4 +1,3 @@
-import logger from '@wdio/logger'
 import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
 import { takeFullPageScreenshots } from '../methods/takeFullPageScreenshots.js'
@@ -10,146 +9,124 @@ import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
 import { getMethodOrWicOption, canUseBidiScreenshot } from '../helpers/utils.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
 import { determineWebFullPageIgnoreRegions } from '../methods/rectangles.js'
-import getScrollPosition from '../clientSideScripts/getScrollPosition.js'
-import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
-
-const log = logger('@wdio/visual-service:@wdio/image-comparison-core:saveFullPageScreen')
+import { readScrollPosition, restoreScrollPosition } from '../helpers/scrollPosition.js'
 
 /**
  * Saves an image of the full page
  */
-export default async function saveFullPageScreen(
+export default async function saveFullPageScreen(options: InternalSaveFullPageMethodOptions): Promise<ScreenshotOutput> {
+    // 1. Check if the method is supported in native context
+    if (options.isNativeContext) {
+        throw new Error('The method saveFullPageScreen is not supported in native context for native mobile apps!')
+    }
+
+    // A full page screenshot that scrolls and stitches leaves the page at the bottom (#1231). Read the position
+    // before the page is prepared (removed elements can make the page shorter and move it), and scroll back after
+    // the page is restored, also when the screenshot fails
+    const startScrollPosition = await readScrollPosition(options.browserInstance)
+    try {
+        return await takeFullPageScreen(options)
+    } finally {
+        await restoreScrollPosition(options.browserInstance, startScrollPosition, options.instanceData.isIOS)
+    }
+}
+
+async function takeFullPageScreen(
     {
         browserInstance,
         instanceData,
         folders,
         tag,
         saveFullPageOptions,
-        isNativeContext,
     }: InternalSaveFullPageMethodOptions
 ): Promise<ScreenshotOutput> {
-    // 1. Check if the method is supported in native context
-    if (isNativeContext) {
-        throw new Error('The method saveFullPageScreen is not supported in native context for native mobile apps!')
-    }
+    // 2. Set some variables
+    const enableLegacyScreenshotMethod = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'enableLegacyScreenshotMethod')
+    const fullPageScrollTimeout = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'fullPageScrollTimeout')
+    const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
+    const userBasedFullPageScreenshot = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'userBasedFullPageScreenshot')
 
-    // Remember the scroll position before the page is prepared: removed elements can make the page shorter
-    // and move it. A full page screenshot that scrolls and stitches leaves the page at the bottom (#1231)
-    const startScrollPosition = await readScrollPosition(browserInstance)
-
-    try {
-        // 2. Set some variables
-        const enableLegacyScreenshotMethod = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'enableLegacyScreenshotMethod')
-        const fullPageScrollTimeout = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'fullPageScrollTimeout')
-        const hideAfterFirstScroll: HTMLElement[] = saveFullPageOptions.method.hideAfterFirstScroll || []
-        const userBasedFullPageScreenshot = getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'userBasedFullPageScreenshot')
-
-        // 3.  Prepare the screenshot
-        const beforeOptions = createBeforeScreenshotOptions(instanceData, saveFullPageOptions.method, saveFullPageOptions.wic)
-        const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions, true)
-        const {
-            dimensions: {
-                window: {
-                    devicePixelRatio,
-                    innerHeight,
-                    isEmulated: _isEmulated,
-                    isLandscape,
-                    screenHeight,
-                    screenWidth,
-                },
+    // 3.  Prepare the screenshot
+    const beforeOptions = createBeforeScreenshotOptions(instanceData, saveFullPageOptions.method, saveFullPageOptions.wic)
+    const enrichedInstanceData: BeforeScreenshotResult = await beforeScreenshot(browserInstance, beforeOptions, true)
+    const {
+        dimensions: {
+            window: {
+                devicePixelRatio,
+                innerHeight,
+                isEmulated: _isEmulated,
+                isLandscape,
+                screenHeight,
+                screenWidth,
             },
-            isAndroid,
-            isAndroidChromeDriverScreenshot,
-            isAndroidNativeWebScreenshot,
-            isIOS,
-            isMobile,
-        } = enrichedInstanceData
+        },
+        isAndroid,
+        isAndroidChromeDriverScreenshot,
+        isAndroidNativeWebScreenshot,
+        isIOS,
+        isMobile,
+    } = enrichedInstanceData
 
-        // 4.  Take the screenshot
-        const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
-            addressBarShadowPadding: beforeOptions.addressBarShadowPadding,
-            devicePixelRatio: devicePixelRatio || NaN,
-            deviceRectangles: instanceData.deviceRectangles,
-            fullPageScrollTimeout,
-            hideAfterFirstScroll,
-            innerHeight: innerHeight || NaN,
-            isAndroid,
-            isAndroidChromeDriverScreenshot,
-            isAndroidNativeWebScreenshot,
-            isIOS,
-            isLandscape,
-            screenHeight: screenHeight || NaN,
-            screenWidth: screenWidth || NaN,
-            toolBarShadowPadding: beforeOptions.toolBarShadowPadding,
-        }
-        const shouldUseBidi = canUseBidiScreenshot(browserInstance) && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
-        const screenshotsData = await takeFullPageScreenshots(browserInstance, fullPageScreenshotOptions, shouldUseBidi)
-
-        // 5.  Get the final image - either direct BiDi or stitched from multiple screenshots
-        const fullPageBase64Image = (screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
-            ? screenshotsData.data[0].screenshot // BiDi screenshot - use directly
-            : await makeFullPageBase64Image(screenshotsData, { devicePixelRatio: devicePixelRatio || NaN, isLandscape })
-
-        // 6. Resolve ignore regions while the DOM is still in screenshot state.
-        //    Full-page image (BiDi or stitched) is in document coordinates; regions are document-relative device pixels.
-        //    On mobile scroll-and-stitch we crop addressBarShadowPadding from the top of each tile, so we pass
-        //    fullPageCropTopPaddingCSS so ignore regions align with the stitched canvas.
-        const ignore = saveFullPageOptions.method?.ignore
-        const ignoreRegionPadding = (getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
-        const usedStitchedMobile = isMobile && !(screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
-        const ignoreRegions = ignore && ignore.length > 0
-            ? await determineWebFullPageIgnoreRegions(
-                {
-                    browserInstance,
-                    devicePixelRatio: devicePixelRatio || 1,
-                    fullPageCropTopPaddingCSS: usedStitchedMobile ? beforeOptions.addressBarShadowPadding : 0,
-                    ignoreRegionPadding,
-                },
-                ignore,
-            )
-            : undefined
-
-        // 7.  Return the data
-        const afterOptions = buildAfterScreenshotOptions({
-            base64Image: fullPageBase64Image,
-            folders,
-            tag,
-            isNativeContext: false,
-            instanceData,
-            enrichedInstanceData,
-            beforeOptions,
-            wicOptions: saveFullPageOptions.wic
-        })
-
-        const result = await afterScreenshot(browserInstance, afterOptions!)
-
-        return {
-            ...result,
-            ...(ignoreRegions ? { ignoreRegions } : {}),
-        }
-    } finally {
-        // After the removed elements are back, so the page has its full height again, also when the screenshot failed
-        await restoreScrollPosition(browserInstance, startScrollPosition)
+    // 4.  Take the screenshot
+    const fullPageScreenshotOptions: FullPageScreenshotDataOptions = {
+        addressBarShadowPadding: beforeOptions.addressBarShadowPadding,
+        devicePixelRatio: devicePixelRatio || NaN,
+        deviceRectangles: instanceData.deviceRectangles,
+        fullPageScrollTimeout,
+        hideAfterFirstScroll,
+        innerHeight: innerHeight || NaN,
+        isAndroid,
+        isAndroidChromeDriverScreenshot,
+        isAndroidNativeWebScreenshot,
+        isIOS,
+        isLandscape,
+        screenHeight: screenHeight || NaN,
+        screenWidth: screenWidth || NaN,
+        toolBarShadowPadding: beforeOptions.toolBarShadowPadding,
     }
-}
+    const shouldUseBidi = canUseBidiScreenshot(browserInstance) && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
+    const screenshotsData = await takeFullPageScreenshots(browserInstance, fullPageScreenshotOptions, shouldUseBidi)
 
-async function readScrollPosition(browserInstance: WebdriverIO.Browser): Promise<number | undefined> {
-    try {
-        return await browserInstance.execute(getScrollPosition)
-    } catch (error) {
-        log.warn(`Could not read the scroll position before the full page screenshot, the page will not be scrolled back: ${error}`)
-        return undefined
-    }
-}
+    // 5.  Get the final image - either direct BiDi or stitched from multiple screenshots
+    const fullPageBase64Image = (screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
+        ? screenshotsData.data[0].screenshot // BiDi screenshot - use directly
+        : await makeFullPageBase64Image(screenshotsData, { devicePixelRatio: devicePixelRatio || NaN, isLandscape })
 
-async function restoreScrollPosition(browserInstance: WebdriverIO.Browser, position: number | undefined): Promise<void> {
-    if (typeof position !== 'number') {
-        return
-    }
-    try {
-        await browserInstance.execute(scrollToPosition, position)
-    } catch (error) {
-        // Do not hide an error of the screenshot itself
-        log.warn(`Could not scroll back to the position before the full page screenshot: ${error}`)
+    // 6. Resolve ignore regions while the DOM is still in screenshot state.
+    //    Full-page image (BiDi or stitched) is in document coordinates; regions are document-relative device pixels.
+    //    On mobile scroll-and-stitch we crop addressBarShadowPadding from the top of each tile, so we pass
+    //    fullPageCropTopPaddingCSS so ignore regions align with the stitched canvas.
+    const ignore = saveFullPageOptions.method?.ignore
+    const ignoreRegionPadding = (getMethodOrWicOption(saveFullPageOptions.method, saveFullPageOptions.wic, 'ignoreRegionPadding') as number | undefined) ?? 1
+    const usedStitchedMobile = isMobile && !(screenshotsData.fullPageHeight === -1 && screenshotsData.fullPageWidth === -1)
+    const ignoreRegions = ignore && ignore.length > 0
+        ? await determineWebFullPageIgnoreRegions(
+            {
+                browserInstance,
+                devicePixelRatio: devicePixelRatio || 1,
+                fullPageCropTopPaddingCSS: usedStitchedMobile ? beforeOptions.addressBarShadowPadding : 0,
+                ignoreRegionPadding,
+            },
+            ignore,
+        )
+        : undefined
+
+    // 7.  Return the data
+    const afterOptions = buildAfterScreenshotOptions({
+        base64Image: fullPageBase64Image,
+        folders,
+        tag,
+        isNativeContext: false,
+        instanceData,
+        enrichedInstanceData,
+        beforeOptions,
+        wicOptions: saveFullPageOptions.wic
+    })
+
+    const result = await afterScreenshot(browserInstance, afterOptions!)
+
+    return {
+        ...result,
+        ...(ignoreRegions ? { ignoreRegions } : {}),
     }
 }
