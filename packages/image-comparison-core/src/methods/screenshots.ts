@@ -48,8 +48,6 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
-    // The scroll position before the full page screenshot, to scroll back to it at the end (#1231)
-    let startScrollY: number | undefined
     let isRotated = false
     let actualFullPageWidth: number | undefined
 
@@ -91,10 +89,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
             throw new Error(`Negative scroll position detected (scrollY: ${scrollY}) during full page screenshot at iteration ${i}. This indicates an issue with viewport calculations or browser scroll state. Check logs for detailed debug information.`)
         }
 
-        const previousScrollY = await browserInstance.execute(scrollToPosition, scrollY)
-        if (i === 0) {
-            startScrollY = previousScrollY
-        }
+        await browserInstance.execute(scrollToPosition, scrollY)
 
         // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
         await browserInstance.execute(hideScrollBars, true)
@@ -200,11 +195,6 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
         }
     }
 
-    // Scroll back to the position before the full page screenshot, so a later check sees the same page
-    if (typeof startScrollY === 'number') {
-        await browserInstance.execute(scrollToPosition, startScrollY)
-    }
-
     if (!scrollHeight) {
         throw new Error('Couldn\'t determine scroll height or screenshot size')
     }
@@ -234,17 +224,12 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(browserInsta
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
-    // The scroll position before the full page screenshot, to scroll back to it at the end (#1231)
-    let startScrollY: number | undefined
     let screenshotSize
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
         const scrollY = innerHeight * i
-        const previousScrollY = await browserInstance.execute(scrollToPosition, scrollY)
-        if (i === 0) {
-            startScrollY = previousScrollY
-        }
+        await browserInstance.execute(scrollToPosition, scrollY)
 
         // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
         await browserInstance.execute(hideScrollBars, true)
@@ -311,11 +296,6 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(browserInsta
         }
     }
 
-    // Scroll back to the position before the full page screenshot, so a later check sees the same page
-    if (typeof startScrollY === 'number') {
-        await browserInstance.execute(scrollToPosition, startScrollY)
-    }
-
     if (!scrollHeight || !screenshotSize) {
         throw new Error('Couldn\'t determine scroll height or screenshot size')
     }
@@ -355,8 +335,6 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
     // Start with an empty array, during the scroll it will be filled because a page could also have a lazy loading
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
-    // The scroll position before the full page screenshot, to scroll back to it at the end (#1231)
-    let startScrollY: number | undefined
     let screenshotSize
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
@@ -370,10 +348,7 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
             ? (i === 0 ? 0 : i * effectiveScrollIncrement)
             : actualInnerHeight * i
 
-        const previousScrollY = await browserInstance.execute(scrollToPosition, scrollY)
-        if (i === 0) {
-            startScrollY = previousScrollY
-        }
+        await browserInstance.execute(scrollToPosition, scrollY)
 
         // Elements that need to be hidden after the first scroll for a fullpage scroll.
         // Hide them before the wait: on a slow device the page needs time to be drawn again without them,
@@ -537,11 +512,6 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
         } catch (e) {
             logHiddenRemovedError(e)
         }
-    }
-
-    // Scroll back to the position before the full page screenshot, so a later check sees the same page
-    if (typeof startScrollY === 'number') {
-        await browserInstance.execute(scrollToPosition, startScrollY)
     }
 
     if (!scrollHeight || !screenshotSize) {

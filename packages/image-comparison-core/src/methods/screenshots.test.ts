@@ -15,7 +15,6 @@ import { MEDIUM_IMAGE_STRING, SMALL_IMAGE_STRING } from '../mocks/image.js'
 import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 import * as rectanglesModule from './rectangles.js'
 import * as utilsModule from '../helpers/utils.js'
-import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getElementVisibleRect from '../clientSideScripts/getElementVisibleRect.js'
 
 const log = logger('test')
@@ -62,15 +61,6 @@ describe('screenshots', () => {
     }
 
     let logWarnSpy: ReturnType<typeof vi.spyOn>
-
-    /**
-     * The last `execute` call scrolls back to the position before the full page screenshot
-     */
-    const expectScrolledBackTo = (browserInstance: WebdriverIO.Browser, position: number) => {
-        const calls = vi.mocked(browserInstance.execute).mock.calls
-
-        expect(calls[calls.length - 1]).toEqual([scrollToPosition, position])
-    }
 
     /**
      * The hide call of `hideAfterFirstScroll` (the third argument is `true`) runs after the first wait and before
@@ -200,26 +190,6 @@ describe('screenshots', () => {
 
             expect(result).toMatchSnapshot()
             expect(result.data).toHaveLength(1)
-        })
-
-        it('should scroll back to the position before the full page screenshot (#1231)', async () => {
-            const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: SMALL_IMAGE_STRING })
-
-            mockBrowserInstance.execute = vi.fn()
-                .mockResolvedValueOnce(420) // scrollToPosition 0 (i=0), returns the position before the scroll
-                .mockResolvedValueOnce(undefined) // hideScrollBars true
-                .mockResolvedValueOnce(2638) // getDocumentScrollHeight
-                .mockResolvedValueOnce({ scrollTop: 0 }) // actualScrollInfo
-                .mockResolvedValueOnce(undefined) // hideScrollBars false
-                .mockResolvedValueOnce(undefined) // scrollToPosition 1319 (i=1)
-                .mockResolvedValueOnce(undefined) // hideScrollBars true
-                .mockResolvedValueOnce(2638) // getDocumentScrollHeight
-                .mockResolvedValueOnce({ scrollTop: 1319 }) // actualScrollInfo
-                .mockResolvedValueOnce(undefined) // hideScrollBars false
-
-            await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions())
-
-            expectScrolledBackTo(mockBrowserInstance, 420)
         })
 
         it('should hide elements after first scroll when hideAfterFirstScroll is provided', async () => {
@@ -407,25 +377,6 @@ describe('screenshots', () => {
             expect(result.data).toHaveLength(2)
         })
 
-        it('should scroll back to the position before the full page screenshot (#1231)', async () => {
-            const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: SMALL_IMAGE_STRING })
-            vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({ width: 1366, height: 768 })
-
-            mockBrowserInstance.execute = vi.fn()
-                .mockResolvedValueOnce(420) // scrollToPosition 0, returns the position before the scroll
-                .mockResolvedValueOnce(undefined) // hideScrollBars
-                .mockResolvedValueOnce(1536) // getDocumentScrollHeight
-                .mockResolvedValueOnce(undefined) // hideScrollBars
-                .mockResolvedValueOnce(undefined) // scrollToPosition 768
-                .mockResolvedValueOnce(undefined) // hideScrollBars
-                .mockResolvedValueOnce(1536) // getDocumentScrollHeight
-                .mockResolvedValueOnce(undefined) // hideScrollBars
-
-            await getAndroidChromeDriverFullPageScreenshotsData(mockBrowserInstance, createBaseOptions())
-
-            expectScrolledBackTo(mockBrowserInstance, 420)
-        })
-
         it('should hide elements after first scroll when hideAfterFirstScroll is provided', async () => {
             const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: SMALL_IMAGE_STRING })
 
@@ -599,21 +550,6 @@ describe('screenshots', () => {
 
             expect(result).toMatchSnapshot()
             expect(result.data).toHaveLength(1)
-        })
-
-        it('should scroll back to the position before the full page screenshot (#1231)', async () => {
-            const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: SMALL_IMAGE_STRING })
-            vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({ width: 1366, height: 768 })
-
-            mockBrowserInstance.execute = vi.fn()
-                .mockResolvedValueOnce(420) // scrollToPosition 0, returns the position before the scroll
-                .mockResolvedValueOnce(1536) // getDocumentScrollHeight
-                .mockResolvedValueOnce(undefined) // scrollToPosition 768
-                .mockResolvedValueOnce(1536) // getDocumentScrollHeight
-
-            await getDesktopFullPageScreenshotsData(mockBrowserInstance, createBaseOptions())
-
-            expectScrolledBackTo(mockBrowserInstance, 420)
         })
 
         it('should hide elements after first scroll when hideAfterFirstScroll is provided', async () => {

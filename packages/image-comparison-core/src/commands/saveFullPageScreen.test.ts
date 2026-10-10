@@ -1,4 +1,7 @@
+import { join } from 'node:path'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mock } from 'vitest-mock-extended'
+import logger from '@wdio/logger'
 import saveFullPageScreen from './saveFullPageScreen.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
 import { takeFullPageScreenshots } from '../methods/takeFullPageScreenshots.js'
@@ -8,6 +11,11 @@ import beforeScreenshot from '../helpers/beforeScreenshot.js'
 import type { InternalSaveFullPageMethodOptions } from './save.interfaces.js'
 import { BASE_CHECK_OPTIONS, createMethodOptions } from '../mocks/mocks.js'
 import { canUseBidiScreenshot } from '../helpers/utils.js'
+import getScrollPosition from '../clientSideScripts/getScrollPosition.js'
+import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
+
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
+const log = logger('test')
 
 vi.mock('../helpers/beforeScreenshot.js', () => ({
     default: vi.fn().mockResolvedValue({
@@ -176,6 +184,61 @@ describe('saveFullPageScreen', () => {
 
     afterEach(() => {
         vi.clearAllMocks()
+    })
+
+    describe('scroll back (#1231)', () => {
+        const createBrowser = (execute = vi.fn().mockResolvedValue(420)) => mock<WebdriverIO.Browser>({
+            isAndroid: false,
+            isMobile: false,
+            execute,
+        })
+
+        it('should read the scroll position before the page is prepared and scroll back after it is restored', async () => {
+            const browserInstance = createBrowser()
+
+            await saveFullPageScreen({ ...baseOptions, browserInstance })
+
+            const execute = vi.mocked(browserInstance.execute).mock
+            expect(execute.calls).toEqual([[getScrollPosition], [scrollToPosition, 420]])
+            // Read before beforeScreenshot (removed elements can make the page shorter), restore after afterScreenshot
+            expect(execute.invocationCallOrder[0]).toBeLessThan(beforeScreenshotSpy.mock.invocationCallOrder[0])
+            expect(execute.invocationCallOrder[1]).toBeGreaterThan(afterScreenshotSpy.mock.invocationCallOrder[0])
+        })
+
+        it('should scroll back and keep the original error when the screenshot fails', async () => {
+            const browserInstance = createBrowser()
+            const screenshotError = new Error('screenshot failed')
+            takeFullPageScreenshotsSpy.mockRejectedValueOnce(screenshotError)
+
+            await expect(saveFullPageScreen({ ...baseOptions, browserInstance })).rejects.toThrow(screenshotError)
+
+            expect(browserInstance.execute).toHaveBeenLastCalledWith(scrollToPosition, 420)
+        })
+
+        it('should keep the result and only warn when the scroll back fails', async () => {
+            const browserInstance = createBrowser(vi.fn().mockResolvedValueOnce(420).mockRejectedValueOnce(new Error('no browser')))
+
+            await expect(saveFullPageScreen({ ...baseOptions, browserInstance })).resolves.toBeDefined()
+
+            expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('Could not scroll back'))
+        })
+
+        it('should not scroll back when the scroll position could not be read', async () => {
+            const browserInstance = createBrowser(vi.fn().mockRejectedValueOnce(new Error('no scripts')))
+
+            await saveFullPageScreen({ ...baseOptions, browserInstance })
+
+            expect(browserInstance.execute).toHaveBeenCalledTimes(1)
+            expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('Could not read the scroll position'))
+        })
+
+        it('should not touch the scroll position in a native context', async () => {
+            const browserInstance = createBrowser()
+
+            await expect(saveFullPageScreen({ ...baseOptions, browserInstance, isNativeContext: true })).rejects.toThrow()
+
+            expect(browserInstance.execute).not.toHaveBeenCalled()
+        })
     })
 
     it('should throw an error when in native context', async () => {
