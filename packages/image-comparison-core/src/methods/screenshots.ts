@@ -2,6 +2,8 @@ import logger from '@wdio/logger'
 import scrollToPosition from '../clientSideScripts/scrollToPosition.js'
 import getDocumentScrollHeight from '../clientSideScripts/getDocumentScrollHeight.js'
 import { calculateDprData, getBase64ScreenshotSize, waitFor } from '../helpers/utils.js'
+import { decodeImage, hasSameArea, isUniformArea, rotate90CW } from '../utils/imageUtils.js'
+import type { RawImage } from '../utils/imageUtils.js'
 import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
@@ -16,6 +18,46 @@ import type { ElementRectanglesOptions, RectanglesOutput } from './rectangles.in
 import { determineElementRectangles } from './rectangles.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:screenshots')
+
+// A busy device (for example a new emulator or simulator) can return the frame from before the scroll. Then the screenshot
+// is taken again, up to this number of times
+const STALE_FRAME_RETRIES = 3
+// The minimum wait before a new screenshot, also with a short `fullPageScrollTimeout`
+const STALE_FRAME_MIN_WAIT = 500
+
+interface ImageArea {
+    imageXPosition: number
+    imageYPosition: number
+    imageWidth: number
+    imageHeight: number
+}
+
+function decodeUpright(screenshot: string, isLandscape: boolean): RawImage {
+    const image = decodeImage(Buffer.from(screenshot, 'base64'))
+    // The same rotation as makeFullPageBase64Image, so the area matches
+    return isLandscape && image.height > image.width ? rotate90CW(image) : image
+}
+
+/**
+ * True when the area of the full page part has the same pixels in both screenshots. An area in one color (for example a
+ * blank part of the page) is not checked: a new screenshot of it can not give another image
+ */
+export function isSameFrameArea(previousScreenshot: string, screenshot: string, area: ImageArea, isLandscape: boolean): boolean {
+    try {
+        const image = decodeUpright(screenshot, isLandscape)
+        const x = Math.floor(area.imageXPosition)
+        const y = Math.floor(area.imageYPosition)
+        const width = Math.floor(area.imageWidth)
+        const height = Math.floor(area.imageHeight)
+
+        return !isUniformArea(image, x, y, width, height)
+            && hasSameArea(decodeUpright(previousScreenshot, isLandscape), image, x, y, width, height)
+    } catch (error) {
+        // Only a check: an image that can not be decoded fails later, when the full page image is made
+        log.debug('Could not compare the full page screenshots for a stale frame', error)
+        return false
+    }
+}
 
 /**
  * Take a full page screenshots for desktop / iOS / Android
@@ -50,6 +92,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
     let scrollHeight: number | undefined
     let isRotated = false
     let actualFullPageWidth: number | undefined
+    let previousScrollTop: number | undefined
 
     // Each screenshot must show a part of the page. Without this check a height of 0 never scrolls and takes screenshots
     // without end, and a negative height scrolls up
@@ -102,7 +145,7 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
         await waitFor(fullPageScrollTimeout)
 
         // Take the screenshot and determine if it's rotated
-        const screenshot = await takeBase64Screenshot(browserInstance)
+        let screenshot = await takeBase64Screenshot(browserInstance)
         isRotated = Boolean(isLandscape && effectiveViewportHeight > viewportWidth)
 
         // Determine scroll height and check if we need to scroll again
@@ -148,20 +191,48 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
             : scrollY
 
         // Store all the screenshot data in the screenshot object
-        const screenshotData = {
-            ...calculateDprData(
-                {
-                    canvasWidth: isRotated ? effectiveViewportHeight : viewportWidth,
-                    canvasYPosition: canvasYPositionForStorage,
-                    imageHeight: imageHeight,
-                    imageWidth: isRotated ? effectiveViewportHeight : viewportWidth,
-                    imageXPosition: viewportX,
-                    imageYPosition: imageYPosition,
-                },
-                devicePixelRatio,
-            ),
-            screenshot,
+        const area = calculateDprData(
+            {
+                canvasWidth: isRotated ? effectiveViewportHeight : viewportWidth,
+                canvasYPosition: canvasYPositionForStorage,
+                imageHeight: imageHeight,
+                imageWidth: isRotated ? effectiveViewportHeight : viewportWidth,
+                imageXPosition: viewportX,
+                imageYPosition: imageYPosition,
+            },
+            devicePixelRatio,
+        )
+
+        // A busy device can return the frame from before the scroll: the page moved, but its part of the screenshot is
+        // the same as in the previous screenshot. Then wait and take the screenshot again
+        const previousScreenshot = viewportScreenshots.at(-1)?.screenshot
+        const scrollTop = actualScrollInfo?.scrollTop
+        if (previousScreenshot && scrollTop !== undefined && scrollTop !== previousScrollTop) {
+            let retries = 0
+            let isSameFrame = isSameFrameArea(previousScreenshot, screenshot, area, isLandscape)
+
+            while (isSameFrame && retries < STALE_FRAME_RETRIES) {
+                retries++
+                log.debug(`The screenshot after the scroll to ${scrollTop}px still shows the previous frame, take it again (${retries}/${STALE_FRAME_RETRIES})`)
+                await waitFor(Math.max(fullPageScrollTimeout, STALE_FRAME_MIN_WAIT))
+                screenshot = await takeBase64Screenshot(browserInstance)
+                isSameFrame = isSameFrameArea(previousScreenshot, screenshot, area, isLandscape)
+            }
+
+            if (isSameFrame) {
+                log.warn(
+                    `The screenshot after the scroll to ${scrollTop}px still shows the same content as the previous one after ` +
+                    `${STALE_FRAME_RETRIES} new screenshots. If that part of the page is not the same as the part above it, the ` +
+                    'device did not draw the page again in time, and the full page image repeats a part. Then increase ' +
+                    '`fullPageScrollTimeout`.'
+                )
+            } else if (retries > 0) {
+                log.info(`The screenshot after the scroll to ${scrollTop}px showed the previous frame, the new screenshot ${retries} is right`)
+            }
         }
+        previousScrollTop = scrollTop
+
+        const screenshotData = { ...area, screenshot }
         viewportScreenshots.push(screenshotData)
 
         // Calculate the actual cropped width from the first screenshot to handle rounding differences
