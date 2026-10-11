@@ -217,9 +217,13 @@ describe('getScrollContainerFullPageScreenshotsData (#125)', () => {
 
         const scripts = execute.mock.calls.map(([script]) => script)
         expect(scripts.indexOf(prepareScrollContainer)).toBeLessThan(scripts.indexOf(scrollContainerTo))
-        // Scrolled back while scroll snap is still off, so the container stops at its start position
-        expect(execute.mock.calls.at(-2)).toEqual([scrollContainerTo, 300])
-        expect(execute.mock.calls.at(-1)).toEqual([prepareScrollContainer, false, true])
+        // The scrollbar comes back first (it can change the layout), then the scroll back while scroll snap is still off,
+        // so the container stops at its start position, then scroll snap comes back
+        expect(execute.mock.calls.slice(-3)).toEqual([
+            [prepareScrollContainer, false, { scrollbar: true, snap: false }],
+            [scrollContainerTo, 300],
+            [prepareScrollContainer, false, { scrollbar: false, snap: true }],
+        ])
     })
 
     it('should not hide the scrollbar of the container when hideScrollBars is off', async () => {
@@ -228,8 +232,8 @@ describe('getScrollContainerFullPageScreenshotsData (#125)', () => {
         await getScrollContainerFullPageScreenshotsData(createBrowser(), { ...baseOptions(element), hideScrollBars: false })
 
         expect(execute.mock.calls.filter(([script]) => script === prepareScrollContainer)).toEqual([
-            [prepareScrollContainer, true, false],
-            [prepareScrollContainer, false, false],
+            [prepareScrollContainer, true, { scrollbar: false, snap: true }],
+            [prepareScrollContainer, false, { scrollbar: false, snap: true }],
         ])
     })
 
@@ -378,6 +382,6 @@ describe('getScrollContainerFullPageScreenshotsData (#125)', () => {
             .rejects.toThrow('The scroll container of the full page screenshot is not in the viewport')
 
         expect(execute.mock.calls.at(-2)).toEqual([scrollContainerTo, 50])
-        expect(execute.mock.calls.at(-1)).toEqual([prepareScrollContainer, false, true])
+        expect(execute.mock.calls.at(-1)).toEqual([prepareScrollContainer, false, { scrollbar: false, snap: true }])
     })
 })

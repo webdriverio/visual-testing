@@ -545,7 +545,7 @@ export async function getScrollContainerFullPageScreenshotsData(
 
     try {
         // Without scroll snap, so the container stops at the scroll position of each screenshot
-        await scrollContainer.execute(prepareScrollContainer, true, hideScrollbar)
+        await scrollContainer.execute(prepareScrollContainer, true, { scrollbar: hideScrollbar, snap: true })
 
         for (let restarts = 0; !capture; restarts++) {
             const result = await captureScrollContainer(browserInstance, options)
@@ -561,10 +561,14 @@ export async function getScrollContainerFullPageScreenshotsData(
         }
     } finally {
         await showHideAfterFirstScrollElements(browserInstance, hideAfterFirstScroll)
+        // The scrollbar first: a scrollbar that takes space changes the layout, and so the scroll positions
+        if (hideScrollbar) {
+            await scrollContainer.execute(prepareScrollContainer, false, { scrollbar: true, snap: false })
+        }
         // Scroll the container back, as the page is scrolled back after a full page screenshot (#1231). Scroll snap is
         // still off, so the container stops at its start position
         await scrollContainer.execute(scrollContainerTo, startScrollTop)
-        await scrollContainer.execute(prepareScrollContainer, false, hideScrollbar)
+        await scrollContainer.execute(prepareScrollContainer, false, { scrollbar: false, snap: true })
     }
 
     const { captures, fullPageHeight, tiles, viewport } = capture

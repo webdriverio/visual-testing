@@ -1,16 +1,18 @@
 /**
  * Prepare a scroll container for the screenshots of a full page screenshot, or put it back as it was (#125):
- * - turn off scroll snap, so that the container stops at the scroll position of each screenshot (an inline
+ * - `snap`: turn off scroll snap, so that the container stops at the scroll position of each screenshot (an inline
  *   `!important` value wins over every value of the page),
- * - hide its scrollbar, as `hideScrollBars` does for the page.
+ * - `scrollbar`: hide its scrollbar, as `hideScrollBars` does for the page.
+ * The parts can be put back separately: the scrollbar before the scroll back (it can change the layout), scroll snap
+ * after it.
  */
-export default function prepareScrollContainer(container: HTMLElement, prepare: boolean, hideScrollbar: boolean): void {
+export default function prepareScrollContainer(container: HTMLElement, prepare: boolean, parts: { scrollbar: boolean, snap: boolean }): void {
     const scrollbarAttribute = 'data-wic-scroll-container'
     const snapAttribute = 'data-wic-scroll-snap-type'
     const styleId = 'wic-scroll-container-style'
 
     if (!prepare) {
-        const saved = container.getAttribute(snapAttribute)
+        const saved = parts.snap ? container.getAttribute(snapAttribute) : null
         if (saved !== null) {
             const [value, priority] = JSON.parse(saved)
             if (value) {
@@ -20,20 +22,22 @@ export default function prepareScrollContainer(container: HTMLElement, prepare: 
             }
             container.removeAttribute(snapAttribute)
         }
-        if (hideScrollbar) {
+        if (parts.scrollbar) {
             container.removeAttribute(scrollbarAttribute)
             document.getElementById(styleId)?.remove()
         }
         return
     }
 
-    container.setAttribute(snapAttribute, JSON.stringify([
-        container.style.getPropertyValue('scroll-snap-type'),
-        container.style.getPropertyPriority('scroll-snap-type'),
-    ]))
-    container.style.setProperty('scroll-snap-type', 'none', 'important')
+    if (parts.snap) {
+        container.setAttribute(snapAttribute, JSON.stringify([
+            container.style.getPropertyValue('scroll-snap-type'),
+            container.style.getPropertyPriority('scroll-snap-type'),
+        ]))
+        container.style.setProperty('scroll-snap-type', 'none', 'important')
+    }
 
-    if (hideScrollbar) {
+    if (parts.scrollbar) {
         container.setAttribute(scrollbarAttribute, '')
         if (!document.getElementById(styleId)) {
             const style = document.createElement('style')

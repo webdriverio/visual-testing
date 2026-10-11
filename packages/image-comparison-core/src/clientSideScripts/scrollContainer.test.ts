@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import getScrollContainerData from './getScrollContainerData.js'
 import scrollContainerTo from './scrollContainerTo.js'
 import prepareScrollContainer from './prepareScrollContainer.js'
+import getVisibleElementViewportRect from './getVisibleElementViewportRect.js'
 
 /**
  * jsdom does no layout, so set the sizes and scroll data that the browser would report. The scroll position stops at
@@ -114,11 +115,11 @@ describe('scroll container client scripts (#125)', () => {
     it('prepareScrollContainer should hide and show the scrollbar of the container only', () => {
         const container = createContainer()
 
-        prepareScrollContainer(container, true, true)
+        prepareScrollContainer(container, true, { scrollbar: true, snap: true })
         expect(container.hasAttribute('data-wic-scroll-container')).toBe(true)
         expect(document.getElementById('wic-scroll-container-style')?.textContent).toContain('scrollbar-width: none')
 
-        prepareScrollContainer(container, false, true)
+        prepareScrollContainer(container, false, { scrollbar: true, snap: true })
         expect(container.hasAttribute('data-wic-scroll-container')).toBe(false)
         expect(document.getElementById('wic-scroll-container-style')).toBeNull()
     })
@@ -126,7 +127,7 @@ describe('scroll container client scripts (#125)', () => {
     it('prepareScrollContainer should not touch the scrollbar when it must stay visible', () => {
         const container = createContainer()
 
-        prepareScrollContainer(container, true, false)
+        prepareScrollContainer(container, true, { scrollbar: false, snap: true })
 
         expect(container.hasAttribute('data-wic-scroll-container')).toBe(false)
         expect(document.getElementById('wic-scroll-container-style')).toBeNull()
@@ -143,13 +144,73 @@ describe('scroll container client scripts (#125)', () => {
             container.style.setProperty('scroll-snap-type', value, priority)
         }
 
-        prepareScrollContainer(container, true, true)
+        prepareScrollContainer(container, true, { scrollbar: true, snap: true })
         expect(container.style.getPropertyValue('scroll-snap-type')).toBe('none')
         expect(container.style.getPropertyPriority('scroll-snap-type')).toBe('important')
 
-        prepareScrollContainer(container, false, true)
+        prepareScrollContainer(container, false, { scrollbar: true, snap: true })
         expect(container.style.getPropertyValue('scroll-snap-type')).toBe(value)
         expect(container.style.getPropertyPriority('scroll-snap-type')).toBe(priority)
         expect(container.hasAttribute('data-wic-scroll-snap-type')).toBe(false)
+    })
+
+    it('prepareScrollContainer should put back the scrollbar and scroll snap separately', () => {
+        // The scrollbar comes back before the scroll back (it can change the layout), scroll snap after it
+        const container = createContainer()
+        container.style.setProperty('scroll-snap-type', 'y mandatory')
+
+        prepareScrollContainer(container, true, { scrollbar: true, snap: true })
+        prepareScrollContainer(container, false, { scrollbar: true, snap: false })
+        expect(container.hasAttribute('data-wic-scroll-container')).toBe(false)
+        expect(container.style.getPropertyValue('scroll-snap-type')).toBe('none')
+
+        prepareScrollContainer(container, false, { scrollbar: false, snap: true })
+        expect(container.style.getPropertyValue('scroll-snap-type')).toBe('y mandatory')
+    })
+
+    describe('getVisibleElementViewportRect', () => {
+        /**
+         * An element with a bounding box; jsdom does no layout
+         */
+        function boxed(element: HTMLElement, rect: { x: number, y: number, width: number, height: number }): HTMLElement {
+            vi.spyOn(element, 'getBoundingClientRect').mockReturnValue(DOMRect.fromRect(rect))
+            element.checkVisibility = () => true
+            return element
+        }
+
+        it('should clip the box to the scroll container, which hides the rest of the element', () => {
+            // The container starts at x = 200 (a sidebar on the left); the element goes 150px to the left of it
+            const container = boxed(document.createElement('main'), { x: 200, y: 60, width: 800, height: 740 })
+            container.style.overflowX = 'auto'
+            container.style.overflowY = 'auto'
+            const element = boxed(document.createElement('div'), { x: 50, y: 362, width: 950, height: 900 })
+            container.appendChild(element)
+            document.body.appendChild(container)
+
+            expect(getVisibleElementViewportRect(element)).toEqual({ x: 200, y: 362, width: 800, height: 438 })
+        })
+
+        it('should not clip a fixed element to its ancestors', () => {
+            const container = boxed(document.createElement('main'), { x: 200, y: 60, width: 800, height: 740 })
+            container.style.overflowX = 'auto'
+            container.style.overflowY = 'auto'
+            const element = boxed(document.createElement('div'), { x: 0, y: 0, width: 1000, height: 50 })
+            element.style.position = 'fixed'
+            container.appendChild(element)
+            document.body.appendChild(container)
+
+            expect(getVisibleElementViewportRect(element)).toEqual({ x: 0, y: 0, width: 1000, height: 50 })
+        })
+
+        it('should return null for an element that the scroll container hides completely', () => {
+            const container = boxed(document.createElement('main'), { x: 200, y: 60, width: 800, height: 740 })
+            container.style.overflowX = 'auto'
+            container.style.overflowY = 'auto'
+            const element = boxed(document.createElement('div'), { x: 220, y: 900, width: 100, height: 50 })
+            container.appendChild(element)
+            document.body.appendChild(container)
+
+            expect(getVisibleElementViewportRect(element)).toBeNull()
+        })
     })
 })
