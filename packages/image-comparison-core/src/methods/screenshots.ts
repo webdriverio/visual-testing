@@ -20,8 +20,10 @@ import { determineElementRectangles } from './rectangles.js'
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:screenshots')
 
 // A busy device (for example a new emulator or simulator) can return the frame from before the scroll. Then the screenshot
-// is taken again, up to this number of times
+// is taken again, up to this number of times for a part of the page, and up to the second number for the whole page (a
+// fixed overlay that fills the screen looks the same after each scroll: this limits the time it costs)
 const STALE_FRAME_RETRIES = 3
+const STALE_FRAME_PAGE_RETRIES = 5
 // The minimum wait before a new screenshot, also with a short `fullPageScrollTimeout`
 const STALE_FRAME_MIN_WAIT = 500
 
@@ -32,31 +34,34 @@ interface ImageArea {
     imageHeight: number
 }
 
-function decodeUpright(screenshot: string, isLandscape: boolean): RawImage {
-    const image = decodeImage(Buffer.from(screenshot, 'base64'))
-    // The same rotation as makeFullPageBase64Image, so the area matches
-    return isLandscape && image.height > image.width ? rotate90CW(image) : image
+/**
+ * Decode a screenshot in the same rotation as makeFullPageBase64Image, so the area matches. Undefined when it can not be
+ * decoded: the check for a stale frame is then not done, and the image fails later, when the full page image is made
+ */
+export function decodeUpright(screenshot: string, isLandscape: boolean): RawImage | undefined {
+    try {
+        const image = decodeImage(Buffer.from(screenshot, 'base64'))
+        return isLandscape && image.height > image.width ? rotate90CW(image) : image
+    } catch (error) {
+        log.debug('Could not decode the full page screenshot to check for a stale frame', error)
+        return undefined
+    }
 }
 
 /**
  * True when the area of the full page part has the same pixels in both screenshots. An area in one color (for example a
  * blank part of the page) is not checked: a new screenshot of it can not give another image
  */
-export function isSameFrameArea(previousScreenshot: string, screenshot: string, area: ImageArea, isLandscape: boolean): boolean {
-    try {
-        const image = decodeUpright(screenshot, isLandscape)
-        const x = Math.floor(area.imageXPosition)
-        const y = Math.floor(area.imageYPosition)
-        const width = Math.floor(area.imageWidth)
-        const height = Math.floor(area.imageHeight)
-
-        return !isUniformArea(image, x, y, width, height)
-            && hasSameArea(decodeUpright(previousScreenshot, isLandscape), image, x, y, width, height)
-    } catch (error) {
-        // Only a check: an image that can not be decoded fails later, when the full page image is made
-        log.debug('Could not compare the full page screenshots for a stale frame', error)
+export function isSameFrameArea(previousImage: RawImage | undefined, image: RawImage | undefined, area: ImageArea): boolean {
+    if (!previousImage || !image) {
         return false
     }
+    const x = Math.floor(area.imageXPosition)
+    const y = Math.floor(area.imageYPosition)
+    const width = Math.floor(area.imageWidth)
+    const height = Math.floor(area.imageHeight)
+
+    return !isUniformArea(image, x, y, width, height) && hasSameArea(previousImage, image, x, y, width, height)
 }
 
 /**
@@ -93,6 +98,10 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
     let isRotated = false
     let actualFullPageWidth: number | undefined
     let previousScrollTop: number | undefined
+    // The decoded previous screenshot, so each screenshot is decoded only once
+    let previousImage: RawImage | undefined
+    let staleFrameRetriesLeft = STALE_FRAME_PAGE_RETRIES
+    let hasWarnedForStaleFrame = false
 
     // Each screenshot must show a part of the page. Without this check a height of 0 never scrolls and takes screenshots
     // without end, and a negative height scrolls up
@@ -207,30 +216,38 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
         // the same as in the previous screenshot. Then wait and take the screenshot again
         const previousScreenshot = viewportScreenshots.at(-1)?.screenshot
         const scrollTop = actualScrollInfo?.scrollTop
+        let image: RawImage | undefined
         if (previousScreenshot && scrollTop !== undefined && scrollTop !== previousScrollTop) {
+            previousImage ??= decodeUpright(previousScreenshot, isLandscape)
+            image = decodeUpright(screenshot, isLandscape)
             let retries = 0
-            let isSameFrame = isSameFrameArea(previousScreenshot, screenshot, area, isLandscape)
+            let isSameFrame = isSameFrameArea(previousImage, image, area)
 
-            while (isSameFrame && retries < STALE_FRAME_RETRIES) {
+            while (isSameFrame && retries < STALE_FRAME_RETRIES && staleFrameRetriesLeft > 0) {
                 retries++
+                staleFrameRetriesLeft--
                 log.debug(`The screenshot after the scroll to ${scrollTop}px still shows the previous frame, take it again (${retries}/${STALE_FRAME_RETRIES})`)
                 await waitFor(Math.max(fullPageScrollTimeout, STALE_FRAME_MIN_WAIT))
                 screenshot = await takeBase64Screenshot(browserInstance)
-                isSameFrame = isSameFrameArea(previousScreenshot, screenshot, area, isLandscape)
+                image = decodeUpright(screenshot, isLandscape)
+                isSameFrame = isSameFrameArea(previousImage, image, area)
             }
 
-            if (isSameFrame) {
+            if (isSameFrame && !hasWarnedForStaleFrame) {
+                hasWarnedForStaleFrame = true
                 log.warn(
                     `The screenshot after the scroll to ${scrollTop}px still shows the same content as the previous one after ` +
-                    `${STALE_FRAME_RETRIES} new screenshots. If that part of the page is not the same as the part above it, the ` +
+                    `${retries} new screenshots. If that part of the page is not the same as the part above it, the ` +
                     'device did not draw the page again in time, and the full page image repeats a part. Then increase ' +
-                    '`fullPageScrollTimeout`.'
+                    '`fullPageScrollTimeout`. A fixed overlay that fills the screen also gives this warning.'
                 )
             } else if (retries > 0) {
                 log.info(`The screenshot after the scroll to ${scrollTop}px showed the previous frame, the new screenshot ${retries} is right`)
             }
         }
         previousScrollTop = scrollTop
+        // When this screenshot was not decoded, the next check decodes it
+        previousImage = image
 
         const screenshotData = { ...area, screenshot }
         viewportScreenshots.push(screenshotData)

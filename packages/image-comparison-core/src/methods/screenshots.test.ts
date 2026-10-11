@@ -9,6 +9,7 @@ import {
     takeBase64BiDiScreenshot,
     takeWebElementScreenshot,
     getMobileFullPageNativeWebScreenshotsData,
+    decodeUpright,
     isSameFrameArea,
 } from './screenshots.js'
 import type { TakeWebElementScreenshot, FullPageScreenshotOptions, FullPageScreenshotNativeMobileOptions } from './screenshots.interfaces.js'
@@ -17,10 +18,15 @@ import { MEDIUM_IMAGE_STRING, SMALL_IMAGE_STRING } from '../mocks/image.js'
 import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 import * as rectanglesModule from './rectangles.js'
 import * as utilsModule from '../helpers/utils.js'
+import * as imageUtilsModule from '../utils/imageUtils.js'
 import getElementVisibleRect from '../clientSideScripts/getElementVisibleRect.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
+vi.mock('../utils/imageUtils.js', async () => {
+    const actual = await vi.importActual<typeof imageUtilsModule>('../utils/imageUtils.js')
+    return { ...actual, decodeImage: vi.fn(actual.decodeImage) }
+})
 vi.mock('./rectangles.js', () => ({
     determineElementRectangles: vi.fn()
 }))
@@ -234,6 +240,49 @@ describe('screenshots', () => {
                 expect(logWarnSpy).not.toHaveBeenCalled()
             })
 
+            // The calls of `execute` for a page of `parts` screenshots of 652px, with the same scroll position for each
+            const scrollsOf = (parts: number) => {
+                const execute = vi.fn()
+                for (let part = 0; part < parts; part++) {
+                    execute
+                        .mockResolvedValueOnce(undefined) // scrollToPosition
+                        .mockResolvedValueOnce(undefined) // hideScrollBars true
+                        .mockResolvedValueOnce(652 * parts) // getDocumentScrollHeight
+                        .mockResolvedValueOnce({ scrollTop: 652 * part }) // actualScrollInfo
+                        .mockResolvedValueOnce(undefined) // hideScrollBars false
+                }
+                return execute
+            }
+
+            it('decodes each screenshot only once', async () => {
+                const mockBrowserInstance = createMockBrowserInstance()
+                mockBrowserInstance.takeScreenshot = vi.fn()
+                    .mockResolvedValueOnce(patternPng(0))
+                    .mockResolvedValueOnce(patternPng(31))
+                    .mockResolvedValueOnce(patternPng(62))
+                mockBrowserInstance.execute = scrollsOf(3)
+                vi.mocked(imageUtilsModule.decodeImage).mockClear()
+
+                await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions({ isAndroid: true }))
+
+                expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(3)
+                expect(imageUtilsModule.decodeImage).toHaveBeenCalledTimes(3)
+            })
+
+            it('takes at most 5 new screenshots for the whole page and warns once', async () => {
+                // A fixed overlay fills the screen: each screenshot is the same, also after each scroll
+                const overlay = patternPng(0)
+                const mockBrowserInstance = createMockBrowserInstance()
+                mockBrowserInstance.takeScreenshot = vi.fn().mockResolvedValue(overlay)
+                mockBrowserInstance.execute = scrollsOf(4)
+
+                await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions({ isAndroid: true }))
+
+                // 4 parts, then 3 new screenshots for the second part and 2 for the third part
+                expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(4 + 5)
+                expect(logWarnSpy).toHaveBeenCalledTimes(1)
+            })
+
             it('waits at least 500 ms before a new screenshot', async () => {
                 const mockBrowserInstance = createMockBrowserInstance()
                 mockBrowserInstance.takeScreenshot = vi.fn()
@@ -289,8 +338,9 @@ describe('screenshots', () => {
                     }
                     return Buffer.from(encode({ data, width, height, channels: 4, depth: 8 })).toString('base64')
                 }
-                expect(isSameFrameArea(rotatedPng(200), rotatedPng(100), { imageXPosition: 0, imageYPosition: 0, imageWidth: 10, imageHeight: 10 }, true)).toBe(false)
-                expect(isSameFrameArea(rotatedPng(200), rotatedPng(200), { imageXPosition: 0, imageYPosition: 0, imageWidth: 10, imageHeight: 10 }, true)).toBe(true)
+                const area = { imageXPosition: 0, imageYPosition: 0, imageWidth: 10, imageHeight: 10 }
+                expect(isSameFrameArea(decodeUpright(rotatedPng(200), true), decodeUpright(rotatedPng(100), true), area)).toBe(false)
+                expect(isSameFrameArea(decodeUpright(rotatedPng(200), true), decodeUpright(rotatedPng(200), true), area)).toBe(true)
             })
         })
 
