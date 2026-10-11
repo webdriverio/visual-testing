@@ -193,6 +193,8 @@ async function checkUntilExpected (
 
     for (;;) {
         attempts++
+        // A file that this attempt wrote has a write time from now on
+        const attemptStart = Date.now()
         let result: CheckResult
         try {
             result = await check(wait - (Date.now() - start))
@@ -208,7 +210,7 @@ async function checkUntilExpected (
 
         const compared = compareResult(result, expectedResult)
         if (!compared.pass) {
-            rememberImages(result, failedImages)
+            rememberImages(result, failedImages, attemptStart)
         }
         const elapsed = Date.now() - start
         if (compared.pass !== isNot || elapsed >= wait) {
@@ -273,12 +275,14 @@ async function findElementAgain (element: WebdriverIO.Element) {
 
 /**
  * Wait, at most for the rest of the wait time, for an element that WebdriverIO did not find (it has no element id),
- * for example a chart that is not in the page yet. The check commands do not wait for it: they need the element id
+ * for example a chart that is not in the page yet. The check commands do not wait for it: they need the element id.
+ * The instances of a multiremote element share the rest of the wait time
  */
 async function findMissingElement (element: WebdriverIO.Element, timeout: number) {
+    const deadline = Date.now() + timeout
     for (const instanceElement of getInstanceElements(element)) {
         if (!instanceElement.elementId) {
-            await instanceElement.waitForExist({ timeout: Math.max(1, timeout) })
+            await instanceElement.waitForExist({ timeout: Math.max(1, deadline - Date.now()) })
             // An element command of WebdriverIO sets the element id of an element that it found
             await instanceElement.getTagName()
         }
@@ -296,12 +300,13 @@ function getImageFiles (result: CheckResult): string[] {
 }
 
 /**
- * Remember the image files that a failed attempt wrote, with their write time
+ * Remember the image files that a failed attempt wrote, with their write time. A file with an older write time is of an
+ * earlier check (a failed attempt does not always save an actual image), so it stays
  */
-function rememberImages (result: CheckResult, images: Map<string, number>) {
+function rememberImages (result: CheckResult, images: Map<string, number>, attemptStart: number) {
     for (const file of getImageFiles(result)) {
         const written = statSync(file, { throwIfNoEntry: false })
-        if (written) {
+        if (written && written.mtimeMs >= attemptStart) {
             images.set(file, written.mtimeMs)
         }
     }

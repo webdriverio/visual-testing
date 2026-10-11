@@ -456,6 +456,38 @@ describe('custom visual matcher', () => {
             expect(browser.checkElement).not.toHaveBeenCalled()
         })
 
+        it('should not wait longer than the wait time for the missing elements of a multiremote element', async () => {
+            // Both instances did not find the element; chrome finds it after 900 ms of the 1000 ms wait time
+            const timeouts: Record<string, number> = {}
+            const instanceElement = (name: string, appearsAfter: number) => ({
+                [WDIO_KIND]: 'element',
+                elementId: '',
+                parent: { [WDIO_KIND]: 'browser', checkElement: vi.fn().mockResolvedValue(result(0)) },
+                waitForExist: vi.fn(async ({ timeout }: { timeout: number }) => {
+                    timeouts[name] = timeout
+                    await new Promise((resolve) => setTimeout(resolve, Math.min(appearsAfter, timeout)))
+                    return true
+                }),
+                getTagName: vi.fn().mockResolvedValue('div'),
+            })
+            const instances: Record<string, ReturnType<typeof instanceElement>> = { chrome: instanceElement('chrome', 900), firefox: instanceElement('firefox', 900) }
+            const element = {
+                [WDIO_KIND]: 'element',
+                isMultiRemote: true,
+                selector: '#box',
+                instances: Object.keys(instances),
+                getInstance: (name: string) => instances[name],
+            } as any as WebdriverIO.Element
+
+            const promise = toMatchElementSnapshot(element, 'foo', 0, { wait: 1000 })
+            await vi.advanceTimersByTimeAsync(2000)
+            await promise
+
+            expect(timeouts.chrome).toBe(1000)
+            // The rest of the same wait time, not again 1000 ms
+            expect(timeouts.firefox).toBeLessThanOrEqual(100)
+        })
+
         it('should not wait for an element that is not in the page without wait time', async () => {
             const element = mock<WebdriverIO.Element>({ [WDIO_KIND]: 'element', parent: browser, elementId: '' })
             vi.mocked(browser.checkElement).mockResolvedValueOnce(result(0))
@@ -498,6 +530,24 @@ describe('custom visual matcher', () => {
             expect((await promise).pass).toBe(true)
             expect(existsSync(files.actual)).toBe(false)
             expect(existsSync(files.diff)).toBe(false)
+        })
+
+        it('should keep an actual image that the failed check did not write', async () => {
+            // An earlier check saved this actual image. The failed attempt does not save one (alwaysSaveActualImage: false
+            // and a mismatch below saveAboveTolerance), so the image is not of this matcher
+            const files = imageFiles()
+            writeFileSync(files.actual, 'earlier check')
+            const earlier = new Date(Date.now() - 60_000)
+            utimesSync(files.actual, earlier, earlier)
+            vi.mocked(browser.checkScreen)
+                .mockResolvedValueOnce({ misMatchPercentage: 10, folders: { baseline: files.baseline, actual: files.actual } })
+                .mockResolvedValueOnce({ misMatchPercentage: 0, folders: { baseline: files.baseline, actual: files.actual } })
+
+            const promise = toMatchScreenSnapshot(browser, 'foo', 0, { wait: 1000, saveAboveTolerance: 20 })
+            await vi.advanceTimersByTimeAsync(1000)
+
+            expect((await promise).pass).toBe(true)
+            expect(readFileSync(files.actual, 'utf8')).toBe('earlier check')
         })
 
         it('should keep the actual image that the matching check saved (alwaysSaveActualImage: true)', async () => {
