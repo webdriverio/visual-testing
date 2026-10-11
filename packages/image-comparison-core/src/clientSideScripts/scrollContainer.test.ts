@@ -237,6 +237,28 @@ describe('scroll container client scripts (#125)', () => {
             expect(getVisibleElementViewportRect(element)).toEqual({ x: 200, y: 70, width: 50, height: 40 })
         })
 
+        it.each([
+            ['translate', '0px'],
+            ['rotate', '0deg'],
+            ['scale', '1'],
+            ['backdrop-filter', 'blur(1px)'],
+            ['container-type', 'size'],
+            ['content-visibility', 'auto'],
+            ['will-change', 'translate'],
+        ])('should clip an absolute element to a static wrapper with %s: %s (its containing block)', (property, value) => {
+            const page = boxed(document.createElement('div'), { x: 0, y: 0, width: 1000, height: 800 })
+            page.style.position = 'relative'
+            const wrapper = clipper()
+            wrapper.style.setProperty(property, value)
+            const element = boxed(document.createElement('div'), { x: 150, y: 70, width: 100, height: 40 })
+            element.style.position = 'absolute'
+            wrapper.appendChild(element)
+            page.appendChild(wrapper)
+            document.body.appendChild(page)
+
+            expect(getVisibleElementViewportRect(element)).toEqual({ x: 200, y: 70, width: 50, height: 40 })
+        })
+
         it('should clip a fixed element to a wrapper with a transform (its containing block)', () => {
             const wrapper = clipper()
             wrapper.style.transform = 'translateX(0px)'

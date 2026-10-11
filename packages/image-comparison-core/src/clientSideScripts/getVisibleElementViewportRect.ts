@@ -16,9 +16,13 @@ export default function getVisibleElementViewportRect(element: HTMLElement): { x
     // absolute element escapes the static ancestors below its positioned ancestor, a fixed element escapes all
     // ancestors below one with a transform (or a filter, contain, ...). The body and the root element pass their
     // overflow to the viewport, so they are not used
-    const isNone = (value: string) => !value || value === 'none' || value === 'normal' || value === 'auto'
-    const containsFixed = (style: CSSStyleDeclaration) => !isNone(style.transform) || !isNone(style.perspective)
-        || !isNone(style.filter) || /paint|layout|strict|content/.test(style.contain) || /transform|perspective|filter/.test(style.willChange)
+    const isNone = (value: string) => !value || value === 'none' || value === 'normal'
+    // The properties that make an element the containing block of its absolute and fixed descendants
+    const containsFixed = (style: CSSStyleDeclaration) => ['transform', 'translate', 'rotate', 'scale', 'perspective', 'filter', 'backdrop-filter', 'container-type']
+        .some((name) => !isNone(style.getPropertyValue(name)))
+        || /paint|layout|strict|content/.test(style.getPropertyValue('contain'))
+        || /auto|hidden/.test(style.getPropertyValue('content-visibility'))
+        || /transform|translate|rotate|scale|perspective|filter/.test(style.getPropertyValue('will-change'))
     let position = getComputedStyle(element).position
     for (let ancestor = element.parentElement; ancestor && ancestor !== document.body && ancestor !== document.documentElement; ancestor = ancestor.parentElement) {
         const style = getComputedStyle(ancestor)
