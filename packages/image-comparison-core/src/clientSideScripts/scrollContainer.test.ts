@@ -202,6 +202,52 @@ describe('scroll container client scripts (#125)', () => {
             expect(getVisibleElementViewportRect(element)).toEqual({ x: 0, y: 0, width: 1000, height: 50 })
         })
 
+        /**
+         * A wrapper that clips its overflow, with the box of the scroll container
+         */
+        function clipper(position = 'static'): HTMLElement {
+            const element = boxed(document.createElement('div'), { x: 200, y: 60, width: 800, height: 740 })
+            element.style.overflowX = 'hidden'
+            element.style.overflowY = 'hidden'
+            element.style.position = position
+            return element
+        }
+
+        it('should not clip an absolute element to a static wrapper above its containing block', () => {
+            // The containing block of the child is the positioned page wrapper, which is above the clipping wrapper
+            const page = boxed(document.createElement('div'), { x: 0, y: 0, width: 1000, height: 800 })
+            page.style.position = 'relative'
+            const wrapper = clipper()
+            const element = boxed(document.createElement('div'), { x: 50, y: 10, width: 100, height: 40 })
+            element.style.position = 'absolute'
+            wrapper.appendChild(element)
+            page.appendChild(wrapper)
+            document.body.appendChild(page)
+
+            expect(getVisibleElementViewportRect(element)).toEqual({ x: 50, y: 10, width: 100, height: 40 })
+        })
+
+        it('should clip an absolute element to a positioned wrapper (its containing block)', () => {
+            const wrapper = clipper('relative')
+            const element = boxed(document.createElement('div'), { x: 150, y: 70, width: 100, height: 40 })
+            element.style.position = 'absolute'
+            wrapper.appendChild(element)
+            document.body.appendChild(wrapper)
+
+            expect(getVisibleElementViewportRect(element)).toEqual({ x: 200, y: 70, width: 50, height: 40 })
+        })
+
+        it('should clip a fixed element to a wrapper with a transform (its containing block)', () => {
+            const wrapper = clipper()
+            wrapper.style.transform = 'translateX(0px)'
+            const element = boxed(document.createElement('div'), { x: 150, y: 70, width: 100, height: 40 })
+            element.style.position = 'fixed'
+            wrapper.appendChild(element)
+            document.body.appendChild(wrapper)
+
+            expect(getVisibleElementViewportRect(element)).toEqual({ x: 200, y: 70, width: 50, height: 40 })
+        })
+
         it('should return null for an element that the scroll container hides completely', () => {
             const container = boxed(document.createElement('main'), { x: 200, y: 60, width: 800, height: 740 })
             container.style.overflowX = 'auto'
