@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import saveTabbablePage from './saveTabbablePage.js'
 import type { InternalSaveTabbablePageMethodOptions } from './save.interfaces.js'
 import {
@@ -90,6 +91,15 @@ describe('saveTabbablePage', () => {
         expect(executeMock).toHaveBeenCalledTimes(2)
         expect(executeMock.mock.calls).toMatchSnapshot()
         expect(saveFullPageScreen.mock.calls).toMatchSnapshot()
+    })
+
+    it('should not use the scroll container option of the full page commands (#125)', async () => {
+        await saveTabbablePage({
+            ...baseOptions,
+            saveTabbableOptions: { ...baseOptions.saveTabbableOptions, method: { ...baseOptions.saveTabbableOptions.method, scrollContainer: mock<WebdriverIO.Element>() } },
+        })
+
+        expect(saveFullPageScreen.mock.calls[0][0].saveFullPageOptions.method.scrollContainer).toBeUndefined()
     })
 
     describe('scroll back (#1231)', () => {
