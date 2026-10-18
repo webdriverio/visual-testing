@@ -19,8 +19,9 @@ APPIUM_PID=$!
 # The Appium log does not show the state of the device, for example when the screen stays black and taps and key events
 # fail for the whole job. Save it in logs/ (uploaded when the job fails) before the action stops the emulator.
 save_device_state() {
+    # A failure here must not stop the cleanup (set -e also applies in the EXIT trap)
+    mkdir -p logs/device || return 0
     echo "::group::Save the device state"
-    mkdir -p logs/device
     timeout 30 adb exec-out screencap -p > logs/device/screen.png || true
     timeout 60 adb logcat -d -v threadtime > logs/device/logcat.txt || true
     local dumps=('window windows' 'activity activities' 'input' 'power' 'display' 'SurfaceFlinger')
