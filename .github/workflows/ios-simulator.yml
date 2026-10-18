@@ -63,7 +63,7 @@ jobs:
       - name: 📱 Install Appium and the XCUITest driver
         run: |
           npm install --global appium@3.8.0
-          appium driver install xcuitest@12.16.0
+          appium driver install xcuitest@12.18.2
 
       - name: 🍏 Run the e2e tests on the iOS simulator
         run: bash .github/scripts/ios-simulator-e2e.sh
