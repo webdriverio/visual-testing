@@ -9,6 +9,12 @@ updates:
   # so only propose versions that are at least 1 day old
   cooldown:
     default-days: 1
+  groups:
+    # react-dom throws when its version is not the same as react
+    react:
+      patterns:
+        - "react"
+        - "react-dom"
   ignore:
     # TypeScript 7 is a new major version: update it by hand, in its own PR
     - dependency-name: "typescript"
