@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { execSync } from 'node:child_process'
+import { execFile, execFileSync } from 'node:child_process'
 import { createWorker } from 'tesseract.js'
-import { recognize } from 'node-tesseract-ocr'
 import { parseString } from 'xml2js'
-import { getNodeOcrData, getSystemOcrData, isSystemTesseractAvailable, parseWordDataFromText } from '../../src/utils/tesseract.js'
+import { getNodeOcrData, getSystemOcrData, isSystemTesseractAvailable, parseWordDataFromText, runSystemTesseract } from '../../src/utils/tesseract.js'
 
 vi.mock('child_process', () => ({
-    execSync: vi.fn()
+    execFile: vi.fn(),
+    execFileSync: vi.fn()
 }))
 vi.mock('tesseract.js', () => ({
     createWorker: vi.fn(() => ({
@@ -21,9 +21,6 @@ vi.mock('tesseract.js', () => ({
         AUTO: 'auto'
     }
 }))
-vi.mock('node-tesseract-ocr', () => ({
-    recognize: vi.fn()
-}))
 vi.mock('xml2js', () => ({
     parseString: vi.fn()
 }))
@@ -34,32 +31,87 @@ describe('isSystemTesseractAvailable', () => {
     })
 
     it('returns true when Tesseract is available', () => {
-        vi.mocked(execSync).mockImplementation(() => '')
+        vi.mocked(execFileSync).mockImplementation(() => '')
 
         expect(isSystemTesseractAvailable()).toBe(true)
-        expect(execSync).toHaveBeenCalledWith('tesseract --version')
+        expect(execFileSync).toHaveBeenCalledWith('tesseract', ['--version'], { stdio: 'ignore' })
     })
 
     it('returns false when Tesseract is not available', () => {
-        vi.mocked(execSync).mockImplementation(() => {
+        vi.mocked(execFileSync).mockImplementation(() => {
             throw new Error('command not found')
         })
 
         expect(isSystemTesseractAvailable()).toBe(false)
-        expect(execSync).toHaveBeenCalledWith('tesseract --version')
+        expect(execFileSync).toHaveBeenCalledWith('tesseract', ['--version'], { stdio: 'ignore' })
     })
 
     it('checks the specified Tesseract binary name', () => {
         const customBinary = 'custom-tesseract'
         // @ts-ignore
-        vi.mocked(execSync).mockImplementation((command) => {
-            if (!command.includes(customBinary)) {
+        vi.mocked(execFileSync).mockImplementation((file) => {
+            if (file !== customBinary) {
                 throw new Error('command not found')
             }
         })
 
         expect(isSystemTesseractAvailable(customBinary)).toBe(true)
-        expect(execSync).toHaveBeenCalledWith(`${customBinary} --version`)
+        expect(execFileSync).toHaveBeenCalledWith(customBinary, ['--version'], { stdio: 'ignore' })
+    })
+
+    it('never starts a shell, so a binary name with shell characters is passed through literally', () => {
+        const hostileBinary = 'tesseract; touch /tmp/pwned'
+        vi.mocked(execFileSync).mockImplementation(() => '')
+
+        isSystemTesseractAvailable(hostileBinary)
+
+        expect(execFileSync).toHaveBeenCalledWith(hostileBinary, ['--version'], { stdio: 'ignore' })
+    })
+})
+
+describe('runSystemTesseract', () => {
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('runs the tesseract binary with an argument array and returns stdout', async () => {
+        // @ts-ignore
+        vi.mocked(execFile).mockImplementation((_file, _args, _options, callback) => {
+            callback(null, { stdout: '<alto/>', stderr: '' })
+        })
+
+        const result = await runSystemTesseract('/fake/path/image.png', { lang: 'eng', oem: 1, psm: 3, presets: ['alto'] })
+
+        expect(result).toBe('<alto/>')
+        expect(execFile).toHaveBeenCalledWith(
+            'tesseract',
+            ['/fake/path/image.png', 'stdout', '-l', 'eng', '--oem', '1', '--psm', '3', 'alto'],
+            { maxBuffer: 10 * 1024 * 1024 },
+            expect.any(Function),
+        )
+    })
+
+    it('passes a file path with shell characters through as one literal argument', async () => {
+        const hostilePath = '/tmp/image.png"; touch /tmp/pwned; echo "'
+        // @ts-ignore
+        vi.mocked(execFile).mockImplementation((_file, _args, _options, callback) => {
+            callback(null, { stdout: '', stderr: '' })
+        })
+
+        await runSystemTesseract(hostilePath, { lang: 'eng', oem: 1, psm: 3, presets: ['alto'] })
+
+        const [, args] = vi.mocked(execFile).mock.calls[0]
+        expect(args[0]).toBe(hostilePath)
+    })
+
+    it('rejects when the binary fails', async () => {
+        // @ts-ignore
+        vi.mocked(execFile).mockImplementation((_file, _args, _options, callback) => {
+            callback(new Error('Recognition failed'), { stdout: '', stderr: '' })
+        })
+
+        await expect(runSystemTesseract('/fake/path/image.png', { lang: 'eng', oem: 1, psm: 3, presets: ['alto'] }))
+            .rejects.toThrow('Recognition failed')
     })
 })
 
@@ -334,6 +386,13 @@ describe('getSystemOcrData', () => {
     const mockLanguage = 'eng'
     const options = { filePath: mockFilePath, language: mockLanguage }
 
+    function mockTesseractStdout(stdout: string) {
+        // @ts-ignore
+        vi.mocked(execFile).mockImplementation((_file, _args, _options, callback) => {
+            callback(null, { stdout, stderr: '' })
+        })
+    }
+
     beforeEach(() => {
         vi.clearAllMocks()
         mockedParsedTextSting = '\n\t\t\nNext-gen browser and mobile automation\n\ntest framework for Node.js\n\t'
@@ -376,7 +435,7 @@ describe('getSystemOcrData', () => {
     it('successfully processes OCR data', async () => {
         const mockResult = '<alto><Layout><Page><PrintSpace><ComposedBlock><TextBlock><TextLine HPOS="100" VPOS="200" WIDTH="300" HEIGHT="400"><String CONTENT="\nNext-gen browser and mobile automation\n\ntest framework for Node.js" HPOS="100" VPOS="200" WIDTH="50" HEIGHT="20" WC="0.95"/></TextLine></TextBlock></ComposedBlock></PrintSpace></Page></Layout></alto>'
 
-        vi.mocked(recognize).mockResolvedValue(mockResult)
+        mockTesseractStdout(mockResult)
         vi.mocked(parseString).mockImplementation((_input, callback) => {
             // @ts-ignore
             callback(null, {
@@ -391,19 +450,22 @@ describe('getSystemOcrData', () => {
 
         const result = await getSystemOcrData(options)
 
-        expect(recognize).toHaveBeenCalledWith(mockFilePath, {
-            lang: mockLanguage,
-            oem: 1,
-            psm: 3,
-            presets: ['alto']
-        })
+        expect(execFile).toHaveBeenCalledWith(
+            'tesseract',
+            [mockFilePath, 'stdout', '-l', mockLanguage, '--oem', '1', '--psm', '3', 'alto'],
+            expect.any(Object),
+            expect.any(Function),
+        )
         expect(result.text).toMatchSnapshot()
         expect(result.lines.length).toEqual(2)
         expect(result.words.length).toEqual(4)
     })
 
     it('handles recognition errors', async () => {
-        vi.mocked(recognize).mockRejectedValue(new Error('Recognition failed'))
+        // @ts-ignore
+        vi.mocked(execFile).mockImplementation((_file, _args, _options, callback) => {
+            callback(new Error('Recognition failed'), { stdout: '', stderr: '' })
+        })
 
         await expect(getSystemOcrData({ filePath: mockFilePath, language: mockLanguage }))
             .rejects
@@ -413,7 +475,7 @@ describe('getSystemOcrData', () => {
     it('handles XML parsing errors', async () => {
         const mockResult = 'Invalid XML content'
 
-        vi.mocked(recognize).mockResolvedValue(mockResult)
+        mockTesseractStdout(mockResult)
         vi.mocked(parseString).mockImplementation((_input, callback) => {
             // @ts-ignore
             callback(new Error('Parsing failed'), null)
@@ -427,7 +489,7 @@ describe('getSystemOcrData', () => {
     it('handles cases with no text found', async () => {
         const mockResult = '<alto><Layout><Page><PrintSpace><ComposedBlock/></PrintSpace></Page></Layout></alto>'
 
-        vi.mocked(recognize).mockResolvedValue(mockResult)
+        mockTesseractStdout(mockResult)
         vi.mocked(parseString).mockImplementation((_input, callback) => {
             // @ts-ignore
             callback(null, { alto: { Layout: [{ Page: [{ PrintSpace: [{ ComposedBlock: [] }] }] }] } })
@@ -444,7 +506,7 @@ describe('getSystemOcrData', () => {
 
         beforeEach(() => {
             vi.clearAllMocks()
-            vi.mocked(recognize).mockResolvedValue('<alto>...</alto>') // Base mock for OCR recognize function
+            mockTesseractStdout('<alto>...</alto>') // Base mock for the tesseract binary
         })
 
         function setupStringMock(missingKey) {

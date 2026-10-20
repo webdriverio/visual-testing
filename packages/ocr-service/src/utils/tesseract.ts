@@ -1,20 +1,50 @@
-import { execSync } from 'node:child_process'
+import { execFile, execFileSync } from 'node:child_process'
+import { promisify } from 'node:util'
 import { createWorker, PSM } from 'tesseract.js'
-import { recognize } from 'node-tesseract-ocr'
 import { parseString } from 'xml2js'
 import type { GetOcrData, Line, ParseWordData, Rectangles, TessaractDataOptions, UnprocessedNodejsBlock, UnprocessedSystemBlock, Words } from '../types.js'
 
+const execFileAsync = promisify(execFile)
+// Tesseract writes the ALTO XML of a full-screen capture to stdout. 1 MB (the Node
+// default) is too small for a busy screen, so give it room.
+const TESSERACT_MAX_STDOUT_BYTES = 10 * 1024 * 1024
+
 export function isSystemTesseractAvailable(tesseractName: string = ''): boolean {
     const binary = tesseractName || 'tesseract'
-    const command = [binary, '--version'].join(' ')
 
     try {
-        execSync(command)
+        // execFileSync with an argument array never starts a shell, so the binary
+        // name is passed through as-is.
+        execFileSync(binary, ['--version'], { stdio: 'ignore' })
     } catch (_ign) {
         return false
     }
 
     return true
+}
+
+type SystemTesseractOptions = {
+    lang: string;
+    oem: number;
+    psm: number;
+    presets: string[];
+}
+
+/**
+ * Run the system Tesseract binary and return what it writes to stdout.
+ *
+ * The file path and every option go to the binary as an argument array, so no
+ * shell ever sees them. This replaces `node-tesseract-ocr`, which built one shell
+ * command string from the file path (GHSA-8j44-735h-w4w2) and has no patched
+ * release.
+ */
+export async function runSystemTesseract(filePath: string, { lang, oem, psm, presets }: SystemTesseractOptions): Promise<string> {
+    // `-l` and `--psm` must come before any config file name such as `alto`, see
+    // https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc
+    const args = [filePath, 'stdout', '-l', lang, '--oem', String(oem), '--psm', String(psm), ...presets]
+    const { stdout } = await execFileAsync('tesseract', args, { maxBuffer: TESSERACT_MAX_STDOUT_BYTES })
+
+    return stdout
 }
 
 export function parseWordDataFromText(attributes: string[]): ParseWordData {
@@ -164,10 +194,9 @@ export async function getSystemOcrData(options: TessaractDataOptions): Promise<G
         const jsonSingleWords: Words[] = []
         const jsonWordStrings: Line[] = []
         let composedBlocks: UnprocessedSystemBlock[] = []
-        const result = await recognize(filePath, {
+        const result = await runSystemTesseract(filePath, {
             lang: language,
             oem: 1,
-            // https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc
             psm: 3,
             presets: ['alto'],
         })

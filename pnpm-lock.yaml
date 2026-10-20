@@ -165,9 +165,6 @@ importers:
       jimp:
         specifier: ^1.6.1
         version: 1.6.1(supports-color@8.1.1)
-      node-tesseract-ocr:
-        specifier: ^2.2.1
-        version: 2.2.1
       tesseract.js:
         specifier: ^7.0.0
         version: 7.0.0
@@ -3878,10 +3875,6 @@ packages:
 
   node-request-interceptor@0.6.3:
     resolution: {integrity: sha512-8I2V7H2Ch0NvW7qWcjmS0/9Lhr0T6x7RD6PDirhvWEkUQvy83x8BA4haYMr09r/rig7hcgYSjYh6cd4U7G1vLA==}
-
-  node-tesseract-ocr@2.2.1:
-    resolution: {integrity: sha512-Q9cD79JGpPNQBxbi1fV+OAsTxYKLpx22sagsxSyKbu1u+t6UarApf5m32uVc8a5QAP1Wk7fIPN0aJFGGEE9DyQ==}
-    engines: {node: '>=10'}
 
   non-error@0.1.0:
     resolution: {integrity: sha512-TMB1uHiGsHRGv1uYclfhivcnf0/PdFp2pNqRxXjncaAsjYMoisaQJI+SSZCqRq+VliwRTC8tsMQfmrWjDMhkPQ==}
@@ -9179,8 +9172,6 @@ snapshots:
       strict-event-emitter: 0.1.0
     transitivePeerDependencies:
       - supports-color
-
-  node-tesseract-ocr@2.2.1: {}
 
   non-error@0.1.0: {}
 
