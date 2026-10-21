@@ -2,7 +2,34 @@ import { execSync } from 'node:child_process'
 import { createWorker, PSM } from 'tesseract.js'
 import { recognize } from 'node-tesseract-ocr'
 import { parseString } from 'xml2js'
-import type { GetOcrData, Line, ParseWordData, Rectangles, TessaractDataOptions, UnprocessedNodejsBlock, UnprocessedSystemBlock, Words } from '../types.js'
+import type {
+    GetOcrData,
+    Line,
+    PageSegmentationMode,
+    ParseWordData,
+    Rectangles,
+    TessaractDataOptions,
+    UnprocessedNodejsBlock,
+    UnprocessedSystemBlock,
+    Words,
+} from '../types.js'
+
+const NO_TEXT_FOUND_MESSAGE = 'No text was found for the OCR, please verify the stored image. '
+    + 'If the image has only one line, one word or one character, try the "psm" option, for example "psm: 7".'
+
+// The tesseract.js names of the supported page segmentation modes
+const TESSERACT_JS_PSM: Record<PageSegmentationMode, PSM> = {
+    3: PSM.AUTO,
+    4: PSM.SINGLE_COLUMN,
+    5: PSM.SINGLE_BLOCK_VERT_TEXT,
+    6: PSM.SINGLE_BLOCK,
+    7: PSM.SINGLE_LINE,
+    8: PSM.SINGLE_WORD,
+    9: PSM.CIRCLE_WORD,
+    10: PSM.SINGLE_CHAR,
+    11: PSM.SPARSE_TEXT,
+    13: PSM.RAW_LINE,
+}
 
 export function isSystemTesseractAvailable(tesseractName: string = ''): boolean {
     const binary = tesseractName || 'tesseract'
@@ -65,14 +92,14 @@ export function extractTextFromAlto(altoContent: string): string {
 export async function getNodeOcrData(options: TessaractDataOptions): Promise<GetOcrData> {
     let worker
     try {
-        const { filePath, language } = options
+        const { filePath, language, psm } = options
         const jsonSingleWords: Words[] = []
         const jsonWordStrings: Line[] = []
         let composedBlocks: UnprocessedNodejsBlock[] = []
 
         worker = await createWorker(language)
         await worker.setParameters({
-            tessedit_pageseg_mode: PSM.AUTO,
+            tessedit_pageseg_mode: TESSERACT_JS_PSM[psm],
         })
         // Since tesseract.js 6 only `text` is on by default; the words and their positions come from `hocr`
         const { data: { text, hocr } } = await worker.recognize(filePath, {}, { text: true, hocr: true })
@@ -92,7 +119,7 @@ export async function getNodeOcrData(options: TessaractDataOptions): Promise<Get
         })
 
         if (!composedBlocks || composedBlocks.length === 0){
-            throw Error('No text was found for the OCR, please verify the stored image.')
+            throw Error(NO_TEXT_FOUND_MESSAGE)
         }
 
         composedBlocks.forEach((block) => {
@@ -160,7 +187,7 @@ export async function getNodeOcrData(options: TessaractDataOptions): Promise<Get
  */
 export async function getSystemOcrData(options: TessaractDataOptions): Promise<GetOcrData> {
     try {
-        const { filePath, language } = options
+        const { filePath, language, psm } = options
         const jsonSingleWords: Words[] = []
         const jsonWordStrings: Line[] = []
         let composedBlocks: UnprocessedSystemBlock[] = []
@@ -168,7 +195,7 @@ export async function getSystemOcrData(options: TessaractDataOptions): Promise<G
             lang: language,
             oem: 1,
             // https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc
-            psm: 3,
+            psm,
             presets: ['alto'],
         })
 
@@ -183,7 +210,7 @@ export async function getSystemOcrData(options: TessaractDataOptions): Promise<G
         const text = extractTextFromAlto(result)
 
         if (!composedBlocks || composedBlocks.length === 0){
-            throw Error('No text was found for the OCR, please verify the stored image.')
+            throw Error(NO_TEXT_FOUND_MESSAGE)
         }
 
         composedBlocks.forEach(composedBlock => {

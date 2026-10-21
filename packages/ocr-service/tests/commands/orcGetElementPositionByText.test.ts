@@ -4,6 +4,7 @@ import ocrGetElementPositionByText from '../../src/commands/ocrGetElementPositio
 import getTextPositions from '../../src/utils/getTextPositions.js'
 import { fuzzyFind } from '../../src/utils/fuzzySearch.js'
 import logger from '@wdio/logger'
+import type { OcrGetElementPositionByTextOptions } from '../../src/types.js'
 
 vi.mock('../../src/utils/getTextPositions.js', () => ({
     default: vi.fn()
@@ -92,5 +93,28 @@ describe('ocrGetElementPositionByText', () => {
         const result = await ocrGetElementPositionByText.bind(mockDriver)(data)
         expect(result.matchedString).toEqual(data.text)
         expect(logInfoMock.mock.calls[0][0]).toEqual(`We searched for the word "${data.text}" and found one match "${data.text}" with score "100%"`)
+    })
+
+    it('passes the page segmentation mode to the OCR', async () => {
+        const data: OcrGetElementPositionByTextOptions = {
+            contrast: 0.5,
+            isTesseractAvailable: false,
+            language: 'ENG',
+            ocrImagesPath: 'path/to/image.png',
+            psm: 7,
+            text: '7',
+        }
+        vi.mocked(getTextPositions).mockResolvedValue([])
+        vi.mocked(fuzzyFind).mockReturnValue([])
+
+        await expect(ocrGetElementPositionByText.bind(mockDriver)(data)).rejects.toThrow()
+        expect(getTextPositions).toHaveBeenCalledWith(mockDriver, {
+            contrast: data.contrast,
+            haystack: undefined,
+            isTesseractAvailable: data.isTesseractAvailable,
+            language: data.language,
+            ocrImagesPath: data.ocrImagesPath,
+            psm: 7,
+        })
     })
 })

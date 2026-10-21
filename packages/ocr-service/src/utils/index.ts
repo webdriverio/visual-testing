@@ -1,7 +1,8 @@
 import { join } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import type { ChainablePromiseElement } from 'webdriverio'
-import type { ClickPoint, DetermineClickPointOptions, Rectangles, RectReturn, ScreenshotSize } from '../types.js'
+import type { ClickPoint, DetermineClickPointOptions, PageSegmentationMode, Rectangles, RectReturn, ScreenshotSize } from '../types.js'
+import { PAGE_SEGMENTATION_MODES } from './constants.js'
 
 export function getBase64ScreenshotSize(screenshot: string): ScreenshotSize {
     return {
@@ -64,4 +65,24 @@ export function isMultiRemoteBrowser(
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
 ): browser is WebdriverIO.MultiRemoteBrowser {
     return browser.isMultiRemote === true
+}
+
+export function isPageSegmentationMode(psm: unknown): psm is PageSegmentationMode {
+    return PAGE_SEGMENTATION_MODES.some((mode) => mode === psm)
+}
+
+/**
+ * Get the page segmentation mode of a command, or the default when it is not set.
+ * Only the supported numbers are allowed, because the system Tesseract gets the value in a shell command.
+ */
+export function getPageSegmentationMode(psm: unknown, defaultPsm: PageSegmentationMode): PageSegmentationMode {
+    if (psm === undefined) {
+        return defaultPsm
+    }
+
+    if (!isPageSegmentationMode(psm)) {
+        throw new Error(`The "psm" option must be one of ${PAGE_SEGMENTATION_MODES.join(', ')}, but it is "${String(psm)}".`)
+    }
+
+    return psm
 }

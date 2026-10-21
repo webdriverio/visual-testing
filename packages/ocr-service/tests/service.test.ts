@@ -3,8 +3,9 @@ import { join } from 'node:path'
 import logger from '@wdio/logger'
 import WdioOcrService from '../src/service.js'
 import { createOcrDir } from '../src/utils/index.js'
-import { CONTRAST, SUPPORTED_LANGUAGES } from '../src/utils/constants.js'
+import { CONTRAST, DEFAULT_PSM, SUPPORTED_LANGUAGES } from '../src/utils/constants.js'
 import ocrGetText from '../src/commands/ocrGetText.js'
+import type { OcrOptions } from '../src/types.js'
 
 vi.mock('../src/utils/index.js', async (importOriginal) => ({
     ...await importOriginal<object>(),
@@ -105,20 +106,28 @@ describe('WdioOcrService', () => {
         expect(service).toHaveProperty('_ocrDir', expectedFolder)
         expect(service).toHaveProperty('_ocrLanguage', SUPPORTED_LANGUAGES.ENGLISH)
         expect(service).toHaveProperty('_ocrContrast', CONTRAST)
+        expect(service).toHaveProperty('_ocrPsm', DEFAULT_PSM)
     })
 
     it('should use provided options to initialize properties', () => {
-        const options = {
+        const options: OcrOptions = {
             imagesFolder: 'custom-folder',
             language: SUPPORTED_LANGUAGES.SPANISH,
             contrast: 0.1,
+            psm: 7,
         }
-        vi.mocked(createOcrDir).mockReturnValue(options.imagesFolder)
+        vi.mocked(createOcrDir).mockReturnValue('custom-folder')
         const service = new WdioOcrService(options)
 
-        expect(service).toHaveProperty('_ocrDir', options.imagesFolder)
+        expect(service).toHaveProperty('_ocrDir', 'custom-folder')
         expect(service).toHaveProperty('_ocrLanguage', SUPPORTED_LANGUAGES.SPANISH)
         expect(service).toHaveProperty('_ocrContrast', options.contrast)
+        expect(service).toHaveProperty('_ocrPsm', 7)
+    })
+
+    it('should throw when the psm option is not supported', () => {
+        // @ts-expect-error 12 is not a supported page segmentation mode
+        expect(() => new WdioOcrService({ psm: 12 })).toThrow('The "psm" option must be one of')
     })
 
     it('should setup OCR commands in standalone mode', async () => {
@@ -177,8 +186,55 @@ describe('WdioOcrService', () => {
                 isTesseractAvailable: false,
                 language: SUPPORTED_LANGUAGES.ENGLISH,
                 imagePath,
-                ocrImagesPath: '.tmp/ocr'
+                ocrImagesPath: '.tmp/ocr',
+                psm: DEFAULT_PSM,
             })
+        })
+
+        it('should use the psm of the service, unless the command has its own psm', async () => {
+            vi.mocked(createOcrDir).mockReturnValue('.tmp/ocr')
+            service = new WdioOcrService({ psm: 6 })
+            browser = createBrowser()
+            await service.before(browser.capabilities, [], browser)
+
+            // @ts-ignore
+            await browser.ocrGetText({})
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ psm: 6 }))
+
+            // @ts-ignore
+            await browser.ocrGetText({ psm: 7 })
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ psm: 7 }))
+        })
+
+        it('should throw when the psm of a command is not supported', async () => {
+            browser = createBrowser()
+            await service.before(browser.capabilities, [], browser)
+
+            // @ts-ignore
+            expect(() => browser.ocrGetText({ psm: '7; echo' })).toThrow('The "psm" option must be one of')
+            expect(ocrGetText).not.toHaveBeenCalled()
+        })
+
+        it('should pass the psm to the commands of a multiremote browser', async () => {
+            vi.mocked(createOcrDir).mockReturnValue('.tmp/ocr')
+            service = new WdioOcrService({ psm: 6 })
+            browser = createBrowser(true)
+            browser.capabilities = {
+                myChromeBrowser: { capabilities: { browserName: 'chrome' } },
+            }
+            await service.before(browser.capabilities, [], browser)
+            // The mock keeps the commands of an instance in `commands`, the multiremote command calls them on the instance
+            // @ts-ignore
+            const chromeInstance = browser.getInstance('myChromeBrowser')
+            chromeInstance.ocrGetText = chromeInstance.commands.ocrGetText
+
+            // @ts-ignore
+            await browser.ocrGetText({})
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ psm: 6 }))
+
+            // @ts-ignore
+            await browser.ocrGetText({ psm: 7 })
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ psm: 7 }))
         })
 
         it('should add OCR commands to multiremote browsers correctly', async () => {
