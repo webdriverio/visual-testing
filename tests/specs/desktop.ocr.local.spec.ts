@@ -25,6 +25,28 @@ describe('@wdio/visual-service:ocr desktop on a local page', () => {
         expect(ocrText).toMatch(/^Next-gen browser and mobile automation test framework for Node[.,]js$/)
     })
 
+    it('should get the text of one character with the page segmentation mode for one line', async function() {
+        const ocrText = await driver.ocrGetText({
+            haystack: $('.counter'),
+            psm: 7,
+        })
+
+        expect(ocrText).toEqual('7')
+    })
+
+    it('should get the position of one character with the page segmentation mode for one line', async function() {
+        const elementPosition = await driver.ocrGetElementPositionByText({
+            haystack: $('.counter'),
+            psm: 7,
+            text: '7',
+            // The default minimum match length is 2
+            fuzzyFindOptions: { minMatchCharLength: 1 },
+        })
+
+        expect(elementPosition.matchedString).toEqual('7')
+        expect(elementPosition.score).toEqual(100)
+    })
+
     it('should get the position of matching text on the screen based on OCR', async function () {
         const string = 'Search'
         const elementPosition = await driver.ocrGetElementPositionByText({

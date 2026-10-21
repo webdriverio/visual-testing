@@ -19,7 +19,20 @@ export interface OcrOptions {
      * Default: eng
      */
     language?: string;
+    /**
+     * The Tesseract page segmentation mode (PSM), see
+     * https://github.com/tesseract-ocr/tesseract/blob/main/doc/tesseract.1.asc
+     * Use 7 (one line), 8 (one word) or 10 (one character) for a haystack with short text
+     * Default: 3 (fully automatic page segmentation)
+     */
+    psm?: PageSegmentationMode;
 }
+
+/**
+ * The Tesseract page segmentation modes that return text with tesseract.js and with the system Tesseract.
+ * 0 (orientation only), 1 and 12 (need the `osd` data) and 2 (not implemented) are not supported.
+ */
+export type PageSegmentationMode = 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 13
 
 /**
  * Browser command options
@@ -28,6 +41,7 @@ type DefaultCommandOptions = {
     contrast?: number;
     haystack?: WebdriverIO.Element | ChainablePromiseElement | RectReturn;
     language?: string;
+    psm?: PageSegmentationMode;
 }
 
 export type GetTextOptions = DefaultCommandOptions & {}
@@ -60,6 +74,7 @@ type DefaultMethodOptions = DefaultCommandOptions & {
     isTesseractAvailable: boolean;
     language: string;
     ocrImagesPath: string;
+    psm: PageSegmentationMode;
 }
 
 export type OcrGetTextOptions = DefaultMethodOptions & {}
@@ -119,6 +134,7 @@ export type Words = Line & {
 export type TessaractDataOptions = {
     filePath: `${string}.${string}`;
     language: string;
+    psm: PageSegmentationMode;
 }
 
 export type ParseWordData = {

@@ -1,6 +1,15 @@
 import { mkdirSync } from 'node:fs'
 import { describe, it, expect, vi } from 'vitest'
-import { adjustElementBbox, createOcrDir, determineClickPoint, getDprPositions, getBase64ScreenshotSize, isMultiRemoteBrowser, isRectanglesObject } from '../../src/utils/index.js'
+import {
+    adjustElementBbox,
+    createOcrDir,
+    determineClickPoint,
+    getBase64ScreenshotSize,
+    getDprPositions,
+    getPageSegmentationMode,
+    isMultiRemoteBrowser,
+    isRectanglesObject,
+} from '../../src/utils/index.js'
 import type { RectReturn } from '../../src/types.js'
 
 vi.mock('node:fs', () => ({
@@ -118,5 +127,21 @@ describe('isMultiRemoteBrowser', () => {
 
     it('should return false when the flag is not set', () => {
         expect(isMultiRemoteBrowser({} as any)).toBe(false)
+    })
+})
+
+describe('getPageSegmentationMode', () => {
+    it('should return the default when no value is set', () => {
+        expect(getPageSegmentationMode(undefined, 3)).toBe(3)
+        expect(getPageSegmentationMode(undefined, 7)).toBe(7)
+    })
+
+    it.each([3, 4, 5, 6, 7, 8, 9, 10, 11, 13])('should return the supported mode %s', (psm) => {
+        expect(getPageSegmentationMode(psm, 3)).toBe(psm)
+    })
+
+    it.each([0, 1, 2, 12, 14, 7.5, '7', '7; echo', null])('should throw for the unsupported value %s', (psm) => {
+        expect(() => getPageSegmentationMode(psm, 3))
+            .toThrow(`The "psm" option must be one of 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, but it is "${String(psm)}".`)
     })
 })

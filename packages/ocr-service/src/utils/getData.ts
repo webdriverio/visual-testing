@@ -14,6 +14,7 @@ export default async function getData(browser: WebdriverIO.Browser, options: Get
         isTesseractAvailable,
         language,
         ocrImagesPath,
+        psm,
     } = options
 
     try {
@@ -49,10 +50,10 @@ export default async function getData(browser: WebdriverIO.Browser, options: Get
 
         if (isTesseractAvailable) {
             log.info('Using system installed version of Tesseract')
-            ocrData = await getSystemOcrData({ filePath: croppedFilePath || filePath, language })
+            ocrData = await getSystemOcrData({ filePath: croppedFilePath || filePath, language, psm })
         } else {
             log.info('Using NodeJS version of Tesseract')
-            ocrData = await getNodeOcrData({ filePath: croppedFilePath || filePath, language })
+            ocrData = await getNodeOcrData({ filePath: croppedFilePath || filePath, language, psm })
         }
 
         if (haystack && elementRectangles) {
