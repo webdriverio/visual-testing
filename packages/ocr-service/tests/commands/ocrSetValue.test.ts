@@ -33,7 +33,7 @@ const options = {
     isTesseractAvailable: false,
     language: 'ENG',
     ocrImagesPath: 'path/to/image.png',
-    psm: 7,
+    pageSegmentationMode: 7,
     text: 'example',
     value: 'test input',
     submitValue: true,

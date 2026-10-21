@@ -1,7 +1,15 @@
 import { join } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import type { ChainablePromiseElement } from 'webdriverio'
-import type { ClickPoint, DetermineClickPointOptions, PageSegmentationMode, Rectangles, RectReturn, ScreenshotSize } from '../types.js'
+import type {
+    ClickPoint,
+    DetermineClickPointOptions,
+    PageSegmentationMode,
+    PageSegmentationModeOptions,
+    Rectangles,
+    RectReturn,
+    ScreenshotSize,
+} from '../types.js'
 import { PAGE_SEGMENTATION_MODES } from './constants.js'
 
 export function getBase64ScreenshotSize(screenshot: string): ScreenshotSize {
@@ -67,22 +75,40 @@ export function isMultiRemoteBrowser(
     return browser.isMultiRemote === true
 }
 
-export function isPageSegmentationMode(psm: unknown): psm is PageSegmentationMode {
-    return PAGE_SEGMENTATION_MODES.some((mode) => mode === psm)
+export function isPageSegmentationMode(pageSegmentationMode: unknown): pageSegmentationMode is PageSegmentationMode {
+    return PAGE_SEGMENTATION_MODES.some((mode) => mode === pageSegmentationMode)
 }
 
 /**
- * Get the page segmentation mode of a command, or the default when it is not set.
- * Only the supported numbers are allowed, because the system Tesseract gets the value in a shell command.
+ * Get the page segmentation mode from the `pageSegmentationMode` option or its alias `psm`, or the default when
+ * neither is set. Only the supported numbers are allowed, because the system Tesseract gets the value in a shell command.
  */
-export function getPageSegmentationMode(psm: unknown, defaultPsm: PageSegmentationMode): PageSegmentationMode {
-    if (psm === undefined) {
-        return defaultPsm
+export function getPageSegmentationMode(
+    options: PageSegmentationModeOptions | undefined,
+    defaultPageSegmentationMode: PageSegmentationMode,
+): PageSegmentationMode {
+    const { pageSegmentationMode, psm } = options ?? {}
+
+    if (pageSegmentationMode !== undefined && psm !== undefined && pageSegmentationMode !== psm) {
+        throw new Error(
+            `The "pageSegmentationMode" option (${String(pageSegmentationMode)}) and its alias "psm" (${String(psm)}) `
+            + 'have different values, use only one of them.'
+        )
     }
 
-    if (!isPageSegmentationMode(psm)) {
-        throw new Error(`The "psm" option must be one of ${PAGE_SEGMENTATION_MODES.join(', ')}, but it is "${String(psm)}".`)
+    // Not `??`: a `null` must fail the check below, not fall back to the alias or the default
+    const value: unknown = pageSegmentationMode !== undefined ? pageSegmentationMode : psm
+
+    if (value === undefined) {
+        return defaultPageSegmentationMode
     }
 
-    return psm
+    if (!isPageSegmentationMode(value)) {
+        throw new Error(
+            `The "pageSegmentationMode" option (alias "psm") must be one of ${PAGE_SEGMENTATION_MODES.join(', ')}, `
+            + `but it is "${String(value)}".`
+        )
+    }
+
+    return value
 }
