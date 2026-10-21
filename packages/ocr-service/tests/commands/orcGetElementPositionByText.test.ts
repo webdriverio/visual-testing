@@ -101,7 +101,7 @@ describe('ocrGetElementPositionByText', () => {
             isTesseractAvailable: false,
             language: 'ENG',
             ocrImagesPath: 'path/to/image.png',
-            psm: 7,
+            pageSegmentationMode: 7,
             text: '7',
         }
         vi.mocked(getTextPositions).mockResolvedValue([])
@@ -114,7 +114,7 @@ describe('ocrGetElementPositionByText', () => {
             isTesseractAvailable: data.isTesseractAvailable,
             language: data.language,
             ocrImagesPath: data.ocrImagesPath,
-            psm: 7,
+            pageSegmentationMode: 7,
         })
     })
 })

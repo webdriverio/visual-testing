@@ -28,13 +28,13 @@ describe('@wdio/visual-service:ocr desktop on a local page', () => {
     it('should get the text of one character with the page segmentation mode for one line', async function() {
         const ocrText = await driver.ocrGetText({
             haystack: $('.counter'),
-            psm: 7,
+            pageSegmentationMode: 7,
         })
 
         expect(ocrText).toEqual('7')
     })
 
-    it('should get the position of one character with the page segmentation mode for one line', async function() {
+    it('should get the position of one character with the psm alias of the page segmentation mode', async function() {
         const elementPosition = await driver.ocrGetElementPositionByText({
             haystack: $('.counter'),
             psm: 7,

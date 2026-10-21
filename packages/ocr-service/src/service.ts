@@ -1,7 +1,7 @@
 import logger from '@wdio/logger'
 import type { Capabilities } from '@wdio/types'
 import { isSystemTesseractAvailable } from './utils/tesseract.js'
-import { CONTRAST, DEFAULT_IMAGES_FOLDER, DEFAULT_PSM, SUPPORTED_LANGUAGES } from './utils/constants.js'
+import { CONTRAST, DEFAULT_IMAGES_FOLDER, DEFAULT_PAGE_SEGMENTATION_MODE, SUPPORTED_LANGUAGES } from './utils/constants.js'
 import { createOcrDir, getPageSegmentationMode, isMultiRemoteBrowser } from './utils/index.js'
 import type { OcrOptions, PageSegmentationMode } from './types.js'
 import ocrGetText from './commands/ocrGetText.js'
@@ -24,14 +24,14 @@ export default class WdioOcrService {
     private _ocrDir: string
     private _ocrLanguage: string
     private _ocrContrast: number
-    private _ocrPsm: PageSegmentationMode
+    private _ocrPageSegmentationMode: PageSegmentationMode
     private _isTesseractAvailable: boolean
 
     constructor(options: OcrOptions) {
         this._ocrDir = createOcrDir(options?.imagesFolder || DEFAULT_IMAGES_FOLDER)
         this._ocrLanguage = options?.language || SUPPORTED_LANGUAGES.ENGLISH
         this._ocrContrast = options?.contrast || CONTRAST
-        this._ocrPsm = getPageSegmentationMode(options?.psm, DEFAULT_PSM)
+        this._ocrPageSegmentationMode = getPageSegmentationMode(options, DEFAULT_PAGE_SEGMENTATION_MODE)
         this._ocrLanguage = options?.language || SUPPORTED_LANGUAGES.ENGLISH
         this._isTesseractAvailable = isSystemTesseractAvailable()
     }
@@ -75,7 +75,7 @@ export default class WdioOcrService {
                     options.ocrImagesPath = options?.imagesFolder || self._ocrDir
                     options.contrast = options?.contrast || self._ocrContrast
                     options.language = options?.language || self._ocrLanguage
-                    options.psm = getPageSegmentationMode(options?.psm, self._ocrPsm)
+                    options.pageSegmentationMode = getPageSegmentationMode(options, self._ocrPageSegmentationMode)
                     options.isTesseractAvailable = self._isTesseractAvailable
                     args[0] = options
                 }
@@ -117,7 +117,7 @@ export default class WdioOcrService {
                         ocrImagesPath: self._ocrDir,
                         contrast: options?.contrast || self._ocrContrast,
                         language: options?.language || self._ocrLanguage,
-                        psm: getPageSegmentationMode(options?.psm, self._ocrPsm),
+                        pageSegmentationMode: getPageSegmentationMode(options, self._ocrPageSegmentationMode),
                         isTesseractAvailable: self._isTesseractAvailable
                     })
                 }

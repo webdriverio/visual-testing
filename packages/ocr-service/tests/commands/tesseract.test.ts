@@ -182,7 +182,7 @@ describe('getNodeOcrData', () => {
             callback(null, parseStringMock)
         })
 
-        const result = await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })
+        const result = await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })
 
         expect(createWorker).toHaveBeenCalledWith(mockLanguage)
         expect(workerMock.setParameters).toHaveBeenCalledWith({ tessedit_pageseg_mode: '3' })
@@ -201,7 +201,7 @@ describe('getNodeOcrData', () => {
             callback(null, parseStringMock)
         })
 
-        await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 7 })
+        await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 7 })
 
         expect(workerMock.setParameters).toHaveBeenCalledWith({ tessedit_pageseg_mode: '7' })
     })
@@ -211,7 +211,7 @@ describe('getNodeOcrData', () => {
         vi.mocked(createWorker).mockResolvedValue(workerMock)
 
         try {
-            await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })
+            await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })
             throw new Error('Test failed: Expected error was not thrown')
         } catch (error) {
             expect(workerMock.terminate).toHaveBeenCalledTimes(1)
@@ -226,7 +226,7 @@ describe('getNodeOcrData', () => {
             callback(new Error('Parsing failed'), null)
         })
 
-        await expect(getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 }))
+        await expect(getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 }))
             .rejects.toThrow('Parsing failed')
         expect(workerMock.terminate).toHaveBeenCalled()
     })
@@ -235,7 +235,7 @@ describe('getNodeOcrData', () => {
         workerMock.recognize.mockResolvedValue({ data: { text: 'Extracted text' } })
         vi.mocked(createWorker).mockResolvedValue(workerMock)
 
-        await expect(getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 }))
+        await expect(getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 }))
             .rejects
             .toThrow(`An error happened when parsing the getNodeOcrData, see: Error: No hocr data was found for the OCR, please verify image at: ${mockFilePath}`)
         expect(workerMock.terminate).toHaveBeenCalled()
@@ -248,9 +248,9 @@ describe('getNodeOcrData', () => {
             callback(null, { div: { div: [] } })
         })
 
-        await expect(getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 }))
+        await expect(getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 }))
             .rejects
-            .toThrow('No text was found for the OCR, please verify the stored image. If the image has only one line, one word or one character, try the "psm" option, for example "psm: 7".')
+            .toThrow('No text was found for the OCR, please verify the stored image. If the image has only one line, one word or one character, try the "pageSegmentationMode" option (Tesseract --psm), for example "pageSegmentationMode: 7".')
         expect(workerMock.terminate).toHaveBeenCalled()
     })
 
@@ -261,14 +261,14 @@ describe('getNodeOcrData', () => {
             callback(null, { div: { div: [{ $: { 'class': 'ocr_carea' } }] } })
         })
 
-        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })).toMatchSnapshot()
+        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })).toMatchSnapshot()
 
         vi.mocked(parseString).mockImplementation((_input, callback) => {
             // @ts-ignore
             callback(null, { div: { div: [{ $: { 'class': 'ocr_carea' }, p: 'notAnArray' }] } })
         })
 
-        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })).toMatchSnapshot()
+        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })).toMatchSnapshot()
     })
 
     it('be able to handle no/empty p.span or array', async () => {
@@ -278,14 +278,14 @@ describe('getNodeOcrData', () => {
             callback(null, { div: { div: [{ $: { 'class': 'ocr_carea' }, p:[] }] } })
         })
 
-        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })).toMatchSnapshot()
+        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })).toMatchSnapshot()
 
         vi.mocked(parseString).mockImplementation((_input, callback) => {
             // @ts-ignore
             callback(null, { div: { div: [{ $: { 'class': 'ocr_carea' }, p: [{ span:{} }] }] } })
         })
 
-        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })).toMatchSnapshot()
+        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })).toMatchSnapshot()
     })
 
     it('be able to handle no/empty p.span.line.span or array', async () => {
@@ -295,14 +295,14 @@ describe('getNodeOcrData', () => {
             callback(null, { div: { div: [{ $: { 'class': 'ocr_carea' }, p:[{ span:[] }] }] } })
         })
 
-        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })).toMatchSnapshot()
+        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })).toMatchSnapshot()
 
         vi.mocked(parseString).mockImplementation((_input, callback) => {
             // @ts-ignore
             callback(null, { div: { div: [{ $: { 'class': 'ocr_carea' }, p: [{ span:[{ _: 'test', $: {} }] }] }] } })
         })
 
-        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })).toMatchSnapshot()
+        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })).toMatchSnapshot()
     })
 
     it('be able to handle no/empty p.span.line.span words or array', async () => {
@@ -312,7 +312,7 @@ describe('getNodeOcrData', () => {
             callback(null, { div: { div: [{ $: { 'class': 'ocr_carea' }, p:[{ span:[{ span: [{}] }] }] }] } })
         })
 
-        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })).toMatchSnapshot()
+        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })).toMatchSnapshot()
     })
 
     it('be able to handle no lineData.bbox', async () => {
@@ -336,7 +336,7 @@ describe('getNodeOcrData', () => {
             })
         })
 
-        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })).toMatchSnapshot()
+        expect(await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })).toMatchSnapshot()
     })
 })
 
@@ -345,7 +345,7 @@ describe('getSystemOcrData', () => {
     let mockedParsedString
     const mockFilePath = '/fake/path/image.png'
     const mockLanguage = 'eng'
-    const options = { filePath: mockFilePath, language: mockLanguage, psm: 3 }
+    const options = { filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 }
 
     beforeEach(() => {
         vi.clearAllMocks()
@@ -422,7 +422,7 @@ describe('getSystemOcrData', () => {
             callback(null, { alto: { Layout: [{ Page: [{ PrintSpace: [{ ComposedBlock: mockedParsedString }] }] }] } })
         })
 
-        await getSystemOcrData({ ...options, psm: 7 })
+        await getSystemOcrData({ ...options, pageSegmentationMode: 7 })
 
         expect(recognize).toHaveBeenCalledWith(mockFilePath, {
             lang: mockLanguage,
@@ -435,7 +435,7 @@ describe('getSystemOcrData', () => {
     it('handles recognition errors', async () => {
         vi.mocked(recognize).mockRejectedValue(new Error('Recognition failed'))
 
-        await expect(getSystemOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 }))
+        await expect(getSystemOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 }))
             .rejects
             .toThrow('An error happened when parsing the getSystemOcrData, see: Error: Recognition failed')
     })
@@ -449,7 +449,7 @@ describe('getSystemOcrData', () => {
             callback(new Error('Parsing failed'), null)
         })
 
-        await expect(getSystemOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 }))
+        await expect(getSystemOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 }))
             .rejects
             .toThrow('Parsing failed')
     })
@@ -463,9 +463,9 @@ describe('getSystemOcrData', () => {
             callback(null, { alto: { Layout: [{ Page: [{ PrintSpace: [{ ComposedBlock: [] }] }] }] } })
         })
 
-        await expect(getSystemOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 }))
+        await expect(getSystemOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 }))
             .rejects
-            .toThrow('No text was found for the OCR, please verify the stored image. If the image has only one line, one word or one character, try the "psm" option, for example "psm: 7".')
+            .toThrow('No text was found for the OCR, please verify the stored image. If the image has only one line, one word or one character, try the "pageSegmentationMode" option (Tesseract --psm), for example "pageSegmentationMode: 7".')
     })
 
     describe('getSystemOcrData missing properties', () => {
@@ -514,7 +514,7 @@ describe('getSystemOcrData', () => {
         it.each(['CONTENT', 'HPOS', 'VPOS', 'WIDTH', 'HEIGHT', 'WC'])('should handle missing %s property', async (missingKey) => {
             setupStringMock(missingKey)
 
-            const result = await getSystemOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 3 })
+            const result = await getSystemOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })
 
             expect(result.words).toHaveLength(0)
             expect(result.lines).toHaveLength(0)
