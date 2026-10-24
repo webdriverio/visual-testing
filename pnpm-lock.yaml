@@ -5262,8 +5262,8 @@ packages:
   zlibjs@0.3.1:
     resolution: {integrity: sha512-+J9RrgTKOmlxFSDHo0pI1xM6BLVUv+o0ZT9ANtCxGkjIVCCUdx9alUF8Gm+dGLKbkkkidWIHFDZHDMpfITt4+w==}
 
-  zod@3.25.56:
-    resolution: {integrity: sha512-rd6eEF3BTNvQnR2e2wwolfTmUTnp70aUTqr0oaGbHifzC3BKJsoV+Gat8vxUMR1hwOKBs6El+qWehrHbCpW6SQ==}
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
 snapshots:
 
@@ -6183,7 +6183,7 @@ snapshots:
     dependencies:
       '@jimp/types': 1.6.1
       '@jimp/utils': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
 
   '@jimp/plugin-blur@1.6.1(supports-color@8.1.1)':
     dependencies:
@@ -6195,7 +6195,7 @@ snapshots:
   '@jimp/plugin-circle@1.6.1':
     dependencies:
       '@jimp/types': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
 
   '@jimp/plugin-color@1.6.1(supports-color@8.1.1)':
     dependencies:
@@ -6203,7 +6203,7 @@ snapshots:
       '@jimp/types': 1.6.1
       '@jimp/utils': 1.6.1
       tinycolor2: 1.6.0
-      zod: 3.25.56
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -6214,7 +6214,7 @@ snapshots:
       '@jimp/plugin-resize': 1.6.1(supports-color@8.1.1)
       '@jimp/types': 1.6.1
       '@jimp/utils': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -6224,7 +6224,7 @@ snapshots:
       '@jimp/plugin-crop': 1.6.1(supports-color@8.1.1)
       '@jimp/plugin-resize': 1.6.1(supports-color@8.1.1)
       '@jimp/types': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -6233,7 +6233,7 @@ snapshots:
       '@jimp/core': 1.6.1(supports-color@8.1.1)
       '@jimp/types': 1.6.1
       '@jimp/utils': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -6241,7 +6241,7 @@ snapshots:
     dependencies:
       '@jimp/types': 1.6.1
       '@jimp/utils': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
 
   '@jimp/plugin-dither@1.6.1':
     dependencies:
@@ -6251,12 +6251,12 @@ snapshots:
     dependencies:
       '@jimp/types': 1.6.1
       '@jimp/utils': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
 
   '@jimp/plugin-flip@1.6.1':
     dependencies:
       '@jimp/types': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
 
   '@jimp/plugin-hash@1.6.1(supports-color@8.1.1)':
     dependencies:
@@ -6276,7 +6276,7 @@ snapshots:
   '@jimp/plugin-mask@1.6.1':
     dependencies:
       '@jimp/types': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
 
   '@jimp/plugin-print@1.6.1(supports-color@8.1.1)':
     dependencies:
@@ -6289,20 +6289,20 @@ snapshots:
       parse-bmfont-binary: 1.0.6
       parse-bmfont-xml: 1.1.6
       simple-xml-to-json: 1.2.3
-      zod: 3.25.56
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
   '@jimp/plugin-quantize@1.6.1':
     dependencies:
       image-q: 4.0.0
-      zod: 3.25.56
+      zod: 3.25.76
 
   '@jimp/plugin-resize@1.6.1(supports-color@8.1.1)':
     dependencies:
       '@jimp/core': 1.6.1(supports-color@8.1.1)
       '@jimp/types': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -6313,7 +6313,7 @@ snapshots:
       '@jimp/plugin-resize': 1.6.1(supports-color@8.1.1)
       '@jimp/types': 1.6.1
       '@jimp/utils': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -6324,13 +6324,13 @@ snapshots:
       '@jimp/plugin-hash': 1.6.1(supports-color@8.1.1)
       '@jimp/types': 1.6.1
       '@jimp/utils': 1.6.1
-      zod: 3.25.56
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
   '@jimp/types@1.6.1':
     dependencies:
-      zod: 3.25.56
+      zod: 3.25.76
 
   '@jimp/utils@1.6.1':
     dependencies:
@@ -10718,4 +10718,4 @@ snapshots:
 
   zlibjs@0.3.1: {}
 
-  zod@3.25.56: {}
+  zod@3.25.76: {}
