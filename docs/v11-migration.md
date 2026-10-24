@@ -16,7 +16,7 @@ v11 is the current major version (npm tag `latest`). This guide lists what chang
 | Change | Do you need to do something? |
 |---|---|
 | [WebdriverIO v10 only](#webdriverio-v10-only) | Yes, if you still use WebdriverIO v9 |
-| [Node.js 22.19 or later](#nodejs-2219-or-later) | Only on an older Node.js |
+| [Node.js 22.23.4, 24.22.1 or 26.12.1](#nodejs-22234-24221-or-26121) | Only on an older Node.js |
 | [New color difference metric (pixelmatch 8)](#new-color-difference-metric-pixelmatch-8) | Check tight tolerances; maybe re-accept some baselines |
 | [Ignored regions](#ignored-regions) | Only if a check fails after the upgrade |
 | [OCR: tesseract.js 7](#ocr-tesseractjs-7) | No |
@@ -40,9 +40,10 @@ WebdriverIO v10. The code paths for WebdriverIO v9 are removed.
 For the WebdriverIO v10 changes that affect visual tests (strict `$()`, elements in a frame), see
 [Upgrading to WebdriverIO v10](../README.md#upgrading-to-webdriverio-v10).
 
-## Node.js 22.19 or later
+## Node.js 22.23.4, 24.22.1 or 26.12.1
 
-All packages declare `"engines": { "node": ">=22.19.0" }`, like WebdriverIO 10. For the visual, OCR and
+All packages declare `"engines": { "node": ">=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1" }`, like WebdriverIO 10. These are the first releases with the
+[updated CA store](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) for the eMudhra intermediate CA compromise. For the visual, OCR and
 comparison packages this changes nothing, because WebdriverIO 10 already needs it.
 `@wdio/visual-reporter` declared `>=20.0.0` before.
 
@@ -94,7 +95,7 @@ No change is needed.
 
 `@wdio/visual-reporter` 0.5:
 
-- Needs Node.js 22.19 or later (before: 20).
+- Needs Node.js 22.23.4, 24.22.1 or 26.12.1 (before: 20).
 - The report UI is rebuilt with React Router 8 (before: Remix 2), React 19 and Vite 8. It looks and works the
   same.
 - **Browser support of the report did not change:** Chrome 87+, Edge 88+, Firefox 78+, Safari 14+, the same

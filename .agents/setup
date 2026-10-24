@@ -14,9 +14,9 @@ EXPECTED_NODE="$(tr -d 'v[:space:]' < .nvmrc)"
 ACTUAL_NODE="$(node -p "process.versions.node")"
 ACTUAL_MAJOR="${ACTUAL_NODE%%.*}"
 EXPECTED_MAJOR="${EXPECTED_NODE%%.*}"
-MIN_NODE="$(node -p "require('./package.json').engines.node.replace(/^>=\\s*/, '')")"
-if ! node -e "const p = (v) => v.split('.').map(Number); const a = p(process.versions.node); const b = p(process.argv[1]); process.exit((a[0] - b[0] || a[1] - b[1] || a[2] - b[2]) < 0 ? 1 : 0)" "$MIN_NODE"; then
-    echo "Node $ACTUAL_NODE is too old. Install Node $EXPECTED_NODE (see .nvmrc) or at least Node $MIN_NODE (package.json#engines)." >&2
+ENGINES="$(node -p "require('./package.json').engines.node")"
+if ! node -e "const v = process.versions.node.split('.').map(Number); process.exit(require('./package.json').engines.node.split('||').some((c) => { const b = c.match(/>=\\s*([\\d.]+)/)[1].split('.').map(Number); const max = c.match(/<\\s*(\\d+)/); return (v[0] - b[0] || v[1] - b[1] || v[2] - b[2]) >= 0 && (!max || v[0] < Number(max[1])) }) ? 0 : 1)"; then
+    echo "Node $ACTUAL_NODE is not supported. Install Node $EXPECTED_NODE (see .nvmrc) or a version in package.json#engines ($ENGINES)." >&2
     exit 1
 fi
 if [[ "$ACTUAL_MAJOR" != "$EXPECTED_MAJOR" ]]; then
