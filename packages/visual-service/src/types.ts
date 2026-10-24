@@ -83,6 +83,23 @@ export interface WdioIcsScrollOptions extends WdioIcsCommonOptions {
     hideAfterFirstScroll?: (WebdriverIO.Element | ChainablePromiseElement)[];
 }
 
+/**
+ * Options of the visual matchers to wait until the image matches (#690)
+ */
+export interface WdioMatcherWaitOptions {
+    /**
+     * The time in milliseconds to check again until the image matches, for example while an animation ends.
+     * With `.not`, until the image does not match. `0` checks once.
+     * @default 0
+     */
+    wait?: number;
+    /**
+     * The time in milliseconds between 2 checks when `wait` is set
+     * @default 100
+     */
+    interval?: number;
+}
+
 export interface WdioIcsIgnoreOptions {
     ignore?: (ElementIgnore | ElementIgnore[] | WebdriverIO.ElementArray | ChainablePromiseArray)[];
 }

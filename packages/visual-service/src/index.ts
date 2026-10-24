@@ -11,7 +11,8 @@ import type {
     WdioSaveElementMethodOptions,
     WdioSaveScreenMethodOptions,
     WdioCheckElementMethodOptions,
-    WdioCheckScreenMethodOptions
+    WdioCheckScreenMethodOptions,
+    WdioMatcherWaitOptions,
 } from './types.js'
 import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 
@@ -125,67 +126,68 @@ declare global {
              * Checks that if current screen matches with snapshot of baseline.
              * @param tag snapshot name
              * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
-             * @param options options to pass into the `checkScreen` method
+             * @param options options to pass into the `checkScreen` method, and `wait` / `interval` to check again until it matches
              */
             toMatchScreenSnapshot(
                 tag: string,
                 expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
-                options?: WdioCheckScreenMethodOptions
+                options?: WdioCheckScreenMethodOptions & WdioMatcherWaitOptions
             ): Promise<R>
             toMatchScreenSnapshot(
                 tag: string,
-                options?: WdioCheckScreenMethodOptions
+                options?: WdioCheckScreenMethodOptions & WdioMatcherWaitOptions
             ): Promise<R>
             /**
              * Checks that if the full page screenshot matches with snapshot of baseline.
              * @param tag snapshot name
              * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
-             * @param options options to pass into the `checkFullPageScreen` method
+             * @param options options to pass into the `checkFullPageScreen` method, and `wait` / `interval` to check again until it matches
              */
             toMatchFullPageSnapshot(
                 tag: string,
                 expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
-                options?: WdioCheckFullPageMethodOptions
+                options?: WdioCheckFullPageMethodOptions & WdioMatcherWaitOptions
             ): Promise<R>
             toMatchFullPageSnapshot(
                 tag: string,
-                options?: WdioCheckFullPageMethodOptions
+                options?: WdioCheckFullPageMethodOptions & WdioMatcherWaitOptions
             ): Promise<R>
             /**
              * Checks that if given element matches with snapshot of baseline.
              * @param tag snapshot name
              * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
-             * @param options options to pass into the `checkElement` method
+             * @param options options to pass into the `checkElement` method, and `wait` / `interval` to check again until it matches
              */
             toMatchElementSnapshot(
                 tag: string,
                 expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
-                options?: WdioCheckElementMethodOptions
+                options?: WdioCheckElementMethodOptions & WdioMatcherWaitOptions
             ): Promise<R>
             toMatchElementSnapshot(
                 tag: string,
-                options?: WdioCheckElementMethodOptions
+                options?: WdioCheckElementMethodOptions & WdioMatcherWaitOptions
             ): Promise<R>
             /**
              * Checks that if the full page screenshot including tab marks matches with snapshot of baseline.
              * @param tag snapshot name
              * @param expectedResult either a number representing a mismatch percentage (defaults to 0) or an asymmetric matcher
-             * @param options options to pass into the `checkTabbablePage` method
+             * @param options options to pass into the `checkTabbablePage` method, and `wait` / `interval` to check again until it matches
              */
             toMatchTabbablePageSnapshot(
                 tag: string,
                 expectedResult?: number | ExpectWebdriverIO.PartialMatcher<number>,
-                options?: WdioCheckFullPageMethodOptions
+                options?: WdioCheckFullPageMethodOptions & WdioMatcherWaitOptions
             ): Promise<R>
             toMatchTabbablePageSnapshot(
                 tag: string,
-                options?: WdioCheckFullPageMethodOptions
+                options?: WdioCheckFullPageMethodOptions & WdioMatcherWaitOptions
             ): Promise<R>
         }
     }
 }
 export type {
     VisualServiceOptions,
+    WdioMatcherWaitOptions,
     WdioCheckElementMethodOptions,
     WdioCheckScreenMethodOptions,
     WdioCheckFullPageMethodOptions,
