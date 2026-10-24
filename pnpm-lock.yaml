@@ -129,8 +129,8 @@ importers:
   packages/image-comparison-core:
     dependencies:
       '@wdio/logger':
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^10.1.0
+        version: 10.1.0
       '@wdio/types':
         specifier: ^10.0.1
         version: 10.0.1
@@ -154,8 +154,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0(expect-webdriverio@8.0.0(@wdio/types@10.0.1)(webdriverio@10.1.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(webdriverio@10.1.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
       '@wdio/logger':
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^10.1.0
+        version: 10.1.0
       '@wdio/types':
         specifier: ^10.0.1
         version: 10.0.1
@@ -255,8 +255,8 @@ importers:
         specifier: workspace:*
         version: link:../image-comparison-core
       '@wdio/logger':
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^10.1.0
+        version: 10.1.0
       '@wdio/types':
         specifier: ^10.0.1
         version: 10.0.1
@@ -2087,10 +2087,6 @@ packages:
 
   '@wdio/local-runner@10.1.0':
     resolution: {integrity: sha512-icWS+muUOAZzzW4SIThv36vpdyDiqZt2si/v1EK+h6g+D0lTMnTCN/Q+EmOk0iRwy8/d8JxmOcBty6Wdby8NxQ==}
-    engines: {node: '>=22.19.0'}
-
-  '@wdio/logger@10.0.0':
-    resolution: {integrity: sha512-kUIw0ZzMs1mvXOaLEcjrM1nqNXY1reaJKReKNcjDSnfhnfUIb0Q5pAsxiMeil2uR0WsSUPzn0r3D9v//7vTOkA==}
     engines: {node: '>=22.19.0'}
 
   '@wdio/logger@10.1.0':
@@ -7335,14 +7331,6 @@ snapshots:
       - utf-8-validate
       - webdriverio
       - yauzl
-
-  '@wdio/logger@10.0.0':
-    dependencies:
-      chalk: 5.6.2
-      loglevel: 1.9.2
-      loglevel-plugin-prefix: 0.8.4
-      safe-regex2: 5.0.0
-      strip-ansi: 7.2.0
 
   '@wdio/logger@10.1.0':
     dependencies:
