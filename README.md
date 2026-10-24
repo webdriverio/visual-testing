@@ -87,7 +87,7 @@ The versions in the table above are the versions of the visual testing packages,
 | `@wdio/ocr-service` | v2 | 2.3.0 and later, v3 |
 
 > [!NOTE]
-> WebdriverIO v10 needs Node.js 22.19 or later. WebdriverIO v9 needs Node.js 18.20 or later.
+> WebdriverIO v10 needs Node.js 22.23.4, 24.22.1 or 26.12.1, or a later release of these lines. WebdriverIO v9 needs Node.js 18.20 or later.
 
 #### Upgrading to WebdriverIO v10
 
