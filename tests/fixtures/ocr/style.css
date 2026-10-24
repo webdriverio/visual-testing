@@ -10,6 +10,8 @@ a { color: inherit; text-decoration: none; }
 h1 { position: absolute; left: 200px; top: 40px; margin: 0; font-size: 48px; font-weight: 400; }
 
 /* Fixed positions: the spec uses these coordinates for its haystack */
+/* One digit in a tight box: Tesseract finds no text in it with the default page segmentation mode 3 */
+.counter { position: absolute; left: 650px; top: 40px; font-size: 48px; line-height: 1.2; }
 .subtitle { position: absolute; left: 200px; top: 140px; margin: 0; }
 .search-button { position: absolute; left: 200px; top: 240px; width: 200px; height: 56px; border: 2px solid #1c1e21; border-radius: 8px; background: #fff; font: inherit; }
 .search-form { position: absolute; left: 200px; top: 240px; width: 600px; height: 56px; margin: 0; }
