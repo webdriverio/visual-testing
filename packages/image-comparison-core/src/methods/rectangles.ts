@@ -3,6 +3,7 @@ import { decodeImage } from '../utils/imageUtils.js'
 import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
+import getElementRectInTopDocument from '../clientSideScripts/getElementRectInTopDocument.js'
 import type {
     DetermineDeviceBlockOutsOptions,
     DetermineWebFullPageIgnoreRegionsOptions,
@@ -326,7 +327,10 @@ export async function determineWebScreenIgnoreRegions(
     // `execute` is an element command: when the browser says that the element reference is stale, for example
     // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
     for (const el of elements) {
-        regionsFromElements.push(await el.execute(rawBcr))
+        regionsFromElements.push(
+            (await el.execute(getElementRectInTopDocument, 'viewport'))
+            ?? (await el.execute(rawBcr))
+        )
     }
 
     return [...regions, ...regionsFromElements]
@@ -397,7 +401,10 @@ export async function determineWebFullPageIgnoreRegions(
     // `execute` is an element command: when the browser says that the element reference is stale, for example
     // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
     for (const el of elements) {
-        regionsFromElements.push(await el.execute(rawDocumentBcr))
+        regionsFromElements.push(
+            (await el.execute(getElementRectInTopDocument, 'document'))
+            ?? (await el.execute(rawDocumentBcr))
+        )
     }
 
     return [...regions, ...regionsFromElements]

@@ -2,11 +2,174 @@ import logger from '@wdio/logger'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
+import getElementRectInTopDocument from '../clientSideScripts/getElementRectInTopDocument.js'
 import getElementViewportRect from '../clientSideScripts/getElementViewportRect.js'
 import { getBase64ScreenshotSize, hasResizeDimensions, waitFor } from '../helpers/utils.js'
 import type { ElementScreenshotDataOptions, ElementScreenshotData } from './screenshots.interfaces.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:takeElementScreenshot')
+
+type CrossOriginFrameElementRect = {
+    x: number
+    y: number
+    width: number
+    height: number
+    framePath: number[]
+}
+
+/**
+ * When an ancestor frame is cross-origin (`window.frameElement` is `null`), compute the element's
+ * viewport-relative rect up to the cross-origin boundary (excluding the frame's own scroll) and
+ * record the `WindowProxy` frame index path from `window.top` down to that boundary.
+ */
+export function getElementRectInCrossOriginFrame(element: Element): CrossOriginFrameElementRect | null {
+    const r = element.getBoundingClientRect()
+    let x = r.left
+    let y = r.top
+    let win: Window | null = element.ownerDocument?.defaultView ?? window
+    while (win && win !== win.top) {
+        let frameEl: Element | null = null
+        try {
+            frameEl = win.frameElement
+        } catch {
+            break
+        }
+        if (!frameEl || !win.parent) {
+            break
+        }
+        const fr = frameEl.getBoundingClientRect()
+        const style = win.parent.getComputedStyle(frameEl)
+        x += fr.left + frameEl.clientLeft + (parseFloat(style.paddingLeft) || 0)
+        y += fr.top + frameEl.clientTop + (parseFloat(style.paddingTop) || 0)
+        win = win.parent
+    }
+
+    const framePath: number[] = []
+    let cur: Window | null = win
+    while (cur && cur !== cur.top) {
+        let parentWin: Window | null = null
+        try {
+            parentWin = cur.parent
+        } catch {
+            break
+        }
+        if (!parentWin || parentWin === cur) {
+            break
+        }
+        let index = -1
+        try {
+            for (let i = 0; i < parentWin.frames.length; i++) {
+                if (parentWin.frames[i] === cur) {
+                    index = i
+                    break
+                }
+            }
+        } catch {
+            break
+        }
+        if (index === -1) {
+            break
+        }
+        framePath.unshift(index)
+        cur = parentWin
+    }
+
+    return { x, y, width: r.width, height: r.height, framePath }
+}
+
+/**
+ * Resolve the content-box offset of a child frame path in the top-level document or viewport.
+ */
+export function getFrameOffsetInTopDocument(
+    framePath: number[],
+    origin: 'document' | 'viewport',
+): { x: number, y: number } | null {
+    if (typeof window === 'undefined' || window !== window.top) {
+        return null
+    }
+    let x = 0
+    let y = 0
+    let win: Window = window
+    for (let step = 0; step < framePath.length; step++) {
+        const frameIndex = framePath[step]
+        let targetWin: Window | undefined
+        try {
+            targetWin = win.frames[frameIndex]
+        } catch {
+            return null
+        }
+        if (!targetWin) {
+            return null
+        }
+        let frameEl: Element | null = null
+        try {
+            const frames = win.document.querySelectorAll('iframe, frame')
+            for (let i = 0; i < frames.length; i++) {
+                if ((frames[i] as HTMLIFrameElement).contentWindow === targetWin) {
+                    frameEl = frames[i]
+                    break
+                }
+            }
+        } catch {
+            return null
+        }
+        if (!frameEl) {
+            return null
+        }
+        const fr = frameEl.getBoundingClientRect()
+        const style = win.getComputedStyle(frameEl)
+        x += fr.left + frameEl.clientLeft + (parseFloat(style.paddingLeft) || 0)
+        y += fr.top + frameEl.clientTop + (parseFloat(style.paddingTop) || 0)
+        win = targetWin
+    }
+
+    return origin === 'document'
+        ? { x: x + window.scrollX, y: y + window.scrollY }
+        : { x, y }
+}
+
+async function resolveElementRectInTopDocument(
+    browserInstance: WebdriverIO.Browser,
+    element: WebdriverIO.Element,
+    origin: 'document' | 'viewport',
+): Promise<{ x: number, y: number, width: number, height: number }> {
+    if (typeof element.execute === 'function') {
+        const directRect = await element.execute(getElementRectInTopDocument, origin)
+        if (directRect) {
+            return directRect
+        }
+
+        const crossOriginRect = await element.execute(getElementRectInCrossOriginFrame)
+        if (crossOriginRect) {
+            const frameOffset = crossOriginRect.framePath.length > 0
+                ? await browserInstance.execute(getFrameOffsetInTopDocument, crossOriginRect.framePath, origin)
+                : { x: 0, y: 0 }
+            if (frameOffset) {
+                return {
+                    x: crossOriginRect.x + frameOffset.x,
+                    y: crossOriginRect.y + frameOffset.y,
+                    width: crossOriginRect.width,
+                    height: crossOriginRect.height,
+                }
+            }
+            if (origin === 'viewport') {
+                return {
+                    x: crossOriginRect.x,
+                    y: crossOriginRect.y,
+                    width: crossOriginRect.width,
+                    height: crossOriginRect.height,
+                }
+            }
+        } else if (origin === 'viewport') {
+            const viewportRect = await element.execute(getElementViewportRect)
+            if (viewportRect) {
+                return viewportRect
+            }
+        }
+    }
+
+    return browserInstance.getElementRect!(element.elementId)
+}
 
 export async function takeElementScreenshot(
     browserInstance: WebdriverIO.Browser,
@@ -39,10 +202,11 @@ async function takeBiDiElementScreenshot(
         await waitFor(100)
     }
 
-    // Get the element rect and clip the screenshot. WebDriver getElementRect
-    // returns coordinates relative to the document origin, which matches the
-    // BiDi `origin: 'document'` coordinate system.
-    const rect = await browserInstance.getElementRect!(element.elementId)
+    // Get the element rect in the top-level document and clip the screenshot.
+    // `element.execute()` runs in the element's own document (also inside a frame
+    // reached with v9 `switchFrame()` or v10 `context.frame()`) and adds the
+    // content-box offset of each parent iframe.
+    const rect = await resolveElementRectInTopDocument(browserInstance, element, 'document')
     const clip = { x: Math.floor(rect.x), y: Math.floor(rect.y), width: Math.floor(rect.width), height: Math.floor(rect.height) }
     const base64Image = await takeBase64BiDiScreenshot({
         browserInstance,
@@ -67,9 +231,9 @@ async function takeBiDiElementScreenshotFromViewport(
         await waitFor(100)
     }
 
-    // The clip of a `viewport` screenshot is relative to the viewport, so use the position of the element in the
-    // viewport. WebDriver `getElementRect` returns the position on the page, which is different when the page is scrolled.
-    const rect = await element.execute(getElementViewportRect)
+    // The clip of a `viewport` screenshot is relative to the top-level viewport, so use the position of the element
+    // in the top-level viewport.
+    const rect = await resolveElementRectInTopDocument(browserInstance, element, 'viewport')
     const elX = Math.floor(rect.x)
     const elY = Math.floor(rect.y)
     const elW = Math.floor(rect.width)

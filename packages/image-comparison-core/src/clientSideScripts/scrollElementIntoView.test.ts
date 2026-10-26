@@ -95,4 +95,56 @@ describe('scrollElementIntoView', () => {
         expect(mockHtmlNode.scrollTop).toBe(0)
         expect(mockBodyNode.scrollTop).toBe(0)
     })
+
+    it('should also scroll the parent document when the element is inside a frame', () => {
+        const frameHtmlNode = {
+            scrollTop: 20,
+            get scrollHeight() { return 600 },
+            get clientHeight() { return 300 },
+        } as unknown as HTMLElement
+        const frameBodyNode = {
+            scrollTop: 0,
+            get scrollHeight() { return 300 },
+            get clientHeight() { return 300 },
+        } as unknown as HTMLElement
+        const frameHead = {
+            appendChild: vi.fn(),
+            removeChild: vi.fn(),
+        } as unknown as HTMLElement
+        const mockFrameEl = {
+            getBoundingClientRect: vi.fn().mockReturnValue({ top: 400 }),
+        } as unknown as Element
+
+        mockHtmlNode.scrollTop = 100
+        const topWin = {
+            document: global.document,
+        } as unknown as Window
+        ;(topWin as any).top = topWin
+        ;(topWin as any).parent = topWin
+
+        const frameDoc = {
+            documentElement: frameHtmlNode,
+            body: frameBodyNode,
+            createElement: vi.fn().mockReturnValue(mockStyleTag),
+            head: frameHead,
+            defaultView: {
+                frameElement: mockFrameEl,
+                parent: topWin,
+                top: topWin,
+            },
+        } as unknown as Document
+
+        const elementInFrame = {
+            getBoundingClientRect: vi.fn().mockReturnValue({ top: 80 }),
+            ownerDocument: frameDoc,
+        } as unknown as HTMLElement
+
+        const result = scrollElementIntoView(elementInFrame, 10)
+
+        // Frame document scrolled: 20 + 80 - 10 = 90
+        expect(frameHtmlNode.scrollTop).toBe(90)
+        // Top-level document scrolled: 100 + 400 - 10 = 490, and returns previous top scroll (100)
+        expect(mockHtmlNode.scrollTop).toBe(490)
+        expect(result).toBe(100)
+    })
 })
