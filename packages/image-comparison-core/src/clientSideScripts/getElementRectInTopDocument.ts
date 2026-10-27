@@ -101,10 +101,10 @@ export default function getElementRectInTopDocument(
 
         // Fallback when scale is only reflected in bounding rect vs layout size:
         // ignore <= 0.5px differences caused by integer rounding of offsetWidth/offsetHeight on unscaled fractional frames.
-        if (htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth * scaleX) > 0.5) {
+        if (scaleX === 1 && htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth) > 0.5) {
             scaleX = fr.width / htmlFrame.offsetWidth
         }
-        if (htmlFrame.offsetHeight > 0 && fr.height > 0 && Math.abs(fr.height - htmlFrame.offsetHeight * scaleY) > 0.5) {
+        if (scaleY === 1 && htmlFrame.offsetHeight > 0 && fr.height > 0 && Math.abs(fr.height - htmlFrame.offsetHeight) > 0.5) {
             scaleY = fr.height / htmlFrame.offsetHeight
         }
 

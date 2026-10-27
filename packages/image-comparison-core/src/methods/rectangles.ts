@@ -545,10 +545,10 @@ export async function determineWebElementIgnoreRegions(
                     curEl = curEl.parentElement
                 }
 
-                if (htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth * stepScaleX) > 0.5) {
+                if (stepScaleX === 1 && htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth) > 0.5) {
                     stepScaleX = fr.width / htmlFrame.offsetWidth
                 }
-                if (htmlFrame.offsetHeight > 0 && fr.height > 0 && Math.abs(fr.height - htmlFrame.offsetHeight * stepScaleY) > 0.5) {
+                if (stepScaleY === 1 && htmlFrame.offsetHeight > 0 && fr.height > 0 && Math.abs(fr.height - htmlFrame.offsetHeight) > 0.5) {
                     stepScaleY = fr.height / htmlFrame.offsetHeight
                 }
 
