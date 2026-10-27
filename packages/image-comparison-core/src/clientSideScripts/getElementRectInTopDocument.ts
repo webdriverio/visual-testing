@@ -8,56 +8,77 @@ export default function getElementRectInTopDocument(
     element: Element,
     origin: 'document' | 'viewport',
 ): { x: number, y: number, width: number, height: number } | null {
-    function getFrameScale(frameEl: Element, fr: DOMRect, style: CSSStyleDeclaration): { scaleX: number, scaleY: number } {
+    function getFrameScale(frameEl: Element, fr: DOMRect, parentWin: Window): { scaleX: number, scaleY: number } {
         const htmlFrame = frameEl as HTMLElement
         let scaleX = 1
         let scaleY = 1
-        if (htmlFrame.offsetWidth > 0 && fr.width > 0) {
-            scaleX = fr.width / htmlFrame.offsetWidth
-        } else if (frameEl.clientWidth > 0 && fr.width > 0) {
-            const borderX = (parseFloat(style.borderLeftWidth) || frameEl.clientLeft || 0) + (parseFloat(style.borderRightWidth) || 0)
-            scaleX = fr.width / (frameEl.clientWidth + borderX)
-        }
-        if (htmlFrame.offsetHeight > 0 && fr.height > 0) {
-            scaleY = fr.height / htmlFrame.offsetHeight
-        } else if (frameEl.clientHeight > 0 && fr.height > 0) {
-            const borderY = (parseFloat(style.borderTopWidth) || frameEl.clientTop || 0) + (parseFloat(style.borderBottomWidth) || 0)
-            scaleY = fr.height / (frameEl.clientHeight + borderY)
-        }
-        const transform = style.transform || htmlFrame.style?.transform || ''
-        if (scaleX === 1 && scaleY === 1 && transform && transform !== 'none') {
-            const scaleMatch = transform.match(/scale\(\s*([+-]?\d*\.?\d+)(?:\s*,\s*([+-]?\d*\.?\d+))?\s*\)/)
-            if (scaleMatch) {
-                const sx = parseFloat(scaleMatch[1])
-                const sy = scaleMatch[2] !== undefined ? parseFloat(scaleMatch[2]) : sx
-                if (sx > 0) {
-                    scaleX = sx
-                }
-                if (sy > 0) {
-                    scaleY = sy
-                }
-            } else {
-                const scaleXMatch = transform.match(/scaleX\(\s*([+-]?\d*\.?\d+)\s*\)/)
-                const scaleYMatch = transform.match(/scaleY\(\s*([+-]?\d*\.?\d+)\s*\)/)
-                if (scaleXMatch && parseFloat(scaleXMatch[1]) > 0) {
-                    scaleX = parseFloat(scaleXMatch[1])
-                }
-                if (scaleYMatch && parseFloat(scaleYMatch[1]) > 0) {
-                    scaleY = parseFloat(scaleYMatch[1])
-                }
-                const matrixMatch = transform.match(/matrix\(\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)/)
-                if (matrixMatch) {
+        let curEl: Element | null = frameEl
+
+        while (curEl) {
+            const cs = parentWin.getComputedStyle(curEl)
+            const inlineTransform = (curEl as HTMLElement).style?.transform || ''
+            const transform = (cs.transform && cs.transform !== 'none') ? cs.transform : inlineTransform
+
+            if (transform && transform !== 'none') {
+                const matrix3dMatch = transform.match(/matrix3d\(\s*([^)]+)\)/)
+                const matrixMatch = !matrix3dMatch && transform.match(/matrix\(\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)/)
+                if (matrix3dMatch) {
+                    const vals = matrix3dMatch[1].split(',').map((v) => parseFloat(v.trim()))
+                    if (vals.length >= 6) {
+                        const sx = Math.hypot(vals[0], vals[1], vals[2])
+                        const sy = Math.hypot(vals[4], vals[5], vals[6] || 0)
+                        if (sx > 0) {
+                            scaleX *= sx
+                        }
+                        if (sy > 0) {
+                            scaleY *= sy
+                        }
+                    }
+                } else if (matrixMatch) {
                     const sx = Math.hypot(parseFloat(matrixMatch[1]), parseFloat(matrixMatch[2]))
                     const sy = Math.hypot(parseFloat(matrixMatch[3]), parseFloat(matrixMatch[4]))
                     if (sx > 0) {
-                        scaleX = sx
+                        scaleX *= sx
                     }
                     if (sy > 0) {
-                        scaleY = sy
+                        scaleY *= sy
+                    }
+                } else {
+                    const scaleMatch = transform.match(/scale\(\s*([+-]?\d*\.?\d+)(?:\s*,\s*([+-]?\d*\.?\d+))?\s*\)/)
+                    if (scaleMatch) {
+                        const sx = parseFloat(scaleMatch[1])
+                        const sy = scaleMatch[2] !== undefined ? parseFloat(scaleMatch[2]) : sx
+                        if (sx > 0) {
+                            scaleX *= sx
+                        }
+                        if (sy > 0) {
+                            scaleY *= sy
+                        }
+                    } else {
+                        const scaleXMatch = transform.match(/scaleX\(\s*([+-]?\d*\.?\d+)\s*\)/)
+                        const scaleYMatch = transform.match(/scaleY\(\s*([+-]?\d*\.?\d+)\s*\)/)
+                        if (scaleXMatch && parseFloat(scaleXMatch[1]) > 0) {
+                            scaleX *= parseFloat(scaleXMatch[1])
+                        }
+                        if (scaleYMatch && parseFloat(scaleYMatch[1]) > 0) {
+                            scaleY *= parseFloat(scaleYMatch[1])
+                        }
                     }
                 }
             }
+
+            curEl = curEl.parentElement
         }
+
+        // Fallback when scale is only reflected in bounding rect vs layout size:
+        // ignore <= 0.5px differences caused by integer rounding of offsetWidth/offsetHeight on unscaled fractional frames.
+        if (scaleX === 1 && htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth) > 0.5) {
+            scaleX = fr.width / htmlFrame.offsetWidth
+        }
+        if (scaleY === 1 && htmlFrame.offsetHeight > 0 && fr.height > 0 && Math.abs(fr.height - htmlFrame.offsetHeight) > 0.5) {
+            scaleY = fr.height / htmlFrame.offsetHeight
+        }
+
         return { scaleX, scaleY }
     }
 
@@ -79,7 +100,7 @@ export default function getElementRectInTopDocument(
         }
         const fr = frameEl.getBoundingClientRect()
         const style = win.parent.getComputedStyle(frameEl)
-        const { scaleX, scaleY } = getFrameScale(frameEl, fr, style)
+        const { scaleX, scaleY } = getFrameScale(frameEl, fr, win.parent)
         const paddingLeft = parseFloat(style.paddingLeft) || 0
         const paddingTop = parseFloat(style.paddingTop) || 0
         x = fr.left + (frameEl.clientLeft + paddingLeft + x) * scaleX

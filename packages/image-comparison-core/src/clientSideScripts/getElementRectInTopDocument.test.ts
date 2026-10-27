@@ -204,4 +204,35 @@ describe('getElementRectInTopDocument', () => {
 
         document.body.removeChild(iframe)
     })
+
+    it('should not distort child size when an unscaled frame has fractional dimensions and rounded offsetWidth', () => {
+        const iframe = document.createElement('iframe')
+        iframe.style.width = '399.75px'
+        iframe.style.height = '299.5px'
+        Object.defineProperty(iframe, 'offsetWidth', { value: 400 })
+        Object.defineProperty(iframe, 'offsetHeight', { value: 300 })
+        vi.spyOn(iframe, 'getBoundingClientRect').mockReturnValue(
+            DOMRect.fromRect({ x: 10, y: 20, width: 399.75, height: 299.5 })
+        )
+        document.body.appendChild(iframe)
+
+        const frameWin = {
+            frameElement: iframe,
+            parent: window,
+            top: window,
+        } as unknown as Window
+        const element = {
+            getBoundingClientRect: () => DOMRect.fromRect({ x: 40, y: 50, width: 200, height: 100 }),
+            ownerDocument: { defaultView: frameWin },
+        } as unknown as HTMLElement
+
+        expect(getElementRectInTopDocument(element, 'viewport')).toEqual({
+            x: 50,
+            y: 70,
+            width: 200,
+            height: 100,
+        })
+
+        document.body.removeChild(iframe)
+    })
 })

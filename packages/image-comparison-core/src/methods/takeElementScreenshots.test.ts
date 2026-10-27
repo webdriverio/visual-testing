@@ -267,6 +267,64 @@ describe('takeElementScreenshot', () => {
             }))
         })
 
+        it('should walk browsingContextGetTree step-by-step for nested cross-origin frames', async () => {
+            viewportRectMock.mockResolvedValueOnce(null)
+            viewportRectMock.mockResolvedValueOnce({ x: 10, y: 20, width: 100, height: 200, framePath: [0, 1] })
+            executeMock.mockResolvedValueOnce(null)
+            ;(browserInstance as any).getWindowHandle = vi.fn().mockResolvedValue('top-ctx')
+            ;(browserInstance as any).browsingContextGetTree = vi.fn().mockResolvedValue({
+                contexts: [{
+                    context: 'top-ctx',
+                    children: [{
+                        context: 'outer-frame-ctx',
+                        children: [
+                            { context: 'inner-frame-0-ctx', children: [] },
+                            { context: 'inner-frame-1-ctx', children: [] },
+                        ],
+                    }],
+                }],
+            })
+            ;(browserInstance as any).scriptCallFunction = vi.fn()
+                .mockResolvedValueOnce({
+                    result: {
+                        type: 'object',
+                        value: [
+                            ['x', { type: 'number', value: 30 }],
+                            ['y', { type: 'number', value: 60 }],
+                            ['scaleX', { type: 'number', value: 0.5 }],
+                            ['scaleY', { type: 'number', value: 0.5 }],
+                        ],
+                    },
+                })
+                .mockResolvedValueOnce({
+                    result: {
+                        type: 'object',
+                        value: [
+                            ['x', { type: 'number', value: 20 }],
+                            ['y', { type: 'number', value: 40 }],
+                            ['scaleX', { type: 'number', value: 1 }],
+                            ['scaleY', { type: 'number', value: 1 }],
+                        ],
+                    },
+                })
+
+            await takeElementScreenshot(browserInstance, vpOptions, true)
+
+            expect((browserInstance as any).browsingContextGetTree).toHaveBeenCalledWith({ root: 'top-ctx' })
+            expect((browserInstance as any).scriptCallFunction).toHaveBeenNthCalledWith(1, expect.objectContaining({
+                target: { context: 'top-ctx' },
+            }))
+            expect((browserInstance as any).scriptCallFunction).toHaveBeenNthCalledWith(2, expect.objectContaining({
+                target: { context: 'outer-frame-ctx' },
+            }))
+            // totalOffset = (30 + 20 * 0.5, 60 + 40 * 0.5) = (40, 80), totalScale = (0.5, 0.5)
+            // clip = (40 + 10 * 0.5, 80 + 20 * 0.5, 100 * 0.5, 200 * 0.5) = (45, 90, 50, 100)
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(expect.objectContaining({
+                origin: 'viewport',
+                clip: { x: 45, y: 90, width: 50, height: 100 },
+            }))
+        })
+
         it('should fall back to browser.getElementRect when getElementRectInTopDocument returns null in viewport mode', async () => {
             viewportRectMock.mockResolvedValueOnce(null)
             viewportRectMock.mockResolvedValueOnce(null)
