@@ -23,9 +23,40 @@ type CrossOriginFrameElementRect = {
  * record the `WindowProxy` frame index path from `window.top` down to that boundary.
  */
 export function getElementRectInCrossOriginFrame(element: Element): CrossOriginFrameElementRect | null {
+    function getFrameScale(frameEl: Element, fr: DOMRect, style: CSSStyleDeclaration): { scaleX: number, scaleY: number } {
+        const htmlFrame = frameEl as HTMLElement
+        let scaleX = 1
+        let scaleY = 1
+        if (htmlFrame.offsetWidth > 0 && fr.width > 0) {
+            scaleX = fr.width / htmlFrame.offsetWidth
+        } else if (frameEl.clientWidth > 0 && fr.width > 0) {
+            const borderX = (parseFloat(style.borderLeftWidth) || frameEl.clientLeft || 0) + (parseFloat(style.borderRightWidth) || 0)
+            scaleX = fr.width / (frameEl.clientWidth + borderX)
+        }
+        if (htmlFrame.offsetHeight > 0 && fr.height > 0) {
+            scaleY = fr.height / htmlFrame.offsetHeight
+        } else if (frameEl.clientHeight > 0 && fr.height > 0) {
+            const borderY = (parseFloat(style.borderTopWidth) || frameEl.clientTop || 0) + (parseFloat(style.borderBottomWidth) || 0)
+            scaleY = fr.height / (frameEl.clientHeight + borderY)
+        }
+        const transform = style.transform || htmlFrame.style?.transform || ''
+        if (scaleX === 1 && scaleY === 1 && transform && transform !== 'none') {
+            const scaleMatch = transform.match(/scale\(\s*([+-]?\d*\.?\d+)(?:\s*,\s*([+-]?\d*\.?\d+))?\s*\)/)
+            if (scaleMatch) {
+                const sx = parseFloat(scaleMatch[1])
+                const sy = scaleMatch[2] !== undefined ? parseFloat(scaleMatch[2]) : sx
+                if (sx > 0) { scaleX = sx }
+                if (sy > 0) { scaleY = sy }
+            }
+        }
+        return { scaleX, scaleY }
+    }
+
     const r = element.getBoundingClientRect()
     let x = r.left
     let y = r.top
+    let width = r.width
+    let height = r.height
     let win: Window | null = element.ownerDocument?.defaultView ?? window
     while (win && win !== win.top) {
         let frameEl: Element | null = null
@@ -39,8 +70,13 @@ export function getElementRectInCrossOriginFrame(element: Element): CrossOriginF
         }
         const fr = frameEl.getBoundingClientRect()
         const style = win.parent.getComputedStyle(frameEl)
-        x += fr.left + frameEl.clientLeft + (parseFloat(style.paddingLeft) || 0)
-        y += fr.top + frameEl.clientTop + (parseFloat(style.paddingTop) || 0)
+        const { scaleX, scaleY } = getFrameScale(frameEl, fr, style)
+        const paddingLeft = parseFloat(style.paddingLeft) || 0
+        const paddingTop = parseFloat(style.paddingTop) || 0
+        x = fr.left + (frameEl.clientLeft + paddingLeft + x) * scaleX
+        y = fr.top + (frameEl.clientTop + paddingTop + y) * scaleY
+        width *= scaleX
+        height *= scaleY
         win = win.parent
     }
 
@@ -74,21 +110,52 @@ export function getElementRectInCrossOriginFrame(element: Element): CrossOriginF
         cur = parentWin
     }
 
-    return { x, y, width: r.width, height: r.height, framePath }
+    return { x, y, width, height, framePath }
 }
 
 /**
- * Resolve the content-box offset of a child frame path in the top-level document or viewport.
+ * Resolve the content-box offset and cumulative scale of a child frame path in the top-level document or viewport.
  */
 export function getFrameOffsetInTopDocument(
     framePath: number[],
     origin: 'document' | 'viewport',
-): { x: number, y: number } | null {
+): { x: number, y: number, scaleX?: number, scaleY?: number } | null {
+    function getFrameScale(frameEl: Element, fr: DOMRect, style: CSSStyleDeclaration): { scaleX: number, scaleY: number } {
+        const htmlFrame = frameEl as HTMLElement
+        let scaleX = 1
+        let scaleY = 1
+        if (htmlFrame.offsetWidth > 0 && fr.width > 0) {
+            scaleX = fr.width / htmlFrame.offsetWidth
+        } else if (frameEl.clientWidth > 0 && fr.width > 0) {
+            const borderX = (parseFloat(style.borderLeftWidth) || frameEl.clientLeft || 0) + (parseFloat(style.borderRightWidth) || 0)
+            scaleX = fr.width / (frameEl.clientWidth + borderX)
+        }
+        if (htmlFrame.offsetHeight > 0 && fr.height > 0) {
+            scaleY = fr.height / htmlFrame.offsetHeight
+        } else if (frameEl.clientHeight > 0 && fr.height > 0) {
+            const borderY = (parseFloat(style.borderTopWidth) || frameEl.clientTop || 0) + (parseFloat(style.borderBottomWidth) || 0)
+            scaleY = fr.height / (frameEl.clientHeight + borderY)
+        }
+        const transform = style.transform || htmlFrame.style?.transform || ''
+        if (scaleX === 1 && scaleY === 1 && transform && transform !== 'none') {
+            const scaleMatch = transform.match(/scale\(\s*([+-]?\d*\.?\d+)(?:\s*,\s*([+-]?\d*\.?\d+))?\s*\)/)
+            if (scaleMatch) {
+                const sx = parseFloat(scaleMatch[1])
+                const sy = scaleMatch[2] !== undefined ? parseFloat(scaleMatch[2]) : sx
+                if (sx > 0) { scaleX = sx }
+                if (sy > 0) { scaleY = sy }
+            }
+        }
+        return { scaleX, scaleY }
+    }
+
     if (typeof window === 'undefined' || window !== window.top) {
         return null
     }
     let x = 0
     let y = 0
+    let scaleX = 1
+    let scaleY = 1
     let win: Window = window
     for (let step = 0; step < framePath.length; step++) {
         const frameIndex = framePath[step]
@@ -118,14 +185,121 @@ export function getFrameOffsetInTopDocument(
         }
         const fr = frameEl.getBoundingClientRect()
         const style = win.getComputedStyle(frameEl)
-        x += fr.left + frameEl.clientLeft + (parseFloat(style.paddingLeft) || 0)
-        y += fr.top + frameEl.clientTop + (parseFloat(style.paddingTop) || 0)
+        const { scaleX: stepScaleX, scaleY: stepScaleY } = getFrameScale(frameEl, fr, style)
+        const paddingLeft = parseFloat(style.paddingLeft) || 0
+        const paddingTop = parseFloat(style.paddingTop) || 0
+        x += (fr.left + (frameEl.clientLeft + paddingLeft) * stepScaleX) * scaleX
+        y += (fr.top + (frameEl.clientTop + paddingTop) * stepScaleY) * scaleY
+        scaleX *= stepScaleX
+        scaleY *= stepScaleY
         win = targetWin
     }
 
     return origin === 'document'
-        ? { x: x + window.scrollX, y: y + window.scrollY }
-        : { x, y }
+        ? { x: x + window.scrollX, y: y + window.scrollY, scaleX, scaleY }
+        : { x, y, scaleX, scaleY }
+}
+
+function parseBiDiFrameOffsetResult(
+    evalResult: unknown,
+): { x: number, y: number, scaleX?: number, scaleY?: number } | null {
+    if (!evalResult || typeof evalResult !== 'object') {
+        return null
+    }
+    const candidate = (evalResult as { result?: unknown }).result ?? evalResult
+    if (!candidate || typeof candidate !== 'object') {
+        return null
+    }
+    if ('x' in candidate && 'y' in candidate && typeof (candidate as { x: unknown }).x === 'number') {
+        return candidate as { x: number, y: number, scaleX?: number, scaleY?: number }
+    }
+    const pairs = (candidate as { value?: unknown }).value
+    if (!Array.isArray(pairs)) {
+        return null
+    }
+    const parsed: Record<string, number> = {}
+    for (const entry of pairs) {
+        if (Array.isArray(entry) && typeof entry[0] === 'string' && entry[1] && typeof entry[1] === 'object') {
+            const val = (entry[1] as { value?: unknown }).value
+            if (typeof val === 'number') {
+                parsed[entry[0]] = val
+            }
+        }
+    }
+    if (typeof parsed.x === 'number' && typeof parsed.y === 'number') {
+        return {
+            x: parsed.x,
+            y: parsed.y,
+            ...(typeof parsed.scaleX === 'number' ? { scaleX: parsed.scaleX } : {}),
+            ...(typeof parsed.scaleY === 'number' ? { scaleY: parsed.scaleY } : {}),
+        }
+    }
+    return null
+}
+
+export async function resolveCrossOriginElementRect(
+    browserInstance: WebdriverIO.Browser | undefined,
+    element: WebdriverIO.Element,
+    origin: 'document' | 'viewport',
+): Promise<{ x: number, y: number, width: number, height: number } | null> {
+    if (typeof element.execute !== 'function') {
+        return null
+    }
+    const crossOriginRect = await element.execute(getElementRectInCrossOriginFrame)
+    if (!crossOriginRect) {
+        return null
+    }
+    let frameOffset: { x: number, y: number, scaleX?: number, scaleY?: number } | null = null
+    if (crossOriginRect.framePath.length === 0) {
+        frameOffset = { x: 0, y: 0, scaleX: 1, scaleY: 1 }
+    } else if (browserInstance) {
+        if (typeof browserInstance.execute === 'function') {
+            frameOffset = await browserInstance.execute(getFrameOffsetInTopDocument, crossOriginRect.framePath, origin)
+        }
+        if (
+            !frameOffset &&
+            typeof browserInstance.getWindowHandle === 'function' &&
+            typeof browserInstance.scriptCallFunction === 'function'
+        ) {
+            try {
+                const topContext = await browserInstance.getWindowHandle()
+                const evalResult = await browserInstance.scriptCallFunction({
+                    functionDeclaration: getFrameOffsetInTopDocument.toString(),
+                    target: { context: topContext },
+                    arguments: [
+                        {
+                            type: 'array',
+                            value: crossOriginRect.framePath.map((idx) => ({ type: 'number', value: idx })),
+                        },
+                        { type: 'string', value: origin },
+                    ],
+                    awaitPromise: false,
+                })
+                frameOffset = parseBiDiFrameOffsetResult(evalResult)
+            } catch {
+                // Ignore BiDi evaluation fallback errors
+            }
+        }
+    }
+    if (frameOffset) {
+        const sx = frameOffset.scaleX ?? 1
+        const sy = frameOffset.scaleY ?? 1
+        return {
+            x: frameOffset.x + crossOriginRect.x * sx,
+            y: frameOffset.y + crossOriginRect.y * sy,
+            width: crossOriginRect.width * sx,
+            height: crossOriginRect.height * sy,
+        }
+    }
+    if (origin === 'viewport') {
+        return {
+            x: crossOriginRect.x,
+            y: crossOriginRect.y,
+            width: crossOriginRect.width,
+            height: crossOriginRect.height,
+        }
+    }
+    return null
 }
 
 async function resolveElementRectInTopDocument(
@@ -139,28 +313,12 @@ async function resolveElementRectInTopDocument(
             return directRect
         }
 
-        const crossOriginRect = await element.execute(getElementRectInCrossOriginFrame)
-        if (crossOriginRect) {
-            const frameOffset = crossOriginRect.framePath.length > 0
-                ? await browserInstance.execute(getFrameOffsetInTopDocument, crossOriginRect.framePath, origin)
-                : { x: 0, y: 0 }
-            if (frameOffset) {
-                return {
-                    x: crossOriginRect.x + frameOffset.x,
-                    y: crossOriginRect.y + frameOffset.y,
-                    width: crossOriginRect.width,
-                    height: crossOriginRect.height,
-                }
-            }
-            if (origin === 'viewport') {
-                return {
-                    x: crossOriginRect.x,
-                    y: crossOriginRect.y,
-                    width: crossOriginRect.width,
-                    height: crossOriginRect.height,
-                }
-            }
-        } else if (origin === 'viewport') {
+        const crossOriginResolved = await resolveCrossOriginElementRect(browserInstance, element, origin)
+        if (crossOriginResolved) {
+            return crossOriginResolved
+        }
+
+        if (origin === 'viewport') {
             const viewportRect = await element.execute(getElementViewportRect)
             if (viewportRect) {
                 return viewportRect

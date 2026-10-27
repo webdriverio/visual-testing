@@ -4,6 +4,7 @@ import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
 import getElementRectInTopDocument from '../clientSideScripts/getElementRectInTopDocument.js'
+import { resolveCrossOriginElementRect } from './takeElementScreenshots.js'
 import type {
     DetermineDeviceBlockOutsOptions,
     DetermineWebFullPageIgnoreRegionsOptions,
@@ -329,6 +330,7 @@ export async function determineWebScreenIgnoreRegions(
     for (const el of elements) {
         regionsFromElements.push(
             (await el.execute(getElementRectInTopDocument, 'viewport'))
+            ?? (await resolveCrossOriginElementRect(options.browserInstance, el, 'viewport'))
             ?? (await el.execute(rawBcr))
         )
     }
@@ -403,6 +405,7 @@ export async function determineWebFullPageIgnoreRegions(
     for (const el of elements) {
         regionsFromElements.push(
             (await el.execute(getElementRectInTopDocument, 'document'))
+            ?? (await resolveCrossOriginElementRect(options.browserInstance, el, 'document'))
             ?? (await el.execute(rawDocumentBcr))
         )
     }
@@ -457,17 +460,73 @@ export async function determineWebElementIgnoreRegions(
     } = options
 
     // Compute bounding boxes relative to the root element: (childBCR - rootBCR)
-    const rawRelativeBcr = (el: Element, root: Element) => {
-        const elRect = el.getBoundingClientRect()
-        const rootRect = root.getBoundingClientRect()
+    const rawRelativeBcr = isWebDriverElementScreenshot
+        ? (el: Element, root: Element) => {
+            const elRect = el.getBoundingClientRect()
+            const rootRect = root.getBoundingClientRect()
 
-        return {
-            x: elRect.x - rootRect.x,
-            y: elRect.y - rootRect.y,
-            width: elRect.width,
-            height: elRect.height,
+            return {
+                x: elRect.x - rootRect.x,
+                y: elRect.y - rootRect.y,
+                width: elRect.width,
+                height: elRect.height,
+            }
         }
-    }
+        : (el: Element, root: Element) => {
+            const elRect = el.getBoundingClientRect()
+            const rootRect = root.getBoundingClientRect()
+            let scaleX = 1
+            let scaleY = 1
+            let win: Window | null = el.ownerDocument?.defaultView ?? (typeof window !== 'undefined' ? window : null)
+            while (win && win !== win.top) {
+                let frameEl: Element | null = null
+                try {
+                    frameEl = win.frameElement
+                } catch {
+                    break
+                }
+                if (!frameEl || !win.parent) {
+                    break
+                }
+                const fr = frameEl.getBoundingClientRect()
+                const style = win.parent.getComputedStyle(frameEl)
+                const htmlFrame = frameEl as HTMLElement
+                let stepScaleX = 1
+                let stepScaleY = 1
+                if (htmlFrame.offsetWidth > 0 && fr.width > 0) {
+                    stepScaleX = fr.width / htmlFrame.offsetWidth
+                } else if (frameEl.clientWidth > 0 && fr.width > 0) {
+                    const borderX = (parseFloat(style.borderLeftWidth) || frameEl.clientLeft || 0) + (parseFloat(style.borderRightWidth) || 0)
+                    stepScaleX = fr.width / (frameEl.clientWidth + borderX)
+                }
+                if (htmlFrame.offsetHeight > 0 && fr.height > 0) {
+                    stepScaleY = fr.height / htmlFrame.offsetHeight
+                } else if (frameEl.clientHeight > 0 && fr.height > 0) {
+                    const borderY = (parseFloat(style.borderTopWidth) || frameEl.clientTop || 0) + (parseFloat(style.borderBottomWidth) || 0)
+                    stepScaleY = fr.height / (frameEl.clientHeight + borderY)
+                }
+                const transform = style.transform || htmlFrame.style?.transform || ''
+                if (stepScaleX === 1 && stepScaleY === 1 && transform && transform !== 'none') {
+                    const scaleMatch = transform.match(/scale\(\s*([+-]?\d*\.?\d+)(?:\s*,\s*([+-]?\d*\.?\d+))?\s*\)/)
+                    if (scaleMatch) {
+                        const sx = parseFloat(scaleMatch[1])
+                        const sy = scaleMatch[2] !== undefined ? parseFloat(scaleMatch[2]) : sx
+                        if (sx > 0) { stepScaleX = sx }
+                        if (sy > 0) { stepScaleY = sy }
+                    }
+                }
+                scaleX *= stepScaleX
+                scaleY *= stepScaleY
+                win = win.parent
+            }
+
+            return {
+                x: (elRect.x - rootRect.x) * scaleX,
+                y: (elRect.y - rootRect.y) * scaleY,
+                width: elRect.width * scaleX,
+                height: elRect.height * scaleY,
+            }
+        }
 
     const regionsFromElements: RectanglesOutput[] = []
     // `execute` is an element command: when the browser says that the element reference is stale, for example

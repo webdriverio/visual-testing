@@ -225,6 +225,48 @@ describe('takeElementScreenshot', () => {
             }))
         })
 
+        it('should scale cross-origin frame element coordinates and dimensions when the parent frame is scaled', async () => {
+            viewportRectMock.mockResolvedValueOnce(null)
+            viewportRectMock.mockResolvedValueOnce({ x: 40, y: 50, width: 200, height: 100, framePath: [0] })
+            executeMock.mockResolvedValueOnce({ x: 35, y: 68, scaleX: 0.5, scaleY: 0.5 })
+
+            await takeElementScreenshot(browserInstance, vpOptions, true)
+
+            // x = 35 + 40 * 0.5 = 55, y = 68 + 50 * 0.5 = 93, width = 200 * 0.5 = 100, height = 100 * 0.5 = 50
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(expect.objectContaining({
+                origin: 'viewport',
+                clip: { x: 55, y: 93, width: 100, height: 50 },
+            }))
+        })
+
+        it('should fall back to browser.scriptCallFunction on top window context when switched into a cross-origin frame', async () => {
+            viewportRectMock.mockResolvedValueOnce(null)
+            viewportRectMock.mockResolvedValueOnce({ x: 10, y: 20, width: 100, height: 200, framePath: [0] })
+            executeMock.mockResolvedValueOnce(null)
+            ;(browserInstance as any).getWindowHandle = vi.fn().mockResolvedValue('top-ctx')
+            ;(browserInstance as any).scriptCallFunction = vi.fn().mockResolvedValue({
+                result: {
+                    type: 'object',
+                    value: [
+                        ['x', { type: 'number', value: 30 }],
+                        ['y', { type: 'number', value: 60 }],
+                        ['scaleX', { type: 'number', value: 1 }],
+                        ['scaleY', { type: 'number', value: 1 }],
+                    ],
+                },
+            })
+
+            await takeElementScreenshot(browserInstance, vpOptions, true)
+
+            expect((browserInstance as any).scriptCallFunction).toHaveBeenCalledWith(expect.objectContaining({
+                target: { context: 'top-ctx' },
+            }))
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(expect.objectContaining({
+                origin: 'viewport',
+                clip: { x: 40, y: 80, width: 100, height: 200 },
+            }))
+        })
+
         it('should fall back to browser.getElementRect when getElementRectInTopDocument returns null in viewport mode', async () => {
             viewportRectMock.mockResolvedValueOnce(null)
             viewportRectMock.mockResolvedValueOnce(null)

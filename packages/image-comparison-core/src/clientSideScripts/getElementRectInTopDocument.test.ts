@@ -158,4 +158,50 @@ describe('getElementRectInTopDocument', () => {
 
         expect(getElementRectInTopDocument(element, 'document')).toBeNull()
     })
+
+    it('should scale child offsets, borders, padding, and dimensions when an ancestor frame is scaled', () => {
+        const iframe = document.createElement('iframe')
+        iframe.style.paddingLeft = '8px'
+        iframe.style.paddingTop = '12px'
+        iframe.style.transform = 'scale(0.5)'
+        Object.defineProperty(iframe, 'clientLeft', { value: 2 })
+        Object.defineProperty(iframe, 'clientTop', { value: 4 })
+        Object.defineProperty(iframe, 'offsetWidth', { value: 400 })
+        Object.defineProperty(iframe, 'offsetHeight', { value: 300 })
+        vi.spyOn(iframe, 'getBoundingClientRect').mockReturnValue(
+            DOMRect.fromRect({ x: 30, y: 60, width: 200, height: 150 })
+        )
+        document.body.appendChild(iframe)
+
+        const frameWin = {
+            frameElement: iframe,
+            parent: window,
+            top: window,
+        } as unknown as Window
+        const element = {
+            getBoundingClientRect: () => DOMRect.fromRect({ x: 40, y: 50, width: 200, height: 100 }),
+            ownerDocument: { defaultView: frameWin },
+        } as unknown as HTMLElement
+
+        vi.spyOn(window, 'scrollX', 'get').mockReturnValue(10)
+        vi.spyOn(window, 'scrollY', 'get').mockReturnValue(200)
+
+        // scaleX = 200 / 400 = 0.5, scaleY = 150 / 300 = 0.5
+        // viewport: x = 30 + (2 + 8 + 40) * 0.5 = 55, y = 60 + (4 + 12 + 50) * 0.5 = 93
+        // width = 200 * 0.5 = 100, height = 100 * 0.5 = 50
+        expect(getElementRectInTopDocument(element, 'viewport')).toEqual({
+            x: 55,
+            y: 93,
+            width: 100,
+            height: 50,
+        })
+        expect(getElementRectInTopDocument(element, 'document')).toEqual({
+            x: 65,
+            y: 293,
+            width: 100,
+            height: 50,
+        })
+
+        document.body.removeChild(iframe)
+    })
 })

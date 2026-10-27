@@ -29,9 +29,13 @@ export default function scrollElementIntoView(element: HTMLElement, addressBarSh
             }
         }
         for (const store of stores) {
-            store.__wdioSavedScrollDocs ??= []
-            if (!store.__wdioSavedScrollDocs.some((entry) => entry.doc === doc)) {
-                store.__wdioSavedScrollDocs.push({ doc, position })
+            try {
+                store.__wdioSavedScrollDocs ??= []
+                if (!store.__wdioSavedScrollDocs.some((entry) => entry.doc === doc)) {
+                    store.__wdioSavedScrollDocs.push({ doc, position })
+                }
+            } catch {
+                // Cross-origin window proxy (e.g. window.top from a cross-origin iframe)
             }
         }
     }
@@ -90,7 +94,11 @@ export default function scrollElementIntoView(element: HTMLElement, addressBarSh
         if (!frameEl || !win.parent) {
             break
         }
-        currentPosition = scrollTargetInDocument(win.parent.document, frameEl, addressBarShadowPadding)
+        try {
+            currentPosition = scrollTargetInDocument(win.parent.document, frameEl, addressBarShadowPadding)
+        } catch {
+            break
+        }
         win = win.parent
     }
 

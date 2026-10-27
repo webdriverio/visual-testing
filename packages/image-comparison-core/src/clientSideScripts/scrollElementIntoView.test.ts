@@ -147,4 +147,35 @@ describe('scrollElementIntoView', () => {
         expect(mockHtmlNode.scrollTop).toBe(490)
         expect(result).toBe(100)
     })
+
+    it('should not throw when window.top is cross-origin and rejects custom property access', () => {
+        const crossOriginTop = new Proxy({}, {
+            get() {
+                throw new Error('SecurityError: Blocked a frame with origin from accessing a cross-origin frame.')
+            },
+            set() {
+                throw new Error('SecurityError: Blocked a frame with origin from accessing a cross-origin frame.')
+            },
+        }) as unknown as Window
+
+        const frameDoc = {
+            documentElement: mockHtmlNode,
+            body: mockBodyNode,
+            createElement: vi.fn().mockReturnValue(mockStyleTag),
+            head: mockHead,
+            defaultView: {
+                frameElement: null,
+                parent: crossOriginTop,
+                top: crossOriginTop,
+            },
+        } as unknown as Document
+
+        const elementInCrossOriginFrame = {
+            getBoundingClientRect: vi.fn().mockReturnValue({ top: 100 }),
+            ownerDocument: frameDoc,
+        } as unknown as HTMLElement
+
+        expect(() => scrollElementIntoView(elementInCrossOriginFrame, 10)).not.toThrow()
+        expect(mockHtmlNode.scrollTop).toBe(90)
+    })
 })
