@@ -235,4 +235,34 @@ describe('getElementRectInTopDocument', () => {
 
         document.body.removeChild(iframe)
     })
+
+    it('should multiply standalone CSS scale and transform scale on the same frame', () => {
+        const iframe = document.createElement('iframe')
+        iframe.style.scale = '0.5'
+        iframe.style.transform = 'scale(0.5)'
+        vi.spyOn(iframe, 'getBoundingClientRect').mockReturnValue(
+            DOMRect.fromRect({ x: 20, y: 40, width: 100, height: 75 })
+        )
+        document.body.appendChild(iframe)
+
+        const frameWin = {
+            frameElement: iframe,
+            parent: window,
+            top: window,
+        } as unknown as Window
+        const element = {
+            getBoundingClientRect: () => DOMRect.fromRect({ x: 40, y: 80, width: 200, height: 120 }),
+            ownerDocument: { defaultView: frameWin },
+        } as unknown as HTMLElement
+
+        // effective scale = 0.5 * 0.5 = 0.25
+        expect(getElementRectInTopDocument(element, 'viewport')).toEqual({
+            x: 30,
+            y: 60,
+            width: 50,
+            height: 30,
+        })
+
+        document.body.removeChild(iframe)
+    })
 })

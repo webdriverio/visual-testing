@@ -517,13 +517,38 @@ export async function determineWebElementIgnoreRegions(
                         }
                     }
 
+                    const inlineScale = (curEl as HTMLElement).style?.scale || ''
+                    const scaleProp = (cs.scale && cs.scale !== 'none') ? cs.scale : inlineScale
+                    if (scaleProp && scaleProp !== 'none') {
+                        const parts = scaleProp.trim().split(/\s+/)
+                        if (parts.length >= 1) {
+                            const rawX = parts[0]
+                            const rawY = parts.length >= 2 ? parts[1] : rawX
+                            const sx = rawX.endsWith('%') ? parseFloat(rawX) / 100 : parseFloat(rawX)
+                            const sy = rawY.endsWith('%') ? parseFloat(rawY) / 100 : parseFloat(rawY)
+                            if (sx > 0) { stepScaleX *= sx }
+                            if (sy > 0) { stepScaleY *= sy }
+                        }
+                    }
+
+                    const csZoom = (cs as unknown as { zoom?: string }).zoom || ''
+                    const inlineZoom = (curEl as HTMLElement).style?.zoom || ''
+                    const zoomProp = (csZoom && csZoom !== 'normal' && csZoom !== '1') ? csZoom : inlineZoom
+                    if (zoomProp && zoomProp !== 'normal' && zoomProp !== '1') {
+                        const z = zoomProp.endsWith('%') ? parseFloat(zoomProp) / 100 : parseFloat(zoomProp)
+                        if (z > 0) {
+                            stepScaleX *= z
+                            stepScaleY *= z
+                        }
+                    }
+
                     curEl = curEl.parentElement
                 }
 
-                if (stepScaleX === 1 && htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth) > 0.5) {
+                if (htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth * stepScaleX) > 0.5) {
                     stepScaleX = fr.width / htmlFrame.offsetWidth
                 }
-                if (stepScaleY === 1 && htmlFrame.offsetHeight > 0 && fr.height > 0 && Math.abs(fr.height - htmlFrame.offsetHeight) > 0.5) {
+                if (htmlFrame.offsetHeight > 0 && fr.height > 0 && Math.abs(fr.height - htmlFrame.offsetHeight * stepScaleY) > 0.5) {
                     stepScaleY = fr.height / htmlFrame.offsetHeight
                 }
 
