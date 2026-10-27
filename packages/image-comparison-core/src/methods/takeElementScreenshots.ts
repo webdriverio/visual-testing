@@ -92,6 +92,7 @@ export function getElementRectInCrossOriginFrame(element: Element): CrossOriginF
             }
 
             curEl = curEl.parentElement
+                ?? (typeof curEl.getRootNode === 'function' ? ((curEl.getRootNode() as ShadowRoot).host ?? null) : null)
         }
 
         if (scaleX === 1 && htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth) > 0.5) {
@@ -242,6 +243,7 @@ export function getFrameOffsetInTopDocument(
             }
 
             curEl = curEl.parentElement
+                ?? (typeof curEl.getRootNode === 'function' ? ((curEl.getRootNode() as ShadowRoot).host ?? null) : null)
         }
 
         if (scaleX === 1 && htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth) > 0.5) {

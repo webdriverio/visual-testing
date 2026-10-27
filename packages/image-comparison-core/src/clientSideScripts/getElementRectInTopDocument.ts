@@ -97,6 +97,7 @@ export default function getElementRectInTopDocument(
             }
 
             curEl = curEl.parentElement
+                ?? (typeof curEl.getRootNode === 'function' ? ((curEl.getRootNode() as ShadowRoot).host ?? null) : null)
         }
 
         // Fallback when scale is only reflected in bounding rect vs layout size:

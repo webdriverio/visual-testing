@@ -543,6 +543,7 @@ export async function determineWebElementIgnoreRegions(
                     }
 
                     curEl = curEl.parentElement
+                        ?? (typeof curEl.getRootNode === 'function' ? ((curEl.getRootNode() as ShadowRoot).host ?? null) : null)
                 }
 
                 if (stepScaleX === 1 && htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth) > 0.5) {
