@@ -16,6 +16,7 @@ export default async function ocrGetElementPositionByText(
         isTesseractAvailable,
         language,
         ocrImagesPath,
+        psm,
         text,
     } = data
     const textPositions = await getTextPositions(this, {
@@ -24,6 +25,7 @@ export default async function ocrGetElementPositionByText(
         isTesseractAvailable,
         language,
         ocrImagesPath,
+        ...(psm !== undefined ? { psm } : {}),
     })
     const matches = fuzzyFind({
         pattern: text,

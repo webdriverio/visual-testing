@@ -63,6 +63,16 @@ describe('ocrSetValue', () => {
         expect(vi.mocked(sendKeys)).toHaveBeenCalledWith(mockDriver, 'test input', true)
     })
 
+    it('forwards psm to ocrClickOnText when provided', async () => {
+        await ocrSetValue.bind(mockDriver)({ ...options, psm: 7 })
+        const { submitValue, value, ...ocrClickOnTextOptions } = options
+
+        expect(vi.mocked(ocrClickOnText)).toHaveBeenCalledWith({
+            ...ocrClickOnTextOptions,
+            psm: 7,
+        })
+    })
+
     it('should handle mobile-specific logic', async () => {
         mockDriver.isMobile = true
         mockDriver.isKeyboardShown = vi.fn()

@@ -11,6 +11,7 @@ export default async function ocrSetValue(this: WebdriverIO.Browser, options: Oc
         isTesseractAvailable,
         language,
         ocrImagesPath,
+        psm,
         submitValue = false,
         text,
         value,
@@ -25,6 +26,7 @@ export default async function ocrSetValue(this: WebdriverIO.Browser, options: Oc
         isTesseractAvailable,
         language,
         ocrImagesPath,
+        ...(psm !== undefined ? { psm } : {}),
         text,
     })
 

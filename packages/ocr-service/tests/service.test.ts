@@ -112,6 +112,7 @@ describe('WdioOcrService', () => {
             imagesFolder: 'custom-folder',
             language: SUPPORTED_LANGUAGES.SPANISH,
             contrast: 0.1,
+            psm: 7,
         }
         vi.mocked(createOcrDir).mockReturnValue(options.imagesFolder)
         const service = new WdioOcrService(options)
@@ -119,6 +120,7 @@ describe('WdioOcrService', () => {
         expect(service).toHaveProperty('_ocrDir', options.imagesFolder)
         expect(service).toHaveProperty('_ocrLanguage', SUPPORTED_LANGUAGES.SPANISH)
         expect(service).toHaveProperty('_ocrContrast', options.contrast)
+        expect(service).toHaveProperty('_ocrPsm', options.psm)
     })
 
     it('should setup OCR commands in standalone mode', async () => {
@@ -178,6 +180,32 @@ describe('WdioOcrService', () => {
                 language: SUPPORTED_LANGUAGES.ENGLISH,
                 imagePath,
                 ocrImagesPath: '.tmp/ocr'
+            })
+        })
+
+        it('should pass service-level psm and allow command-level psm override', async () => {
+            service = new WdioOcrService({ psm: 7 })
+            browser = createBrowser()
+            await service.before(browser.capabilities as any, [], browser)
+
+            // @ts-ignore
+            await browser.ocrGetText({})
+            expect(ocrGetText).toHaveBeenLastCalledWith({
+                contrast: CONTRAST,
+                isTesseractAvailable: false,
+                language: SUPPORTED_LANGUAGES.ENGLISH,
+                ocrImagesPath: '.tmp/ocr',
+                psm: 7,
+            })
+
+            // @ts-ignore
+            await browser.ocrGetText({ psm: 10 })
+            expect(ocrGetText).toHaveBeenLastCalledWith({
+                contrast: CONTRAST,
+                isTesseractAvailable: false,
+                language: SUPPORTED_LANGUAGES.ENGLISH,
+                ocrImagesPath: '.tmp/ocr',
+                psm: 10,
             })
         })
 

@@ -93,4 +93,35 @@ describe('ocrGetElementPositionByText', () => {
         expect(result.matchedString).toEqual(data.text)
         expect(logInfoMock.mock.calls[0][0]).toEqual(`We searched for the word "${data.text}" and found one match "${data.text}" with score "100%"`)
     })
+
+    it('forwards psm to getTextPositions when provided', async () => {
+        const data = {
+            contrast: 0.5,
+            isTesseractAvailable: false,
+            language: 'ENG',
+            ocrImagesPath: 'path/to/image.png',
+            psm: 7,
+            text: 'unique',
+        }
+        const mockTextPositions = [{
+            dprPosition: { left: 529, top: 606, right: 643, bottom: 619 },
+            filePath: 'path/example.png' as const,
+            originalPosition: { left: 529, top: 606, right: 643, bottom: 619 },
+            text: 'unique'
+        }]
+        vi.mocked(getTextPositions).mockResolvedValue(mockTextPositions)
+        vi.mocked(fuzzyFind).mockReturnValue([
+            { item: mockTextPositions[0], score: 0, refIndex: 1 },
+        ])
+
+        await ocrGetElementPositionByText.bind(mockDriver)(data)
+        expect(getTextPositions).toHaveBeenCalledWith(mockDriver, {
+            contrast: 0.5,
+            haystack: undefined,
+            isTesseractAvailable: false,
+            language: 'ENG',
+            ocrImagesPath: 'path/to/image.png',
+            psm: 7,
+        })
+    })
 })

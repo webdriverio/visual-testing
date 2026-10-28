@@ -184,13 +184,29 @@ describe('getNodeOcrData', () => {
         const result = await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage })
 
         expect(createWorker).toHaveBeenCalledWith(mockLanguage)
-        expect(workerMock.setParameters).toHaveBeenCalled()
+        expect(workerMock.setParameters).toHaveBeenCalledWith({
+            tessedit_pageseg_mode: 'auto'
+        })
         // tesseract.js 6+ returns only `text` unless the other outputs are asked for
         expect(workerMock.recognize).toHaveBeenCalledWith(mockFilePath, {}, { text: true, hocr: true })
         expect(workerMock.terminate).toHaveBeenCalled()
         expect(result.text).toBe('Extracted text')
         expect(result.words.length).toBeGreaterThan(0)
         expect(result.lines.length).toBeGreaterThan(0)
+    })
+
+    it('uses custom psm when provided', async () => {
+        vi.mocked(createWorker).mockResolvedValue(workerMock)
+        vi.mocked(parseString).mockImplementation((_input, callback) => {
+            // @ts-ignore
+            callback(null, parseStringMock)
+        })
+
+        await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, psm: 7 })
+
+        expect(workerMock.setParameters).toHaveBeenCalledWith({
+            tessedit_pageseg_mode: '7'
+        })
     })
 
     it('handles recognition errors', async () => {
@@ -400,6 +416,32 @@ describe('getSystemOcrData', () => {
         expect(result.text).toMatchSnapshot()
         expect(result.lines.length).toEqual(2)
         expect(result.words.length).toEqual(4)
+    })
+
+    it('uses custom psm when provided', async () => {
+        const mockResult = '<alto><Layout><Page><PrintSpace><ComposedBlock><TextBlock><TextLine HPOS="100" VPOS="200" WIDTH="300" HEIGHT="400"><String CONTENT="7" HPOS="100" VPOS="200" WIDTH="50" HEIGHT="20" WC="0.95"/></TextLine></TextBlock></ComposedBlock></PrintSpace></Page></Layout></alto>'
+
+        vi.mocked(recognize).mockResolvedValue(mockResult)
+        vi.mocked(parseString).mockImplementation((_input, callback) => {
+            // @ts-ignore
+            callback(null, {
+                alto: {
+                    Layout: [{
+                        _: mockedParsedTextSting,
+                        Page: [{ PrintSpace: [{ ComposedBlock: mockedParsedString }] }]
+                    }]
+                }
+            })
+        })
+
+        await getSystemOcrData({ ...options, psm: 7 })
+
+        expect(recognize).toHaveBeenCalledWith(mockFilePath, {
+            lang: mockLanguage,
+            oem: 1,
+            psm: 7,
+            presets: ['alto']
+        })
     })
 
     it('handles recognition errors', async () => {

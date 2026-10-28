@@ -105,6 +105,36 @@ describe('getData', () => {
         expect(result).toMatchSnapshot()
     })
 
+    it('forwards psm option to system and NodeJS Tesseract', async () => {
+        vi.mocked(getBase64ScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
+
+        await getData(browser, {
+            contrast: 1.0,
+            isTesseractAvailable: true,
+            language: 'ENG',
+            ocrImagesPath: '/fake/ocr/path',
+            psm: 7
+        })
+        expect(Tesseract.getSystemOcrData).toHaveBeenCalledWith({
+            filePath: '/fake/path/image.png',
+            language: 'ENG',
+            psm: 7
+        })
+
+        await getData(browser, {
+            contrast: 1.0,
+            isTesseractAvailable: false,
+            language: 'ENG',
+            ocrImagesPath: '/fake/ocr/path',
+            psm: 10
+        })
+        expect(Tesseract.getNodeOcrData).toHaveBeenCalledWith({
+            filePath: '/fake/path/image.png',
+            language: 'ENG',
+            psm: 10
+        })
+    })
+
     it('processes OCR data correctly using a haystack', async () => {
         const logInfoMock = vi.spyOn(log, 'info')
         const options = {

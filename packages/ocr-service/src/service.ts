@@ -24,12 +24,14 @@ export default class WdioOcrService {
     private _ocrDir: string
     private _ocrLanguage: string
     private _ocrContrast: number
+    private _ocrPsm?: number
     private _isTesseractAvailable: boolean
 
     constructor(options: OcrOptions) {
         this._ocrDir = createOcrDir(options?.imagesFolder || DEFAULT_IMAGES_FOLDER)
         this._ocrLanguage = options?.language || SUPPORTED_LANGUAGES.ENGLISH
         this._ocrContrast = options?.contrast || CONTRAST
+        this._ocrPsm = options?.psm
         this._ocrLanguage = options?.language || SUPPORTED_LANGUAGES.ENGLISH
         this._isTesseractAvailable = isSystemTesseractAvailable()
     }
@@ -70,9 +72,13 @@ export default class WdioOcrService {
 
                 if (typeof args[0] === 'object' && args[0] !== null) {
                     const options = args[0] as Record<string, any>
+                    const psm = options?.psm ?? self._ocrPsm
                     options.ocrImagesPath = options?.imagesFolder || self._ocrDir
                     options.contrast = options?.contrast || self._ocrContrast
                     options.language = options?.language || self._ocrLanguage
+                    if (psm !== undefined) {
+                        options.psm = psm
+                    }
                     options.isTesseractAvailable = self._isTesseractAvailable
                     args[0] = options
                 }
@@ -109,11 +115,13 @@ export default class WdioOcrService {
             currentBrowser.addCommand(
                 commandName,
                 function (this: typeof currentBrowser, options) {
+                    const psm = options?.psm ?? self._ocrPsm
                     return command.bind(this)({
                         ...options,
                         ocrImagesPath: self._ocrDir,
                         contrast: options?.contrast || self._ocrContrast,
                         language: options?.language || self._ocrLanguage,
+                        ...(psm !== undefined ? { psm } : {}),
                         isTesseractAvailable: self._isTesseractAvailable
                     })
                 }

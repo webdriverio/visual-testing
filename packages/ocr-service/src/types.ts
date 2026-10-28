@@ -19,6 +19,11 @@ export interface OcrOptions {
      * Default: eng
      */
     language?: string;
+    /**
+     * The Page Segmentation Mode (PSM) to use for Tesseract OCR (0-13)
+     * Default: 3
+     */
+    psm?: number;
 }
 
 /**
@@ -28,6 +33,7 @@ type DefaultCommandOptions = {
     contrast?: number;
     haystack?: WebdriverIO.Element | ChainablePromiseElement | RectReturn;
     language?: string;
+    psm?: number;
 }
 
 export type GetTextOptions = DefaultCommandOptions & {}
@@ -119,6 +125,7 @@ export type Words = Line & {
 export type TessaractDataOptions = {
     filePath: `${string}.${string}`;
     language: string;
+    psm?: number;
 }
 
 export type ParseWordData = {

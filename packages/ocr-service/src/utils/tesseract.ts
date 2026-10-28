@@ -65,14 +65,14 @@ export function extractTextFromAlto(altoContent: string): string {
 export async function getNodeOcrData(options: TessaractDataOptions): Promise<GetOcrData> {
     let worker
     try {
-        const { filePath, language } = options
+        const { filePath, language, psm } = options
         const jsonSingleWords: Words[] = []
         const jsonWordStrings: Line[] = []
         let composedBlocks: UnprocessedNodejsBlock[] = []
 
         worker = await createWorker(language)
         await worker.setParameters({
-            tessedit_pageseg_mode: PSM.AUTO,
+            tessedit_pageseg_mode: psm !== undefined ? String(psm) as PSM : PSM.AUTO,
         })
         // Since tesseract.js 6 only `text` is on by default; the words and their positions come from `hocr`
         const { data: { text, hocr } } = await worker.recognize(filePath, {}, { text: true, hocr: true })
@@ -160,7 +160,7 @@ export async function getNodeOcrData(options: TessaractDataOptions): Promise<Get
  */
 export async function getSystemOcrData(options: TessaractDataOptions): Promise<GetOcrData> {
     try {
-        const { filePath, language } = options
+        const { filePath, language, psm = 3 } = options
         const jsonSingleWords: Words[] = []
         const jsonWordStrings: Line[] = []
         let composedBlocks: UnprocessedSystemBlock[] = []
@@ -168,7 +168,7 @@ export async function getSystemOcrData(options: TessaractDataOptions): Promise<G
             lang: language,
             oem: 1,
             // https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc
-            psm: 3,
+            psm,
             presets: ['alto'],
         })
 
