@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest'
 import { join } from 'node:path'
+import { encode } from 'fast-png'
 import logger from '@wdio/logger'
 import {
     getDesktopFullPageScreenshotsData,
@@ -7,7 +8,9 @@ import {
     logHiddenRemovedError,
     takeBase64BiDiScreenshot,
     takeWebElementScreenshot,
-    getMobileFullPageNativeWebScreenshotsData
+    getMobileFullPageNativeWebScreenshotsData,
+    decodeUpright,
+    isSameFrameArea,
 } from './screenshots.js'
 import type { TakeWebElementScreenshot, FullPageScreenshotOptions, FullPageScreenshotNativeMobileOptions } from './screenshots.interfaces.js'
 import type { RectanglesOutput } from './rectangles.interfaces.js'
@@ -15,10 +18,15 @@ import { MEDIUM_IMAGE_STRING, SMALL_IMAGE_STRING } from '../mocks/image.js'
 import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 import * as rectanglesModule from './rectangles.js'
 import * as utilsModule from '../helpers/utils.js'
+import * as imageUtilsModule from '../utils/imageUtils.js'
 import getElementVisibleRect from '../clientSideScripts/getElementVisibleRect.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
+vi.mock('../utils/imageUtils.js', async () => {
+    const actual = await vi.importActual<typeof imageUtilsModule>('../utils/imageUtils.js')
+    return { ...actual, decodeImage: vi.fn(actual.decodeImage) }
+})
 vi.mock('./rectangles.js', () => ({
     determineElementRectangles: vi.fn()
 }))
@@ -161,6 +169,179 @@ describe('screenshots', () => {
             expect(result).toMatchSnapshot()
             expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(2)
             expect(result.data).toHaveLength(2)
+        })
+
+        describe('stale frames', () => {
+            // A real PNG that is large enough for the compared area, in one gray value
+            const grayPng = (gray: number) => {
+                const width = 400
+                const height = 1400
+                const data = new Uint8Array(width * height * 4)
+                for (let i = 0; i < data.length; i += 4) {
+                    data.set([gray, gray, gray, 255], i)
+                }
+                return Buffer.from(encode({ data, width, height, channels: 4, depth: 8 })).toString('base64')
+            }
+            // A real PNG with content: each row has another gray value, so the compared area is not one color
+            const patternPng = (offset: number) => {
+                const width = 400
+                const height = 1400
+                const data = new Uint8Array(width * height * 4)
+                for (let y = 0; y < height; y++) {
+                    const gray = (y + offset) % 256
+                    for (let x = 0; x < width; x++) {
+                        data.set([gray, gray, gray, 255], (y * width + x) * 4)
+                    }
+                }
+                return Buffer.from(encode({ data, width, height, channels: 4, depth: 8 })).toString('base64')
+            }
+            const firstPart = patternPng(0)
+            const secondPart = patternPng(97)
+            const twoScrolls = (secondScrollTop: number) => vi.fn()
+                .mockResolvedValueOnce(undefined) // scrollToPosition 0 (i=0)
+                .mockResolvedValueOnce(undefined) // hideScrollBars true
+                .mockResolvedValueOnce(1304) // getDocumentScrollHeight
+                .mockResolvedValueOnce({ scrollTop: 0 }) // actualScrollInfo
+                .mockResolvedValueOnce(undefined) // hideScrollBars false
+                .mockResolvedValueOnce(undefined) // scrollToPosition 652 (i=1)
+                .mockResolvedValueOnce(undefined) // hideScrollBars true
+                .mockResolvedValueOnce(1304) // getDocumentScrollHeight
+                .mockResolvedValueOnce({ scrollTop: secondScrollTop }) // actualScrollInfo
+                .mockResolvedValueOnce(undefined) // hideScrollBars false
+
+            it('takes the screenshot again when it still shows the frame from before the scroll', async () => {
+                const mockBrowserInstance = createMockBrowserInstance()
+                mockBrowserInstance.takeScreenshot = vi.fn()
+                    .mockResolvedValueOnce(firstPart)
+                    // The device did not draw the page again yet
+                    .mockResolvedValueOnce(firstPart)
+                    .mockResolvedValueOnce(secondPart)
+                mockBrowserInstance.execute = twoScrolls(652)
+
+                const result = await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions({ isAndroid: true }))
+
+                expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(3)
+                expect(result.data.map(({ screenshot }) => screenshot)).toEqual([firstPart, secondPart])
+                // The wait of each scroll, and one before the new screenshot
+                expect(utilsModule.waitFor).toHaveBeenCalledTimes(3)
+                expect(logWarnSpy).not.toHaveBeenCalled()
+            })
+
+            it('does not take the screenshot again when the compared area is one color', async () => {
+                // For example a blank part of the page: a new screenshot can not give another image
+                const blank = grayPng(255)
+                const mockBrowserInstance = createMockBrowserInstance()
+                mockBrowserInstance.takeScreenshot = vi.fn().mockResolvedValue(blank)
+                mockBrowserInstance.execute = twoScrolls(652)
+
+                await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions({ isAndroid: true }))
+
+                expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(2)
+                expect(logWarnSpy).not.toHaveBeenCalled()
+            })
+
+            // The calls of `execute` for a page of `parts` screenshots of 652px, with the same scroll position for each
+            const scrollsOf = (parts: number) => {
+                const execute = vi.fn()
+                for (let part = 0; part < parts; part++) {
+                    execute
+                        .mockResolvedValueOnce(undefined) // scrollToPosition
+                        .mockResolvedValueOnce(undefined) // hideScrollBars true
+                        .mockResolvedValueOnce(652 * parts) // getDocumentScrollHeight
+                        .mockResolvedValueOnce({ scrollTop: 652 * part }) // actualScrollInfo
+                        .mockResolvedValueOnce(undefined) // hideScrollBars false
+                }
+                return execute
+            }
+
+            it('decodes each screenshot only once', async () => {
+                const mockBrowserInstance = createMockBrowserInstance()
+                mockBrowserInstance.takeScreenshot = vi.fn()
+                    .mockResolvedValueOnce(patternPng(0))
+                    .mockResolvedValueOnce(patternPng(31))
+                    .mockResolvedValueOnce(patternPng(62))
+                mockBrowserInstance.execute = scrollsOf(3)
+                vi.mocked(imageUtilsModule.decodeImage).mockClear()
+
+                await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions({ isAndroid: true }))
+
+                expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(3)
+                expect(imageUtilsModule.decodeImage).toHaveBeenCalledTimes(3)
+            })
+
+            it('takes at most 5 new screenshots for the whole page and warns once', async () => {
+                // A fixed overlay fills the screen: each screenshot is the same, also after each scroll
+                const overlay = patternPng(0)
+                const mockBrowserInstance = createMockBrowserInstance()
+                mockBrowserInstance.takeScreenshot = vi.fn().mockResolvedValue(overlay)
+                mockBrowserInstance.execute = scrollsOf(4)
+
+                await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions({ isAndroid: true }))
+
+                // 4 parts, then 3 new screenshots for the second part and 2 for the third part
+                expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(4 + 5)
+                expect(logWarnSpy).toHaveBeenCalledTimes(1)
+            })
+
+            it('waits at least 500 ms before a new screenshot', async () => {
+                const mockBrowserInstance = createMockBrowserInstance()
+                mockBrowserInstance.takeScreenshot = vi.fn()
+                    .mockResolvedValueOnce(firstPart)
+                    .mockResolvedValueOnce(firstPart)
+                    .mockResolvedValueOnce(secondPart)
+                mockBrowserInstance.execute = twoScrolls(652)
+
+                await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions({ isAndroid: true, fullPageScrollTimeout: 0 }))
+
+                expect(vi.mocked(utilsModule.waitFor).mock.calls).toEqual([[0], [0], [500]])
+            })
+
+            it('keeps the screenshot and warns after 3 new screenshots with the same content', async () => {
+                const mockBrowserInstance = createMockBrowserInstance()
+                mockBrowserInstance.takeScreenshot = vi.fn().mockResolvedValue(firstPart)
+                mockBrowserInstance.execute = twoScrolls(652)
+
+                const result = await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions({ isAndroid: true }))
+
+                expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(5)
+                expect(result.data).toHaveLength(2)
+                expect(logWarnSpy).toHaveBeenCalledTimes(1)
+                expect(logWarnSpy).toHaveBeenCalledWith(expect.stringContaining('fullPageScrollTimeout'))
+            })
+
+            it('does not take the screenshot again when the page did not scroll', async () => {
+                const mockBrowserInstance = createMockBrowserInstance()
+                mockBrowserInstance.takeScreenshot = vi.fn().mockResolvedValue(firstPart)
+                mockBrowserInstance.execute = twoScrolls(0)
+
+                await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, createMobileOptions({ isAndroid: true }))
+
+                expect(mockBrowserInstance.takeScreenshot).toHaveBeenCalledTimes(2)
+                expect(logWarnSpy).not.toHaveBeenCalled()
+            })
+
+            it('compares a landscape screenshot in the same rotation as the full page image', async () => {
+                // A portrait image of a landscape device: the compared area is in the rotated image
+                const rotatedPng = (gray: number) => {
+                    const width = 20
+                    const height = 30
+                    const data = new Uint8Array(width * height * 4)
+                    for (let i = 0; i < data.length; i += 4) {
+                        // Each column has another value, so the compared area is not one color
+                        const value = 150 + ((i / 4) % width)
+                        data.set([value, value, value, 255], i)
+                    }
+                    // A different pixel only in the second screenshot, at the top left of the upright image (bottom left
+                    // of the rotated image)
+                    if (gray === 100) {
+                        data.set([0, 0, 0, 255], ((height - 1) * width) * 4)
+                    }
+                    return Buffer.from(encode({ data, width, height, channels: 4, depth: 8 })).toString('base64')
+                }
+                const area = { imageXPosition: 0, imageYPosition: 0, imageWidth: 10, imageHeight: 10 }
+                expect(isSameFrameArea(decodeUpright(rotatedPng(200), true), decodeUpright(rotatedPng(100), true), area)).toBe(false)
+                expect(isSameFrameArea(decodeUpright(rotatedPng(200), true), decodeUpright(rotatedPng(200), true), area)).toBe(true)
+            })
         })
 
         it('should handle landscape mode with rotation detection', async () => {
