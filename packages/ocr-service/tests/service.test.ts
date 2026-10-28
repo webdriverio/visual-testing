@@ -3,8 +3,9 @@ import { join } from 'node:path'
 import logger from '@wdio/logger'
 import WdioOcrService from '../src/service.js'
 import { createOcrDir } from '../src/utils/index.js'
-import { CONTRAST, SUPPORTED_LANGUAGES } from '../src/utils/constants.js'
+import { CONTRAST, DEFAULT_PAGE_SEGMENTATION_MODE, SUPPORTED_LANGUAGES } from '../src/utils/constants.js'
 import ocrGetText from '../src/commands/ocrGetText.js'
+import type { OcrOptions } from '../src/types.js'
 
 vi.mock('../src/utils/index.js', async (importOriginal) => ({
     ...await importOriginal<object>(),
@@ -105,20 +106,38 @@ describe('WdioOcrService', () => {
         expect(service).toHaveProperty('_ocrDir', expectedFolder)
         expect(service).toHaveProperty('_ocrLanguage', SUPPORTED_LANGUAGES.ENGLISH)
         expect(service).toHaveProperty('_ocrContrast', CONTRAST)
+        expect(service).toHaveProperty('_ocrPageSegmentationMode', DEFAULT_PAGE_SEGMENTATION_MODE)
     })
 
     it('should use provided options to initialize properties', () => {
-        const options = {
+        const options: OcrOptions = {
             imagesFolder: 'custom-folder',
             language: SUPPORTED_LANGUAGES.SPANISH,
             contrast: 0.1,
+            pageSegmentationMode: 7,
         }
-        vi.mocked(createOcrDir).mockReturnValue(options.imagesFolder)
+        vi.mocked(createOcrDir).mockReturnValue('custom-folder')
         const service = new WdioOcrService(options)
 
-        expect(service).toHaveProperty('_ocrDir', options.imagesFolder)
+        expect(service).toHaveProperty('_ocrDir', 'custom-folder')
         expect(service).toHaveProperty('_ocrLanguage', SUPPORTED_LANGUAGES.SPANISH)
         expect(service).toHaveProperty('_ocrContrast', options.contrast)
+        expect(service).toHaveProperty('_ocrPageSegmentationMode', 7)
+    })
+
+    it('should accept the psm alias', () => {
+        const service = new WdioOcrService({ psm: 8 })
+
+        expect(service).toHaveProperty('_ocrPageSegmentationMode', 8)
+    })
+
+    it('should throw when the page segmentation mode is not supported', () => {
+        // @ts-expect-error 12 is not a supported page segmentation mode
+        expect(() => new WdioOcrService({ pageSegmentationMode: 12 })).toThrow('The "pageSegmentationMode" option (alias "psm") must be one of')
+    })
+
+    it('should throw when the page segmentation mode and its alias have different values', () => {
+        expect(() => new WdioOcrService({ pageSegmentationMode: 7, psm: 6 })).toThrow('have different values')
     })
 
     it('should setup OCR commands in standalone mode', async () => {
@@ -177,8 +196,69 @@ describe('WdioOcrService', () => {
                 isTesseractAvailable: false,
                 language: SUPPORTED_LANGUAGES.ENGLISH,
                 imagePath,
-                ocrImagesPath: '.tmp/ocr'
+                ocrImagesPath: '.tmp/ocr',
+                pageSegmentationMode: DEFAULT_PAGE_SEGMENTATION_MODE,
             })
+        })
+
+        it('should use the page segmentation mode of the service, unless the command has its own', async () => {
+            vi.mocked(createOcrDir).mockReturnValue('.tmp/ocr')
+            service = new WdioOcrService({ pageSegmentationMode: 6 })
+            browser = createBrowser()
+            await service.before(browser.capabilities, [], browser)
+
+            // @ts-ignore
+            await browser.ocrGetText({})
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ pageSegmentationMode: 6 }))
+
+            // @ts-ignore
+            await browser.ocrGetText({ pageSegmentationMode: 7 })
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ pageSegmentationMode: 7 }))
+
+            // @ts-ignore
+            await browser.ocrGetText({ psm: 8 })
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ pageSegmentationMode: 8 }))
+        })
+
+        it('should let a command override the psm alias of the service', async () => {
+            service = new WdioOcrService({ psm: 6 })
+            browser = createBrowser()
+            await service.before(browser.capabilities, [], browser)
+
+            // @ts-ignore
+            await browser.ocrGetText({ pageSegmentationMode: 7 })
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ pageSegmentationMode: 7 }))
+        })
+
+        it('should throw when the page segmentation mode of a command is not supported', async () => {
+            browser = createBrowser()
+            await service.before(browser.capabilities, [], browser)
+
+            // @ts-ignore
+            expect(() => browser.ocrGetText({ psm: '7; echo' })).toThrow('The "pageSegmentationMode" option (alias "psm") must be one of')
+            expect(ocrGetText).not.toHaveBeenCalled()
+        })
+
+        it('should pass the page segmentation mode to the commands of a multiremote browser', async () => {
+            vi.mocked(createOcrDir).mockReturnValue('.tmp/ocr')
+            service = new WdioOcrService({ pageSegmentationMode: 6 })
+            browser = createBrowser(true)
+            browser.capabilities = {
+                myChromeBrowser: { capabilities: { browserName: 'chrome' } },
+            }
+            await service.before(browser.capabilities, [], browser)
+            // The mock keeps the commands of an instance in `commands`, the multiremote command calls them on the instance
+            // @ts-ignore
+            const chromeInstance = browser.getInstance('myChromeBrowser')
+            chromeInstance.ocrGetText = chromeInstance.commands.ocrGetText
+
+            // @ts-ignore
+            await browser.ocrGetText({})
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ pageSegmentationMode: 6 }))
+
+            // @ts-ignore
+            await browser.ocrGetText({ psm: 7 })
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ pageSegmentationMode: 7 }))
         })
 
         it('should add OCR commands to multiremote browsers correctly', async () => {
