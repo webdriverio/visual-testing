@@ -10,14 +10,33 @@ IOS_DEVICE_NAME="CI ${SIMULATOR_DEVICE_TYPE}"
 UDID=$(xcrun simctl create "$IOS_DEVICE_NAME" "$SIMULATOR_DEVICE_TYPE" "$RUNTIME")
 export IOS_DEVICE_NAME IOS_PLATFORM_VERSION
 echo "Simulator: $IOS_DEVICE_NAME, iOS $IOS_PLATFORM_VERSION ($UDID)"
+# The boot continues while WebDriverAgent is downloaded
+xcrun simctl boot "$UDID"
+mkdir -p logs
+
+# Use the prebuilt WebDriverAgent of the installed XCUITest driver: Appium installs and starts it on the simulator,
+# without an xcodebuild build (minutes on the runner) and without xcodebuild in each session.
+# When the download fails, build WebDriverAgent as before.
+WDA_DIR="${RUNNER_TEMP:-/tmp}/wda-sim"
+rm -rf "$WDA_DIR"
+if appium driver run xcuitest download-wda -- --kind=sim --platform=iOS --outdir="$WDA_DIR" > logs/download-wda.log 2>&1 \
+    && [ -d "$WDA_DIR/WebDriverAgentRunner-Runner.app" ]; then
+    export IOS_PREBUILT_WDA="$WDA_DIR/WebDriverAgentRunner-Runner.app"
+    echo "Prebuilt WebDriverAgent: $IOS_PREBUILT_WDA"
+else
+    tail -20 logs/download-wda.log || true
+    echo "::warning::The prebuilt WebDriverAgent could not be downloaded, so it is built"
+fi
+
 xcrun simctl bootstatus "$UDID" -b > /dev/null
 
-# Build WebDriverAgent before the first session: inside a session, Appium waits only 60 s for it, and the build
-# alone takes longer on the runner. The session then reuses this build.
-mkdir -p logs
-echo "Building WebDriverAgent (output in logs/build-wda.log)"
-appium driver run xcuitest build-wda --name "$IOS_DEVICE_NAME" --sdk "$IOS_PLATFORM_VERSION" > logs/build-wda.log 2>&1 \
-    || { tail -50 logs/build-wda.log; exit 1; }
+if [ -z "${IOS_PREBUILT_WDA:-}" ]; then
+    # Build WebDriverAgent before the first session: inside a session, Appium waits only 60 s for it, and the build
+    # alone takes longer on the runner. The session then reuses this build.
+    echo "Building WebDriverAgent (output in logs/build-wda.log)"
+    appium driver run xcuitest build-wda --name "$IOS_DEVICE_NAME" --sdk "$IOS_PLATFORM_VERSION" > logs/build-wda.log 2>&1 \
+        || { tail -50 logs/build-wda.log; exit 1; }
+fi
 
 # Its output goes to a file (uploaded when the job fails), not to the job log
 appium --port 4723 > logs/appium.log 2>&1 &
@@ -35,8 +54,8 @@ for _ in $(seq 1 60); do
 done
 curl -sf http://127.0.0.1:4723/status > /dev/null || { echo "Appium did not start"; cat logs/appium.log; exit 1; }
 
-# Warm-up: the first session builds WebDriverAgent, Safari shows a first-start tip, and iOS shows a first-boot
-# notification that can be in the screenshots. Its result and files are not kept.
+# Warm-up: Safari shows a first-start tip, and iOS shows a first-boot notification that can be in the screenshots.
+# Its result and files are not kept.
 echo "::group::Warm up the simulator"
 BASELINE_SETUP=true pnpm test.local.sims.web --mochaOpts.grep "full page screenshot successful" || true
 rm -rf tests/localBaseline .tmp
