@@ -72,7 +72,7 @@
     "@vitest/coverage-v8": "^5.0.3",
     "@vitest/ui": "^5.0.5",
     "@wdio/appium-service": "^10.1.0",
-    "@wdio/browserstack-service": "^9.41.0",
+    "@wdio/browserstack-service": "^9.42.1",
     "@wdio/cli": "^10.1.0",
     "@wdio/globals": "^10.1.0",
     "@wdio/image-comparison-core": "workspace:*",
