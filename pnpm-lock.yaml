@@ -24,8 +24,8 @@ importers:
         specifier: ^22.0.6
         version: 22.0.6
       '@types/inquirer':
-        specifier: ^9.0.10
-        version: 9.0.10
+        specifier: ^10.0.0
+        version: 10.0.0(@types/node@24.19.2)
       '@types/jsdom':
         specifier: ~30.0.0
         version: 30.0.0
@@ -176,8 +176,8 @@ importers:
         version: 0.6.2
     devDependencies:
       '@types/inquirer':
-        specifier: ~9.0.10
-        version: 9.0.10
+        specifier: ~10.0.0
+        version: 10.0.0(@types/node@24.19.2)
       '@types/xml2js':
         specifier: ~0.4.14
         version: 0.4.14
@@ -1907,8 +1907,9 @@ packages:
   '@types/gitconfiglocal@2.0.3':
     resolution: {integrity: sha512-W6hyZux6TrtKfF2I9XNLVcsFr4xRr0T+S6hrJ9nDkhA2vzsFPIEAbnY4vgb6v2yKXQ9MJVcbLsARNlMfg4EVtQ==}
 
-  '@types/inquirer@9.0.10':
-    resolution: {integrity: sha512-vFW2WbXwO9eZpRT5GJGFJ/shgyMNnYozmnjakt9jCQSS1lvqX8pZEQMjJ9RdDPct/YxwciQ8+V8OYn9euIrZDA==}
+  '@types/inquirer@10.0.0':
+    resolution: {integrity: sha512-h1Y4dQCbTBrV3s6ITOi77IKZDqnnhSvOm6gC48VlJ1wd3Z33SUkrvbalwhfaC6OXrgZL0fNldv5+aty7+Z3Xhw==}
+    deprecated: This is a stub types definition. inquirer provides its own type definitions, so you do not need this installed.
 
   '@types/istanbul-lib-coverage@2.0.6':
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
@@ -1977,9 +1978,6 @@ packages:
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
-
-  '@types/through@0.0.33':
-    resolution: {integrity: sha512-HsJ+z3QuETzP3cswwtzt2vEIiHBk/dCcHGhbmG5X3ecnwFD/lPrMpliGXxSCg03L9AhrdwA4Oz/qfspkDW+xGQ==}
 
   '@types/tough-cookie@4.0.5':
     resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
@@ -4515,9 +4513,6 @@ packages:
     resolution: {integrity: sha512-IoDlSLTs3Yq593mb3ZoKWKXMNu3UpObxhgA/Xuid5p4bbfi2jdY1Hj0m1K+0/tEuQTxIGMhQDqGjKb7RuxGpAQ==}
     engines: {node: '>=0.12.0'}
 
-  rxjs@7.8.2:
-    resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
-
   sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
@@ -7013,10 +7008,11 @@ snapshots:
 
   '@types/gitconfiglocal@2.0.3': {}
 
-  '@types/inquirer@9.0.10':
+  '@types/inquirer@10.0.0(@types/node@24.19.2)':
     dependencies:
-      '@types/through': 0.0.33
-      rxjs: 7.8.2
+      inquirer: 14.2.3(@types/node@24.19.2)
+    transitivePeerDependencies:
+      - '@types/node'
 
   '@types/istanbul-lib-coverage@2.0.6': {}
 
@@ -7084,10 +7080,6 @@ snapshots:
       '@types/node': 24.19.2
 
   '@types/stack-utils@2.0.3': {}
-
-  '@types/through@0.0.33':
-    dependencies:
-      '@types/node': 24.19.2
 
   '@types/tough-cookie@4.0.5': {}
 
@@ -10049,10 +10041,6 @@ snapshots:
   run-applescript@7.1.0: {}
 
   run-async@4.0.6: {}
-
-  rxjs@7.8.2:
-    dependencies:
-      tslib: 2.8.1
 
   sade@1.8.1:
     dependencies:
