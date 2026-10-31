@@ -5027,8 +5027,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@11.1.0:
-    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+  uuid@11.1.1:
+    resolution: {integrity: sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==}
     hasBin: true
 
   valibot@1.5.0:
@@ -7192,7 +7192,7 @@ snapshots:
       glob: 11.1.0
       tar: 7.5.22
       undici: 6.29.0
-      uuid: 11.1.0
+      uuid: 11.1.1
       webdriverio: 9.32.0(supports-color@8.1.1)
       winston-transport: 4.9.0
       yauzl: 3.4.0
@@ -10562,7 +10562,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  uuid@11.1.0: {}
+  uuid@11.1.1: {}
 
   valibot@1.5.0(typescript@6.0.3):
     optionalDependencies:
