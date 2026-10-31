@@ -39,7 +39,7 @@
     "@react-router/node": "^8.4.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "autoprefixer": "^10.6.1",
+    "autoprefixer": "^10.6.2",
     "isbot": "^5.2.2",
     "postcss": "^8.5.32",
     "react": "^19.3.1",
