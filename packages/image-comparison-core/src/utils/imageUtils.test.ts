@@ -6,6 +6,8 @@ import {
     toBase64Png,
     createCanvas,
     cropImage,
+    hasSameArea,
+    isUniformArea,
     compositeImage,
     resizeBilinear,
     rotate90CW,
@@ -155,6 +157,47 @@ describe('cropImage', () => {
         expect(cropped.data[4]).toBe(0)
         expect(cropped.data[5]).toBe(0)
         expect(cropped.data[6]).toBe(255)
+    })
+})
+
+describe('hasSameArea', () => {
+    // 3x2 image, each pixel a different gray value
+    const makeImage = (): RawImage => {
+        const data = new Uint8Array(3 * 2 * 4)
+        for (let i = 0; i < 6; i++) {
+            data.set([i * 10, i * 10, i * 10, 255], i * 4)
+        }
+        return { data, width: 3, height: 2 }
+    }
+
+    it('is true for the same pixels in the area', () => {
+        expect(hasSameArea(makeImage(), makeImage(), 0, 0, 3, 2)).toBe(true)
+    })
+
+    it('ignores a different pixel outside the area', () => {
+        const changed = makeImage()
+        // pixel (0, 0)
+        changed.data[0] = 99
+
+        expect(hasSameArea(makeImage(), changed, 1, 0, 2, 2)).toBe(true)
+        expect(hasSameArea(makeImage(), changed, 0, 0, 3, 2)).toBe(false)
+    })
+
+    it('finds a different pixel in the last row and column of the area', () => {
+        const changed = makeImage()
+        // alpha of pixel (2, 1)
+        changed.data[(1 * 3 + 2) * 4 + 3] = 0
+
+        expect(hasSameArea(makeImage(), changed, 1, 1, 2, 1)).toBe(false)
+    })
+
+    it('does not compare an area that is not fully inside both images', () => {
+        const small: RawImage = { data: new Uint8Array(2 * 2 * 4), width: 2, height: 2 }
+
+        expect(hasSameArea(makeImage(), makeImage(), 1, 0, 3, 2)).toBe(false)
+        expect(hasSameArea(makeImage(), makeImage(), -1, 0, 2, 2)).toBe(false)
+        expect(hasSameArea(makeImage(), makeImage(), 0, 0, 0, 2)).toBe(false)
+        expect(hasSameArea(makeImage(), small, 0, 0, 3, 2)).toBe(false)
     })
 })
 
@@ -313,5 +356,35 @@ describe('setOpacity', () => {
         const img = createCanvas(1, 1, 0, 0, 0, 200)
         setOpacity(img, 0)
         expect(img.data[3]).toBe(0)
+    })
+})
+
+describe('isUniformArea', () => {
+    const image = (pixel: (x: number, y: number) => number[]) => {
+        const width = 4
+        const height = 4
+        const data = new Uint8Array(width * height * 4)
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                data.set(pixel(x, y), (y * width + x) * 4)
+            }
+        }
+        return { data, width, height }
+    }
+
+    it('should be true when all pixels of the area have the same value', () => {
+        expect(isUniformArea(image(() => [255, 255, 255, 255]), 0, 0, 4, 4)).toBe(true)
+    })
+
+    it('should be false when one pixel of the area has another value', () => {
+        expect(isUniformArea(image((x, y) => x === 3 && y === 3 ? [254, 255, 255, 255] : [255, 255, 255, 255]), 0, 0, 4, 4)).toBe(false)
+    })
+
+    it('should only look at the area', () => {
+        expect(isUniformArea(image((x) => x === 0 ? [0, 0, 0, 255] : [255, 255, 255, 255]), 1, 0, 3, 4)).toBe(true)
+    })
+
+    it('should be false for an area outside the image', () => {
+        expect(isUniformArea(image(() => [255, 255, 255, 255]), 2, 2, 4, 4)).toBe(false)
     })
 })
