@@ -1,7 +1,16 @@
 import { mkdirSync } from 'node:fs'
 import { describe, it, expect, vi } from 'vitest'
-import { adjustElementBbox, createOcrDir, determineClickPoint, getDprPositions, getBase64ScreenshotSize, isMultiRemoteBrowser, isRectanglesObject } from '../../src/utils/index.js'
-import type { RectReturn } from '../../src/types.js'
+import {
+    adjustElementBbox,
+    createOcrDir,
+    determineClickPoint,
+    getBase64ScreenshotSize,
+    getDprPositions,
+    getPageSegmentationMode,
+    isMultiRemoteBrowser,
+    isRectanglesObject,
+} from '../../src/utils/index.js'
+import type { PageSegmentationMode, RectReturn } from '../../src/types.js'
 
 vi.mock('node:fs', () => ({
     mkdirSync: vi.fn(),
@@ -118,5 +127,38 @@ describe('isMultiRemoteBrowser', () => {
 
     it('should return false when the flag is not set', () => {
         expect(isMultiRemoteBrowser({} as any)).toBe(false)
+    })
+})
+
+describe('getPageSegmentationMode', () => {
+    it('should return the default when no value is set', () => {
+        expect(getPageSegmentationMode(undefined, 3)).toBe(3)
+        expect(getPageSegmentationMode({}, 7)).toBe(7)
+    })
+
+    it.each<PageSegmentationMode>([3, 4, 5, 6, 7, 8, 9, 10, 11, 13])('should return the supported mode %s', (mode) => {
+        expect(getPageSegmentationMode({ pageSegmentationMode: mode }, 3)).toBe(mode)
+    })
+
+    it('should accept the psm alias', () => {
+        expect(getPageSegmentationMode({ psm: 7 }, 3)).toBe(7)
+    })
+
+    it('should accept both names with the same value', () => {
+        expect(getPageSegmentationMode({ pageSegmentationMode: 7, psm: 7 }, 3)).toBe(7)
+    })
+
+    it('should throw when both names have different values', () => {
+        expect(() => getPageSegmentationMode({ pageSegmentationMode: 7, psm: 6 }, 3))
+            .toThrow('The "pageSegmentationMode" option (7) and its alias "psm" (6) have different values, use only one of them.')
+    })
+
+    it.each([0, 1, 2, 12, 14, 7.5, '7', '7; echo', null])('should throw for the unsupported value %s', (mode) => {
+        const message = `The "pageSegmentationMode" option (alias "psm") must be one of 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, but it is "${String(mode)}".`
+
+        // @ts-expect-error the value is not a supported page segmentation mode
+        expect(() => getPageSegmentationMode({ pageSegmentationMode: mode }, 3)).toThrow(message)
+        // @ts-expect-error the value is not a supported page segmentation mode
+        expect(() => getPageSegmentationMode({ psm: mode }, 3)).toThrow(message)
     })
 })
