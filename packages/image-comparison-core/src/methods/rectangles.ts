@@ -3,6 +3,8 @@ import { decodeImage } from '../utils/imageUtils.js'
 import { ANDROID_OFFSETS, IOS_OFFSETS } from '../helpers/constants.js'
 import { calculateDprData, getBase64ScreenshotSize, isObject } from '../helpers/utils.js'
 import { getElementPositionAndroid, getElementPositionDesktop, getElementWebviewPosition } from './elementPosition.js'
+import getElementRectInTopDocument from '../clientSideScripts/getElementRectInTopDocument.js'
+import { resolveCrossOriginElementRect, resolveCrossOriginFrameOffset } from './takeElementScreenshots.js'
 import type {
     DetermineDeviceBlockOutsOptions,
     DetermineWebFullPageIgnoreRegionsOptions,
@@ -326,7 +328,11 @@ export async function determineWebScreenIgnoreRegions(
     // `execute` is an element command: when the browser says that the element reference is stale, for example
     // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
     for (const el of elements) {
-        regionsFromElements.push(await el.execute(rawBcr))
+        regionsFromElements.push(
+            (await el.execute(getElementRectInTopDocument, 'viewport'))
+            ?? (await resolveCrossOriginElementRect(options.browserInstance, el, 'viewport'))
+            ?? (await el.execute(rawBcr))
+        )
     }
 
     return [...regions, ...regionsFromElements]
@@ -397,7 +403,11 @@ export async function determineWebFullPageIgnoreRegions(
     // `execute` is an element command: when the browser says that the element reference is stale, for example
     // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
     for (const el of elements) {
-        regionsFromElements.push(await el.execute(rawDocumentBcr))
+        regionsFromElements.push(
+            (await el.execute(getElementRectInTopDocument, 'document'))
+            ?? (await resolveCrossOriginElementRect(options.browserInstance, el, 'document'))
+            ?? (await el.execute(rawDocumentBcr))
+        )
     }
 
     return [...regions, ...regionsFromElements]
@@ -450,24 +460,187 @@ export async function determineWebElementIgnoreRegions(
     } = options
 
     // Compute bounding boxes relative to the root element: (childBCR - rootBCR)
-    const rawRelativeBcr = (el: Element, root: Element) => {
-        const elRect = el.getBoundingClientRect()
-        const rootRect = root.getBoundingClientRect()
+    type RelativeRectWithFramePath = RectanglesOutput & { framePath?: number[] }
+    const rawRelativeBcr = isWebDriverElementScreenshot
+        ? (el: Element, root: Element): RelativeRectWithFramePath => {
+            const elRect = el.getBoundingClientRect()
+            const rootRect = root.getBoundingClientRect()
 
-        return {
-            x: elRect.x - rootRect.x,
-            y: elRect.y - rootRect.y,
-            width: elRect.width,
-            height: elRect.height,
+            return {
+                x: elRect.x - rootRect.x,
+                y: elRect.y - rootRect.y,
+                width: elRect.width,
+                height: elRect.height,
+            }
         }
-    }
+        : (el: Element, root: Element): RelativeRectWithFramePath => {
+            function getFrameScale(frameEl: Element, fr: DOMRect, parentWin: Window): { scaleX: number, scaleY: number } {
+                const htmlFrame = frameEl as HTMLElement
+                let stepScaleX = 1
+                let stepScaleY = 1
+                let curEl: Element | null = frameEl
+
+                while (curEl) {
+                    const cs = parentWin.getComputedStyle(curEl)
+                    const inlineTransform = (curEl as HTMLElement).style?.transform || ''
+                    const transform = (cs.transform && cs.transform !== 'none') ? cs.transform : inlineTransform
+
+                    if (transform && transform !== 'none') {
+                        const matrix3dMatch = transform.match(/matrix3d\(\s*([^)]+)\)/)
+                        const matrixMatch = !matrix3dMatch && transform.match(/matrix\(\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)\s*,\s*([+-]?\d*\.?\d+)/)
+                        if (matrix3dMatch) {
+                            const vals = matrix3dMatch[1].split(',').map((v) => parseFloat(v.trim()))
+                            if (vals.length >= 6) {
+                                const sx = Math.hypot(vals[0], vals[1], vals[2])
+                                const sy = Math.hypot(vals[4], vals[5], vals[6] || 0)
+                                if (sx > 0) { stepScaleX *= sx }
+                                if (sy > 0) { stepScaleY *= sy }
+                            }
+                        } else if (matrixMatch) {
+                            const sx = Math.hypot(parseFloat(matrixMatch[1]), parseFloat(matrixMatch[2]))
+                            const sy = Math.hypot(parseFloat(matrixMatch[3]), parseFloat(matrixMatch[4]))
+                            if (sx > 0) { stepScaleX *= sx }
+                            if (sy > 0) { stepScaleY *= sy }
+                        } else {
+                            const scaleMatch = transform.match(/scale\(\s*([+-]?\d*\.?\d+)(?:\s*,\s*([+-]?\d*\.?\d+))?\s*\)/)
+                            if (scaleMatch) {
+                                const sx = parseFloat(scaleMatch[1])
+                                const sy = scaleMatch[2] !== undefined ? parseFloat(scaleMatch[2]) : sx
+                                if (sx > 0) { stepScaleX *= sx }
+                                if (sy > 0) { stepScaleY *= sy }
+                            } else {
+                                const scaleXMatch = transform.match(/scaleX\(\s*([+-]?\d*\.?\d+)\s*\)/)
+                                const scaleYMatch = transform.match(/scaleY\(\s*([+-]?\d*\.?\d+)\s*\)/)
+                                if (scaleXMatch && parseFloat(scaleXMatch[1]) > 0) { stepScaleX *= parseFloat(scaleXMatch[1]) }
+                                if (scaleYMatch && parseFloat(scaleYMatch[1]) > 0) { stepScaleY *= parseFloat(scaleYMatch[1]) }
+                            }
+                        }
+                    }
+
+                    const inlineScale = (curEl as HTMLElement).style?.scale || ''
+                    const scaleProp = (cs.scale && cs.scale !== 'none') ? cs.scale : inlineScale
+                    if (scaleProp && scaleProp !== 'none') {
+                        const parts = scaleProp.trim().split(/\s+/)
+                        if (parts.length >= 1) {
+                            const rawX = parts[0]
+                            const rawY = parts.length >= 2 ? parts[1] : rawX
+                            const sx = rawX.endsWith('%') ? parseFloat(rawX) / 100 : parseFloat(rawX)
+                            const sy = rawY.endsWith('%') ? parseFloat(rawY) / 100 : parseFloat(rawY)
+                            if (sx > 0) { stepScaleX *= sx }
+                            if (sy > 0) { stepScaleY *= sy }
+                        }
+                    }
+
+                    const csZoom = (cs as unknown as { zoom?: string }).zoom || ''
+                    const inlineZoom = (curEl as HTMLElement).style?.zoom || ''
+                    const zoomProp = (csZoom && csZoom !== 'normal' && csZoom !== '1') ? csZoom : inlineZoom
+                    if (zoomProp && zoomProp !== 'normal' && zoomProp !== '1') {
+                        const z = zoomProp.endsWith('%') ? parseFloat(zoomProp) / 100 : parseFloat(zoomProp)
+                        if (z > 0) {
+                            stepScaleX *= z
+                            stepScaleY *= z
+                        }
+                    }
+
+                    curEl = curEl.parentElement
+                        ?? (typeof curEl.getRootNode === 'function' ? ((curEl.getRootNode() as ShadowRoot).host ?? null) : null)
+                }
+
+                if (stepScaleX === 1 && htmlFrame.offsetWidth > 0 && fr.width > 0 && Math.abs(fr.width - htmlFrame.offsetWidth) > 0.5) {
+                    stepScaleX = fr.width / htmlFrame.offsetWidth
+                }
+                if (stepScaleY === 1 && htmlFrame.offsetHeight > 0 && fr.height > 0 && Math.abs(fr.height - htmlFrame.offsetHeight) > 0.5) {
+                    stepScaleY = fr.height / htmlFrame.offsetHeight
+                }
+
+                return { scaleX: stepScaleX, scaleY: stepScaleY }
+            }
+
+            const elRect = el.getBoundingClientRect()
+            const rootRect = root.getBoundingClientRect()
+            let scaleX = 1
+            let scaleY = 1
+            let win: Window | null = el.ownerDocument?.defaultView ?? (typeof window !== 'undefined' ? window : null)
+            while (win && win !== win.top) {
+                let frameEl: Element | null = null
+                try {
+                    frameEl = win.frameElement
+                } catch {
+                    break
+                }
+                if (!frameEl || !win.parent) {
+                    break
+                }
+                const fr = frameEl.getBoundingClientRect()
+                const { scaleX: stepScaleX, scaleY: stepScaleY } = getFrameScale(frameEl, fr, win.parent)
+                scaleX *= stepScaleX
+                scaleY *= stepScaleY
+                win = win.parent
+            }
+
+            const framePath: number[] = []
+            let cur: Window | null = win
+            while (cur && cur !== cur.top) {
+                let parentWin: Window | null = null
+                try {
+                    parentWin = cur.parent
+                } catch {
+                    break
+                }
+                if (!parentWin || parentWin === cur) {
+                    break
+                }
+                let index = -1
+                try {
+                    for (let i = 0; i < parentWin.frames.length; i++) {
+                        if (parentWin.frames[i] === cur) {
+                            index = i
+                            break
+                        }
+                    }
+                } catch {
+                    break
+                }
+                if (index === -1) {
+                    break
+                }
+                framePath.unshift(index)
+                cur = parentWin
+            }
+
+            return {
+                x: (elRect.x - rootRect.x) * scaleX,
+                y: (elRect.y - rootRect.y) * scaleY,
+                width: elRect.width * scaleX,
+                height: elRect.height * scaleY,
+                ...(framePath.length > 0 ? { framePath } : {}),
+            }
+        }
 
     const regionsFromElements: RectanglesOutput[] = []
     // `execute` is an element command: when the browser says that the element reference is stale, for example
     // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
     for (const el of elements) {
         // The type arguments make WebdriverIO map `rootElement` to the DOM element of the script
-        regionsFromElements.push(await el.execute<RectanglesOutput, [WebdriverIO.Element]>(rawRelativeBcr, rootElement))
+        const relRect = await el.execute<RelativeRectWithFramePath, [WebdriverIO.Element]>(rawRelativeBcr, rootElement)
+        if (!isWebDriverElementScreenshot && relRect.framePath && relRect.framePath.length > 0) {
+            const frameOffset = await resolveCrossOriginFrameOffset(options.browserInstance, relRect.framePath, 'viewport')
+            const sx = frameOffset?.scaleX ?? 1
+            const sy = frameOffset?.scaleY ?? 1
+            regionsFromElements.push({
+                x: relRect.x * sx,
+                y: relRect.y * sy,
+                width: relRect.width * sx,
+                height: relRect.height * sy,
+            })
+        } else {
+            regionsFromElements.push({
+                x: relRect.x,
+                y: relRect.y,
+                width: relRect.width,
+                height: relRect.height,
+            })
+        }
     }
 
     // Both literal regions and element-derived regions are currently expected
