@@ -108,6 +108,11 @@ export interface FullPageScreenshotsData {
     fullPageWidth: number;
     /** Array of screenshot data. */
     data: ScreenshotData[];
+    /**
+     * With a scroll container (#125): the places of the ignore elements in the full page image, in CSS pixels, measured
+     * at each screenshot. An element can have more than one place, for example a sticky element in each screenshot
+     */
+    elementRegions?: { x: number, y: number, width: number, height: number }[];
 }
 
 /**
@@ -116,6 +121,11 @@ export interface FullPageScreenshotsData {
 interface ScreenshotData {
     /** The width of the canvas. */
     canvasWidth: number;
+    /**
+     * The x position on the canvas. When it is set, the image is a part of the canvas width (`imageWidth`), for
+     * example the scroll container of a page (#125). When it is not set, the image fills the canvas width from x = 0.
+     */
+    canvasXPosition?: number;
     /** The y position on the canvas. */
     canvasYPosition: number;
     /** The height of the image. */
@@ -179,6 +189,29 @@ export interface FullPageScreenshotDataOptions extends
     screenHeight: number;
     /** Width of the screen. */
     screenWidth: number;
+    /** The scroll container of a page where a container scrolls and not the page (#125) */
+    scrollContainer?: WebdriverIO.Element;
+    /** With a scroll container: the ignore elements, measured at each screenshot (#125) */
+    ignoreElements?: WebdriverIO.Element[];
+    /** Hide the scrollbar of the scroll container, as for the page */
+    hideScrollBars?: boolean;
+}
+
+/**
+ * Interface representing options for a full page screenshot of a page where a container scrolls (#125).
+ */
+export interface ScrollContainerFullPageOptions extends ScreenshotInfo, ScrollOptions {
+    /** The scroll container */
+    scrollContainer: WebdriverIO.Element;
+    /** The ignore elements, measured at each screenshot */
+    ignoreElements?: WebdriverIO.Element[];
+    /** Hide the scrollbar of the scroll container */
+    hideScrollBars: boolean;
+    /**
+     * The viewport in the screenshot, in CSS pixels. Not set: the screenshot is the viewport (desktop, Android
+     * ChromeDriver). Set: a mobile screenshot of the screen (Android native web, iOS), with the viewport in it
+     */
+    viewport?: { x: number, y: number, width: number, height: number };
 }
 
 /**

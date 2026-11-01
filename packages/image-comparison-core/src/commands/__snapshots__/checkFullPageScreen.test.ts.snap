@@ -99,6 +99,7 @@ exports[`checkFullPageScreen > should execute checkFullPageScreen with basic opt
         "ignore": undefined,
         "ignoreRegionPadding": undefined,
         "removeElements": [],
+        "scrollContainer": undefined,
         "waitForFontsLoaded": true,
       },
       "wic": {
@@ -333,6 +334,7 @@ exports[`checkFullPageScreen > should handle all full page specific options 1`] 
         "ignore": undefined,
         "ignoreRegionPadding": undefined,
         "removeElements": [],
+        "scrollContainer": undefined,
         "waitForFontsLoaded": false,
       },
       "wic": {
@@ -486,6 +488,7 @@ exports[`checkFullPageScreen > should handle hideAfterFirstScroll correctly 1`] 
         "ignore": undefined,
         "ignoreRegionPadding": undefined,
         "removeElements": [],
+        "scrollContainer": undefined,
         "waitForFontsLoaded": true,
       },
       "wic": {
@@ -644,6 +647,7 @@ exports[`checkFullPageScreen > should handle hideElements and removeElements cor
             "selector": "#remove",
           },
         ],
+        "scrollContainer": undefined,
         "waitForFontsLoaded": true,
       },
       "wic": {
@@ -878,6 +882,7 @@ exports[`checkFullPageScreen > should handle undefined method options with fallb
         "ignore": undefined,
         "ignoreRegionPadding": undefined,
         "removeElements": [],
+        "scrollContainer": undefined,
         "waitForFontsLoaded": true,
       },
       "wic": {
