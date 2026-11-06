@@ -4,6 +4,8 @@ import type {
     GetElementPositionByTextOptions,
     GetTextOptions,
     OcrGetElementPositionByText,
+    PageSegmentationMode,
+    PageSegmentationModeOptions,
     SetValueOptions,
     WaitForTextDisplayedOptions,
 } from './types.js'
@@ -53,3 +55,4 @@ declare global {
 
 export default WdioOcrService
 export const SUPPORTED_OCR_LANGUAGES = SUPPORTED_LANGUAGES
+export type { PageSegmentationMode, PageSegmentationModeOptions }

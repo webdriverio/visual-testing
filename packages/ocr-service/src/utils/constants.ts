@@ -1,3 +1,5 @@
+import type { PageSegmentationMode } from '../types.js'
+
 export const DEFAULT_IMAGES_FOLDER = '.tmp/'
 export const SUPPORTED_LANGUAGES = {
     AFRIKAANS: 'afr',
@@ -56,6 +58,8 @@ export const SUPPORTED_LANGUAGES = {
     VIETNAMESE: 'vie'
 }
 export const CONTRAST = 0.25
+export const DEFAULT_PAGE_SEGMENTATION_MODE: PageSegmentationMode = 3
+export const PAGE_SEGMENTATION_MODES: PageSegmentationMode[] = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13]
 export const DEFAULT_FUZZY_OPTIONS = {
     distance: 100,
     isCaseSensitive: false,
