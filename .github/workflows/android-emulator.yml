@@ -38,8 +38,8 @@ jobs:
     timeout-minutes: 45
     env:
       # Used by tests/configs/wdio.local.android.emus.web.conf.ts
-      ANDROID_AVD: ci_android_35
-      ANDROID_PLATFORM_VERSION: "15"
+      ANDROID_AVD: ci_android_36
+      ANDROID_PLATFORM_VERSION: "16"
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -79,13 +79,14 @@ jobs:
       - name: 🤖 Run the e2e tests on the Android emulator
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         with:
-          api-level: 35
+          # Not 35: its Chrome 124 has no navigation ids, so `url()` fails in the WebDriver BiDi run
+          api-level: 36
           target: google_apis
           arch: x86_64
           # The cmdline-tools of the runner image do not know the newest Pixel profiles
           profile: pixel_6
           pre-emulator-launch-script: avdmanager list device -c | tr '\n' ' '
-          avd-name: ci_android_35
+          avd-name: ci_android_36
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
           disable-animations: true
           script: bash .github/scripts/android-emulator-e2e.sh

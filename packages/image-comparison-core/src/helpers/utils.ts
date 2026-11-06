@@ -436,9 +436,9 @@ export async function getMobileScreenSize({
  * Wait until the browser shows the new page after a navigation from a script.
  *
  * WebDriver Classic drivers wait for the navigation before they run the next command. In a WebDriver BiDi session
- * the next script can run while the browser replaces the page, and fails with for example `Cannot find context with
- * specified id` or `execution contexts cleared` (#1232). The text of these errors depends on the browser version, so
- * every error during the wait means "check again". The next command shows an error that stays.
+ * Chrome holds the next script until the new page commits, and then rejects it, for example with `Cannot find context
+ * with specified id` or `execution contexts cleared` (#1232). The error depends on the timing, so every error during
+ * the wait means "check again". The next command shows an error that stays.
  */
 async function waitForPageLoad(browserInstance: WebdriverIO.Browser, url: string): Promise<void> {
     let lastError: unknown
