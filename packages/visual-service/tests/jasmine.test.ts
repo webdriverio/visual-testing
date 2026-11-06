@@ -62,6 +62,16 @@ describe('jasmine', () => {
             expect(await toMatchScreenSnapshot().negativeCompare!(browser, 'tag')).toEqual({ pass: true, message: 'mismatch' })
         })
 
+        it('should tell the visual matcher if it is called with `.not`, so `wait` waits for the right result (#690)', async () => {
+            const matcher = vi.fn().mockResolvedValue({ pass: true, message: () => 'passed' })
+            const { toMatchScreenSnapshot } = toJasmineAsyncMatchers({ toMatchScreenSnapshot: matcher })
+
+            await toMatchScreenSnapshot().compare(browser, 'tag')
+            await toMatchScreenSnapshot().negativeCompare!(browser, 'tag')
+
+            expect(matcher.mock.contexts).toEqual([{ isNot: false }, { isNot: true }])
+        })
+
         it('should make one Jasmine matcher for each visual matcher', () => {
             const matcher = vi.fn()
 
