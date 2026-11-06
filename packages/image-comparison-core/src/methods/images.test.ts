@@ -1136,6 +1136,37 @@ describe('makeFullPageBase64Image', () => {
         expect(result).toMatchSnapshot()
     })
 
+    it('should paste a tile with a canvas x position at that position, with its own width (#125)', async () => {
+        const { compositeImage, cropImage } = vi.mocked(await import('../utils/imageUtils.js'))
+
+        await makeFullPageBase64Image({
+            fullPageHeight: 2000,
+            fullPageWidth: 1000,
+            data: [{
+                canvasWidth: 1000,
+                canvasXPosition: 200,
+                canvasYPosition: 800,
+                imageHeight: 400,
+                imageWidth: 600,
+                imageXPosition: 200,
+                imageYPosition: 60,
+                screenshot: 'container-tile',
+            }],
+        }, defaultOptions)
+
+        expect(cropImage).toHaveBeenCalledWith(expect.anything(), 200, 60, 600, 400)
+        expect(compositeImage).toHaveBeenCalledWith(expect.anything(), expect.anything(), 200, 800)
+    })
+
+    it('should paste a tile without a canvas x position at x = 0, with the canvas width', async () => {
+        const { compositeImage, cropImage } = vi.mocked(await import('../utils/imageUtils.js'))
+
+        await makeFullPageBase64Image({ ...defaultScreenshotsData, data: [defaultScreenshotsData.data[0]] }, defaultOptions)
+
+        expect(cropImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 1000, 800)
+        expect(compositeImage).toHaveBeenCalledWith(expect.anything(), expect.anything(), 0, 0)
+    })
+
     it('should handle landscape mode with rotation', async () => {
         getBase64ScreenshotSizeMock.mockReturnValue({ width: 800, height: 1000 })
 

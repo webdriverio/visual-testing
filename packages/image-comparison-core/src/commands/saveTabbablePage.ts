@@ -4,6 +4,7 @@ import saveFullPageScreen from './saveFullPageScreen.js'
 import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 import type { InternalSaveTabbablePageMethodOptions } from './save.interfaces.js'
 import { readScrollPosition, restoreScrollPosition } from '../helpers/scrollPosition.js'
+import { withoutScrollContainer } from '../helpers/utils.js'
 
 /**
  * Saves an image of all tab executions
@@ -46,7 +47,7 @@ async function takeTabbablePage(
     await browserInstance.execute(drawTabbableOnCanvas, saveTabbableOptions.wic.tabbableOptions)
 
     // 2. Create the screenshot
-    const fullPageData = await saveFullPageScreen({ browserInstance, folders, instanceData, isNativeContext, saveFullPageOptions: saveTabbableOptions, tag })
+    const fullPageData = await saveFullPageScreen({ browserInstance, folders, instanceData, isNativeContext, saveFullPageOptions: withoutScrollContainer(saveTabbableOptions, 'saveTabbablePage'), tag })
 
     // 3. Remove the canvas
     await browserInstance.execute(removeElementFromDom, 'wic-tabbable-canvas')

@@ -1088,6 +1088,29 @@ describe('rectangles', () => {
             ])
         })
 
+        it('should use the element regions measured at each screenshot with a scroll container (#125), and not measure the elements again', async () => {
+            const element = mock<WebdriverIO.Element>({ elementId: 'ignore-id', selector: '.ignore', execute: vi.fn() })
+            const region = { x: 0, y: 500, width: 300, height: 80 }
+
+            const result = await determineWebFullPageIgnoreRegions(
+                {
+                    ...fullPageOptions,
+                    devicePixelRatio: 2,
+                    // A sticky title in 2 screenshots of the container
+                    elementRegions: [{ x: 0, y: 60, width: 1000, height: 30 }, { x: 0, y: 800, width: 1000, height: 30 }],
+                },
+                [region, element],
+            )
+
+            expect(element.execute).not.toHaveBeenCalled()
+            expect(result).toEqual([
+                // The coordinate region, then the measured element regions, in device pixels
+                { x: 0, y: 1000, width: 600, height: 160 },
+                { x: 0, y: 120, width: 2000, height: 60 },
+                { x: 0, y: 1600, width: 2000, height: 60 },
+            ])
+        })
+
         it('should treat raw regions as document-relative CSS pixels and apply DPR', async () => {
             const region = { x: 0, y: 500, width: 300, height: 80 }
 
