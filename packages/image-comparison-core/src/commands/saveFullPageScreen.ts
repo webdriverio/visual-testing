@@ -84,7 +84,8 @@ async function takeFullPageScreen(
         screenWidth: screenWidth || NaN,
         toolBarShadowPadding: beforeOptions.toolBarShadowPadding,
     }
-    const shouldUseBidi = canUseBidiScreenshot(browserInstance) && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
+    // Not on mobile: Chrome on Android gives a document screenshot of the right height that repeats the viewport (#1232)
+    const shouldUseBidi = canUseBidiScreenshot(browserInstance) && !isMobile && (!userBasedFullPageScreenshot || !enableLegacyScreenshotMethod)
     const screenshotsData = await takeFullPageScreenshots(browserInstance, fullPageScreenshotOptions, shouldUseBidi)
 
     // 5.  Get the final image - either direct BiDi or stitched from multiple screenshots
