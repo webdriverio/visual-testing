@@ -64,8 +64,8 @@ jobs:
 
       - name: 📱 Install Appium and the UiAutomator2 driver
         run: |
-          npm install --global appium@3.8.0
-          appium driver install uiautomator2@8.7.0
+          npm install --global appium@3.9.0
+          appium driver install uiautomator2@8.7.3
 
       # The emulator needs hardware acceleration
       - name: ⚙️ Enable KVM

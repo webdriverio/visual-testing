@@ -43,7 +43,8 @@ function androidCaps(
         // ("The instrumentation process cannot be initialized within 30000ms timeout")
         ...(process.env.CI ? { 'appium:uiautomator2ServerLaunchTimeout': 120 * 1000 } : {}),
         ...(nativeWebScreenshot ? { 'appium:nativeWebScreenshot': true } : {}),
-        'wdio:enforceWebDriverClassic': true,
+        // `test.local.emus.web.bidi` runs the same suite in the default WebDriver BiDi session
+        ...(process.env.ANDROID_WEBDRIVER_BIDI === 'true' ? {} : { 'wdio:enforceWebDriverClassic': true }),
         'wdio-ics:options': {
             logName: `${deviceName
                 .split(' ')
