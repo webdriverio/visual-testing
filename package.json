@@ -33,6 +33,7 @@
     "test.local.chrome.v10.emulation": "wdio tests/configs/wdio.local.chrome.v10.emulation.conf.ts",
     "test.local.emus.app": "wdio tests/configs/wdio.local.android.emus.app.conf.ts",
     "test.local.emus.web": "wdio tests/configs/wdio.local.android.emus.web.conf.ts",
+    "test.local.emus.web.bidi": "cross-env ANDROID_WEBDRIVER_BIDI=true wdio tests/configs/wdio.local.android.emus.web.conf.ts",
     "test.local.sims.app": "wdio tests/configs/wdio.local.ios.sims.app.conf.ts",
     "test.local.sims.web": "wdio tests/configs/wdio.local.ios.sims.web.conf.ts",
     "test.local.desktop.multi": "wdio tests/configs/wdio.local.desktop.multi.conf.ts",

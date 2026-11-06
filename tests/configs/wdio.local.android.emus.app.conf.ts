@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.local.appium.shared.conf.ts'
 
-// The AVD name and Android version, for example in CI: ANDROID_AVD=ci_android_35 ANDROID_PLATFORM_VERSION=15.0
+// The AVD name and Android version, for example in CI: ANDROID_AVD=ci_android_36 ANDROID_PLATFORM_VERSION=16.0
 const androidDeviceName = process.env.ANDROID_AVD ?? 'Pixel_7_Pro_Android_14_API_34'
 const androidPlatformVersion = process.env.ANDROID_PLATFORM_VERSION ?? '14.0'
 
