@@ -14,9 +14,9 @@ import type {
     Words,
 } from '../types.js'
 
-const NO_TEXT_FOUND_MESSAGE = 'No text was found for the OCR, please verify the stored image. '
-    + 'If the image has only one line, one word or one character, try the "pageSegmentationMode" option (Tesseract --psm), '
-    + 'for example "pageSegmentationMode: 7".'
+const NO_TEXT_FOUND_MESSAGE = 'No text was found for the OCR, please verify the stored image. It can be empty. '
+    + 'If it has only one line, one word or one character, try the "pageSegmentationMode" option (Tesseract --psm), '
+    + 'for example "pageSegmentationMode: 7", but with an empty image this mode can return invented text.'
 
 // The tesseract.js names of the supported page segmentation modes
 const TESSERACT_JS_PAGE_SEGMENTATION_MODES: Record<PageSegmentationMode, PSM> = {

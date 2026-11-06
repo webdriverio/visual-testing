@@ -88,8 +88,10 @@ left edge of the image, below an ignored region, is a real difference that v10 d
 - About 15 % faster, and the memory leak of tesseract.js 5 (memory grew over time until a crash) is fixed.
 - On our test screenshots, the found text and word positions are the same.
 - The `clickDuration` option of `ocrClickOnText` is typed `number` (before: the wrapper type `Number`).
+- The new `pageSegmentationMode` option (alias `psm`) sets the Tesseract page segmentation mode for a small haystack. The default stays 3, so the results do not change.
+- The "No text was found" error has a longer text. Update a test that compares the complete message.
 
-No change is needed.
+No change is needed for the code of a service or a command.
 
 ## Visual reporter
 

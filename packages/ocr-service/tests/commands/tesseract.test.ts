@@ -192,6 +192,19 @@ describe('getNodeOcrData', () => {
         expect(result.lines.length).toBeGreaterThan(0)
     })
 
+    it('tells in the error that the image can be empty, and that a mode for short text then invents text', async () => {
+        vi.mocked(createWorker).mockResolvedValue(workerMock)
+        vi.mocked(parseString).mockImplementation((_input, callback) => {
+            // @ts-ignore
+            callback(null, { div: { div: [] } })
+        })
+
+        const result = getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 })
+
+        await expect(result).rejects.toThrow('It can be empty.')
+        await expect(result).rejects.toThrow('with an empty image this mode can return invented text')
+    })
+
     // The real tesseract.js enum: a wrong entry in the map of the modes must fail here
     it.each(PAGE_SEGMENTATION_MODES)('uses the page segmentation mode %s of the options', async (pageSegmentationMode) => {
         vi.mocked(createWorker).mockResolvedValue(workerMock)
@@ -249,7 +262,7 @@ describe('getNodeOcrData', () => {
 
         await expect(getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 }))
             .rejects
-            .toThrow('No text was found for the OCR, please verify the stored image. If the image has only one line, one word or one character, try the "pageSegmentationMode" option (Tesseract --psm), for example "pageSegmentationMode: 7".')
+            .toThrow('No text was found for the OCR, please verify the stored image. It can be empty. If it has only one line, one word or one character, try the "pageSegmentationMode" option (Tesseract --psm), for example "pageSegmentationMode: 7", but with an empty image this mode can return invented text.')
         expect(workerMock.terminate).toHaveBeenCalled()
     })
 
@@ -464,7 +477,7 @@ describe('getSystemOcrData', () => {
 
         await expect(getSystemOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 3 }))
             .rejects
-            .toThrow('No text was found for the OCR, please verify the stored image. If the image has only one line, one word or one character, try the "pageSegmentationMode" option (Tesseract --psm), for example "pageSegmentationMode: 7".')
+            .toThrow('No text was found for the OCR, please verify the stored image. It can be empty. If it has only one line, one word or one character, try the "pageSegmentationMode" option (Tesseract --psm), for example "pageSegmentationMode: 7", but with an empty image this mode can return invented text.')
     })
 
     describe('getSystemOcrData missing properties', () => {
