@@ -285,6 +285,18 @@ describe('saveFullPageScreen', () => {
         expect(takeFullPageScreenshotsSpy.mock.calls[0]).toMatchSnapshot()
     })
 
+    // Chrome on Android gives a document screenshot of the right height that repeats the viewport (#1232)
+    it('should not use BiDi on a mobile browser', async () => {
+        canUseBidiScreenshotSpy.mockReturnValueOnce(true)
+        const beforeOptions = createBeforeScreenshotOptions(baseOptions.instanceData, baseOptions.saveFullPageOptions.method, baseOptions.saveFullPageOptions.wic)
+        const enrichedInstanceData = await beforeScreenshot(baseOptions.browserInstance, beforeOptions, true)
+        beforeScreenshotSpy.mockResolvedValueOnce({ ...enrichedInstanceData, isMobile: true })
+
+        await saveFullPageScreen(baseOptions)
+
+        expect(takeFullPageScreenshotsSpy.mock.calls[0][2]).toBe(false)
+    })
+
     it('should use BiDi when canUseBidiScreenshot=true, userBasedFullPageScreenshot=true, enableLegacyScreenshotMethod=false', async () => {
         canUseBidiScreenshotSpy.mockReturnValueOnce(true)
         takeFullPageScreenshotsSpy.mockResolvedValueOnce(createBidiMockData('test-bidi-screenshot-data-2'))
