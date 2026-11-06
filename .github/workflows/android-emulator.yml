@@ -87,7 +87,8 @@ jobs:
           profile: pixel_6
           pre-emulator-launch-script: avdmanager list device -c | tr '\n' ' '
           avd-name: ci_android_36
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
+          # Not swiftshader_indirect: with it, the API 36 emulator dies at the native screenshot of a full page
+          emulator-options: -no-window -gpu guest -noaudio -no-boot-anim -camera-back none -no-snapshot
           disable-animations: true
           script: bash .github/scripts/android-emulator-e2e.sh
 
