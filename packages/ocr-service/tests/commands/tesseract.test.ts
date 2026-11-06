@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { execSync } from 'node:child_process'
 import { createWorker } from 'tesseract.js'
+import { PAGE_SEGMENTATION_MODES } from '../../src/utils/constants.js'
 import { recognize } from 'node-tesseract-ocr'
 import { parseString } from 'xml2js'
 import { getNodeOcrData, getSystemOcrData, isSystemTesseractAvailable, parseWordDataFromText } from '../../src/utils/tesseract.js'
@@ -8,7 +9,8 @@ import { getNodeOcrData, getSystemOcrData, isSystemTesseractAvailable, parseWord
 vi.mock('child_process', () => ({
     execSync: vi.fn()
 }))
-vi.mock('tesseract.js', () => ({
+vi.mock('tesseract.js', async (importOriginal) => ({
+    ...await importOriginal<object>(),
     createWorker: vi.fn(() => ({
         load: vi.fn(),
         loadLanguage: vi.fn(),
@@ -16,11 +18,7 @@ vi.mock('tesseract.js', () => ({
         setParameters: vi.fn(),
         recognize: vi.fn(),
         terminate: vi.fn()
-    })),
-    PSM: {
-        AUTO: '3',
-        SINGLE_LINE: '7',
-    }
+    }))
 }))
 vi.mock('node-tesseract-ocr', () => ({
     recognize: vi.fn()
@@ -194,16 +192,17 @@ describe('getNodeOcrData', () => {
         expect(result.lines.length).toBeGreaterThan(0)
     })
 
-    it('uses the page segmentation mode of the options', async () => {
+    // The real tesseract.js enum: a wrong entry in the map of the modes must fail here
+    it.each(PAGE_SEGMENTATION_MODES)('uses the page segmentation mode %s of the options', async (pageSegmentationMode) => {
         vi.mocked(createWorker).mockResolvedValue(workerMock)
         vi.mocked(parseString).mockImplementation((_input, callback) => {
             // @ts-ignore
             callback(null, parseStringMock)
         })
 
-        await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode: 7 })
+        await getNodeOcrData({ filePath: mockFilePath, language: mockLanguage, pageSegmentationMode })
 
-        expect(workerMock.setParameters).toHaveBeenCalledWith({ tessedit_pageseg_mode: '7' })
+        expect(workerMock.setParameters).toHaveBeenCalledWith({ tessedit_pageseg_mode: String(pageSegmentationMode) })
     })
 
     it('handles recognition errors', async () => {

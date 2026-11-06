@@ -31,7 +31,9 @@ export type PageSegmentationModeOptions = {
     /**
      * The Tesseract page segmentation mode (Tesseract `--psm`), see
      * https://github.com/tesseract-ocr/tesseract/blob/main/doc/tesseract.1.asc
-     * Use 7 (one line), 8 (one word) or 10 (one character) for a haystack with short text
+     * Use 7 (one line), 8 (one word) or 10 (one character) for a haystack with short text, in the options of the
+     * command. In the service options the value also applies to OCR of the full page, which then returns wrong text.
+     * With these modes an empty haystack can return invented text, such as `oo`, and not an error.
      * Default: 3 (fully automatic page segmentation)
      */
     pageSegmentationMode?: PageSegmentationMode;

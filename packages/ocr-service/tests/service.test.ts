@@ -261,6 +261,28 @@ describe('WdioOcrService', () => {
             expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ pageSegmentationMode: 7 }))
         })
 
+        it('should use the new mode when a multiremote command gets the same options object again', async () => {
+            vi.mocked(createOcrDir).mockReturnValue('.tmp/ocr')
+            service = new WdioOcrService()
+            browser = createBrowser(true)
+            browser.capabilities = {
+                myChromeBrowser: { capabilities: { browserName: 'chrome' } },
+            }
+            await service.before(browser.capabilities, [], browser)
+            // @ts-ignore
+            const chromeInstance = browser.getInstance('myChromeBrowser')
+            chromeInstance.ocrGetText = chromeInstance.commands.ocrGetText
+            const options: Record<string, unknown> = {}
+
+            // @ts-ignore
+            await browser.ocrGetText(options)
+            options.psm = 8
+            // @ts-ignore
+            await browser.ocrGetText(options)
+
+            expect(ocrGetText).toHaveBeenLastCalledWith(expect.objectContaining({ pageSegmentationMode: 8 }))
+        })
+
         it('should add OCR commands to multiremote browsers correctly', async () => {
             const logSpy = vi.spyOn(log, 'info')
             browser = createBrowser(true)

@@ -75,7 +75,6 @@ export default class WdioOcrService {
                     options.ocrImagesPath = options?.imagesFolder || self._ocrDir
                     options.contrast = options?.contrast || self._ocrContrast
                     options.language = options?.language || self._ocrLanguage
-                    options.pageSegmentationMode = getPageSegmentationMode(options, self._ocrPageSegmentationMode)
                     options.isTesseractAvailable = self._isTesseractAvailable
                     args[0] = options
                 }
