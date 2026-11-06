@@ -75,7 +75,7 @@ pnpm test.local.emus.web
 echo "::endgroup::"
 
 # Compare with the baselines of WebDriver Classic, not with baselines of WebDriver BiDi: a wrong BiDi image would be
-# equal to its own baseline and pass. The BiDi full page screenshots repeat the viewport, so they are not in this run.
+# equal to its own baseline and pass.
 echo "::group::Compare WebDriver BiDi with the baselines"
-pnpm test.local.emus.web.bidi --mochaOpts.grep "full page" --mochaOpts.invert
+pnpm test.local.emus.web.bidi
 echo "::endgroup::"
