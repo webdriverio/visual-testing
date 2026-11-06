@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@types/xml2js": "~0.4.14",
-    "webdriverio": "^10.1.0"
+    "webdriverio": "^10.2.0"
   },
   "peerDependencies": {
     "webdriverio": "^10.0.0"
