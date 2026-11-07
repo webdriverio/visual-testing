@@ -99,8 +99,8 @@ importers:
         specifier: ^1.90.0
         version: 1.90.0
       release-it:
-        specifier: ^21.1.1
-        version: 21.1.1(@types/node@24.19.2)(magicast@0.5.5)(supports-color@8.1.1)
+        specifier: ^21.1.2
+        version: 21.1.2(@types/node@24.19.2)(magicast@0.5.5)(supports-color@8.1.1)
       rimraf:
         specifier: ^6.1.3
         version: 6.1.3
@@ -4478,8 +4478,8 @@ packages:
   regenerator-runtime@0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
 
-  release-it@21.1.1:
-    resolution: {integrity: sha512-jOhoWMK3hm5UAYfxREcLW1BRlNzMhKfjN8m4sxjnOOPXDWk6b//mZIk2ABv9Cno/eH1M911iyGaCMtapnwS7Ng==}
+  release-it@21.1.2:
+    resolution: {integrity: sha512-5jy1qepCnvifzMjMV+Vj0redgjsK8uQF5VeUwP7xVJAadhxLLWAtzju+CUyEUUd/7Ru95LR+uuiQmScgl3l8BA==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
     hasBin: true
 
@@ -4990,12 +4990,12 @@ packages:
     resolution: {integrity: sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==}
     engines: {node: '>=18.17'}
 
-  undici@7.29.1:
-    resolution: {integrity: sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==}
-    engines: {node: '>=20.18.1'}
-
   undici@7.30.0:
     resolution: {integrity: sha512-dkrQXeHSaoamnItlYbmzG0wFYrM0ZwDxCIg0A7aKjTyyhh9svRzCNFEzV+Vm05/yehjCzjDZ31KXfGEjYSztDQ==}
+    engines: {node: '>=20.18.1'}
+
+  undici@7.30.1:
+    resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
     engines: {node: '>=20.18.1'}
 
   undici@8.11.2:
@@ -9974,7 +9974,7 @@ snapshots:
 
   regenerator-runtime@0.13.11: {}
 
-  release-it@21.1.1(@types/node@24.19.2)(magicast@0.5.5)(supports-color@8.1.1):
+  release-it@21.1.2(@types/node@24.19.2)(magicast@0.5.5)(supports-color@8.1.1):
     dependencies:
       '@inquirer/prompts': 8.7.3(@types/node@24.19.2)
       '@octokit/rest': 22.0.1
@@ -9994,7 +9994,7 @@ snapshots:
       os-name: 7.0.1
       proxy-agent: 8.0.2(supports-color@8.1.1)
       tinyglobby: 0.2.17
-      undici: 7.29.1
+      undici: 7.30.1
       url-join: 5.0.0
       verkit: 0.5.0
       wildcard-match: 5.1.6
@@ -10554,9 +10554,9 @@ snapshots:
 
   undici@6.29.0: {}
 
-  undici@7.29.1: {}
-
   undici@7.30.0: {}
+
+  undici@7.30.1: {}
 
   undici@8.11.2: {}
 
