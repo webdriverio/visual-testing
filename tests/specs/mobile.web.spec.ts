@@ -39,6 +39,14 @@ describe('@wdio/visual-service mobile web', () => {
     // which would preserve inline style changes from "ignore elements" tests.
     afterEach(async () => await browser.refresh())
 
+    // WebdriverIO continues with WebDriver Classic when Appium can not forward BiDi. Without this test the BiDi run
+    // would then pass without testing BiDi.
+    if (process.env.ANDROID_WEBDRIVER_BIDI === 'true') {
+        it('should run in a WebDriver BiDi session', async () => {
+            await expect(browser.isBidi).toBe(true)
+        })
+    }
+
     if (
         wdioIcsCommands.length === 0 ||
         wdioIcsCommands.includes('checkScreen')
