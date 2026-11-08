@@ -51,8 +51,15 @@ function iOSCaps(
             'appium:wdaLaunchTimeout': 180 * 1000,
             'appium:webviewConnectTimeout': 60 * 1000,
             'appium:webviewConnectRetries': 120,
-            // Appium reuses the WebDriverAgent of the previous session, which can have stopped: start a new one
-            'appium:useNewWDA': true,
+            ...(process.env.IOS_PREBUILT_WDA ? {
+                // The prebuilt WebDriverAgent of the XCUITest driver: Appium installs and starts it in each session,
+                // without xcodebuild
+                'appium:usePreinstalledWDA': true,
+                'appium:prebuiltWDAPath': process.env.IOS_PREBUILT_WDA,
+            } : {
+                // Appium reuses the WebDriverAgent of the previous session, which can have stopped: start a new one
+                'appium:useNewWDA': true,
+            }),
         } : {}),
         'wdio-ics:options': {
             logName: `${deviceName
