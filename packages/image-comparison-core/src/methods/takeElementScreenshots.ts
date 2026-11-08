@@ -2,7 +2,7 @@ import logger from '@wdio/logger'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
 import scrollElementIntoView from '../clientSideScripts/scrollElementIntoView.js'
-import getElementViewportRect from '../clientSideScripts/getElementViewportRect.js'
+import getElementRectInTopDocument from '../clientSideScripts/getElementRectInTopDocument.js'
 import { getBase64ScreenshotSize, hasResizeDimensions, waitFor } from '../helpers/utils.js'
 import type { ElementScreenshotDataOptions, ElementScreenshotData } from './screenshots.interfaces.js'
 
@@ -39,11 +39,25 @@ async function takeBiDiElementScreenshot(
         await waitFor(100)
     }
 
-    // Get the element rect and clip the screenshot. WebDriver getElementRect
-    // returns coordinates relative to the document origin, which matches the
-    // BiDi `origin: 'document'` coordinate system.
-    const rect = await browserInstance.getElementRect!(element.elementId)
-    const clip = { x: Math.floor(rect.x), y: Math.floor(rect.y), width: Math.floor(rect.width), height: Math.floor(rect.height) }
+    // Get the element rect relative to the top-level document.
+    // The helper adds the offsets of any ancestor iframes so the clip
+    // coordinates match the BiDi `origin: 'document'` coordinate system.
+    const rect = await element.execute(getElementRectInTopDocument, 'document')
+
+    if (!rect) {
+        throw new Error(
+            '[BiDi element screenshot] Unable to calculate the element position relative to the top-level document. ' +
+            'The element may be inside an inaccessible cross-origin frame.'
+        )
+    }
+
+    const clip = {
+        x: Math.floor(rect.x),
+        y: Math.floor(rect.y),
+        width: Math.floor(rect.width),
+        height: Math.floor(rect.height),
+    }
+
     const base64Image = await takeBase64BiDiScreenshot({
         browserInstance,
         origin: 'document',
@@ -69,7 +83,15 @@ async function takeBiDiElementScreenshotFromViewport(
 
     // The clip of a `viewport` screenshot is relative to the viewport, so use the position of the element in the
     // viewport. WebDriver `getElementRect` returns the position on the page, which is different when the page is scrolled.
-    const rect = await element.execute(getElementViewportRect)
+    const rect = await element.execute(getElementRectInTopDocument, 'viewport')
+
+    if (!rect) {
+        throw new Error(
+            '[BiDi viewport screenshot] Unable to calculate the element position relative to the top-level viewport. ' +
+            'The element may be inside an inaccessible cross-origin frame.'
+        )
+    }
+
     const elX = Math.floor(rect.x)
     const elY = Math.floor(rect.y)
     const elW = Math.floor(rect.width)
