@@ -541,7 +541,7 @@ export async function makeFullPageBase64Image(
         const { height: screenshotHeight, width: screenshotWidth } = getBase64ScreenshotSize(currentScreenshot, devicePixelRatio)
         const isRotated = isLandscape && screenshotHeight > screenshotWidth
         const newBase64Image = isRotated ? rotateBase64Image({ base64Image: currentScreenshot, degrees: 90 }) : currentScreenshot
-        const { canvasYPosition, imageHeight, imageXPosition, imageYPosition } = screenshotsData.data[i]
+        const { canvasXPosition, canvasYPosition, imageHeight, imageWidth, imageXPosition, imageYPosition } = screenshotsData.data[i]
         const image = decodeImage(Buffer.from(newBase64Image, 'base64'))
 
         // Clamp crop dimensions to fit within the actual image bounds
@@ -551,12 +551,13 @@ export async function makeFullPageBase64Image(
         const clampedCropX = Math.max(0, Math.min(imageXPosition, actualImageWidth - 1))
         const clampedCropY = Math.max(0, Math.min(imageYPosition, actualImageHeight - 1))
         // Ensure the cropped width matches the canvas width to avoid 1px gaps due to rounding
-        // The canvas width is the target, but we must not exceed the available image bounds
+        // The canvas width is the target, but we must not exceed the available image bounds.
+        // An image with a canvas x position is a part of the canvas width, so it uses its own width
         const maxAvailableWidth = actualImageWidth - clampedCropX
-        const clampedCropWidth = Math.min(canvasWidth, maxAvailableWidth)
+        const clampedCropWidth = Math.min(canvasXPosition === undefined ? canvasWidth : imageWidth, maxAvailableWidth)
         const clampedCropHeight = Math.min(imageHeight, actualImageHeight - clampedCropY)
 
-        compositeImage(canvas, cropImage(image, clampedCropX, clampedCropY, clampedCropWidth, clampedCropHeight), 0, canvasYPosition)
+        compositeImage(canvas, cropImage(image, clampedCropX, clampedCropY, clampedCropWidth, clampedCropHeight), canvasXPosition ?? 0, canvasYPosition)
     }
 
     return toBase64Png(canvas)

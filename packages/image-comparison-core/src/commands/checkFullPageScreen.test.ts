@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import checkFullPageScreen from './checkFullPageScreen.js'
 import type { InternalCheckFullPageMethodOptions } from './check.interfaces.js'
 import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
@@ -252,6 +253,17 @@ describe('checkFullPageScreen', () => {
         await checkFullPageScreen(options)
 
         expect(saveFullPageScreenSpy.mock.calls[0]).toMatchSnapshot()
+    })
+
+    it('should pass the scroll container to saveFullPageScreen (#125)', async () => {
+        const scrollContainer = mock<WebdriverIO.Element>({ elementId: 'container' })
+
+        await checkFullPageScreen({
+            ...baseOptions,
+            checkFullPageOptions: { ...baseOptions.checkFullPageOptions, method: { ...baseOptions.checkFullPageOptions.method, scrollContainer } },
+        })
+
+        expect(saveFullPageScreenSpy.mock.calls[0][0].saveFullPageOptions.method.scrollContainer).toBe(scrollContainer)
     })
 
     it('should handle hybrid app options correctly', async () => {

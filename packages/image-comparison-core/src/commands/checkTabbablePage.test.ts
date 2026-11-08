@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 import checkTabbablePage from './checkTabbablePage.js'
 import type { InternalCheckTabbablePageMethodOptions } from './check.interfaces.js'
 import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
@@ -229,6 +230,15 @@ describe('checkTabbablePage', () => {
         await checkTabbablePage(options)
 
         expect(baseOptions.browserInstance.execute).toMatchSnapshot()
+    })
+
+    it('should not use the scroll container option of the full page commands (#125)', async () => {
+        await checkTabbablePage({
+            ...baseOptions,
+            checkTabbableOptions: { ...baseOptions.checkTabbableOptions, method: { ...baseOptions.checkTabbableOptions.method, scrollContainer: mock<WebdriverIO.Element>() } },
+        })
+
+        expect(checkFullPageScreenSpy.mock.calls[0][0].checkFullPageOptions.method.scrollContainer).toBeUndefined()
     })
 
     describe('scroll back (#1231)', () => {

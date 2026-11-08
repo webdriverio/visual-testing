@@ -265,6 +265,45 @@ describe('saveFullPageScreen', () => {
         )
     })
 
+    describe('scroll container (#125)', () => {
+        it('should scroll and stitch the scroll container, also when BiDi could be used', async () => {
+            canUseBidiScreenshotSpy.mockReturnValueOnce(true)
+            const container = mock<WebdriverIO.Element>({ elementId: 'container' })
+
+            await saveFullPageScreen({
+                ...baseOptions,
+                saveFullPageOptions: { ...baseOptions.saveFullPageOptions, method: createMethodOptions({ scrollContainer: container }) },
+            })
+
+            const [, options, shouldUseBidi] = takeFullPageScreenshotsSpy.mock.calls[0]
+            expect(shouldUseBidi).toBe(false)
+            expect(options.scrollContainer).toBe(container)
+        })
+
+        it('should not add the shadow padding to the page, which would cut the end of the container on mobile', async () => {
+            const container = mock<WebdriverIO.Element>({ elementId: 'container' })
+
+            await saveFullPageScreen({
+                ...baseOptions,
+                saveFullPageOptions: { ...baseOptions.saveFullPageOptions, method: createMethodOptions({ scrollContainer: container }) },
+            })
+
+            expect(beforeScreenshotSpy.mock.calls[0][1]).toMatchObject({ addressBarShadowPadding: 0, toolBarShadowPadding: 0 })
+            expect(takeFullPageScreenshotsSpy.mock.calls[0][1]).toMatchObject({ addressBarShadowPadding: 0, toolBarShadowPadding: 0 })
+        })
+
+        it('should wait for an element that is a promise', async () => {
+            const container = mock<WebdriverIO.Element>({ elementId: 'container' })
+
+            await saveFullPageScreen({
+                ...baseOptions,
+                saveFullPageOptions: { ...baseOptions.saveFullPageOptions, method: createMethodOptions({ scrollContainer: Promise.resolve(container) }) },
+            })
+
+            expect(takeFullPageScreenshotsSpy.mock.calls[0][1].scrollContainer).toBe(container)
+        })
+    })
+
     it('should use BiDi when conditions are met', async () => {
         canUseBidiScreenshotSpy.mockReturnValueOnce(true)
         takeFullPageScreenshotsSpy.mockResolvedValueOnce(createBidiMockData('test-bidi-screenshot-data'))
