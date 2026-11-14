@@ -381,7 +381,7 @@ export async function determineWebFullPageIgnoreRegions(
 ): Promise<RectanglesOutput[]> {
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const { devicePixelRatio, ignoreRegionPadding: padding, fullPageCropTopPaddingCSS: cropTop = 0 } = options
+    const { devicePixelRatio, ignoreRegionPadding: padding, fullPageCropTopPaddingCSS: cropTop = 0, elementRegions } = options
 
     const rawDocumentBcr = (el: Element) => {
         const rect = el.getBoundingClientRect()
@@ -393,10 +393,11 @@ export async function determineWebFullPageIgnoreRegions(
         }
     }
 
-    const regionsFromElements: RectanglesOutput[] = []
+    // With a scroll container (#125) the elements were measured at each screenshot, so use those places
+    const regionsFromElements: RectanglesOutput[] = elementRegions ? [...elementRegions] : []
     // `execute` is an element command: when the browser says that the element reference is stale, for example
     // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
-    for (const el of elements) {
+    for (const el of elementRegions ? [] : elements) {
         regionsFromElements.push(await el.execute(rawDocumentBcr))
     }
 

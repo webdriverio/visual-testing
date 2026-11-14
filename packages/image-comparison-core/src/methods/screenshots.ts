@@ -6,12 +6,17 @@ import type {
     FullPageScreenshotOptions,
     FullPageScreenshotNativeMobileOptions,
     FullPageScreenshotsData,
+    ScrollContainerFullPageOptions,
     TakeWebElementScreenshot,
     TakeWebElementScreenshotData,
 } from './screenshots.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
 import getElementVisibleRect from '../clientSideScripts/getElementVisibleRect.js'
+import getScrollContainerData from '../clientSideScripts/getScrollContainerData.js'
+import scrollContainerTo from '../clientSideScripts/scrollContainerTo.js'
+import prepareScrollContainer from '../clientSideScripts/prepareScrollContainer.js'
+import getVisibleElementViewportRect from '../clientSideScripts/getVisibleElementViewportRect.js'
 import type { ElementRectanglesOptions, RectanglesOutput } from './rectangles.interfaces.js'
 import { determineElementRectangles } from './rectangles.js'
 
@@ -521,6 +526,292 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
         ),
         data: viewportScreenshots,
     }
+}
+
+/**
+ * Take a full page screenshot of a page where a scroll container scrolls and not the page (#125).
+ * The image is the viewport with the container expanded: the rows above the container (for example a header), the
+ * full content of the container, then the rows below the container (for example a footer). Columns next to the
+ * container (for example a sidebar) are only in the image for the first viewport.
+ * All values are in CSS pixels until `toDeviceTile`.
+ */
+export async function getScrollContainerFullPageScreenshotsData(
+    browserInstance: WebdriverIO.Browser,
+    options: ScrollContainerFullPageOptions,
+): Promise<FullPageScreenshotsData> {
+    const { devicePixelRatio, hideAfterFirstScroll, hideScrollBars: hideScrollbar, ignoreElements = [], scrollContainer } = options
+    const startScrollTop = (await scrollContainer.execute(getScrollContainerData)).scrollTop
+    let capture: ScrollContainerCapture | undefined
+
+    try {
+        // Without scroll snap, so the container stops at the scroll position of each screenshot
+        await scrollContainer.execute(prepareScrollContainer, true, { scrollbar: hideScrollbar, snap: true })
+
+        for (let restarts = 0; !capture; restarts++) {
+            const result = await captureScrollContainer(browserInstance, options)
+            if ('capture' in result) {
+                capture = result.capture
+                continue
+            }
+            // The rows in the screenshots so far are not up to date any more: start again from the top
+            if (restarts >= MAX_SCROLL_CONTAINER_RESTARTS) {
+                throw new Error(`The scroll position of the scroll container changed while the screenshots were taken (${result.moved.scrollTop} px instead of ${result.moved.target} px), ${restarts + 1} times: content above the visible rows changed, or a script scrolled the container. The full page screenshot can not be stitched.`)
+            }
+            await showHideAfterFirstScrollElements(browserInstance, hideAfterFirstScroll)
+        }
+    } finally {
+        await showHideAfterFirstScrollElements(browserInstance, hideAfterFirstScroll)
+        // The scrollbar first: a scrollbar that takes space changes the layout, and so the scroll positions
+        if (hideScrollbar) {
+            await scrollContainer.execute(prepareScrollContainer, false, { scrollbar: true, snap: false })
+        }
+        // Scroll the container back, as the page is scrolled back after a full page screenshot (#1231). Scroll snap is
+        // still off, so the container stops at its start position
+        await scrollContainer.execute(scrollContainerTo, startScrollTop)
+        await scrollContainer.execute(prepareScrollContainer, false, { scrollbar: false, snap: true })
+    }
+
+    const { captures, fullPageHeight, tiles, viewport } = capture
+
+    return {
+        fullPageHeight: Math.round(fullPageHeight * devicePixelRatio),
+        fullPageWidth: Math.round(viewport.width * devicePixelRatio),
+        data: tiles.map((tile) => ({ ...toDeviceTile(tile, viewport, devicePixelRatio), screenshot: captures[tile.screenshotIndex].screenshot })),
+        ...(ignoreElements.length > 0
+            ? { elementRegions: getScrollContainerElementRegions(tiles, captures.map(({ elementBoxes }) => elementBoxes), viewport) }
+            : {}),
+    }
+}
+
+/**
+ * Scroll the container from its first row to its last row, take the screenshots and make the tiles of the image.
+ * Returns `moved` when the scroll position of the container changed after a scroll, for example because content loaded
+ * above the visible rows (the browser then keeps the visible rows in place) or because a script scrolled it: the rows
+ * of the earlier screenshots can then be out of date.
+ */
+async function captureScrollContainer(
+    browserInstance: WebdriverIO.Browser,
+    options: ScrollContainerFullPageOptions,
+): Promise<{ capture: ScrollContainerCapture } | { moved: { scrollTop: number, target: number } }> {
+    const { devicePixelRatio, fullPageScrollTimeout, hideAfterFirstScroll, ignoreElements = [], scrollContainer } = options
+    const tiles: ScrollContainerTile[] = []
+    // The screenshots, with the boxes of the ignore elements in the viewport when each screenshot was taken
+    const captures: ScrollContainerCapture['captures'] = []
+    let viewport = options.viewport
+    // The container content rows [0, covered) are in the image
+    let covered = 0
+    let container = await scrollContainer.execute(getScrollContainerData)
+
+    for (let i = 0; ; i++) {
+        // A position at a device pixel, which the browser can keep: the screenshot then starts at or above the next row.
+        // The browser stops at the end of the content, which can be before the target
+        const target = Math.floor(covered * devicePixelRatio) / devicePixelRatio
+        const scrolledTo = await scrollContainer.execute(scrollContainerTo, target)
+        if (i === 1 && hideAfterFirstScroll.length > 0) {
+            try {
+                await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
+            } catch (e) {
+                logHiddenRemovedError(e)
+            }
+        }
+        // Simply wait the amount of time specified for lazy-loading
+        await waitFor(fullPageScrollTimeout)
+        const screenshot = await takeBase64Screenshot(browserInstance)
+        // The container when the screenshot was taken: lazy loading can make its content longer, and content that
+        // loads above the visible rows can change its scroll position
+        container = await scrollContainer.execute(getScrollContainerData)
+        const elementBoxes: (ElementBox | null)[] = []
+        for (const element of ignoreElements) {
+            elementBoxes.push(await element.execute(getVisibleElementViewportRect))
+        }
+
+        if (!viewport) {
+            // The screenshot is the viewport. Android ChromeDriver screenshots can be higher than the viewport (the
+            // area of the hidden toolbar at the bottom), so not more than the size of the viewport of the page
+            const { height, width } = getBase64ScreenshotSize(screenshot, devicePixelRatio)
+            viewport = { x: 0, y: 0, width: Math.min(width, container.viewportWidth), height: Math.min(height, container.viewportHeight) }
+        }
+        assertScrollContainerInViewport(container, viewport.height)
+        const { top, scrollTop } = container
+        const visibleHeight = Math.min(top + container.height, viewport.height) - top
+        // The position changed during the wait, or the screenshot does not start at the next row (rows are missing)
+        if (Math.abs(scrollTop - scrolledTo) > SCROLL_POSITION_TOLERANCE || scrollTop > target + SCROLL_POSITION_TOLERANCE) {
+            return { moved: { scrollTop, target } }
+        }
+
+        captures.push({ screenshot, elementBoxes })
+        const screenshotIndex = captures.length - 1
+        if (i === 0) {
+            // The rows above the container and the first visible part of the container, with all columns
+            const firstHeight = Math.min(visibleHeight, container.scrollHeight)
+            tiles.push({
+                canvasWidth: viewport.width,
+                canvasYPosition: 0,
+                imageHeight: top + firstHeight,
+                imageWidth: viewport.width,
+                imageXPosition: viewport.x,
+                imageYPosition: viewport.y,
+                screenshotIndex,
+                scrollTop: 0,
+            })
+            covered = firstHeight
+        } else {
+            // The new rows of the container content, only the columns of the container
+            const newRows = Math.min(scrollTop + visibleHeight, container.scrollHeight) - covered
+            if (newRows <= 0) {
+                break
+            }
+            tiles.push({
+                canvasWidth: viewport.width,
+                canvasXPosition: Math.max(0, container.left),
+                canvasYPosition: top + covered,
+                imageHeight: newRows,
+                imageWidth: Math.min(container.width, viewport.width - Math.max(0, container.left)),
+                imageXPosition: viewport.x + Math.max(0, container.left),
+                imageYPosition: viewport.y + top + covered - scrollTop,
+                screenshotIndex,
+                scrollTop,
+            })
+            covered += newRows
+        }
+
+        if (covered >= container.scrollHeight) {
+            break
+        }
+    }
+
+    if (!viewport) {
+        throw new Error('Could not take a screenshot of the scroll container')
+    }
+
+    // The rows below the container (for example a footer), from the last screenshot
+    const containerBottom = Math.min(container.top + container.height, viewport.height)
+    const belowHeight = Math.max(0, viewport.height - containerBottom)
+    if (belowHeight > 0) {
+        tiles.push({
+            canvasWidth: viewport.width,
+            canvasYPosition: container.top + covered,
+            imageHeight: belowHeight,
+            imageWidth: viewport.width,
+            imageXPosition: viewport.x,
+            imageYPosition: viewport.y + containerBottom,
+            screenshotIndex: captures.length - 1,
+            // The last screenshot shows the last rows of the container right above these rows
+            scrollTop: container.scrollTop,
+        })
+    }
+
+    return { capture: { captures, fullPageHeight: container.top + covered + belowHeight, tiles, viewport } }
+}
+
+async function showHideAfterFirstScrollElements(browserInstance: WebdriverIO.Browser, hideAfterFirstScroll: ScrollContainerFullPageOptions['hideAfterFirstScroll']) {
+    if (hideAfterFirstScroll.length === 0) {
+        return
+    }
+    try {
+        await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, false)
+    } catch (e) {
+        logHiddenRemovedError(e)
+    }
+}
+
+/**
+ * The scroll position of a scroll container can change while the screenshots are taken, then the screenshots are taken
+ * again from the top, at most this many times
+ */
+const MAX_SCROLL_CONTAINER_RESTARTS = 3
+/**
+ * A difference of the scroll position that is only rounding, in CSS pixels: the browser keeps the scroll position in
+ * device pixels (or in smaller layout units), and the container can start at a fractional row
+ */
+const SCROLL_POSITION_TOLERANCE = 1
+
+type ElementBox = { x: number, y: number, width: number, height: number }
+type ScrollContainerTile = Omit<FullPageScreenshotsData['data'][number], 'screenshot'> & {
+    screenshotIndex: number
+    /** The scroll position of the container in the screenshot of the tile */
+    scrollTop: number
+}
+type ScrollContainerCapture = {
+    captures: { screenshot: string, elementBoxes: (ElementBox | null)[] }[]
+    fullPageHeight: number
+    tiles: ScrollContainerTile[]
+    viewport: { x: number, y: number, width: number, height: number }
+}
+
+/**
+ * A tile in device pixels. The height and the width come from the rounded edges of the tile, so the tiles touch without
+ * a gap or an overlap, also when the CSS values are fractional. The place of the crop in the screenshot comes from the
+ * place on the canvas: a canvas row and the screenshot row of the same content differ by the scroll position of the
+ * container in device pixels, which the browser keeps as a whole number (the top of the container cancels out). So
+ * the rounding of the other values can not move the crop by a row
+ */
+function toDeviceTile(
+    { screenshotIndex: _screenshotIndex, scrollTop, ...tile }: ScrollContainerTile,
+    viewport: { x: number, y: number },
+    devicePixelRatio: number,
+): Omit<FullPageScreenshotsData['data'][number], 'screenshot'> {
+    const toDevice = (value: number) => Math.round(value * devicePixelRatio)
+    const { canvasXPosition, canvasYPosition, imageHeight, imageWidth } = tile
+
+    return {
+        canvasWidth: toDevice(tile.canvasWidth),
+        ...(canvasXPosition === undefined ? {} : { canvasXPosition: toDevice(canvasXPosition) }),
+        canvasYPosition: toDevice(canvasYPosition),
+        imageHeight: toDevice(canvasYPosition + imageHeight) - toDevice(canvasYPosition),
+        imageWidth: canvasXPosition === undefined ? toDevice(imageWidth) : toDevice(canvasXPosition + imageWidth) - toDevice(canvasXPosition),
+        imageXPosition: toDevice(viewport.x) + toDevice(canvasXPosition ?? 0),
+        imageYPosition: toDevice(viewport.y) + toDevice(canvasYPosition) - toDevice(scrollTop),
+    }
+}
+
+/**
+ * Only a scroll container that is fully in the viewport shows all its rows: rows above or below the viewport would be
+ * missing in the full page image
+ */
+function assertScrollContainerInViewport(container: { top: number, height: number }, viewportHeight: number) {
+    const bottom = container.top + container.height
+    if (bottom <= 0 || container.top >= viewportHeight) {
+        throw new Error('The scroll container of the full page screenshot is not in the viewport')
+    }
+    if (container.top < 0) {
+        throw new Error(`The top of the scroll container is above the viewport (${Math.round(container.top)} px), so its first rows can not be in the full page screenshot. Scroll the page to the scroll container first.`)
+    }
+    // 1 px for rounding
+    if (bottom > viewportHeight + 1) {
+        throw new Error(`The bottom of the scroll container is below the viewport (${Math.round(bottom)} px, viewport ${Math.round(viewportHeight)} px), so its last rows can not be in the full page screenshot. The scroll container must fit in the viewport.`)
+    }
+}
+
+/**
+ * Get the places of the ignore elements in the full page image: the part of each element box that is in the rows and
+ * columns of a tile, moved to the place of that tile. An element that is in more than one tile (for example across 2
+ * tiles, or a sticky element at the top of the container) gets a region in each tile.
+ */
+function getScrollContainerElementRegions(tiles: ScrollContainerTile[], elementBoxes: (ElementBox | null)[][], viewport: { x: number, y: number }): ElementBox[] {
+    const regions: ElementBox[] = []
+    for (const tile of tiles) {
+        for (const box of elementBoxes[tile.screenshotIndex]) {
+            if (!box) {
+                continue
+            }
+            // The box in the screenshot, then the part of it in the tile
+            const left = Math.max(box.x + viewport.x, tile.imageXPosition)
+            const right = Math.min(box.x + viewport.x + box.width, tile.imageXPosition + tile.imageWidth)
+            const top = Math.max(box.y + viewport.y, tile.imageYPosition)
+            const bottom = Math.min(box.y + viewport.y + box.height, tile.imageYPosition + tile.imageHeight)
+            if (right > left && bottom > top) {
+                regions.push({
+                    x: left - tile.imageXPosition + (tile.canvasXPosition ?? 0),
+                    y: top - tile.imageYPosition + tile.canvasYPosition,
+                    width: right - left,
+                    height: bottom - top,
+                })
+            }
+        }
+    }
+
+    return regions
 }
 
 /**

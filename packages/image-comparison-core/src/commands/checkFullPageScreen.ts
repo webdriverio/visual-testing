@@ -56,6 +56,7 @@ export default async function checkFullPageScreen(
             ignore: checkFullPageOptions.method.ignore,
             ignoreRegionPadding,
             removeElements,
+            scrollContainer: checkFullPageOptions.method.scrollContainer,
             waitForFontsLoaded,
         },
     }

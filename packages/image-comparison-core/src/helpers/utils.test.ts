@@ -42,6 +42,7 @@ import {
     logAllDeprecatedCompareOptions,
     prepareComparisonFilePaths,
     updateVisualBaseline,
+    withoutScrollContainer,
 } from './utils.js'
 import type { FormatFileNameOptions, GetAndCreatePathOptions, ExtractCommonCheckVariablesOptions } from './utils.interfaces.js'
 import { IMAGE_STRING } from '../mocks/image.js'
@@ -1353,5 +1354,26 @@ describe('utils', () => {
             expect(result.platformName).toBe('Android')
             expect(result).toMatchSnapshot()
         })
+    })
+})
+
+describe('withoutScrollContainer (#125)', () => {
+    afterEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('should return the options when there is no scroll container', () => {
+        const options: { method: { hideScrollBars: boolean, scrollContainer?: string } } = { method: { hideScrollBars: true } }
+
+        expect(withoutScrollContainer(options, 'checkTabbablePage')).toBe(options)
+        expect(log.warn).not.toHaveBeenCalled()
+    })
+
+    it('should remove the scroll container and warn', () => {
+        const options = { method: { hideScrollBars: true, scrollContainer: 'element' } }
+
+        expect(withoutScrollContainer(options, 'saveTabbablePage')).toEqual({ method: { hideScrollBars: true, scrollContainer: undefined } })
+        expect(options.method.scrollContainer).toBe('element')
+        expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('`scrollContainer` is not supported by `saveTabbablePage`'))
     })
 })

@@ -2,7 +2,7 @@ import type { BaseMobileWebScreenshotOptions, BaseWebScreenshotOptions, Folders 
 import type { DefaultOptions } from '../helpers/options.interfaces.js'
 import type { ResizeDimensions } from '../methods/images.interfaces.js'
 import type { CheckMethodOptions } from './check.interfaces.js'
-import type { ElementIgnore } from './element.interfaces.js'
+import type { ElementIgnore, WicElement } from './element.interfaces.js'
 
 export interface SaveFullPageOptions {
     wic: DefaultOptions;
@@ -36,6 +36,14 @@ export interface SaveFullPageMethodOptions extends Partial<Folders>, BaseWebScre
      * @default false
      */
     userBasedFullPageScreenshot?: boolean;
+    /**
+     * The element that scrolls, for a page where a container scrolls and not the page itself (for example an app
+     * with a fixed header). The image is then the viewport with this container expanded: the part above the
+     * container, the full content of the container, and the part below it. The screenshot scrolls and stitches,
+     * also in a WebDriver BiDi session.
+     * @default undefined
+     */
+    scrollContainer?: WicElement;
 }
 
 export interface CheckFullPageMethodOptions extends SaveFullPageMethodOptions, CheckMethodOptions { }

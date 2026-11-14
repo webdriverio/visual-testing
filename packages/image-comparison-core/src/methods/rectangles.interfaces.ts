@@ -178,6 +178,11 @@ export interface DetermineWebFullPageIgnoreRegionsOptions {
      * @default 0
      */
     fullPageCropTopPaddingCSS?: number;
+    /**
+     * With a scroll container (#125): the places of the ignore elements in the full page image, in CSS pixels, measured
+     * at each screenshot. The elements are then not measured again.
+     */
+    elementRegions?: RectanglesOutput[];
 }
 
 export interface DetermineWebElementIgnoreRegionsOptions {
