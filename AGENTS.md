@@ -100,6 +100,8 @@ Mock the browser in unit tests; do not start a browser.
   mobile web spec or its configs. Locally: start an emulator and Appium, then
   `ANDROID_AVD=<avd> ANDROID_PLATFORM_VERSION=<version> pnpm test.local.emus.web`
   (see [.github/scripts/android-emulator-e2e.sh](.github/scripts/android-emulator-e2e.sh)).
+  The job also compares `pnpm test.local.emus.web.bidi` with the baselines of the
+  Classic run: a wrong BiDi image passes against a BiDi baseline.
 - [`ios simulator`](.github/workflows/ios-simulator.yml): the same for iOS, on
   a new simulator in a macOS runner. Locally: start Appium with the XCUITest
   driver, then

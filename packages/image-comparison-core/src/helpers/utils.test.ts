@@ -47,7 +47,9 @@ import type { FormatFileNameOptions, GetAndCreatePathOptions, ExtractCommonCheck
 import { IMAGE_STRING } from '../mocks/image.js'
 import { DEVICE_RECTANGLES } from './constants.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
+import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
+import { isPageLoaded } from '../clientSideScripts/isPageLoaded.js'
 import type { ClassOptions } from './options.interfaces.js'
 
 vi.mock('../clientSideScripts/injectWebviewOverlay.js', () => ({
@@ -58,6 +60,9 @@ vi.mock('../clientSideScripts/getMobileWebviewClickAndDimensions.js', () => ({
 }))
 vi.mock('../clientSideScripts/checkMetaTag.js', () => ({
     checkMetaTag: Symbol('checkMetaTag'),
+}))
+vi.mock('../clientSideScripts/isPageLoaded.js', () => ({
+    isPageLoaded: Symbol('isPageLoaded'),
 }))
 
 const log = logger('test')
@@ -596,25 +601,84 @@ describe('utils', () => {
     })
 
     describe('loadBase64Html', () => {
+        const blobUrl = 'blob:http://example.com/new-page'
         let mockBrowserInstance: WebdriverIO.Browser
 
         beforeEach(() => {
             mockBrowserInstance = createMockBrowserInstance()
         })
 
-        it('should call browserInstance.execute with blob URL creation for all platforms', async () => {
-            await loadBase64Html({ browserInstance: mockBrowserInstance, isIOS: false })
-
-            expect(mockBrowserInstance.execute).toHaveBeenCalledTimes(1)
-            expect(mockBrowserInstance.execute).toHaveBeenCalledWith(expect.any(Function), expect.any(String))
+        afterEach(() => {
+            vi.useRealTimers()
+            vi.restoreAllMocks()
         })
 
-        it('should call browserInstance.execute with blob URL creation and checkMetaTag for iOS', async () => {
-            await loadBase64Html({ browserInstance: mockBrowserInstance, isIOS: true })
+        it('should navigate to a blob URL and check that the new page is loaded', async () => {
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce(blobUrl)
+                .mockResolvedValueOnce(true)
+
+            await loadBase64Html({ browserInstance: mockBrowserInstance, isIOS: false })
 
             expect(mockBrowserInstance.execute).toHaveBeenCalledTimes(2)
             expect(mockBrowserInstance.execute).toHaveBeenNthCalledWith(1, expect.any(Function), expect.any(String))
-            expect(mockBrowserInstance.execute).toHaveBeenNthCalledWith(2, checkMetaTag)
+            expect(mockBrowserInstance.execute).toHaveBeenNthCalledWith(2, isPageLoaded, blobUrl)
+        })
+
+        it('should check the meta tag on iOS after the new page is loaded', async () => {
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce(blobUrl)
+                .mockResolvedValueOnce(true)
+                .mockResolvedValueOnce(undefined)
+
+            await loadBase64Html({ browserInstance: mockBrowserInstance, isIOS: true })
+
+            expect(mockBrowserInstance.execute).toHaveBeenCalledTimes(3)
+            expect(mockBrowserInstance.execute).toHaveBeenNthCalledWith(2, isPageLoaded, blobUrl)
+            expect(mockBrowserInstance.execute).toHaveBeenNthCalledWith(3, checkMetaTag)
+        })
+
+        it('should wait while the browser still shows the previous page', async () => {
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce(blobUrl)
+                .mockResolvedValueOnce(false)
+                .mockResolvedValueOnce(false)
+                .mockResolvedValueOnce(true)
+
+            await loadBase64Html({ browserInstance: mockBrowserInstance, isIOS: false })
+
+            expect(mockBrowserInstance.execute).toHaveBeenCalledTimes(4)
+        })
+
+        // In a WebDriver BiDi session the check can run while the browser replaces the page (#1232)
+        it('should check again when the browser replaces the page during the check', async () => {
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce(blobUrl)
+                .mockRejectedValueOnce(new Error('unknown error - Cannot find context with specified id'))
+                .mockRejectedValueOnce(new Error('unknown error - execution contexts cleared'))
+                .mockResolvedValueOnce(true)
+
+            await loadBase64Html({ browserInstance: mockBrowserInstance, isIOS: false })
+
+            expect(mockBrowserInstance.execute).toHaveBeenCalledTimes(4)
+            expect(warnSpy).not.toHaveBeenCalled()
+        })
+
+        // For example when the page does not allow the navigation: the measurement can still work on the current page
+        it('should warn and continue when the new page does not load in time', async () => {
+            vi.useFakeTimers()
+            const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => {})
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce(blobUrl)
+                .mockResolvedValue(false)
+
+            const loaded = loadBase64Html({ browserInstance: mockBrowserInstance, isIOS: false })
+            await vi.advanceTimersByTimeAsync(10000)
+            await loaded
+
+            expect(warnSpy).toHaveBeenCalledOnce()
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('did not load'))
         })
     })
 
@@ -679,7 +743,8 @@ describe('utils', () => {
 
         it('should return correct device rectangles for iOS WebView flow', async () => {
             vi.mocked(mockBrowserInstance.execute)
-                .mockResolvedValueOnce(undefined) // loadBase64Html
+                .mockResolvedValueOnce('blob:page') // loadBase64Html
+                .mockResolvedValueOnce(true) // isPageLoaded
                 .mockResolvedValueOnce(undefined) // checkMetaTag
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
@@ -696,6 +761,24 @@ describe('utils', () => {
             expect(result).toMatchSnapshot()
         })
 
+        it('should inject the overlay only after the new page is loaded', async () => {
+            vi.mocked(mockBrowserInstance.execute)
+                .mockResolvedValueOnce('blob:page') // loadBase64Html
+                .mockResolvedValueOnce(true) // isPageLoaded
+                .mockResolvedValueOnce(undefined) // injectWebviewOverlay
+                .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
+
+            await getMobileViewPortPosition({
+                browserInstance: mockBrowserInstance,
+                ...baseOptions,
+                isAndroid: true,
+                isIOS: false,
+            })
+
+            expect(mockBrowserInstance.execute).toHaveBeenNthCalledWith(2, isPageLoaded, 'blob:page')
+            expect(mockBrowserInstance.execute).toHaveBeenNthCalledWith(3, injectWebviewOverlay, true)
+        })
+
         it('should handle rounded overlay values from non-integer DPR', async () => {
             const dpr = 2.625
             const screenW = 1080
@@ -710,7 +793,8 @@ describe('utils', () => {
             const overlayHeight = Math.round(cssHeight * dpr)
 
             vi.mocked(mockBrowserInstance.execute)
-                .mockResolvedValueOnce(undefined) // loadBase64Html
+                .mockResolvedValueOnce('blob:page') // loadBase64Html
+                .mockResolvedValueOnce(true) // isPageLoaded
                 .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce({
@@ -743,12 +827,14 @@ describe('utils', () => {
 
             vi.mocked(mockBrowserInstance.execute)
                 // --- Attempt 1: overlay returns zeros (Start Surface is blocking) ---
-                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce('blob:page') // loadBase64Html (blob)
+                .mockResolvedValueOnce(true) // isPageLoaded
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce({ x: 0, y: 0, width: 0, height: 0 }) // getMobileWebviewClickAndDimensions
                 // --- Dismiss Start Surface: Back button ---
                 // --- Attempt 2: overlay returns valid data ---
-                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce('blob:page') // loadBase64Html (blob)
+                .mockResolvedValueOnce(true) // isPageLoaded
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
 
@@ -777,7 +863,8 @@ describe('utils', () => {
 
             const zeroOverlay = { x: 0, y: 0, width: 0, height: 0 }
             const attemptMocks = () => [
-                undefined, // loadBase64Html
+                'blob:page', // loadBase64Html
+                true, // isPageLoaded
                 undefined, // injectWebviewOverlay
                 zeroOverlay, // getMobileWebviewClickAndDimensions
             ]
@@ -810,12 +897,14 @@ describe('utils', () => {
 
             vi.mocked(mockBrowserInstance.execute)
                 // --- Attempt 1: a Safari tip takes the native tap, the overlay gets nothing ---
-                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce('blob:page') // loadBase64Html (blob)
+                .mockResolvedValueOnce(true) // isPageLoaded
                 .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce({ x: 0, y: 0, width: 0, height: 0 }) // getMobileWebviewClickAndDimensions
                 // --- Attempt 2: the tip is closed, the overlay gets the tap ---
-                .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                .mockResolvedValueOnce('blob:page') // loadBase64Html (blob)
+                .mockResolvedValueOnce(true) // isPageLoaded
                 .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
                 .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                 .mockResolvedValueOnce({ x: 150, y: 300, width: 100, height: 100 }) // getMobileWebviewClickAndDimensions
@@ -845,7 +934,8 @@ describe('utils', () => {
             const mocked = vi.mocked(mockBrowserInstance.execute)
             for (let i = 0; i < 3; i++) {
                 mocked
-                    .mockResolvedValueOnce(undefined) // loadBase64Html (blob)
+                    .mockResolvedValueOnce('blob:page') // loadBase64Html (blob)
+                    .mockResolvedValueOnce(true) // isPageLoaded
                     .mockResolvedValueOnce(undefined) // checkMetaTag (iOS)
                     .mockResolvedValueOnce(undefined) // injectWebviewOverlay
                     .mockResolvedValueOnce({ x: 0, y: 0, width: 0, height: 0 }) // getMobileWebviewClickAndDimensions

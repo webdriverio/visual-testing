@@ -25,12 +25,17 @@ import type {
 } from './utils.interfaces.js'
 import type { ClassOptions, CompareOptions } from './options.interfaces.js'
 import { checkMetaTag } from '../clientSideScripts/checkMetaTag.js'
+import { isPageLoaded } from '../clientSideScripts/isPageLoaded.js'
 import { injectWebviewOverlay } from '../clientSideScripts/injectWebviewOverlay.js'
 import { getMobileWebviewClickAndDimensions } from '../clientSideScripts/getMobileWebviewClickAndDimensions.js'
 import type { DeviceRectangles } from '../methods/rectangles.interfaces.js'
 import type { BaseDimensions } from '../base.interfaces.js'
 
 const log = logger('@wdio/visual-service:@wdio/image-comparison-core:utils')
+
+/** Check for at most 5 seconds if the browser shows the new page */
+const PAGE_LOAD_CHECKS = 50
+const PAGE_LOAD_CHECK_INTERVAL = 100
 
 /**
  * Resolve the folder path without creating it on disk
@@ -428,6 +433,36 @@ export async function getMobileScreenSize({
 }
 
 /**
+ * Wait until the browser shows the new page after a navigation from a script.
+ *
+ * WebDriver Classic drivers wait for the navigation before they run the next command. In a WebDriver BiDi session
+ * Chrome holds the next script until the new page commits, and then rejects it, for example with `Cannot find context
+ * with specified id` or `execution contexts cleared` (#1232). The error depends on the timing, so every error during
+ * the wait means "check again". The next command shows an error that stays.
+ */
+async function waitForPageLoad(browserInstance: WebdriverIO.Browser, url: string): Promise<void> {
+    let lastError: unknown
+
+    for (let attempt = 0; attempt < PAGE_LOAD_CHECKS; attempt++) {
+        try {
+            if (await browserInstance.execute(isPageLoaded, url)) {
+                return
+            }
+            lastError = undefined
+        } catch (error: unknown) {
+            lastError = error
+        }
+
+        await waitFor(PAGE_LOAD_CHECK_INTERVAL)
+    }
+
+    log.warn(
+        `The page for the viewport measurement did not load in ${PAGE_LOAD_CHECKS * PAGE_LOAD_CHECK_INTERVAL} ms, `
+        + `continue on the current page.${lastError ? ` Last error: ${lastError}` : ''}`
+    )
+}
+
+/**
  * Load a base64 HTML page in the browser
  */
 export async function loadBase64Html({ browserInstance, isIOS }: LoadBase64HtmlOptions): Promise<void> {
@@ -455,11 +490,15 @@ export async function loadBase64Html({ browserInstance, isIOS }: LoadBase64HtmlO
         </body>
         </html>`
 
-    await browserInstance.execute((htmlContent: string) => {
+    const blobUrl = await browserInstance.execute((htmlContent: string) => {
         const blob = new Blob([htmlContent], { type: 'text/html' })
         const blobUrl = URL.createObjectURL(blob)
         window.location.href = blobUrl
+
+        return blobUrl
     }, htmlContent)
+
+    await waitForPageLoad(browserInstance, blobUrl)
 
     if (isIOS) {
         await browserInstance.execute(checkMetaTag)
