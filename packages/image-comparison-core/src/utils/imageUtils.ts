@@ -83,6 +83,37 @@ export function cropImage(img: RawImage, x: number, y: number, w: number, h: num
     return { data, width: w, height: h }
 }
 
+// True when both images have the same pixels in the area. An area that is not fully inside both images is not compared.
+export function hasSameArea(a: RawImage, b: RawImage, x: number, y: number, w: number, h: number): boolean {
+    if (x < 0 || y < 0 || w <= 0 || h <= 0) { return false }
+    if (x + w > a.width || y + h > a.height || x + w > b.width || y + h > b.height) { return false }
+    const rowBytes = w * 4
+    for (let row = 0; row < h; row++) {
+        const aOffset = ((y + row) * a.width + x) * 4
+        const bOffset = ((y + row) * b.width + x) * 4
+        if (Buffer.compare(a.data.subarray(aOffset, aOffset + rowBytes), b.data.subarray(bOffset, bOffset + rowBytes)) !== 0) {
+            return false
+        }
+    }
+    return true
+}
+
+// True when all pixels of the area have the same value, for example a blank part of a page. An area that is not fully
+// inside the image is not uniform.
+export function isUniformArea(img: RawImage, x: number, y: number, w: number, h: number): boolean {
+    if (x < 0 || y < 0 || w <= 0 || h <= 0 || x + w > img.width || y + h > img.height) { return false }
+    const first = (y * img.width + x) * 4
+    for (let row = 0; row < h; row++) {
+        const offset = ((y + row) * img.width + x) * 4
+        for (let i = 0; i < w * 4; i++) {
+            if (img.data[offset + i] !== img.data[first + (i % 4)]) {
+                return false
+            }
+        }
+    }
+    return true
+}
+
 // Porter-Duff "over" compositing. Mutates base in place.
 export function compositeImage(base: RawImage, overlay: RawImage, offsetX: number, offsetY: number, opacity = 1): void {
     for (let oy = 0; oy < overlay.height; oy++) {
