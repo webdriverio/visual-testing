@@ -79,4 +79,20 @@ describe('scrollBackToPosition', () => {
         expect(document.documentElement.style.getPropertyPriority('scroll-behavior')).toBe('important')
         expect(document.body.style.getPropertyValue('scroll-behavior')).toBe('')
     })
+
+    it('should also restore ancestor documents saved before scrolling', () => {
+        html = setScrollState(document.documentElement, { scrollHeight: 3000, clientHeight: 800 })
+        const parentDoc = document.implementation.createHTMLDocument('parent')
+        setScrollState(parentDoc.documentElement, { scrollHeight: 4000, clientHeight: 900 })
+        parentDoc.documentElement.scrollTop = 750
+        ;(window as unknown as { __wdioSavedScrollDocs?: Array<{ doc: Document, position: number }> }).__wdioSavedScrollDocs = [
+            { doc: parentDoc, position: 120 },
+        ]
+
+        scrollBackToPosition(420)
+
+        expect(document.documentElement.scrollTop).toBe(420)
+        expect(parentDoc.documentElement.scrollTop).toBe(120)
+        expect((window as unknown as { __wdioSavedScrollDocs?: unknown }).__wdioSavedScrollDocs).toBeUndefined()
+    })
 })

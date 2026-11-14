@@ -1245,6 +1245,29 @@ describe('rectangles', () => {
                 { x: 10, y: 20, width: 100, height: 40 },
             ])
         })
+
+        it('should scale ignored element regions when rootElement is inside a scaled cross-origin frame', async () => {
+            const rootElement = { elementId: 'root', selector: '.root' } as WebdriverIO.Element
+            const childElement = mock<WebdriverIO.Element>({
+                elementId: 'child-id',
+                selector: '.child',
+                execute: vi.fn().mockResolvedValue({ x: 20, y: 30, width: 100, height: 40, framePath: [0] }),
+            })
+            mockExecute.mockResolvedValueOnce({ x: 10, y: 15, scaleX: 0.5, scaleY: 0.5 })
+
+            const result = await determineWebElementIgnoreRegions({
+                browserInstance: mockBrowserInstance as unknown as WebdriverIO.Browser,
+                devicePixelRatio: 2,
+                rootElement,
+                ignoreRegionPadding: 0,
+                isWebDriverElementScreenshot: false,
+            }, [childElement])
+
+            // CSS: (20,30,100,40) × frameScale(0.5) → (10,15,50,20) × DPR(2) → (20,30,100,40)
+            expect(result).toEqual([
+                { x: 20, y: 30, width: 100, height: 40 },
+            ])
+        })
     })
 
     describe('determineDeviceBlockOuts', () => {

@@ -110,11 +110,7 @@ describe('@wdio/visual-service WebdriverIO v10 browsing contexts', () => {
         expect(await browser.checkTabbablePage('v10-tabbable-modal')).toBe(0)
     })
 
-    // Known gap, not supported yet: the element rect comes from WebDriver Classic `getElementRect`, which cannot
-    // find an element in a frame (`no such element`), and `browsingContext.captureScreenshot` only accepts a
-    // top-level context. A fix must add the offset of the iframe to the rect of the element in the frame.
-    // Remove `.skip` when this is supported.
-    it.skip('takes an element screenshot of an element in a frame found with context.frame()', async () => {
+    it('takes an element screenshot of an element in a frame found with context.frame()', async () => {
         await browser.url(fixture('box.html'))
         // creates the baseline of the box outside a frame
         await browser.checkElement(await $('#target'), 'v10-box')
