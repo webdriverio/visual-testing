@@ -95,7 +95,7 @@
     "saucelabs": "^9.3.0",
     "typescript": "^6.0.3",
     "vitest": "^5.0.3",
-    "vitest-mock-extended": "^5.1.1",
+    "vitest-mock-extended": "^6.0.0",
     "wdio-lambdatest-service": "^4.0.1",
     "webdriverio": "^10.2.0"
   },
