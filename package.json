@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
-    "@inquirer/prompts": "^8.7.5",
+    "@inquirer/prompts": "^8.8.0",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@tsconfig/node22": "^22.0.6",
     "@types/jsdom": "~30.0.0",
