@@ -114,8 +114,8 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3(@types/node@24.19.2)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.1.0)(jsdom@30.1.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
       vitest-mock-extended:
-        specifier: ^5.1.1
-        version: 5.1.1(typescript@6.0.3)(vitest@5.0.3)
+        specifier: ^6.0.0
+        version: 6.0.0(typescript@6.0.3)(vitest@5.0.3)
       wdio-lambdatest-service:
         specifier: ^4.0.1
         version: 4.0.1(patch_hash=07d272cca35a334e8835c85beb552eb4f8cdb6e76edba1cab0289e9c092dbf1b)(@wdio/cli@10.2.0(@types/node@24.19.2)(@wdio/visual-service@packages+visual-service)(expect-webdriverio@8.0.0(@wdio/types@10.2.0)(webdriverio@10.2.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0)))(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))(@wdio/types@10.2.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webdriverio@10.2.0(proxy-agent@8.0.2(supports-color@8.1.1))(supports-color@8.1.1)(yauzl@3.4.0))
@@ -5132,8 +5132,8 @@ packages:
       yaml:
         optional: true
 
-  vitest-mock-extended@5.1.1:
-    resolution: {integrity: sha512-k5Ji2+t4+nsdepXeakCkilyKydtgaULtP0HsjwQGIZsYr5hDTqrwCtC0+Sh0YBKUS7cY/Wxplf7SVjcZstTIMQ==}
+  vitest-mock-extended@6.0.0:
+    resolution: {integrity: sha512-hVdWq7UDWTTfhcgQIrzZ2V8P3JkWugTAO3qHhC8wZYDXFEZHlrvDdew4gkPCbRV2rdEjhwqvKcNx6gZRTLpjXg==}
     peerDependencies:
       typescript: 3.x || 4.x || 5.x || 6.x || 7.x
       vitest: '>=4.0.0'
@@ -10655,7 +10655,7 @@ snapshots:
       tsx: 4.23.15
       yaml: 2.9.1
 
-  vitest-mock-extended@5.1.1(typescript@6.0.3)(vitest@5.0.3):
+  vitest-mock-extended@6.0.0(typescript@6.0.3)(vitest@5.0.3):
     dependencies:
       ts-essentials: 10.2.1(typescript@6.0.3)
       typescript: 6.0.3
