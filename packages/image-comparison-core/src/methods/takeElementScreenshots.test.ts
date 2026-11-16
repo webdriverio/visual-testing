@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { mock } from 'vitest-mock-extended'
 import logger from '@wdio/logger'
 import { takeElementScreenshot } from './takeElementScreenshots.js'
-import getElementViewportRect from '../clientSideScripts/getElementViewportRect.js'
+import getElementRectInTopDocument from '../clientSideScripts/getElementRectInTopDocument.js'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
 import { getBase64ScreenshotSize, waitFor, hasResizeDimensions } from '../helpers/utils.js'
@@ -44,6 +44,12 @@ describe('takeElementScreenshot', () => {
     const hasResizeDimensionsSpy = vi.mocked(hasResizeDimensions)
 
     const executeMock = vi.fn().mockResolvedValue(undefined)
+    const elementExecuteMock = vi.fn().mockResolvedValue({
+        x: 10,
+        y: 20,
+        width: 100,
+        height: 200,
+    })
     const getElementRectMock = vi.fn().mockResolvedValue({ x: 10, y: 20, width: 100, height: 200 })
 
     const browserInstance = {
@@ -66,7 +72,11 @@ describe('takeElementScreenshot', () => {
             statusBarAndAddressBar: { height: 47, width: 390, x: 0, y: 0 },
             viewport: { height: 733, width: 390, x: 0, y: 47 }
         },
-        element: { elementId: 'test-element' } as any,
+        element: {
+            elementId: 'test-element',
+            execute: elementExecuteMock,
+        } as any,
+
         isEmulated: false,
         initialDevicePixelRatio: 2,
         innerHeight: 900,
@@ -92,7 +102,10 @@ describe('takeElementScreenshot', () => {
                 base64Image: 'bidi-screenshot-data',
                 isWebDriverElementScreenshot: false
             })
-            expect(getElementRectMock).toHaveBeenCalledWith('test-element')
+            expect(elementExecuteMock).toHaveBeenCalledWith(
+                getElementRectInTopDocument,
+                'document'
+            )
             expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith({
                 browserInstance,
                 origin: 'document',
@@ -100,6 +113,44 @@ describe('takeElementScreenshot', () => {
             })
             expect(takeWebElementScreenshotSpy).not.toHaveBeenCalled()
             expect(makeCroppedBase64ImageSpy).not.toHaveBeenCalled()
+        })
+
+        it('should correctly pass scaled element rectangle to BiDi screenshot clip with document origin', async () => {
+            elementExecuteMock.mockResolvedValueOnce({
+                x: 80,
+                y: 60,
+                width: 200,
+                height: 100,
+            })
+
+            const result = await takeElementScreenshot(browserInstance, baseOptions, true)
+
+            expect(result).toEqual({
+                base64Image: 'bidi-screenshot-data',
+                isWebDriverElementScreenshot: false,
+            })
+            expect(elementExecuteMock).toHaveBeenCalledWith(
+                getElementRectInTopDocument,
+                'document'
+            )
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith({
+                browserInstance,
+                origin: 'document',
+                clip: { x: 80, y: 60, width: 200, height: 100 },
+            })
+        })
+
+        it('should throw when element is clipped by an ancestor iframe content area with document origin', async () => {
+            elementExecuteMock.mockResolvedValueOnce({
+                x: 80,
+                y: 60,
+                width: 200,
+                height: 100,
+                isClippedByIframe: true,
+            })
+
+            const err = await takeElementScreenshot(browserInstance, baseOptions, true).catch(e => e) as Error
+            expect(err.message).toMatch(/clipped by an ancestor iframe content area/)
         })
         //
         // We intentionally rely on BiDi with origin: 'document' only. If that
@@ -118,12 +169,19 @@ describe('takeElementScreenshot', () => {
             })
             // Only scrollElementIntoView: saveWebElement scrolls back after the page is restored (#1229)
             expect(executeMock).toHaveBeenCalledTimes(1)
-            expect(executeMock.mock.calls[0]).toMatchSnapshot()
+            expect(executeMock.mock.calls[0]).toEqual([
+                expect.any(Function),
+                expect.objectContaining({ elementId: 'test-element' }),
+                6
+            ])
             expect(waitForSpy).toHaveBeenCalledWith(100)
         })
 
         it('should resolve a Promise-wrapped element (ChainablePromiseElement) before passing to browser.execute()', async () => {
-            const resolvedElement = { elementId: 'promise-element' }
+            const resolvedElement = {
+                elementId: 'promise-element',
+                execute: elementExecuteMock,
+            }
             const optionsWithPromiseElement = {
                 ...baseOptions,
                 autoElementScroll: true,
@@ -133,7 +191,10 @@ describe('takeElementScreenshot', () => {
 
             await takeElementScreenshot(browserInstance, optionsWithPromiseElement, true)
 
-            expect(getElementRectMock).toHaveBeenCalledWith('promise-element')
+            expect(elementExecuteMock).toHaveBeenCalledWith(
+                getElementRectInTopDocument,
+                'document'
+            )
             // The resolved element (not the Promise) must be passed to browser.execute()
             expect(executeMock.mock.calls[0][1]).toEqual(resolvedElement)
         })
@@ -160,7 +221,10 @@ describe('takeElementScreenshot', () => {
 
             await takeElementScreenshot(browserInstance, vpOptions, true)
 
-            expect(viewportRectMock).toHaveBeenCalledWith(getElementViewportRect)
+            expect(viewportRectMock).toHaveBeenCalledWith(
+                getElementRectInTopDocument,
+                'viewport'
+            )
             expect(getElementRectMock).not.toHaveBeenCalled()
             expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(expect.objectContaining({
                 origin: 'viewport',
@@ -191,6 +255,32 @@ describe('takeElementScreenshot', () => {
                 origin: 'viewport',
                 clip: { x: 10, y: 20, width: 100, height: 200 },
             })
+        })
+
+        it('should clip scaled element rectangle in viewport screenshot', async () => {
+            viewportRectMock.mockResolvedValueOnce({ x: 80, y: 60, width: 200, height: 100 })
+
+            const result = await takeElementScreenshot(browserInstance, vpOptions, true)
+
+            expect(result.base64Image).toBe('bidi-screenshot-data')
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith({
+                browserInstance,
+                origin: 'viewport',
+                clip: { x: 80, y: 60, width: 200, height: 100 },
+            })
+        })
+
+        it('should throw when element is clipped by an ancestor iframe content area', async () => {
+            viewportRectMock.mockResolvedValueOnce({
+                x: 80,
+                y: 60,
+                width: 200,
+                height: 100,
+                isClippedByIframe: true,
+            })
+
+            const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
+            expect(err.message).toMatch(/clipped by an ancestor iframe content area/)
         })
 
         it('should throw when element dimensions exceed the viewport', async () => {
@@ -319,7 +409,11 @@ describe('takeElementScreenshot', () => {
             })
             // Only the call that scrolls the element into view: saveWebElement scrolls back after the page is restored (#1229)
             expect(executeMock).toHaveBeenCalledTimes(1)
-            expect(executeMock.mock.calls[0]).toMatchSnapshot()
+            expect(executeMock.mock.calls[0]).toEqual([
+                expect.any(Function),
+                expect.objectContaining({ elementId: 'test-element' }),
+                6
+            ])
             expect(waitForSpy).toHaveBeenCalledWith(100)
         })
 
