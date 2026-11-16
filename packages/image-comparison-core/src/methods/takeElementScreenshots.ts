@@ -51,6 +51,12 @@ async function takeBiDiElementScreenshot(
         )
     }
 
+    if (rect.isClippedByIframe) {
+        throw new Error(
+            '[BiDi element screenshot] The element is not fully visible because it is clipped by an ancestor iframe content area.'
+        )
+    }
+
     const clip = {
         x: Math.floor(rect.x),
         y: Math.floor(rect.y),
@@ -89,6 +95,13 @@ async function takeBiDiElementScreenshotFromViewport(
         throw new Error(
             '[BiDi viewport screenshot] Unable to calculate the element position relative to the top-level viewport. ' +
             'The element may be inside an inaccessible cross-origin frame.'
+        )
+    }
+
+    if (rect.isClippedByIframe) {
+        throw new Error(
+            '[BiDi viewport screenshot] The element is not fully visible in the viewport ' +
+            'because it is clipped by an ancestor iframe content area.'
         )
     }
 

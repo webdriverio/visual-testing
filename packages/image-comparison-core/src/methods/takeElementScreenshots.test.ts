@@ -114,6 +114,44 @@ describe('takeElementScreenshot', () => {
             expect(takeWebElementScreenshotSpy).not.toHaveBeenCalled()
             expect(makeCroppedBase64ImageSpy).not.toHaveBeenCalled()
         })
+
+        it('should correctly pass scaled element rectangle to BiDi screenshot clip with document origin', async () => {
+            elementExecuteMock.mockResolvedValueOnce({
+                x: 80,
+                y: 60,
+                width: 200,
+                height: 100,
+            })
+
+            const result = await takeElementScreenshot(browserInstance, baseOptions, true)
+
+            expect(result).toEqual({
+                base64Image: 'bidi-screenshot-data',
+                isWebDriverElementScreenshot: false,
+            })
+            expect(elementExecuteMock).toHaveBeenCalledWith(
+                getElementRectInTopDocument,
+                'document'
+            )
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith({
+                browserInstance,
+                origin: 'document',
+                clip: { x: 80, y: 60, width: 200, height: 100 },
+            })
+        })
+
+        it('should throw when element is clipped by an ancestor iframe content area with document origin', async () => {
+            elementExecuteMock.mockResolvedValueOnce({
+                x: 80,
+                y: 60,
+                width: 200,
+                height: 100,
+                isClippedByIframe: true,
+            })
+
+            const err = await takeElementScreenshot(browserInstance, baseOptions, true).catch(e => e) as Error
+            expect(err.message).toMatch(/clipped by an ancestor iframe content area/)
+        })
         //
         // We intentionally rely on BiDi with origin: 'document' only. If that
         // ever fails, we surface the underlying error instead of silently
@@ -217,6 +255,32 @@ describe('takeElementScreenshot', () => {
                 origin: 'viewport',
                 clip: { x: 10, y: 20, width: 100, height: 200 },
             })
+        })
+
+        it('should clip scaled element rectangle in viewport screenshot', async () => {
+            viewportRectMock.mockResolvedValueOnce({ x: 80, y: 60, width: 200, height: 100 })
+
+            const result = await takeElementScreenshot(browserInstance, vpOptions, true)
+
+            expect(result.base64Image).toBe('bidi-screenshot-data')
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith({
+                browserInstance,
+                origin: 'viewport',
+                clip: { x: 80, y: 60, width: 200, height: 100 },
+            })
+        })
+
+        it('should throw when element is clipped by an ancestor iframe content area', async () => {
+            viewportRectMock.mockResolvedValueOnce({
+                x: 80,
+                y: 60,
+                width: 200,
+                height: 100,
+                isClippedByIframe: true,
+            })
+
+            const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
+            expect(err.message).toMatch(/clipped by an ancestor iframe content area/)
         })
 
         it('should throw when element dimensions exceed the viewport', async () => {
