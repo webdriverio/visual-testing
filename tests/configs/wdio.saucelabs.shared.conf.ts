@@ -49,6 +49,10 @@ export const config: WebdriverIO.Config  = {
                 createJsonReportFiles: true,
                 rawMisMatchPercentage: !!process.env.RAW_MISMATCH || false,
                 enableLayoutTesting: true,
+                // In CI a missing baseline must fail: a new file name (for example a new device) would otherwise save
+                // the current screenshot as its baseline and pass without a comparison.
+                // To collect new baselines from CI, upload `tests/sauceLabsBaseline/` in a temporary commit.
+                autoSaveBaseline: !process.env.CI,
             } satisfies VisualServiceOptions,
         ],
     ],

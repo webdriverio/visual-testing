@@ -4,8 +4,8 @@ import {
     Outlet,
     Scripts,
     ScrollRestoration,
-} from '@remix-run/react'
-import type { LinksFunction } from '@remix-run/node'
+} from 'react-router'
+import type { LinksFunction } from 'react-router'
 import globalStylesHref from '~/styles/globals.css?url'
 
 export const links: LinksFunction = () => [

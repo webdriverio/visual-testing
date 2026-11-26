@@ -26,7 +26,7 @@ export const config: WebdriverIO.Config = {
             },
             browserName: 'iPhone-14',
             platformName: 'iOS',
-            specs: [mobileSpecs],
+            'wdio:specs': [mobileSpecs],
             'wdio-ics:options': {
                 logName: 'browserstack-real-device-iPhone-14',
                 commands: [

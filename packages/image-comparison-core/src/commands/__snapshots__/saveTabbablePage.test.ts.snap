@@ -10,7 +10,7 @@ exports[`saveTabbablePage > should save a tabbable page screenshot 1`] = `
 exports[`saveTabbablePage > should save a tabbable page screenshot 2`] = `
 [
   [
-    [MockFunction spy],
+    [MockFunction],
     {
       "circle": {
         "backgroundColor": "red",
@@ -29,7 +29,7 @@ exports[`saveTabbablePage > should save a tabbable page screenshot 2`] = `
     },
   ],
   [
-    [MockFunction spy],
+    [MockFunction],
     "wic-tabbable-canvas",
   ],
 ]
@@ -40,10 +40,10 @@ exports[`saveTabbablePage > should save a tabbable page screenshot 3`] = `
   [
     {
       "browserInstance": {
-        "execute": [MockFunction spy] {
+        "execute": [MockFunction] {
           "calls": [
             [
-              [MockFunction spy],
+              [MockFunction],
               {
                 "circle": {
                   "backgroundColor": "red",
@@ -62,7 +62,7 @@ exports[`saveTabbablePage > should save a tabbable page screenshot 3`] = `
               },
             ],
             [
-              [MockFunction spy],
+              [MockFunction],
               "wic-tabbable-canvas",
             ],
           ],

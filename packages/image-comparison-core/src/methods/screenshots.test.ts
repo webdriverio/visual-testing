@@ -15,6 +15,7 @@ import { MEDIUM_IMAGE_STRING, SMALL_IMAGE_STRING } from '../mocks/image.js'
 import { DEVICE_RECTANGLES } from '../helpers/constants.js'
 import * as rectanglesModule from './rectangles.js'
 import * as utilsModule from '../helpers/utils.js'
+import getElementVisibleRect from '../clientSideScripts/getElementVisibleRect.js'
 
 const log = logger('test')
 vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
@@ -43,7 +44,7 @@ vi.mock('../clientSideScripts/hideRemoveElements.js', () => ({
 describe('screenshots', () => {
     const createMockBrowserInstance = (
         { takeScreenshot = SMALL_IMAGE_STRING, takeElementScreenshot = SMALL_IMAGE_STRING }:
-            { takeScreenshot?: string, takeElementScreenshot?: string } = {}
+        { takeScreenshot?: string, takeElementScreenshot?: string } = {}
     ) => {
         return {
             takeScreenshot: vi.fn().mockResolvedValue(takeScreenshot),
@@ -60,6 +61,21 @@ describe('screenshots', () => {
     }
 
     let logWarnSpy: ReturnType<typeof vi.spyOn>
+
+    /**
+     * The hide call of `hideAfterFirstScroll` (the third argument is `true`) runs after the first wait and before
+     * the wait of the second scroll
+     */
+    const expectHiddenBeforeTheSecondWait = (browserInstance: WebdriverIO.Browser) => {
+        const execute = vi.mocked(browserInstance.execute).mock
+        const hideCallIndex = execute.calls.findIndex((call) => call[2] === true && typeof call[1] === 'object' && call[1] !== null && 'hide' in call[1])
+        const hideOrder = execute.invocationCallOrder[hideCallIndex]
+        const waitOrders = vi.mocked(utilsModule.waitFor).mock.invocationCallOrder
+
+        expect(hideCallIndex).toBeGreaterThanOrEqual(0)
+        expect(hideOrder).toBeGreaterThan(waitOrders[0])
+        expect(hideOrder).toBeLessThan(waitOrders[1])
+    }
 
     describe('getMobileFullPageNativeWebScreenshotsData', () => {
         const createMobileOptions = (overrides: Partial<FullPageScreenshotNativeMobileOptions> = {}): FullPageScreenshotNativeMobileOptions => ({
@@ -198,6 +214,9 @@ describe('screenshots', () => {
             const result = await getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options)
 
             expect(result).toMatchSnapshot()
+            // The elements are hidden before the wait of the second scroll, so a slow device has the whole wait
+            // to draw the page again without them before the screenshot
+            expectHiddenBeforeTheSecondWait(mockBrowserInstance)
 
             const executeCalls = vi.mocked(mockBrowserInstance.execute).mock.calls
             const hideElementsCalls = executeCalls.filter(call =>
@@ -270,7 +289,55 @@ describe('screenshots', () => {
                 .mockResolvedValueOnce(0) // pageYOffset for error logging
 
             await expect(getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options))
-                .rejects.toThrow(/Negative scroll position detected/)
+                .rejects.toThrow(/is -90 px \(viewport 50 px, addressBarShadowPadding 20 px, toolBarShadowPadding 20 px, home bar 100 px\)\. The viewport is not higher than the home bar/)
+            expect(mockBrowserInstance.takeScreenshot).not.toHaveBeenCalled()
+        })
+
+        it('should advise smaller shadow paddings when they make the viewport height not positive', async () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            const options = createMobileOptions({
+                deviceRectangles: { ...createMobileOptions().deviceRectangles, viewport: { x: 0, y: 100, width: 750, height: 40 } },
+                addressBarShadowPadding: 25,
+                toolBarShadowPadding: 25,
+            })
+
+            await expect(getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options))
+                .rejects.toThrow(/is -10 px \(viewport 40 px, addressBarShadowPadding 25 px, toolBarShadowPadding 25 px, home bar 0 px\)\. Use smaller shadow paddings\./)
+        })
+
+        it('should throw a clear error when the viewport measurement of the session failed (viewport height 0)', async () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            const options = createMobileOptions({
+                deviceRectangles: { ...createMobileOptions().deviceRectangles, viewport: { x: 0, y: 0, width: 0, height: 0 } },
+                addressBarShadowPadding: 6,
+                toolBarShadowPadding: 6,
+                isAndroid: true,
+            })
+
+            await expect(getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options))
+                .rejects.toThrow(/the viewport of the mobile browser is not known/)
+            expect(mockBrowserInstance.takeScreenshot).not.toHaveBeenCalled()
+        })
+
+        it('should not take screenshots without end when the viewport height is 0 and there are no shadow paddings', async () => {
+            const mockBrowserInstance = createMockBrowserInstance()
+            // Without a check the scroll position stays 0 and the loop adds a scroll for each screenshot
+            let screenshots = 0
+            mockBrowserInstance.takeScreenshot = vi.fn(async () => {
+                if (++screenshots > 20) {
+                    throw new Error('endless loop')
+                }
+                return SMALL_IMAGE_STRING
+            })
+            const options = createMobileOptions({
+                deviceRectangles: { ...createMobileOptions().deviceRectangles, viewport: { x: 0, y: 0, width: 0, height: 0 } },
+                addressBarShadowPadding: 0,
+                toolBarShadowPadding: 0,
+            })
+
+            await expect(getMobileFullPageNativeWebScreenshotsData(mockBrowserInstance, options))
+                .rejects.toThrow(/the viewport of the mobile browser is not known/)
+            expect(screenshots).toBe(0)
         })
 
         it('should throw error when scroll height cannot be determined', async () => {
@@ -383,6 +450,9 @@ describe('screenshots', () => {
             const result = await getAndroidChromeDriverFullPageScreenshotsData(mockBrowserInstance, options)
 
             expect(result).toMatchSnapshot()
+            // The elements are hidden before the wait of the second scroll, so a slow device has the whole wait
+            // to draw the page again without them before the screenshot
+            expectHiddenBeforeTheSecondWait(mockBrowserInstance)
             expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
                 expect.any(Function),
                 { hide: [mockElements], remove: [] },
@@ -551,6 +621,9 @@ describe('screenshots', () => {
             const result = await getDesktopFullPageScreenshotsData(mockBrowserInstance, options)
 
             expect(result).toMatchSnapshot()
+            // The elements are hidden before the wait of the second scroll, so a slow device has the whole wait
+            // to draw the page again without them before the screenshot
+            expectHiddenBeforeTheSecondWait(mockBrowserInstance)
             expect(mockBrowserInstance.execute).toHaveBeenCalledWith(
                 expect.any(Function),
                 { hide: [mockElements], remove: [] },
@@ -694,6 +767,93 @@ describe('screenshots', () => {
         afterEach(() => {
             vi.clearAllMocks()
             logWarnSpy.mockRestore()
+        })
+
+        describe('iOS (temporary workaround for https://github.com/appium/appium/issues/22939)', () => {
+            const iosDeviceRectangles = { ...DEVICE_RECTANGLES, viewport: { x: 0, y: 68, width: 402, height: 806 } }
+
+            it('should cut the visible part of the element from a screenshot when it is not fully inside the viewport', async () => {
+                const mockBrowserInstance = createMockBrowserInstance({ takeScreenshot: MEDIUM_IMAGE_STRING })
+                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: false, isInFrame: false, x: 0, y: 0, width: 402, height: 714 })
+                vi.mocked(utilsModule.calculateDprData).mockReturnValueOnce({ x: 0, y: 204, width: 1206, height: 2142 })
+
+                const result = await takeWebElementScreenshot(createBaseTakeWebElementScreenshotOptions({
+                    browserInstance: mockBrowserInstance,
+                    devicePixelRatio: 3,
+                    deviceRectangles: iosDeviceRectangles,
+                    isIOS: true,
+                }))
+
+                expect(mockBrowserInstance.execute).toHaveBeenCalledWith(getElementVisibleRect, expect.objectContaining({ elementId: 'element-123' }))
+                // The visible part, moved by the position of the viewport on the screen
+                expect(utilsModule.calculateDprData).toHaveBeenCalledWith({ x: 0, y: 68, width: 402, height: 714 }, 3)
+                expect(mockBrowserInstance.takeElementScreenshot).not.toHaveBeenCalled()
+                expect(rectanglesModule.determineElementRectangles).not.toHaveBeenCalled()
+                expect(result).toEqual({
+                    base64Image: MEDIUM_IMAGE_STRING,
+                    isWebDriverElementScreenshot: false,
+                    rectangles: { x: 0, y: 204, width: 1206, height: 2142 },
+                })
+            })
+
+            it('should use the element screenshot of the driver when the element is fully inside the viewport', async () => {
+                const mockBrowserInstance = createMockBrowserInstance({ takeElementScreenshot: SMALL_IMAGE_STRING })
+                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: true, isInFrame: false, x: 0, y: 10, width: 300, height: 200 })
+                vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({ width: 300, height: 200 })
+
+                const result = await takeWebElementScreenshot(createBaseTakeWebElementScreenshotOptions({
+                    browserInstance: mockBrowserInstance,
+                    deviceRectangles: iosDeviceRectangles,
+                    isIOS: true,
+                }))
+
+                expect(mockBrowserInstance.takeElementScreenshot).toHaveBeenCalledWith('element-123')
+                expect(mockBrowserInstance.takeScreenshot).not.toHaveBeenCalled()
+                expect(result.isWebDriverElementScreenshot).toBe(true)
+            })
+
+            it('should use the element screenshot of the driver when no part of the element is visible', async () => {
+                const mockBrowserInstance = createMockBrowserInstance({ takeElementScreenshot: SMALL_IMAGE_STRING })
+                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: false, isInFrame: false, x: 0, y: 900, width: 402, height: 0 })
+                vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({ width: 300, height: 200 })
+
+                await takeWebElementScreenshot(createBaseTakeWebElementScreenshotOptions({
+                    browserInstance: mockBrowserInstance,
+                    deviceRectangles: iosDeviceRectangles,
+                    isIOS: true,
+                }))
+
+                expect(mockBrowserInstance.takeElementScreenshot).toHaveBeenCalledWith('element-123')
+                expect(mockBrowserInstance.takeScreenshot).not.toHaveBeenCalled()
+            })
+
+            it('should use the element screenshot of the driver for an element in a frame', async () => {
+                const mockBrowserInstance = createMockBrowserInstance({ takeElementScreenshot: SMALL_IMAGE_STRING })
+                vi.mocked(mockBrowserInstance.execute).mockResolvedValueOnce({ isFullyVisible: false, isInFrame: true, x: 0, y: 0, width: 300, height: 400 })
+                vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({ width: 300, height: 200 })
+
+                await takeWebElementScreenshot(createBaseTakeWebElementScreenshotOptions({
+                    browserInstance: mockBrowserInstance,
+                    deviceRectangles: iosDeviceRectangles,
+                    isIOS: true,
+                }))
+
+                expect(mockBrowserInstance.takeElementScreenshot).toHaveBeenCalledWith('element-123')
+                expect(mockBrowserInstance.takeScreenshot).not.toHaveBeenCalled()
+            })
+
+            it('should not check the viewport on other platforms', async () => {
+                const mockBrowserInstance = createMockBrowserInstance({ takeElementScreenshot: SMALL_IMAGE_STRING })
+                vi.mocked(utilsModule.getBase64ScreenshotSize).mockReturnValue({ width: 300, height: 200 })
+
+                await takeWebElementScreenshot(createBaseTakeWebElementScreenshotOptions({
+                    browserInstance: mockBrowserInstance,
+                    isAndroid: true,
+                }))
+
+                expect(mockBrowserInstance.execute).not.toHaveBeenCalled()
+                expect(mockBrowserInstance.takeElementScreenshot).toHaveBeenCalled()
+            })
         })
 
         describe('normal mode (fallback = false)', () => {

@@ -3,8 +3,13 @@ import { defineConfig, coverageConfigDefaults, defaultExclude } from 'vitest/con
 export default defineConfig({
     test: {
         include: ['./packages/**/(tests|src)/**/*.test.ts'],
-        reporters: ['default', ['html', { outputFile: '.vitest-ui/index.html' }]],
+        // The static HTML report (.vitest-ui/) is written only on request (`pnpm test:unit:report`), not on every run
+        reporters: process.env.VITEST_HTML_REPORT === 'true'
+            ? ['default', ['html', { outputDir: '.vitest-ui' }]]
+            : ['default'],
         coverage: {
+            // Vitest 4 removed `coverage.all`: without `include`, only the files that the tests load are reported
+            include: ['packages/*/src/**/*.{ts,tsx}'],
             thresholds: {
                 lines: 50,
                 statements: 50,

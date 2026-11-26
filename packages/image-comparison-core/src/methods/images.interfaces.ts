@@ -1,7 +1,7 @@
 import type { RectanglesOutput, DeviceRectangles } from './rectangles.interfaces.js'
 import type { BaseCoordinates, BaseDeviceInfo, BaseDimensions, BaseImageCompareOptions, BaseMobileBlockOutOptions, Folders } from '../base.interfaces.js'
 import type { TestContext } from './compareReport.interfaces.js'
-import type { WicElement } from 'src/index.js'
+import type { WicElement } from '../index.js'
 
 export interface ResizeDimensions {
     /** The bottom margin */

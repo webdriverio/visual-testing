@@ -684,7 +684,7 @@ exports[`takeBase64ElementScreenshot > should log error and still call takeEleme
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy] {
+      "takeElementScreenshot": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -724,7 +724,7 @@ exports[`takeBase64ElementScreenshot > should use native element screenshot when
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy] {
+      "takeElementScreenshot": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -755,7 +755,7 @@ exports[`takeResizedBase64Screenshot > should handle Android device (non-iOS) 1`
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy],
+      "takeElementScreenshot": [MockFunction],
     },
   ],
 ]
@@ -773,7 +773,7 @@ exports[`takeResizedBase64Screenshot > should handle Android device (non-iOS) 3`
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -810,7 +810,7 @@ exports[`takeResizedBase64Screenshot > should handle custom resize dimensions 1`
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy],
+      "takeElementScreenshot": [MockFunction],
     },
   ],
 ]
@@ -828,7 +828,7 @@ exports[`takeResizedBase64Screenshot > should handle custom resize dimensions 3`
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -865,7 +865,7 @@ exports[`takeResizedBase64Screenshot > should handle different device pixel rati
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy],
+      "takeElementScreenshot": [MockFunction],
     },
   ],
 ]
@@ -883,7 +883,7 @@ exports[`takeResizedBase64Screenshot > should handle different device pixel rati
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -920,7 +920,7 @@ exports[`takeResizedBase64Screenshot > should handle different element regions 1
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy],
+      "takeElementScreenshot": [MockFunction],
     },
   ],
 ]
@@ -938,7 +938,7 @@ exports[`takeResizedBase64Screenshot > should handle different element regions 3
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -975,7 +975,7 @@ exports[`takeResizedBase64Screenshot > should handle different screenshot data 1
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy],
+      "takeElementScreenshot": [MockFunction],
     },
   ],
 ]
@@ -993,7 +993,7 @@ exports[`takeResizedBase64Screenshot > should handle different screenshot data 3
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -1033,7 +1033,7 @@ exports[`takeResizedBase64Screenshot > should handle element with different elem
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "different-element-id",
@@ -1056,7 +1056,7 @@ exports[`takeResizedBase64Screenshot > should handle iOS device with device pixe
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy],
+      "takeElementScreenshot": [MockFunction],
     },
   ],
 ]
@@ -1074,7 +1074,7 @@ exports[`takeResizedBase64Screenshot > should handle iOS device with device pixe
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -1111,7 +1111,7 @@ exports[`takeResizedBase64Screenshot > should handle large element dimensions 1`
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy],
+      "takeElementScreenshot": [MockFunction],
     },
   ],
 ]
@@ -1129,7 +1129,7 @@ exports[`takeResizedBase64Screenshot > should handle large element dimensions 3`
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -1183,7 +1183,7 @@ exports[`takeResizedBase64Screenshot > should handle non-WDIO element with loggi
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             undefined,
@@ -1206,7 +1206,7 @@ exports[`takeResizedBase64Screenshot > should handle zero element dimensions 1`]
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy],
+      "takeElementScreenshot": [MockFunction],
     },
   ],
 ]
@@ -1224,7 +1224,7 @@ exports[`takeResizedBase64Screenshot > should handle zero element dimensions 3`]
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "test-element-id",
@@ -1261,7 +1261,7 @@ exports[`takeResizedBase64Screenshot > should take resized base64 screenshot wit
   [
     {
       "elementId": "test-element-id",
-      "takeElementScreenshot": [MockFunction spy],
+      "takeElementScreenshot": [MockFunction],
     },
   ],
 ]
@@ -1279,7 +1279,7 @@ exports[`takeResizedBase64Screenshot > should take resized base64 screenshot wit
 [
   [
     {
-      "getElementRect": [MockFunction spy] {
+      "getElementRect": [MockFunction] {
         "calls": [
           [
             "test-element-id",

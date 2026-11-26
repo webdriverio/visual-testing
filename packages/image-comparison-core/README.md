@@ -21,7 +21,7 @@ v10 uses [pixelmatch](https://github.com/mapbox/pixelmatch) instead of resemble.
 |---|---|---|
 | AA forgiveness | opt-in (`ignoreAntialiasing: true`) | on by default (`ignoreAntialiasing: true`) |
 | Strict comparison | default | set `ignoreAntialiasing: false` |
-| Engine | resemble RGB/brightness | pixelmatch YIQ perceptual distance |
+| Engine | resemble RGB/brightness | pixelmatch perceptual distance (OKLab/HyAB since v11, YIQ in v10) |
 
 No config change is needed if you rely on forgiving comparison behaviour.
 
@@ -36,7 +36,7 @@ No config change is needed if you rely on forgiving comparison behaviour.
 | `ignoreColors` | resemble luma grayscale | ~16/255 (`0.063`) | no |
 | `ignoreNothing` | - | `0` | no |
 
-Thresholds are calibrated to resemble outcomes; the underlying algorithm is YIQ perceptual distance, not resemble's RGB math.
+Thresholds are calibrated to resemble outcomes; the underlying algorithm is pixelmatch's perceptual color distance, not resemble's RGB math. Since v11 this is pixelmatch 8 (OKLab color space and HyAB distance; v10 used YIQ). pixelmatch 8 keeps the threshold scale (`0` to `1`, where `1` is black vs white), so the thresholds above stay the same, but mismatch numbers can differ a little from v10.
 
 ### Last-wins semantics
 

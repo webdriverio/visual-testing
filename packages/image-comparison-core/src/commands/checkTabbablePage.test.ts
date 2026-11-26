@@ -2,12 +2,19 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import checkTabbablePage from './checkTabbablePage.js'
 import type { InternalCheckTabbablePageMethodOptions } from './check.interfaces.js'
 import { BASE_CHECK_OPTIONS } from '../mocks/mocks.js'
+import { readScrollPosition, restoreScrollPosition } from '../helpers/scrollPosition.js'
+import drawTabbableOnCanvas from '../clientSideScripts/drawTabbableOnCanvas.js'
+import removeElementFromDom from '../clientSideScripts/removeElementFromDom.js'
 
 vi.mock('../clientSideScripts/drawTabbableOnCanvas.js', () => ({
     default: vi.fn()
 }))
 vi.mock('../clientSideScripts/removeElementFromDom.js', () => ({
     default: vi.fn()
+}))
+vi.mock('../helpers/scrollPosition.js', () => ({
+    readScrollPosition: vi.fn().mockResolvedValue(420),
+    restoreScrollPosition: vi.fn(),
 }))
 vi.mock('./checkFullPageScreen.js', () => ({
     default: vi.fn().mockResolvedValue({
@@ -222,5 +229,35 @@ describe('checkTabbablePage', () => {
         await checkTabbablePage(options)
 
         expect(baseOptions.browserInstance.execute).toMatchSnapshot()
+    })
+
+    describe('scroll back (#1231)', () => {
+        it('should read the scroll position before the tabbables are drawn and scroll back after the canvas is removed', async () => {
+            await checkTabbablePage(baseOptions)
+
+            const execute = vi.mocked(baseOptions.browserInstance.execute).mock
+            // Drawing the tabbables scrolls to the top, so the position must be read before it
+            expect(vi.mocked(readScrollPosition).mock.invocationCallOrder[0]).toBeLessThan(execute.invocationCallOrder[0])
+            expect(execute.calls[0][0]).toBe(drawTabbableOnCanvas)
+            expect(execute.calls[1][0]).toBe(removeElementFromDom)
+            expect(restoreScrollPosition).toHaveBeenCalledWith(baseOptions.browserInstance, 420, baseOptions.instanceData.isIOS)
+            expect(vi.mocked(restoreScrollPosition).mock.invocationCallOrder[0]).toBeGreaterThan(execute.invocationCallOrder[1])
+        })
+
+        it('should scroll back and keep the original error when the check fails', async () => {
+            const checkError = new Error('check failed')
+            checkFullPageScreenSpy.mockRejectedValueOnce(checkError)
+
+            await expect(checkTabbablePage(baseOptions)).rejects.toThrow(checkError)
+
+            expect(restoreScrollPosition).toHaveBeenCalledWith(baseOptions.browserInstance, 420, baseOptions.instanceData.isIOS)
+        })
+
+        it('should not touch the scroll position in a native context', async () => {
+            await expect(checkTabbablePage({ ...baseOptions, isNativeContext: true })).rejects.toThrow()
+
+            expect(readScrollPosition).not.toHaveBeenCalled()
+            expect(restoreScrollPosition).not.toHaveBeenCalled()
+        })
     })
 })

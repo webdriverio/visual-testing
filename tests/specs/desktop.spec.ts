@@ -8,6 +8,12 @@ describe('@wdio/visual-service desktop', () => {
     // @TODO
     // @ts-ignore
     const browserName = `${browser.capabilities.browserName}-${browser.capabilities.browserVersion}`
+    // Desktop Safari puts the macOS window shadow in the first pixel row of a screenshot. The color of this row
+    // is not the same on all LambdaTest machines (gray or black), so the screen comparisons do not compare it.
+    const isSafari = `${browser.capabilities.browserName}`.toLowerCase() === 'safari'
+    const getSafariWindowShadowBlockOut = async () => isSafari
+        ? { blockOut: [{ x: 0, y: 0, width: await browser.execute(() => window.innerWidth), height: 1 }] }
+        : {}
 
     beforeEach(async () => {
         await browser.url('')
@@ -18,9 +24,12 @@ describe('@wdio/visual-service desktop', () => {
     afterEach(async () => await browser.execute('window.scrollTo(0, 0);', []))
 
     it(`should compare an element successful with a baseline for '${browserName}'`, async function() {
+        const scrollYBefore = await browser.execute(() => window.scrollY)
         await expect($('.hero__title-logo')).toMatchElementSnapshot('wdioLogo', {
             removeElements: [await $('nav.navbar')]
         })
+        // The element screenshot scrolls the element into view, then it must scroll back, also to the top (#1229)
+        await expect(await browser.execute(() => window.scrollY)).toEqual(scrollYBefore)
     })
 
     it(`should compare an element screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
@@ -50,7 +59,7 @@ describe('@wdio/visual-service desktop', () => {
     })
 
     it(`should compare a viewport screenshot successful with a baseline for '${browserName}'`, async function() {
-        await expect(browser).toMatchScreenSnapshot('viewportScreenshot')
+        await expect(browser).toMatchScreenSnapshot('viewportScreenshot', await getSafariWindowShadowBlockOut())
     })
 
     it(`should compare a viewport screenshot with ignore elements successful with a baseline for '${browserName}'`, async function () {
@@ -66,6 +75,7 @@ describe('@wdio/visual-service desktop', () => {
         await expect(browser).toMatchScreenSnapshot(
             'ignoredElementsViewportScreenshot',
             {
+                ...await getSafariWindowShadowBlockOut(),
                 // Block 2 ignores the modified regions. Skipped when BASELINE_SETUP=true.
                 ...(!isBaselineSetup ? {
                     ignore: [
@@ -79,6 +89,7 @@ describe('@wdio/visual-service desktop', () => {
 
     it(`should compare a full page screenshot successful with a baseline for '${browserName}'`, async function () {
         await expect(browser).toMatchFullPageSnapshot('fullPage', {
+            ...await getSafariWindowShadowBlockOut(),
             fullPageScrollTimeout: 1500,
             hideAfterFirstScroll: [
                 await $('nav.navbar'),
@@ -97,6 +108,7 @@ describe('@wdio/visual-service desktop', () => {
         }
 
         await expect(browser).toMatchFullPageSnapshot('ignoredElementsFullPageScreenshot', {
+            ...await getSafariWindowShadowBlockOut(),
             fullPageScrollTimeout: 1500,
             hideAfterFirstScroll: [
                 await $('nav.navbar'),
@@ -112,6 +124,7 @@ describe('@wdio/visual-service desktop', () => {
 
     it(`should compare a tabbable screenshot successful with a baseline for '${browserName}'`, async function() {
         await expect(browser).toMatchTabbablePageSnapshot('tabbable', {
+            ...await getSafariWindowShadowBlockOut(),
             hideAfterFirstScroll: [
                 await $('nav.navbar'),
             ],

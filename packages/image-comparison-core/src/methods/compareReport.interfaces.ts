@@ -1,7 +1,7 @@
-import type { CompareData } from 'src/pixelmatch/compare.interfaces.js'
+import type { CompareData } from '../pixelmatch/compare.interfaces.js'
 import type { WicImageCompareOptions } from './images.interfaces.js'
 import type { BoundingBoxes, ReportFileSizes } from './rectangles.interfaces.js'
-import type { FilePaths, FolderPaths } from 'src/base.interfaces.js'
+import type { FilePaths, FolderPaths } from '../base.interfaces.js'
 
 export type TestContext = {
     /** The name of the command being executed */

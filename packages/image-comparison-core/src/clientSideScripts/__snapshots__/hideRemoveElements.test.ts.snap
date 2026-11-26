@@ -45,25 +45,25 @@ exports[`hideRemoveElements > should be able to find and hide elements based on 
 NodeList [
   <span
     class="hide"
-    style="visibility: hidden;"
+    style="visibility: hidden !important;"
   >
     Hello
   </span>,
   <span
     class="hide"
-    style="visibility: hidden;"
+    style="visibility: hidden !important;"
   >
     Hello
   </span>,
   <span
     class="hide"
-    style="visibility: hidden;"
+    style="visibility: hidden !important;"
   >
     Hello
   </span>,
   <span
     class="hide"
-    style="visibility: hidden;"
+    style="visibility: hidden !important;"
   >
     Hello
   </span>,

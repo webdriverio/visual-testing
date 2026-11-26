@@ -4,7 +4,6 @@
     "allowSyntheticDefaultImports": true,
     "rootDir": "./src",
     "outDir": "./dist",
-    "baseUrl": "."
   },
   "include": ["./src/**/*.ts"]
 }

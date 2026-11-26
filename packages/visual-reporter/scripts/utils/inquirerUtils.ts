@@ -7,8 +7,8 @@ export async function chooseItems({
     currentPath,
     includeFiles = false,
 }: {
-  currentPath: string;
-  includeFiles?: boolean;
+    currentPath: string;
+    includeFiles?: boolean;
 }): Promise<string> {
     async function prompt(srcPath: string): Promise<string> {
         const promptMessage = `Please choose the Visual Testing output.json file (current folder: ${srcPath})`

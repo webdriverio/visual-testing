@@ -28,8 +28,8 @@ export function listItems({
     folderPath,
     includeFiles,
 }: {
-  folderPath: string;
-  includeFiles: boolean;
+    folderPath: string;
+    includeFiles: boolean;
 }) {
     const items = readdirSync(folderPath, { withFileTypes: true })
     const choices = items

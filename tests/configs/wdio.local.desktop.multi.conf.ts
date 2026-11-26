@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { config as sharedConfig } from './wdio.shared.conf.ts'
 import type { VisualServiceOptions } from '@wdio/visual-service'
 
-export const config: WebdriverIO.Config  = {
+export const config: WebdriverIO.MultiRemoteConfig = {
     ...sharedConfig,
     // ============
     // Capabilities
@@ -84,7 +84,8 @@ export const config: WebdriverIO.Config  = {
                 baselineFolder: join(process.cwd(), './localBaseline/'),
                 formatImageName: '{tag}-{logName}-{width}x{height}',
                 screenshotPath: join(process.cwd(), '.tmp/'),
-                autoSaveBaseline: false,
+                // CI has no baselines, the check commands and the matchers create them in the same run
+                autoSaveBaseline: true,
                 savePerInstance: true,
                 blockOutStatusBar: true,
                 blockOutToolBar: true,
@@ -99,12 +100,12 @@ export const config: WebdriverIO.Config  = {
     before: async () => {
         // Set the default screensize
         //Note: browser.setWindowSize does not execute on each browser unlike some of the other commands.
-        if (!multiremotebrowser.chromeBrowserOne.isMobile) {
-            await multiremotebrowser.chromeBrowserOne.setWindowSize(1366, 768)
+        if (!multiRemoteBrowser.getInstance('chromeBrowserOne').isMobile) {
+            await multiRemoteBrowser.getInstance('chromeBrowserOne').setWindowSize(1366, 768)
         }
 
-        if (!multiremotebrowser.chromeBrowserTwo.isMobile) {
-            await multiremotebrowser.chromeBrowserTwo.setWindowSize(1366, 768)
+        if (!multiRemoteBrowser.getInstance('chromeBrowserTwo').isMobile) {
+            await multiRemoteBrowser.getInstance('chromeBrowserTwo').setWindowSize(1366, 768)
         }
     },
 }

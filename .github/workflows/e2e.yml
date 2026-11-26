@@ -1,0 +1,296 @@
+name: e2e
+
+# Jobs that need the cloud credentials (LambdaTest, Sauce Labs): pull requests only
+on:
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+# One run per pull request: a new commit cancels the run of the previous commit
+concurrency:
+  group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  ci-pr-desktop-web:
+    name: 🔄 💻 CI PR Run Desktop Web Tests on LambdaTest
+    runs-on: ubuntu-latest
+    # Usually 2-3 minutes. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 20
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot.
+    # The intent is to also run this job on the Dependabot updates that can change the desktop e2e results.
+    # This needs the Dependabot secrets LAMBDATEST_USERNAME and LAMBDATEST_ACCESS_KEY, which only a repository
+    # admin can add. Without them, the job always fails and blocks the auto-merge, so Dependabot is skipped.
+    # When an admin adds these secrets, replace the condition with:
+    #   github.event.pull_request.head.repo.full_name == github.repository && (
+    #     github.actor != 'dependabot[bot]' ||
+    #     contains(github.event.pull_request.title, 'copyfiles') ||
+    #     contains(github.event.pull_request.title, 'rimraf') ||
+    #     contains(github.event.pull_request.title, 'lambdatest') ||
+    #     contains(github.event.pull_request.title, 'webdriverio') ||
+    #     (contains(github.event.pull_request.title, '@wdio/') && !contains(github.event.pull_request.title, '@wdio/appium-service'))
+    #   )
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version-file: ".nvmrc"
+          check-latest: true
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🖥️ 🌐 Run Desktop Web e2e tests
+        working-directory: ./
+        env:
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+          BUILD_PREFIX: true
+        run: pnpm test.lambdatest.desktop --maxConcurrency=3
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: failure()
+        with:
+          name: ci-pr-desktop-web-logs
+          include-hidden-files: true
+          path: |
+            logs/*.log
+            .tmp/
+            !.tmp/checkActual/
+            !.tmp/saveActual/
+            !.tmp/testDiff/
+            !.next/
+
+  ci-pr-android-web:
+    name: 🔄 🤖 🌐 CI PR Run Android Web Tests on LambdaTest
+    runs-on: ubuntu-latest
+    # Usually 5-17 minutes; failing checks with retries can take 30+. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version-file: ".nvmrc"
+          check-latest: true
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🤖 🌐 Run Android Web e2e tests
+        working-directory: ./
+        env:
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+          BUILD_PREFIX: true
+        run: pnpm test.lambdatest.emu.web --maxConcurrency=6
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: failure()
+        with:
+          name: ci-pr-android-web-logs
+          include-hidden-files: true
+          path: |
+            logs/*.log
+            .tmp/
+            !.tmp/checkActual/
+            !.tmp/saveActual/
+            !.tmp/testDiff/
+            !.next/
+
+  ci-pr-ios-web:
+    name: 🔄 🍏 🌐 CI PR Run iOS Web Tests on LambdaTest
+    runs-on: ubuntu-latest
+    # Usually 5-17 minutes; failing checks with retries can take 30+. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version-file: ".nvmrc"
+          check-latest: true
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 🍏 🌐 Run iOS Web e2e tests
+        working-directory: ./
+        env:
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+          BUILD_PREFIX: true
+        run: pnpm test.lambdatest.sims.web --maxConcurrency=6
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: failure()
+        with:
+          name: ci-pr-ios-web-logs
+          include-hidden-files: true
+          path: |
+            logs/*.log
+            .tmp/
+            !.tmp/checkActual/
+            !.tmp/saveActual/
+            !.tmp/testDiff/
+            !.next/
+
+  ci-pr-app:
+    name: 🔄 📱 CI PR Run Mobile App Tests on Sauce
+    runs-on: ubuntu-latest
+    # Usually 5-17 minutes; failing checks with retries can take 30+. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 45
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version-file: ".nvmrc"
+          check-latest: true
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 😶‍🌫️ 📱 Run App e2e tests
+        working-directory: ./
+        env:
+          SAUCE_USERNAME_WDIO_ICS: ${{ secrets.SAUCE_USERNAME_WDIO_ICS }}
+          SAUCE_ACCESS_KEY_WDIO_ICS: ${{ secrets.SAUCE_ACCESS_KEY_WDIO_ICS }}
+          BUILD_PREFIX: true
+        run: pnpm test.saucelabs.app --maxConcurrency=20
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: failure()
+        with:
+          name: ci-pr-mobile-app-logs
+          include-hidden-files: true
+          path: |
+            logs/*.log
+            .tmp/
+            !.tmp/checkActual/
+            !.tmp/saveActual/
+            !.tmp/testDiff/
+            !.next/
+
+  ci-pr-ocr:
+    name: 🔄 📱 CI PR Run OCR Tests  on LambdaTest
+    runs-on: ubuntu-latest
+    # Usually 2-3 minutes. Without a limit, a hung job runs until the GitHub default of 6 hours
+    timeout-minutes: 20
+    # Needs the cloud credentials, which GitHub does not give to pull requests from forks or from Dependabot
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version-file: ".nvmrc"
+          check-latest: true
+          cache: pnpm
+
+      - name: 🧩 Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: 😶‍🌫️ 🔎 Run OCR e2e tests
+        working-directory: ./
+        env:
+          LAMBDATEST_USERNAME: ${{ secrets.LAMBDATEST_USERNAME }}
+          LAMBDATEST_ACCESS_KEY: ${{ secrets.LAMBDATEST_ACCESS_KEY }}
+          BUILD_PREFIX: true
+        run: pnpm test.ocr.lambdatest.desktop --maxConcurrency=1
+
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: failure()
+        with:
+          name: ci-pr-ocr-logs
+          include-hidden-files: true
+          path: |
+            logs/*.log
+            .tmp/
+            !.next/

@@ -27,7 +27,7 @@ export interface StoriesRes {
     stories: { [key: string]: StorybookData };
 }
 
-export type Stories = { [key: string]: StorybookData };
+export type Stories = { [key: string]: StorybookData }
 
 export type CreateTestFileOptions = {
     additionalSearchParams: URLSearchParams;
@@ -76,7 +76,7 @@ export type CreateItContent = {
 
 export type CategoryComponent = { category: string, component: string }
 
-export type ScanStorybookReturnData = { storiesJson: StorybookData[]; storybookUrl: string; tempDir: string}
+export type ScanStorybookReturnData = { storiesJson: StorybookData[]; storybookUrl: string; tempDir: string }
 
 export type EmulatedDeviceType = {
     name: string,

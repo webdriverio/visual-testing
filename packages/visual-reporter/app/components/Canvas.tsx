@@ -6,14 +6,14 @@ import { useTransform } from '../hooks/useTransform.js'
 import { useCanvasDrawing } from '../hooks/useCanvasDrawing.js'
 
 interface CanvasProps {
-  imageSrc: string;
-  transform: { x: number; y: number; scale: number };
-  setTransform: React.Dispatch<
-    React.SetStateAction<{ x: number; y: number; scale: number }>
-  >;
-  diffBoxes?: BoundingBox[];
-  highlightedBox?: BoundingBox | null;
-  ignoredBoxes?: BoundingBox[];
+    imageSrc: string;
+    transform: { x: number; y: number; scale: number };
+    setTransform: React.Dispatch<
+        React.SetStateAction<{ x: number; y: number; scale: number }>
+    >;
+    diffBoxes?: BoundingBox[];
+    highlightedBox?: BoundingBox | null;
+    ignoredBoxes?: BoundingBox[];
 }
 
 const Canvas: React.FC<CanvasProps> = ({

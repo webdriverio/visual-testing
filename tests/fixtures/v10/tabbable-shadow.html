@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tabbable shadow DOM</title>
+<style>
+    body { margin: 0; background: #fff; }
+    x-box { display: block; margin: 20px; }
+    button { display: block; width: 160px; height: 40px; margin: 20px; border: 0; background: #388e3c; }
+</style>
+<script>
+    // The 2 buttons of the box are in a shadow root: the tab order goes through them, as in tabbable-light.html
+    customElements.define('x-box', class extends HTMLElement {
+        connectedCallback() {
+            if (this.shadowRoot) {
+                return
+            }
+            this.attachShadow({ mode: 'open' }).innerHTML = '<style>button { display: block; width: 160px; height: 40px; margin: 20px; border: 0; background: #388e3c; }</style><button></button><button></button>'
+        }
+    })
+</script>
+</head>
+<body>
+<button></button>
+<x-box></x-box>
+<button></button>
+</body>
+</html>

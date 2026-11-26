@@ -11,7 +11,7 @@ import { IoIosApps } from 'react-icons/io'
 const SelectIcon = ({
     iconName,
 }: {
-  iconName: SelectCustomPlaceholderIconType;
+    iconName: SelectCustomPlaceholderIconType;
 }) => {
     switch (iconName) {
     case 'status':

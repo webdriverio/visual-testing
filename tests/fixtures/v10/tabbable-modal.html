@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tabbable modal dialog</title>
+<style>
+    body { margin: 0; background: #fff; }
+    dialog { width: 300px; height: 160px; padding: 0; border: 4px solid #333; background: #ffe; }
+    button { display: block; width: 100px; height: 40px; margin: 20px; padding: 0; border: 0; background: #388e3c; }
+</style>
+</head>
+<body>
+<!-- With a modal dialog only its content can get the focus, and the drawing must be above the dialog (top layer).
+     tabbable-modal-reference.html has the same layout with elements with tabindex="0" at the expected places -->
+<button></button>
+<dialog id="dialog"><button></button><button></button></dialog>
+<script>document.getElementById('dialog').showModal(); document.activeElement.blur()</script>
+</body>
+</html>

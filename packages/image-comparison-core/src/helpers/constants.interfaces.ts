@@ -33,4 +33,4 @@ export type IosOffsets = {
             };
         };
     };
-};
+}

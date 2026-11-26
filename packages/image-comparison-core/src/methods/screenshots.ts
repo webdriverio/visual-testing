@@ -11,6 +11,7 @@ import type {
 } from './screenshots.interfaces.js'
 import hideRemoveElements from '../clientSideScripts/hideRemoveElements.js'
 import hideScrollBars from '../clientSideScripts/hideScrollbars.js'
+import getElementVisibleRect from '../clientSideScripts/getElementVisibleRect.js'
 import type { ElementRectanglesOptions, RectanglesOutput } from './rectangles.interfaces.js'
 import { determineElementRectangles } from './rectangles.js'
 
@@ -50,53 +51,45 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
     let isRotated = false
     let actualFullPageWidth: number | undefined
 
+    // Each screenshot must show a part of the page. Without this check a height of 0 never scrolls and takes screenshots
+    // without end, and a negative height scrolls up
+    if (effectiveViewportHeight <= 0) {
+        log.error('The viewport height for the full page screenshot is not positive', {
+            effectiveViewportHeight,
+            viewportHeight,
+            deviceInfo: { isAndroid, isLandscape, devicePixelRatio, addressBarShadowPadding, toolBarShadowPadding },
+            deviceRectangles: { viewport, bottomBar, homeBar, screenSize: options.deviceRectangles.screenSize },
+        })
+
+        const viewportCssHeight = viewportHeight + addressBarShadowPadding + toolBarShadowPadding
+        const homeBarHeight = viewportHeight - effectiveViewportHeight
+        // Smaller shadow paddings only help when the viewport is higher than the home bar
+        const advice = viewportCssHeight - homeBarHeight > 0
+            ? 'Use smaller shadow paddings.'
+            : 'The viewport is not higher than the home bar, so the device rectangles are probably wrong.'
+
+        throw new Error(viewport.height === 0
+            ? 'The full page screenshot can not be taken: the viewport of the mobile browser is not known (height 0). ' +
+                'The visual service measures it at the start of the session with a native tap in the middle of the screen, ' +
+                'and that measurement failed, for example because the screen was black or a browser screen covered the page. ' +
+                'See the warnings of the visual service in the WebdriverIO log.'
+            : `The full page screenshot can not be taken: the viewport height without the shadow paddings and the home bar is ${effectiveViewportHeight} px ` +
+                `(viewport ${viewportCssHeight} px, addressBarShadowPadding ${addressBarShadowPadding} px, ` +
+                `toolBarShadowPadding ${toolBarShadowPadding} px, home bar ${homeBarHeight} px). ${advice}`)
+    }
+
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
         const scrollY = effectiveViewportHeight * i
-
-        if (scrollY < 0) {
-            const currentBrowserScrollPosition = await browserInstance.execute(() => window.pageYOffset || document.documentElement.scrollTop)
-
-            log.error('Negative scrollY detected during full page screenshot', {
-                iteration: i,
-                scrollY,
-                effectiveViewportHeight,
-                originalViewportHeight: viewportHeight,
-                calculatedScrollY: effectiveViewportHeight * i,
-                deviceInfo: {
-                    isAndroid,
-                    isLandscape,
-                    devicePixelRatio,
-                    addressBarShadowPadding,
-                    toolBarShadowPadding
-                },
-                deviceRectangles: {
-                    viewport: options.deviceRectangles.viewport,
-                    bottomBar: options.deviceRectangles.bottomBar,
-                    homeBar: options.deviceRectangles.homeBar,
-                    screenSize: options.deviceRectangles.screenSize
-                },
-                homeBarAdjustment: {
-                    hasNoBottomBar,
-                    hasHomeBar,
-                    homeBarHeightAdjustment: hasNoBottomBar && hasHomeBar ? Math.round(homeBar.height / (isAndroid ? devicePixelRatio : 1)) : 0
-                },
-                scrollHeight,
-                currentBrowserScrollPosition
-            })
-
-            throw new Error(`Negative scroll position detected (scrollY: ${scrollY}) during full page screenshot at iteration ${i}. This indicates an issue with viewport calculations or browser scroll state. Check logs for detailed debug information.`)
-        }
 
         await browserInstance.execute(scrollToPosition, scrollY)
 
         // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
         await browserInstance.execute(hideScrollBars, true)
 
-        // Simply wait the amount of time specified for lazy-loading
-        await waitFor(fullPageScrollTimeout)
-
-        // Elements that need to be hidden after the first scroll for a fullpage scroll
+        // Elements that need to be hidden after the first scroll for a fullpage scroll.
+        // Hide them before the wait: on a slow device the page needs time to be drawn again without them,
+        // otherwise the screenshot can still show them
         if (i === 1 && hideAfterFirstScroll.length > 0) {
             try {
                 await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
@@ -104,6 +97,9 @@ export async function getMobileFullPageNativeWebScreenshotsData(browserInstance:
                 logHiddenRemovedError(e)
             }
         }
+
+        // Simply wait the amount of time specified for lazy-loading
+        await waitFor(fullPageScrollTimeout)
 
         // Take the screenshot and determine if it's rotated
         const screenshot = await takeBase64Screenshot(browserInstance)
@@ -231,10 +227,9 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(browserInsta
         // Hide scrollbars before taking a screenshot, we don't want them, on the screenshot
         await browserInstance.execute(hideScrollBars, true)
 
-        // Simply wait the amount of time specified for lazy-loading
-        await waitFor(fullPageScrollTimeout)
-
-        // Elements that need to be hidden after the first scroll for a fullpage scroll
+        // Elements that need to be hidden after the first scroll for a fullpage scroll.
+        // Hide them before the wait: on a slow device the page needs time to be drawn again without them,
+        // otherwise the screenshot can still show them
         if (i === 1 && hideAfterFirstScroll.length > 0) {
             try {
                 await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
@@ -242,6 +237,9 @@ export async function getAndroidChromeDriverFullPageScreenshotsData(browserInsta
                 logHiddenRemovedError(e)
             }
         }
+
+        // Simply wait the amount of time specified for lazy-loading
+        await waitFor(fullPageScrollTimeout)
 
         // Take the screenshot
         const screenshot = await takeBase64Screenshot(browserInstance)
@@ -331,6 +329,8 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
     const amountOfScrollsArray = []
     let scrollHeight: number | undefined
     let screenshotSize
+    // Safari desktop: where the next image starts on the canvas, in CSS pixels
+    let nextSafariCanvasYPosition = 0
 
     for (let i = 0; i <= amountOfScrollsArray.length; i++) {
         // Determine and start scrolling
@@ -345,10 +345,9 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
 
         await browserInstance.execute(scrollToPosition, scrollY)
 
-        // Simply wait the amount of time specified for lazy-loading
-        await waitFor(fullPageScrollTimeout)
-
-        // Elements that need to be hidden after the first scroll for a fullpage scroll
+        // Elements that need to be hidden after the first scroll for a fullpage scroll.
+        // Hide them before the wait: on a slow device the page needs time to be drawn again without them,
+        // otherwise the screenshot can still show them
         if (i === 1 && hideAfterFirstScroll.length > 0) {
             try {
                 await browserInstance.execute(hideRemoveElements, { hide: hideAfterFirstScroll, remove: [] }, true)
@@ -356,6 +355,9 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
                 logHiddenRemovedError(e)
             }
         }
+
+        // Simply wait the amount of time specified for lazy-loading
+        await waitFor(fullPageScrollTimeout)
 
         // Take the screenshot
         const screenshot = await takeBase64Screenshot(browserInstance)
@@ -469,16 +471,14 @@ export async function getDesktopFullPageScreenshotsData(browserInstance:Webdrive
             imageHeight = screenshotSize.height - imageYPosition
         }
 
-        // Calculate based on where the previous image ends
-        // Previous image's canvasYPosition + previous image's height
+        // Safari desktop: the image starts where the previous image ends. This is counted in CSS pixels, because the
+        // stored images are already in device pixels (calculateDprData), so they can not be added to CSS pixels
         let canvasYPosition: number
-        if (isSafariDesktop && !isFirstImage) {
-            const previousImage = viewportScreenshots[viewportScreenshots.length - 1]
-            canvasYPosition = previousImage
-                ? previousImage.canvasYPosition + previousImage.imageHeight
-                : actualInnerHeight + (i - 1) * effectiveScrollIncrement
+        if (isSafariDesktop) {
+            canvasYPosition = isFirstImage ? 0 : nextSafariCanvasYPosition
+            nextSafariCanvasYPosition = canvasYPosition + imageHeight
         } else {
-            canvasYPosition = isSafariDesktop ? 0 : scrollY
+            canvasYPosition = scrollY
         }
 
         // Store all the screenshot data in the screenshot object
@@ -618,6 +618,37 @@ export async function takeWebElementScreenshot({
             base64Image,
             isWebDriverElementScreenshot: false,
             rectangles,
+        }
+    }
+
+    // TEMPORARY workaround for https://github.com/appium/appium/issues/22939 (see #1127): in iOS Safari, the Appium
+    // element screenshot has the size of the whole element, but only the part inside the viewport has pixels, the rest
+    // is transparent (shown as black). Until Appium fixes it, cut the visible part of the element from a screenshot when
+    // the element is not fully inside the viewport, as on Android. `innerHeight` leaves out the area under the floating
+    // Safari toolbar of iOS 26, so the cut does not have the toolbar. In a frame the position is relative to the frame,
+    // not to the page, so the driver's element screenshot is used there, as before.
+    if (isIOS) {
+        const visibleRect = await browserInstance.execute(getElementVisibleRect, await element)
+
+        if (!visibleRect.isFullyVisible && !visibleRect.isInFrame && visibleRect.width > 0 && visibleRect.height > 0) {
+            log.info('The element is not fully inside the viewport, cutting its visible part from a screenshot (see https://github.com/appium/appium/issues/22939)')
+            const base64Image = await takeBase64Screenshot(browserInstance)
+            // On iOS the device rectangles are in CSS pixels, as in getElementWebviewPosition
+            const rectangles = calculateDprData(
+                {
+                    height: visibleRect.height,
+                    width: visibleRect.width,
+                    x: visibleRect.x + deviceRectangles.viewport.x,
+                    y: visibleRect.y + deviceRectangles.viewport.y,
+                },
+                devicePixelRatio,
+            )
+
+            return {
+                base64Image,
+                isWebDriverElementScreenshot: false,
+                rectangles,
+            }
         }
     }
 

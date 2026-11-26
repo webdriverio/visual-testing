@@ -79,6 +79,23 @@ describe('getData', () => {
         expect(result).toMatchSnapshot()
     })
 
+    it.each([
+        { engine: 'system Tesseract', isTesseractAvailable: true, getOcrData: Tesseract.getSystemOcrData },
+        { engine: 'NodeJS Tesseract', isTesseractAvailable: false, getOcrData: Tesseract.getNodeOcrData },
+    ])('passes the page segmentation mode to $engine', async ({ isTesseractAvailable, getOcrData }) => {
+        vi.mocked(getBase64ScreenshotSize).mockReturnValue({ height: 1200, width: 1200 })
+
+        await getData(browser, {
+            contrast: 1.0,
+            isTesseractAvailable,
+            language: 'ENG',
+            ocrImagesPath: '/fake/ocr/path',
+            pageSegmentationMode: 7,
+        })
+
+        expect(getOcrData).toHaveBeenCalledWith(expect.objectContaining({ pageSegmentationMode: 7 }))
+    })
+
     it('processes OCR data correctly using NodeJS Tesseract', async () => {
         const logInfoMock = vi.spyOn(log, 'info')
         const options = {

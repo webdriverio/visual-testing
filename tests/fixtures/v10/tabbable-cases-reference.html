@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tabbable cases reference</title>
+<style>
+    body { margin: 0; background: #fff; }
+    main { opacity: 0; }
+    .row { display: block; box-sizing: border-box; width: 160px; height: 40px; margin: 20px; padding: 0; border: 0; }
+    .summary { height: 40px; }
+</style>
+</head>
+<body>
+<!-- The expected tab stops of tabbable-cases.html: an element with tabindex="0" at the same place -->
+<main>
+    <div><div class="row"></div></div>
+    <div class="row" tabindex="0"></div>
+    <div class="row" tabindex="0"></div>
+    <div class="row"></div>
+    <div><div class="row" tabindex="0"></div></div>
+    <div class="row" tabindex="0"></div>
+    <div class="row" tabindex="0"></div>
+    <div class="row" tabindex="0"><div class="summary" tabindex="0"></div></div>
+    <div class="row"></div>
+</main>
+</body>
+</html>

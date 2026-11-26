@@ -114,7 +114,7 @@ export interface BaseImageCompareOptions {
      */
     ignoreColors?: boolean;
     /**
-     * Use a relaxed RGB tolerance (~16/255 per channel in YIQ space).
+     * Use a relaxed color tolerance (pixelmatch threshold `0.063`).
      * Preset: strict threshold, AA not forgiven (does not inherit default AA forgiveness).
      * @default false
      */

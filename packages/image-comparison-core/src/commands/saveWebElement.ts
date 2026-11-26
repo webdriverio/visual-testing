@@ -10,11 +10,25 @@ import { canUseBidiScreenshot, getMethodOrWicOption } from '../helpers/utils.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
 import { determineWebElementIgnoreRegions } from '../methods/rectangles.js'
+import { readScrollPosition, restoreScrollPosition } from '../helpers/scrollPosition.js'
 
 /**
  * Saves an image of an element
  */
-export default async function saveWebElement(
+export default async function saveWebElement(options: InternalSaveElementMethodOptions): Promise<ScreenshotOutput> {
+    // With `autoElementScroll`, the screenshot scrolls the element into view (#1229). Read the position before the page
+    // is prepared (removed elements can make the page shorter and move it), and scroll back after the page is
+    // restored, also when the screenshot fails
+    const { browserInstance, instanceData, saveElementOptions: { wic: { autoElementScroll } } } = options
+    const startScrollPosition = autoElementScroll ? await readScrollPosition(browserInstance) : undefined
+    try {
+        return await takeWebElement(options)
+    } finally {
+        await restoreScrollPosition(browserInstance, startScrollPosition, instanceData.isIOS)
+    }
+}
+
+async function takeWebElement(
     {
         browserInstance,
         instanceData,

@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tabbable cases</title>
+<style>
+    body { margin: 0; background: #fff; }
+    /* The elements stay tab stops but are not visible: only the drawn tab order is visible */
+    main { opacity: 0; }
+    form { display: block; margin: 0; padding: 0; }
+    .row { display: block; box-sizing: border-box; width: 160px; height: 40px; margin: 20px; padding: 0; border: 0; appearance: none; }
+    summary { display: block; height: 40px; }
+</style>
+</head>
+<body>
+<!-- tabbable-cases-reference.html has the same layout, with an element with tabindex="0" for each expected tab stop -->
+<main>
+    <!-- The radio group of a form also has the radio input with form="radios" outside the form, which is checked -->
+    <form id="radios"><input class="row" type="radio" name="group"></form>
+    <input class="row" type="radio" name="group" form="radios" checked>
+    <!-- A radio group without a form, and no checked radio input: only the first radio input -->
+    <input class="row" type="radio" name="other">
+    <input class="row" type="radio" name="other">
+    <!-- The checked radio input with the same name in a form is in an other group -->
+    <form><input class="row" type="radio" name="other" checked></form>
+    <!-- An SVG link and an SVG element with a tabindex -->
+    <svg class="row" width="160" height="40"><a href="#link"><rect width="160" height="40"></rect></a></svg>
+    <svg class="row" width="160" height="40"><rect tabindex="0" width="160" height="40"></rect></svg>
+    <!-- A details element with a tabindex, and then its summary -->
+    <details class="row" tabindex="0"><summary></summary><button>closed</button></details>
+    <!-- A details element with a negative tabindex: its summary is skipped too -->
+    <details class="row" tabindex="-1"><summary></summary></details>
+</main>
+</body>
+</html>

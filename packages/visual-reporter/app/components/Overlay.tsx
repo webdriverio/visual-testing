@@ -6,8 +6,8 @@ import Canvas from './Canvas.js'
 import { useChangeNavigation } from '../hooks/useChangeNavigation.js'
 
 interface OverlayProps {
-  data: MethodData;
-  onClose: () => void;
+    data: MethodData;
+    onClose: () => void;
 }
 
 const Overlay: React.FC<OverlayProps> = ({ data, onClose }) => {

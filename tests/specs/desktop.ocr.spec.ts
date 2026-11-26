@@ -1,8 +1,11 @@
 import { browser } from '@wdio/globals'
 
 describe('@wdio/visual-service:ocr desktop', () => {
+    // The v9 website keeps the page that these tests use, the v10 website (webdriver.io) has a new home page
+    const website = 'https://v9.webdriver.io'
+
     beforeEach(async () => {
-        await browser.url('https://webdriver.io/')
+        await browser.url(`${website}/`)
         await $('.hero__title').waitForDisplayed()
     })
 
@@ -67,7 +70,7 @@ describe('@wdio/visual-service:ocr desktop', () => {
             }
         })
 
-        await expect(browser).toHaveUrl('https://webdriver.io/docs/gettingstarted')
+        await expect(browser).toHaveUrl(`${website}/docs/gettingstarted`)
     })
 
     it(`should click on a button based on text inside of a haystack of coordinates on ${environment}`, async function () {
@@ -81,7 +84,7 @@ describe('@wdio/visual-service:ocr desktop', () => {
             contrast: 0.5,
         })
 
-        await expect(browser).toHaveUrl('https://webdriver.io/docs/why-webdriverio')
+        await expect(browser).toHaveUrl(`${website}/docs/why-webdriverio`)
     })
 
     it(`should set a value in an input field based on finding text inside of a haystack that is an element on ${environment}`, async function() {

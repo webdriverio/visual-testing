@@ -504,7 +504,8 @@ const COMPARE_PRESET_SETTINGS: Record<ComparisonIgnoreOption, { threshold: numbe
     nothing: { threshold: 0, includeAA: true },
     less: { threshold: 0.063, includeAA: true },
     antialiasing: {
-        // Resemble's ignoreAntialiasing uses 32/255 per-channel tolerance (~0.13 YIQ).
+        // Calibrated to resemble's ignoreAntialiasing (32/255 per channel). The scale is pixelmatch's:
+        // 0 to 1, where 1 is black vs white (pixelmatch 8 kept it when it moved from YIQ to OKLab/HyAB).
         threshold: 0.13,
         includeAA: false,
     },
@@ -538,7 +539,8 @@ export function resolveComparePreset(ignoreList: ComparisonIgnoreOption[]): { th
         return COMPARE_PRESET_SETTINGS[activePreset]
     }
 
-    // Default strict tolerance: 16/255 per channel (~6.3% of max YIQ distance).
+    // Default strict tolerance, calibrated to resemble's 16/255 per channel. The scale is pixelmatch's:
+    // 0 to 1, where 1 is black vs white.
     return { threshold: 0.063, includeAA: true }
 }
 

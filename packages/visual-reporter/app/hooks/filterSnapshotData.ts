@@ -17,27 +17,25 @@ const UseFilteredDescriptionData = (
                     .map((test: TestData) => {
                         const filteredMethods = test.data.filter((method: MethodData) => {
                             const appMatch =
-                !selectedOptions.app.length ||
+                                !selectedOptions.app.length ||
                 selectedOptions.app.includes(item.description)
                             const browserMatch =
-                !selectedOptions.browser.length ||
+                                !selectedOptions.browser.length ||
                 selectedOptions.browser.includes(
-                    `${method.instanceData.browser?.name}-${method.instanceData.browser?.version}` ||
-                    ''
+                    `${method.instanceData.browser?.name}-${method.instanceData.browser?.version}`
                 )
                             const deviceMatch =
-                !selectedOptions.device.length ||
+                                !selectedOptions.device.length ||
                 selectedOptions.device.includes(
                     method.instanceData.deviceName || ''
                 )
                             const platformMatch =
-                !selectedOptions.platform.length ||
+                                !selectedOptions.platform.length ||
                 selectedOptions.platform.includes(
-                    `${method.instanceData.platform.name}-${method.instanceData.platform.version}` ||
-                    ''
+                    `${method.instanceData.platform.name}-${method.instanceData.platform.version}`
                 )
                             const statusMatch =
-                selectedOptions.status === 'all' ||
+                                selectedOptions.status === 'all' ||
                 (selectedOptions.status === 'passed' &&
                   parseFloat(method.misMatchPercentage) === 0) ||
                 (selectedOptions.status === 'failed' &&

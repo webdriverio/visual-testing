@@ -1,3 +1,4 @@
+import logger from '@wdio/logger'
 import type { Capabilities } from '@wdio/types'
 import { getMobileScreenSize, getMobileViewPortPosition, IOS_OFFSETS, NOT_KNOWN } from '@wdio/image-comparison-core'
 import type { Folders, InstanceData, TestContext } from '@wdio/image-comparison-core'
@@ -9,6 +10,8 @@ import type {
     MobileInstanceData,
     WdioIcsOptions,
 } from './types.js'
+
+const log = logger('@wdio/visual-service')
 
 /**
  * Get the folders data
@@ -45,7 +48,7 @@ export function getBase64ScreenshotSize(screenshot: string, devicePixelRation = 
 /**
  * Get the device pixel ratio
  */
-export function getDevicePixelRatio(screenshot: string, deviceScreenSize: {height:number, width: number}): number {
+export function getDevicePixelRatio(screenshot: string, deviceScreenSize: { height:number, width: number }): number {
     const screenshotSize = getBase64ScreenshotSize(screenshot)
     const devicePixelRatio = Math.round(screenshotSize.width / deviceScreenSize.width) === Math.round(screenshotSize.height / deviceScreenSize.height)
         ? Math.round(screenshotSize.width / deviceScreenSize.width)
@@ -273,11 +276,65 @@ export async function getInstanceData({
 }
 
 /**
- * Traverse up the scope chain until browser element was reached
+ * Tells a multiremote browser apart from a single browser
  */
-export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browser): WebdriverIO.Browser {
-    const elemObject = elem as WebdriverIO.Element
-    return (elemObject as WebdriverIO.Element).parent ? getBrowserObject(elemObject.parent) : elem as WebdriverIO.Browser
+export function isMultiRemoteBrowser(
+    browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
+): browser is WebdriverIO.MultiRemoteBrowser {
+    return browser.isMultiRemote === true
+}
+
+/**
+ * WebdriverIO brands its objects with their role: `'browser'`, `'element'`, `'element-array'`, `'mock'` or
+ * `'browsing-context'`. `Symbol.for()` gives the same symbol in every copy of WebdriverIO, so no import is needed.
+ * See https://github.com/webdriverio/webdriverio/pull/15812
+ */
+const WDIO_KIND: unique symbol = Symbol.for('wdio.kind')
+
+/**
+ * Tells if a value is a WebdriverIO object with this kind
+ */
+function isWdioKind(value: unknown, kind: string): value is object {
+    return (typeof value === 'object' || typeof value === 'function') && value !== null
+        && WDIO_KIND in value && value[WDIO_KIND] === kind
+}
+
+/**
+ * The kind of a multiremote browser is also `'browser'`, so check `isMultiRemote` too
+ */
+function isSingleBrowser(value: unknown): value is WebdriverIO.Browser {
+    return isWdioKind(value, 'browser') && !('isMultiRemote' in value && value.isMultiRemote === true)
+}
+
+interface MultiRemoteElement {
+    instances: string[]
+    getInstance: (instanceName: string) => WebdriverIO.Element
+}
+
+/**
+ * A multiremote element (`multiRemoteBrowser.$()`) has no `parent`, it holds the element of each instance.
+ * `getInstance()` gives that element, and its parent is the browser of the instance.
+ * The kind does not tell if an element is multiremote, so check `isMultiRemote` too
+ */
+export function isMultiRemoteElement(element: unknown): element is MultiRemoteElement {
+    return isWdioKind(element, 'element') && 'isMultiRemote' in element && element.isMultiRemote === true
+}
+
+/**
+ * Traverse up the scope chain until the browser is reached.
+ * In WebdriverIO v10 the parent of an element can also be a browsing context, which holds the browser in `browser`
+ */
+export function getBrowserObject(elem: unknown): WebdriverIO.Browser {
+    if (isSingleBrowser(elem)) {
+        return elem
+    }
+    if (isWdioKind(elem, 'browsing-context') && 'browser' in elem) {
+        return getBrowserObject(elem.browser)
+    }
+    if (isWdioKind(elem, 'element') && 'parent' in elem) {
+        return getBrowserObject(elem.parent)
+    }
+    throw new Error('Could not find the browser of this element. Use an element of WebdriverIO v10, for example from `browser.$()`.')
 }
 
 /**
@@ -286,7 +343,7 @@ export function getBrowserObject (elem: WebdriverIO.Element | WebdriverIO.Browse
 const appiumKeys = ['app', 'bundleId', 'appPackage', 'appActivity', 'appWaitActivity', 'appWaitPackage'] as const
 type AppiumKeysType = typeof appiumKeys[number]
 export function getNativeContext({ capabilities, isMobile }:
-    { capabilities: WebdriverIO.Capabilities, isMobile: boolean }
+{ capabilities: WebdriverIO.Capabilities, isMobile: boolean }
 ): boolean {
     if (!capabilities || typeof capabilities !== 'object' || !isMobile) {
         return false
@@ -295,7 +352,7 @@ export function getNativeContext({ capabilities, isMobile }:
     const isAppiumAppCapPresent = (capabilities: Capabilities.RequestedStandaloneCapabilities) => {
         return appiumKeys.some((key) => (
             (capabilities as Capabilities.AppiumCapabilities)[key as keyof Capabilities.AppiumCapabilities] !== undefined ||
-            (capabilities as Capabilities.AppiumCapabilities)[`appium:${key}`as keyof Capabilities.AppiumCapabilities] !== undefined ||
+            (capabilities as Capabilities.AppiumCapabilities)[`appium:${key}` as keyof Capabilities.AppiumCapabilities] !== undefined ||
             (capabilities as WebdriverIO.Capabilities)['appium:options']?.[key as AppiumKeysType] !== undefined ||
             (capabilities as WebdriverIO.Capabilities)['lt:options']?.[key as AppiumKeysType] !== undefined
         ))
@@ -360,3 +417,77 @@ export function enrichTestContext(
     }
 }
 
+/**
+ * Chromium-based browsers (Chrome, Chromium, Edge)
+ */
+function isChromium(browserInstance: WebdriverIO.Browser): boolean {
+    const browserName = (browserInstance.capabilities.browserName ?? '').toLowerCase()
+    return ['chrome', 'chromium', 'edge'].some((name) => browserName.includes(name))
+}
+
+/**
+ * Bring a page that is in a background tab to the front before a check or save command.
+ *
+ * Why: in a WebDriver BiDi session with a Chromium-based browser on Linux, a page in a background tab (for example
+ * after `browser.newWindow()`, which in WebdriverIO v10 does not switch to the new tab) has 2 problems:
+ * - it reports `window.outerHeight` = `window.innerHeight`, and the desktop file name uses the outer size, so the
+ *   check uses another file name, saves a new baseline (`autoSaveBaseline`) and passes without a comparison;
+ * - when the page had no new frame for about 300 ms, `browsingContext.captureScreenshot` (CDP `Page.captureScreenshot`)
+ *   never returns, until the `bidiResponseTimeout` (180 seconds by default). This is a Chromium bug: it also
+ *   happens with CDP only, see https://issues.chromium.org/issues/571157133
+ * Chrome on macOS and Firefox (BiDi) do not have these problems.
+ *
+ * A WebDriver Classic screenshot does not have them either, because ChromeDriver brings the tab to the front first
+ * (`ActivateWebView` in `ExecuteScreenshot`). The BiDi `browsingContext.captureScreenshot` does not, so do the same
+ * here with `browsingContext.activate` (CDP `Page.bringToFront`). Side effect: the tab of the page comes to the front.
+ *
+ * Scope: BiDi sessions of Chromium-based desktop browsers, and only when the page is hidden. It is not limited to
+ * Linux: the browser can run on another OS than the test runner (grid, cloud), the hang is also reported on macOS
+ * with other Chrome versions, and Windows was not tested. It never fails the command.
+ *
+ * Reports:
+ * - Chromium bug: https://issues.chromium.org/issues/571157133
+ * - WebDriver BiDi spec (what `browsingContext.captureScreenshot` must do for a hidden page):
+ *   https://github.com/w3c/webdriver-bidi/issues/1176
+ * When Chromium fixes the bug, limit this to the older Chrome versions or remove it.
+ */
+export async function activateHiddenBrowsingContext(browserInstance: WebdriverIO.Browser, isNativeContext: boolean): Promise<void> {
+    if (!browserInstance.isBidi || browserInstance.isMobile || isNativeContext || !isChromium(browserInstance)) {
+        return
+    }
+
+    try {
+        const isHidden = await browserInstance.execute(() => document.visibilityState === 'hidden')
+        if (!isHidden) {
+            return
+        }
+
+        const context = await browserInstance.getWindowHandle()
+        log.info(`The page is in a background tab, activating the browsing context "${context}" before the screenshot`)
+        await browserInstance.browsingContextActivate({ context })
+    } catch (error) {
+        log.warn(`Could not bring the page in a background tab to the front, the screenshot can fail: ${error}`)
+    }
+}
+
+/**
+ * The Appium UiAutomator2 driver does not support the WebDriver BiDi commands that WebdriverIO and the visual
+ * service use, so in a BiDi session (the WebdriverIO v10 default) every check command fails with an error that
+ * does not tell the workaround (#1232). Tell it once, at the start of the session.
+ * A test call instead of a capability check: the warning stops by itself when Appium supports these commands.
+ */
+export async function warnIfBiDiScriptsFailOnAndroid(browserInstance: WebdriverIO.Browser): Promise<void> {
+    if (!browserInstance.isAndroid || !browserInstance.isBidi || !browserInstance.capabilities.browserName) {
+        return
+    }
+
+    try {
+        await browserInstance.execute(() => true)
+    } catch (error) {
+        log.warn(
+            'This Android browser session uses WebDriver BiDi, but the driver does not run its scripts, so the '
+            + 'visual commands and matchers will fail. Set `\'wdio:enforceWebDriverClassic\': true` in the '
+            + `capabilities. See https://github.com/webdriverio/visual-testing/issues/1232. Error: ${error}`
+        )
+    }
+}

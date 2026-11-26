@@ -23,4 +23,4 @@ export interface BeforeScreenshotOptions {
     waitForFontsLoaded: boolean;
 }
 
-export type BeforeScreenshotResult = EnrichedInstanceData;
+export type BeforeScreenshotResult = EnrichedInstanceData

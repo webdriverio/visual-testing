@@ -1,24 +1,27 @@
-import { browser, expect } from '@wdio/globals'
+import { browser, expect, multiRemoteBrowser } from '@wdio/globals'
 import { fileExists } from '../helpers/fileExists.ts'
 
 describe('@wdio/visual-service check that multi remote is working', () => {
     const resolution = '1366x768'
+    // WebdriverIO v10 does not store the instances as properties of the multiremote browser
+    const getChromeBrowserOne = () => multiRemoteBrowser.getInstance('chromeBrowserOne')
+    const getChromeBrowserTwo = () => multiRemoteBrowser.getInstance('chromeBrowserTwo')
 
     beforeEach(async () => {
-        await multiremotebrowser.chromeBrowserOne.url('')
-        await multiremotebrowser.chromeBrowserOne.pause(500)
+        await getChromeBrowserOne().url('')
+        await getChromeBrowserOne().pause(500)
 
-        await multiremotebrowser.chromeBrowserTwo.url('')
-        await multiremotebrowser.chromeBrowserTwo.pause(500)
+        await getChromeBrowserTwo().url('')
+        await getChromeBrowserTwo().pause(500)
     })
 
     // Chrome remembers the last position when the url is loaded again, this will reset it.
     afterEach(async () => {
-        await multiremotebrowser.chromeBrowserOne.execute(
+        await getChromeBrowserOne().execute(
             'window.scrollTo(0, 0);',
             []
         )
-        await multiremotebrowser.chromeBrowserTwo.execute(
+        await getChromeBrowserTwo().execute(
             'window.scrollTo(0, 0);',
             []
         )
@@ -27,14 +30,14 @@ describe('@wdio/visual-service check that multi remote is working', () => {
     it('take a screenshot of each browser', async () => {
         const tag = 'homepage'
         const imageDataOne =
-            await multiremotebrowser.chromeBrowserOne.saveScreen(tag)
+            await getChromeBrowserOne().saveScreen(tag)
         const imageDataTwo =
-            await multiremotebrowser.chromeBrowserTwo.saveScreen(tag)
+            await getChromeBrowserTwo().saveScreen(tag)
 
         const logNameOne =
             'wdio-ics:options' in
-            multiremotebrowser.chromeBrowserOne.requestedCapabilities
-                ? multiremotebrowser.chromeBrowserOne.requestedCapabilities[
+            getChromeBrowserOne().requestedCapabilities
+                ? getChromeBrowserOne().requestedCapabilities[
                     'wdio-ics:options'
                 // @ts-ignore
                 ]?.logName
@@ -45,8 +48,8 @@ describe('@wdio/visual-service check that multi remote is working', () => {
 
         const logNameTwo =
             'wdio-ics:options' in
-            multiremotebrowser.chromeBrowserTwo.requestedCapabilities
-                ? multiremotebrowser.chromeBrowserTwo.requestedCapabilities[
+            getChromeBrowserTwo().requestedCapabilities
+                ? getChromeBrowserTwo().requestedCapabilities[
                     'wdio-ics:options'
                 // @ts-ignore
                 ]?.logName
@@ -74,5 +77,37 @@ describe('@wdio/visual-service check that multi remote is working', () => {
 
             expect(fileExists(filePath)).toBe(true)
         }
+    })
+
+    // https://github.com/webdriverio/visual-testing/issues/1238
+    describe('element commands and matchers', () => {
+        const selector = '.hero__title-logo'
+
+        it('compares a multiremote element on each instance with the matcher', async () => {
+            await expect(multiRemoteBrowser.$(selector)).toMatchElementSnapshot('multiremote-element', 0)
+        })
+
+        it('compares the element of one instance with the matcher', async () => {
+            await expect(getChromeBrowserOne().$(selector)).toMatchElementSnapshot('instance-element', 0)
+        })
+
+        it('runs the multiremote element command on each instance with the element of that instance', async () => {
+            const results = await multiRemoteBrowser.checkElement(await multiRemoteBrowser.$(selector), 'multiremote-check-element', {})
+
+            expect(results).toEqual({ chromeBrowserOne: 0, chromeBrowserTwo: 0 })
+        })
+
+        it('runs the multiremote element command with a multiremote element that is not awaited', async () => {
+            const results = await multiRemoteBrowser.checkElement(multiRemoteBrowser.$(selector), 'multiremote-check-element-not-awaited', {})
+
+            expect(results).toEqual({ chromeBrowserOne: 0, chromeBrowserTwo: 0 })
+        })
+
+        it('runs the element command of one instance on that instance only', async () => {
+            const imageData = await getChromeBrowserTwo().saveElement(await getChromeBrowserTwo().$(selector), 'instance-save-element')
+
+            // The multiremote command gives the image data of each instance, the command of an instance gives one
+            expect(imageData.fileName).toBe(`instance-save-element-chrome-latest-two-${resolution}.png`)
+        })
     })
 })

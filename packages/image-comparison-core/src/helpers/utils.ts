@@ -386,14 +386,14 @@ export async function getMobileScreenSize({
 
     try {
         if (isIOS) {
-            ({ screenSize: { height, width } } = (await browserInstance.execute('mobile: deviceScreenInfo')) as {
+            ({ screenSize: { height, width } } = (await browserInstance.executeScript('mobile: deviceScreenInfo', [])) as {
                 statusBarSize: BaseDimensions,
                 scale: number,
                 screenSize: BaseDimensions,
             })
             // It's Android
         } else {
-            const { realDisplaySize } = (await browserInstance.execute('mobile: deviceInfo')) as { realDisplaySize: string }
+            const { realDisplaySize } = (await browserInstance.executeScript('mobile: deviceInfo', [])) as { realDisplaySize: string }
 
             if (!realDisplaySize || !/^\d+x\d+$/.test(realDisplaySize)) {
                 throw new Error(`Invalid realDisplaySize format. Expected 'widthxheight', got "${realDisplaySize}"`)
@@ -468,15 +468,19 @@ export async function loadBase64Html({ browserInstance, isIOS }: LoadBase64HtmlO
 
 /**
  * Execute a native click
+ *
+ * `mobile:` commands use `executeScript`, the WebDriver Classic command, and not `execute`.
+ * In a WebDriver BiDi session `execute` runs the script as page JavaScript with `script.callFunction`,
+ * where a `mobile:` command does not exist.
  */
 export async function executeNativeClick({ browserInstance, isIOS, x, y }: ExecuteNativeClickOptions): Promise<void> {
     if (isIOS) {
-        return browserInstance.execute('mobile: tap', { x, y })
+        return browserInstance.executeScript('mobile: tap', [{ x, y }])
     }
 
     try {
         // The `clickGesture` is not working on Appium 1, only on Appium 2
-        await browserInstance.execute('mobile: clickGesture', { x, y })
+        await browserInstance.executeScript('mobile: clickGesture', [{ x, y }])
     } catch (error: unknown) {
         if (
             error instanceof Error &&
@@ -485,7 +489,7 @@ export async function executeNativeClick({ browserInstance, isIOS, x, y }: Execu
             log.warn(
                 'Error executing `clickGesture`, falling back to `doubleClickGesture`. This likely means you are using Appium 1. Is this intentional?'
             )
-            await browserInstance.execute('mobile: doubleClickGesture', { x, y })
+            await browserInstance.executeScript('mobile: doubleClickGesture', [{ x, y }])
         } else {
             throw error
         }
@@ -498,10 +502,16 @@ export async function executeNativeClick({ browserInstance, isIOS, x, y }: Execu
  * native clicks from reaching the webview overlay. Each retry dismisses the Start
  * Surface via a combination of native taps and WebDriver URL navigation, then
  * re-attempts the measurement.
- *
- * iOS does not suffer from this issue, so only a single attempt is made there.
  */
 const MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES = 5
+
+/**
+ * The maximum number of times we attempt to measure the viewport position on iOS.
+ * On the first Safari start of a new simulator or device, Safari shows a tip (for example
+ * "View Bookmarks, Share Menu, and Open Tabs" on iOS 26). The first native tap only closes
+ * that tip and does not reach the webview overlay, so the next attempt measures correctly.
+ */
+const MAX_IOS_VIEWPORT_MEASUREMENT_ATTEMPTS = 3
 
 /**
  * Get the mobile viewport position, we determine this by:
@@ -512,11 +522,12 @@ const MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES = 5
  * 5. Calculating the position of the viewport based on the click position of the native click vs the overlay
  * 6. Returning the calculated values
  *
- * On Android only: when the overlay reports zero dimensions (width=0, height=0)
- * the native click did not reach the webview. This typically means Chrome's Start
- * Surface or tab overview is blocking it. The function will retry up to
- * MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES times, tapping the tab thumbnail area
- * between attempts to dismiss the blocking UI.
+ * When the overlay reports zero dimensions (width=0, height=0) the native click did not reach
+ * the webview, and the function measures again:
+ * - Android: Chrome's Start Surface or tab overview is blocking it. Up to
+ *   MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES attempts, with the Back button between attempts.
+ * - iOS: a Safari tip took the tap (first Safari start). Up to MAX_IOS_VIEWPORT_MEASUREMENT_ATTEMPTS
+ *   attempts; the first tap already closed the tip.
  */
 export async function getMobileViewPortPosition({
     browserInstance,
@@ -532,7 +543,7 @@ export async function getMobileViewPortPosition({
         const currentUrl = await browserInstance.getUrl()
         const nativeClickX = screenWidth / 2
         const nativeClickY = screenHeight / 2
-        const maxAttempts = isAndroid ? MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES : 1
+        const maxAttempts = isAndroid ? MAX_ANDROID_VIEWPORT_MEASUREMENT_RETRIES : MAX_IOS_VIEWPORT_MEASUREMENT_ATTEMPTS
 
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
             // 1. Load a base64 HTML page
@@ -546,20 +557,23 @@ export async function getMobileViewPortPosition({
             // 4a. Get the data from the overlay and remove it
             const { y, x, width, height } = await browserInstance.execute(getMobileWebviewClickAndDimensions, '[data-test="ics-overlay"]')
 
-            // 4b. On Android, validate the overlay data.
+            // 4b. Validate the overlay data.
+            // When width and height are both 0 the native click never reached the overlay.
+            // On Android this typically means Chrome's Start Surface or tab overview is blocking the webview.
             // NOTE: for future detection of Chrome's Start Surface, `document.visibilityState`
             // and `document.hasFocus()` can be used as a more direct signal. When the Start
             // Surface is active the webview reports visibility: "hidden" and hasFocus: false.
-            // When width and height are both 0 the native click never reached the overlay,
-            // which typically means Chrome's Start Surface or tab overview is blocking the webview.
-            if (isAndroid && width === 0 && height === 0) {
+            // On iOS a Safari tip (first Safari start) takes the tap and closes, so the next attempt works.
+            if (width === 0 && height === 0) {
                 log.warn(
                     `Viewport measurement attempt ${attempt}/${maxAttempts}: ` +
                     'overlay did not receive the native click. ' +
-                    'Chrome may be showing its Start Surface or tab overview.'
+                    (isAndroid
+                        ? 'Chrome may be showing its Start Surface or tab overview.'
+                        : 'Safari may be showing a tip, which the tap closed.')
                 )
 
-                if (attempt < maxAttempts) {
+                if (isAndroid && attempt < maxAttempts) {
                     await dismissAndroidStartSurface({ browserInstance })
                 }
 
@@ -588,10 +602,12 @@ export async function getMobileViewPortPosition({
             return deviceRectangles
         }
 
-        // All Android retries exhausted — reset the URL and fall through to initialDeviceRectangles
+        // All attempts exhausted — reset the URL and fall through to initialDeviceRectangles
         log.error(
             `Viewport measurement failed after ${maxAttempts} attempts. ` +
-            'Chrome appears stuck in Start Surface or tab overview mode. ' +
+            (isAndroid
+                ? 'Chrome appears stuck in Start Surface or tab overview mode. '
+                : 'Something in Safari blocks the native click on the page. ') +
             'Returning initial device rectangles; screenshots may have incorrect dimensions.'
         )
         await browserInstance.url(currentUrl)
@@ -623,7 +639,7 @@ async function dismissAndroidStartSurface({
     browserInstance: WebdriverIO.Browser
 }): Promise<void> {
     try {
-        await browserInstance.execute('mobile: pressKey', { keycode: 4 })
+        await browserInstance.executeScript('mobile: pressKey', [{ keycode: 4 }])
         await waitFor(1500)
     } catch (error) {
         log.warn('Failed to dismiss Chrome Start Surface via Back button', error)

@@ -11,4 +11,8 @@ docs/
 .eslintcache
 tsconfig.json
 src
+tests
+# Compiled unit tests and their mocks
+*.test.*
+dist/mocks/
 *.tgz

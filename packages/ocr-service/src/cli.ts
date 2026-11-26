@@ -4,9 +4,9 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import type { RectReturn } from './types.js'
 import getData from './utils/getData.js'
-import { createOcrDir } from './utils/index.js'
+import { createOcrDir, isPageSegmentationMode } from './utils/index.js'
 import { isSystemTesseractAvailable } from './utils/tesseract.js'
-import { SUPPORTED_LANGUAGES } from './utils/constants.js'
+import { DEFAULT_PAGE_SEGMENTATION_MODE, PAGE_SEGMENTATION_MODES, SUPPORTED_LANGUAGES } from './utils/constants.js'
 import { remote } from 'webdriverio'
 
 export const CONFIG_HELPER_INTRO = `
@@ -86,6 +86,7 @@ async function main() {
         isTesseractAvailable: isSystemTesseractAvailable(),
         language: SUPPORTED_LANGUAGES.ENGLISH,
         ocrImagesPath: ocrDir,
+        pageSegmentationMode: DEFAULT_PAGE_SEGMENTATION_MODE,
     }
     let filePath: string
 
@@ -158,9 +159,16 @@ async function main() {
             },
         })
 
+        const pageSegmentationMode = Number(await input({
+            message: 'Enter the Tesseract page segmentation mode, --psm (3 = automatic, 7 = one line, 10 = one character):',
+            default: DEFAULT_PAGE_SEGMENTATION_MODE.toString(),
+            validate: (input) => isPageSegmentationMode(Number(input)) || `Please enter one of ${PAGE_SEGMENTATION_MODES.join(', ')}`,
+        }))
+
         options = {
             ...options,
             contrast: parseFloat(advancedOptions),
+            pageSegmentationMode: isPageSegmentationMode(pageSegmentationMode) ? pageSegmentationMode : DEFAULT_PAGE_SEGMENTATION_MODE,
         }
     }
 

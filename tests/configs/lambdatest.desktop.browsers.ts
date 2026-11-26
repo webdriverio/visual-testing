@@ -35,7 +35,7 @@ export function lambdaDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [basicSpecs],
+            'wdio:specs': [basicSpecs],
             ...defaultBrowserLambdaTestOptions,
             'wdio-ics:options': {
                 logName: 'chrome-latest',
@@ -45,7 +45,7 @@ export function lambdaDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [checkMethodFolderSpecs],
+            'wdio:specs': [checkMethodFolderSpecs],
             ...defaultBrowserLambdaTestOptions,
             'wdio-ics:options': {
                 logName: 'chrome-latest',
@@ -55,7 +55,7 @@ export function lambdaDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [saveMethodFolderSpecs],
+            'wdio:specs': [saveMethodFolderSpecs],
             ...defaultBrowserLambdaTestOptions,
             'wdio-ics:options': {
                 logName: 'chrome-latest',
@@ -69,7 +69,7 @@ export function lambdaDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserLambdaTestOptions,
             'wdio-ics:options': {
                 logName: 'chrome-latest',
@@ -79,7 +79,7 @@ export function lambdaDesktopBrowsers({
             browserName: 'chrome',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [bidiEmulatedDesktopSpecs],
+            'wdio:specs': [bidiEmulatedDesktopSpecs],
             ...defaultBrowserLambdaTestOptions,
             'wdio-ics:options': {
                 logName: 'chrome-latest',
@@ -100,7 +100,7 @@ export function lambdaDesktopBrowsers({
             browserName: 'firefox',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserLambdaTestOptions,
             'wdio-ics:options': {
                 logName: 'Firefox latest',
@@ -110,7 +110,7 @@ export function lambdaDesktopBrowsers({
             browserName: 'MicrosoftEdge',
             browserVersion: 'latest',
             platformName: 'Windows 10',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             ...defaultBrowserLambdaTestOptions,
             'wdio-ics:options': {
                 logName: 'Microsoft Edge latest',
@@ -129,7 +129,7 @@ export function lambdaDesktopBrowsers({
         {
             browserName: 'Safari',
             browserVersion: 'latest',
-            specs: [deskSpecs],
+            'wdio:specs': [deskSpecs],
             'LT:Options': {
                 ...defaultBrowserLambdaTestOptions['LT:Options'],
                 platformName: 'MacOS Sequoia',

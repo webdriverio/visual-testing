@@ -18,7 +18,7 @@ import type {
     StatusAddressToolBarRectangles,
     StatusAddressToolBarRectanglesOptions,
 } from './rectangles.interfaces.js'
-import type { ElementIgnore } from 'src/commands/element.interfaces.js'
+import type { ElementIgnore } from '../commands/element.interfaces.js'
 
 /**
  * Determine the element rectangles on the page / screenshot
@@ -203,8 +203,30 @@ export function validateIgnoreRegion(x: unknown) {
  * Format the error message
  */
 export function formatErrorMessage(item:unknown, message:string) {
+    const notFoundMessage = formatNotFoundElementMessage(item)
+    if (notFoundMessage) {
+        return notFoundMessage
+    }
+
     const formattedItem = isObject(item) ? JSON.stringify(item) : item
     return `${formattedItem} ${message}`
+}
+
+/**
+ * An element that WebdriverIO could not find has an `error` and no `elementId`. `JSON.stringify` of an `Error`
+ * is `{}`, so name the selector and the reason instead, for example a WebdriverIO v10 `StrictSelectorError`
+ */
+function formatNotFoundElementMessage(item:unknown) {
+    if (!isObject(item) || !('error' in (item as object)) || !('selector' in (item as object))) {
+        return undefined
+    }
+
+    const { selector, error } = item as { selector: unknown, error: unknown }
+    const reason = error instanceof Error
+        ? `${error.name && error.name !== 'Error' ? `${error.name}: ` : ''}${error.message}`
+        : String(error)
+
+    return `element "${String(selector)}" could not be found: ${reason}`
 }
 
 /**
@@ -291,40 +313,20 @@ export async function determineWebScreenIgnoreRegions(
 ): Promise<RectanglesOutput[]> {
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const { browserInstance, devicePixelRatio, deviceRectangles, isAndroid, isAndroidNativeWebScreenshot, isIOS, ignoreRegionPadding: padding } = options
+    const { devicePixelRatio, deviceRectangles, isAndroid, isAndroidNativeWebScreenshot, isIOS, ignoreRegionPadding: padding } = options
 
     // Get raw (unrounded) BCR values so we can multiply by DPR before
     // rounding. The shared getBoundingClientRect script pre-rounds to CSS
     // integers which loses sub-pixel precision that matters at higher DPRs.
-    const rawBcr = (el: HTMLElement) => {
+    const rawBcr = (el: Element) => {
         const rect = el.getBoundingClientRect()
         return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
     }
-    // Browsers can invalidate element references when the DOM is mutated
-    // (e.g. by beforeScreenshot CSS/style injection). Re-query via $$ to
-    // get fresh refs. Use $$ per unique selector so multiple elements
-    // sharing the same selector (e.g. from a $$ call) each resolve to
-    // the correct match by index.
     const regionsFromElements: RectanglesOutput[] = []
-    const selectorCache = new Map<string, WebdriverIO.Element[]>()
-    const selectorIndex = new Map<string, number>()
-
-    for (const element of elements) {
-        const selector = element.selector as string
-
-        if (!selectorCache.has(selector)) {
-            const fresh = await browserInstance.$$(selector)
-            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
-            selectorIndex.set(selector, 0)
-        }
-
-        const idx = selectorIndex.get(selector)!
-        const cached = selectorCache.get(selector)!
-        const el = idx < cached.length ? cached[idx] : element
-        selectorIndex.set(selector, idx + 1)
-
-        const bcr = await browserInstance.execute(rawBcr, el as any) as RectanglesOutput
-        regionsFromElements.push(bcr)
+    // `execute` is an element command: when the browser says that the element reference is stale, for example
+    // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
+    for (const el of elements) {
+        regionsFromElements.push(await el.execute(rawBcr))
     }
 
     return [...regions, ...regionsFromElements]
@@ -379,9 +381,9 @@ export async function determineWebFullPageIgnoreRegions(
 ): Promise<RectanglesOutput[]> {
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
-    const { browserInstance, devicePixelRatio, ignoreRegionPadding: padding, fullPageCropTopPaddingCSS: cropTop = 0 } = options
+    const { devicePixelRatio, ignoreRegionPadding: padding, fullPageCropTopPaddingCSS: cropTop = 0 } = options
 
-    const rawDocumentBcr = (el: HTMLElement) => {
+    const rawDocumentBcr = (el: Element) => {
         const rect = el.getBoundingClientRect()
         return {
             x: rect.x + window.scrollX,
@@ -392,25 +394,10 @@ export async function determineWebFullPageIgnoreRegions(
     }
 
     const regionsFromElements: RectanglesOutput[] = []
-    const selectorCache = new Map<string, WebdriverIO.Element[]>()
-    const selectorIndex = new Map<string, number>()
-
-    for (const element of elements) {
-        const selector = element.selector as string
-
-        if (!selectorCache.has(selector)) {
-            const fresh = await browserInstance.$$(selector)
-            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
-            selectorIndex.set(selector, 0)
-        }
-
-        const idx = selectorIndex.get(selector)!
-        const cached = selectorCache.get(selector)!
-        const el = idx < cached.length ? cached[idx] : element
-        selectorIndex.set(selector, idx + 1)
-
-        const bcr = await browserInstance.execute(rawDocumentBcr, el as any) as RectanglesOutput
-        regionsFromElements.push(bcr)
+    // `execute` is an element command: when the browser says that the element reference is stale, for example
+    // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
+    for (const el of elements) {
+        regionsFromElements.push(await el.execute(rawDocumentBcr))
     }
 
     return [...regions, ...regionsFromElements]
@@ -455,7 +442,6 @@ export async function determineWebElementIgnoreRegions(
     const awaitedIgnores = await Promise.all(ignores)
     const { elements, regions } = splitIgnores(awaitedIgnores)
     const {
-        browserInstance,
         devicePixelRatio,
         rootElement,
         ignoreRegionPadding: padding,
@@ -464,7 +450,7 @@ export async function determineWebElementIgnoreRegions(
     } = options
 
     // Compute bounding boxes relative to the root element: (childBCR - rootBCR)
-    const rawRelativeBcr = (el: HTMLElement, root: HTMLElement) => {
+    const rawRelativeBcr = (el: Element, root: Element) => {
         const elRect = el.getBoundingClientRect()
         const rootRect = root.getBoundingClientRect()
 
@@ -477,25 +463,11 @@ export async function determineWebElementIgnoreRegions(
     }
 
     const regionsFromElements: RectanglesOutput[] = []
-    const selectorCache = new Map<string, WebdriverIO.Element[]>()
-    const selectorIndex = new Map<string, number>()
-
-    for (const element of elements) {
-        const selector = element.selector as string
-
-        if (!selectorCache.has(selector)) {
-            const fresh = await browserInstance.$$(selector)
-            selectorCache.set(selector, fresh as unknown as WebdriverIO.Element[])
-            selectorIndex.set(selector, 0)
-        }
-
-        const idx = selectorIndex.get(selector)!
-        const cached = selectorCache.get(selector)!
-        const el = idx < cached.length ? cached[idx] : element
-        selectorIndex.set(selector, idx + 1)
-
-        const bcr = await browserInstance.execute(rawRelativeBcr, el as any, rootElement as any) as RectanglesOutput
-        regionsFromElements.push(bcr)
+    // `execute` is an element command: when the browser says that the element reference is stale, for example
+    // after a DOM change by the beforeScreenshot style injection, WebdriverIO finds the element again and runs it again
+    for (const el of elements) {
+        // The type arguments make WebdriverIO map `rootElement` to the DOM element of the script
+        regionsFromElements.push(await el.execute<RectanglesOutput, [WebdriverIO.Element]>(rawRelativeBcr, rootElement))
     }
 
     // Both literal regions and element-derived regions are currently expected

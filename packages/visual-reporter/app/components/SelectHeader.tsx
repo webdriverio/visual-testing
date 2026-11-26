@@ -14,12 +14,12 @@ const SelectHeader = ({
     handleSelectedOptions,
     instanceData,
 }: {
-  handleSelectedOptions: (
-    selectedOptions: string[] | keyof SelectedOptions | string,
-    type: string
-  ) => void;
-  instanceData: SnapshotInstanceData;
-    }) => {
+    handleSelectedOptions: (
+        selectedOptions: string[] | keyof SelectedOptions | string,
+        type: string
+    ) => void;
+    instanceData: SnapshotInstanceData;
+}) => {
     const appOptions = instanceData?.app
         ? instanceData.app.map((instance: string) => ({
             value: instance,

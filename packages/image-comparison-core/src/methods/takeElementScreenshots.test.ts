@@ -1,7 +1,9 @@
 import { beforeEach, describe, it, expect, vi, afterEach } from 'vitest'
 import { join } from 'node:path'
+import { mock } from 'vitest-mock-extended'
 import logger from '@wdio/logger'
 import { takeElementScreenshot } from './takeElementScreenshots.js'
+import getElementViewportRect from '../clientSideScripts/getElementViewportRect.js'
 import { takeBase64BiDiScreenshot, takeWebElementScreenshot } from './screenshots.js'
 import { makeCroppedBase64Image } from './images.js'
 import { getBase64ScreenshotSize, waitFor, hasResizeDimensions } from '../helpers/utils.js'
@@ -114,21 +116,9 @@ describe('takeElementScreenshot', () => {
                 base64Image: 'bidi-screenshot-data',
                 isWebDriverElementScreenshot: false
             })
-            // First call: scrollElementIntoView, second call: scrollToPosition (restore)
-            expect(executeMock).toHaveBeenCalledTimes(2)
-            expect(executeMock.mock.calls[0]).toMatchSnapshot()
-            expect(executeMock.mock.calls[1]).toMatchSnapshot()
-            expect(waitForSpy).toHaveBeenCalledWith(100)
-        })
-
-        it('should not restore scroll when autoElementScroll is enabled but no previous position', async () => {
-            const optionsWithScroll = { ...baseOptions, autoElementScroll: true }
-            executeMock.mockResolvedValueOnce(undefined) // no previous position
-
-            await takeElementScreenshot(browserInstance, optionsWithScroll, true)
-
-            // Only the scrollElementIntoView call, no restore
+            // Only scrollElementIntoView: saveWebElement scrolls back after the page is restored (#1229)
             expect(executeMock).toHaveBeenCalledTimes(1)
+            expect(executeMock.mock.calls[0]).toMatchSnapshot()
             expect(waitForSpy).toHaveBeenCalledWith(100)
         })
 
@@ -150,12 +140,43 @@ describe('takeElementScreenshot', () => {
     })
 
     describe('BiDi viewport screenshots', () => {
+        // The position of the element in the viewport (getBoundingClientRect in the page)
+        const viewportRectMock = vi.fn()
         const vpOptions: ElementScreenshotDataOptions = {
             ...baseOptions,
+            element: mock<WebdriverIO.Element>({ elementId: 'test-element', execute: viewportRectMock }),
             biDiOrigin: 'viewport',
             innerWidth: 1280,
             innerHeight: 720,
         }
+
+        beforeEach(() => {
+            viewportRectMock.mockResolvedValue({ x: 10, y: 20, width: 100, height: 200 })
+        })
+
+        it('should clip with the position in the viewport and not with the position on the page (getElementRect)', async () => {
+            // The page is scrolled by 2000px: getElementRect returns the position on the page
+            getElementRectMock.mockResolvedValueOnce({ x: 10, y: 2020, width: 100, height: 200 })
+
+            await takeElementScreenshot(browserInstance, vpOptions, true)
+
+            expect(viewportRectMock).toHaveBeenCalledWith(getElementViewportRect)
+            expect(getElementRectMock).not.toHaveBeenCalled()
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(expect.objectContaining({
+                origin: 'viewport',
+                clip: { x: 10, y: 20, width: 100, height: 200 },
+            }))
+        })
+
+        it('should round the position and size down, as the document origin does', async () => {
+            viewportRectMock.mockResolvedValueOnce({ x: 10.7, y: 20.4, width: 100.9, height: 200.5 })
+
+            await takeElementScreenshot(browserInstance, vpOptions, true)
+
+            expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(expect.objectContaining({
+                clip: { x: 10, y: 20, width: 100, height: 200 },
+            }))
+        })
 
         it('should take viewport screenshot when element is fully inside the viewport', async () => {
             // element at (10, 20, 100x200) — fits in 1280x720 viewport
@@ -173,7 +194,7 @@ describe('takeElementScreenshot', () => {
         })
 
         it('should throw when element dimensions exceed the viewport', async () => {
-            getElementRectMock.mockResolvedValueOnce({ x: 0, y: 0, width: 1400, height: 800 })
+            viewportRectMock.mockResolvedValueOnce({ x: 0, y: 0, width: 1400, height: 800 })
 
             const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
             expect(err.message).toMatch(/element dimensions \(1400x800px\) exceed the viewport \(1280x720px\)/)
@@ -183,7 +204,7 @@ describe('takeElementScreenshot', () => {
 
         it('should throw when element is completely outside the viewport', async () => {
             // element below the fold
-            getElementRectMock.mockResolvedValueOnce({ x: 0, y: 800, width: 100, height: 200 })
+            viewportRectMock.mockResolvedValueOnce({ x: 0, y: 800, width: 100, height: 200 })
 
             const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
             expect(err.message).toMatch(/element is not in the viewport/)
@@ -193,7 +214,7 @@ describe('takeElementScreenshot', () => {
 
         it('should throw when element is partially outside the viewport but fits', async () => {
             // element starts at x=-10, so it bleeds left of the viewport
-            getElementRectMock.mockResolvedValueOnce({ x: -10, y: 0, width: 100, height: 200 })
+            viewportRectMock.mockResolvedValueOnce({ x: -10, y: 0, width: 100, height: 200 })
 
             const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
             expect(err.message).toMatch(/not fully visible in the viewport/)
@@ -202,7 +223,7 @@ describe('takeElementScreenshot', () => {
         })
 
         it('should include element and viewport dimensions in the error messages', async () => {
-            getElementRectMock.mockResolvedValueOnce({ x: 0, y: 900, width: 200, height: 100 })
+            viewportRectMock.mockResolvedValueOnce({ x: 0, y: 900, width: 200, height: 100 })
 
             const err = await takeElementScreenshot(browserInstance, vpOptions, true).catch(e => e) as Error
             expect(err.message).toMatch(/x=0, y=900, 200x100px/)
@@ -217,8 +238,8 @@ describe('takeElementScreenshot', () => {
             const result = await takeElementScreenshot(browserInstance, vpScrollOptions, true)
 
             expect(result.base64Image).toBe('bidi-screenshot-data')
-            // scrollElementIntoView + scrollToPosition (restore)
-            expect(executeMock).toHaveBeenCalledTimes(2)
+            // Only scrollElementIntoView: saveWebElement scrolls back after the page is restored (#1229)
+            expect(executeMock).toHaveBeenCalledTimes(1)
             expect(takeBase64BiDiScreenshotSpy).toHaveBeenCalledWith(
                 expect.objectContaining({ origin: 'viewport' })
             )
@@ -296,22 +317,9 @@ describe('takeElementScreenshot', () => {
                 base64Image: 'cropped-screenshot-data',
                 isWebDriverElementScreenshot: false
             })
-            expect(executeMock).toHaveBeenCalledTimes(2)
-            // First call for scrolling element into view
+            // Only the call that scrolls the element into view: saveWebElement scrolls back after the page is restored (#1229)
+            expect(executeMock).toHaveBeenCalledTimes(1)
             expect(executeMock.mock.calls[0]).toMatchSnapshot()
-            // Second call for scrolling back to original position
-            expect(executeMock.mock.calls[1]).toMatchSnapshot()
-            expect(waitForSpy).toHaveBeenCalledWith(100)
-        })
-
-        it('should not scroll back when autoElementScroll is enabled but no current position', async () => {
-            const optionsWithScroll = { ...baseOptions, autoElementScroll: true }
-            executeMock.mockResolvedValueOnce(undefined) // no scroll position returned
-
-            const result = await takeElementScreenshot(browserInstance, optionsWithScroll, false)
-
-            expect(result).toMatchSnapshot()
-            expect(executeMock).toHaveBeenCalledTimes(1) // Only the scroll into view call
             expect(waitForSpy).toHaveBeenCalledWith(100)
         })
 

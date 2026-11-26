@@ -2,6 +2,8 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import saveWebElement from './saveWebElement.js'
 import { takeElementScreenshot } from '../methods/takeElementScreenshots.js'
 import afterScreenshot from '../helpers/afterScreenshot.js'
+import beforeScreenshot from '../helpers/beforeScreenshot.js'
+import { readScrollPosition, restoreScrollPosition } from '../helpers/scrollPosition.js'
 import { canUseBidiScreenshot } from '../helpers/utils.js'
 import { createBeforeScreenshotOptions, buildAfterScreenshotOptions } from '../helpers/options.js'
 import type { InternalSaveElementMethodOptions } from './save.interfaces.js'
@@ -11,6 +13,10 @@ import {
     createBeforeScreenshotMock
 } from '../mocks/mocks.js'
 
+vi.mock('../helpers/scrollPosition.js', () => ({
+    readScrollPosition: vi.fn().mockResolvedValue(420),
+    restoreScrollPosition: vi.fn(),
+}))
 vi.mock('../methods/takeElementScreenshots.js', () => ({
     takeElementScreenshot: vi.fn().mockResolvedValue({
         base64Image: 'element-screenshot-data',
@@ -295,5 +301,41 @@ describe('saveWebElement', () => {
         expect(buildAfterScreenshotOptionsSpy).toHaveBeenCalled()
         const buildAfterScreenshotOptionsCall = buildAfterScreenshotOptionsSpy.mock.calls[buildAfterScreenshotOptionsSpy.mock.calls.length - 1]
         expect(buildAfterScreenshotOptionsCall[0].wicOptions).toHaveProperty('alwaysSaveActualImage', false)
+    })
+
+    describe('scroll back (#1229)', () => {
+        const withAutoElementScroll = (autoElementScroll: boolean): InternalSaveElementMethodOptions => ({
+            ...baseOptions,
+            saveElementOptions: {
+                ...baseOptions.saveElementOptions,
+                wic: { ...baseOptions.saveElementOptions.wic, autoElementScroll },
+            },
+        })
+
+        it('should read the scroll position before the page is prepared and scroll back after it is restored', async () => {
+            await saveWebElement(withAutoElementScroll(true))
+
+            // Read before beforeScreenshot (removed elements can make the page shorter), restore after afterScreenshot
+            expect(vi.mocked(readScrollPosition).mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(beforeScreenshot).mock.invocationCallOrder[0])
+            expect(restoreScrollPosition).toHaveBeenCalledWith(baseOptions.browserInstance, 420, baseOptions.instanceData.isIOS)
+            expect(vi.mocked(restoreScrollPosition).mock.invocationCallOrder[0]).toBeGreaterThan(afterScreenshotSpy.mock.invocationCallOrder[0])
+        })
+
+        it('should scroll back and keep the original error when the screenshot fails', async () => {
+            const screenshotError = new Error('screenshot failed')
+            takeElementScreenshotSpy.mockRejectedValueOnce(screenshotError)
+
+            await expect(saveWebElement(withAutoElementScroll(true))).rejects.toThrow(screenshotError)
+
+            expect(restoreScrollPosition).toHaveBeenCalledWith(baseOptions.browserInstance, 420, baseOptions.instanceData.isIOS)
+        })
+
+        it('should not read or restore the scroll position when autoElementScroll is off', async () => {
+            await saveWebElement(withAutoElementScroll(false))
+
+            expect(readScrollPosition).not.toHaveBeenCalled()
+            // `restoreScrollPosition` does nothing without a position
+            expect(restoreScrollPosition).not.toHaveBeenCalledWith(expect.anything(), expect.any(Number), expect.anything())
+        })
     })
 })

@@ -8,12 +8,12 @@ import PlatformIcon from './PlatformIcon.js'
 import styles from './OverlayHeader.module.css'
 
 interface OverlayHeaderProps {
-  data: MethodData;
-  onClose: () => void;
-  currentChange: number;
-  totalChanges: number;
-  onPrevChange: () => void;
-  onNextChange: () => void;
+    data: MethodData;
+    onClose: () => void;
+    currentChange: number;
+    totalChanges: number;
+    onPrevChange: () => void;
+    onNextChange: () => void;
 }
 
 const OverlayHeader: React.FC<OverlayHeaderProps> = ({
@@ -33,7 +33,7 @@ const OverlayHeader: React.FC<OverlayHeaderProps> = ({
     const notKnown = 'not-known'
     const browserName = browser?.name || notKnown
     const browserVersion =
-    browser?.version === 'not-known' ? notKnown : browser?.version
+        browser?.version === 'not-known' ? notKnown : browser?.version
     const device = deviceName || notKnown
     const platformVersion = platform.version || notKnown
 
@@ -68,7 +68,7 @@ const OverlayHeader: React.FC<OverlayHeaderProps> = ({
                     </div>
                 </div>
                 <button className={styles.closeButton} onClick={onClose}>
-          ×
+                    ×
                 </button>
             </div>
             <div className={styles.instanceDataWrapper}>

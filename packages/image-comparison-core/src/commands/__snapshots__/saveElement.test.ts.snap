@@ -16,9 +16,9 @@ exports[`saveElement > should execute saveAppElement when isNativeContext is tru
     },
     "element": {
       "elementId": "test-element",
-      "getLocation": [MockFunction spy],
-      "getSize": [MockFunction spy],
-      "isDisplayed": [MockFunction spy],
+      "getLocation": [MockFunction],
+      "getSize": [MockFunction],
+      "isDisplayed": [MockFunction],
       "selector": "#test-element",
     },
     "folders": {
@@ -175,9 +175,9 @@ exports[`saveElement > should execute saveWebElement when isNativeContext is fal
     },
     "element": {
       "elementId": "test-element",
-      "getLocation": [MockFunction spy],
-      "getSize": [MockFunction spy],
-      "isDisplayed": [MockFunction spy],
+      "getLocation": [MockFunction],
+      "getSize": [MockFunction],
+      "isDisplayed": [MockFunction],
       "selector": "#test-element",
     },
     "folders": {

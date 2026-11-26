@@ -124,6 +124,6 @@ function createCaps({
             ...sauceOptions,
             appiumVersion: '2.0.0',
         },
-        specs: [mobileSpecs],
+        'wdio:specs': [mobileSpecs],
     }
 }

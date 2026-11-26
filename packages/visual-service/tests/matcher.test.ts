@@ -4,6 +4,9 @@ import {
     toMatchElementSnapshot, toMatchTabbablePageSnapshot
 } from '../src/matcher.js'
 
+// WebdriverIO brands its objects with their kind, see `isWdioKind()` in `src/utils.ts`
+const WDIO_KIND = Symbol.for('wdio.kind')
+
 const folders = {
     baseline: 'foo',
     actual: 'bar',
@@ -15,6 +18,7 @@ let multiremoteBrowser = {} as any as WebdriverIO.MultiRemoteBrowser
 describe('custom visual matcher', () => {
     beforeEach(() => {
         browser = {
+            [WDIO_KIND]: 'browser',
             checkScreen: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders }),
             checkFullPageScreen: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders }),
             checkElement: vi.fn().mockResolvedValue({ misMatchPercentage :113, folders }),
@@ -41,7 +45,7 @@ describe('custom visual matcher', () => {
                     misMatchPercentage: 0
                 },
             }),
-            isMultiremote: true,
+            isMultiRemote: true,
             instances: {
                 chrome: {
                     checkScreen: vi.fn().mockResolvedValue({ misMatchPercentage: 10, folders }),
@@ -77,12 +81,111 @@ describe('custom visual matcher', () => {
         expect(browser.checkElement).toBeCalledTimes(1)
     })
 
+    it('toMatchElementSnapshot with an element found from a WebdriverIO v10 browsing context', async () => {
+        // In WebdriverIO v10 the parent of the element is the browsing context, which holds the browser in `browser`
+        const browsingContext = { [WDIO_KIND]: 'browsing-context', browser, isFrame: false }
+        const element = { [WDIO_KIND]: 'element', elementId: 'element-id', selector: '#logo', parent: browsingContext } as any as WebdriverIO.Element
+
+        await expect(toMatchElementSnapshot(element, 'foo', 123, {})).resolves.toEqual({
+            pass: true,
+            message: expect.any(Function)
+        })
+        expect(browser.checkElement).toHaveBeenCalledWith(element, 'foo', expect.any(Object))
+    })
+
+    describe('toMatchElementSnapshot with a multiremote element', () => {
+        // `multiRemoteBrowser.$()` gives an element without `parent`, `getInstance()` gives the element of each
+        // instance, and the parent of that element is the browser of the instance
+        const createMultiRemoteElement = (misMatchPercentages = { chrome: 0, firefox: 0 }) => {
+            const instanceBrowsers = {
+                chrome: { [WDIO_KIND]: 'browser', checkElement: vi.fn().mockResolvedValue({ misMatchPercentage: misMatchPercentages.chrome, folders }) },
+                firefox: { [WDIO_KIND]: 'browser', checkElement: vi.fn().mockResolvedValue({ misMatchPercentage: misMatchPercentages.firefox, folders }) },
+            }
+            const instanceElements: Record<string, { [WDIO_KIND]: string, elementId: string, parent: object }> = {
+                chrome: { [WDIO_KIND]: 'element', elementId: 'chrome-element', parent: instanceBrowsers.chrome },
+                firefox: { [WDIO_KIND]: 'element', elementId: 'firefox-element', parent: instanceBrowsers.firefox },
+            }
+            const element = {
+                [WDIO_KIND]: 'element',
+                isMultiRemote: true,
+                selector: '#purplebox',
+                instances: Object.keys(instanceElements),
+                getInstance: (instanceName: string) => instanceElements[instanceName],
+            } as any as WebdriverIO.Element
+
+            return { element, instanceBrowsers, instanceElements }
+        }
+
+        it('compares the element on each instance', async () => {
+            const { element, instanceBrowsers, instanceElements } = createMultiRemoteElement()
+
+            await expect(toMatchElementSnapshot(element, 'purplebox', 0, {})).resolves.toEqual({
+                pass: true,
+                message: expect.any(Function)
+            })
+            expect(instanceBrowsers.chrome.checkElement).toHaveBeenCalledTimes(1)
+            expect(instanceBrowsers.chrome.checkElement).toHaveBeenCalledWith(instanceElements.chrome, 'purplebox', expect.any(Object))
+            expect(instanceBrowsers.firefox.checkElement).toHaveBeenCalledTimes(1)
+            expect(instanceBrowsers.firefox.checkElement).toHaveBeenCalledWith(instanceElements.firefox, 'purplebox', expect.any(Object))
+        })
+
+        it('fails with the message of each instance that does not match', async () => {
+            const { element } = createMultiRemoteElement({ chrome: 0, firefox: 5 })
+
+            const result = await toMatchElementSnapshot(element, 'purplebox', 1, {})
+
+            expect(result.pass).toBe(false)
+            expect(result.message()).toContain('Instance "firefox":\nExpected image mismatch percentage to be at most 1%, but was 5%.')
+            expect(result.message()).not.toContain('Instance "chrome"')
+        })
+
+        it('gives a clear error when the browser of an instance has no checkElement command', async () => {
+            const { element, instanceElements } = createMultiRemoteElement()
+            instanceElements.firefox.parent = { [WDIO_KIND]: 'browser' }
+
+            await expect(toMatchElementSnapshot(element, 'purplebox')).rejects.toThrow(
+                'The visual service did not add the "checkElement" command to this session'
+            )
+        })
+    })
+
     it('toMatchTabbablePageSnapshot', async () => {
         await expect(toMatchTabbablePageSnapshot(browser, 'foo', 123, {})).resolves.toEqual({
             pass: true,
             message: expect.any(Function)
         })
         expect(browser.checkTabbablePage).toBeCalledTimes(1)
+    })
+
+    describe('when the visual service did not add its commands', () => {
+        const pageMatchers: Array<[string, typeof toMatchScreenSnapshot | typeof toMatchFullPageSnapshot | typeof toMatchTabbablePageSnapshot, string]> = [
+            ['toMatchScreenSnapshot', toMatchScreenSnapshot, 'checkScreen'],
+            ['toMatchFullPageSnapshot', toMatchFullPageSnapshot, 'checkFullPageScreen'],
+            ['toMatchTabbablePageSnapshot', toMatchTabbablePageSnapshot, 'checkTabbablePage'],
+        ]
+
+        it.each(pageMatchers)('%s gives a clear error', async (_, matcher, command) => {
+            await expect(matcher({} as any, 'tag')).rejects.toThrow(
+                `The visual service did not add the "${command}" command to this session`
+            )
+        })
+
+        it('accepts a browser that is a function, as a WebdriverIO browser can be', async () => {
+            const functionBrowser = Object.assign(() => {}, {
+                checkScreen: vi.fn().mockResolvedValue({ misMatchPercentage: 0, folders }),
+            })
+
+            await expect(toMatchScreenSnapshot(functionBrowser as any, 'tag')).resolves.toMatchObject({ pass: true })
+        })
+
+        it('toMatchElementSnapshot gives a clear error', async () => {
+            // The browser of the element has no `checkElement` command
+            const element = { [WDIO_KIND]: 'element', parent: { [WDIO_KIND]: 'browser' } } as any as WebdriverIO.Element
+
+            await expect(toMatchElementSnapshot(element, 'tag')).rejects.toThrow(
+                'The visual service did not add the "checkElement" command to this session'
+            )
+        })
     })
 
     it('should throw an error if tag is missing', async () => {

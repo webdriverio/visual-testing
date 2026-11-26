@@ -1,6 +1,6 @@
 import type { ImageCompareResult } from '@wdio/image-comparison-core'
 
-import { getBrowserObject } from './utils.js'
+import { getBrowserObject, isMultiRemoteElement } from './utils.js'
 import type {
     WdioCheckFullPageMethodOptions,
     WdioCheckElementMethodOptions,
@@ -43,7 +43,7 @@ function evaluateResult(
                 `\nBaseline: ${result.folders.baseline}\n` +
                 `Actual Screenshot: ${result.folders.actual}\n` +
                 `Difference: ${result.folders.diff}\n` +
-                '\nFor guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/api/visual-regression.html'
+                '\nFor guidance on handling visual discrepancies, refer to: https://webdriver.io/docs/visual-testing/faq'
         }
     }
 
@@ -58,10 +58,12 @@ function isMultiremoteResult(
     return typeof result === 'object' && Object.values(result)[0]?.misMatchPercentage !== undefined
 }
 
-function compareResult (result: ImageCompareResult, expected: number | ExpectWebdriverIO.PartialMatcher<number>) {
-    const isMultiremote = isMultiremoteResult(result)
-    const results = isMultiremote
-        ? Object.entries(result as unknown as Record<string, ImageCompareResult>).map(([instanceName, instanceResult]) => ({
+function compareResult (
+    result: ImageCompareResult | Record<string, ImageCompareResult>,
+    expected: number | ExpectWebdriverIO.PartialMatcher<number>
+) {
+    const results = isMultiremoteResult(result)
+        ? Object.entries(result).map(([instanceName, instanceResult]) => ({
             instanceName,
             result: instanceResult,
         }))
@@ -141,6 +143,18 @@ function parseMatcherParams (
     return { expectedResult, options }
 }
 
+/**
+ * Give a clear error when the service could not add its commands, for example when its setup failed
+ */
+function assertVisualCommand (browser: unknown, command: string) {
+    // A WebdriverIO browser can be an object or a function
+    const canHaveCommands = (typeof browser === 'object' && browser !== null) || typeof browser === 'function'
+    const visualCommand = canHaveCommands && command in browser ? Reflect.get(browser, command) : undefined
+    if (typeof visualCommand !== 'function') {
+        throw new Error(`The visual service did not add the "${command}" command to this session. See the earlier error of @wdio/visual-service in the log.`)
+    }
+}
+
 export async function toMatchScreenSnapshot (
     browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser,
     tag: string,
@@ -148,6 +162,7 @@ export async function toMatchScreenSnapshot (
     optionsOrUndefined?: WdioCheckScreenMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    assertVisualCommand(browser, 'checkScreen')
     const result = await browser.checkScreen(tag, options) as ImageCompareResult
     return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }
@@ -159,6 +174,7 @@ export async function toMatchFullPageSnapshot (
     optionsOrUndefined?: WdioCheckFullPageMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    assertVisualCommand(browser, 'checkFullPageScreen')
     const result = await browser.checkFullPageScreen(tag, options) as ImageCompareResult
     return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }
@@ -170,9 +186,25 @@ export async function toMatchElementSnapshot (
     optionsOrUndefined?: WdioCheckElementMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
-    const browser = getBrowserObject(await element)
-    const result = await browser.checkElement(await element, tag, options) as ImageCompareResult
+    const resolvedElement = await element
+
+    // A multiremote element has no parent, so compare the element of each instance with the browser of that instance
+    if (isMultiRemoteElement(resolvedElement)) {
+        const results: Record<string, ImageCompareResult> = {}
+        for (const instanceName of resolvedElement.instances) {
+            results[instanceName] = await checkElementOfBrowser(resolvedElement.getInstance(instanceName), tag, options)
+        }
+        return compareResult(results, expectedResult || DEFAULT_EXPECTED_RESULT)
+    }
+
+    const result = await checkElementOfBrowser(resolvedElement, tag, options)
     return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
+}
+
+async function checkElementOfBrowser (element: WebdriverIO.Element, tag: string, options: WdioCheckElementMethodOptions) {
+    const browser = getBrowserObject(element)
+    assertVisualCommand(browser, 'checkElement')
+    return await browser.checkElement(element, tag, options) as ImageCompareResult
 }
 
 export async function toMatchTabbablePageSnapshot (
@@ -182,6 +214,7 @@ export async function toMatchTabbablePageSnapshot (
     optionsOrUndefined?: WdioCheckFullPageMethodOptions
 ) {
     const { expectedResult, options } = parseMatcherParams(tag, expectedResultOrOptions, optionsOrUndefined)
+    assertVisualCommand(browser, 'checkTabbablePage')
     const result = await browser.checkTabbablePage(tag, options) as ImageCompareResult
     return compareResult(result, expectedResult || DEFAULT_EXPECTED_RESULT)
 }

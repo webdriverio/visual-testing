@@ -18,7 +18,7 @@ interface DescriptionGroup {
 class VisualReportGenerator {
     directoryPath: string
 
-    constructor({ directoryPath }:{directoryPath: string}) {
+    constructor({ directoryPath }:{ directoryPath: string }) {
         this.directoryPath = directoryPath
     }
 

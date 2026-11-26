@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-vi.mock('@blazediff/core', () => ({
-    diff: vi.fn()
+vi.mock('pixelmatch', () => ({
+    default: vi.fn()
 }))
 
 vi.mock('../utils/imageUtils.js', () => {
@@ -19,10 +19,10 @@ vi.mock('../utils/imageUtils.js', () => {
 })
 
 import compareImages from './compareImages.js'
-import { diff } from '@blazediff/core'
+import pixelmatch from 'pixelmatch'
 import * as imageUtils from '../utils/imageUtils.js'
 
-const diffFn = vi.mocked(diff)
+const pixelmatchFn = vi.mocked(pixelmatch)
 const decodeImageFn = vi.mocked(imageUtils.decodeImage)
 const resizeBilinearFn = vi.mocked(imageUtils.resizeBilinear)
 
@@ -34,7 +34,7 @@ describe('pixelmatch adapter - compareImages', () => {
 
     describe('basic comparison', () => {
         it('returns zero mismatch percentage when images are identical', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             const result = await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
 
@@ -45,7 +45,7 @@ describe('pixelmatch adapter - compareImages', () => {
 
         it('returns correct mismatch percentage for a known diff count', async () => {
             // 100x100 = 10000 total pixels, 100 diff pixels = 1%
-            diffFn.mockImplementation(() => 100)
+            pixelmatchFn.mockImplementation(() => 100)
 
             const result = await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
 
@@ -54,7 +54,7 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('returns analysisTime greater than or equal to 0', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             const result = await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
 
@@ -62,7 +62,7 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('resolves getBuffer to a Buffer', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             const result = await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
             const buf = await result.getBuffer()
@@ -76,7 +76,7 @@ describe('pixelmatch adapter - compareImages', () => {
                 .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4).fill(128), width: 100, height: 100 }) // baseline
                 .mockReturnValueOnce({ data: actual, width: 100, height: 100 }) // actual
 
-            diffFn.mockImplementation((_img1, _img2, output: Uint8Array) => {
+            pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array) => {
                 // Mark pixel at (0,0) as a diff (magenta)
                 output[0] = 255
                 output[1] = 0
@@ -107,7 +107,7 @@ describe('pixelmatch adapter - compareImages', () => {
 
     describe('diffPixels and diffBounds', () => {
         it('collects magenta pixels as diff pixel coordinates', async () => {
-            diffFn.mockImplementation((_img1, _img2, output: Uint8Array, width: number) => {
+            pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array, width: number) => {
                 // Place a magenta pixel at x=5, y=3
                 const pos = (3 * width + 5) * 4
                 output[pos] = 255
@@ -124,7 +124,7 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('does not count grayscale matching pixels as diff pixels', async () => {
-            diffFn.mockImplementation((_img1, _img2, output: Uint8Array, width: number) => {
+            pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array, width: number) => {
                 const pos = (2 * width + 10) * 4
                 output[pos] = 200
                 output[pos + 1] = 200
@@ -139,7 +139,7 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('computes correct diffBounds from multiple diff pixels', async () => {
-            diffFn.mockImplementation((_img1, _img2, output: Uint8Array, width: number) => {
+            pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array, width: number) => {
                 const mark = (x: number, y: number) => {
                     const pos = (y * width + x) * 4
                     output[pos] = 255
@@ -159,7 +159,7 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('returns sentinel diffBounds when there are no diff pixels', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             const result = await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
 
@@ -176,11 +176,11 @@ describe('pixelmatch adapter - compareImages', () => {
             ['alpha', { threshold: 0.063, includeAA: true }],
             ['colors', { threshold: 0.063, includeAA: true }],
         ] as const)('passes preset settings for ignore: %s', async (ignore, expected) => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), { ignore })
 
-            expect(diffFn).toHaveBeenCalledWith(
+            expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.anything(), expect.anything(), expect.anything(),
                 expect.any(Number), expect.any(Number),
                 expect.objectContaining(expected)
@@ -188,11 +188,11 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('passes threshold=0.063 and includeAA=true when no ignore option is given', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
 
-            expect(diffFn).toHaveBeenCalledWith(
+            expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.anything(), expect.anything(), expect.anything(),
                 expect.any(Number), expect.any(Number),
                 expect.objectContaining({ threshold: 0.063, includeAA: true })
@@ -200,13 +200,13 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('uses last-wins preset when ignoreLess follows ignoreAntialiasing', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
                 ignore: ['antialiasing', 'less']
             })
 
-            expect(diffFn).toHaveBeenCalledWith(
+            expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.anything(), expect.anything(), expect.anything(),
                 expect.any(Number), expect.any(Number),
                 expect.objectContaining({ threshold: 0.063, includeAA: true })
@@ -214,13 +214,13 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('uses last-wins preset when ignoreNothing follows other flags', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
                 ignore: ['antialiasing', 'less', 'nothing']
             })
 
-            expect(diffFn).toHaveBeenCalledWith(
+            expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.anything(), expect.anything(), expect.anything(),
                 expect.any(Number), expect.any(Number),
                 expect.objectContaining({ threshold: 0, includeAA: true })
@@ -228,13 +228,13 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('uses last-wins preset when ignoreLess follows ignoreAlpha', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
                 ignore: ['alpha', 'less']
             })
 
-            expect(diffFn).toHaveBeenCalledWith(
+            expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.anything(), expect.anything(), expect.anything(),
                 expect.any(Number), expect.any(Number),
                 expect.objectContaining({ threshold: 0.063, includeAA: true })
@@ -251,7 +251,7 @@ describe('pixelmatch adapter - compareImages', () => {
             })
             let capturedPixels1: Uint8Array | undefined
 
-            diffFn.mockImplementation((img1: Uint8Array) => {
+            pixelmatchFn.mockImplementation((img1: Uint8Array) => {
                 capturedPixels1 = new Uint8Array(img1)
                 return 0
             })
@@ -272,7 +272,7 @@ describe('pixelmatch adapter - compareImages', () => {
             })
             let capturedPixels1: Uint8Array | undefined
 
-            diffFn.mockImplementation((img1: Uint8Array) => {
+            pixelmatchFn.mockImplementation((img1: Uint8Array) => {
                 capturedPixels1 = new Uint8Array(img1)
                 return 0
             })
@@ -288,12 +288,12 @@ describe('pixelmatch adapter - compareImages', () => {
             decodeImageFn
                 .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4).fill(128), width: 100, height: 100 })
                 .mockReturnValueOnce({ data: new Uint8Array(50 * 50 * 4).fill(64), width: 50, height: 50 })
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
 
             // Canvas is 100×100; img2 (50×50) is padded to fill it
-            expect(diffFn).toHaveBeenCalledWith(
+            expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.any(Object), expect.any(Object), expect.any(Uint8Array),
                 100, 100, expect.any(Object)
             )
@@ -303,12 +303,12 @@ describe('pixelmatch adapter - compareImages', () => {
             decodeImageFn
                 .mockReturnValueOnce({ data: new Uint8Array(50 * 50 * 4).fill(64), width: 50, height: 50 })
                 .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4).fill(128), width: 100, height: 100 })
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
 
             // Canvas is 100×100; img1 (50×50) is padded to fill it
-            expect(diffFn).toHaveBeenCalledWith(
+            expect(pixelmatchFn).toHaveBeenCalledWith(
                 expect.any(Object), expect.any(Object), expect.any(Uint8Array),
                 100, 100, expect.any(Object)
             )
@@ -316,27 +316,43 @@ describe('pixelmatch adapter - compareImages', () => {
     })
 
     describe('ignoredBoxes', () => {
-        it('zeroes out the specified box regions in both pixel arrays before comparison', async () => {
+        it('passes an ignoreMask for the box regions and leaves both images unchanged', async () => {
+            // 2×2 images with a different value in each channel, so a changed pixel can not go unnoticed
+            const img1 = Uint8Array.from({ length: 2 * 2 * 4 }, (_, index) => index + 1)
+            const img2 = Uint8Array.from({ length: 2 * 2 * 4 }, (_, index) => 101 + index)
+            decodeImageFn
+                .mockReturnValueOnce({ data: new Uint8Array(img1), width: 2, height: 2 })
+                .mockReturnValueOnce({ data: new Uint8Array(img2), width: 2, height: 2 })
+
             let capturedImg1: Uint8Array | undefined
             let capturedImg2: Uint8Array | undefined
+            let capturedMask: Uint8Array | Uint8ClampedArray | undefined
 
-            diffFn.mockImplementation((img1: Uint8Array, img2: Uint8Array) => {
-                capturedImg1 = new Uint8Array(img1)
-                capturedImg2 = new Uint8Array(img2)
+            pixelmatchFn.mockImplementation((data1: Uint8Array, data2: Uint8Array, _output, _width, _height, options) => {
+                capturedImg1 = new Uint8Array(data1)
+                capturedImg2 = new Uint8Array(data2)
+                capturedMask = options?.ignoreMask
                 return 0
             })
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
                 output: {
-                    ignoredBoxes: [{ left: 0, top: 0, right: 0, bottom: 0 }]
+                    // The right column: pixels (1,0) and (1,1)
+                    ignoredBoxes: [{ left: 1, top: 0, right: 1, bottom: 1 }]
                 }
             })
 
-            expect(capturedImg1![0]).toBe(0)
-            expect(capturedImg1![1]).toBe(0)
-            expect(capturedImg1![2]).toBe(0)
-            expect(capturedImg1![3]).toBe(0)
-            expect(capturedImg2![0]).toBe(0)
+            expect(capturedMask).toEqual(Uint8Array.from([0, 1, 0, 1]))
+            expect(capturedImg1).toEqual(img1)
+            expect(capturedImg2).toEqual(img2)
+        })
+
+        it('passes no ignoreMask without ignored boxes', async () => {
+            pixelmatchFn.mockImplementation(() => 0)
+
+            await compareImages(Buffer.from('img1'), Buffer.from('img2'), {})
+
+            expect(pixelmatchFn.mock.calls[0][5]).not.toHaveProperty('ignoreMask')
         })
     })
 
@@ -345,7 +361,7 @@ describe('pixelmatch adapter - compareImages', () => {
             decodeImageFn
                 .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4), width: 100, height: 100 })
                 .mockReturnValueOnce({ data: new Uint8Array(50 * 50 * 4), width: 50, height: 50 })
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), { scaleToSameSize: true })
 
@@ -360,7 +376,7 @@ describe('pixelmatch adapter - compareImages', () => {
             decodeImageFn
                 .mockReturnValueOnce({ data: new Uint8Array(50 * 50 * 4), width: 50, height: 50 })
                 .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4), width: 100, height: 100 })
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), { scaleToSameSize: true })
 
@@ -372,7 +388,7 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('does not call resizeBilinear when scaleToSameSize is false', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), { scaleToSameSize: false })
 
@@ -380,7 +396,7 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('does not call resizeBilinear when images are the same size', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), { scaleToSameSize: true })
 
@@ -390,7 +406,7 @@ describe('pixelmatch adapter - compareImages', () => {
 
     describe('direct pixelmatch mode', () => {
         it('forwards resolved pixelmatch settings to pixelmatch', async () => {
-            diffFn.mockImplementation(() => 0)
+            pixelmatchFn.mockImplementation(() => 0)
 
             await compareImages(Buffer.from('img1'), Buffer.from('img2'), {
                 pixelmatch: {
@@ -405,7 +421,7 @@ describe('pixelmatch adapter - compareImages', () => {
                 },
             })
 
-            expect(diffFn.mock.calls[0]?.[5]).toMatchSnapshot()
+            expect(pixelmatchFn.mock.calls[0]?.[5]).toMatchSnapshot()
         })
 
         it('uses custom diffColor for diff pixel detection and compositing', async () => {
@@ -414,7 +430,7 @@ describe('pixelmatch adapter - compareImages', () => {
                 .mockReturnValueOnce({ data: new Uint8Array(100 * 100 * 4).fill(128), width: 100, height: 100 })
                 .mockReturnValueOnce({ data: actual, width: 100, height: 100 })
 
-            diffFn.mockImplementation((_img1, _img2, output: Uint8Array) => {
+            pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array) => {
                 output[0] = 255
                 output[1] = 0
                 output[2] = 0
@@ -443,7 +459,7 @@ describe('pixelmatch adapter - compareImages', () => {
         })
 
         it('uses pixelmatch output directly when diffMask is true', async () => {
-            diffFn.mockImplementation((_img1, _img2, output: Uint8Array) => {
+            pixelmatchFn.mockImplementation((_img1, _img2, output: Uint8Array) => {
                 output[0] = 10
                 output[1] = 20
                 output[2] = 30

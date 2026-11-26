@@ -25,7 +25,6 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NPM_CONFIG_PROVENANCE: true
 
 jobs:
@@ -50,21 +49,30 @@ jobs:
           git config --global user.name "WebdriverIO Release Bot"
 
       - name: 🔧 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
         with:
           node-version-file: ".nvmrc"
+          check-latest: true
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
 
       - name: 🧩 Install Dependencies
-        run: pnpm pnpm.install.workaround
+        run: pnpm install --frozen-lockfile
 
       # ========================================
       # Alpha Release Steps
       # ========================================
+      - name: 🚫 Block Alpha in Changesets Pre Mode
+        if: github.event.inputs.release_type == 'alpha'
+        run: |
+          if [[ -f .changeset/pre.json ]]; then
+            echo "Changesets pre mode is active: use the production release type, it publishes prerelease versions."
+            exit 1
+          fi
+
       - name: 🔄 Validate Package Directory
         if: github.event.inputs.release_type == 'alpha'
         run: |
@@ -121,9 +129,11 @@ jobs:
       - name: 📣 Create Release Pull Request or Publish to npm
         if: github.event.inputs.release_type == 'production'
         id: changesets
-        uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
+        # changesets/action v2 is for Changesets CLI v3. The git identity set above is kept, and the release commit and
+        # tags are pushed with the GitHub API. The `github-token` input defaults to `github.token`; v2 refuses a
+        # different GITHUB_TOKEN environment variable, so do not set one in this workflow.
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm release
-          setupGitUser: false
-          commit: "chore: release [skip ci]"
+          publish-script: pnpm release
+          commit-message: "chore: release [skip ci]"

@@ -3,19 +3,19 @@
 exports[`toggleTextTransparency > should make text transparent when enabled 1`] = `
 <div
   id="testDiv"
-  style="color: transparent;"
+  style="color: transparent !important;"
 >
   
                 
   <p
-    style="color: transparent;"
+    style="color: transparent !important;"
   >
     Paragraph
   </p>
   
                 
   <span
-    style="color: transparent;"
+    style="color: transparent !important;"
   >
     Span
   </span>
@@ -37,19 +37,19 @@ exports[`toggleTextTransparency > should make text transparent when enabled 1`] 
 exports[`toggleTextTransparency > should remove transparent style when disabled 1`] = `
 <div
   id="testDiv"
-  style="color: transparent;"
+  style="color: transparent !important;"
 >
   
                 
   <p
-    style="color: transparent;"
+    style="color: transparent !important;"
   >
     Paragraph
   </p>
   
                 
   <span
-    style="color: transparent;"
+    style="color: transparent !important;"
   >
     Span
   </span>
@@ -71,19 +71,19 @@ exports[`toggleTextTransparency > should remove transparent style when disabled 
 exports[`toggleTextTransparency > should remove transparent style when disabled 2`] = `
 <div
   id="testDiv"
-  style="color: transparent;"
+  style="color: transparent !important;"
 >
   
                 
   <p
-    style="color: transparent;"
+    style="color: transparent !important;"
   >
     Paragraph
   </p>
   
                 
   <span
-    style="color: transparent;"
+    style="color: transparent !important;"
   >
     Span
   </span>

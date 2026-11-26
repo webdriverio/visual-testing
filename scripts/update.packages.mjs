@@ -39,7 +39,7 @@ function removeDependencies(dir) {
 
 function installDependencies(dir) {
     console.log(`Installing dependencies in ${dir}...`)
-    execSync('pnpm pnpm.install.workaround', { stdio: 'inherit', cwd: dir })
+    execSync('pnpm install', { stdio: 'inherit', cwd: dir })
 }
 
 function isPnpmInstalled() {

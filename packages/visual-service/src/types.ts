@@ -27,12 +27,12 @@ import type { WaitForStorybookComponentToBeLoaded } from './storybook/Types.js'
 
 type MultiOutput = {
     [browserName: string]: ScreenshotOutput;
-};
-export type Output = MultiOutput | ScreenshotOutput;
+}
+export type Output = MultiOutput | ScreenshotOutput
 type MultiResult = {
     [browserName: string]: ImageCompareResult | number;
-};
-export type Result = MultiResult | (ImageCompareResult | number);
+}
+export type Result = MultiResult | (ImageCompareResult | number)
 export type MobileInstanceData = {
     devicePixelRatio: number;
     deviceRectangles: DeviceRectangles;
@@ -43,7 +43,7 @@ export type getFolderMethodOptions =
     | CheckScreenMethodOptions
     | SaveElementMethodOptions
     | SaveFullPageMethodOptions
-    | SaveScreenMethodOptions;
+    | SaveScreenMethodOptions
 export type GetInstanceDataOptions = {
     browserInstance: WebdriverIO.Browser,
     initialDeviceRectangles: DeviceRectangles,

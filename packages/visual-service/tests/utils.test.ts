@@ -1,5 +1,9 @@
+import { join } from 'node:path'
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
+import { mock } from 'vitest-mock-extended'
+import logger from '@wdio/logger'
 import {
+    activateHiddenBrowsingContext,
     getBrowserObject,
     getDevicePixelRatio, getFolders,
     getInstanceData,
@@ -7,10 +11,19 @@ import {
     getNativeContext,
     enrichTestContext,
     getLtOptions,
+    isMultiRemoteBrowser,
+    isMultiRemoteElement,
+    warnIfBiDiScriptsFailOnAndroid,
 } from '../src/utils.js'
+
+vi.mock('@wdio/logger', () => import(join(process.cwd(), '__mocks__', '@wdio/logger')))
+const log = logger('test')
 
 // Import the functions we need to spy on
 import * as imageComparisonCore from '@wdio/image-comparison-core'
+
+// WebdriverIO brands its objects with their kind, see `isWdioKind()` in `src/utils.ts`
+const WDIO_KIND = Symbol.for('wdio.kind')
 
 const DEVICE_RECTANGLES = {
     bottomBar: { y: 0, x: 0, width: 0, height: 0 },
@@ -671,41 +684,159 @@ describe('utils', () => {
     })
 
     describe('getBrowserObject', () => {
-        function createElementMock(parent: WebdriverIO.Browser): WebdriverIO.Element {
-            // @ts-expect-error
-            return {
-                isMultiremote: false,
-                sessionId: 'mock-session-id',
-                elementId: 'mock-element-id',
-                ELEMENT: 'mock-ELEMENT',
-                selector: 'mock-selector',
-                parent: parent,
-                capabilities: {},
-                requestedCapabilities: {},
-            } as WebdriverIO.Element
-        }
-        const browserMock = {
-            isMultiremote: false,
-            sessionId: 'mock-session-id',
-            capabilities: {},
-            requestedCapabilities: {},
-            options: {},
-        } as WebdriverIO.Browser
+        const browserMock = { [WDIO_KIND]: 'browser', isMultiRemote: false, sessionId: 'mock-session-id' }
+        const createElementMock = (parent: object) => ({ [WDIO_KIND]: 'element', isMultiRemote: false, elementId: 'mock-element-id', parent })
 
         it('should return the browser object when passed a browser object', () => {
             expect(getBrowserObject(browserMock)).toBe(browserMock)
         })
 
         it('should return the browser object when passed an element with the browser as its parent', () => {
-            const elementWithBrowserParent = createElementMock(browserMock)
-            expect(getBrowserObject(elementWithBrowserParent)).toBe(browserMock)
+            expect(getBrowserObject(createElementMock(browserMock))).toBe(browserMock)
         })
 
         it('should return the browser object for a nested element structure', () => {
-            const parentElement = createElementMock(browserMock)
-            // @ts-ignore
-            const childElement = createElementMock(parentElement)
+            const childElement = createElementMock(createElementMock(browserMock))
             expect(getBrowserObject(childElement)).toBe(browserMock)
+        })
+
+        // WebdriverIO v10: elements found from a browsing context (`browser.url()`, `context.frame()`)
+        // have the context as parent, and the context holds the browser in `browser`
+        const topLevelContextMock = { [WDIO_KIND]: 'browsing-context', browser: browserMock, isFrame: false }
+        const frameContextMock = { [WDIO_KIND]: 'browsing-context', browser: browserMock, isFrame: true, parent: topLevelContextMock }
+
+        it('should return the browser object when passed a WebdriverIO v10 browsing context', () => {
+            expect(getBrowserObject(topLevelContextMock)).toBe(browserMock)
+        })
+
+        it('should return the browser object for an element found from a WebdriverIO v10 browsing context', () => {
+            expect(getBrowserObject(createElementMock(topLevelContextMock))).toBe(browserMock)
+        })
+
+        it('should return the browser object for an element found in a WebdriverIO v10 frame', () => {
+            expect(getBrowserObject(createElementMock(frameContextMock))).toBe(browserMock)
+        })
+
+        it('should not return a multiremote browser, which is also of kind "browser"', () => {
+            const multiRemoteBrowser = { [WDIO_KIND]: 'browser', isMultiRemote: true }
+            expect(() => getBrowserObject(createElementMock(multiRemoteBrowser))).toThrow('Could not find the browser of this element')
+        })
+
+        it('should throw for an object that is not a WebdriverIO object', () => {
+            expect(() => getBrowserObject({ parent: browserMock })).toThrow('Could not find the browser of this element')
+            expect(() => getBrowserObject(undefined)).toThrow('Could not find the browser of this element')
+        })
+    })
+
+    describe('isMultiRemoteBrowser', () => {
+        it('should return true for a multiremote browser', () => {
+            expect(isMultiRemoteBrowser({ isMultiRemote: true } as any)).toBe(true)
+        })
+
+        it('should return false for a single browser', () => {
+            expect(isMultiRemoteBrowser({ isMultiRemote: false } as any)).toBe(false)
+        })
+
+        it('should return false when the flag is not set', () => {
+            expect(isMultiRemoteBrowser({} as any)).toBe(false)
+        })
+    })
+
+    describe('isMultiRemoteElement', () => {
+        // `multiRemoteBrowser.$()` gives an element without `parent`, `getInstance()` gives the element of each instance
+        const getInstance = (instanceName: string) => ({ elementId: `${instanceName}-element` })
+
+        it('should return true for a multiremote element', () => {
+            expect(isMultiRemoteElement({ [WDIO_KIND]: 'element', isMultiRemote: true, instances: ['chrome'], getInstance })).toBe(true)
+        })
+
+        it('should return false for the element of one instance', () => {
+            expect(isMultiRemoteElement({ [WDIO_KIND]: 'element', isMultiRemote: false, elementId: 'chrome-element', parent: {} })).toBe(false)
+        })
+
+        it('should return false for an object without the WebdriverIO element kind', () => {
+            expect(isMultiRemoteElement({ isMultiRemote: true, instances: ['chrome'], getInstance })).toBe(false)
+            expect(isMultiRemoteElement({ [WDIO_KIND]: 'browser', isMultiRemote: true, instances: ['chrome'], getInstance })).toBe(false)
+        })
+
+        it('should return false for a value that is not an object', () => {
+            expect(isMultiRemoteElement(undefined)).toBe(false)
+            expect(isMultiRemoteElement(null)).toBe(false)
+            expect(isMultiRemoteElement('element')).toBe(false)
+        })
+    })
+
+    describe('activateHiddenBrowsingContext', () => {
+        const createBrowser = ({ isBidi = true, isMobile = false, isHidden = true, browserName = 'chrome' } = {}) => mock<WebdriverIO.Browser>({
+            isBidi,
+            isMobile,
+            capabilities: { browserName },
+            execute: vi.fn().mockResolvedValue(isHidden),
+            getWindowHandle: vi.fn().mockResolvedValue('context-a'),
+            browsingContextActivate: vi.fn().mockResolvedValue({}),
+        })
+
+        it('should activate the browsing context when the page is in a background tab', async () => {
+            const browser = createBrowser()
+
+            await activateHiddenBrowsingContext(browser, false)
+
+            expect(browser.browsingContextActivate).toHaveBeenCalledWith({ context: 'context-a' })
+        })
+
+        it('should not activate the browsing context when the page is visible', async () => {
+            const browser = createBrowser({ isHidden: false })
+
+            await activateHiddenBrowsingContext(browser, false)
+
+            expect(browser.browsingContextActivate).not.toHaveBeenCalled()
+        })
+
+        it('should do nothing in a WebDriver Classic session, on mobile or in a native context', async () => {
+            const browsers = [createBrowser({ isBidi: false }), createBrowser({ isMobile: true }), createBrowser()]
+
+            await activateHiddenBrowsingContext(browsers[0], false)
+            await activateHiddenBrowsingContext(browsers[1], false)
+            await activateHiddenBrowsingContext(browsers[2], true)
+
+            for (const browser of browsers) {
+                expect(browser.execute).not.toHaveBeenCalled()
+                expect(browser.browsingContextActivate).not.toHaveBeenCalled()
+            }
+        })
+
+        it('should activate the browsing context in Edge and Chromium too', async () => {
+            for (const browserName of ['MicrosoftEdge', 'msedge', 'chromium', 'chrome-headless-shell']) {
+                const browser = createBrowser({ browserName })
+
+                await activateHiddenBrowsingContext(browser, false)
+
+                expect(browser.browsingContextActivate).toHaveBeenCalledWith({ context: 'context-a' })
+            }
+        })
+
+        it('should do nothing in a browser that is not based on Chromium', async () => {
+            const browser = createBrowser({ browserName: 'firefox' })
+
+            await activateHiddenBrowsingContext(browser, false)
+
+            expect(browser.execute).not.toHaveBeenCalled()
+            expect(browser.browsingContextActivate).not.toHaveBeenCalled()
+        })
+
+        it('should not fail when the browser cannot activate the browsing context', async () => {
+            const browser = createBrowser()
+            vi.mocked(browser.browsingContextActivate).mockRejectedValue(new Error('unknown command'))
+
+            await expect(activateHiddenBrowsingContext(browser, false)).resolves.toBeUndefined()
+        })
+
+        it('should not fail when the visibility of the page cannot be read', async () => {
+            const browser = createBrowser()
+            vi.mocked(browser.execute).mockRejectedValue(new Error('no such frame'))
+
+            await expect(activateHiddenBrowsingContext(browser, false)).resolves.toBeUndefined()
+            expect(browser.browsingContextActivate).not.toHaveBeenCalled()
         })
     })
 
@@ -835,3 +966,51 @@ describe('utils', () => {
         })
     })
 })
+
+describe('warnIfBiDiScriptsFailOnAndroid (#1232)', () => {
+    const createBrowser = ({ isAndroid = true, isBidi = true, browserName = 'chrome', execute = vi.fn().mockResolvedValue(true) } = {}) => mock<WebdriverIO.Browser>({
+        isAndroid,
+        isBidi,
+        capabilities: { browserName },
+        execute,
+    })
+
+    // Each test starts with no warning calls, whatever the tests before it logged
+    beforeEach(() => {
+        vi.mocked(log.warn).mockClear()
+    })
+
+    it('should warn with the workaround when the driver does not run scripts', async () => {
+        const bidiError = new Error('WebDriver Bidi command "script.callFunction" failed with error: unknown command')
+        const browser = createBrowser({ execute: vi.fn().mockRejectedValue(bidiError) })
+
+        await warnIfBiDiScriptsFailOnAndroid(browser)
+
+        expect(log.warn).toHaveBeenCalledTimes(1)
+        expect(log.warn).toHaveBeenCalledWith(expect.stringContaining("'wdio:enforceWebDriverClassic': true"))
+        expect(log.warn).toHaveBeenCalledWith(expect.stringContaining(bidiError.message))
+    })
+
+    it('should not warn when the driver runs scripts', async () => {
+        const browser = createBrowser()
+
+        await warnIfBiDiScriptsFailOnAndroid(browser)
+
+        expect(browser.execute).toHaveBeenCalledTimes(1)
+        expect(log.warn).not.toHaveBeenCalled()
+    })
+
+    it.each([
+        ['a WebDriver Classic session', { isBidi: false }],
+        ['another platform', { isAndroid: false }],
+        ['a native app session', { browserName: '' }],
+    ])('should not test a script in %s', async (_name, overrides) => {
+        const browser = createBrowser(overrides)
+
+        await warnIfBiDiScriptsFailOnAndroid(browser)
+
+        expect(browser.execute).not.toHaveBeenCalled()
+        expect(log.warn).not.toHaveBeenCalled()
+    })
+})
+

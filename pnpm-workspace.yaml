@@ -1,7 +1,43 @@
-# pnpm-workspace.yaml
 packages:
-    - "packages/image-comparison-core"
-    - "packages/visual-service"
-    - "packages/ocr-service"
-    - "packages/visual-reporter"
-    - "packages/visual-remix-reporter"
+  - packages/*
+
+patchedDependencies:
+  wdio-lambdatest-service@4.0.1: patches/wdio-lambdatest-service@4.0.1.patch
+
+# edgedriver/geckodriver: WebdriverIO downloads the drivers at runtime.
+# Others only print messages or run version checks.
+allowBuilds:
+  edgedriver: false
+  esbuild: true
+  geckodriver: false
+  protobufjs: false
+  tesseract.js: false
+  unrs-resolver: false
+
+# pnpm refuses packages that are less than 1 day old. WebdriverIO 10.2.0 was published on 2026-11-06 at
+# 02:04 UTC: remove this exception after 2026-11-07 02:10 UTC
+minimumReleaseAgeExclude:
+  - '@wdio/appium-service@10.2.0'
+  - '@wdio/cli@10.2.0'
+  - '@wdio/config@10.2.0'
+  - '@wdio/display-server@10.2.0'
+  - '@wdio/dot-reporter@10.2.0'
+  - '@wdio/globals@10.2.0'
+  - '@wdio/jasmine-framework@10.2.0'
+  - '@wdio/local-runner@10.2.0'
+  - '@wdio/logger@10.2.0'
+  - '@wdio/mocha-framework@10.2.0'
+  - '@wdio/protocols@10.2.0'
+  - '@wdio/repl@10.2.0'
+  - '@wdio/reporter@10.2.0'
+  - '@wdio/runner@10.2.0'
+  - '@wdio/sauce-service@10.2.0'
+  - '@wdio/session@10.2.0'
+  - '@wdio/shared-store-service@10.2.0'
+  - '@wdio/snapshot@10.2.0'
+  - '@wdio/spec-reporter@10.2.0'
+  - '@wdio/types@10.2.0'
+  - '@wdio/utils@10.2.0'
+  - create-wdio@10.2.0
+  - webdriver@10.2.0
+  - webdriverio@10.2.0

@@ -1,5 +1,114 @@
 # @wdio/ocr-service
 
+## 3.1.0
+
+### Minor Changes
+
+- daa60df: Require Node.js 22.23.4, 24.22.1 or 26.12.1, or a later release of these lines: the first releases with the updated CA store for the eMudhra intermediate CA compromise (https://nodejs.org/en/blog/vulnerability/october-2026-security-releases). Node.js 23 and 25 are not supported.
+- c9de253: feat: add the `pageSegmentationMode` option (alias `psm`) to set the Tesseract page segmentation mode
+  
+  With the default page segmentation mode 3 (fully automatic), Tesseract often finds no text in a small haystack with one or two characters, for example a counter or a badge, and the command fails with "No text was found for the OCR". You can now set the page segmentation mode (Tesseract `--psm`) for the service and for each OCR command:
+  
+  ```ts
+  const counter = await browser.ocrGetText({ haystack: $('#counter'), pageSegmentationMode: 7 })
+  ```
+  
+  The value in the service options applies to all OCR commands, and a command value overrides it. Set the modes for short text (7, 8, 9, 10 and 13) on the command, for the small haystack: in the service options they also apply to OCR of the full page, which then returns wrong text and no error.
+  
+  These modes also always return something: an empty haystack can return invented text, such as `oo`, and not the "No text was found" error. Do not use them to check that an element is empty.
+  
+  `psm` is an alias with the name of the Tesseract option: `{ psm: 7 }` is the same as `{ pageSegmentationMode: 7 }`. When you set both with different values in the service options or in one command, you get an error.
+  
+  The supported values are 3, 4, 5, 6, 7, 8, 9, 10, 11 and 13; for example 7 = one line, 8 = one word, 10 = one character. Other values throw an error. The default stays 3, so the results do not change when you do not set the option. It works with tesseract.js and with a system Tesseract, and the CLI asks for it in the advanced mode.
+  
+  To find one character with `ocrGetElementPositionByText()`, `ocrClickOnText()`, `ocrSetValue()` or `ocrWaitForTextDisplayed()`, also set `fuzzyFindOptions: { minMatchCharLength: 1 }`.
+
+## 3.0.0
+
+### Major Changes
+
+- 104fb89: feat!: support WebdriverIO v10 only
+  
+  All changes that users can notice in v11, also the fixes in `@wdio/image-comparison-core` 3.0.0, are in the [v11 migration guide](https://github.com/webdriverio/visual-testing/blob/main/docs/v11-migration.md).
+  
+  `@wdio/visual-service` v11, `@wdio/image-comparison-core` v3 and `@wdio/ocr-service` v3 support only WebdriverIO v10. WebdriverIO v10 needs Node.js 22.19 or later.
+  
+  **What changed**
+  
+  - The `@wdio/globals`, `@wdio/logger` and `@wdio/types` dependencies are now `^10.0.0` (before: `^9.29.1 || ^10.0.0`).
+  - The code paths for WebdriverIO v9 are removed. For example, a multiremote browser or element is found only with the `isMultiRemote` flag of WebdriverIO v10, not with the `isMultiremote` flag of WebdriverIO v9.
+  - The visual service finds the browser of an element, and a multiremote element, with the kind brand of WebdriverIO v10 (`Symbol.for('wdio.kind')`). `toMatchElementSnapshot()` gives a clear error for a value that is not a WebdriverIO v10 element.
+  
+  **If you use WebdriverIO v9**
+  
+  Stay on `@wdio/visual-service@10`, `@wdio/image-comparison-core@2` and `@wdio/ocr-service@2`. They are in maintenance on the `v10` branch, and fixes are backported on request.
+
+### Patch Changes
+
+- e9c18f9: fix: declare `webdriverio` as a peer dependency
+  
+  `@wdio/visual-service` and `@wdio/ocr-service` import `webdriverio` at runtime, and the types of `@wdio/image-comparison-core` use the `webdriverio` types, but the packages did not declare it. They now have the peer dependency `webdriverio: ^10.0.0`. A WebdriverIO project always has `webdriverio` installed, so no change is needed in your project.
+- 4c63e9a: chore: upgrade `@inquirer/prompts` to 8 for the CLI wizards
+  
+  `@inquirer/prompts` 8.7.3 is ESM only and needs Node.js `^20.17.0`, `^22.13.0` or `>=23.5.0`. Both packages now need Node.js 22.19 or newer (like WebdriverIO 10), so this changes nothing for users. The wizards work the same; the prompt colors now come from Node.js `styleText`.
+- 5557e9e: chore: declare Node.js `>=22.19.0`, the same as WebdriverIO 10
+  
+  All packages now declare `"engines": { "node": ">=22.19.0" }`, like every package of WebdriverIO 10.
+  
+  - `@wdio/image-comparison-core`, `@wdio/visual-service` and `@wdio/ocr-service` did not declare a Node.js version, but they already needed 22.19 or newer through WebdriverIO 10.
+  - `@wdio/visual-reporter` declared `>=20.0.0`. Node.js 20 is end-of-life, and the reporter CLI is used together with WebdriverIO 10, so it now also needs Node.js 22.19 or newer.
+- 17f3201: fix: type `clickDuration` as `number` instead of the wrapper object type `Number`
+  
+  The `clickDuration` option of `ocrClickOnText` used the type `Number`. It now uses `number`, like the other numeric options.
+- d263218: chore: upgrade `tesseract.js` from 5 to 7
+  
+  OCR with the built-in Tesseract (when no system Tesseract is installed) is about 15 % faster, and the memory leak of tesseract.js 5 (memory grew over time until a crash) is fixed. The found text and word positions are the same. Since tesseract.js 6 only the `text` output is on by default, so the service now asks for the `hocr` output, which it uses for the word positions.
+
+## 2.3.1
+
+### Patch Changes
+
+- 525a75a: chore: accept the WebdriverIO 10 releases instead of the 10.0.0 prereleases
+
+  The `@wdio/globals`, `@wdio/logger` and `@wdio/types` ranges change from `^9.29.1 || ^10.0.0-0` to `^9.29.1 || ^10.0.0`. WebdriverIO 10.0.0 is released, so the alpha versions are no longer accepted. WebdriverIO v9 (9.29.1 and later) is still supported.
+
+## 2.3.0
+
+### Minor Changes
+
+- c1a5b84: feat: support WebdriverIO v10 (keep WebdriverIO v9 support)
+
+  `@wdio/visual-service` and `@wdio/ocr-service` now run with WebdriverIO v10. WebdriverIO v9 (9.29.1 and later) is still supported. WebdriverIO v10 needs Node.js 22.19 or later.
+
+  **What changed**
+
+  - The `@wdio/globals`, `@wdio/logger` and `@wdio/types` dependencies accept v9 and v10.
+  - `expect-webdriverio` is no longer a dependency of `@wdio/visual-service`. The service uses only its `ExpectWebdriverIO` types, which your `@wdio/globals` gives. This removes a second `expect-webdriverio` copy and peer dependency warnings (for example with pnpm).
+  - Multiremote: the services read `isMultiRemote` (v10) and `isMultiremote` (v9). Before, a multiremote session on v10 did not get the visual and OCR commands.
+  - Multiremote mobile emulation is set on each instance with `instances` and `getInstance()`, which are available in v9 and v10.
+  - Multiremote: the commands of each instance (for example `browser.getInstance('chrome').checkScreen()`) use the context of that instance. Before, all instances used the context of the last instance, so with a web instance and a native app instance, the web check ran as a native app check and saved a `...-NaNxNaN.png` file.
+  - Chrome and Edge `mobileEmulation.deviceName` in a WebDriver BiDi session: in v10, `emulate('device')` can fail (for example `emulation.setTextLayoutModeOverride` is not supported by Chrome 154), and the service setup then stopped, so the visual matchers were missing. The service now sets the viewport and the device pixel ratio of the device that the browser emulates, so the screenshots keep the resolution of the device. In v9 nothing changes.
+  - Storybook: the loader uses `execute()` with an `async` function, because v10 removed `executeAsync()`. The clip selector uses `$(selector, { strict: false })`, because `$` is strict in v10.
+  - Element screenshots: the service gets the browser of an element whose parent is a v10 browsing context.
+  - Appium `mobile:` commands use `executeScript()`. In a WebDriver BiDi session (Appium 3, required by v10), `execute()` runs the script as page JavaScript.
+  - Jasmine: the visual matchers (`toMatchScreenSnapshot` and the others) now work with `framework: 'jasmine'`, in WebdriverIO v9 and v10. Before, they were never added, because the Jasmine `expect` has no `extend()`. The service now adds them as Jasmine async matchers.
+  - When the matchers cannot be added, the warning now gives the reason. Before, it always said "Expect package not found".
+  - When the service cannot add its commands (for example when a WebDriver command of its setup fails), the visual matchers are still added, the service logs the reason, and a matcher fails with `The visual service did not add the "checkScreen" command to this session`. Before, the only error was `expect(...).toMatchScreenSnapshot is not a function`.
+  - When an ignored element was not found, the error now shows the selector and the reason, for example `element "~button-LOGIN" could not be found: StrictSelectorError: ...`. Before, it showed the element as JSON.
+  - `ignore` elements: before the comparison, each element is found again in its own scope (the element or browsing context it was found from) and at its own index. Before, the service searched the whole page with the selector and took the elements in order, so an element of a filtered `$$().filter()` list, of a chained `$('form').$$('input')` query or of a frame could be replaced by another element with the same selector.
+
+  **Known limits**
+
+  - In a WebDriver BiDi session, an element screenshot of an element in a frame is not supported: with WebdriverIO v9 `switchFrame()` the image is moved by the position of the frame, and with v10 `context.frame()` the command fails. With WebDriver Classic (`'wdio:enforceWebDriverClassic': true`), it works with v9 and v10. See #1228.
+
+  **Upgrading to WebdriverIO v10**
+
+  - In WebdriverIO v10, `$()` throws a `StrictSelectorError` when the selector finds more than one element. This applies to elements in `ignore` and to `checkElement()` / `toMatchElementSnapshot()`. Use `$$()`, `$(selector, { strict: false })` or a more specific selector. `hideElements` and `removeElements` are not affected.
+
+  ### Committers: 1
+
+  - David Prevost ([@dprevost-LMI](https://github.com/dprevost-LMI))
+
 ## 2.2.10
 
 ### Patch Changes

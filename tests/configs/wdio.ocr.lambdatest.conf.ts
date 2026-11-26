@@ -19,7 +19,6 @@ export const config: WebdriverIO.Config  = {
                 platformName: 'Windows 10',
                 build: buildName,
                 project: '@wdio/ocr-service',
-                // @ts-expect-error
                 w3c: true,
                 resolution: '1600x1200',
                 queueTimeout: 900,

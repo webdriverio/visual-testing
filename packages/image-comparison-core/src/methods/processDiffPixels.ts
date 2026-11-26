@@ -45,7 +45,7 @@
  */
 
 import logger from '@wdio/logger'
-import type { Pixel, WicImageCompareOptions } from 'src/methods/images.interfaces.js'
+import type { Pixel, WicImageCompareOptions } from './images.interfaces.js'
 import type { BoundingBox, IgnoreBoxes } from './rectangles.interfaces.js'
 import type { CompareData } from '../pixelmatch/compare.interfaces.js'
 import { savePngBuffer } from './images.js'
