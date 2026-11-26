@@ -48,4 +48,4 @@ Example: `ignoreLess: true` with the default `ignoreAntialiasing: true` resolves
 
 Golden fixture tests documenting expected pass/fail behaviour live in [`tests/fixtures/ignore-options/`](./tests/fixtures/ignore-options/).
 
-Comparison uses [pixelmatch](https://github.com/mapbox/pixelmatch).
+Comparison uses the [pixelmatch](https://github.com/mapbox/pixelmatch) 8 algorithm, run by [`@blazediff/core/pixelmatch`](https://github.com/teimurjan/blazediff/tree/main/packages/core), a faster drop-in with identical results.
