@@ -37,7 +37,7 @@
     "watch:tsc": "pnpm run build:tsc -w"
   },
   "dependencies": {
-    "@blazediff/core": "^2.0.2",
+    "@blazediff/core": "^2.0.3",
     "@wdio/logger": "^10.1.0",
     "@wdio/types": "^10.1.0",
     "fast-png": "^8.0.0"

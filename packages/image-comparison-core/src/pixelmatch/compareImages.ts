@@ -1,4 +1,4 @@
-import { pixelmatch } from '@blazediff/core/pixelmatch'
+import pixelmatch from '@blazediff/core/pixelmatch'
 import { resolveComparePreset } from '../helpers/options.js'
 import { DEFAULT_PIXELMATCH_OPTIONS } from '../helpers/constants.js'
 import { applyResembleGrayscale } from './compareBrightness.js'

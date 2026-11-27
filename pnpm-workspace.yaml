@@ -41,3 +41,5 @@ minimumReleaseAgeExclude:
   - create-wdio@10.2.0
   - webdriver@10.2.0
   - webdriverio@10.2.0
+  - '@blazediff/contract@1.0.1'
+  - '@blazediff/core@2.0.3'
