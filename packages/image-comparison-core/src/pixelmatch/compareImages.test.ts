@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-vi.mock('pixelmatch', () => ({
-    default: vi.fn()
+vi.mock('@blazediff/core/pixelmatch', () => ({
+    pixelmatch: vi.fn()
 }))
 
 vi.mock('../utils/imageUtils.js', () => {
@@ -19,7 +19,7 @@ vi.mock('../utils/imageUtils.js', () => {
 })
 
 import compareImages from './compareImages.js'
-import pixelmatch from 'pixelmatch'
+import { pixelmatch } from '@blazediff/core/pixelmatch'
 import * as imageUtils from '../utils/imageUtils.js'
 
 const pixelmatchFn = vi.mocked(pixelmatch)

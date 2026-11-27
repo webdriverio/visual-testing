@@ -125,6 +125,9 @@ importers:
 
   packages/image-comparison-core:
     dependencies:
+      '@blazediff/core':
+        specifier: ^2.0.2
+        version: 2.0.2
       '@wdio/logger':
         specifier: ^10.1.0
         version: 10.2.0
@@ -132,9 +135,6 @@ importers:
         specifier: ^10.1.0
         version: 10.2.0
       fast-png:
-        specifier: ^8.0.0
-        version: 8.0.0
-      pixelmatch:
         specifier: ^8.0.0
         version: 8.0.0
     devDependencies:
@@ -395,6 +395,12 @@ packages:
   '@bcoe/v8-coverage@1.0.2':
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
+
+  '@blazediff/contract@1.0.0':
+    resolution: {integrity: sha512-MHokakmcmZiEvGAe4htjc5lH6JewjqOSyj1ylNgvpVeJLelnu6NtoIdd+y+lTtVE8VqWgOw3MpQW6HujiDexOg==}
+
+  '@blazediff/core@2.0.2':
+    resolution: {integrity: sha512-/4WOGgX6+kMrHA3CMPRYZ9k5+KdPYIjH+5gFLN+O2Q5Q0i24HDwL7I75qeEjqF01eZENbiTr3WuN0Aq9Calz4Q==}
 
   '@borewit/text-codec@0.2.2':
     resolution: {integrity: sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ==}
@@ -4276,10 +4282,6 @@ packages:
     resolution: {integrity: sha512-o8mkY4E/+LNUf6LzX96ht6k6CEDi65k9G2rjMtBe9Oo+VPKSvl+0GKHuH/AlG+GA5LPG/i5hrekkxUc3s2HU+Q==}
     hasBin: true
 
-  pixelmatch@8.0.0:
-    resolution: {integrity: sha512-cIqOLfh5k52us715qf3B3+kTOxZv+WDv77HN7xokLScYQGYQHi4m/ynoDIPpvF2LvCyUJGyvzY64i0QCXtzu1g==}
-    hasBin: true
-
   pkg-types@2.3.0:
     resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
 
@@ -5613,6 +5615,12 @@ snapshots:
       '@babel/helper-validator-identifier': 7.29.7
 
   '@bcoe/v8-coverage@1.0.2': {}
+
+  '@blazediff/contract@1.0.0': {}
+
+  '@blazediff/core@2.0.2':
+    dependencies:
+      '@blazediff/contract': 1.0.0
 
   '@borewit/text-codec@0.2.2': {}
 
@@ -9753,10 +9761,6 @@ snapshots:
   pixelmatch@5.3.0:
     dependencies:
       pngjs: 6.0.0
-
-  pixelmatch@8.0.0:
-    dependencies:
-      pngjs: 7.0.0
 
   pkg-types@2.3.0:
     dependencies:
