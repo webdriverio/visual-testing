@@ -126,8 +126,8 @@ importers:
   packages/image-comparison-core:
     dependencies:
       '@blazediff/core':
-        specifier: ^2.0.3
-        version: 2.0.3
+        specifier: ^2.0.2
+        version: 2.0.2
       '@wdio/logger':
         specifier: ^10.1.0
         version: 10.2.0
@@ -396,11 +396,11 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@blazediff/contract@1.0.1':
-    resolution: {integrity: sha512-9FG9ev7wUVjfaUYTI7lq+pUw6UfBpCbcgK2QGjZFHi4LpSRj1u4/BxxWOp2J1WKZTPXDpEFO24ZC2lwqsIv8GA==}
+  '@blazediff/contract@1.0.0':
+    resolution: {integrity: sha512-MHokakmcmZiEvGAe4htjc5lH6JewjqOSyj1ylNgvpVeJLelnu6NtoIdd+y+lTtVE8VqWgOw3MpQW6HujiDexOg==}
 
-  '@blazediff/core@2.0.3':
-    resolution: {integrity: sha512-V0Z7fKHBKvExbee/yHTOYDefu18CXiPQ5k1wdraK4d+qXqbcEIFxpk0tyqb49RXuGcYPh3cAXcHf5NXorNlp5w==}
+  '@blazediff/core@2.0.2':
+    resolution: {integrity: sha512-/4WOGgX6+kMrHA3CMPRYZ9k5+KdPYIjH+5gFLN+O2Q5Q0i24HDwL7I75qeEjqF01eZENbiTr3WuN0Aq9Calz4Q==}
 
   '@borewit/text-codec@0.2.2':
     resolution: {integrity: sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ==}
@@ -5616,11 +5616,11 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@blazediff/contract@1.0.1': {}
+  '@blazediff/contract@1.0.0': {}
 
-  '@blazediff/core@2.0.3':
+  '@blazediff/core@2.0.2':
     dependencies:
-      '@blazediff/contract': 1.0.1
+      '@blazediff/contract': 1.0.0
 
   '@borewit/text-codec@0.2.2': {}
 
